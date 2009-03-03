@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.spam.server.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;

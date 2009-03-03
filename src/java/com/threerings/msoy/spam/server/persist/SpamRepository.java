@@ -23,9 +23,26 @@ public class SpamRepository extends DepotRepository
         super(ctx);
     }
 
+    /**
+     * Add an email address to the opt-out list.
+     */
+    public void addOptOutEmail (String email)
+    {
+        insert(new OptOutRecord(email.toLowerCase()));
+    }
+
+    /**
+     * Returns true if the given email address is on the opt-out list
+     */
+    public boolean hasOptedOut (String email)
+    {
+        return load(OptOutRecord.class, email.toLowerCase()) != null;
+    }
+
     @Override
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(SpamRecord.class);
+        classes.add(OptOutRecord.class);
     }
 }

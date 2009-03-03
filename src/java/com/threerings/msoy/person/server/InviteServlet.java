@@ -34,6 +34,7 @@ import com.threerings.msoy.server.persist.GameInvitationRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Invitation;
@@ -289,7 +290,7 @@ public class InviteServlet extends MsoyServiceServlet
         }
 
         // make sure this address isn't on the opt-out list
-        if (_memberRepo.hasOptedOut(email)) {
+        if (_spamRepo.hasOptedOut(email)) {
             throw new ServiceException(InvitationResults.OPTED_OUT);
         }
 
@@ -351,7 +352,7 @@ public class InviteServlet extends MsoyServiceServlet
         }
 
         // make sure this address isn't on the opt-out list
-        if (_memberRepo.hasOptedOut(email)) {
+        if (_spamRepo.hasOptedOut(email)) {
             throw new ServiceException(InvitationResults.OPTED_OUT);
         }
 
@@ -408,6 +409,7 @@ public class InviteServlet extends MsoyServiceServlet
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected SpamRepository _spamRepo;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;

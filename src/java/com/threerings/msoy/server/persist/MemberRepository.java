@@ -86,6 +86,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -946,22 +947,6 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Add an email address to the opt-out list.
-     */
-    public void addOptOutEmail (String email)
-    {
-        insert(new OptOutRecord(email.toLowerCase()));
-    }
-
-    /**
-     * Returns true if the given email address is on the opt-out list
-     */
-    public boolean hasOptedOut (String email)
-    {
-        return load(OptOutRecord.class, email.toLowerCase()) != null;
-    }
-
-    /**
      * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
      * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
      */
@@ -971,7 +956,7 @@ public class MemberRepository extends DepotRepository
         if (invRec != null) {
             invRec.inviteeId = -1;
             update(invRec, InvitationRecord.INVITEE_ID);
-            addOptOutEmail(invRec.inviteeEmail);
+            _spamRepo.addOptOutEmail(invRec.inviteeEmail);
         }
     }
 
@@ -1396,7 +1381,6 @@ public class MemberRepository extends DepotRepository
         classes.add(SessionRecord.class);
         classes.add(InvitationRecord.class);
         classes.add(InviterRecord.class);
-        classes.add(OptOutRecord.class);
         classes.add(ExternalMapRecord.class);
         classes.add(MemberWarningRecord.class);
         classes.add(AffiliateRecord.class);
@@ -1476,6 +1460,7 @@ public class MemberRepository extends DepotRepository
         };
 
     @Inject protected UserActionRepository _actionRepo;
+    @Inject protected SpamRepository _spamRepo;
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";

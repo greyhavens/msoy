@@ -27,6 +27,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.spam.server.SpamUtil;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.gwt.Invitation;
@@ -196,7 +197,7 @@ public class MemberServlet extends MsoyServiceServlet
             if (invRec == null) {
                 throw new ServiceException("e.invite_not_found");
             }
-            _memberRepo.addOptOutEmail(invRec.inviteeEmail);
+            _spamRepo.addOptOutEmail(invRec.inviteeEmail);
 
         } else if (_memberRepo.inviteAvailable(inviteId) != null) {
             _memberRepo.optOutInvite(inviteId);
@@ -305,6 +306,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
+    @Inject protected SpamRepository _spamRepo;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
