@@ -195,6 +195,10 @@ public class PartyDirector extends BasicDirector
      */
     public function joinParty (id :int) :void
     {
+        if (isInParty()) {
+            leaveParty();
+        }
+
         // first we have to find out what node is hosting the party in question
         _pbsvc.locateParty(_wctx.getClient(), id,
             new JoinAdapter(connectParty, function (cause :String) :void {
