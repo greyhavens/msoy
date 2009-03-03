@@ -56,8 +56,8 @@ public class MsoyEvents
         @Field public long createdOn;
         @Field public String tracker;
 
-        public Login (int memberId, boolean firstLogin, long createdOn, 
-            boolean isGuest, String tracker)
+        public Login (int memberId, boolean firstLogin, boolean isGuest,
+            long createdOn, String tracker)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
