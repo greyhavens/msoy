@@ -425,12 +425,19 @@ public class OccupantSprite extends MsoySprite
         return "m.occupant";
     }
 
-    // from MsoyMediaContainer
-    override public function isBlocked () :Boolean
+    /**
+     * Is this occupant muted?
+     */
+    public function isMuted () :Boolean
     {
-        return super.isBlocked() ||
-            (_occInfo != null && _ctx.getMuteDirector() != null &&
-             _ctx.getMuteDirector().isMuted(_occInfo.username));
+        return (_occInfo != null && _ctx.getMuteDirector() != null &&
+             _ctx.getMuteDirector().isMuted(_occInfo.username))
+    }
+
+    override protected function getBlockType () :String
+    {
+        // let's have the mute blocking take precedence over bleep blocking
+        return isMuted() ? "mute" : super.getBlockType();
     }
 
     override protected function getSpecialProperty (name :String) :Object

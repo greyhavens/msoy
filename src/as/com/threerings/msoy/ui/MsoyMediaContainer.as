@@ -97,6 +97,7 @@ public class MsoyMediaContainer extends MediaContainer
 
     /**
      * Is the media contained herein specifically bleeped?
+     * This does not check the global bleep.
      */
     public function isBleeped () :Boolean
     {
@@ -110,7 +111,7 @@ public class MsoyMediaContainer extends MediaContainer
      */
     public function isBlocked () :Boolean
     {
-        return Prefs.isGlobalBleep() || isBleeped();
+        return (null != getBlockType());
     }
 
     /**
@@ -118,7 +119,7 @@ public class MsoyMediaContainer extends MediaContainer
      */
     public function checkBlocked () :void
     {
-        setIsBlocked(isBlocked());
+        setIsBlocked(getBlockType());
     }
 
     // from ContextMenuProvider
@@ -207,12 +208,24 @@ public class MsoyMediaContainer extends MediaContainer
         return new MsoyVideoDisplay(player);
     }
 
-    // TODO: doc
-    protected function setIsBlocked (blocked :Boolean) :void
+    /**
+     * Get the type of block being done on this media.
+     * This string can be used for translation, potentially, or for turning into
+     * a static media desc. See setIsBlocked().
+     */
+    protected function getBlockType () :String
+    {
+        return (Prefs.isGlobalBleep() || isBleeped()) ? "bleep" : null;
+    }
+
+    /**
+     * Set the blockType being used on this media, or null if not blocked.
+     */
+    protected function setIsBlocked (blockType :String) :void
     {
         var desc :MediaDesc;
-        if (blocked) {
-            desc = new DefaultItemMediaDesc(MediaDesc.IMAGE_JPEG, Item.FURNITURE, "blocked");
+        if (blockType != null) {
+            desc = new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, Item.FURNITURE, blockType);
         } else {
             desc = _desc;
         }
