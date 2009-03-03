@@ -268,12 +268,10 @@ public class MsoyAdminManager
             for (MemberObject memobj : _locator.getMembersOnline()) {
                 total++;
                 active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
-                if (memobj.isGuest()) {
-                    if (memobj.getMemberId() == 0) {
-                        viewers++;
-                    } else {
-                        guests++;
-                    }
+                if (memobj.isViewer()) {
+                    viewers++;
+                } else if (memobj.isPermaguest()) {
+                    guests++;
                 }
             }
             _eventLog.currentMemberStats(ServerConfig.nodeName, total, active, guests, viewers);
