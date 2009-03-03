@@ -136,6 +136,8 @@ public class CronLogic
             public void run () {
                 try {
                     _injector.getInstance(job).run();
+                } catch (Throwable t) {
+                    log.warning("Job failed", "job", job, t);
                 } finally {
                     jobCompleted(job);
                 }
