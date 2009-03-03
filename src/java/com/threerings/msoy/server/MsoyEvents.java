@@ -27,12 +27,12 @@ public class MsoyEvents
     @Event(name="CurrentMemberStats") // note: do not change this event name
     public static class CurrentMemberStats implements MsoyEvent
     {
-        @Index @Field final Date timestamp;
-        @Field public String serverName;
-        @Field public int total;
-        @Field public int active;
-        @Field public int guests;
-        @Field public int viewers;
+        @Index @Field final public Date timestamp;
+        @Field final public String serverName;
+        @Field final public int total;
+        @Field final public int active;
+        @Field final public int guests;
+        @Field final public int viewers;
 
         public CurrentMemberStats (
                 String serverName, int total, int active, int guests, int viewers)
@@ -49,12 +49,12 @@ public class MsoyEvents
     @Event(name="Login") // note: do not change this event name
     public static class Login implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public boolean firstLogin;
-        @Field public boolean isGuest;
-        @Field public long createdOn;
-        @Field public String tracker;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public boolean firstLogin;
+        @Field final public boolean isGuest;
+        @Field final public long createdOn;
+        @Field final public String tracker;
 
         public Login (int memberId, boolean firstLogin, boolean isGuest,
             long createdOn, String tracker)
@@ -71,15 +71,15 @@ public class MsoyEvents
     @Event(name="SessionMetrics") // note: do not change this event name
     public static class SessionMetrics implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int inMyRooms;
-        @Field public int inFriendRooms;
-        @Field public int inStrangerRooms;
-        @Field public int inWhirleds;
-        @Field public int totalActive;
-        @Field public int totalIdle;
-        @Field public String sessionToken;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int inMyRooms;
+        @Field final public int inFriendRooms;
+        @Field final public int inStrangerRooms;
+        @Field final public int inWhirleds;
+        @Field final public int totalActive;
+        @Field final public int totalIdle;
+        @Field final public String sessionToken;
 
         public SessionMetrics (int memberId, int timeInMyRooms, int timeInFriendRooms,
             int timeInStrangerRooms, int timeInWhirleds, int totalTimeActive, int totalTimeIdle,
@@ -100,10 +100,10 @@ public class MsoyEvents
     @Event(name="MailSent") // note: do not change this event name
     public static class MailSent implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int senderId;
-        @Field public int recipientId;
-        @Field public int payloadType;
+        @Index @Field final public Date timestamp;
+        @Field final public int senderId;
+        @Field final public int recipientId;
+        @Field final public int payloadType;
 
         public MailSent (int senderId, int recipientId, int payloadType)
         {
@@ -117,9 +117,9 @@ public class MsoyEvents
     @Event(name="ExchangeRate") // note: do not change this event name
     public static class ExchangeRate implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public String serverName;
-        @Field public double rate;
+        @Index @Field final public Date timestamp;
+        @Field final public String serverName;
+        @Field final public double rate;
 
         public ExchangeRate (String serverName, double rate)
         {
@@ -132,12 +132,12 @@ public class MsoyEvents
     @Event(name="FlowTransaction") // note: do not change this event name
     public static class FlowTransaction implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int actionType;
-        @Field public int deltaFlow;
-        @Field public int deltaBars;
-        @Field public int deltaBling;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int actionType;
+        @Field final public int deltaFlow;
+        @Field final public int deltaBars;
+        @Field final public int deltaBling;
 
         public FlowTransaction (int memberId, int actionType, Currency currency, int amountDelta)
         {
@@ -153,12 +153,12 @@ public class MsoyEvents
     @Event(name="ItemPurchase") // note: do not change this event name
     public static class ItemPurchase implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public byte itemType;
-        @Field public int itemId;
-        @Field public int flowCost;
-        @Field public int goldCost;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public byte itemType;
+        @Field final public int itemId;
+        @Field final public int flowCost;
+        @Field final public int goldCost;
 
         public ItemPurchase (
             int memberId, byte itemType, int itemId, Currency currency, int amountPaid)
@@ -175,14 +175,14 @@ public class MsoyEvents
     @Event(name="ItemCatalogListing") // note: do not change this event name
     public static class ItemCatalogListing implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int creatorId;
-        @Field public byte itemType;
-        @Field public int itemId;
-        @Field public int flowCost;
-        @Field public int goldCost;
-        @Field public int pricing;
-        @Field public int salesTarget;
+        @Index @Field final public Date timestamp;
+        @Field final public int creatorId;
+        @Field final public byte itemType;
+        @Field final public int itemId;
+        @Field final public int flowCost;
+        @Field final public int goldCost;
+        @Field final public int pricing;
+        @Field final public int salesTarget;
 
         public ItemCatalogListing (int creatorId, byte itemType,
             int itemId, int flowCost, int goldCost, int pricing, int salesTarget)
@@ -201,10 +201,10 @@ public class MsoyEvents
     @Event(name="FriendshipAction") // note: do not change this event name
     public static class FriendshipAction implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int friendId;
-        @Field public boolean isAdded;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int friendId;
+        @Field final public boolean isAdded;
 
         public FriendshipAction (int memberId, int friendId, boolean isAdded)
         {
@@ -218,10 +218,10 @@ public class MsoyEvents
     @Event(name="GroupMembershipAction") // note: do not change this event name
     public static class GroupMembershipAction implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int groupId;
-        @Field public boolean isJoined;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int groupId;
+        @Field final public boolean isJoined;
 
         public GroupMembershipAction (int memberId, int groupId, boolean isJoined)
         {
@@ -235,10 +235,10 @@ public class MsoyEvents
     @Event(name="GroupRankModification") // note: do not change this event name
     public static class GroupRankModification implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int groupId;
-        @Field public byte newRank;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int groupId;
+        @Field final public byte newRank;
 
         public GroupRankModification (int memberId, int groupId, byte newRank)
         {
@@ -252,13 +252,13 @@ public class MsoyEvents
     @Event(name="RoomExit") // note: do not change this event name
     public static class RoomExit implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int playerId;
-        @Field public int sceneId;
-        @Field public boolean isWhirled;
-        @Field public int secondsInRoom;
-        @Field public int occupantsLeft;
-        @Field public String tracker;
+        @Index @Field final public Date timestamp;
+        @Field final public int playerId;
+        @Field final public int sceneId;
+        @Field final public boolean isWhirled;
+        @Field final public int secondsInRoom;
+        @Field final public int occupantsLeft;
+        @Field final public String tracker;
 
         public RoomExit (
             int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft,
@@ -277,12 +277,12 @@ public class MsoyEvents
     @Event(name="AVRGExit") // note: do not change this event name
     public static class AVRGExit implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Index @Field public int gameId;
-        @Field public int playerId;
-        @Field public int secondsInGame;
-        @Field public int playersLeft;
-        @Field public String tracker;
+        @Index @Field final public Date timestamp;
+        @Index @Field final public int gameId;
+        @Field final public int playerId;
+        @Field final public int secondsInGame;
+        @Field final public int playersLeft;
+        @Field final public String tracker;
 
         public AVRGExit (int playerId, int gameId, int seconds, int playersLeft, String tracker)
         {
@@ -298,13 +298,13 @@ public class MsoyEvents
     @Event(name="GameExit") // note: do not change this event name
     public static class GameExit implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Index @Field public int gameId;
-        @Field public byte gameGenre;
-        @Field public int playerId;
-        @Field public int secondsInGame;
-        @Field public boolean multiplayer;
-        @Field public String tracker;
+        @Index @Field final public Date timestamp;
+        @Index @Field final public int gameId;
+        @Field final public byte gameGenre;
+        @Field final public int playerId;
+        @Field final public int secondsInGame;
+        @Field final public boolean multiplayer;
+        @Field final public String tracker;
 
         public GameExit (
             int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer,
@@ -323,13 +323,13 @@ public class MsoyEvents
     @Event(name="GamePlayed") // note: do not change this event name
     public static class GamePlayed implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int gameGenre;
-        @Field public int gameId;
-        @Field public int itemId;
-        @Field public int payout;
-        @Field public int secondsPlayed;
-        @Field public int playerId;
+        @Index @Field final public Date timestamp;
+        @Field final public int gameGenre;
+        @Field final public int gameId;
+        @Field final public int itemId;
+        @Field final public int payout;
+        @Field final public int secondsPlayed;
+        @Field final public int playerId;
 
         public GamePlayed (
             int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
@@ -347,10 +347,10 @@ public class MsoyEvents
     @Event(name="TrophyEarned") // note: do not change this event name
     public static class TrophyEarned implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int recipientId;
-        @Field public int gameId;
-        @Field public String trophyIdent;
+        @Index @Field final public Date timestamp;
+        @Field final public int recipientId;
+        @Field final public int gameId;
+        @Field final public String trophyIdent;
 
         public TrophyEarned (int recipientId, int gameId, String trophyIdent)
         {
@@ -364,11 +364,11 @@ public class MsoyEvents
     @Event(name="PrizeEarned") // note: do not change this event name
     public static class PrizeEarned implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int recipientId;
-        @Field public int gameId;
-        @Field public String prizeIdent;
-        @Field public byte prizeItemType;
+        @Index @Field final public Date timestamp;
+        @Field final public int recipientId;
+        @Field final public int gameId;
+        @Field final public String prizeIdent;
+        @Field final public byte prizeItemType;
 
         public PrizeEarned (int recipientId, int gameId, String prizeIdent, byte prizeItemType)
         {
@@ -383,10 +383,10 @@ public class MsoyEvents
     @Event(name="InviteSent") // note: do not change this event name
     public static class InviteSent implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public String inviteId;
-        @Field public int inviterId;
-        @Field public String recipient;
+        @Index @Field final public Date timestamp;
+        @Field final public String inviteId;
+        @Field final public int inviterId;
+        @Field final public String recipient;
 
         public InviteSent (String inviteId, int inviterId, String recipient)
         {
@@ -400,10 +400,10 @@ public class MsoyEvents
     @Event(name="GameInviteSent") // note: do not change this event name
     public static class GameInviteSent implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int gameId;
-        @Field public int inviterId;
-        @Field public String recipient;
+        @Index @Field final public Date timestamp;
+        @Field final public int gameId;
+        @Field final public int inviterId;
+        @Field final public String recipient;
 
         public GameInviteSent (int gameId, int inviterId, String recipient)
         {
@@ -417,10 +417,10 @@ public class MsoyEvents
     @Event(name="WhirledMailGameInviteSent") // note: do not change this event name
     public static class WhieldMailGameInviteSent implements MsoyEvent
     {
-        @Index @Field final Date timestamp;
-        @Field final int gameId;
-        @Field final int inviterId;
-        @Field final int recipientId;
+        @Index @Field final public Date timestamp;
+        @Field final public int gameId;
+        @Field final public int inviterId;
+        @Field final public int recipientId;
 
         public WhieldMailGameInviteSent (int gameId, int inviterId, int recipientId)
         {
@@ -434,10 +434,10 @@ public class MsoyEvents
     @Event(name="FacebookGameInvitesSent") // note: do not change this event name
     public static class FacebookGameInvitesSent implements MsoyEvent
     {
-        @Index @Field final Date timestamp;
-        @Field final int gameId;
-        @Field final int inviterId;
-        @Field final int count;
+        @Index @Field final public Date timestamp;
+        @Field final public int gameId;
+        @Field final public int inviterId;
+        @Field final public int count;
 
         public FacebookGameInvitesSent (int gameId, int inviterId, int count)
         {
@@ -451,8 +451,8 @@ public class MsoyEvents
     @Event(name="InviteViewed") // note: do not change this event name
     public static class InviteViewed implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public String inviteId;
+        @Index @Field final public Date timestamp;
+        @Field final public String inviteId;
 
         public InviteViewed (String inviteId)
         {
@@ -464,9 +464,9 @@ public class MsoyEvents
     @Event(name="VisitorInfoCreated") // note: do not change this event name
     public static class VisitorInfoCreated implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Index @Field public String tracker;
-        @Field public boolean web;
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String tracker;
+        @Field final public boolean web;
 
         public VisitorInfoCreated (VisitorInfo info, boolean web)
         {
@@ -479,9 +479,9 @@ public class MsoyEvents
     @Event(name="VectorAssociated") // note: do not change this event name
     public static class VectorAssociated implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Index @Field public String tracker;
-        @Field public String vector;
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String tracker;
+        @Field final public String vector;
 
         public VectorAssociated (VisitorInfo info, String vector)
         {
@@ -494,9 +494,9 @@ public class MsoyEvents
     @Event(name="HttpReferrerAssociated") // note: do not change this event name
     public static class HttpReferrerAssociated implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Index @Field public String tracker;
-        @Field public String referrer;
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String tracker;
+        @Field final public String referrer;
 
         public HttpReferrerAssociated (VisitorInfo info, String referrer)
         {
@@ -509,11 +509,11 @@ public class MsoyEvents
     @Event(name="AccountCreated") // note: do not change this event name
     public static class AccountCreated implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int newMemberId;
-        @Field public String inviteId;
-        @Field public int affiliateId;
-        @Field public String tracker;
+        @Index @Field final public Date timestamp;
+        @Field final public int newMemberId;
+        @Field final public String inviteId;
+        @Field final public int affiliateId;
+        @Field final public String tracker;
 
         public AccountCreated (int newMemberId, String inviteId, int affiliateId, String tracker)
         {
@@ -528,9 +528,9 @@ public class MsoyEvents
     @Event(name="RoomUpdated") // note: do not change this event name
     public static class RoomUpdated implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int sceneId;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int sceneId;
 
         public RoomUpdated (int memberId, int sceneId)
         {
@@ -543,8 +543,8 @@ public class MsoyEvents
     @Event(name="ProfileUpdated") // note: do not change this event name
     public static class ProfileUpdated implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
 
         public ProfileUpdated (int memberId)
         {
@@ -556,14 +556,14 @@ public class MsoyEvents
     @Event(name="ForumMessagePosted") // note: do not change this event name
     public static class ForumMessagePosted implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public int memberId;
-        @Field public int threadId;
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int threadId;
         /**
          * The number of posts that have been added to the related discussion thread.
          * If this is 1, it indicates that this is the first post of a new thread.
          */
-        @Field public int postNumber;
+        @Field final public int postNumber;
 
         public ForumMessagePosted (int memberId, int threadId, int postNumber)
         {
@@ -580,11 +580,11 @@ public class MsoyEvents
     @Event(name="ClientAction") // note: do not change this event name
     public static class ClientAction implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public String tracker;
-        @Index @Field public String actionName;
+        @Index @Field final public Date timestamp;
+        @Field final public String tracker;
+        @Index @Field final public String actionName;
         /** Additional information such as which game's button was clicked */
-        @Field public String details;
+        @Field final public String details;
 
         public ClientAction (String tracker, String actionName, String details)
         {
@@ -602,11 +602,11 @@ public class MsoyEvents
     @Event(name="TestAction") // note: do not change this event name
     public static class TestAction implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public String tracker;
-        @Index @Field public String actionName;
-        @Index @Field public String testName;
-        @Field public int testGroup;
+        @Index @Field final public Date timestamp;
+        @Field final public String tracker;
+        @Index @Field final public String actionName;
+        @Index @Field final public String testName;
+        @Field final public int testGroup;
 
         public TestAction (String tracker, String actionName, String testName, int testGroup)
         {
@@ -625,12 +625,12 @@ public class MsoyEvents
     @Event(name="WebSessionStatusChanged") // note: do not change this event name
     public static class WebSessionStatusChanged implements MsoyEvent
     {
-        @Index @Field public Date timestamp;
-        @Field public String tracker;
-        @Field public boolean player;
-        @Field public boolean guest;
-        @Field public boolean other;
-        @Field public boolean newInfo;
+        @Index @Field final public Date timestamp;
+        @Field final public String tracker;
+        @Field final public boolean player;
+        @Field final public boolean guest;
+        @Field final public boolean other;
+        @Field final public boolean newInfo;
 
         public WebSessionStatusChanged (
             String tracker, boolean player, boolean guest, boolean other, boolean newInfo)
@@ -679,17 +679,17 @@ public class MsoyEvents
             // DailyAllGuestBehavior.properties, DailyExperience*.properties
 
             /** Package-protected string that gets logged in Panopticon. */
-            String token;
+            final String token;
 
             private Type (String token) {
                 this.token = token;
             }
         }
 
-        @Index @Field public Date timestamp;
-        @Index @Field public String tracker;
-        @Field public int memberId;
-        @Field public String action;
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String tracker;
+        @Field final public int memberId;
+        @Field final public String action;
 
         public Experience (Type action, int memberId, String tracker)
         {
