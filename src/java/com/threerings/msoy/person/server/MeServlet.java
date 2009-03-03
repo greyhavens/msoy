@@ -53,6 +53,7 @@ import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType.Category;
 import com.threerings.msoy.person.util.FeedMessageType;
@@ -280,6 +281,11 @@ public class MeServlet extends MsoyServiceServlet
             log.warning("Non-support attempted to delete an earned medal", "deleter", mrec.memberId,
                 "memberId", memberId, "medalId", medalId);
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+        
+        ProfileRecord record = _profileRepo.loadProfile(memberId);
+        if (record != null && record.profileMedalId == medalId) {
+            _profileRepo.updateProfileAward(memberId, 0, 0);
         }
 
         if (!_medalRepo.deleteEarnedMedal(memberId, medalId)) {
