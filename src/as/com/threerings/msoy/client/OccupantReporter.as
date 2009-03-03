@@ -65,7 +65,6 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-            // TODO: if we keep this, move the translation to the notify bundle
             _ctx.getNotificationDirector().addGenericNotification(
                 MessageBundle.tcompose("m.entered_room", info.username),
                 Notification.LOWEST, info.username as MemberName);
@@ -86,7 +85,6 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-            // TODO: if we keep this, move the translation to the notify bundle
             _ctx.getNotificationDirector().addGenericNotification(
                 MessageBundle.tcompose("m.left_room", info.username),
                 Notification.LOWEST, info.username as MemberName);
