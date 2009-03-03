@@ -60,7 +60,7 @@ public class CronLogic
      * @param job a runnable that will be executed periodically <em>on a separate thread</em>.
      * @param hourlyPeriod the number of hours between executions of this job.
      */
-    public void scheduleEvery (Runnable job, int hourlyPeriod)
+    public void scheduleEvery (int hourlyPeriod, Runnable job)
     {
         int minOfHour = job.getClass().toString().hashCode() % 60;
         int minOfDay = 0;
@@ -81,7 +81,7 @@ public class CronLogic
      * @param job a runnable that will be executed periodically <em>on a separate thread</em>.
      * @param hour the hour of the day at which to execute this job.
      */
-    public void scheduleAt (Runnable job, int hour)
+    public void scheduleAt (int hour, Runnable job)
     {
         int minOfHour = job.getClass().toString().hashCode() % 60;
         synchronized (_jobs) {
