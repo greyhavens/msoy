@@ -193,15 +193,6 @@ public class FrameEntryPoint
             args = afterVector.newArgs;
         }
 
-        ExtractedParam afterVisitor = extractParams("vid", pagename, token, args);
-        if (afterVisitor != null) {
-            if (info == null || !info.isAuthoritative) { // only override client-side info
-                info = new VisitorInfo(afterVisitor.value, false);
-            }
-            token = afterVisitor.newToken;
-            args = afterVisitor.newArgs;
-        }
-
         // START LEGACY CODE - to be removed after all of our ads and embeds are transitioned
         //
         // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting of

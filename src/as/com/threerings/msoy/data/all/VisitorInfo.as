@@ -21,9 +21,6 @@ public class VisitorInfo
     /** Id for vector in the url or flash params */
     public static const VECTOR_ID :String = "vec";
 
-    /** Id for visitorId in the url or flash params */
-    public static const VISITOR_ID :String = "vid";
-
     /** Player's tracking number, used to assign them to test groups. */
     public var id :String;
 
@@ -47,14 +44,6 @@ public class VisitorInfo
         var total :Number = now + rand;
         var info :VisitorInfo = new VisitorInfo();
         return total.toString(16);
-    }
-
-    /**
-     * Return the argument string that will append a tracking id to a GWT page url.
-     */
-    public function getTrackingArgs () :String
-    {
-        return "_" + VISITOR_ID + "_" + id;
     }
 
     public function toString () :String
