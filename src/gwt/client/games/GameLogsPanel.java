@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.gwt.GameLogs;
@@ -84,11 +85,9 @@ public class GameLogsPanel extends VerticalPanel
         int col = 0;
         int ii = 0;
         for (Map.Entry<Date, Integer> log : sortedLogs.entrySet()) {
-            String href = "/gamelogs?gameId=" + _gameId + "&logId=" + log.getValue();
-            String label = MsoyUI.formatDateTime(log.getKey());
-
-            table.setWidget(row, col, MsoyUI.createHTML(
-                "<a target='_blank' href='" + href + "'>" + label + "</a>", null));
+            Anchor href = new Anchor("/gamelogs?gameId=" + _gameId + "&logId=" + log.getValue(),
+                                     MsoyUI.formatDateTime(log.getKey()), "_blank");
+            table.setWidget(row, col, href);
             row ++;
             if (row * (TABLE_COLUMNS - col - 1) >= (sortedLogs.size() - ii)) {
                 row = 0;
