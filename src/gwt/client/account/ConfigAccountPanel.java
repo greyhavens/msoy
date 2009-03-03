@@ -83,7 +83,8 @@ public class ConfigAccountPanel extends FlowPanel
     protected void updateAccount ()
     {
         // make sure the passwords match
-        if (!_password.getText().trim().equals(_confirm.getText().trim())) {
+        final String password = _password.getText().trim();
+        if (!password.equals(_confirm.getText().trim())) {
             MsoyUI.errorNear(_msgs.editPasswordMismatch(), _confirm);
             return;
         }
@@ -95,7 +96,7 @@ public class ConfigAccountPanel extends FlowPanel
         _usersvc.updateEmail(email, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 CShell.frame.emailUpdated(email, false);
-                _usersvc.updatePassword(_password.getText().trim(), new MsoyCallback<Void>() {
+                _usersvc.updatePassword(CShell.frame.md5hex(password), new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         displayThanks();
                     }
