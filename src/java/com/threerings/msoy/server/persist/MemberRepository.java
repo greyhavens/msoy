@@ -551,7 +551,7 @@ public class MemberRepository extends DepotRepository
     public String loadEntryVector (int memberId)
     {
         EntryVectorRecord erec = load(
-            EntryVectorRecord.class, EntryVectorRecord.MEMBER_ID, memberId);
+            EntryVectorRecord.class, new Where(EntryVectorRecord.MEMBER_ID, memberId));
         return (erec == null) ? null : erec.vector;
     }
 
@@ -670,6 +670,9 @@ public class MemberRepository extends DepotRepository
         deleteAll(FriendRecord.class,
                   new Where(new Or(new In(FriendRecord.INVITER_ID, memberIds),
                                    new In(FriendRecord.INVITEE_ID, memberIds))));
+        // we don't purge InvitationRecord or GameInvitationRecord; they will probably be few in
+        // number and are arguably interesting for historical reasons; this may need to be
+        // revisited if we achieve "internet scale"
     }
 
     /**
