@@ -87,8 +87,8 @@ public class GameLogsPanel extends VerticalPanel
             String href = "/gamelogs?gameId=" + _gameId + "&logId=" + log.getValue();
             String label = MsoyUI.formatDateTime(log.getKey());
 
-            table.setWidget(
-                row, col, MsoyUI.createHTML("<a href='" + href + "'>" + label + "</a>", null));
+            table.setWidget(row, col, MsoyUI.createHTML(
+                "<a target='_blank' href='" + href + "'>" + label + "</a>", null));
             row ++;
             if (row * (TABLE_COLUMNS - col - 1) >= (sortedLogs.size() - ii)) {
                 row = 0;
