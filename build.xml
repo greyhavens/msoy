@@ -1225,6 +1225,7 @@
     <copy file="${deploy.dir}/ehcache.xml" todir="${approot.server}/${deploy.dir}"/>
     <copy file="${deploy.dir}/antisamy-config.xml" todir="${approot.server}/${deploy.dir}"/>
     <copy file="${deploy.dir}/embedstub-base.swf" todir="${approot.server}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/mochistub-base.swf" todir="${approot.server}/${deploy.dir}"/>
 
     <!-- create some runtime directories (all servers) -->
     <mkdir dir="${approot.server.code}/log/lighttpd"/>
