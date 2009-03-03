@@ -509,10 +509,11 @@ public class GroupRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(GroupMembershipRecord.class,
-                  new Where(new Conditionals.In(GroupMembershipRecord.MEMBER_ID, memberIds)));
         // note: if these members were the last manager of any groups, they are left high and dry;
         // given that we only purge permaguests currently, this is a non-issue
+        deleteAll(GroupMembershipRecord.class,
+                  new Where(new Conditionals.In(GroupMembershipRecord.MEMBER_ID, memberIds)));
+        _tagRepo.purgeMembers(memberIds);
     }
 
     protected GroupMembershipRecord loadMembership (int groupId, int memberId)

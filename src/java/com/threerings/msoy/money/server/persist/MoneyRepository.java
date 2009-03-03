@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -48,13 +49,11 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-
 import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
-
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 
 import static com.threerings.msoy.Log.log;
@@ -557,6 +556,18 @@ public class MoneyRepository extends DepotRepository
         // select * from CashOutRecord where timeCompleted is null
         return findAll(BlingCashOutRecord.class, new Where(
             new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED)));
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(MemberAccountRecord.class,
+                  new Where(new Conditionals.In(MemberAccountRecord.MEMBER_ID, memberIds)));
+        deleteAll(MoneyTransactionRecord.class,
+                  new Where(new Conditionals.In(MoneyTransactionRecord.MEMBER_ID, memberIds)));
     }
 
     /**

@@ -19,6 +19,7 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.data.UserAction;
@@ -116,6 +117,18 @@ public class UserActionRepository extends DepotRepository
         // finally compute a new humanity assessment for this member (TODO: load up action summary
         // counts, pass that data in as well)
         return helper.computeNewHumanity(memberId, currentHumanity, secsSinceLast);
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(MemberActionLogRecord.class,
+                  new Where(new Conditionals.In(MemberActionLogRecord.MEMBER_ID, memberIds)));
+        deleteAll(MemberActionSummaryRecord.class,
+                  new Where(new Conditionals.In(MemberActionSummaryRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

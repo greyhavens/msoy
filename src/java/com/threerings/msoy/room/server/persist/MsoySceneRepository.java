@@ -14,6 +14,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.FromOverride;
@@ -49,6 +51,7 @@ import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
+import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -482,6 +485,23 @@ public class MsoySceneRepository extends DepotRepository
             SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
             SceneRecord.THUMBNAIL_HASH, thumbnailHash,
             SceneRecord.THUMBNAIL_TYPE, thumbnailType);
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // delete all scenes owned by these members
+        List<Key<SceneRecord>> scenes = findAllKeys(
+            SceneRecord.class, false, new Where(new In(SceneRecord.OWNER_ID, memberIds)));
+        deleteAll(SceneRecord.class, KeySet.newKeySet(SceneRecord.class, scenes));
+        // delete all furni from all of those scenes
+        List<Integer> sceneIds = Lists.transform(scenes, RecordFunctions.<SceneRecord>getIntKey());
+        deleteAll(SceneFurniRecord.class, new Where(new In(SceneFurniRecord.SCENE_ID, sceneIds)));
+        // delete all scene ratings by these members
+        _ratingRepo.purgeMembers(memberIds);
     }
 
     /**

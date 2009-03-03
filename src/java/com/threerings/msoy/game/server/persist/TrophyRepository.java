@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server.persist;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -16,9 +17,10 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
+import com.samskivert.depot.operator.Conditionals.In;
+import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -108,11 +110,12 @@ public class TrophyRepository extends DepotRepository
     }
 
     /**
-     * Deletes all trophies held by the supplied member.
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
      */
-    public void deleteTrophies (final int memberId)
+    public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID, memberId));
+        deleteAll(TrophyRecord.class, new Where(new In(TrophyRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

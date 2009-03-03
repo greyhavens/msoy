@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -308,6 +309,16 @@ public abstract class TagRepository extends DepotRepository
         // invalidate and delete tag history records for this target
         deleteAll(getTagHistoryClass(),
                   new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId));
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // note: this is a full table scan, but currently probably ok
+        deleteAll(TagHistoryRecord.class, new Where(new In(TagHistoryRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

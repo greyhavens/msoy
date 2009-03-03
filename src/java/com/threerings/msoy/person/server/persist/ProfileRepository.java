@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -161,6 +162,16 @@ public class ProfileRepository extends DepotRepository
     {
         updatePartial(ProfileRecord.class, memberId, ProfileRecord.PROFILE_BADGE_CODE, badgeCode,
             ProfileRecord.PROFILE_MEDAL_ID, medalId);
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(ProfileRecord.class, new Where(new In(ProfileRecord.MEMBER_ID, memberIds)));
+        deleteAll(InterestRecord.class, new Where(new In(InterestRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

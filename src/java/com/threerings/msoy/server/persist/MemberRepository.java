@@ -134,43 +134,6 @@ public class MemberRepository extends DepotRepository
             new SchemaMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
         ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(25, "blingAffiliate"));
 
-        // Convert existing tracking numbers from the ReferralRecord, or creates new ones for those
-        // members who didn't get their tracking numbers yet.
-        // TODO: remove ReferralRecord after this migration happened in production.
-        registerMigration(new DataMigration("2008_09_25_referral_to_tracking_id") {
-            @Override public void invoke () throws DatabaseException {
-                int converted = 0, created = 0;
-
-                // first, copy all referral trackers over to member records
-                List<ReferralRecord> todos = findAll(ReferralRecord.class);
-                for (ReferralRecord referral : todos) {
-                    String visitorId = VisitorInfo.normalizeVisitorId(referral.tracker);
-                    updatePartial(MemberRecord.class, referral.memberId,
-                        MemberRecord.VISITOR_ID, visitorId);
-                    if (++converted % 100 == 0) {
-                        log.info("ReferralRecord conversion: " + converted + " processed...");
-                    }
-                }
-
-                // now fill in all missing trackers
-                List<MemberRecord> missing = findAll(
-                    MemberRecord.class, new Where(new IsNull(MemberRecord.VISITOR_ID)));
-
-                for (MemberRecord member : missing) {
-                    // default visitorId will be based on registration time
-                    String visitorId = VisitorInfo.timestampToVisitorId(member.created);
-                    updatePartial(MemberRecord.class, member.memberId,
-                        MemberRecord.VISITOR_ID, visitorId);
-                    if (++created % 100 == 0) {
-                        log.info("VisitorID creation: " + converted + " processed...");
-                    }
-                }
-
-                log.info(String.format("Converted %d old ReferralRecords, created %d new ones",
-                                       converted, created));
-            }
-        });
-
         // drop this superfluous index
         ctx.registerMigration(MemberExperienceRecord.class,
             new SchemaMigration.DropIndex(2, "ixDateOccurred"));
@@ -905,8 +868,7 @@ public class MemberRepository extends DepotRepository
      */
     public InvitationRecord loadInvite (String inviteId, boolean markViewed)
     {
-        InvitationRecord invRec = load(
-            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
+        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
             update(invRec, InvitationRecord.VIEWED);
@@ -949,7 +911,7 @@ public class MemberRepository extends DepotRepository
      */
     public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
     {
-        return load(GameInvitationRecord.class, GameInvitationRecord.getKey(inviteeEmail));
+        return load(GameInvitationRecord.class, inviteeEmail);
     }
 
     /**
@@ -1396,7 +1358,6 @@ public class MemberRepository extends DepotRepository
         classes.add(ExternalMapRecord.class);
         classes.add(MemberWarningRecord.class);
         classes.add(AffiliateRecord.class);
-        classes.add(ReferralRecord.class);
         classes.add(MemberExperienceRecord.class);
         classes.add(CharityRecord.class);
         classes.add(EntryVectorRecord.class);

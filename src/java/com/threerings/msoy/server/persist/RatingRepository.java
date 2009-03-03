@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Set;
 
 import com.samskivert.util.StringUtil;
@@ -20,6 +21,7 @@ import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.operator.Conditionals.In;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.presents.annotation.BlockingThread;
@@ -37,7 +39,7 @@ public abstract class RatingRepository extends DepotRepository
         public int ratingCount;
         public int ratingSum;
     }
-    
+
     /**
      * Creates a tag repository for the supplied tag and tag history record classes.
      */
@@ -90,7 +92,7 @@ public abstract class RatingRepository extends DepotRepository
                 ratingRec.rating = rating;
                 update(ratingRec);
             }
-            
+
         } else {
             try {
                 ratingRec = getRatingClass().newInstance();
@@ -128,13 +130,11 @@ public abstract class RatingRepository extends DepotRepository
                 updatePartial(getTargetClass(), targetId, _ratingSum, targetRec.ratingSum);
             }
         }
-        
+
         return Tuple.newTuple(new RatingResult(
             targetRec.ratingSum, targetRec.ratingCount), newRating);
     }
 
-    
-    
     // TODO: Doc me
     public void deleteRatings (int targetId)
     {
@@ -145,24 +145,36 @@ public abstract class RatingRepository extends DepotRepository
     public void reassignRatings (final int oldTargetId, int newTargetId)
     {
         // TODO: this cache eviction might be slow :)
-        updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), oldTargetId),
-                      new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
-                          @Override
-                          public boolean testForEviction (Serializable key, RatingRecord record) {
-                              return (record.targetId == oldTargetId);
-                          }
-                      }, RatingRecord.TARGET_ID, newTargetId);
+        updatePartial(
+            getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), oldTargetId),
+            new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
+                @Override
+                public boolean testForEviction (Serializable key, RatingRecord record) {
+                    return (record.targetId == oldTargetId);
+                }
+            }, RatingRecord.TARGET_ID, newTargetId);
     }
 
     /**
-     * Returns the rating given to the specified target by the specified member or 0 if they've never
-     * rated the target.
+     * Returns the rating given to the specified target by the specified member or 0 if they've
+     * never rated the target.
      */
     public byte getRating (int targetId, int memberId)
     {
         RatingRecord record = load(
             getRatingClass(), RatingRecord.TARGET_ID, targetId, RatingRecord.MEMBER_ID, memberId);
         return (record == null) ? (byte)0 : record.rating;
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // note: this is a full table scan, add appropriate index if this becomes slow
+        deleteAll(getRatingClass(),
+                  new Where(new In(getRatingColumn(RatingRecord.MEMBER_ID), memberIds)));
     }
 
     /** Exports the specific rating class used by this repository. */

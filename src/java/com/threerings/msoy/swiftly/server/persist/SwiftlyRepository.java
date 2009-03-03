@@ -4,6 +4,7 @@
 package com.threerings.msoy.swiftly.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,11 +18,12 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -304,6 +306,17 @@ public class SwiftlyRepository extends DepotRepository
                 "Couldn't find swiftly collaborator record for build result update [projectId=" +
                     projectId + "memberId=" + memberId + "]");
         }
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts. Note: we do not destroy projects owned by deleted members, but we do remove
+     * deleted members as collaborators on projects.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(SwiftlyCollaboratorsRecord.class,
+                  new Where(new In(SwiftlyCollaboratorsRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

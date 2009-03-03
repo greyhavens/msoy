@@ -133,6 +133,17 @@ public class MedalRepository extends DepotRepository
         return result > 0;
     }
 
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // note: this will full table scan, but that might be OK
+        deleteAll(EarnedMedalRecord.class,
+                  new Where(new In(EarnedMedalRecord.MEMBER_ID, memberIds)));
+    }
+
     @Override
     protected void getManagedRecords(Set<Class<? extends PersistentRecord>> classes)
     {

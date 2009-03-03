@@ -21,6 +21,7 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.stats.server.persist.StatRepository;
 
 import com.whirled.game.server.persist.GameCookieRepository;
 
@@ -39,20 +40,25 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 
 import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
@@ -71,6 +77,7 @@ import com.threerings.msoy.server.persist.MemberExperienceRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
+import com.threerings.msoy.server.persist.UserActionRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -445,11 +452,7 @@ public class MemberLogic
             deadNames.add(mrec.accountName);
         }
 
-        // purge their authentication information
-        _oooAuthRepo.purgeMembers(deadNames);
-
         // delete everything that we can unequivocally delete
-        _memberRepo.purgeMembers(deadIds);
         _avrGameRepo.purgeMembers(deadIds);
         _badgeRepo.purgeMembers(deadIds);
         _commentRepo.purgeMembers(deadIds);
@@ -459,37 +462,27 @@ public class MemberLogic
         _galleryRepo.purgeMembers(deadIds);
         _gcookRepo.purgePlayers(deadIds);
         _groupRepo.purgeMembers(deadIds);
-        //    ItemListInfoRecord - to be removed?
         _mailRepo.purgeMembers(deadIds);
+        _medalRepo.purgeMembers(deadIds);
+        _memberRepo.purgeMembers(deadIds);
+        _moneyRepo.purgeMembers(deadIds);
+        _oooAuthRepo.purgeMembers(deadNames);
+        _profileRepo.purgeMembers(deadIds);
+        _sceneRepo.purgeMembers(deadIds);
+        _statRepo.purgePlayers(deadIds);
+        _swiftlyRepo.purgeMembers(deadIds);
+        _trophyRepo.purgeMembers(deadIds);
+        _uactionRepo.purgeMembers(deadIds);
 
+        //    ItemListInfoRecord - to be removed?
 
         // Records that refer directly to a member id (there may be sub-records that refer
         // indirectly):
         //    ItemRepository (audio, avatar, decor, document, furniture, game, item pack, level
         //         pack, pet, photo, prize, prop, toy, trophy source, video) x (item, rating,
         //         catalog, clone records)
-        //    EarnedMedalRecord
-        //    InvitationRecord
-        //    ReferralRecord - to be removed
-        //    GameInvitationRecord
         //    MemoriesRecord - part of item deletion
-        //    MemberAccountRecord
-        //    MoneyTransactionRecord
-        //    BlingCashOutRecord
-        //    SceneRecord
-        //    SceneRatingRecord
-        //    ProfileRecord
-        //    InterestRecord
-        //    RatingRecord
-        //    StatRecord
-        //    SwiftlyProjectRecord
-        //    SwiftlyCollaboratorsRecord
-        //    TagHistoryRecord
-        //    TrophyRecord
-        //    MessageRecord
         //    EventRecord
-        //    MemberActionLogRecord
-        //    MemberActionSummaryRecord
 
 //         _memberRepo.deleteMember(_memberRepo.loadMember(memberId));
 
@@ -498,31 +491,17 @@ public class MemberLogic
         // to the deletion of the rest of the stuff.
 
         // Records that prevent the member deletion
+        //    BlingCashOutRecord
         //    ForumThreadRecord
         //    ForumMessageRecord
         //    GroupRecord
         //    CatalogRecord
         //    GameDetailRecord
 
-
         // OLD TODO comment from MemberRepository:
         // delete a whole bunch of shit
         // - inventory items
         // - item tags
-        // - item ratings
-        // - game ratings
-        // - game cookies
-        // - trophies
-        // - comments
-        // - rooms, furni, etc.
-        // - mail messages
-        // - profile data
-        // - swiftly projects (?)
-        // - invitations
-        // - friendships
-        // - group memberships
-        // - member action records, action summary record
-        // - thread read tracking info
     }
 
     /**
@@ -771,7 +750,14 @@ public class MemberLogic
     @Inject protected GalleryRepository _galleryRepo;
     @Inject protected GameCookieRepository _gcookRepo;
     @Inject protected MailRepository _mailRepo;
+    @Inject protected MedalRepository _medalRepo;
+    @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyOOOUserRepository _oooAuthRepo;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected StatRepository _statRepo;
+    @Inject protected SwiftlyRepository _swiftlyRepo;
+    @Inject protected TrophyRepository _trophyRepo;
+    @Inject protected UserActionRepository _uactionRepo;
 
     /** The whirled tour home page item. */
     protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(
