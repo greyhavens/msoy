@@ -7,11 +7,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Provides a simple interface for dispatching node actions for players.
@@ -27,6 +29,11 @@ public class PlayerNodeActions
     public void leaveAVRGame (int playerId)
     {
         _peerMan.invokeNodeAction(new LeaveAVRGameAction(playerId));
+    }
+
+    public void displayNameUpdated (MemberName name)
+    {
+        _peerMan.invokeNodeAction(new DisplayNameUpdated(name));
     }
 
     /** Handles updating a player's game. */
@@ -62,6 +69,23 @@ public class PlayerNodeActions
             // clear their AVRG affiliation
             memObj.setAvrGameId(0);
         }
+    }
+
+    protected static class DisplayNameUpdated extends PlayerNodeAction
+    {
+        public DisplayNameUpdated (MemberName name) {
+            super(name.getMemberId());
+            _name = name.toString();
+        }
+
+        public DisplayNameUpdated () {
+        }
+
+        protected void execute (PlayerObject plobj) {
+            // TODO
+        }
+
+        protected String _name;
     }
 
     @Inject protected MsoyPeerManager _peerMan;
