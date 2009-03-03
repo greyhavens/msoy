@@ -11,7 +11,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
@@ -58,12 +57,12 @@ public class CronLogic
      * <p> Note that the job will be scheduled to run at some arbitrary minute after the our based
      * on the hashcode of the name of the job class.
      *
-     * @param job a class which will be resolved via the Injector and executed periodically.
+     * @param job a runnable that will be executed periodically <em>on a separate thread</em>.
      * @param hourlyPeriod the number of hours between executions of this job.
      */
-    public void scheduleEvery (Class<? extends Runnable> job, int hourlyPeriod)
+    public void scheduleEvery (Runnable job, int hourlyPeriod)
     {
-        int minOfHour = job.toString().hashCode() % 60;
+        int minOfHour = job.getClass().toString().hashCode() % 60;
         int minOfDay = 0;
         while (minOfDay < 24*60) {
             synchronized (_jobs) {
@@ -79,12 +78,12 @@ public class CronLogic
      * <p> Note that the job will be scheduled to run at some arbitrary minute after the our based
      * on the hashcode of the name of the job class.
      *
-     * @param job a class which will be resolved via the Injector and executed periodically.
+     * @param job a runnable that will be executed periodically <em>on a separate thread</em>.
      * @param hour the hour of the day at which to execute this job.
      */
-    public void scheduleAt (Class<? extends Runnable> job, int hour)
+    public void scheduleAt (Runnable job, int hour)
     {
-        int minOfHour = job.toString().hashCode() % 60;
+        int minOfHour = job.getClass().toString().hashCode() % 60;
         synchronized (_jobs) {
             _jobs.put(hour * 60 + minOfHour, job);
         }
@@ -98,21 +97,21 @@ public class CronLogic
 
     protected void executeJobs (int minuteOfDay)
     {
-        List<Class<? extends Runnable>> jobs = Lists.newArrayList();
+        List<Runnable> jobs = Lists.newArrayList();
         synchronized (_jobs) {
-            List<Class<? extends Runnable>> sched = _jobs.get(minuteOfDay);
+            List<Runnable> sched = _jobs.get(minuteOfDay);
             if (sched != null) {
                 jobs.addAll(sched);
             }
         }
-        for (Class<? extends Runnable> job : jobs) {
+        for (Runnable job : jobs) {
             executeJob(job);
         }
     }
 
-    protected void executeJob (final Class<? extends Runnable> job)
+    protected void executeJob (final Runnable job)
     {
-        final NodeObject.Lock lock = new NodeObject.Lock(CRON_LOCK, job.getName());
+        final NodeObject.Lock lock = new NodeObject.Lock(CRON_LOCK, job.getClass().getName());
         _peerMan.acquireLock(lock, new ResultListener<String>() {
             public void requestCompleted (String result) {
                 if (!result.equals(_peerMan.getNodeObject().nodeName)) {
@@ -126,16 +125,16 @@ public class CronLogic
         });
     }
 
-    protected void startJob (final Class<? extends Runnable> job, final NodeObject.Lock lock)
+    protected void startJob (final Runnable job, final NodeObject.Lock lock)
     {
-        if (_running.putIfAbsent(job, lock) != null) {
+        if (_running.putIfAbsent(job.getClass(), lock) != null) {
             log.info("Dropping job as it is still executing", "job", job);
             return;
         }
         new Thread() {
             public void run () {
                 try {
-                    _injector.getInstance(job).run();
+                    job.run();
                 } catch (Throwable t) {
                     log.warning("Job failed", "job", job, t);
                 } finally {
@@ -145,9 +144,9 @@ public class CronLogic
         }.start();
     }
 
-    protected void jobCompleted (Class<? extends Runnable> job)
+    protected void jobCompleted (Runnable job)
     {
-        final NodeObject.Lock lock = _running.remove(job);
+        final NodeObject.Lock lock = _running.remove(job.getClass());
         if (lock != null) {
             _omgr.postRunnable(new Runnable() {
                 public void run () {
@@ -200,15 +199,13 @@ public class CronLogic
     protected JobTicker _ticker;
 
     /** A map of all jobs scheduled for a single day. */
-    protected ListMultimap<Integer, Class<? extends Runnable>> _jobs =
-        Multimaps.newArrayListMultimap();
+    protected ListMultimap<Integer, Runnable> _jobs = Multimaps.newArrayListMultimap();
 
     /** A map of jobs currently running on this node. */
     protected ConcurrentHashMap<Class<? extends Runnable>, NodeObject.Lock> _running =
         new ConcurrentHashMap<Class<? extends Runnable>, NodeObject.Lock>();
 
     // los dependidos
-    @Inject protected Injector _injector;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MsoyPeerManager _peerMan;
 
