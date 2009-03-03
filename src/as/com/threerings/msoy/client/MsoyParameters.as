@@ -73,27 +73,35 @@ public class MsoyParameters
 
     protected static function massageStubParams (disp :DisplayObject) :void
     {
-        var stubURL :String = disp.root.loaderInfo.loaderURL;
-        var pageURL :String = null;
-        try {
-            pageURL = ExternalInterface.call("window.location.href.toString");
-        } catch (e :Error) {
-            // oh well
-        }
-
-        const site :String = figureSiteFromUrl(pageURL || stubURL);
         const gameId :int = int(_params["game"]);
         const roomId :int = int(_params["room"]);
         delete _params["game"];
         delete _params["room"];
 
+        // maybe set up a vector if none already provided
+        if (!("vec" in _params)) {
+            var stubURL :String = disp.root.loaderInfo.loaderURL;
+            var pageURL :String = null;
+            try {
+                pageURL = ExternalInterface.call("window.location.href.toString");
+            } catch (e :Error) {
+                // oh well
+            }
+
+            const site :String = figureSiteFromUrl(pageURL || stubURL);
+            if (gameId != 0) {
+                _params["vec"] = "e." + site + ".games." + gameId;
+            } else {
+                _params["vec"] = "e." + site + ".rooms." + roomId;
+            }
+        }
+
+        // and our other params
         if (gameId != 0) {
             _params["gameId"] = gameId;
-            _params["vec"] = "e." + site + ".games." + gameId;
 
         } else if (roomId != 0) {
             _params["sceneId"] = roomId;
-            _params["vec"] = "e." + site + ".rooms." + roomId;
         }
     }
 

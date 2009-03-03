@@ -203,14 +203,13 @@ public class ShareDialog extends FloatingPanel
         if (!memName.isGuest()) {
             stubArgs += "&aff=" + memName.getMemberId();
         }
-        const url :String = DeploymentConfig.serverURL + "stubdlsvc?args=" +
-            encodeURIComponent(stubArgs);
 
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");
         box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 400));
         var stub :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
-            startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
+            startDownload,
+            [ stubURL(stubArgs), "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
         stub.styleName = "orangeButton";
         box.addChild(stub);
         _downloadBtns.push(stub);
@@ -235,7 +234,8 @@ public class ShareDialog extends FloatingPanel
                         return;
                     }
 
-                    startDownload(url + "&mochiId=" + encodeURIComponent(mochiIdField.text),
+                    startDownload(stubURL(stubArgs + "&vec=e.mochi.games." + _placeId) +
+                        "&mochiId=" + encodeURIComponent(mochiIdField.text),
                         "Whirled-game-" + _placeId + "-mochi-stub.swf");
                 });
             mochi.styleName = "orangeButton";
@@ -247,6 +247,11 @@ public class ShareDialog extends FloatingPanel
         box.addChild(_downloadError = FlexUtil.createLabel(""));
         _downloadError.setStyle("color", 0xFF0000);
         return box;
+    }
+
+    protected function stubURL (args :String) :String
+    {
+        return DeploymentConfig.serverURL + "stubdlsvc?args=" + encodeURIComponent(args);
     }
 
     protected function createContainer (key :String) :VBox
