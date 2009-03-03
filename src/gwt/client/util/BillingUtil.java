@@ -36,7 +36,7 @@ public class BillingUtil
 
         } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
             MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
-                              Link.createListener(Pages.ACCOUNT, "edit"));
+                              Link.createListener(Pages.ACCOUNT, "config"));
 
         } else {
             Window.open(LANDING + "?initUsername=" + CShell.creds.accountName, "_blank",
