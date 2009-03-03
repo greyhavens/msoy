@@ -263,27 +263,22 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.GENERAL.get("b.chatPrefs"), command: CHAT_PREFS });
         menuData.push({ label: Msgs.GENERAL.get("b.clearChat"),
             callback: _wctx.getChatDirector().clearDisplays });
-        menuData.push({ type: "separator" });
+        CommandMenu.addSeparator(menuData);
 
         const place :PlaceView = _wctx.getPlaceView();
         const allowHistoryToggle :Boolean = !(place is MsoyGamePanel) ||
             (place as MsoyGamePanel).shouldUseChatOverlay();
-        var addedSomething :Boolean = false;
         if (allowHistoryToggle) {
             menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
                     Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
-            addedSomething = true;
         }
         if (!(place is MsoyGamePanel)) {
             menuData.push({ command: TOGGLE_CHAT_SIDEBAR, label: Msgs.GENERAL.get(
                     Prefs.getSidebarChat() ? "b.overlay_chat" : "b.sidebar_chat") });
             menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
                     Prefs.getShowingOccupantList() ? "b.hide_occ_list" : "b.show_occ_list") });
-            addedSomething = true;
         }
-        if (addedSomething) {
-            menuData.push({ type: "separator" });
-        }
+        CommandMenu.addSeparator(menuData);
 
         // slap your friends in a menu
         var friends :Array = new Array();
@@ -316,7 +311,7 @@ public class WorldController extends MsoyController
 
         var gateways :Array = me.getSortedGateways();
         if (gateways.length > 0) {
-            menuData.push({ type: "separator"});
+            CommandMenu.addSeparator(menuData);
         }
         for each (var ge :GatewayEntry in gateways) {
             var subMenuData :Array = [];
@@ -337,7 +332,7 @@ public class WorldController extends MsoyController
                 if (contacts.length == 0) {
                     subMenuData.push({ label: Msgs.CHAT.get("m.no_im_contacts"), enabled: false});
                 }
-                subMenuData.push({ type: "separator"});
+                CommandMenu.addSeparator(subMenuData);
                 subMenuData.push({
                     label:Msgs.CHAT.get("m.im_logout"), command: UNREGISTER_IM, arg: ge.gateway });
             }

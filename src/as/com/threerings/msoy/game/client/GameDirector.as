@@ -13,6 +13,8 @@ import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.crowd.client.PlaceController;
 
+import com.threerings.flex.CommandMenu;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
@@ -118,7 +120,7 @@ public class GameDirector extends BasicDirector
         var config :MsoyGameConfig = getGameConfig();
 
         menuData.push({label: _liaison.gameName});
-        menuData.push({type: "separator"});
+        CommandMenu.addSeparator(menuData);
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
             icon: StyleManager.getStyleDeclaration(".controlBarGameButton").getStyle("image")});
         if (_liaison.gameGroupId != Game.NO_GROUP) {

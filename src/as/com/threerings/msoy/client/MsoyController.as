@@ -276,7 +276,7 @@ public class MsoyController extends Controller
         for each (var fn :Function in _goMenuProviders) {
             var array :Array = fn();
             if (array != null && array.length > 0) {
-                menuData.push({ type: "separator" });
+                CommandMenu.addSeparator(menuData);
                 menuData.push.apply(null, array);
             }
         }

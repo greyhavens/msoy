@@ -440,7 +440,7 @@ public class RoomObjectController extends RoomController
 
         avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
             command: WorldController.VIEW_STUFF, arg: Item.AVATAR });
-        avItems.push({ type: "separator" });
+        CommandMenu.addSeparator(avItems);
 
         for (var ii :int = 0; ii < avatars.length; ii++) {
             var av :Avatar = avatars[ii] as Avatar;
