@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -79,5 +80,14 @@ public class NaviUtil
     public static ClickListener onViewTransactions (ReportType report)
     {
         return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
+    }
+
+    public static ClickListener onGoBack ()
+    {
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                History.back();
+            }
+        };
     }
 }

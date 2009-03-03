@@ -43,6 +43,7 @@ import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.util.DateUtil;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Contains useful user interface related methods.
@@ -435,11 +436,7 @@ public class MsoyUI
      */
     public static Image createBackArrow ()
     {
-        return createBackArrow(new ClickListener() {
-            public void onClick (Widget sender) {
-                History.back();
-            }
-        });
+        return createBackArrow(NaviUtil.onGoBack());
     }
 
     /**
