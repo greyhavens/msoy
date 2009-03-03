@@ -19,7 +19,7 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.data.all.FeedMessage;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.Interest;
 

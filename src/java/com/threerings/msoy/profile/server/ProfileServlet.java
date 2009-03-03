@@ -60,7 +60,7 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.data.all.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.server.GalleryLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;

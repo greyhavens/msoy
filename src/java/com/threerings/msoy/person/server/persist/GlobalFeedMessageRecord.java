@@ -7,7 +7,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.data.all.FeedMessage;
 
 /**
  * Contains persistent data for a global feed message.

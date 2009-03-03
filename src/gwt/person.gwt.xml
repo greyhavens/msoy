@@ -3,6 +3,7 @@
   <inherits name="dnd"/>
 
   <source path="com/threerings/msoy/person/gwt"/>
+  <source path="com/threerings/msoy/person/data/all"/>
   <source path="client/person"/>
 
   <public path="public/person"/>

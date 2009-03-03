@@ -13,7 +13,7 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.data.all.FeedMessage;
 
 /**
  * Contains information on a feed message.

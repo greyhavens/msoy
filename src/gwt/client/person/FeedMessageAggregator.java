@@ -11,9 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.FriendFeedMessage;
-import com.threerings.msoy.person.gwt.SelfFeedMessage;
+import com.threerings.msoy.person.data.all.FeedMessage;
+import com.threerings.msoy.person.data.all.FriendFeedMessage;
+import com.threerings.msoy.person.data.all.SelfFeedMessage;
 
 import client.shell.CShell;
 import client.util.DateUtil;

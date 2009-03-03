@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.gwt;
+package com.threerings.msoy.person.data.all;
 
 import com.threerings.msoy.data.all.GroupName;
 
