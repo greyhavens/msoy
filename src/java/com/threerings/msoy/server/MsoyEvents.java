@@ -52,14 +52,17 @@ public class MsoyEvents
         @Index @Field public Date timestamp;
         @Field public int memberId;
         @Field public boolean firstLogin;
+        @Field public boolean isGuest;
         @Field public long createdOn;
         @Field public String tracker;
 
-        public Login (int memberId, boolean firstLogin, long createdOn, String tracker)
+        public Login (int memberId, boolean firstLogin, long createdOn, 
+            boolean isGuest, String tracker)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
             this.firstLogin = firstLogin;
+            this.isGuest = isGuest;
             this.createdOn = createdOn;
             this.tracker = toValue(tracker);
         }

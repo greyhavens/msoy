@@ -162,12 +162,13 @@ public class MsoyEventLogger
         post(new MsoyEvents.Experience(Type.ITEM_LISTED, creatorId, tracker));
     }
 
-    public void userLoggedIn (int memberId, String tracker, boolean firstLogin, long createdOn)
+    public void userLoggedIn (int memberId, String tracker, boolean firstLogin,
+        boolean isGuest, long createdOn)
     {
         if (!MemberName.isViewer(memberId)) {
             post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
         }
-        post(new MsoyEvents.Login(memberId, firstLogin, createdOn, tracker));
+        post(new MsoyEvents.Login(memberId, firstLogin, isGuest, createdOn, tracker));
     }
 
     public void logPlayerMetrics (MemberObject member, String sessionToken)

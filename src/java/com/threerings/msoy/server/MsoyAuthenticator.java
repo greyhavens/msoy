@@ -257,7 +257,7 @@ public class MsoyAuthenticator extends Authenticator
         String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
         creds.setUsername(new LurkerName(name));
         rdata.code = MsoyAuthResponseData.SUCCESS;
-        _eventLog.userLoggedIn(memberId, creds.visitorId, false, System.currentTimeMillis());
+        _eventLog.userLoggedIn(memberId, creds.visitorId, false, true, System.currentTimeMillis());
     }
 
     protected Account authenticateMember (WorldCredentials creds, MsoyAuthResponseData rdata,
@@ -329,7 +329,7 @@ public class MsoyAuthenticator extends Authenticator
         // log.info("User logged on [user=" + user.username + "].");
         rdata.code = MsoyAuthResponseData.SUCCESS;
         _eventLog.userLoggedIn(member.memberId, member.visitorId, account.firstLogon,
-                               member.created.getTime());
+                               member.isPermaguest(), member.created.getTime());
 
         return account;
     }
