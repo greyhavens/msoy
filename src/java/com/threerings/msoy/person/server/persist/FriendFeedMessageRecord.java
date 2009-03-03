@@ -8,8 +8,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-import com.threerings.msoy.person.data.all.FeedMessage;
-import com.threerings.msoy.person.data.all.FriendFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FriendFeedMessage;
 
 /**
  * Contains persistent data on a feed message distributed to a member's friends.

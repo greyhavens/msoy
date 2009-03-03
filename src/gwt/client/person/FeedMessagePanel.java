@@ -23,10 +23,10 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.person.data.all.FeedMessage;
-import com.threerings.msoy.person.data.all.FriendFeedMessage;
-import com.threerings.msoy.person.data.all.GroupFeedMessage;
-import com.threerings.msoy.person.data.all.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FriendFeedMessage;
+import com.threerings.msoy.person.gwt.GroupFeedMessage;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
