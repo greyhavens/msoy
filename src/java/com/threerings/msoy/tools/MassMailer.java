@@ -28,7 +28,7 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
-import com.threerings.msoy.mail.server.SpamUtil;
+import com.threerings.msoy.spam.server.SpamUtil;
 import com.threerings.msoy.web.gwt.MessageUtil;
 
 import com.threerings.msoy.server.ServerConfig;

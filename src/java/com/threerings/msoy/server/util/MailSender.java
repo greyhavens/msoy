@@ -36,7 +36,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.msoy.data.all.MemberMailUtil;
-import com.threerings.msoy.mail.server.SpamUtil;
+import com.threerings.msoy.spam.server.SpamUtil;
 import com.threerings.presents.server.ShutdownManager;
 
 import static com.threerings.msoy.Log.log;

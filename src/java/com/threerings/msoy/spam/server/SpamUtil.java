@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.mail.server;
+package com.threerings.msoy.spam.server;
 
 import java.io.StringWriter;
 import java.security.MessageDigest;

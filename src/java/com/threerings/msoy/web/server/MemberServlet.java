@@ -26,7 +26,7 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.mail.server.SpamUtil;
+import com.threerings.msoy.spam.server.SpamUtil;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.gwt.Invitation;

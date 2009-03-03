@@ -25,6 +25,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.spam.server.SpamUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -293,6 +294,4 @@ public class MailLogic
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
-
-    protected static final int MEMBERS_PER_LOOP = 100;
 }
