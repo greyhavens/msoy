@@ -428,9 +428,9 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void updateValidated (boolean validated)
+    public void emailUpdated (String address, boolean validated)
     {
-        Session.updateEmailValid(validated);
+        Session.emailUpdated(address, validated);
     }
 
     // from interface Frame
@@ -856,8 +856,8 @@ public class FrameEntryPoint
         case DID_LOGON:
             Session.didLogon(SessionData.unflatten(ArrayUtil.toIterator(args)));
             return null;
-        case UPDATE_VALIDATED:
-            updateValidated(Boolean.parseBoolean(args[0]));
+        case EMAIL_UPDATED:
+            emailUpdated(args[0], Boolean.parseBoolean(args[1]));
             return null;
         case GET_WEB_CREDS:
             return (CShell.creds == null) ? null : CShell.creds.flatten().toArray(new String[0]);

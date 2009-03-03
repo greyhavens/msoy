@@ -155,13 +155,18 @@ public class Session
     }
 
     /**
-     * Reconfigures our role based on whether our email is now or is no longer validated.
+     * Called when our email address and/or validation status changes.
      */
-    public static void updateEmailValid (boolean validated)
+    public static void emailUpdated (String address, boolean validated)
     {
         if (CShell.creds == null) {
             return; // bogosity!
         }
+
+        // update our cached credentials
+        CShell.creds.accountName = address;
+
+        // update our role (if appropriate)
         if (validated) {
             switch (CShell.creds.role) {
             case PERMAGUEST: break; // bogosity!

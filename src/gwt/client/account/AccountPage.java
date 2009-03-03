@@ -36,6 +36,9 @@ public class AccountPage extends Page
                 Link.go(Pages.ACCOUNT, "create"); // guests/permaguests have to register first
             }
 
+        } else if (action.equals("config")) {
+            setContent(_msgs.configTitle(), new ConfigAccountPanel());
+
         } else if (action.equals("optout")) {
             setContent(new OptOutPanel(args.get(1, ""), args.get(2, 0)));
 
@@ -60,7 +63,7 @@ public class AccountPage extends Page
                     if (valid) {
                         msg = _msgs.emailValidated();
                         if (memberId == CShell.getMemberId()) {
-                            CShell.frame.updateValidated(true);
+                            CShell.frame.emailUpdated(CShell.creds.accountName, true);
                         }
                     } else {
                         msg = _msgs.emailInvalid();

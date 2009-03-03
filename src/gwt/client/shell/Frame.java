@@ -34,7 +34,7 @@ public interface Frame
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
         SET_TITLE, ADD_NAV_LINK, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT,
-        DID_LOGON, UPDATE_VALIDATED, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION,
+        DID_LOGON, EMAIL_UPDATED, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION,
         GET_ACTIVE_INVITE, GET_VISITOR_INFO, CLIENT_ACTION
     };
 
@@ -92,9 +92,9 @@ public interface Frame
     void dispatchDidLogon (SessionData data);
 
     /**
-     * Changes our email validation status.
+     * Notifies the frame that our email address and validation status changed.
      */
-    void updateValidated (boolean validated);
+    void emailUpdated (String address, boolean validated);
 
     /**
      * MD5 encodes the supplied text.

@@ -339,9 +339,8 @@ public class EditAccountPanel extends FlowPanel
         _upemail.setEnabled(false);
         _usersvc.updateEmail(email, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
-                CShell.creds.accountName = email;
                 MsoyUI.infoNear(_msgs.emailUpdated(), _upemail);
-                CShell.frame.updateValidated(false);
+                CShell.frame.emailUpdated(email, false);
                 refresh();
             }
             public void onFailure (Throwable cause) {
