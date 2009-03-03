@@ -22,7 +22,7 @@ public class MsoyGameController extends WhirledGameController
         super.willEnterPlace(plobj);
 
         // wire up our occupant reporter (don't report initial occupants)
-        _occReporter.willEnterPlace((_pctx as GameContext).getMsoyContext(), plobj, false);
+        _occReporter.willEnterPlace((_pctx as GameContext).getMsoyContext(), plobj);
     }
 
     // from PlaceController

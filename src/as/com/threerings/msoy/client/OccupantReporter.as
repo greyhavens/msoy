@@ -16,7 +16,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.notify.data.Notification;
@@ -27,32 +26,30 @@ import com.threerings.msoy.notify.data.Notification;
 public class OccupantReporter
     implements SetListener
 {
-    public function willEnterPlace (
-        ctx :MsoyContext, plobj :PlaceObject, reportInitialOccupants :Boolean = true) :void
+    public function willEnterPlace (ctx :MsoyContext, plobj :PlaceObject) :void
     {
         _ctx = ctx;
-
-        if (reportInitialOccupants) {
-            // report the current room occupants
-            var occs :String = "";
-            for (var iter :Iterator = plobj.occupantInfo.iterator(); iter.hasNext(); ) {
-                var info :OccupantInfo = (iter.next() as OccupantInfo);
-                if (isSelf(info)) {
-                    continue;
-                }
-                if (occs.length > 0) {
-                    occs += ", ";
-                }
-                occs += info.username;
-            }
-            if (occs.length > 0) {
-                _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-                    MessageBundle.tcompose("m.in_room", occs));
-            }
-        }
-
         // listen for and report enter/exit
         plobj.addListener(this);
+
+//        if (reportInitialOccupants) {
+//            // report the current room occupants
+//            var occs :String = "";
+//            for (var iter :Iterator = plobj.occupantInfo.iterator(); iter.hasNext(); ) {
+//                var info :OccupantInfo = (iter.next() as OccupantInfo);
+//                if (isSelf(info)) {
+//                    continue;
+//                }
+//                if (occs.length > 0) {
+//                    occs += ", ";
+//                }
+//                occs += info.username;
+//            }
+//            if (occs.length > 0) {
+//                _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+//                    MessageBundle.tcompose("m.in_room", occs));
+//            }
+//        }
     }
 
     public function didLeavePlace (plobj :PlaceObject) :void
@@ -68,12 +65,9 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-//            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-//                MessageBundle.tcompose("m.entered_room", info.username));
             // TODO: if we keep this, move the translation to the notify bundle
             _ctx.getNotificationDirector().addGenericNotification(
-                MessageBundle.qualify(MsoyCodes.GENERAL_MSGS,
-                    MessageBundle.tcompose("m.entered_room", info.username)),
+                MessageBundle.tcompose("m.entered_room", info.username),
                 Notification.LOWEST, info.username as MemberName);
         }
     }
@@ -92,12 +86,9 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-//            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-//                MessageBundle.tcompose("m.left_room", info.username));
             // TODO: if we keep this, move the translation to the notify bundle
             _ctx.getNotificationDirector().addGenericNotification(
-                MessageBundle.qualify(MsoyCodes.GENERAL_MSGS,
-                    MessageBundle.tcompose("m.left_room", info.username)),
+                MessageBundle.tcompose("m.left_room", info.username),
                 Notification.LOWEST, info.username as MemberName);
         }
     }
