@@ -27,7 +27,8 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#register}.
      */
-    void register (String clientVersion, RegisterInfo info, AsyncCallback<SessionData> callback);
+    void register (String clientVersion, RegisterInfo info,
+                   AsyncCallback<WebUserService.RegisterData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#validateSession}.

@@ -97,7 +97,6 @@ public class Session
 
         // we're logged in! clear out any leftover cookie, and load up visitor info from the server
         VisitorCookie.clear();
-        EntryVectorCookie.clear();
         CShell.visitor = data.visitor;
 
         // tell it from the mountain
@@ -128,11 +127,10 @@ public class Session
         // we're logged out, or maybe we're just a guest player.
         // if we don't already have a visitor token, create a brand new shiny one
         boolean newInfo = false;
-        if (! VisitorCookie.exists()) {
-            VisitorInfo info = new VisitorInfo();
-            VisitorCookie.save(info, false);
-            CShell.visitor = info;
-            _membersvc.trackVisitorInfoCreation(info, new NoopAsyncCallback());
+        if (!VisitorCookie.exists()) {
+            CShell.visitor = new VisitorInfo();
+            VisitorCookie.save(CShell.visitor, false);
+            _membersvc.trackVisitorInfoCreation(CShell.visitor, new NoopAsyncCallback());
             newInfo = true;
         } else {
             // we already have one, just load it back in

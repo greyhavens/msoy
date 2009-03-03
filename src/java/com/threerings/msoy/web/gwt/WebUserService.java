@@ -18,6 +18,13 @@ public interface WebUserService extends RemoteService
     /** The default length of a session. */
     public static final int SESSION_DAYS = 3;
 
+    /** Used by {@link #register}. */
+    public static class RegisterData extends SessionData
+    {
+        /** The entry vector associated with this client. */
+        public String entryVector;
+    }
+
     /**
      * Requests that the client be logged on as the specified user with the supplied (MD5-encoded)
      * password.
@@ -43,7 +50,7 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    SessionData register (String clientVersion, RegisterInfo info)
+    RegisterData register (String clientVersion, RegisterInfo info)
         throws ServiceException;
 
     /**

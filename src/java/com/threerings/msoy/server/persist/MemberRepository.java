@@ -519,6 +519,16 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns the entry vector noted for the specified member account or null.
+     */
+    public String loadEntryVector (int memberId)
+    {
+        EntryVectorRecord erec = load(
+            EntryVectorRecord.class, EntryVectorRecord.MEMBER_ID, memberId);
+        return (erec == null) ? null : erec.vector;
+    }
+
+    /**
      * Configures a member's account name (email address).
      */
     public void configureAccountName (int memberId, String accountName)

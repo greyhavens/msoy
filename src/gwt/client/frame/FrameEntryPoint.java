@@ -43,7 +43,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.images.frame.FrameImages;
 import client.shell.BrowserTest;
 import client.shell.CShell;
-import client.shell.EntryVectorCookie;
 import client.shell.HttpReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
@@ -181,11 +180,13 @@ public class FrameEntryPoint
             return;
         }
 
-        String vector = null;
-        VisitorInfo info = (CShell.visitor != null) ? CShell.visitor : VisitorCookie.get();
+        // we either got a canonical VisitorInfo when we logged in, or we failed to log in (had no
+        // credentials, in which case a VisitorCookie was created by Session and
+        // VisitorCookie.get() should always that non-null instance)
+        final VisitorInfo info = (CShell.visitor != null) ? CShell.visitor : VisitorCookie.get();
 
-        // pull out the vector and visitor id from the URL.
-        // they will be of the form: "vec_VECTOR" and "vis_VISITORID" respectively.
+        // pull out the vector id from the URL; it will be of the form: "vec_VECTOR"
+        String vector = null;
         ExtractedParam afterVector = extractParams("vec", pagename, token, args);
         if (afterVector != null) {
             vector = afterVector.value;
@@ -214,18 +215,16 @@ public class FrameEntryPoint
         }
         // END LEGACY CODE
 
-        // if we got a new vector from the URL, record it in Panopticon and in a cookie
+        // if we got a new vector from the URL, tell the server to associate it with our visitor id
         if (vector != null) {
-            final VisitorInfo constInfo = info;
             _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
-                    CShell.log("Saved vector association for " + constInfo);
+                    CShell.log("Saved vector association for " + info);
                 }
                 public void onFailure (Throwable caught) {
                     CShell.log("Failed to send vector creation to server.", caught);
                 }
             });
-            EntryVectorCookie.save(vector);
         }
 
         // if we have a new visitor info, use that as well

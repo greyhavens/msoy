@@ -104,7 +104,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData register (String clientVersion, RegisterInfo info)
+    public RegisterData register (String clientVersion, RegisterInfo info)
         throws ServiceException
     {
         checkClientVersion(clientVersion, info.email);
@@ -205,7 +205,14 @@ public class WebUserServlet extends MsoyServiceServlet
         params.set("code", _accountLogic.generateValidationCode(mrec));
         _mailer.sendTemplateEmail(info.email, ServerConfig.getFromAddress(), "welcome", params);
 
-        return startSession(mrec, info.expireDays);
+        // start our first session with the newly created account
+        RegisterData data = new RegisterData();
+        startSession(mrec, info.expireDays, data);
+
+        // and load up our entry vector and send it back to GWT for its nefarious porpoises
+        data.entryVector = _memberRepo.loadEntryVector(mrec.memberId);
+
+        return data;
     }
 
     // from interface WebUserService
@@ -223,7 +230,9 @@ public class WebUserServlet extends MsoyServiceServlet
 
             WebCreds creds = mrec.toCreds(authtok);
             _mhelper.mapMemberId(creds.token, mrec.memberId);
-            return loadSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId));
+            SessionData data = new SessionData();
+            initSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId), data);
+            return data;
 
         } catch (Exception e) {
             log.warning("Failed to refresh session [tok=" + authtok + "].", e);
@@ -589,17 +598,27 @@ public class WebUserServlet extends MsoyServiceServlet
     protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
-        AffiliateCookie.clear(getThreadLocalResponse());
-
-        // if they made it through that gauntlet, create or update their session token
-        WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
-        _mhelper.mapMemberId(creds.token, mrec.memberId);
-        return loadSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId));
+        SessionData data = new SessionData();
+        startSession(mrec, expireDays, data);
+        return data;
     }
 
-    protected SessionData loadSessionData (MemberRecord mrec, WebCreds creds, MemberMoney money)
+    protected void startSession (MemberRecord mrec, int expireDays, SessionData data)
+        throws ServiceException
     {
-        SessionData data = new SessionData();
+        AffiliateCookie.clear(getThreadLocalResponse());
+        // start or rejoin our session (creating a token)
+        WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
+        // map that token to our member id for faster lookup
+        _mhelper.mapMemberId(creds.token, mrec.memberId);
+        // finally fill in our various session data
+        initSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId), data);
+    }
+
+    protected void initSessionData (
+        MemberRecord mrec, WebCreds creds, MemberMoney money, SessionData data)
+    {
+        // fill in their web credentials
         data.creds = creds;
 
         // fill in their flow, gold and level
@@ -616,8 +635,6 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (Exception e) {
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", e);
         }
-
-        return data;
     }
 
     // our dependencies

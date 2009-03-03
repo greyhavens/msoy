@@ -41,7 +41,6 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
-import client.shell.EntryVectorCookie;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -139,7 +138,7 @@ public class CreateAccountPanel extends FlowPanel
         content.add(controls);
 
         // create our click callback that handles the actual registation process
-        new ClickCallback<SessionData>(create) {
+        new ClickCallback<WebUserService.RegisterData>(create) {
             @Override protected boolean callService () {
                 if (!validateData()) {
                     return false;
@@ -183,12 +182,12 @@ public class CreateAccountPanel extends FlowPanel
                 return true;
             }
 
-            @Override protected boolean gotResult (final SessionData session) {
+            @Override protected boolean gotResult (final WebUserService.RegisterData session) {
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!
                 setStatus(_msgs.creatingDone(),
                           ConversionTrackingUtil.createAdWordsTracker(),
-                          ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
+                          ConversionTrackingUtil.createBeacon(session.entryVector));
                 session.justCreated = true;
                 new Timer() {
                     public void run () {
