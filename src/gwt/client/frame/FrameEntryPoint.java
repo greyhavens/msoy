@@ -194,27 +194,6 @@ public class FrameEntryPoint
             args = afterVector.newArgs;
         }
 
-        // START LEGACY CODE - to be removed after all of our ads and embeds are transitioned
-        //
-        // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting of
-        // three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
-        int aidIdx = args.indexOf("aid");
-        int lastIdx = aidIdx + 3;
-        if (aidIdx != -1 && args.getArgCount() > lastIdx) {
-            String aff = args.get(aidIdx + 1, "");
-            String vec = args.get(aidIdx + 2, "");
-            String cre = args.get(aidIdx + 3, "");
-
-            // remove the "aid" tag and its three values
-            token = Args.compose((Object[])args.remove(aidIdx, aidIdx + 4));
-            args = new Args();
-            args.setToken(token);
-
-            // save our info
-            vector = aff + ":" + vec + ":" + cre;
-        }
-        // END LEGACY CODE
-
         // if we got a new vector from the URL, tell the server to associate it with our visitor id
         if (vector != null) {
             _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
