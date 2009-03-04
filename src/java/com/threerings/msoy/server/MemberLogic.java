@@ -45,9 +45,12 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -445,63 +448,59 @@ public class MemberLogic
     public void deleteMembers (Collection<Integer> memberIds)
     {
         // make sure all of the supplied ids are actually members and grab their account names
-        List<Integer> deadIds = Lists.newArrayList();
-        List<String> deadNames = Lists.newArrayList();
+        List<Integer> purgeIds = Lists.newArrayList();
+        List<String> purgeNames = Lists.newArrayList();
+        List<Integer> killIds = Lists.newArrayList(), disableIds = Lists.newArrayList();
         for (MemberRecord mrec : _memberRepo.loadMembers(memberIds)) {
-            deadIds.add(mrec.memberId);
-            deadNames.add(mrec.accountName);
+            purgeIds.add(mrec.memberId);
+            purgeNames.add(mrec.accountName);
+            // permaguests get fully deleted, registered members get disabled
+            if (mrec.isPermaguest()) {
+                killIds.add(mrec.memberId);
+            } else {
+                disableIds.add(mrec.memberId);
+            }
         }
 
         // delete everything that we can unequivocally delete
-        _avrGameRepo.purgeMembers(deadIds);
-        _badgeRepo.purgeMembers(deadIds);
-        _commentRepo.purgeMembers(deadIds);
-        _faveRepo.purgeMembers(deadIds);
-        _feedRepo.purgeMembers(deadIds);
-        _forumRepo.purgeMembers(deadIds);
-        _galleryRepo.purgeMembers(deadIds);
-        _gcookRepo.purgePlayers(deadIds);
-        _groupRepo.purgeMembers(deadIds);
-        _mailRepo.purgeMembers(deadIds);
-        _medalRepo.purgeMembers(deadIds);
-        _memberRepo.purgeMembers(deadIds);
-        _moneyRepo.purgeMembers(deadIds);
-        _oooAuthRepo.purgeMembers(deadNames);
-        _profileRepo.purgeMembers(deadIds);
-        _sceneRepo.purgeMembers(deadIds);
-        _statRepo.purgePlayers(deadIds);
-        _swiftlyRepo.purgeMembers(deadIds);
-        _trophyRepo.purgeMembers(deadIds);
-        _uactionRepo.purgeMembers(deadIds);
+        _avrGameRepo.purgeMembers(purgeIds);
+        _badgeRepo.purgeMembers(purgeIds);
+        _commentRepo.purgeMembers(purgeIds);
+        _faveRepo.purgeMembers(purgeIds);
+        _feedRepo.purgeMembers(purgeIds);
+        _forumRepo.purgeMembers(purgeIds);
+        _galleryRepo.purgeMembers(purgeIds);
+        _gcookRepo.purgePlayers(purgeIds);
+        _groupRepo.purgeMembers(purgeIds);
+        _mailRepo.purgeMembers(purgeIds);
+        _medalRepo.purgeMembers(purgeIds);
+        _memberRepo.purgeMembers(purgeIds);
+        _moneyRepo.purgeMembers(purgeIds);
+        _oooAuthRepo.purgeMembers(purgeNames);
+        _profileRepo.purgeMembers(purgeIds);
+        _sceneRepo.purgeMembers(purgeIds);
+        _statRepo.purgePlayers(purgeIds);
+        _swiftlyRepo.purgeMembers(purgeIds);
+        _trophyRepo.purgeMembers(purgeIds);
+        _uactionRepo.purgeMembers(purgeIds);
 
         //    ItemListInfoRecord - to be removed?
+        //    EventRecord - leave these around?
 
-        // Records that refer directly to a member id (there may be sub-records that refer
-        // indirectly):
-        //    ItemRepository (audio, avatar, decor, document, furniture, game, item pack, level
-        //         pack, pet, photo, prize, prop, toy, trophy source, video) x (item, rating,
-        //         catalog, clone records)
-        //    MemoriesRecord - part of item deletion
-        //    EventRecord
+        // delete their inventory and associated data
+        for (ItemRepository<ItemRecord> irepo : _itemLogic.getRepositories()) {
+            irepo.purgeMembers(purgeIds);
+        }
 
-//         _memberRepo.deleteMember(_memberRepo.loadMember(memberId));
+        // fully delete all permaguest records
+        if (!killIds.isEmpty()) {
+            _memberRepo.deleteMembers(killIds);
+        }
 
-        // Strategy: report if the member has done anything that may be worthwhile and/or annoying
-        // to delete that admin/support can delete manually. Once all of those are clear, move on
-        // to the deletion of the rest of the stuff.
-
-        // Records that prevent the member deletion
-        //    BlingCashOutRecord
-        //    ForumThreadRecord
-        //    ForumMessageRecord
-        //    GroupRecord
-        //    CatalogRecord
-        //    GameDetailRecord
-
-        // OLD TODO comment from MemberRepository:
-        // delete a whole bunch of shit
-        // - inventory items
-        // - item tags
+        // and disable all registered member records
+        if (!disableIds.isEmpty()) {
+            _memberRepo.disableMembers(killIds);
+        }
     }
 
     /**
@@ -733,6 +732,7 @@ public class MemberLogic
     @Inject protected MemberManager _memberMan;
     @Inject protected StatLogic _statLogic;
     @Inject protected BadgeLogic _badgeLogic;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;

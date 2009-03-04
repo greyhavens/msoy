@@ -377,7 +377,7 @@ public class AccountLogic
             if (stalerec != null) {
                 try {
                     _memberRepo.purgeMembers(Collections.singletonList(stalerec.memberId));
-                    _memberRepo.deleteMember(stalerec);
+                    _memberRepo.deleteMembers(Collections.singletonList(stalerec.memberId));
                 } catch (RuntimeException e) {
                     log.warning("Failed to rollback MemberRecord creation", "mrec", stalerec, e);
                 }

@@ -14,13 +14,16 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.impl.Modifier;
+import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Logic;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 
@@ -99,9 +102,8 @@ public class MemoryRepository extends DepotRepository
     {
         if (record.data == null) {
             delete(record);
-
-        } else if (update(record) == 0) {
-            insert(record);
+        } else {
+            store(record);
         }
     }
 
@@ -111,6 +113,16 @@ public class MemoryRepository extends DepotRepository
     public void deleteMemories (byte itemType, int itemId)
     {
         delete(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
+    }
+
+    /**
+     * Deletes all memories for all of the specified items.
+     */
+    public void purgeMemories (byte itemType, Collection<Integer> itemIds)
+    {
+        deleteAll(MemoriesRecord.class, new Where(
+            new Logic.And(new Conditionals.Equals(MemoriesRecord.ITEM_TYPE, itemType),
+                          new Conditionals.In(MemoriesRecord.ITEM_ID, itemIds))));
     }
 
     @Override // from DepotRepository

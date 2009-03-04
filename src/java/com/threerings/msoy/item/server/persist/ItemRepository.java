@@ -33,10 +33,11 @@ import com.samskivert.util.QuickSort;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FieldDefinition;
@@ -65,6 +66,7 @@ import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
+import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -631,6 +633,41 @@ public abstract class ItemRepository<T extends ItemRecord>
     public List<CatalogRecord> loadCatalog (Collection<Integer> catalogIds)
     {
         return resolveCatalogRecords(loadAll(getCatalogClass(), catalogIds));
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        List<Integer> deletedIds = Lists.newArrayList();
+
+        // delete all purchased clones
+        List<Key<CloneRecord>> clones = findAllKeys(
+            getCloneClass(), false,
+            new Where(new In(getCloneColumn(CloneRecord.OWNER_ID), memberIds)));
+        deleteAll(getCloneClass(), KeySet.newKeySet(getCloneClass(), clones));
+        deletedIds.addAll(Lists.transform(clones, RecordFunctions.<CloneRecord>getIntKey()));
+
+        // delete all original items that are not listed in the catalog; we could delete the
+        // catalog originals but that would make repricing or otherwise fiddling with the catalog
+        // listings on the part of the support staff more of a PITA, so we'll leave 'em for now
+        List<Key<T>> origs = findAllKeys(
+            getItemClass(), false,
+            new Where(new And(new In(getItemColumn(ItemRecord.OWNER_ID), memberIds),
+                              new Not(new Equals(getItemColumn(ItemRecord.CATALOG_ID), 0)))));
+        deleteAll(getItemClass(), KeySet.newKeySet(getItemClass(), origs));
+        deletedIds.addAll(Lists.transform(origs, RecordFunctions.<T>getIntKey()));
+
+        // now delete memories for all of the deleted items
+        if (!deletedIds.isEmpty()) {
+            _memoryRepo.purgeMemories(_itemType, deletedIds);
+        }
+
+        // delete tag and rating history for these members
+        _tagRepo.purgeMembers(memberIds);
+        _ratingRepo.purgeMembers(memberIds);
     }
 
     protected List<CatalogRecord> resolveCatalogRecords (List<CatalogRecord> records)
@@ -1267,7 +1304,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         classes.add(getItemClass());
         classes.add(getCloneClass());
         classes.add(getCatalogClass());
-        classes.add(getRatingClass());
     }
 
     /**

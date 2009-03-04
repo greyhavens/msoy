@@ -600,12 +600,28 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Deletes <em>only</em> the supplied member record. You should not call this method, use
-     * MemberLogic.deleteMember().
+     * Deletes the {@link MemberRecord} for the specified ids. This should <em>only</em> be called
+     * for permaguest records. Registered members are left "on the books" (just their MemberRecord,
+     * everything else is purged).
      */
-    public void deleteMember (MemberRecord member)
+    public void deleteMembers (Collection<Integer> memberIds)
     {
-        delete(member);
+        deleteAll(MemberRecord.class, new Where(new In(MemberRecord.MEMBER_ID, memberIds)));
+    }
+
+    /**
+     * Marks all of the supplied records as disabled. This is where registered members go to die.
+     */
+    public void disableMembers (Collection<Integer> memberIds)
+    {
+        // we have to do this one at a time
+        for (int memberId : memberIds) {
+            updatePartial(MemberRecord.class, memberId,
+                          MemberRecord.ACCOUNT_NAME, memberId + ":disabled");
+        }
+        // NOTE: currently, the OOOUserRecord will have been deleted for all of these member
+        // records, if we some day ditch our OOOUser crap and move passwords into MemberRecord,
+        // this method should set their password to "" so that this account cannot be logged into
     }
 
     /**

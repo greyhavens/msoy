@@ -196,6 +196,14 @@ public class ItemLogic
     }
 
     /**
+     * Returns an iterator over our different item repositories.
+     */
+    public Iterable<ItemRepository<ItemRecord>> getRepositories ()
+    {
+        return _repos.values();
+    }
+
+    /**
      * A small helper interface for editClone.
      */
     public static interface CloneEditOp
