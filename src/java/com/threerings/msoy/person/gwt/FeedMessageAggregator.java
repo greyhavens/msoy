@@ -69,6 +69,7 @@ public class FeedMessageAggregator
 
                 // if one of the aggregate messages has been displayed, that means this message
                 // is displayed and should be removed from any further aggregates
+                // TODO: is this always true? what about the MAX_AGGREGATED_ITEMS limit?
                 if (lvalue.getDisplayed() || rvalue.getDisplayed()) {
                     if (lvalue.getDisplayed() && rsize > 1) {
                         rvalue.remove(message);
@@ -79,7 +80,7 @@ public class FeedMessageAggregator
                 }
 
                 if (lsize >= rsize && lsize > 1) {
-                    newMessages.add(new AggregateMessage(true, message.type,
+                    newMessages.add(new AggregateFeedMessage(true, message.type,
                         message.posted, lvalue.getList()));
                     if (rsize > 1) {
                         rvalue.remove(message);
@@ -87,7 +88,7 @@ public class FeedMessageAggregator
                     lvalue.setDisplayed(true);
                     continue;
                 } else if (rsize > 1) {
-                    newMessages.add(new AggregateMessage(false, message.type,
+                    newMessages.add(new AggregateFeedMessage(false, message.type,
                         message.posted, rvalue.getList()));
                     if (lsize > 1) {
                         lvalue.remove(message);
@@ -123,7 +124,7 @@ public class FeedMessageAggregator
      * Get the key for left side aggregation. Multiple actions by the same person (eg listing new
      * things in the shop).
      */
-    public static MessageKey getLeftKey (FeedMessage message)
+    protected static MessageKey getLeftKey (FeedMessage message)
     {
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
@@ -146,7 +147,7 @@ public class FeedMessageAggregator
      * Get the key for right side aggregation. Multiple people performing the same action (eg
      * winning the same trophy).
      */
-    public static MessageKey getRightKey (FeedMessage message)
+    protected static MessageKey getRightKey (FeedMessage message)
     {
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
@@ -179,7 +180,7 @@ public class FeedMessageAggregator
     /**
      * Builds a left side or right side aggregated HashMap for the supplied messages.
      */
-    public static void buildMessageMap (List<FeedMessage> messages, long header,
+    protected static void buildMessageMap (List<FeedMessage> messages, long header,
         HashMap<MessageKey, MessageAggregate> map, boolean left)
     {
         for (FeedMessage message : messages) {
@@ -234,71 +235,7 @@ public class FeedMessageAggregator
         public boolean equals (Object o)
         {
             MessageKey other = (MessageKey)o;
-            return type.equals(other.type) && key == other.key;
-        }
-    }
-
-    /**
-     * An aggregate message conatining multiple actions by the same actor (left=true), or actors
-     * performing the same action (left=false). Duplicate items will be removed at this point.
-     */
-    public static class AggregateMessage extends FeedMessage
-    {
-        public AggregateMessage (
-            boolean left, FeedMessageType type, long posted, List<FeedMessage> messages)
-        {
-            this.left = left;
-            this.type = type;
-            this.posted = posted;
-            this.messages = new ArrayList<FeedMessage>();
-            for (FeedMessage message : messages) {
-                if (!contains(message)) {
-                    this.messages.add(message);
-                }
-            }
-        }
-        public List<FeedMessage> messages;
-        public boolean left;
-
-        /**
-         * Compare the given message with the contents of the list. Check for duplicates is based
-         * on the type of message: don't show the same player updating the same room twice, or the
-         * same player gaining more than one level.
-         */
-        protected boolean contains (FeedMessage message)
-        {
-            switch (message.type) {
-            case FRIEND_UPDATED_ROOM:
-                // don't show the same friend updating the same room id twice
-                for (FeedMessage msg : this.messages) {
-                    if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend)
-                        && msg.data[0].equals(message.data[0])) {
-                        return true;
-                    }
-                }
-                break;
-
-            case FRIEND_GAINED_LEVEL:
-                // don't show the same friend's level gain more than once
-                for (FeedMessage msg : this.messages) {
-                    if (((FriendFeedMessage)msg).friend.equals(
-                            ((FriendFeedMessage)message).friend)) {
-                        return true;
-                    }
-                }
-                break;
-
-            case SELF_ROOM_COMMENT:
-            case SELF_ITEM_COMMENT:
-                // don't show the same friend's comment more than once
-                for (FeedMessage msg : this.messages) {
-                    if (((SelfFeedMessage)msg).actor.equals(((SelfFeedMessage)message).actor)) {
-                        return true;
-                    }
-                }
-                break;
-            }
-            return false;
+            return type == other.type && key == other.key;
         }
     }
 

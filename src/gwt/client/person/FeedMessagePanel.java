@@ -23,12 +23,12 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.gwt.AggregateFeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
-import com.threerings.msoy.person.gwt.FeedMessageAggregator.AggregateMessage;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -57,11 +57,12 @@ public class FeedMessagePanel extends FocusPanel
             addGroupMessage((GroupFeedMessage)message);
         } else if (message instanceof SelfFeedMessage) {
             addSelfMessage((SelfFeedMessage)message);
-        } else if (message instanceof AggregateMessage) {
-            if (((AggregateMessage)message).left) {
-                this.addLeftAggregateMessage(((AggregateMessage)message).messages);
+        } else if (message instanceof AggregateFeedMessage) {
+            AggregateFeedMessage aggMsg = (AggregateFeedMessage)message;
+            if (aggMsg.left) {
+                this.addLeftAggregateMessage(aggMsg.messages);
             } else {
-                this.addRightAggregateMessage(((AggregateMessage)message).messages);
+                this.addRightAggregateMessage(aggMsg.messages);
             }
         } else {
             addMessage(message);
