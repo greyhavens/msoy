@@ -25,8 +25,9 @@ public class LoginCountResult implements AggregatedResult<LoginCountResult>
 
     public boolean init (final EventData eventData)
     {
+        final Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
         final int memberId = ((Number)eventData.getData().get("memberId")).intValue();
-        if (memberId < 0) {
+        if (memberId < 0 || (isGuest != null && isGuest.booleanValue())) {
             uniqueGuests.add(memberId);
         } else {
             uniquePlayers.add(memberId);
