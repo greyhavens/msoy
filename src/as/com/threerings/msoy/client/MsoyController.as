@@ -123,6 +123,9 @@ public class MsoyController extends Controller
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
+    /** Command to ensure that the share dialog is up. */
+    public static const POP_SHARE_DIALOG :String = "PopShareDialog";
+
     // NOTE:
     // Any commands defined in this class should be handled in this class.
     // Currently, this is not the case. Some commands are here without even an abstract or
@@ -338,6 +341,17 @@ public class MsoyController extends Controller
     public function handleMoveBack (closeInsteadOfHome :Boolean = false) :void
     {
         // handled by our derived classes
+    }
+
+    /**
+     * Handles the POP_SHARE_DIALOG command.
+     */
+    public function handlePopShareDialog () :void
+    {
+        // do it this way so that we don't mess up the dialog popper.
+        if (!_mctx.getControlBar().shareBtn.selected) {
+            _mctx.getControlBar().shareBtn.activate();
+        }
     }
 
     /**

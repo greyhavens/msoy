@@ -408,6 +408,7 @@ public /*abstract*/ class MsoyContext
         _notifyDir = new NotificationDirector(this);
         _muteDir = new MuteDirector(this);
         _muteDir.setChatDirector(_chatDir);
+        _upsellDir = new UpsellDirector(this);
     }
 
     /**
@@ -436,5 +437,6 @@ public /*abstract*/ class MsoyContext
     protected var _chatDir :MsoyChatDirector;
     protected var _muteDir :MuteDirector;
     protected var _notifyDir :NotificationDirector;
+    protected var _upsellDir :UpsellDirector;
 }
 }
