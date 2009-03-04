@@ -48,7 +48,7 @@ public class GroupDiscussionsPanel extends FlowPanel
         rssText.setStyleName("RssText");
         rss.add(rssText);
         Image rssImage = MsoyUI.createActionImage(
-            "/images/group/thread_rss.png", _msgs.discussionRss(), rssClick);
+            "/images/group/thread_rss.png", _msgs.discussionRssTip(), rssClick);
         rss.add(rssImage);
         add(rss);
 
