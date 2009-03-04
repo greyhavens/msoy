@@ -8,7 +8,6 @@ import java.util.MissingResourceException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -49,7 +48,7 @@ public class CShell
      */
     public static boolean isGuest ()
     {
-        return MemberName.isGuest(getMemberId());
+        return getMemberId() == 0;
     }
 
     /**
