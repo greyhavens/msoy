@@ -51,11 +51,11 @@ public class ComicOverlay extends ChatOverlay
         // with it.
         _scrollOverlay.mouseEnabled = false;
         _scrollOverlay.blendMode = BlendMode.LAYER;
-
-        // overlay for chat that stays in a given place on the screen.
-        _staticOverlay.setComicOverlay(this);
-        _staticOverlay.mouseEnabled = false;
-        _staticOverlay.blendMode = BlendMode.LAYER;
+//
+//        // overlay for chat that stays in a given place on the screen.
+//        _staticOverlay.setComicOverlay(this);
+//        _staticOverlay.mouseEnabled = false;
+//        _staticOverlay.blendMode = BlendMode.LAYER;
     }
 
     override public function displayChat (display :Boolean) :void
@@ -69,7 +69,7 @@ public class ComicOverlay extends ChatOverlay
         _bubbles = new HashMap();
         _allBubbles = [];
 
-        var overlays :Array = [ _scrollOverlay, _staticOverlay ];
+        var overlays :Array = [ _scrollOverlay /*, _staticOverlay*/ ];
         var layers :Array = [ PlaceBox.LAYER_CHAT_SCROLL, PlaceBox.LAYER_CHAT_STATIC ];
         for (var ii :int = 0; ii < overlays.length; ii++) {
             var contains :Boolean = _target.containsOverlay(overlays[ii]);
@@ -216,7 +216,7 @@ public class ComicOverlay extends ChatOverlay
 
     override protected function getOverlays () :Array
     {
-        return super.getOverlays().concat(_scrollOverlay, _staticOverlay);
+        return super.getOverlays().concat(_scrollOverlay /*, _staticOverlay*/);
     }
 
     /**
@@ -319,7 +319,8 @@ public class ComicOverlay extends ChatOverlay
         if (placeOf(type) == PLACE) {
             _scrollOverlay.addChild(bubble);
         } else {
-            _staticOverlay.addChild(bubble);
+            log.warning("Do not have a static overlay anymore!");
+            //_staticOverlay.addChild(bubble);
         }
         _allBubbles.unshift(bubble);
 
@@ -556,9 +557,9 @@ public class ComicOverlay extends ChatOverlay
      * scroll. */
     protected var _scrollOverlay :Sprite = new Sprite();
 
-    /** The overlay we place on top of our target that contains all the chat glyphs that should
-     * not scroll with the scene. */
-    protected var _staticOverlay :StaticOverlay = new StaticOverlay();
+//    /** The overlay we place on top of our target that contains all the chat glyphs that should
+//     * not scroll with the scene. */
+//    protected var _staticOverlay :StaticOverlay = new StaticOverlay();
 
     /** The provider of info about laying out bubbles. */
     protected var _provider :ChatInfoProvider;
@@ -710,22 +711,22 @@ class BubbleCloud
     protected var _viewWidth :Number;
     protected var _viewHeight :Number;
 }
-
-class StaticOverlay extends Sprite
-    implements PlaceLayer
-{
-    public function setComicOverlay (comicOverlay :ComicOverlay) :void
-    {
-        _comicOverlay = comicOverlay;
-    }
-
-    // from PlaceLayer
-    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        if (_comicOverlay != null) {
-            _comicOverlay.setPlaceSize(unscaledWidth, unscaledHeight);
-        }
-    }
-
-    protected var _comicOverlay :ComicOverlay;
-}
+//
+//class StaticOverlay extends Sprite
+//    implements PlaceLayer
+//{
+//    public function setComicOverlay (comicOverlay :ComicOverlay) :void
+//    {
+//        _comicOverlay = comicOverlay;
+//    }
+//
+//    // from PlaceLayer
+//    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+//    {
+//        if (_comicOverlay != null) {
+//            _comicOverlay.setPlaceSize(unscaledWidth, unscaledHeight);
+//        }
+//    }
+//
+//    protected var _comicOverlay :ComicOverlay;
+//}
