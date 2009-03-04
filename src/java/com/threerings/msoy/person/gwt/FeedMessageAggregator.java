@@ -1,7 +1,7 @@
 //
 // $Id: FeedPanel.java 12917 2008-10-28 20:10:30Z sarah $
 
-package client.person;
+package com.threerings.msoy.person.gwt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.FriendFeedMessage;
-import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
 import client.shell.CShell;
 import client.util.DateUtil;
@@ -22,7 +18,7 @@ import client.util.DateUtil;
  * Functions to aggregate a list of news feed messages by the actor (left aggregate) or the action
  * (right aggregate) in question.
  */
-public class FeedMessageAggregator extends FlowPanel
+public class FeedMessageAggregator
 {
     /**
      * Aggregate any messages with the same actor (left aggregate) or the same action (right
@@ -130,15 +126,16 @@ public class FeedMessageAggregator extends FlowPanel
     public static MessageKey getLeftKey (FeedMessage message)
     {
         switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
-        case 101: // FRIEND_UPDATED_ROOM
-        case 102: // FRIEND_WON_TROPHY
-        case 103: // FRIEND_LISTED_ITEM
-        case 105: // FRIEND_WON_BADGE
-        case 106: // FRIEND_WON_MEDAL
+        case FRIEND_ADDED_FRIEND:
+        case FRIEND_UPDATED_ROOM:
+        case FRIEND_WON_TROPHY:
+        case FRIEND_LISTED_ITEM:
+        case FRIEND_WON_BADGE:
+        case FRIEND_WON_MEDAL:
             // group all these by the friend doing the actions
             return new MessageKey(message.type, ((FriendFeedMessage)message).friend.getMemberId());
-        case 104: // FRIEND_GAINED_LEVEL
+
+        case FRIEND_GAINED_LEVEL:
             // all level gains by all friends are displayed together
             return new MessageKey(message.type, 0);
         }
@@ -152,22 +149,27 @@ public class FeedMessageAggregator extends FlowPanel
     public static MessageKey getRightKey (FeedMessage message)
     {
         switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
+        case FRIEND_ADDED_FRIEND:
             // one or more friends added a person to their friends, that person is the key
             return new MessageKey(message.type, message.data[1]);
-        case 102: // FRIEND_WON_TROPHY
+
+        case FRIEND_WON_TROPHY:
             // one or more friends earned the same trophy; trophy name and id is the key
             return new MessageKey(message.type, message.data[1].concat(message.data[0]).hashCode());
-        case 105: // FRIEND_WON_BADGE
+
+        case FRIEND_WON_BADGE:
             // one or more friends earned the same badge; badge id and level is the key
             return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
-        case 106: // FRIEND_WON_MEDAL
+
+        case FRIEND_WON_MEDAL:
             // one or more friends earned the same medal; medal name and group id is the key
             return new MessageKey(message.type, message.data[0].concat(message.data[3]).hashCode());
-        case 300: // SELF_ROOM_COMMENT
+
+        case SELF_ROOM_COMMENT:
             // one or more people commented on your room; scene id is the key
             return new MessageKey(message.type, message.data[0]);
-        case 301: // SELF_ITEM_COMMENT
+
+        case SELF_ITEM_COMMENT:
             // one or more people commented on your shop item; catalog id is the key
             return new MessageKey(message.type, message.data[1]);
         }
@@ -205,38 +207,34 @@ public class FeedMessageAggregator extends FlowPanel
      */
     protected static class MessageKey
     {
-        public Integer type;
-        public Integer key;
+        public FeedMessageType type;
+        public int key;
 
-        public MessageKey (int type, String key)
+        public MessageKey (FeedMessageType type, String key)
         {
-            this.type = new Integer(type);
+            this.type = type;
             try {
-                this.key = new Integer(key);
+                this.key = Integer.valueOf(key);
             } catch (Exception e) {
-                this.key = new Integer(0);
+                this.key = 0;
             }
         }
 
-        public MessageKey (int type, int key)
+        public MessageKey (FeedMessageType type, int key)
         {
-            this.type = new Integer(type);
-            this.key = new Integer(key);
+            this.type = type;
+            this.key = key;
         }
 
         public int hashCode ()
         {
-            int code = type.hashCode();
-            if (key != null) {
-                code ^= key.hashCode();
-            }
-            return code;
+            return type.getCode() ^ key;
         }
 
         public boolean equals (Object o)
         {
             MessageKey other = (MessageKey)o;
-            return type.equals(other.type) && key.equals(other.key);
+            return type.equals(other.type) && key == other.key;
         }
     }
 
@@ -246,7 +244,8 @@ public class FeedMessageAggregator extends FlowPanel
      */
     public static class AggregateMessage extends FeedMessage
     {
-        public AggregateMessage (boolean left, int type, long posted, List<FeedMessage> messages)
+        public AggregateMessage (
+            boolean left, FeedMessageType type, long posted, List<FeedMessage> messages)
         {
             this.left = left;
             this.type = type;
@@ -268,8 +267,8 @@ public class FeedMessageAggregator extends FlowPanel
          */
         protected boolean contains (FeedMessage message)
         {
-            switch(message.type) {
-            case 101: // FRIEND_UPDATED_ROOM
+            switch (message.type) {
+            case FRIEND_UPDATED_ROOM:
                 // don't show the same friend updating the same room id twice
                 for (FeedMessage msg : this.messages) {
                     if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend)
@@ -278,7 +277,8 @@ public class FeedMessageAggregator extends FlowPanel
                     }
                 }
                 break;
-            case 104: // FRIEND_GAINED_LEVEL
+
+            case FRIEND_GAINED_LEVEL:
                 // don't show the same friend's level gain more than once
                 for (FeedMessage msg : this.messages) {
                     if (((FriendFeedMessage)msg).friend.equals(
@@ -287,8 +287,9 @@ public class FeedMessageAggregator extends FlowPanel
                     }
                 }
                 break;
-            case 300: // SELF_ROOM_COMMENT
-            case 301: // SELF_ITEM_COMMENT
+
+            case SELF_ROOM_COMMENT:
+            case SELF_ITEM_COMMENT:
                 // don't show the same friend's comment more than once
                 for (FeedMessage msg : this.messages) {
                     if (((SelfFeedMessage)msg).actor.equals(((SelfFeedMessage)message).actor)) {

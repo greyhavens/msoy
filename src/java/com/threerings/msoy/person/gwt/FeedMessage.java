@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class FeedMessage
     implements IsSerializable
 {
-    /** The numeric code indicating the type of this message. See FeedMessageType. */
-    public int type;
+    /** The type of feed message. */
+    public FeedMessageType type;
 
     /** The arguments to this feed message. */
     public String[] data;

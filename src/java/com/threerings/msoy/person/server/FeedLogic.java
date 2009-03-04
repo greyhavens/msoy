@@ -22,17 +22,17 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
-import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.person.util.FeedMessageType.Category;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.presents.annotation.BlockingThread;
@@ -85,7 +85,8 @@ public class FeedLogic
 
         // limit the feed messages to itemsPerCategory per category
         for (FeedMessageRecord record : allRecords) {
-            Category category = FeedMessageType.getCategory(record.type);
+            FeedMessageType type = FeedMessageType.fromCode(record.type);
+            Category category = type.getCategory();
 
             // skip all categories except the one we care about
             if (onlyCategory != null && category != onlyCategory) {
@@ -99,16 +100,16 @@ public class FeedLogic
             }
 
             String key;
-            if (record.type == FeedMessageType.FRIEND_GAINED_LEVEL.getCode()) {
+            if (type == FeedMessageType.FRIEND_GAINED_LEVEL) {
                 // all levelling records are returned, they get aggregated into a single item
                 key = "";
-            } else if (record.type == FeedMessageType.GROUP_UPDATED_ROOM.getCode()) {
+            } else if (type == FeedMessageType.GROUP_UPDATED_ROOM) {
                 // include room updates from the first itemsPerCategory groups
                 key = "group_" + ((GroupFeedMessageRecord)record).groupId + "";
-            } else if (record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
+            } else if (type == FeedMessageType.SELF_ROOM_COMMENT) {
                 // include comments on the first itemsPerCategory rooms and/or items
                 key = "room_" + record.data.split("\t")[0];
-            } else if (record.type == FeedMessageType.SELF_ITEM_COMMENT.getCode()) {
+            } else if (type == FeedMessageType.SELF_ITEM_COMMENT) {
                 // include comments on the first itemsPerCategory rooms and/or items
                 key = "item_" + record.data.split("\t")[1];
             } else if (record instanceof FriendFeedMessageRecord) {
@@ -137,7 +138,7 @@ public class FeedLogic
             // pull out messages of the right category (combine global & group announcements)
             List<FeedMessage> typeMessages = Lists.newArrayList();
             for (FeedMessage message : allChosenMessages) {
-                if (FeedMessageType.getCategory(message.type) == category) {
+                if (message.type.getCategory() == category) {
                     typeMessages.add(message);
                 }
             }

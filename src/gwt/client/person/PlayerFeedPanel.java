@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 
 import client.person.FeedMessagePanel.BasicWidget;
 import client.shell.DynamicLookup;

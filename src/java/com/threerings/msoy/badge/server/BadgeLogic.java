@@ -26,8 +26,8 @@ import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.money.server.MoneyLogic;
 
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRepository;

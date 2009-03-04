@@ -26,7 +26,7 @@ import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 
 import static com.threerings.msoy.Log.log;
 

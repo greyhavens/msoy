@@ -11,8 +11,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.group.data.all.GroupMembership;

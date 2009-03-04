@@ -24,13 +24,14 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageAggregator.AggregateMessage;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.person.FeedMessageAggregator.AggregateMessage;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -71,37 +72,36 @@ public class FeedMessagePanel extends FocusPanel
     {
         String friendLink = profileLink(message);
         switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
+        case FRIEND_ADDED_FRIEND:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriend(friendLink,
                 buildString(message))));
             break;
 
-        case 101: // FRIEND_UPDATED_ROOM
+        case FRIEND_UPDATED_ROOM:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendUpdatedRoom(friendLink,
                 buildString(message))));
             break;
 
-        case 102: // FRIEND_WON_TROPHY
+        case FRIEND_WON_TROPHY:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonTrophy(
                             friendLink, buildString(message))));
             break;
 
-        case 103: // FRIEND_LISTED_ITEM
+        case FRIEND_LISTED_ITEM:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendListedItem(
                             friendLink, buildString(message))));
             break;
 
-        case 104: // FRIEND_GAINED_LEVEL
+        case FRIEND_GAINED_LEVEL:
             add(new IconWidget("friend_gained_level", _pmsgs.friendGainedLevel(
                             friendLink, buildString(message))));
-            break;
 
-        case 105: // FRIEND_WON_BADGE
+        case FRIEND_WON_BADGE:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(
                             friendLink, buildString(message))));
             break;
 
-        case 106: // FRIEND_WON_MEDAL
+        case FRIEND_WON_MEDAL:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(
                             friendLink, buildString(message))));
             break;
@@ -111,17 +111,21 @@ public class FeedMessagePanel extends FocusPanel
     protected void addGroupMessage (GroupFeedMessage message)
     {
         switch (message.type) {
-        case 200: // GROUP_ANNOUNCEMENT
+        case GROUP_ANNOUNCEMENT:
             String threadLink = Link.createHtml(
                 message.data[1], Pages.GROUPS, Args.compose("t", message.data[2]));
             add(new ThumbnailWidget(buildMedia(message),
                 _pmsgs.groupAnnouncement(message.data[0], threadLink)));
             break;
-        case 201: // GROUP_UPDATED_ROOM
+
+        case GROUP_UPDATED_ROOM:
             String groupLink = Link.createHtml(message.group.toString(), Pages.GROUPS,
                 Args.compose("f", message.group.getGroupId()));
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendUpdatedRoom(
                 groupLink, buildString(message))));
+            break;
+
+        default:
             break;
         }
     }
@@ -129,7 +133,7 @@ public class FeedMessagePanel extends FocusPanel
     protected void addSelfMessage (SelfFeedMessage message)
     {
         switch (message.type) {
-        case 300: // SELF_ROOM_COMMENT
+        case SELF_ROOM_COMMENT:
             if (message.actor == null) {
                 return; // TEMP: skip old pre-actor messages
             }
@@ -137,11 +141,13 @@ public class FeedMessagePanel extends FocusPanel
                 buildString(message));
             add(new ThumbnailWidget(buildMedia(message), roomText));
             break;
-        case 301: // SELF_ITEM_COMMENT
+
+        case SELF_ITEM_COMMENT:
             String itemText = _pmsgs.selfItemComment(profileLink(message), buildString(message));
             add(new ThumbnailWidget(buildMedia(message), itemText));
             break;
-        case 302: // SELF_FORUM_REPLY
+
+        case SELF_FORUM_REPLY:
             String replyText = _pmsgs.selfForumReply(profileLink(message), buildString(message));
             add(new BasicWidget(replyText));
             break;
@@ -151,7 +157,7 @@ public class FeedMessagePanel extends FocusPanel
     protected void addMessage (FeedMessage message)
     {
         switch (message.type) {
-        case 1: // GLOBAL_ANNOUNCEMENT
+        case GLOBAL_ANNOUNCEMENT:
             String threadLink = Link.createHtml(
                 message.data[0], Pages.GROUPS, Args.compose("t", message.data[1]));
             add(new BasicWidget(_pmsgs.globalAnnouncement(threadLink)));
@@ -189,29 +195,28 @@ public class FeedMessagePanel extends FocusPanel
      */
     protected String buildString (FeedMessage message)
     {
-        switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
+        switch (message.type.getCategory()) {
+        case FRIENDINGS:
             return profileLink(message.data[0], message.data[1]);
 
-        case 101: // FRIEND_UPDATED_ROOM
-        case 201: // GROUP_UPDATED_ROOM
+        case ROOMS:
             return Link.createHtml(message.data[1], Pages.WORLD, "s" + message.data[0]);
 
-        case 102: // FRIEND_WON_TROPHY
+        case TROPHIES:
             return Link.createHtml(message.data[0], Pages.GAMES,
                                    NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
                                                        NaviUtil.GameDetails.TROPHIES));
 
-        case 103: // FRIEND_LISTED_ITEM
+        case LISTED_ITEMS:
             return _pmsgs.descCombine(
                 _dmsgs.xlate("itemType" + message.data[1]),
                         Link.createHtml(message.data[0], Pages.SHOP,
                             Args.compose("l", message.data[1], message.data[2])));
 
-        case 104: // FRIEND_GAINED_LEVEL
+        case LEVELS:
             return message.data[0];
 
-        case 105: // FRIEND_WON_BADGE
+        case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
             int badgeLevel = Integer.parseInt(message.data[1]);
             String badgeHexCode = Integer.toHexString(badgeCode);
@@ -221,7 +226,7 @@ public class FeedMessagePanel extends FocusPanel
             int memberId = ((FriendFeedMessage)message).friend.getMemberId();
             return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
 
-        case 106: // FRIEND_WON_MEDAL
+        case MEDALS:
             memberId = ((FriendFeedMessage)message).friend.getMemberId();
             String medalLink =
                 Link.createHtml(message.data[0], Pages.ME, Args.compose("medals", memberId));
@@ -233,17 +238,17 @@ public class FeedMessagePanel extends FocusPanel
                 Link.createHtml(message.data[2], Pages.GROUPS, Args.compose("d", message.data[3]));
             return _pmsgs.medal(medalLink, groupLink);
 
-        // case 201: // GROUP_UPDATED_ROOM is above
+        case COMMENTS:
+            if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
+                return Link.createHtml(message.data[1], Pages.ROOMS, Args.compose("room",
+                    message.data[0]));
 
-        case 300: // SELF_ROOM_COMMENT
-            return Link.createHtml(message.data[1], Pages.ROOMS, Args.compose("room",
-                message.data[0]));
+            } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
+                return Link.createHtml(message.data[2], Pages.SHOP, Args.compose("l",
+                    message.data[0], message.data[1]));
+            }
 
-        case 301: // SELF_ITEM_COMMENT
-            return Link.createHtml(message.data[2], Pages.SHOP, Args.compose("l",
-                message.data[0], message.data[1]));
-
-        case 302: // SELF_FORUM_REPLY
+        case FORUMS:
             return Link.createHtml(message.data[1], Pages.GROUPS, Args.compose("t",
                 message.data[0]));
         }
@@ -258,8 +263,8 @@ public class FeedMessagePanel extends FocusPanel
     {
         MediaDesc media;
         ClickListener clicker;
-        switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
+        switch (message.type.getCategory()) {
+        case FRIENDINGS:
             if (message.data.length < 3) {
                 return null;
             }
@@ -275,8 +280,7 @@ public class FeedMessagePanel extends FocusPanel
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
-        case 101: // FRIEND_UPDATED_ROOM
-        case 201: // GROUP_UPDATED_ROOM
+        case ROOMS:
             if (message.data.length < 3) {
                 return null;
             }
@@ -294,7 +298,7 @@ public class FeedMessagePanel extends FocusPanel
             media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
             return MediaUtil.createMediaView(media, MediaDesc.SNAPSHOT_TINY_SIZE, clicker);
 
-        case 102: // FRIEND_WON_TROPHY
+        case TROPHIES:
             media = MediaDesc.stringToMD(message.data[2]);
             if (media == null) {
                 return null;
@@ -307,7 +311,7 @@ public class FeedMessagePanel extends FocusPanel
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
-        case 103: // FRIEND_LISTED_ITEM
+        case LISTED_ITEMS:
             if (message.data.length < 4) {
                 return null;
             }
@@ -323,7 +327,7 @@ public class FeedMessagePanel extends FocusPanel
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
-        case 105: // FRIEND_WON_BADGE
+        case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
             int level = Integer.parseInt(message.data[1]);
             int memberId = ((FriendFeedMessage)message).friend.getMemberId();
@@ -334,7 +338,7 @@ public class FeedMessagePanel extends FocusPanel
                 Pages.ME, Args.compose("passport", memberId)));
             return image;
 
-        case 106: // FRIEND_WON_MEDAL
+        case MEDALS:
             media = MediaDesc.stringToMD(message.data[1]);
             if (media == null) {
                 return null;
@@ -347,7 +351,7 @@ public class FeedMessagePanel extends FocusPanel
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
-        case 200: // GROUP_ANNOUNCEMENT
+        case ANNOUNCEMENTS:
             if (message.data.length < 4) {
                 return null;
             }
@@ -362,39 +366,39 @@ public class FeedMessagePanel extends FocusPanel
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
-        // case 201: // GROUP_UPDATED_ROOM is above
-
-        case 300: // SELF_ROOM_COMMENT
-            if (message.data.length < 3) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.WORLD, Args.compose("s", message.data[0]));
+        case COMMENTS:
+            if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
+                if (message.data.length < 3) {
+                    return null;
                 }
-            };
-            // snapshots are unconstrained at a set size; fake a width constraint for TINY_SIZE.
-            media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-            return MediaUtil.createMediaView(media, MediaDesc.SNAPSHOT_TINY_SIZE, clicker);
-
-        case 301: // SELF_ITEM_COMMENT
-            if (message.data.length < 4) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[3]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.SHOP, Args.compose("l", message.data[0], message.data[1]));
+                media = MediaDesc.stringToMD(message.data[2]);
+                if (media == null) {
+                    return null;
                 }
-            };
-            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+                clicker = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Link.go(Pages.WORLD, Args.compose("s", message.data[0]));
+                    }
+                };
+                // snapshots are unconstrained at a set size; fake a width constraint for TINY_SIZE.
+                media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                return MediaUtil.createMediaView(media, MediaDesc.SNAPSHOT_TINY_SIZE, clicker);
+    
+            } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
+                if (message.data.length < 4) {
+                    return null;
+                }
+                media = MediaDesc.stringToMD(message.data[3]);
+                if (media == null) {
+                    return null;
+                }
+                clicker = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Link.go(Pages.SHOP, Args.compose("l", message.data[0], message.data[1]));
+                    }
+                };
+                return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+            }
         }
         return null;
     }
@@ -457,38 +461,38 @@ public class FeedMessagePanel extends FocusPanel
         FeedMessage message = list.get(0);
         String friendLink = profileLink(message);
         switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
+        case FRIEND_ADDED_FRIEND:
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendAddedFriend(friendLink,
                 standardCombine(list))));
             break;
 
-        case 101: // FRIEND_UPDATED_ROOM
+        case FRIEND_UPDATED_ROOM:
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendUpdatedRooms(friendLink,
                 standardCombine(list))));
             break;
 
-        case 102: // FRIEND_WON_TROPHY
+        case FRIEND_WON_TROPHY:
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonTrophies(
                             friendLink, standardCombine(list))));
             break;
 
-        case 103: // FRIEND_LISTED_ITEM
+        case FRIEND_LISTED_ITEM:
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendListedItem(
                             friendLink, standardCombine(list))));
             break;
 
-        case 104: // FRIEND_GAINED_LEVEL
+        case FRIEND_GAINED_LEVEL:
             // display all levels gained by all friends together
             add(new IconWidget("friend_gained_level",
                         _pmsgs.friendsGainedLevel(friendLinkCombine(list))));
             break;
 
-        case 105: // FRIEND_WON_BADGE
+        case FRIEND_WON_BADGE:
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonBadges(
                             friendLink, standardCombine(list))));
             break;
 
-        case 106: // FRIEND_WON_MEDAL
+        case FRIEND_WON_MEDAL:
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonMedal(
                             friendLink, standardCombine(list))));
             break;
@@ -507,32 +511,32 @@ public class FeedMessagePanel extends FocusPanel
         FeedMessage message = list.get(0);
         String friendLinks = profileCombine(list);
         switch (message.type) {
-        case 100: // FRIEND_ADDED_FRIEND
+        case FRIEND_ADDED_FRIEND:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriend(
                 friendLinks, buildString(message))));
             break;
 
-        case 102: // FRIEND_WON_TROPHY
+        case FRIEND_WON_TROPHY:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonTrophy(
                             friendLinks, buildString(message))));
             break;
 
-        case 105: // FRIEND_WON_BADGE
+        case FRIEND_WON_BADGE:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(friendLinks,
                 buildString(message))));
             break;
 
-        case 106: // FRIEND_WON_MEDAL
+        case FRIEND_WON_MEDAL:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(friendLinks,
                 buildString(message))));
             break;
 
-        case 300: // SELF_ROOM_COMMENT
+        case SELF_ROOM_COMMENT:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.selfRoomComment(friendLinks,
                 buildString(message))));
             break;
 
-        case 301: // SELF_ITEM_COMMENT
+        case SELF_ITEM_COMMENT:
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.selfItemComment(friendLinks,
                 buildString(message))));
             break;

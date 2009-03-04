@@ -35,8 +35,8 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;

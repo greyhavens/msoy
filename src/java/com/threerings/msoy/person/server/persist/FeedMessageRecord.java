@@ -14,6 +14,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 
 /**
  * Contains information on a feed message.
@@ -49,7 +50,7 @@ public abstract class FeedMessageRecord extends PersistentRecord
     public FeedMessage toMessage ()
     {
         FeedMessage message = createMessage();
-        message.type = type;
+        message.type = FeedMessageType.fromCode(type);
         message.data = data.split("\t");
         message.posted = posted.getTime();
         return message;
