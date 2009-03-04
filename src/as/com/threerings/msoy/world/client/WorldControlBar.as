@@ -12,7 +12,6 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.client.BubblePopup;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
@@ -59,18 +58,6 @@ public class WorldControlBar extends ControlBar
     {
         super(ctx);
         _wctx = ctx;
-    }
-
-    /**
-     * Shows a help bubble emphasizing the use of the share button.
-     * TODO: make more generic
-     */
-    public function showShareButtonBubble () :void
-    {
-        // top center of the button (w/ vertical offset to clear the control bar)
-        var gloc :Point = shareBtn.localToGlobal(new Point(shareBtn.width / 2, -7));
-        BubblePopup.showHelpBubble(_ctx.getTopPanel().getPlaceContainer(),
-            Msgs.WORLD.get("h.room_share"), gloc);
     }
 
     public function enableZoomControl (enabled :Boolean ) :void

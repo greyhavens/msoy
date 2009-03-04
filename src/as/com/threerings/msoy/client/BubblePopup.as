@@ -1,6 +1,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.BlendMode;
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.MouseEvent;
@@ -31,19 +32,35 @@ public class BubblePopup extends Sprite
      * @param gloc the global location where the tail of the bubble should be
      */
     public static function showHelpBubble (
-        parent :PlaceBox, str :String, gloc :Point) :void
+        ctx :MsoyContext, target :DisplayObject, message :String, yOffset :int = 0) :void
     {
-        // convert to local coordinates
-        var loc :Point = parent.globalToLocal(gloc);
+        var p :Point = target.localToGlobal(new Point(target.width / 2, yOffset));
+
+        // TODO: We should be using the PopUpManager so we can position anywhere, not just
+        // inside the placebox.
+        var parent :PlaceBox = ctx.getTopPanel().getPlaceContainer();
+        p = parent.globalToLocal(p);
+
         // TODO: orient bubble tail based on the edge of the container the new point is closest to
-        var bubble :BubblePopup = new BubblePopup(str);
-        bubble.x = loc.x;
-        bubble.y = loc.y;
+        var bubble :BubblePopup = new BubblePopup(message);
+        bubble.x = p.x;
+        bubble.y = p.y;
         bubble.alpha = 0;
         parent.addOverlay(bubble, PlaceBox.LAYER_HELP_BUBBLES);
 
+        // helper to remove the bubble from the place box
+        var remove :Function = function () :void {
+            parent.removeOverlay(bubble);
+        };
+
+        // helper to fade out the bubble
+        var fadeOut :Function = function (delay :Number) :void {
+            Tweener.addTween(bubble,
+                { alpha: 0.0, time: FADE_OUT_DURATION, delay: delay, onComplete: remove });
+        };
+
         // fade in and fade out if there is no other user input
-        Tweener.addTween(bubble, {alpha :1.0, time :FADE_IN_DURATION});
+        Tweener.addTween(bubble, { alpha: 1.0, time: FADE_IN_DURATION });
         fadeOut(SOLID_DURATION + FADE_IN_DURATION);
 
         // mouse over makes solid and stops all fades
@@ -63,23 +80,12 @@ public class BubblePopup extends Sprite
             Tweener.removeTweens(bubble);
             remove();
         });
-
-        // helper to fade out the bubble
-        function fadeOut (delay :Number) :void {
-            Tweener.addTween(bubble, {alpha :0.0, time :FADE_OUT_DURATION,
-                delay :delay, onComplete :remove});
-        }
-
-        // helper to remove the bubble from the place box
-        function remove () :void {
-            parent.removeOverlay(bubble);
-        }
     }
 
     /**
      * Creates a new notification bubble.
      */
-    public function BubblePopup (str :String)
+    public function BubblePopup (message :String)
     {
         // NB: 0, 0 is the tip of the tail
 
@@ -90,7 +96,7 @@ public class BubblePopup extends Sprite
         text.selectable = false;
         text.autoSize = TextFieldAutoSize.LEFT;
         text.antiAliasType = AntiAliasType.ADVANCED;
-        TextUtil.setText(text, TextUtil.parseLinks(str, format, true, true), format);
+        TextUtil.setText(text, TextUtil.parseLinks(message, format, true, true), format);
         text.width = WIDTH - PADDING * 2;
         addChild(text);
 

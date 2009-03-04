@@ -28,6 +28,7 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
+import com.threerings.msoy.client.BubblePopup;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
@@ -364,7 +365,8 @@ public class RoomObjectController extends RoomController
             _wdctx.resultListener(function (group :int) :void {
                 // group 1: no help, group 2: help
                 if (group == 2) {
-                    WorldControlBar(_wdctx.getControlBar()).showShareButtonBubble();
+                    BubblePopup.showHelpBubble(_wdctx, _wdctx.getControlBar().shareBtn,
+                        Msgs.WORLD.get("h.room_share"), -7);
                 }
             }));
     }
