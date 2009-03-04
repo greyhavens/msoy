@@ -1,6 +1,5 @@
 //
-//
-// $Id: FeedPanel.java 12917 2008-10-28 20:10:30Z sarah $
+// $Id$
 
 package client.person;
 
@@ -450,7 +449,7 @@ public class FeedMessagePanel extends FocusPanel
             contents.add(MsoyUI.createHTML(html, "TextContainer"));
         }
     }
-
+    addMultiActionsMessage
     public static class BasicWidget extends FlowPanel
     {
         public BasicWidget (String html)
