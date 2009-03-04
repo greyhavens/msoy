@@ -36,7 +36,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.threerings.util.MessageManager;
+import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
 
@@ -50,11 +50,13 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.client.LayeredContainer;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
@@ -88,6 +90,7 @@ public class ChatOverlay
         fmt.color = 0x000000;
         fmt.bold = false;
         fmt.underline = false;
+        fmt.url = ""; // need to set to "" to turn OFF urls from earlier TextFormats
         return fmt;
     }
 
@@ -97,7 +100,6 @@ public class ChatOverlay
     {
         _ctx = ctx;
         _ctx.getClient().addEventListener(MsoyClient.EMBEDDED_STATE_KNOWN, handleEmbeddedKnown);
-        _msgMan = _ctx.getMessageManager();
         _includeOccList = includeOccupantList;
         _scrollBarSide = scrollBarSide;
 
@@ -760,18 +762,15 @@ public class ChatOverlay
     protected function formatMessage (
         msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
-        // first parse the message text into plain and links
-        var texts :Array =
-            TextUtil.parseLinks(msg.message, userSpeakFmt, shouldParseSpecialLinks(type));
+        var texts :Array = TextUtil.parseLinks(msg.message, userSpeakFmt, true);
 
-        // possibly insert the formatting
-        if (forceSpeaker || alwaysUseSpeaker(type)) {
-            var format :String = msg.getFormat();
-            if (format != null) {
-                var umsg :UserMessage = (msg as UserMessage);
-                texts.unshift(_msgMan.getBundle(MsoyCodes.CHAT_MSGS).get(
-                        format, umsg.getSpeakerDisplayName()) + " ");
-            }
+        var format :String = msg.getFormat();
+        if ((format != null) && (forceSpeaker || alwaysUseSpeaker(type))) {
+            var umsg :UserMessage = (msg as UserMessage);
+            var name :Name = umsg.getSpeakerDisplayName();
+            var texts2 :Array = TextUtil.parseLinks(
+                Msgs.CHAT.get(format, name, _defaultFmt, true);
+            texts.unshift.apply(null, texts2);
         }
 
         return texts;
@@ -791,6 +790,7 @@ public class ChatOverlay
         _defaultFmt.color = 0x000070;
         _defaultFmt.bold = false;
         _defaultFmt.underline = false;
+        _defaultFmt.url = ""; // negate any urls in previous-set fields
 
         _userSpeakFmt = createChatFormat();
     }
@@ -820,23 +820,6 @@ public class ChatOverlay
     protected function alwaysUseSpeaker (type :int) :Boolean
     {
         return (modeOf(type) == EMOTE) || (placeOf(type) == BROADCAST);
-    }
-
-    /**
-     * Should we parse "special links" (in the format "[text|url]") for chat messages
-     * of the specified type.
-     */
-    protected function shouldParseSpecialLinks (type :int) :Boolean
-    {
-        switch (type) {
-        case FEEDBACK:
-        case INFO:
-        case ATTENTION:
-            return true;
-
-        default:
-            return false;
-        }
     }
 
     /**
@@ -1257,9 +1240,6 @@ public class ChatOverlay
 
     /** If true, the sidebar is being suppressed and we shouldn't show it. */
     protected var _suppressSidebar :Boolean;
-
-    /** Used to translate messages. */
-    protected var _msgMan :MessageManager;
 
     /** The overlay we place on top of our target that contains all the history subtitle chat
      * glyphs. */
