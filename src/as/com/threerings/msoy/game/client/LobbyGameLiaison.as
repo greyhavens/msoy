@@ -14,6 +14,9 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.client.GameReadyObserver;
 
+import com.whirled.game.client.WhirledGameBackend;
+import com.whirled.game.client.WhirledGameController;
+
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -228,6 +231,14 @@ public class LobbyGameLiaison extends GameLiaison
     protected function lobbyCleared (closedByUser :Boolean) :void
     {
         _lobby = null;
+
+        if (closedByUser) {
+            var gameCtrl :WhirledGameController =
+                _wctx.getGameDirector().getGameController() as WhirledGameController;
+            if (gameCtrl != null) {
+                (gameCtrl.backend as WhirledGameBackend).lobbyClosed();
+            }
+        }
 
         // if we're about to enter a game, or already shutting down, stop her
         if (_gameOid != 0 || _shuttingDown) {
