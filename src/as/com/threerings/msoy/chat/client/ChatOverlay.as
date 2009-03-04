@@ -769,7 +769,7 @@ public class ChatOverlay
             var umsg :UserMessage = (msg as UserMessage);
             var name :Name = umsg.getSpeakerDisplayName();
             var texts2 :Array = TextUtil.parseLinks(
-                Msgs.CHAT.get(format, name, _defaultFmt, true);
+                Msgs.CHAT.get(format, name), _defaultFmt, true);
             texts.unshift.apply(null, texts2);
         }
 
