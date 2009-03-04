@@ -25,8 +25,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheKey;
-import com.samskivert.depot.DataMigration;
-import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 
@@ -57,7 +55,6 @@ import com.samskivert.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
-import com.samskivert.depot.operator.Conditionals.IsNull;
 import com.samskivert.depot.operator.Conditionals.LessThan;
 import com.samskivert.depot.operator.Conditionals.Like;
 import com.samskivert.depot.operator.Conditionals.NotEquals;
@@ -80,7 +77,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;

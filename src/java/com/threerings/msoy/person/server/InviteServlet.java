@@ -22,7 +22,6 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.persist.GameDetailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;

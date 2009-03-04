@@ -34,7 +34,6 @@ import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.RegisterInfo;
-import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import com.threerings.msoy.web.gwt.WebUserService;

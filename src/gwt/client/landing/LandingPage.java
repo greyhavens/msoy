@@ -8,9 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.shell.Page;
-import client.util.Link;
 
 /**
  * The main entry point for the landing page(s).

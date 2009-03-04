@@ -9,7 +9,6 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -697,7 +696,7 @@ public class MsoyUI
             target.addClickListener(listener);
         }
     }
-    
+
     /**
      * Computes the number of rows to display for a paged grid.
      *

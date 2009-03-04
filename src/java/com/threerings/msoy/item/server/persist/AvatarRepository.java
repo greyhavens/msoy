@@ -3,29 +3,16 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DatabaseException;
-import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.annotation.Entity;
-import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.*;
 
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
-
-import com.threerings.msoy.item.data.all.Item;
 
 import static com.threerings.msoy.Log.log;
 

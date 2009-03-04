@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -23,7 +22,6 @@ import com.samskivert.depot.operator.Conditionals.IsNull;
 import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.msoy.person.gwt.Gallery;
-import com.threerings.msoy.server.persist.RecordFunctions;
 
 /**
  * Provides access to gallery persistence.

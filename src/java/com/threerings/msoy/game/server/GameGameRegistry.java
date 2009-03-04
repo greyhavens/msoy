@@ -49,7 +49,6 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Table;
-import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.parlor.server.ParlorSender;

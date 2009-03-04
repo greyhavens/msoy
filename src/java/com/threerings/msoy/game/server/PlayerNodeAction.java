@@ -9,7 +9,6 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 /**
  * An action to be invoked on every server on which a player is logged in. This is different from

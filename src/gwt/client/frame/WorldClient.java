@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
-import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
