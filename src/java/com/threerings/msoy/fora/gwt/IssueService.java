@@ -52,6 +52,12 @@ public interface IssueService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads a single forum message.
+     */
+    ForumMessage loadMessage (int messageId)
+        throws ServiceException;
+
+    /**
      * Loads a list of ForumMessage for an issueId.
      */
     List<ForumMessage> loadMessages (int issueId, int messageId)

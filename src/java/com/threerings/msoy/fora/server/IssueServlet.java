@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.fora.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -74,6 +75,18 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
+    public ForumMessage loadMessage (int messageId)
+        throws ServiceException
+    {
+        // TODO Do we want to validate read priviledges for this message?
+        ForumMessageRecord msgrec = _forumRepo.loadMessage(messageId);
+        if (msgrec == null) {
+            return null;
+        }
+        return resolveMessages(Collections.singletonList(msgrec)).get(0);
+    }
+
+    // from interface IssueService
     public List<ForumMessage> loadMessages (int issueId, int messageId)
         throws ServiceException
     {
@@ -84,22 +97,7 @@ public class IssueServlet extends MsoyServiceServlet
         }
         // TODO Do we want to validate read priviledges for these individual messages?
 
-        // enumerate the posters and create member cards for them
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
-        IntSet posters = new ArrayIntSet();
-        for (ForumMessageRecord msgrec : msgrecs) {
-            posters.add(msgrec.posterId);
-        }
-        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(posters)) {
-            cards.put(mcrec.memberId, mcrec.toMemberCard());
-        }
-
-        // convert the messages to runtime format
-        List<ForumMessage> messages = Lists.newArrayList();
-        for (ForumMessageRecord msgrec : msgrecs) {
-            messages.add(msgrec.toForumMessage(cards));
-        }
-        return messages;
+        return resolveMessages(msgrecs);
     }
 
     // from interface IssueService
@@ -211,6 +209,26 @@ public class IssueServlet extends MsoyServiceServlet
                 result.issues.size() : _issueRepo.loadIssueCount(types, states);
         }
         return result;
+    }
+
+    protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> records)
+    {
+        // enumerate the posters and create member cards for them
+        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+        IntSet posters = new ArrayIntSet();
+        for (ForumMessageRecord msgrec : records) {
+            posters.add(msgrec.posterId);
+        }
+        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(posters)) {
+            cards.put(mcrec.memberId, mcrec.toMemberCard());
+        }
+
+        // convert the messages to runtime format
+        List<ForumMessage> messages = Lists.newArrayList();
+        for (ForumMessageRecord msgrec : records) {
+            messages.add(msgrec.toForumMessage(cards));
+        }
+        return messages;
     }
 
     // our dependencies

@@ -59,3 +59,21 @@
   vertical-align: bottom;
   white-space: nowrap;
 }
+
+.editIssuePanel .Title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.editIssuePanel .Label, .editIssuePanel .SubTitle {
+  font-weight: bold;
+}
+
+.editIssuePanel .Label {
+  width: 50px;
+  vertical-align: top;
+}
+
+.editIssuePanel .SubTitle {
+  padding-top: 10px;
+}

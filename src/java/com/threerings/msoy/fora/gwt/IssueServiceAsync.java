@@ -32,6 +32,11 @@ public interface IssueServiceAsync
     void loadIssue (int issueId, AsyncCallback<Issue> callback);
 
     /**
+     * The asynchronous version of {@link IssueService#loadMessage}.
+     */
+    void loadMessage (int messageId, AsyncCallback<ForumMessage> callback);
+
+    /**
      * The asynchronous version of {@link IssueService#loadMessages}.
      */
     void loadMessages (int issueId, int messageId, AsyncCallback<List<ForumMessage>> callback);

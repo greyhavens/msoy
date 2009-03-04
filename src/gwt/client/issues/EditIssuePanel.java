@@ -35,26 +35,59 @@ import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NaviUtil;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 
 /**
  * Displays an issue and allows it to be edited if the user is authorized.
  */
 public class EditIssuePanel extends TableFooterPanel
 {
-    public EditIssuePanel (IssueModels imodels)
+    public static EditIssuePanel newForCreate (IssueModels models, int messageId)
     {
-        buildPanel();
-        createIssue();
+        EditIssuePanel panel = new EditIssuePanel(models);
+        panel.createIssue(messageId);
+        return panel;
     }
 
-    public EditIssuePanel (IssueModels imodels, int issueId)
+    public static EditIssuePanel newForEdit (IssueModels models, int issueId)
     {
-        _imodels =  imodels;
+        EditIssuePanel panel = new EditIssuePanel(models);
+        panel.displayIssue(issueId);
+        return panel;
+    }
 
+    public EditIssuePanel (IssueModels imodels)
+    {
+        setStyleName("editIssuePanel");
+        _imodels = imodels;
+        addRow(_table = new SmartTable(0, 5));
+    }
+
+    protected void createIssue (final int messageId)
+    {
+        _newIssue = true;
+        _issue = new Issue();
+        _issue.creator = new MemberName(CShell.creds.permaName, CShell.creds.getMemberId());
+        fillEditPanel();
+
+        if (messageId != 0) {
+            _issuesvc.loadMessage(messageId, new MsoyCallback<ForumMessage>() {
+                public void onSuccess (ForumMessage msg) {
+                    if (msg != null) {
+                        _messageId = messageId;
+                        addMessage(msg);
+                    }
+                }
+            });
+        }
+    }
+
+    protected void displayIssue (int issueId)
+    {
         Issue issue = _imodels.findIssue(issueId);
         if (issue != null) {
-            buildPanel();
             setIssue(issue, 0, 0);
 
         } else {
@@ -63,7 +96,6 @@ public class EditIssuePanel extends TableFooterPanel
                     if (issue == null) {
                         MsoyUI.error(_msgs.errINotFound());
                     } else {
-                        buildPanel();
                         setIssue(issue, 0, 0);
                     }
                 }
@@ -71,30 +103,7 @@ public class EditIssuePanel extends TableFooterPanel
         }
     }
 
-//     public EditIssuePanel (ThreadPanel tpanel, ForumMessage message)
-//     {
-//         _tpanel = tpanel;
-//         _message = message;
-//         buildPanel();
-
-//         createIssue();
-//         addMessage(message);
-//     }
-
-    public void createIssue ()
-    {
-        _newIssue = true;
-        _issue = new Issue();
-        _issue.creator = new MemberName(CShell.creds.permaName, CShell.creds.getMemberId());
-        fillEditPanel();
-    }
-
-    public void setIssue (Issue issue)
-    {
-        setIssue(issue, 0, 0);
-    }
-
-    public void setIssue (Issue issue, int messageId, int page)
+    protected void setIssue (Issue issue, int messageId, int page)
     {
         _issue = issue;
         _messageId = messageId;
@@ -113,41 +122,30 @@ public class EditIssuePanel extends TableFooterPanel
         });
     }
 
-    protected void buildPanel ()
-    {
-        _table = new SmartTable(0, 5);
-
-        int rr = 0;
-        _table.setText(rr++, 0, _msgs.iType());
-        _table.setText(rr++, 0, _msgs.iCreator());
-        _table.setText(rr++, 0, _msgs.iOwner());
-        _table.setText(rr++, 0, _msgs.iSummary());
-        _table.setText(rr++, 0, _msgs.iState());
-        _table.setText(rr++, 0, _msgs.iPriority());
-        _table.setText(rr++, 0, _msgs.iCategory());
-        _table.setText(rr++, 0, _msgs.iDescription());
-        _table.setText(rr++, 0, _msgs.iComment());
-        for (rr = 0; rr < _table.getRowCount(); rr++) {
-            _table.getFlexCellFormatter().setVerticalAlignment(rr, 0, HasAlignment.ALIGN_TOP);
-        }
-
-        addRow(_table);
-    }
-
     protected void fillViewPanel ()
     {
-        int rr = 0;
-        _table.setText(rr++, 1, IssueMsgs.typeMsg(_issue.type, _msgs));
-        _table.setText(rr++, 1, _issue.creator.toString());
+        int row = 0;
+        _table.setText(row, 0, _issue.summary, 2, "Title");
+        _table.setText(row++, 1, IssueMsgs.typeMsg(_issue.type, _msgs), 1, null);
+
+        _table.setText(row, 0, _msgs.iCreator() + ": " + _issue.creator);
+        String otxt = (_issue.owner == null ? _msgs.iNoOwner() : _issue.owner.toString());
+        _table.setText(row++, 1, _msgs.iOwner() + ": " + otxt);
+
+        _table.setText(row, 0, _msgs.iState() + ": " + IssueMsgs.stateMsg(_issue.state, _msgs));
         _table.setText(
-            rr++, 1, (_issue.owner == null ? _msgs.iNoOwner() : _issue.owner.toString()));
-        _table.setText(rr++, 1, _issue.summary);
-        _table.setText(rr++, 1, IssueMsgs.stateMsg(_issue.state, _msgs));
-        _table.setText(rr++, 1, IssueMsgs.priorityMsg(_issue.priority, _msgs));
-        _table.setText(rr++, 1, IssueMsgs.categoryMsg(_issue.category, _msgs));
-        _table.setText(rr++, 1, _issue.description);
-        _table.setText(rr++, 1, _issue.closeComment);
-        _messagesRow = rr;
+            row, 1, _msgs.iPriority() + ": " + IssueMsgs.priorityMsg(_issue.priority, _msgs));
+        _table.setText(
+            row++, 2, _msgs.iCategory() + ": " + IssueMsgs.categoryMsg(_issue.category, _msgs));
+
+        if (!StringUtil.isBlank(_issue.description)) {
+            _table.setText(row++, 0, _msgs.iDescription(), 3, "SubTitle");
+            _table.setText(row++, 0, _issue.description, 3, null);
+        }
+        if (_issue.state != Issue.STATE_OPEN) {
+            _table.setText(row++, 0, _msgs.iComment(), 3, "SubTitle");
+            _table.setText(row++, 0, _issue.closeComment, 3, null);
+        }
 
         if (_messageId > 0) {
             Button assign = new Button(_msgs.assign());
@@ -157,18 +155,18 @@ public class EditIssuePanel extends TableFooterPanel
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
-                    Link.go(Pages.GROUPS, 
-                        Args.compose("t", _message.threadId, _page, _messageId));
+                    Link.go(Pages.GROUPS, Args.compose("t", _threadId, _page, _messageId));
                     return false;
                 }
             };
-            _table.setWidget(0, _messagesRow++, assign);
+            _table.setWidget(row++, 2, assign);
         }
     }
 
     protected void fillEditPanel ()
     {
         int row = 0;
+        _table.setText(row, 0, _msgs.iType(), 1, "Label");
         _table.setWidget(row++, 1, _typeBox = new ListBox());
         for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
             _typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], _msgs));
@@ -176,7 +174,11 @@ public class EditIssuePanel extends TableFooterPanel
                 _typeBox.setSelectedIndex(ii);
             }
         }
+
+        _table.setText(row, 0, _msgs.iCreator(), 1, "Label");
         _table.setText(row++, 1, _issue.creator.toString());
+
+        _table.setText(row, 0, _msgs.iOwner(), 1, "Label");
         _table.setWidget(row++, 1, _ownerBox = new ListBox());
         _ownerBox.addItem(_msgs.iNoOwner());
         _issuesvc.loadOwners(new MsoyCallback<List<MemberName>>() {
@@ -186,9 +188,6 @@ public class EditIssuePanel extends TableFooterPanel
                 }
             }
         });
-
-        _summary = MsoyUI.createTextBox(_issue.summary, Issue.MAX_SUMMARY_LENGTH, 60);
-        _table.setWidget(row++, 1, _summary);
 
         HorizontalPanel sbits = new HorizontalPanel();
         sbits.add(_stateBox = new ListBox());
@@ -216,8 +215,10 @@ public class EditIssuePanel extends TableFooterPanel
             };
             sbits.add(closeIgnored);
         }
+        _table.setText(row, 0, _msgs.iState(), 1, "Label");
         _table.setWidget(row++, 1, sbits);
 
+        _table.setText(row, 0, _msgs.iPriority(), 1, "Label");
         _table.setWidget(row++, 1, _priorityBox = new ListBox());
         for (int ii = 0; ii < Issue.PRIORITY_VALUES.length; ii++) {
             _priorityBox.addItem(IssueMsgs.priorityMsg(Issue.PRIORITY_VALUES[ii], _msgs));
@@ -226,6 +227,7 @@ public class EditIssuePanel extends TableFooterPanel
             }
         }
 
+        _table.setText(row, 0, _msgs.iCategory(), 1, "Label");
         _table.setWidget(row++, 1, _categoryBox = new ListBox());
         for (int ii = 0; ii < Issue.CATEGORY_VALUES.length; ii++) {
             _categoryBox.addItem(IssueMsgs.categoryMsg(Issue.CATEGORY_VALUES[ii], _msgs));
@@ -234,39 +236,27 @@ public class EditIssuePanel extends TableFooterPanel
             }
         }
 
+        _summary = MsoyUI.createTextBox(_issue.summary, Issue.MAX_SUMMARY_LENGTH, 60);
+        _table.setText(row, 0, _msgs.iSummary(), 1, "Label");
+        _table.setWidget(row++, 1, _summary);
+
+        _table.setText(row, 0, _msgs.iDescription(), 1, "Label");
         _description = new LimitedTextArea(Issue.MAX_DESC_LENGTH, 60, 3);
         _description.setText(_issue.description);
         _table.setWidget(row++, 1, _description);
 
         _comment = new LimitedTextArea(Issue.MAX_COMMENT_LENGTH, 60, 3);
         if (_issue.issueId != 0) {
+            _table.setText(row, 0, _msgs.iComment(), 1, "Label");
             _table.setWidget(row++, 1, _comment);
             _comment.setText(_issue.closeComment);
         }
 
-        Button left, right;
-        if (_tpanel != null) {
-            left = new Button(_msgs.cancel(), new ClickListener() {
-                public void onClick (Widget source) {
-                    _tpanel.showMessages();
-                }
-            });
-            right = new Button(_msgs.create());
-            new CommitCallback(right);
-
-        } else {
-            left = new Button(_msgs.cancel(), new ClickListener() {
-                public void onClick (Widget source) {
-                    History.back();
-                }
-            });
-            right = new Button(_newIssue ? _msgs.create() : _msgs.update());
-            new CommitCallback(right);
-        }
+        Button cancel = new Button(_msgs.cancel(), NaviUtil.onGoBack());
+        Button submit = new Button(_newIssue ? _msgs.create() : _msgs.update());
+        new CommitCallback(submit);
         _table.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        _table.setWidget(row++, 0, MsoyUI.createButtonPair(left, right), 2, null);
-
-        _messagesRow = row;
+        _table.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, submit), 2, null);
     }
 
     protected void setOwners (List<MemberName> owners)
@@ -283,18 +273,18 @@ public class EditIssuePanel extends TableFooterPanel
 
     protected void setMessages (List<ForumMessage> messages)
     {
+        _table.addText(_msgs.assocMessages(), 3, "SubTitle");
         for (ForumMessage message : messages) {
             addMessage(message);
         }
         if (_messageId > 0) {
-            _message = messages.get(0);
+            _threadId = messages.get(0).threadId;
         }
     }
 
     protected void addMessage (ForumMessage message)
     {
-        _table.getFlexCellFormatter().setColSpan(_messagesRow, 0, 2);
-        _table.setWidget(_messagesRow++, 0, new IssueMessagePanel(message));
+        _table.addWidget(new IssueMessagePanel(message), 3, null);
     }
 
     protected class CommitCallback extends ClickCallback<Issue>
@@ -327,8 +317,7 @@ public class EditIssuePanel extends TableFooterPanel
             }
 
             if (_issue.issueId == 0) {
-                _issuesvc.createIssue(
-                    _issue, (_message == null ? 0 : _message.messageId), this);
+                _issuesvc.createIssue(_issue, _messageId, this);
             } else {
                 _issuesvc.updateIssue(_issue, this);
             }
@@ -340,9 +329,6 @@ public class EditIssuePanel extends TableFooterPanel
                 _imodels.flush();
             }
             History.back();
-            // TODO
-//             _message.issueId = result.issueId;
-//             _tpanel.showMessages(true);
             return false;
         }
 
@@ -353,9 +339,7 @@ public class EditIssuePanel extends TableFooterPanel
 
     protected IssueModels _imodels;
     protected Issue _issue;
-    protected ThreadPanel _tpanel;
-    protected ForumMessage _message;
-    protected int _messageId, _page;
+    protected int _threadId, _messageId, _page;
     protected boolean _newIssue;
 
     protected SmartTable _table;
@@ -369,8 +353,6 @@ public class EditIssuePanel extends TableFooterPanel
     protected LimitedTextArea _comment;
     protected List<MemberName> _ownerNames;
     protected Hyperlink _threadLink;
-
-    protected int _messagesRow;
 
     protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
     protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)

@@ -295,15 +295,12 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             if (_message.issueId > 0) {
                 ClickListener viewClick = Link.createListener(
-                    Pages.GROUPS, Args.compose("i", _message.issueId));
+                    Pages.ISSUES, Args.compose("i", _message.issueId));
                 toolBar.add(makeInfoImage(_images.view_issue(), _mmsgs.inlineIssue(), viewClick));
 
             } else if (CShell.isSupport()) {
-                ClickListener newClick = new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _parent.newIssue(_message);
-                    }
-                };
+                ClickListener newClick = Link.createListener(
+                    Pages.ISSUES, Args.compose("create", _message.messageId));
                 toolBar.add(makeInfoImage(_images.new_issue(), _mmsgs.inlineNewIssue(), newClick));
                 String aargs = Args.compose("assign", _message.messageId, _page);
                 toolBar.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),

@@ -26,10 +26,10 @@ public class IssuesPage extends Page
             setContent(_msgs.myIssuesTitle(), issues);
 
         } else if (action.equals("create")) {
-            setContent(_msgs.newIssue(), new EditIssuePanel(_imodels));
+            setContent(_msgs.newIssue(), EditIssuePanel.newForCreate(_imodels, args.get(1, 0)));
 
         } else if (action.equals("i")) {
-            setContent(_msgs.viewIssue(), new EditIssuePanel(_imodels, args.get(1, 0)));
+            setContent(_msgs.viewIssue(), EditIssuePanel.newForEdit(_imodels, args.get(1, 0)));
 
         } else { // action.equals("list") or no action
             int type = args.get(1, Issue.TYPE_BUG), state = args.get(2, Issue.STATE_OPEN);
