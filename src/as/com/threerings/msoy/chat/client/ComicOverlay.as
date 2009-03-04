@@ -173,8 +173,8 @@ public class ComicOverlay extends ChatOverlay
      *
      * @return the padding that should be applied to the bubble's label.
      */
-    public function drawBubbleShape (g :Graphics, type :int, txtWidth :int, txtHeight :int,
-        tail :Boolean) :int
+    public function drawBubbleShape (
+        g :Graphics, type :int, txtWidth :int, txtHeight :int, tail :Boolean) :int
     {
         var outline :uint = getOutlineColor(type);
         var background :uint;
@@ -206,6 +206,12 @@ public class ComicOverlay extends ChatOverlay
         }
 
         return padding;
+    }
+
+    override public function setClickableGlyphs (clickable :Boolean) :void
+    {
+        super.setClickableGlyphs(clickable);
+        setClickable(_allBubbles, clickable);
     }
 
     override protected function getOverlays () :Array
@@ -308,6 +314,7 @@ public class ComicOverlay extends ChatOverlay
                 new BubbleCloud(this, MAX_BUBBLES_PER_USER, local, _target.width, _target.height);
             _bubbles.put(speaker, cloud);
         }
+        bubble.setClickable(_glyphsClickableAlways);
         cloud.addBubble(bubble);
         if (placeOf(type) == PLACE) {
             _scrollOverlay.addChild(bubble);

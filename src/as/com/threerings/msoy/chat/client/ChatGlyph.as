@@ -56,25 +56,8 @@ public class ChatGlyph extends Sprite
     }
 
     /**
-     * Returns true if the text under the given stage coordinates should be clickable (such as a
-     * URL).
+     * Force the clickability of the glyph.
      */
-    public function isClickableAtPoint (stagePoint :Point) :Boolean
-    {
-        var textPoint :Point = _txt.globalToLocal(stagePoint);
-        var charIndex :int = _txt.getCharIndexAtPoint(textPoint.x, textPoint.y);
-        if (charIndex == -1 || charIndex >= _txt.length) {
-            // make sure we're not showing the text-selection cursor
-            setClickable(false);
-            return false;
-        }
-
-        var format :TextFormat = _txt.getTextFormat(charIndex);
-        var clickable :Boolean = (format != null) && !StringUtil.isBlank(format.url);
-        setClickable(clickable);
-        return clickable;
-    }
-
     public function setClickable (clickable :Boolean) :void
     {
         _txt.mouseEnabled = clickable;
@@ -95,6 +78,7 @@ public class ChatGlyph extends Sprite
     protected function createTextField () :TextField
     {
         var txt :TextField = new TextField();
+        TextFieldUtil.trackOnlyLinksMouseable(txt);
         txt.multiline = true;
         txt.wordWrap = true;
         txt.selectable = true; // enable copy/paste

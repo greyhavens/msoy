@@ -118,7 +118,6 @@ public class GameChatContainer extends LayeredContainer
     {
         clearOverlay();
         _overlay = new ChatOverlay(_ctx, this, ChatOverlay.SCROLL_BAR_LEFT, false);
-        _overlay.setClickableGlyphs(true);
         // this overlay needs to listen on both the msoy and game chat directors
         _chatDtr.addChatDisplay(_overlay);
         _ctx.getMsoyChatDirector().addChatDisplay(_overlay);

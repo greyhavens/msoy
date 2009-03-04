@@ -207,15 +207,7 @@ public class ChatOverlay
             // but only local coords seem to work. Bug?
             var objs :Array = overlay.getObjectsUnderPoint(overlay.globalToLocal(stagePoint));
             for each (var obj :DisplayObject in objs) {
-                // the obj returned when hovering over text is the TextField, not the Chat Glyph
-                if (obj.parent is ChatGlyph) {
-                    if (_glyphsClickableAlways) {
-                        (obj.parent as ChatGlyph).setClickable(true);
-                        return true;
-                    } else if ((obj.parent as ChatGlyph).isClickableAtPoint(stagePoint)) {
-                        return true;
-                    }
-                } else if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
+                if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled) {
                     return true;
                 }
             }
@@ -282,6 +274,9 @@ public class ChatOverlay
     public function setClickableGlyphs (clickable :Boolean) :void
     {
         _glyphsClickableAlways = clickable;
+
+        setClickable(_showingHistory, clickable);
+        setClickable(_subtitles, clickable);
     }
 
     /**
@@ -385,6 +380,7 @@ public class ChatOverlay
             glyph.y = ypos;
             ypos -= 1;
             glyph.setTransparent(_chatContainer == null && _target is PlaceBox);
+            glyph.setClickable(_glyphsClickableAlways);
         }
 
         for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
@@ -530,14 +526,10 @@ public class ChatOverlay
                 _chatContainer.displayOccupantList(_occupantList);
             }
             setHistoryEnabled(true, true);
-            for each (var glyph :ChatGlyph in _showingHistory) {
-                glyph.setClickable(true);
-            }
+            setClickable(_showingHistory, true);
 
         } else {
-            for each (glyph in _showingHistory) {
-                glyph.setClickable(false);
-            }
+            setClickable(_showingHistory, false);
             _ctx.getTopPanel().clearLeftPanel(_chatContainer);
             if (_chatContainer.containsOccupantList()) {
                 _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
@@ -606,6 +598,13 @@ public class ChatOverlay
         return _occupantList != null &&
             (_target.containsOverlay(_occupantList) ||
             (_chatContainer != null && _chatContainer.containsOccupantList()));
+    }
+
+    protected function setClickable (glyphs :Array, clickable :Boolean) :void
+    {
+        for each (var glyph :ChatGlyph in glyphs) {
+            glyph.setClickable(clickable);
+        }
     }
 
     protected function getDefaultTargetBounds () :Rectangle
@@ -714,6 +713,7 @@ public class ChatOverlay
         glyph.x = _targetBounds.x + PAD;
         glyph.y = _targetBounds.bottom - height - PAD;
         scrollUpSubtitles(height + 1);
+        glyph.setClickable(_glyphsClickableAlways);
         _subtitles.push(glyph);
         _historyOverlay.addChild(glyph);
     }
@@ -749,9 +749,6 @@ public class ChatOverlay
         var msg :ChatMessage = _filteredMessages[index] as ChatMessage;
         glyph = createSubtitle(msg, getType(msg, true), false);
         glyph.histIndex = index;
-        if (_chatContainer != null) {
-            glyph.setClickable(true);
-        }
         _showingHistory.push(glyph);
         return glyph;
     }
