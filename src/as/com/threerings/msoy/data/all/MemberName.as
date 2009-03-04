@@ -43,14 +43,6 @@ public class MemberName extends Name
     }
 
     /**
-     * Returns true if the supplied member id represents a guest.
-     */
-    public static function isGuest (memberId :int) :Boolean
-    {
-        return memberId <= 0;
-    }
-
-    /**
      * Create a new MemberName.
      */
     public function MemberName (displayName :String = "", memberId :int = 0)
@@ -65,14 +57,6 @@ public class MemberName extends Name
     public function getMemberId () :int
     {
         return _memberId;
-    }
-
-    /**
-     * Returns true if this name represents a guest member or a viewer.
-     */
-    public function isGuest () :Boolean
-    {
-        return MemberName.isGuest(_memberId);
     }
 
     /**
