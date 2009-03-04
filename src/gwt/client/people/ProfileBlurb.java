@@ -32,6 +32,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ImageChooserPopup;
@@ -42,7 +43,6 @@ import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
-import client.util.DateUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;

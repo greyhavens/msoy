@@ -26,11 +26,11 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
-import client.util.DateUtil;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

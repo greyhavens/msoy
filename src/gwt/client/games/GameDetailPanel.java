@@ -30,6 +30,7 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
 import client.comment.CommentsPanel;
 import client.item.FavoriteIndicator;
@@ -43,7 +44,6 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
-import client.util.NaviUtil.GameDetails;
 
 /**
  * Displays detail information on a particular game.

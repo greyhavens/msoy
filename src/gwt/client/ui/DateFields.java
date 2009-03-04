@@ -5,8 +5,6 @@ package client.ui;
 
 import java.util.Date;
 
-import client.util.DateUtil;
-
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -14,6 +12,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.web.gwt.DateUtil;
 
 public class DateFields extends HorizontalPanel
     implements SourcesFocusEvents

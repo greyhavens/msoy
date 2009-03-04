@@ -22,6 +22,7 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
+import com.threerings.msoy.web.gwt.DateUtil;
 
 import client.item.ImageChooserPopup;
 import client.ui.ContestBox;
@@ -29,7 +30,6 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
-import client.util.DateUtil;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

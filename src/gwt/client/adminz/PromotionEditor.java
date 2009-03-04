@@ -23,6 +23,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Promotion;
 
 import client.item.ImageChooserPopup;
@@ -31,7 +32,6 @@ import client.ui.MsoyUI;
 import client.ui.PromotionBox;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
-import client.util.DateUtil;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

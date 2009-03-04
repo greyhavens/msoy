@@ -7,9 +7,9 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
 import client.shell.Page;
-import client.util.NaviUtil.GameDetails;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's single player the game

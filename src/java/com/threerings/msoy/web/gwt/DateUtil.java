@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package com.threerings.msoy.web.gwt;
 
 import java.util.Date;
 

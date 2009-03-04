@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.threerings.msoy.web.gwt.DateUtil;
+
 /**
  * Functions to aggregate a list of news feed messages by the actor (left aggregate) or the action
  * (right aggregate) in question.
@@ -101,14 +103,10 @@ public class FeedMessageAggregator
     /**
      * Calculate the miliseconds for the start of a given day.
      */
-    @SuppressWarnings("deprecation")
     public static long startOfDay (long timestamp)
     {
         Date date = new Date(timestamp);
-        // TODO: move DateUtil to shared code so we can use it here
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
+        DateUtil.zeroTime(date);
         return date.getTime();
     }
 

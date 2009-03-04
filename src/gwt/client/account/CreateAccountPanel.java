@@ -32,6 +32,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
+import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -44,7 +45,6 @@ import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.DateUtil;
 import client.util.ServiceUtil;
 
 /**
