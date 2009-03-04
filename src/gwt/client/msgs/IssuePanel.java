@@ -61,6 +61,14 @@ public class IssuePanel extends TitledListPanel
         setContents(createHeader(_mmsgs.assignIssueListHeader(), false), issues);
     }
 
+    public void issueUpdated (boolean newIssue, Issue issue)
+    {
+        if (newIssue) {
+            _imodels.newIssuePosted(issue);
+        }
+        redisplayIssues();
+    }
+
     public void redisplayIssues ()
     {
         Link.go(Pages.GROUPS, (_owned ? "owned_" : "b_") + _type + "_" + _state);

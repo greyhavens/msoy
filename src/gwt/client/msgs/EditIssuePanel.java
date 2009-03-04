@@ -9,12 +9,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -25,6 +26,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
+import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -112,6 +114,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(6, 1, IssueMsgs.categoryMsg(_issue.category, _mmsgs));
         _table.setText(7, 1, _issue.closeComment);
         _messagesRow = 8;
+
         if (_messageId > 0) {
             Button assign = new Button(_mmsgs.assign());
             new ClickCallback<Void>(assign) {
@@ -149,15 +152,37 @@ public class EditIssuePanel extends TableFooterPanel
                 }
             }
         });
-        _table.setWidget(row++, 1, _description = MsoyUI.createTextArea(_issue.description, 50, 3));
+        _description = new LimitedTextArea(Issue.MAX_DESC_LENGTH, 60, 3);
+        _description.setText(_issue.description);
+        _table.setWidget(row++, 1, _description);
 
-        _table.setWidget(row++, 1, _stateBox = new ListBox());
+        HorizontalPanel sbits = new HorizontalPanel();
+        sbits.add(_stateBox = new ListBox());
         for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
             _stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], _mmsgs));
             if (_issue.state == Issue.STATE_VALUES[ii]) {
                 _stateBox.setSelectedIndex(ii);
             }
         }
+        if (_issue.issueId != 0) {
+            sbits.add(WidgetUtil.makeShim(5, 5));
+            Button closeFixed = new Button(_mmsgs.iCloseFixed());
+            new CommitCallback(closeFixed) {
+                protected byte getState () {
+                    return Issue.STATE_RESOLVED;
+                }
+            };
+            sbits.add(closeFixed);
+            sbits.add(WidgetUtil.makeShim(5, 5));
+            Button closeIgnored = new Button(_mmsgs.iCloseIgnored());
+            new CommitCallback(closeIgnored) {
+                protected byte getState () {
+                    return Issue.STATE_IGNORED;
+                }
+            };
+            sbits.add(closeIgnored);
+        }
+        _table.setWidget(row++, 1, sbits);
 
         _table.setWidget(row++, 1, _priorityBox = new ListBox());
         for (int ii = 0; ii < Issue.PRIORITY_VALUES.length; ii++) {
@@ -175,7 +200,11 @@ public class EditIssuePanel extends TableFooterPanel
             }
         }
 
-        _table.setWidget(row++, 1, _comment = MsoyUI.createTextArea(_issue.closeComment, 50, 3));
+        _comment = new LimitedTextArea(Issue.MAX_COMMENT_LENGTH, 60, 3);
+        if (_issue.issueId != 0) {
+            _table.setWidget(row++, 1, _comment);
+            _comment.setText(_issue.closeComment);
+        }
 
         Button left, right;
         if (_tpanel != null) {
@@ -185,16 +214,7 @@ public class EditIssuePanel extends TableFooterPanel
                 }
             });
             right = new Button(_mmsgs.create());
-            new ClickCallback<Issue>(right) {
-                @Override protected boolean callService () {
-                    return commitEdit(true, this);
-                }
-                @Override protected boolean gotResult (Issue result) {
-                    _message.issueId = result.issueId;
-                    _tpanel.showMessages(true);
-                    return false;
-                }
-            };
+            new CommitCallback(right);
 
         } else {
             left = new Button(_mmsgs.cancel(), new ClickListener() {
@@ -203,15 +223,7 @@ public class EditIssuePanel extends TableFooterPanel
                 }
             });
             right = new Button(_newIssue ? _mmsgs.create() : _mmsgs.update());
-            new ClickCallback<Issue>(right) {
-                @Override protected boolean callService () {
-                    return commitEdit(_newIssue, this);
-                }
-                @Override protected boolean gotResult (Issue result) {
-                    _ipanel.redisplayIssues();
-                    return false;
-                }
-            };
+            new CommitCallback(right);
         }
         _table.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
         _table.setWidget(row++, 0, MsoyUI.createButtonPair(left, right), 2, null);
@@ -247,43 +259,56 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setWidget(_messagesRow++, 0, new IssueMessagePanel(message));
     }
 
-    protected boolean commitEdit (boolean create, ClickCallback<Issue> callback)
+    protected class CommitCallback extends ClickCallback<Issue>
     {
-        _issue.owner = (_ownerBox.getSelectedIndex() > 0) ?
-                        _ownerNames.get(_ownerBox.getSelectedIndex() - 1) : null;
-        _issue.description = _description.getText();
-        if (_issue.description.length() == 0) {
-            MsoyUI.error(_mmsgs.errINoDescription());
-            return false;
-        } else if (_issue.description.length() > Issue.MAX_DESC_LENGTH) {
-            MsoyUI.error(_mmsgs.errIDescLong());
-            return false;
-        }
-        _issue.state = Issue.STATE_VALUES[_stateBox.getSelectedIndex()];
-        _issue.priority = Issue.PRIORITY_VALUES[_priorityBox.getSelectedIndex()];
-        _issue.type = Issue.TYPE_VALUES[_typeBox.getSelectedIndex()];
-        _issue.category = Issue.CATEGORY_VALUES[_categoryBox.getSelectedIndex()];
-        if (_issue.state != Issue.STATE_OPEN) {
-            _issue.closeComment = _comment.getText();
-            if (_issue.closeComment.length() == 0) {
-                MsoyUI.error(_mmsgs.errINoComment());
-                return false;
-            } else if (_issue.closeComment.length() > Issue.MAX_COMMENT_LENGTH) {
-                MsoyUI.error(_mmsgs.errICommentLong());
-                return false;
-            } else if (_issue.owner == null ||
-                    _issue.owner.getMemberId() != CShell.creds.getMemberId()) {
-                MsoyUI.error(_mmsgs.errICloseOwner());
-                return false;
-            }
+        public CommitCallback (Button button) {
+            super(button);
         }
 
-        if (create) {
-            _issuesvc.createIssue(_issue, (_message == null ? 0 : _message.messageId), callback);
-        } else {
-            _issuesvc.updateIssue(_issue, callback);
+        @Override protected boolean callService () {
+            _issue.description = _description.getText();
+            if (_issue.description.length() == 0) {
+                MsoyUI.error(_mmsgs.errINoDescription());
+                return false;
+            }
+
+            _issue.state = getState();
+            _issue.priority = Issue.PRIORITY_VALUES[_priorityBox.getSelectedIndex()];
+            _issue.type = Issue.TYPE_VALUES[_typeBox.getSelectedIndex()];
+            _issue.category = Issue.CATEGORY_VALUES[_categoryBox.getSelectedIndex()];
+            if (_ownerBox.getSelectedIndex() > 0) {
+                _issue.owner = _ownerNames.get(_ownerBox.getSelectedIndex() - 1);
+            } else if (_issue.issueId != 0) {
+                // updating an ownerless issue makes it yours
+                _issue.owner = CShell.creds.name;
+            }
+
+            if (_issue.state != Issue.STATE_OPEN) {
+                _issue.closeComment = _comment.getText();
+            }
+
+            if (_issue.issueId == 0) {
+                _issuesvc.createIssue(
+                    _issue, (_message == null ? 0 : _message.messageId), this);
+            } else {
+                _issuesvc.updateIssue(_issue, this);
+            }
+            return true;
         }
-        return true;
+
+        @Override protected boolean gotResult (Issue result) {
+            if (_ipanel != null) {
+                _ipanel.issueUpdated(_newIssue, result);
+            } else {
+                _message.issueId = result.issueId;
+                _tpanel.showMessages(true);
+            }
+            return false;
+        }
+
+        protected byte getState () {
+            return Issue.STATE_VALUES[_stateBox.getSelectedIndex()];
+        }
     }
 
     protected IssuePanel _ipanel;
@@ -296,11 +321,11 @@ public class EditIssuePanel extends TableFooterPanel
     protected SmartTable _table;
     protected ListBox _typeBox;
     protected ListBox _ownerBox;
-    protected TextArea _description;
+    protected LimitedTextArea _description;
     protected ListBox _stateBox;
     protected ListBox _priorityBox;
     protected ListBox _categoryBox;
-    protected TextArea _comment;
+    protected LimitedTextArea _comment;
     protected List<MemberName> _ownerNames;
     protected Hyperlink _threadLink;
 
