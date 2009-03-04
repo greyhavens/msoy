@@ -35,18 +35,16 @@ public class FeedMessageAggregator
         // javascript
         messages.addAll(Arrays.asList(oldMessages));
 
-        HashMap<MessageKey, MessageAggregate> messageMapLeft =
-            new HashMap<MessageKey, MessageAggregate>();
-        HashMap<MessageKey, MessageAggregate> messageMapRight =
-            new HashMap<MessageKey, MessageAggregate>();
+        HashMap<MessageKey, MessageAggregate> actions = new HashMap<MessageKey, MessageAggregate>();
+        HashMap<MessageKey, MessageAggregate> actors = new HashMap<MessageKey, MessageAggregate>();
 
         // if grouping by date, start with today then work backwards
         long header = byDate ? startOfDay(System.currentTimeMillis()) : 0;
-        MessageAggregate dummyValue = new MessageAggregate();
+        MessageAggregate dummy = new MessageAggregate();
 
         while (!messages.isEmpty()) {
-            buildMessageMap(messages, header, messageMapLeft, true);
-            buildMessageMap(messages, header, messageMapRight, false);
+            buildMessageMap(messages, header, actions, AggregateFeedMessage.Style.ACTIONS);
+            buildMessageMap(messages, header, actors, AggregateFeedMessage.Style.ACTORS);
             FeedMessage message = null;
 
             for (Iterator<FeedMessage> msgIter = messages.iterator(); msgIter.hasNext();) {
@@ -58,49 +56,43 @@ public class FeedMessageAggregator
                 msgIter.remove();
 
                 // Find the larger of the left or right aggregate message and display it
-                MessageKey lkey = getLeftKey(message);
-                MessageAggregate lvalue = lkey == null ? null : messageMapLeft.get(lkey);
-                lvalue = lvalue == null ? dummyValue : lvalue;
-                MessageKey rkey = getRightKey(message);
-                MessageAggregate rvalue = rkey == null ? null : messageMapRight.get(rkey);
-                rvalue = rvalue == null ? dummyValue : rvalue;
-                int lsize = lvalue.size();
-                int rsize = rvalue.size();
+                MessageAggregate actionsValue = getDefault(actions, getActionsKey(message), dummy);
+                MessageAggregate actorsValue = getDefault(actors, getActorsKey(message), dummy);
+                int actionsSize = actionsValue.size();
+                int actorsSize = actorsValue.size();
 
                 // if one of the aggregate messages has been displayed, that means this message
                 // is displayed and should be removed from any further aggregates
                 // TODO: is this always true? what about the MAX_AGGREGATED_ITEMS limit?
-                if (lvalue.getDisplayed() || rvalue.getDisplayed()) {
-                    if (lvalue.getDisplayed() && rsize > 1) {
-                        rvalue.remove(message);
-                    } else if (rvalue.getDisplayed() && lsize > 1) {
-                        lvalue.remove(message);
+                if (actionsValue.getDisplayed() || actorsValue.getDisplayed()) {
+                    if (actionsValue.getDisplayed() && actorsSize > 1) {
+                        actorsValue.remove(message);
+                    } else if (actorsValue.getDisplayed() && actionsSize > 1) {
+                        actionsValue.remove(message);
                     }
                     continue;
                 }
 
-                if (lsize >= rsize && lsize > 1) {
+                if (actionsSize >= actorsSize && actionsSize > 1) {
                     newMessages.add(new AggregateFeedMessage(AggregateFeedMessage.Style.ACTIONS,
-                        message.type, message.posted, lvalue.getList()));
-                    if (rsize > 1) {
-                        rvalue.remove(message);
+                        message.type, message.posted, actionsValue.getList()));
+                    if (actorsSize > 1) {
+                        actorsValue.remove(message);
                     }
-                    lvalue.setDisplayed(true);
+                    actionsValue.setDisplayed(true);
                     continue;
-                } else if (rsize > 1) {
+                } else if (actorsSize > 1) {
                     newMessages.add(new AggregateFeedMessage(AggregateFeedMessage.Style.ACTORS,
-                        message.type, message.posted, rvalue.getList()));
-                    if (lsize > 1) {
-                        lvalue.remove(message);
+                        message.type, message.posted, actorsValue.getList()));
+                    if (actionsSize > 1) {
+                        actionsValue.remove(message);
                     }
-                    rvalue.setDisplayed(true);
+                    actorsValue.setDisplayed(true);
                     continue;
                 } else {
                     newMessages.add(message);
                 }
             }
-            messageMapLeft.clear();
-            messageMapRight.clear();
         }
 
         return newMessages;
@@ -121,10 +113,20 @@ public class FeedMessageAggregator
     }
 
     /**
+     * Gets the map entry if the key and value are not null, otherwise returns the dummy.
+     */
+    protected static MessageAggregate getDefault(
+        HashMap<MessageKey, MessageAggregate> map, MessageKey key, MessageAggregate dummy)
+    {
+        MessageAggregate agg = key == null ? null : map.get(key);
+        return agg == null ? dummy : agg;
+    }
+
+    /**
      * Get the key for left side aggregation. Multiple actions by the same person (eg listing new
      * things in the shop).
      */
-    protected static MessageKey getLeftKey (FeedMessage message)
+    protected static MessageKey getActionsKey (FeedMessage message)
     {
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
@@ -147,7 +149,7 @@ public class FeedMessageAggregator
      * Get the key for right side aggregation. Multiple people performing the same action (eg
      * winning the same trophy).
      */
-    protected static MessageKey getRightKey (FeedMessage message)
+    protected static MessageKey getActorsKey (FeedMessage message)
     {
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
@@ -181,13 +183,18 @@ public class FeedMessageAggregator
      * Builds a left side or right side aggregated HashMap for the supplied messages.
      */
     protected static void buildMessageMap (List<FeedMessage> messages, long header,
-        HashMap<MessageKey, MessageAggregate> map, boolean left)
+        HashMap<MessageKey, MessageAggregate> map, AggregateFeedMessage.Style style)
     {
+        map.clear();
         for (FeedMessage message : messages) {
             if (header > message.posted) {
                 break;
             }
-            MessageKey key = (left ? getLeftKey(message) : getRightKey(message));
+            MessageKey key = null;
+            switch (style) {
+            case ACTIONS: key = getActionsKey(message); break;
+            case ACTORS: key = getActorsKey(message); break;
+            }
             if (key == null) {
                 continue;
             }
