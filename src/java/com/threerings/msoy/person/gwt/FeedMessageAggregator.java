@@ -10,10 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-
-import client.shell.CShell;
-import client.util.DateUtil;
-
 /**
  * Functions to aggregate a list of news feed messages by the actor (left aggregate) or the action
  * (right aggregate) in question.
@@ -112,10 +108,14 @@ public class FeedMessageAggregator
     /**
      * Calculate the miliseconds for the start of a given day.
      */
+    @SuppressWarnings("deprecation")
     public static long startOfDay (long timestamp)
     {
         Date date = new Date(timestamp);
-        DateUtil.zeroTime(date);
+        // TODO: move DateUtil to shared code so we can use it here
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
         return date.getTime();
     }
 
@@ -312,8 +312,9 @@ public class FeedMessageAggregator
         public void add (FeedMessage message)
         {
             if (displayed) {
-                CShell.log(
-                    "Ignoring addition of messages to a MessageAggregate that has been displayed");
+                // TODO: better way of logging in server/client shared code
+                //CShell.log(
+                //    "Ignoring addition of messages to a MessageAggregate that has been displayed");
                 return;
             }
             list.add(message);
