@@ -20,6 +20,11 @@ public class PetName extends Name
         _petId = petId;
     }
 
+    public function getPetId () :int
+    {
+        return _petId;
+    }
+
     override public function hashCode () :int
     {
         return _petId;

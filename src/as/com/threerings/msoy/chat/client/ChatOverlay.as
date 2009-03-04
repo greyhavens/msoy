@@ -53,6 +53,7 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
@@ -61,6 +62,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.world.client.WorldContext;
 
 public class ChatOverlay
@@ -765,8 +767,16 @@ public class ChatOverlay
         if ((format != null) && (forceSpeaker || alwaysUseSpeaker(type))) {
             var umsg :UserMessage = (msg as UserMessage);
             var name :Name = umsg.getSpeakerDisplayName();
+            var cmd :String;
+            if (name is MemberName) {
+                cmd = MsoyController.POP_MEMBER_MENU + "/" + name.toString() + "/" + 
+                    String(MemberName(name).getMemberId());
+            } else if (name is PetName) {
+                cmd = MsoyController.POP_PET_MENU + "/" + name.toString() + "/" + 
+                    String(PetName(name).getPetId());
+            }
             var texts2 :Array = TextUtil.parseLinks(
-                Msgs.CHAT.get(format, name), _defaultFmt, true);
+                Msgs.CHAT.get(format, name, cmd) + " ", _defaultFmt, true);
             texts.unshift.apply(null, texts2);
         }
 

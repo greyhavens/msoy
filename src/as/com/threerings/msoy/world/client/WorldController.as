@@ -77,6 +77,7 @@ import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.PetName;
 
 import com.threerings.msoy.utils.Args;
 
@@ -833,6 +834,16 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the POP_PET_MENU command.
+     */
+    public function handlePopPetMenu (name :String, petId :int) :void
+    {
+        var menuItems :Array = [];
+        addPetMenuItems(new PetName(name, petId), menuItems);
+        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
+    }
+
+    /**
      * Displays a new page either in our GWT application or by reloading the current web page with
      * the full GWT application, restoring our current location and then displaying the page.
      */
@@ -1169,6 +1180,16 @@ public class WorldController extends MsoyController
                 command: INVITE_TO_PARTY, arg: memId,
                 enabled: !_wctx.getPartyDirector().partyContainsPlayer(memId) });
         }
+    }
+
+    /**
+     * Add pet menu items.
+     */
+    public function addPetMenuItems (petName :Name, menuItems :Array) :void
+    {
+        const isMuted :Boolean = _wctx.getMuteDirector().isMuted(petName);
+        menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
+            callback: _wctx.getMuteDirector().setMuted, arg: [ petName, !isMuted ] });
     }
 
     // from MsoyController

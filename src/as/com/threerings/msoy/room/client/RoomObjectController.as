@@ -471,8 +471,7 @@ public class RoomObjectController extends RoomController
 
         var menuItems :Array = [];
 
-        menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
-            callback: _wdctx.getMuteDirector().setMuted, arg: [ occInfo.username, !isMuted ] });
+        _wdctx.getWorldController().addPetMenuItems(occInfo.username, menuItems);
         if (pet.isBleepable()) {
             var key :String = pet.isBleeped() ? "b.unbleep_pet" : "b.bleep_pet";
             menuItems.push({ label: Msgs.GENERAL.get(key),

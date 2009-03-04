@@ -86,6 +86,13 @@ public class MsoyController extends Controller
     /** Command to display the go menu. */
     public static const POP_GO_MENU :String = "PopGoMenu";
 
+    /** Command to display a simplified menu for muting/etc a member. */
+    public static const POP_MEMBER_MENU :String = "PopMemberMenu";
+
+    /** Command to display a simplified menu for muting/etc a pet. */
+    // nada here. Pets only exist in world, but we handle them generically
+    public static const POP_PET_MENU :String = "PopPetMenu";
+
     /** Command to display sign-up info for guests. */
     public static const SHOW_SIGN_UP :String = "ShowSignUp";
 
@@ -288,6 +295,17 @@ public class MsoyController extends Controller
         _goMenu.addEventListener(MenuEvent.MENU_HIDE, function (... ignored) :void {
             _goMenu = null;
         });
+    }
+
+    /**
+     * Handles the POP_MEMBER_MENU command.
+     */
+    public function handlePopMemberMenu (name :String, memberId :int) :void
+    {
+        var menuItems :Array = [];
+        // reconsistute the memberName from args
+        addMemberMenuItems(new MemberName(name, memberId), menuItems);
+        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
     /**
