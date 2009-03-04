@@ -194,12 +194,6 @@ public class RoomObjectController extends RoomController
                 var kind :String = Msgs.GENERAL.get(avatar.getDesc());
                 var flagItems :Array = [];
 
-                if (avatar.isBleepable()) {
-                    var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
-                    flagItems.push({ label: Msgs.GENERAL.get(key, kind),
-                                     callback: avatar.toggleBleeped, arg: _wdctx });
-                }
-
                 var ident :ItemIdent = avatar.getItemIdent();
                 if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
                     flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
@@ -208,6 +202,12 @@ public class RoomObjectController extends RoomController
                         flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
                                          command: MsoyController.FLAG_ITEM, arg: ident });
                     }
+                }
+
+                if (avatar.isBleepable()) {
+                    var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
+                    flagItems.push({ label: Msgs.GENERAL.get(key, kind),
+                                     callback: avatar.toggleBleeped, arg: _wdctx });
                 }
 
                 if (flagItems.length > 0) {
