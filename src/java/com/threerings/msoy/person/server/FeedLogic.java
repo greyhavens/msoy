@@ -35,7 +35,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.person.util.FeedMessageType.Category;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -53,7 +52,6 @@ public class FeedLogic
      */
     public List<FeedCategory> loadFeedCategories (
         MemberRecord mrec, IntSet friendIds, int itemsPerCategory, Category onlyCategory)
-        throws ServiceException
     {
         int feedDays = MAX_PERSONAL_FEED_CUTOFF_DAYS;
 
