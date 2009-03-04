@@ -449,7 +449,7 @@ public class FeedMessagePanel extends FocusPanel
             contents.add(MsoyUI.createHTML(html, "TextContainer"));
         }
     }
-    addMultiActionsMessage
+
     public static class BasicWidget extends FlowPanel
     {
         public BasicWidget (String html)
