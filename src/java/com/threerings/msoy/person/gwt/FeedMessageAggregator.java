@@ -80,16 +80,16 @@ public class FeedMessageAggregator
                 }
 
                 if (lsize >= rsize && lsize > 1) {
-                    newMessages.add(new AggregateFeedMessage(true, message.type,
-                        message.posted, lvalue.getList()));
+                    newMessages.add(new AggregateFeedMessage(AggregateFeedMessage.Style.ACTIONS,
+                        message.type, message.posted, lvalue.getList()));
                     if (rsize > 1) {
                         rvalue.remove(message);
                     }
                     lvalue.setDisplayed(true);
                     continue;
                 } else if (rsize > 1) {
-                    newMessages.add(new AggregateFeedMessage(false, message.type,
-                        message.posted, rvalue.getList()));
+                    newMessages.add(new AggregateFeedMessage(AggregateFeedMessage.Style.ACTORS,
+                        message.type, message.posted, rvalue.getList()));
                     if (lsize > 1) {
                         lvalue.remove(message);
                     }

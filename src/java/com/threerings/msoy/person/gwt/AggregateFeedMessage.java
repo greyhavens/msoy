@@ -1,16 +1,29 @@
+//
+// $Id$
+
 package com.threerings.msoy.person.gwt;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An aggregate message conatining multiple actions by the same actor (left=true), or actors
- * performing the same action (left=false). Duplicate items will be removed at this point.
+ * An aggregate message containing multiple actions by the same actor, or multiple actors performing
+ * the same action. Also prevents duplicate messages.
  */
 public class AggregateFeedMessage extends FeedMessage
 {
-    /** The style of aggregation, either many actions (true) or many actors (false). */
-    public boolean left;
+    /** Styles of aggregation. */
+    public enum Style
+    {
+        /** Many actions, one actor. */
+        ACTIONS,
+
+        /** Many actors, one action. */
+        ACTORS
+    };
+
+    /** The style of aggregation for this message. */
+    public Style style;
 
     /** The messages we are aggregating. */
     public List<FeedMessage> messages;
@@ -19,9 +32,9 @@ public class AggregateFeedMessage extends FeedMessage
      * Creates a new aggregate message.
      */
     public AggregateFeedMessage (
-        boolean left, FeedMessageType type, long posted, List<FeedMessage> messages)
+        Style style, FeedMessageType type, long posted, List<FeedMessage> messages)
     {
-        this.left = left;
+        this.style = style;
         this.type = type;
         this.posted = posted;
         this.messages = new ArrayList<FeedMessage>();

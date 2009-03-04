@@ -59,10 +59,17 @@ public class FeedMessagePanel extends FocusPanel
             addSelfMessage((SelfFeedMessage)message);
         } else if (message instanceof AggregateFeedMessage) {
             AggregateFeedMessage aggMsg = (AggregateFeedMessage)message;
-            if (aggMsg.left) {
-                this.addLeftAggregateMessage(aggMsg.messages);
-            } else {
-                this.addRightAggregateMessage(aggMsg.messages);
+            switch (aggMsg.style) {
+            case ACTIONS:
+                addMultiActionsMessage(aggMsg.messages);
+                break;
+
+            case ACTORS:
+                addMutliActorsMessage(aggMsg.messages);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown aggregation style: " + aggMsg.style);
             }
         } else {
             addMessage(message);
@@ -457,7 +464,7 @@ public class FeedMessagePanel extends FocusPanel
     /**
      * Display multiple actions by the same person (eg listing new things in the shop).
      */
-    protected void addLeftAggregateMessage (List<FeedMessage> list)
+    protected void addMultiActionsMessage (List<FeedMessage> list)
     {
         FeedMessage message = list.get(0);
         String friendLink = profileLink(message);
@@ -507,7 +514,7 @@ public class FeedMessagePanel extends FocusPanel
     /**
      * Display multiple people performing the same action (eg winning the same trophy).
      */
-    protected void addRightAggregateMessage (List<FeedMessage> list)
+    protected void addMutliActorsMessage (List<FeedMessage> list)
     {
         FeedMessage message = list.get(0);
         String friendLinks = profileCombine(list);
