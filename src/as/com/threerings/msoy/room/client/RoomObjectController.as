@@ -360,15 +360,10 @@ public class RoomObjectController extends RoomController
     public function handlePublishRoom () :void
     {
         _roomObj.roomService.publishRoom(_wdctx.getClient(), _wdctx.listener());
-        // TODO: remove when A/B test is finished
-        _wdctx.getMsoyClient().getABTestGroup("2008 12 share hint", true,
-            _wdctx.resultListener(function (group :int) :void {
-                // group 1: no help, group 2: help
-                if (group == 2) {
-                    BubblePopup.showHelpBubble(_wdctx, _wdctx.getControlBar().shareBtn,
-                        Msgs.WORLD.get("h.room_share"), -7);
-                }
-            }));
+
+        // TODO: remove this bubbley hint someday?
+        BubblePopup.showHelpBubble(_wdctx, _wdctx.getControlBar().shareBtn,
+            Msgs.WORLD.get("h.room_share"), -7);
     }
 
     /**
