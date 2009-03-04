@@ -318,7 +318,8 @@ public abstract class TagRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         // note: this is a full table scan, but currently probably ok
-        deleteAll(TagHistoryRecord.class, new Where(new In(TagHistoryRecord.MEMBER_ID, memberIds)));
+        deleteAll(getTagHistoryClass(),
+                  new Where(new In(getTagHistoryColumn(TagHistoryRecord.MEMBER_ID), memberIds)));
     }
 
     @Override // from DepotRepository
