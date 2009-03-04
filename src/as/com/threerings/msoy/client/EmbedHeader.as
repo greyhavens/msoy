@@ -117,7 +117,7 @@ public class EmbedHeader extends Canvas
 
     protected function didLogon (event :ClientEvent) :void
     {
-        const isGuest :Boolean = _ctx.getMemberObject().isGuest();
+        const isGuest :Boolean = _ctx.getMemberObject().isPermaguest();
         FlexUtil.setVisible(_logon, isGuest);
         FlexUtil.setVisible(_signup, isGuest);
     }

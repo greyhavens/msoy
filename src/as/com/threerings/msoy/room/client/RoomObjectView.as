@@ -473,7 +473,7 @@ public class RoomObjectView extends RoomView
             if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
                 menuItems.push(MenuUtil.createControllerMenuItem(
                     Msgs.GENERAL.get("b.view_item", kind), MsoyController.VIEW_ITEM, ident));
-                if (!_ctx.getMemberObject().isGuest()) {
+                if (!_ctx.getMemberObject().isPermaguest()) {
                     menuItems.push(MenuUtil.createControllerMenuItem(
                         Msgs.GENERAL.get("b.flag_item", kind), MsoyController.FLAG_ITEM, ident));
                 }

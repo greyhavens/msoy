@@ -218,14 +218,6 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Return true if this user is merely a guest.
-     */
-    public function isGuest () :Boolean
-    {
-        return memberName.isGuest();
-    }
-
-    /**
      * Returns true if this user is a permaguest.
      */
     public function isPermaguest () :Boolean

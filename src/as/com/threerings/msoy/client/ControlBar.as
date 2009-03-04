@@ -220,14 +220,10 @@ public class ControlBar extends HBox
         chatOptsBtn.enabled = isLoggedOn;
         _chatControl.enabled = isLoggedOn;
 
-        const memName :MemberName = _ctx.getMyName();
-        const isMember :Boolean = (memName != null) && !memName.isGuest();
-        if (numChildren > 0 && (isMember == _isMember)) {
+        // if we're already set up, then we're done
+        if (numChildren > 0) {
             return;
         }
-
-        // remember how things are set for now
-        _isMember = isMember;
 
         // and add our various control buttons
         setupControls();
@@ -399,9 +395,6 @@ public class ControlBar extends HBox
 
     /** Our clientside context. */
     protected var _ctx :MsoyContext;
-
-    /** Are we currently configured to show the controls for a member? */
-    protected var _isMember :Boolean;
 
     /** Button visibility conditions. */
     protected var _conditions :Dictionary = new Dictionary(true);

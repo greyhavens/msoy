@@ -1078,7 +1078,6 @@ public class WorldController extends MsoyController
         const memId :int = member.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
-        const isGuest :Boolean = MemberName.isGuest(memId);
         var placeCtrl :Object = null;
         if (addPlaceItems) {
             placeCtrl = _wctx.getLocationDirector().getPlaceController();
@@ -1089,7 +1088,7 @@ public class WorldController extends MsoyController
         }
 
         // if we're not a guest, populate availability menu.
-        if (isUs && !isGuest) {
+        if (isUs) {
             var availActions :Array = [];
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
@@ -1111,15 +1110,13 @@ public class WorldController extends MsoyController
                 menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                                  command: OPEN_CHANNEL, arg: member });
             }
-            if (!isGuest) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
-                                 command: VIEW_MEMBER, arg: memId });
-                menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
-                                 command: GO_MEMBER_HOME, arg: memId });
-                if (!us.isGuest() && !us.friends.containsKey(memId)) {
-                    menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
-                                     command: INVITE_FRIEND, arg: memId });
-                }
+            menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
+                             command: VIEW_MEMBER, arg: memId });
+            menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
+                             command: GO_MEMBER_HOME, arg: memId });
+            if (!us.friends.containsKey(memId)) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
+                                 command: INVITE_FRIEND, arg: memId });
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
                              command: COMPLAIN_MEMBER, arg: [memId, member] });
@@ -1143,7 +1140,7 @@ public class WorldController extends MsoyController
         }
 
         if (isUs && _wctx.getMsoyClient().isEmbedded()) {
-            if (isGuest) {
+            if (_wctx.getMemberObject().isPermaguest()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
                     callback: function () :void {
                         (new LogonPanel(_wctx)).open();
@@ -1241,20 +1238,14 @@ public class WorldController extends MsoyController
         super.clientDidLogon(event);
 
         var memberObj :MemberObject = _wctx.getMemberObject();
-        // if not a guest, save the username that we logged in with
-        if (!memberObj.isGuest()) {
+        // if not a permaguest, save the username that we logged in with
+        if (!memberObj.isPermaguest()) {
             var name :Name = _wctx.getClient().getCredentials().getUsername();
             if (name != null) {
                 Prefs.setUsername(name.toString());
             }
-            _wctx.getTopPanel().getHeaderBar().getChatTabs().memberObjectUpdated(memberObj);
-
-        } else {
-            // if we are a guest, let the GWT application know the guest id as whom we're
-            // authenticated so that it can pass that guest id along to the server if we register
-            // and the server can transfer any flow we earn as this guest to our new account
-            _wctx.getMsoyClient().gotGuestIdToGWT(memberObj.getMemberId());
         }
+        _wctx.getTopPanel().getHeaderBar().getChatTabs().memberObjectUpdated(memberObj);
 
         if (!_didFirstLogonGo) {
             _didFirstLogonGo = true;

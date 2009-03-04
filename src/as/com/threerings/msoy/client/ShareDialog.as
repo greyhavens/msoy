@@ -58,7 +58,7 @@ public class ShareDialog extends FloatingPanel
         title = Msgs.GENERAL.get(_inGame ? "t.share_game" : "t.share_room");
         showCloseButton = true;
 
-        if (!ctx.getMyName().isGuest()) {
+        if (ctx.isRegistered()) {
             addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350));
             const affLink :CommandLinkButton = new CommandLinkButton(
                 Msgs.GENERAL.get("b.sharing"), MsoyController.VIEW_URL,
@@ -75,10 +75,9 @@ public class ShareDialog extends FloatingPanel
         tabs.height = 240;
 
         tabs.addChild(createSocialBox());
-        // TODO: guests can't abuse the email thingy?
-//        if (!_memObj.isGuest()) {
+        if (ctx.isRegistered()) {
             tabs.addChild(createEmailBox());
-//        }
+        }
         tabs.addChild(createLinkBox());
         tabs.addChild(createEmbedBox());
 
@@ -99,11 +98,8 @@ public class ShareDialog extends FloatingPanel
     public function getEmbedCode (size :int) :String
     {
         var flashVars :String = VisitorInfo.makeFlashVars(_placeId, _inGame);
-        // if we're not a guest, include the "aff=<memberId>" flashvar to affiliate users to us
-        const memName :MemberName = _ctx.getMyName();
-        if (!memName.isGuest()) {
-            flashVars += "&aff=" + memName.getMemberId();
-        }
+        // include the "aff=<memberId>" flashvar to affiliate users to us
+        flashVars += "&aff=" + _ctx.getMyName().getMemberId();
         if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
         }
@@ -199,10 +195,7 @@ public class ShareDialog extends FloatingPanel
     {
         const roomOrGame :String = (_inGame ? "game" : "room");
         var stubArgs :String = roomOrGame + "=" + _placeId;
-        const memName :MemberName = _ctx.getMyName();
-        if (!memName.isGuest()) {
-            stubArgs += "&aff=" + memName.getMemberId();
-        }
+        stubArgs += "&aff=" + _ctx.getMyName().getMemberId();
 
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");

@@ -10,7 +10,6 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -33,13 +32,7 @@ public class PartyContextImpl implements PartyContext
      */
     public function connect (partyId :int, hostname :String, port :int) :void
     {
-        // if we are a guest and have an assigned member name, pass it along to the game server so
-        // that it will show us the same guest name that we had on the server
-        var name :MemberName = _wctx.getMyName();
-        if (name != null && !name.isGuest()) {
-            name = null;
-        }
-        var pcreds :PartyCredentials = new PartyCredentials(name);
+        var pcreds :PartyCredentials = new PartyCredentials(null);
         pcreds.sessionToken = (_wctx.getClient().getCredentials() as MsoyCredentials).sessionToken;
         pcreds.partyId = partyId;
 

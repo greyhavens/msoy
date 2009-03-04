@@ -38,14 +38,6 @@ public class PartierObject extends BodyObject
         return memberName.getMemberId();
     }
 
-    /**
-     * Return true if this user is merely a guest.
-     */
-    public function isGuest () :Boolean
-    {
-        return memberName.isGuest();
-    }
-
     // from BodyObject
     override public function readObject (ins :ObjectInputStream) :void
     {

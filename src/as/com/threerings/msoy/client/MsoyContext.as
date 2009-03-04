@@ -37,6 +37,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.CurseFilter;
@@ -124,8 +125,18 @@ public /*abstract*/ class MsoyContext
      */
     public function getMyName () :MemberName
     {
-        var body :BodyObject = _client.getClientObject() as BodyObject;
+        var body :BodyObject = (_client.getClientObject() as BodyObject);
         return (body == null) ? null : body.getVisibleName() as MemberName;
+    }
+
+    /**
+     * Returns true if we're logged on to a registered (non-viewer, non-permaguest) account.
+     */
+    public function isRegistered () :Boolean
+    {
+        var body :BodyObject = (_client.getClientObject() as BodyObject);
+        return (body != null) && !(body.getVisibleName() as MemberName).isViewer() &&
+            !MemberMailUtil.isPermaguest(body.username.toString());
     }
 
     /**

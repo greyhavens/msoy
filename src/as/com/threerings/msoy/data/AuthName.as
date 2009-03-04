@@ -25,12 +25,6 @@ public class AuthName extends Name
         return _memberId;
     }
 
-    /** Returns true if this name represents a guest member or a viewer. */
-    public function isGuest () :Boolean
-    {
-        return MemberName.isGuest(_memberId);
-    }
-
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {

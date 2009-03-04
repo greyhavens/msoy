@@ -217,14 +217,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
-     * Tells GWT that we were assigned a guest id.
-     */
-    public function gotGuestIdToGWT (guestId :int) :void
-    {
-        dispatchEventToGWT("gotGuestId", [ guestId ]);
-    }
-
-    /**
      * Dispatches an event to GWT.
      */
     public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void

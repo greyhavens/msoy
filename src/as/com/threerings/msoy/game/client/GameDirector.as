@@ -136,8 +136,7 @@ public class GameDirector extends BasicDirector
             icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
         menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
-        if (Game.isDevelopmentVersion(_liaison.gameId) && !_wctx.getMyName().isGuest() &&
-            !(_liaison is AVRGameLiaison)) {
+        if (Game.isDevelopmentVersion(_liaison.gameId) && !(_liaison is AVRGameLiaison)) {
             menuData.push({label: Msgs.GAME.get("b.gameRemoveTrophies"), command: removeTrophies});
         }
         if (_liaison is AVRGameLiaison) {

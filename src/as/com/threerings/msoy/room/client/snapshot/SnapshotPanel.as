@@ -104,7 +104,7 @@ public class SnapshotPanel extends FloatingPanel
 
     protected function createSnapshotControls () :void
     {
-        const isGuest :Boolean = _ctx.getMyName().isGuest();
+        const isGuest :Boolean = (_ctx as WorldContext).getMemberObject().isPermaguest();
 
         var hPan :HBox = new HBox();
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
@@ -145,7 +145,7 @@ public class SnapshotPanel extends FloatingPanel
         if (!isGuest) {
             _sendPostcard = new CommandCheckBox(Msgs.WORLD.get("b.snap_postcard"),
                 enforceUIInterlocks);
-            _sendPostcard.selected = isGuest;
+            _sendPostcard.selected = false;
             addChild(_sendPostcard);
         }
 

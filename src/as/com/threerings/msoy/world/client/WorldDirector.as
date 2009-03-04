@@ -200,7 +200,7 @@ public class WorldDirector extends BasicDirector
         // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
         // or have ever worn any non-tofu avatar, don't show the avatar intro
         var mobj :MemberObject = _wctx.getMemberObject();
-        if (_avatarIntro != null || mobj.isGuest() || mobj.isPermaguest() ||
+        if (_avatarIntro != null || mobj.isViewer() || mobj.isPermaguest() ||
             mobj.avatar != null || mobj.avatarCache.size() > 0) {
             return;
         }

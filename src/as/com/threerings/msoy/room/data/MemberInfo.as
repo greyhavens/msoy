@@ -24,14 +24,6 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
-     * Return true if we represent a guest.
-     */
-    public function isGuest () :Boolean
-    {
-        return MemberName.isGuest(getMemberId());
-    }
-
-    /**
      * Returns information on a game this user is currently lobbying or playing.
      */
     public function getGameSummary () :GameSummary

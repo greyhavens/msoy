@@ -170,56 +170,49 @@ public class RoomObjectController extends RoomController
             }
 
             // if we're not a guest add a menu for changing avatars
-            if (!us.isGuest()) {
-                menuItems.push(createChangeAvatarMenu(us, canControl));
-            }
+            menuItems.push(createChangeAvatarMenu(us, canControl));
 
             // add our custom menu items (avatar actions and states)
             if (avatar != null) {
                 addSelfMenuItems(avatar, menuItems, canControl);
             }
 
-        } else {
-            // create a menu for clicking on someone else
-            const memId :int = occInfo.getMemberId();
-            if (!MemberName.isGuest(memId)) {
-                // TODO: move up when we can forward MemberObjects between servers for guests
-                menuItems.push({ label: Msgs.GENERAL.get("b.follow_other"),
-                                 callback: followOther, arg: occInfo.username });
+        } else { // shown when clicking on someone else
+            menuItems.push({ label: Msgs.GENERAL.get("b.follow_other"),
+                             callback: followOther, arg: occInfo.username });
 
-                // If they are following us
-                if (us.followers.containsKey(memId)) {
-                    menuItems.push({ label: Msgs.GENERAL.get("b.ditch_follower"),
-                                     callback: ditchFollower, arg: occInfo.username });
-                } else {
-                    menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
-                                     callback: inviteFollow, arg: occInfo.username });
+            // if they are following us...
+            if (us.followers.containsKey(occInfo.getMemberId())) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.ditch_follower"),
+                                 callback: ditchFollower, arg: occInfo.username });
+            } else {
+                menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
+                                 callback: inviteFollow, arg: occInfo.username });
+            }
+
+            if (avatar != null) {
+                var kind :String = Msgs.GENERAL.get(avatar.getDesc());
+                var flagItems :Array = [];
+
+                if (avatar.isBleepable()) {
+                    var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
+                    flagItems.push({ label: Msgs.GENERAL.get(key, kind),
+                                     callback: avatar.toggleBleeped, arg: _wdctx });
                 }
 
-                if (avatar != null) {
-                    var kind :String = Msgs.GENERAL.get(avatar.getDesc());
-                    var flagItems :Array = [];
-
-                    if (avatar.isBleepable()) {
-                        var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
-                        flagItems.push({ label: Msgs.GENERAL.get(key, kind),
-                                         callback: avatar.toggleBleeped, arg: _wdctx });
+                var ident :ItemIdent = avatar.getItemIdent();
+                if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
+                    flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+                                     command: MsoyController.VIEW_ITEM, arg: ident });
+                    if (!us.isPermaguest()) {
+                        flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
+                                         command: MsoyController.FLAG_ITEM, arg: ident });
                     }
+                }
 
-                    var ident :ItemIdent = avatar.getItemIdent();
-                    if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
-                        flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
-                                         command: MsoyController.VIEW_ITEM, arg: ident });
-                        if (!us.isGuest()) {
-                            flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
-                                             command: MsoyController.FLAG_ITEM, arg: ident });
-                        }
-                    }
-
-                    if (flagItems.length > 0) {
-                        menuItems.push({ label: Msgs.GENERAL.get("l.item_menu", kind),
-                                         children: flagItems });
-                    }
+                if (flagItems.length > 0) {
+                    menuItems.push({ label: Msgs.GENERAL.get("l.item_menu", kind),
+                                     children: flagItems });
                 }
             }
         }

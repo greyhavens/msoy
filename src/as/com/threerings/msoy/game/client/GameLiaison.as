@@ -310,11 +310,12 @@ public class GameLiaison
             const forReal :Boolean = Boolean(args[2]);
             const hasCookie :Boolean = Boolean(args[3]);
             const gamePanel :MsoyGamePanel = getMsoyGamePanel();
-            if (forReal && _gctx.getPlayerObject().isGuest() &&
-                    (!MsoyGamePanel.USE_GAMEOVER_POPUP || gamePanel.getController().isParty())) {
-                // if a guest earns flow, we want to show them the "please register" dialog
-                displayGuestFlowEarnage(coins, hasCookie);
-            }
+// TODO: reenable with an A/B test
+//             if (forReal && _gctx.getPlayerObject().isPermaguest() &&
+//                 (!MsoyGamePanel.USE_GAMEOVER_POPUP || gamePanel.getController().isParty())) {
+//                 // if a guest earns flow, we want to show them the "please register" dialog
+//                 displayGuestFlowEarnage(coins, hasCookie);
+//             }
             // display a notification to permaguests about signing up
             if (forReal && _gctx.getPlayerObject().isPermaguest()) {
                 _wctx.getNotificationDirector().displayPayoutUpsell(coins, hasCookie);

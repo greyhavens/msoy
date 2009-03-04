@@ -54,7 +54,7 @@ public class GameOverPanel extends FloatingPanel
                 FlexUtil.createLabel(wgMsgs.get("m.coins_awarded", coins), "gameOverCoins"));
 
             var msg :String;
-            if (_gctx.getPlayerObject().isGuest()) {
+            if (_gctx.getPlayerObject().isPermaguest()) {
                 msg = hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note";
             } else {
                 msg = "m.goShopping";
@@ -70,7 +70,7 @@ public class GameOverPanel extends FloatingPanel
         addChild(_topArea);
         //setStyle("horizontalAlign", "center");
 
-        if (_gctx.getPlayerObject().isGuest()) {
+        if (_gctx.getPlayerObject().isPermaguest()) {
             const signUpBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
             signUpBtn.styleName = "joinNowButton";
             addChild(signUpBtn);

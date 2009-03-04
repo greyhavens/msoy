@@ -704,7 +704,7 @@ public class MsoyController extends Controller
     protected function checkIdleLogoff (... ignored) :void
     {
         // only do something if we're logged on and a guest
-        if (_mctx.getClient().isLoggedOn() && _mctx.getMyName().isGuest()) {
+        if (_mctx.getClient().isLoggedOn() && !_mctx.isRegistered()) {
             _logoffMessage = "m.idle_logoff";
             _mctx.getClient().logoff(false);
         }

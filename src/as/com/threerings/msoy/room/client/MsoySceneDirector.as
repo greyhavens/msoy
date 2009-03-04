@@ -224,14 +224,14 @@ public class MsoySceneDirector extends SceneDirector
 
         // we have nowhere to go back. let's just go home.
         var memberId :int = _worldctx.getMemberObject().getMemberId();
-        if (!MemberName.isGuest(memberId)) {
+        if (!MemberName.isViewer(memberId)) {
             log.info("Scene locked, returning home [memberId=" + memberId + "].");
             ctrl.handleGoMemberHome(memberId);
             return;
         }
 
-        // we're a guest and don't have a home! just go to the generic public area.
-        log.info("Scene locked, am guest, have no home, going to common scene.");
+        // we're a viewer and don't have a home! just go to the generic public area.
+        log.info("Scene locked, am viewer, have no home, going to common scene.");
         var commonAreaId :int = 1; // = SceneRecord.PUBLIC_ROOM.getSceneId()
         ctrl.handleGoScene(commonAreaId);
     }

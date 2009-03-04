@@ -99,7 +99,7 @@ public class FriendsListPanel extends FlyingPanel
     {
         super.createChildren();
 
-        if (_wctx.getMemberObject().isGuest()) {
+        if (_wctx.getMemberObject().isPermaguest()) {
             var joinBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
             joinBtn.styleName = "joinNowButton";
             addChild(FlexUtil.createWideText(Msgs.GENERAL.get("m.guest_friends"), "playerLabel"));
