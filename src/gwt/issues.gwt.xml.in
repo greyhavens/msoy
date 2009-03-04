@@ -1,0 +1,10 @@
+<module>
+  <inherits name="msgs"/>
+
+  <source path="client/issues"/>
+
+  <public path="public/issues"/>
+  <stylesheet src="issues.css"/>
+
+  <entry-point class="client.issues.IssuesPage"/>
+</module>

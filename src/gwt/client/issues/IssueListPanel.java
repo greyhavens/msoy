@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.issues;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -63,13 +63,13 @@ public class IssueListPanel extends PagedGrid<Issue>
     @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
-        return MsoyUI.createHTML(_mmsgs.noIssues(), "Empty");
+        return MsoyUI.createHTML(_msgs.noIssues(), "Empty");
     }
 
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return _mmsgs.noIssues();
+        return _msgs.noIssues();
     }
 
     @Override // from PagedGrid
@@ -84,18 +84,15 @@ public class IssueListPanel extends PagedGrid<Issue>
         super.addCustomControls(controls);
 
         // add a button for refreshing the issue list
-        _refresh = new Button(_mmsgs.tlpRefresh(), new ClickListener() {
+        _refresh = new Button(_msgs.ilpRefresh(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.displayIssues(true);
             }
         });
         controls.setWidget(0, 0, _refresh);
         if (CShell.isSupport()) {
-            controls.setWidget(0, 1, new Button(_mmsgs.newIssue(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    _parent.createIssue();
-                }
-            }));
+            controls.setWidget(0, 1, new Button(_msgs.newIssue(),
+                                                Link.createListener(Pages.ISSUES, "create")));
         }
     }
 
@@ -116,34 +113,37 @@ public class IssueListPanel extends PagedGrid<Issue>
             setCellSpacing(0);
 
             int col = 0;
+            String summary = issue.summary;
+            // TEMP: until we migrate descrips to summaries
+            if (summary == null || summary.length() == 0) {
+                summary = "<no summary>";
+            }
             Widget toIssue = Link.create(
-                issue.description, Pages.GROUPS, _linkPrefix + issue.issueId + _linkPostfix);
+                summary, Pages.ISSUES, _linkPrefix + issue.issueId + _linkPostfix);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
-            setText(0, col, IssueMsgs.priorityMsg(issue, _mmsgs));
+            setText(0, col, IssueMsgs.priorityMsg(issue, _msgs));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
-            setText(0, col, IssueMsgs.categoryMsg(issue, _mmsgs));
+            setText(0, col, IssueMsgs.categoryMsg(issue, _msgs));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
-            setText(0, col, (issue.owner == null ? _mmsgs.iNone() : issue.owner.toString()));
-            getFlexCellFormatter().setStyleName(0, col++, "State");
+            setText(0, col, (issue.owner == null ? _msgs.iNone() : issue.owner.toString()));
+            getFlexCellFormatter().setStyleName(0, col++, "Owner");
 
-            VerticalPanel created = new VerticalPanel();
-            Widget creator;
+            FlowPanel created = new FlowPanel();
+            Widget actor;
             if (issue.state == Issue.STATE_OPEN) {
-                created.add(new Label(MsoyUI.formatDateTime(issue.createdTime)));
-                creator = Link.create(
-                    issue.creator.toString(), Pages.PEOPLE, "" + issue.creator.getMemberId());
+                created.add(new Label(MsoyUI.formatDate(issue.createdTime)));
+                actor = Link.memberView(issue.creator);
             } else {
                 if (issue.closedTime != null) {
-                    created.add(new Label(MsoyUI.formatDateTime(issue.closedTime)));
+                    created.add(new Label(MsoyUI.formatDate(issue.closedTime)));
                 }
-                creator = Link.create(
-                    issue.owner.toString(), Pages.PEOPLE, "" + issue.owner.getMemberId());
+                actor = Link.memberView(issue.owner);
             }
-            created.add(creator);
+            created.add(actor);
             setWidget(0, col, created);
             getFlexCellFormatter().setStyleName(0, col++, "Created");
         }
@@ -157,7 +157,7 @@ public class IssueListPanel extends PagedGrid<Issue>
     protected String _linkPrefix;
     protected String _linkPostfix = "";
 
-    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
+    protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
 
     /** The number of issues displayed per page. */
     protected static final int ISSUES_PER_PAGE = 20;

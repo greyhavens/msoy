@@ -8,17 +8,13 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
-import client.msgs.IssueModels;
-import client.msgs.IssuePanel;
 import client.msgs.ThreadPanel;
-import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
@@ -26,8 +22,7 @@ public class GroupsPage extends Page
 {
     public enum Nav {
         DETAIL("d"), EDIT("edit"), MYGROUPS("mygroups"), UNREAD("unread"), FORUM("f"), THREAD("t"),
-        OWNED("owned"), ASSIGN("assign"), BUG("b"), ASSIGNED("a"), ISSUES("i"), MEDALS("m"),
-        CREATEMEDAL("cm"), EDITMEDAL("em"), DEFAULT("");
+        MEDALS("m"), CREATEMEDAL("cm"), EDITMEDAL("em"), DEFAULT("");
 
         public static Nav getGroupPage (Args args)
         {
@@ -105,40 +100,6 @@ public class GroupsPage extends Page
             tpanel.showThread(_fmodels, args.get(1, 0), args.get(2, 0), args.get(3, 0));
             setContent(_msgs.forumsTitle(), tpanel);
 
-        } else if (page == Nav.OWNED && CShell.isSupport()) {
-            int type = args.get(1, Issue.TYPE_BUG);
-            IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayOwnedIssues(type, Issue.STATE_OPEN, false);
-            setContent(_msgs.myIssuesTitle(), issues);
-
-        } else if (page == Nav.ASSIGN && CShell.isSupport()) {
-            int messageId = args.get(1, 0), pageNum = args.get(2, 0);
-            IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayAssignIssues(Issue.TYPE_BUG, messageId, pageNum);
-            setContent(_msgs.issuesTitle(), issues);
-
-        } else if (page == Nav.BUG || page == Nav.ASSIGN || page == Nav.OWNED) {
-            int type = args.get(1, Issue.TYPE_BUG), state = args.get(2, Issue.STATE_OPEN);
-            IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayIssues(type, state, false);
-            setContent(_msgs.issuesTitle(), issues);
-
-        } else if (page == Nav.ASSIGNED) {
-            int messageId = args.get(1, 0), pageNum = args.get(2, 0), issueId = args.get(3, 0);
-            IssuePanel issues = new IssuePanel(_imodels);
-            if (CShell.isSupport()) {
-                issues.displayIssue(issueId, 0, messageId, pageNum);
-            } else {
-                issues.displayIssue(issueId, 0);
-            }
-            setContent(_msgs.issuesTitle(), issues);
-
-        } else if (page == Nav.ISSUES) {
-            int issueId = args.get(1, 0), owned = args.get(2, 0);
-            IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayIssue(issueId, owned);
-            setContent(_msgs.issuesTitle(), issues);
-
         } else if (page == Nav.MEDALS) {
             int groupId = args.get(1, 0);
             setContent(_msgs.medalListTitle(), new MedalListPanel(groupId));
@@ -169,7 +130,6 @@ public class GroupsPage extends Page
     }
 
     protected ForumModels _fmodels = new ForumModels();
-    protected IssueModels _imodels = new IssueModels();
     protected GroupDetailPanel _detail = new GroupDetailPanel();
     protected GalaxyPanel _galaxy;
 

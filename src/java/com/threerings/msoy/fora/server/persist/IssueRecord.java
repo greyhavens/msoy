@@ -29,6 +29,7 @@ public class IssueRecord extends PersistentRecord
     public static final ColumnExp ISSUE_ID = colexp(_R, "issueId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
     public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp SUMMARY = colexp(_R, "summary");
     public static final ColumnExp DESCRIPTION = colexp(_R, "description");
     public static final ColumnExp STATE = colexp(_R, "state");
     public static final ColumnExp PRIORITY = colexp(_R, "priority");
@@ -41,7 +42,7 @@ public class IssueRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** This issue's unique identifier. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -52,6 +53,10 @@ public class IssueRecord extends PersistentRecord
 
     /** The user id that owns the issue. */
     public int ownerId;
+
+    /** The one-line summary of the issue. */
+    @Column(length=Issue.MAX_SUMMARY_LENGTH, nullable=true) // TODO: remove post-migration
+    public String summary;
 
     /** The description of the issue. */
     @Column(length=Issue.MAX_DESC_LENGTH)
@@ -87,6 +92,7 @@ public class IssueRecord extends PersistentRecord
     {
         Issue issue = new Issue();
         issue.issueId = issueId;
+        issue.summary = summary;
         issue.description = description;
         issue.state = state;
         issue.priority = priority;

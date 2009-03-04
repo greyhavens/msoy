@@ -1,10 +1,11 @@
 //
 // $Id$
 
-package client.msgs;
+package client.issues;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -13,6 +14,7 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
+import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -84,7 +86,7 @@ public class IssueModels
 
         protected int _type, _state;
         protected boolean _isManager;
-        protected HashMap<Integer, Issue> _issues = new HashMap<Integer, Issue>();
+        protected Map<Integer, Issue> _issues = new HashMap<Integer, Issue>();
     }
 
     /** A data model that provides owned issues. */
@@ -104,18 +106,12 @@ public class IssueModels
     }
 
     /**
-     * Notifies the cache that a new issue was posted.
+     * Clears out our cached issues.
      */
-    public void newIssuePosted (Issue issue)
+    public void flush ()
     {
-        HashMap<Integer, Issues> typeIssues = _issuesModel.get(issue.type);
-        if (typeIssues == null) {
-            return;
-        }
-        Issues imodel = typeIssues.get(issue.state);
-        if (imodel != null) {
-            imodel.prependItem(issue);
-        }
+        _issuesModel.clear();
+        _ownedModel.clear();
     }
 
     /**
@@ -124,9 +120,10 @@ public class IssueModels
      */
     public Issues getIssues (int type, int state, boolean refresh)
     {
-        HashMap<Integer, Issues> typeIssues = getTypeMap(type, _issuesModel);
+        Map<Integer, Issues> typeIssues = getTypeMap(type, _issuesModel);
         Issues issues;
         if (refresh || (issues = typeIssues.get(state)) == null) {
+            CShell.log("Creating new model for " + type + " " + state);
             typeIssues.put(state, issues = new Issues(type, state));
         }
         return issues;
@@ -138,9 +135,10 @@ public class IssueModels
      */
     public OwnedIssues getOwnedIssues (int type, int state, boolean refresh)
     {
-        HashMap<Integer, OwnedIssues> typeIssues = getTypeMap(type, _ownedModel);
+        Map<Integer, OwnedIssues> typeIssues = getTypeMap(type, _ownedModel);
         OwnedIssues issues;
         if (refresh || (issues = typeIssues.get(state)) == null) {
+            CShell.log("Creating owned new model for " + type + " " + state);
             typeIssues.put(state, issues = new OwnedIssues(type, state));
         }
         return issues;
@@ -149,10 +147,10 @@ public class IssueModels
     /**
      * Returns a mapping of states to Issues/OwnedIssues for a certain type.
      */
-    public <V extends Issues> HashMap<Integer, V> getTypeMap (
-        int type, HashMap<Integer, HashMap<Integer, V>> model)
+    public <V extends Issues> Map<Integer, V> getTypeMap (
+        int type, Map<Integer, Map<Integer, V>> model)
     {
-        HashMap<Integer, V> typeIssues = model.get(type);
+        Map<Integer, V> typeIssues = model.get(type);
         if (typeIssues == null) {
             model.put(type, typeIssues = new HashMap<Integer, V>());
         }
@@ -171,10 +169,9 @@ public class IssueModels
     /**
      * Finds an issue in a specified model.
      */
-    protected <V extends Issues> Issue findIssue (
-        int issueId, HashMap<Integer, HashMap<Integer, V>> map)
+    protected <V extends Issues> Issue findIssue (int issueId, Map<Integer, Map<Integer, V>> map)
     {
-        for (HashMap<Integer, V> typeIssues : map.values()) {
+        for (Map<Integer, V> typeIssues : map.values()) {
             for (V model : typeIssues.values()) {
                 Issue issue = model.getIssue(issueId);
                 if (issue != null) {
@@ -186,12 +183,12 @@ public class IssueModels
     }
 
     /** A cached Issues data model. */
-    protected HashMap<Integer, HashMap<Integer, Issues>> _issuesModel =
-        new HashMap<Integer, HashMap<Integer, Issues>>();
+    protected Map<Integer, Map<Integer, Issues>> _issuesModel =
+        new HashMap<Integer, Map<Integer, Issues>>();
 
     /** A cached OwnedIssues data model. */
-    protected HashMap<Integer, HashMap<Integer, OwnedIssues>> _ownedModel =
-        new HashMap<Integer, HashMap<Integer, OwnedIssues>>();
+    protected Map<Integer, Map<Integer, OwnedIssues>> _ownedModel =
+        new HashMap<Integer, Map<Integer, OwnedIssues>>();
 
     protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
         ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);

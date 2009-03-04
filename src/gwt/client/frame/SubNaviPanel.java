@@ -82,8 +82,8 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "My Groups", Pages.GROUPS, "mygroups");
                 addLink(null, "My Discussions", Pages.GROUPS, "unread");
                 if (CShell.isSupport()) {
-                    addLink(null, "Issues", Pages.GROUPS, "b");
-                    addLink(null, "My Issues", Pages.GROUPS, "owned");
+                    addLink(null, "Issues", Pages.ISSUES, "");
+                    addLink(null, "My Issues", Pages.ISSUES, "mine");
                 }
             }
             break;

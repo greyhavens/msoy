@@ -116,6 +116,7 @@ public class IssueRepository extends DepotRepository
         IssueRecord ir = new IssueRecord();
         ir.creatorId = issue.creator.getMemberId();
         ir.ownerId = (issue.owner != null ? issue.owner.getMemberId() : -1);
+        ir.summary = issue.summary;
         ir.description = issue.description;
         ir.state = issue.state;
         ir.priority = issue.priority;
@@ -133,6 +134,7 @@ public class IssueRepository extends DepotRepository
     {
         updatePartial(IssueRecord.class, issue.issueId,
                 IssueRecord.OWNER_ID, (issue.owner != null ? issue.owner.getMemberId() : -1),
+                IssueRecord.SUMMARY, issue.summary,
                 IssueRecord.DESCRIPTION, issue.description,
                 IssueRecord.STATE, issue.state,
                 IssueRecord.PRIORITY, issue.priority,

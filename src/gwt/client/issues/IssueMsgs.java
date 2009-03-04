@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.issues;
 
 import com.threerings.msoy.fora.gwt.Issue;
 
@@ -13,7 +13,7 @@ public class IssueMsgs
     /**
      * Returns the translated type string.
      */
-    public static String typeMsg (Issue issue, MsgsMessages msgs)
+    public static String typeMsg (Issue issue, IssuesMessages msgs)
     {
         return typeMsg(issue.type, msgs);
     }
@@ -21,7 +21,7 @@ public class IssueMsgs
     /**
      * Returns the translated state string.
      */
-    public static String stateMsg (Issue issue, MsgsMessages msgs)
+    public static String stateMsg (Issue issue, IssuesMessages msgs)
     {
         return stateMsg(issue.state, msgs);
     }
@@ -29,7 +29,7 @@ public class IssueMsgs
     /**
      * Returns the translated priority string.
      */
-    public static String priorityMsg (Issue issue, MsgsMessages msgs)
+    public static String priorityMsg (Issue issue, IssuesMessages msgs)
     {
         return priorityMsg(issue.priority, msgs);
     }
@@ -37,7 +37,7 @@ public class IssueMsgs
     /**
      * Returns the translated category string.
      */
-    public static String categoryMsg (Issue issue, MsgsMessages msgs)
+    public static String categoryMsg (Issue issue, IssuesMessages msgs)
     {
         return categoryMsg(issue.category, msgs);
     }
@@ -45,7 +45,7 @@ public class IssueMsgs
     /**
      * Returns the translated type string.
      */
-    public static String typeMsg (int type, MsgsMessages msgs)
+    public static String typeMsg (int type, IssuesMessages msgs)
     {
         switch (type) {
         case Issue.TYPE_BUG:
@@ -60,7 +60,7 @@ public class IssueMsgs
     /**
      * Returns the translated state string.
      */
-    public static String stateMsg (int state, MsgsMessages msgs)
+    public static String stateMsg (int state, IssuesMessages msgs)
     {
         switch (state) {
         case Issue.STATE_OPEN:
@@ -77,7 +77,7 @@ public class IssueMsgs
     /**
      * Returns the translated priority string.
      */
-    public static String priorityMsg (int priority, MsgsMessages msgs)
+    public static String priorityMsg (int priority, IssuesMessages msgs)
     {
         switch (priority) {
         case Issue.PRIORITY_LOW:
@@ -94,7 +94,7 @@ public class IssueMsgs
     /**
      * Returns the translated category string.
      */
-    public static String categoryMsg (int category, MsgsMessages msgs)
+    public static String categoryMsg (int category, IssuesMessages msgs)
     {
         switch (category) {
         case Issue.CAT_NONE:

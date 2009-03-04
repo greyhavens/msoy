@@ -24,6 +24,7 @@ public enum Pages
     SUPPORT(Tabs.HELP),
     SWIFTLY(null), // TODO: Tabs.CREATE
     GROUPS(Tabs.GROUPS),
+    ISSUES(Tabs.GROUPS),
     WORLD(null);
 
     /**

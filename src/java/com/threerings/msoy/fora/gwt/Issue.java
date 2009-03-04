@@ -42,6 +42,9 @@ public class Issue
     /** A category indicating the issue currently uncategorized. */
     public static final int CAT_NONE = 0;
 
+    /** The maximum length of the issue summary. */
+    public static final int MAX_SUMMARY_LENGTH = 80;
+
     /** The maximum length of the issue description. */
     public static final int MAX_DESC_LENGTH = 1024;
 
@@ -79,7 +82,10 @@ public class Issue
     /** The user that owns the issue. */
     public MemberName owner;
 
-    /** The description of the issue. */
+    /** The one-line summary of the issue. */
+    public String summary;
+
+    /** The full description of the issue. */
     public String description;
 
     /** The state of the issue (OPEN, RESOLVED, IGNORED, etc). */

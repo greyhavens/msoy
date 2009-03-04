@@ -112,9 +112,10 @@ public class ThreadPanel extends TitledListPanel
 
     public void newIssue (ForumMessage message)
     {
-        if (MsoyUI.requireValidated()) {
-            setContents(_mmsgs.newIssue(), new EditIssuePanel(this, message));
-        }
+// TODO:
+//         if (MsoyUI.requireValidated()) {
+//             setContents(_mmsgs.newIssue(), new EditIssuePanel(this, message));
+//         }
     }
 
     // from interface SearchBox.Listener

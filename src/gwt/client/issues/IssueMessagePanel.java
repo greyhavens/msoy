@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.issues;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.msgs.SimpleMessagePanel;
 import client.util.Link;
 
 /**
@@ -38,7 +39,7 @@ public class IssueMessagePanel extends SimpleMessagePanel
     {
         super.addInfo(info);
 
-        Widget link = Link.create(_mmsgs.iThread(), Pages.GROUPS, "t_" + _threadId);
+        Widget link = Link.create(_msgs.iThread(), Pages.GROUPS, "t_" + _threadId);
         link.setStyleName("issueMessageLink");
         link.addStyleName("actionLabel");
         info.add(link);
@@ -46,5 +47,5 @@ public class IssueMessagePanel extends SimpleMessagePanel
 
     protected int _threadId;
 
-    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
+    protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
 }

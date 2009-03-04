@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.issues;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -15,10 +15,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
-import com.threerings.msoy.web.gwt.Pages;
 
+import client.msgs.TitledListPanel;
+import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
@@ -42,8 +42,8 @@ public class IssuePanel extends TitledListPanel
     {
         IssueListPanel issues = new IssueListPanel(this);
         issues.displayIssues(_type, _state, _owned, _imodels, refresh);
-        setContents(createHeader(_owned ? _mmsgs.myIssueListHeader() :
-                    _mmsgs.issueListHeader(), true), issues);
+        setContents(createHeader(_owned ? _msgs.myIssueListHeader() :
+                    _msgs.issueListHeader(), true), issues);
     }
 
     public void displayOwnedIssues (int type, int state, boolean refresh)
@@ -58,64 +58,26 @@ public class IssuePanel extends TitledListPanel
         _state = Issue.STATE_OPEN;
         IssueListPanel issues = new IssueListPanel(this);
         issues.displayAssignIssues(_type, _state, _imodels, messageId, page);
-        setContents(createHeader(_mmsgs.assignIssueListHeader(), false), issues);
+        setContents(createHeader(_msgs.assignIssueListHeader(), false), issues);
     }
 
     public void issueUpdated (boolean newIssue, Issue issue)
     {
-        if (newIssue) {
-            _imodels.newIssuePosted(issue);
-        }
+        CShell.log("Issue updated " + newIssue + " " + issue);
+        // since only admins update issues, we just flush our cached data when issues are updated
+        // and reload everything from the database
+        _imodels.flush();
         redisplayIssues();
     }
 
     public void redisplayIssues ()
     {
-        Link.go(Pages.GROUPS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
-    }
-
-    public void displayIssue (int issueId, int owned)
-    {
-        displayIssue(issueId, owned, 0, 0);
-    }
-
-    public void displayIssue (int issueId, int owned, final int messageId, final int page)
-    {
-        if (_ipanel == null) {
-            _ipanel = new EditIssuePanel(this);
-        }
-        _owned = owned > 0;
-
-        Issue issue = _imodels.findIssue(issueId);
-        if (issue != null) {
-            _state = issue.state;
-            _type = issue.type;
-            _ipanel.setIssue(issue, messageId, page);
-            setContents(_mmsgs.viewIssue(issue.description), _ipanel, true);
-
+        if (_owned) {
+            displayOwnedIssues(_type, _state, false);
         } else {
-            _issuesvc.loadIssue(issueId, new AsyncCallback<Issue>() {
-                public void onSuccess (Issue issue) {
-                    _state = issue.state;
-                    _type = issue.type;
-                    _ipanel.setIssue(issue, messageId, page);
-                    updateTitle(_mmsgs.viewIssue(issue.description));
-                }
-                public void onFailure (Throwable caught) {
-                    MsoyUI.error(_mmsgs.errINotFound());
-                }
-            });
-            setContents(_mmsgs.viewIssue("..."), _ipanel, true);
+            displayIssues(_type, _state, false);
         }
-    }
-
-    public void createIssue ()
-    {
-        if (_ipanel == null) {
-            _ipanel = new EditIssuePanel(this);
-        }
-        _ipanel.createIssue();
-        setContents(_mmsgs.newIssue(), _ipanel, true);
+        // Link.go(Pages.GROUPS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
     }
 
     protected FlexTable createHeader (String title, boolean states)
@@ -124,10 +86,10 @@ public class IssuePanel extends TitledListPanel
         header.setWidth("100%");
 
         int col = 0;
-        header.setText(0, col++, _mmsgs.iType());
+        header.setText(0, col++, _msgs.iType());
         ListBox typeBox = new ListBox();
         for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
-            typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], _mmsgs));
+            typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], _msgs));
             if (Issue.TYPE_VALUES[ii] == _type) {
                 typeBox.setSelectedIndex(ii);
             }
@@ -141,10 +103,10 @@ public class IssuePanel extends TitledListPanel
         header.setWidget(0, col++, typeBox);
 
         if (states) {
-            header.setText(0, col++, _mmsgs.iState());
+            header.setText(0, col++, _msgs.iState());
             ListBox stateBox = new ListBox();
             for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
-                stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], _mmsgs));
+                stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], _msgs));
                 if (Issue.STATE_VALUES[ii] == _state) {
                     stateBox.setSelectedIndex(ii);
                 }
@@ -158,11 +120,10 @@ public class IssuePanel extends TitledListPanel
             header.setWidget(0, col++, stateBox);
         }
 
-        header.setText(0, col++, _mmsgs.iPriority(), 1, "Column");
-        header.setText(0, col++, _mmsgs.iCategory(), 1, "Column");
-        header.setText(0, col++, _mmsgs.iOwner(), 1, "Column");
-        String htext = (_state == Issue.STATE_OPEN) ?
-            _mmsgs.iCreator() : _mmsgs.iCloser();
+        header.setText(0, col++, _msgs.iPriority(), 1, "Column");
+        header.setText(0, col++, _msgs.iCategory(), 1, "Column");
+        header.setText(0, col++, _msgs.iOwner(), 1, "Column");
+        String htext = (_state == Issue.STATE_OPEN) ? _msgs.iCreated() : _msgs.iClosed();
         header.setText(0, col++, htext, 1, "Created");
 
         return header;
@@ -177,10 +138,7 @@ public class IssuePanel extends TitledListPanel
     /** If we're only showing owned issues. */
     protected boolean _owned;
 
-    /** The issue viewing/editing panel. */
-    protected EditIssuePanel _ipanel;
-
-    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
+    protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
     protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
         ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
 }
