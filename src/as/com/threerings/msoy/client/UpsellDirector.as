@@ -100,7 +100,7 @@ public class UpsellDirector extends BasicDirector
 
     protected var _mctx :MsoyContext;
 
-    protected var _timer :Timer = new Timer(6 * 1000);
+    protected var _timer :Timer = new Timer(60 * 1000);
 
     protected var _shownBubble :Boolean;
 }
