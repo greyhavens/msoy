@@ -500,11 +500,6 @@ public class AVRGameManager extends PlaceManager
 
     public void joinGame (final int playerId, final AVRService.AVRGameJoinListener listener)
     {
-        if (MemberName.isGuest(playerId)) {
-            doJoinGame(playerId, null, null, listener);
-            return;
-        }
-
         AVRGameConfig config = (AVRGameConfig)getConfig();
         int gameId = config.getGameId();
         final PropertySpaceObject offlineProps = _offlineProps.remove(playerId);
@@ -844,9 +839,6 @@ public class AVRGameManager extends PlaceManager
 
     protected void flushPlayerGameState (final int playerId, PropertySpaceObject player)
     {
-        if (MemberName.isGuest(playerId)) {
-            return;
-        }
         final Map<String, byte[]> state = PropertySpaceHelper.encodeDirtyStateForStore(player);
         if (!state.isEmpty()) {
             _invoker.postUnit(new WriteOnlyUnit("flushPlayerAVRGState") {

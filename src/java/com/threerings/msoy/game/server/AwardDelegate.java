@@ -98,8 +98,7 @@ public class AwardDelegate extends RatingDelegate
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
-            Player player = new Player(
-                lookupName(playerOids[ii]), playerOids[ii], scores[ii], availFlow);
+            Player player = createPlayer(playerOids[ii], scores[ii], availFlow);
             players.put(playerOids[ii], player);
             highestScore = Math.max(highestScore, player.score); // used capped score
         }
@@ -183,16 +182,14 @@ public class AwardDelegate extends RatingDelegate
         // any funny business
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player pl = new Player(lookupName(winnerOids[ii]), winnerOids[ii], 1,
-                                   getAwardableFlow(now, winnerOids[ii]));
+            Player pl = createPlayer(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
             pl.percentile = 49;
             players.put(winnerOids[ii], pl);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
-            Player pl = new Player(lookupName(loserOids[ii]), loserOids[ii], 0,
-                                   getAwardableFlow(now, loserOids[ii]));
+            Player pl = createPlayer(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
             pl.percentile = 49;
             players.put(loserOids[ii], pl);
         }
@@ -286,7 +283,8 @@ public class AwardDelegate extends RatingDelegate
 
         // potentially create a flow record for this occupant
         if (!_flowRecords.containsKey(bodyOid) && plobj != null) {
-            FlowRecord record = new FlowRecord(plobj.memberName, plobj.getHumanity());
+            FlowRecord record = new FlowRecord(
+                plobj.memberName, plobj.getHumanity(), plobj.isPermaguest());
             _flowRecords.put(bodyOid, record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
@@ -347,9 +345,6 @@ public class AwardDelegate extends RatingDelegate
 
         for (Player player : players) {
             int memberId = player.getMemberId();
-            if (MemberName.isGuest(memberId)) {
-                continue;
-            }
 
             // track total game sessions
             _gameReg.incrementStat(memberId, StatType.GAME_SESSIONS, 1);
@@ -368,7 +363,7 @@ public class AwardDelegate extends RatingDelegate
                 // Note - commented out because we don't have a badge for this right now
                 /*for (Player oplayer : players) {
                     int oMemberId = oplayer.getMemberId();
-                    if (oMemberId != memberId && !MemberName.isGuest(oMemberId)) {
+                    if (oMemberId != memberId) {
                         _gameReg.addToSetStat(memberId, StatType.MP_GAME_PARTNERS, oMemberId);
                     }
                 }*/
@@ -376,10 +371,15 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    protected MemberName lookupName (int playerOid)
+    protected Player createPlayer (int playerOid, int score, int availFlow)
     {
         FlowRecord record = _flowRecords.get(playerOid);
-        return (record == null) ? null : record.name;
+        if (record == null) {
+            log.warning("Missing flow record for player", "game", where(), "oid", playerOid);
+            return new Player(new MemberName("", 0), true, playerOid, score, availFlow);
+        } else {
+            return new Player(record.name, record.isGuest, playerOid, score, availFlow);
+        }
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -710,8 +710,7 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // see if we even care
-        if (record.getTotalAward() == 0 || MemberName.isGuest(record.memberId) ||
-                _content.game.isDevelopmentVersion()) {
+        if (record.getTotalAward() == 0 || _content.game.isDevelopmentVersion()) {
             return;
         }
 
@@ -772,13 +771,15 @@ public class AwardDelegate extends RatingDelegate
         public float humanity;
         public int memberId;
         public MemberName name;
+        public boolean isGuest;
 
         public int played;
 
-        public FlowRecord (MemberName name, float humanity) {
+        public FlowRecord (MemberName name, float humanity, boolean isGuest) {
             this.humanity = humanity;
             this.memberId = name.getMemberId();
             this.name = name;
+            this.isGuest = isGuest;
         }
 
         public int getPlayTime (int now) {
@@ -848,6 +849,7 @@ public class AwardDelegate extends RatingDelegate
     protected static class Player implements Comparable<Player>
     {
         public MemberName name;
+        public boolean isGuest;
         public int playerOid;
         public int score;
         public int availFlow;
@@ -855,8 +857,9 @@ public class AwardDelegate extends RatingDelegate
         public int percentile;
         public int flowAward;
 
-        public Player (MemberName name, int playerOid, int score, int availFlow) {
+        public Player (MemberName name, boolean isGuest, int playerOid, int score, int availFlow) {
             this.name = name;
+            this.isGuest = isGuest;
             this.playerOid = playerOid;
             this.score = Math.max(0, Math.min(MAX_ALLOWED_SCORE, score));
             this.availFlow = availFlow;
@@ -915,8 +918,7 @@ public class AwardDelegate extends RatingDelegate
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {
         public boolean apply (Player player) {
-            // if we couldn't look up your name, alas we must treat you as a guest
-            return (player.name == null) || player.name.isGuest();
+            return player.isGuest;
         }
     };
 

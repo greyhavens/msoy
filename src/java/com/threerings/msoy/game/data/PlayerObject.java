@@ -24,6 +24,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -70,19 +71,19 @@ public class PlayerObject extends WhirledPlayerObject
     public PropertySpaceMarshaller propertyService;
 
     /**
-     * Return true if this user is a guest.
-     */
-    public boolean isGuest ()
-    {
-        return memberName.isGuest();
-    }
-
-    /**
      * Get the media to use as our headshot.
      */
     public MediaDesc getHeadShotMedia ()
     {
         return memberName.getPhoto();
+    }
+
+    /**
+     * Returns true if this user is a permaguest.
+     */
+    public boolean isPermaguest ()
+    {
+        return MemberMailUtil.isPermaguest(username.toString());
     }
 
     /**

@@ -114,16 +114,6 @@ public class MemberName extends Name
         return memberId == 0;
     }
 
-    /**
-     * Returns true if the supplied member id represents a guest or a viewer,
-     * rather than a registered user.
-     */
-    public static boolean isGuest (int memberId)
-    {
-        // memberId == 0 is not technically a guest, but is used for "viewers"
-        return memberId <= 0;
-    }
-
     /** For unserialization. */
     public MemberName ()
     {
@@ -145,14 +135,6 @@ public class MemberName extends Name
     public int getMemberId ()
     {
         return _memberId;
-    }
-
-    /**
-     * Returns true if this name represents a guest member or a viewer.
-     */
-    public boolean isGuest ()
-    {
-        return isGuest(_memberId);
     }
 
     /**

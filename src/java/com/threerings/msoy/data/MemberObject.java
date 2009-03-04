@@ -216,11 +216,11 @@ public class MemberObject extends MsoyBodyObject
     public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
 
     /**
-     * Return true if this user is a guest.
+     * Return true if this user is only viewing the scene and should not be rendered within it.
      */
-    public boolean isGuest ()
+    public boolean isViewer ()
     {
-        return memberName.isGuest();
+        return memberName.isViewer();
     }
 
     /**
@@ -229,14 +229,6 @@ public class MemberObject extends MsoyBodyObject
     public boolean isPermaguest ()
     {
         return MemberMailUtil.isPermaguest(username.toString());
-    }
-
-    /**
-     * Return true if this user is only viewing the scene and should not be rendered within it.
-     */
-    public boolean isViewer ()
-    {
-        return memberName.isViewer();
     }
 
     /**

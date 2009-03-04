@@ -934,11 +934,6 @@ public class GameGameRegistry
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject)caller;
-        if (plobj.getMemberName().isGuest()) {
-            log.warning("Requested to remove development trophies from a guest", "gameId", gameId);
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
         _invoker.postUnit(new PersistingUnit("removeDevelopmentTrophies", lner) {
             @Override public void invokePersistent() throws Exception {
                 _trophies = _trophyRepo.loadTrophies(gameId, plobj.getMemberId());

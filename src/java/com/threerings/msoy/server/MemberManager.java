@@ -238,12 +238,12 @@ public class MemberManager
     // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject member)
     {
-        if (member.isGuest()) {
+        if (member.isViewer()) {
             return;
         }
 
-        //  add a listener for changes to accumulated flow so that the member's level can be
-        // updated as necessary
+        // add a listener for changes to accumulated flow so that the member's level can be updated
+        // as necessary
         member.addListener(new AttributeChangeListener() {
             public void attributeChanged (final AttributeChangedEvent event) {
                 if (MemberObject.ACC_COINS.equals(event.getName())) {
@@ -271,7 +271,6 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
             boolean autoFriended;
             @Override public void invokePersistent () throws Exception {
@@ -463,8 +462,6 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-
         if (avatarItemId == 0) {
             // a request to return to the default avatar
             finishSetAvatar(user, null, null, listener);
@@ -504,10 +501,7 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-
         // TODO: verify entered string
-
         _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
                                              "user", user.who(), "name", name) {
             @Override public void invokePersistent () throws Exception {
@@ -579,8 +573,6 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
-        ensureNotGuest(member);
-
         _invoker.postUnit(new PersistingUnit("setHomeSceneId", listener, "who", member.who()) {
             @Override
             public void invokePersistent () throws Exception {
@@ -711,8 +703,6 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
-        ensureNotGuest(member);
-
         final String commitStatus = StringUtil.truncate(status, Profile.MAX_STATUS_LENGTH);
         _invoker.postUnit(new PersistingUnit("updateStatus", listener, "who", member.who()) {
             @Override public void invokePersistent () throws Exception {
@@ -747,13 +737,10 @@ public class MemberManager
         } else {
             page = "world-s" + placeId;
         }
-        String url = ServerConfig.getServerURL();
-        if (memObj.isGuest()) {
-            url += "#" + page;
-        } else {
-            // set them up with the affiliate info
-            url += "welcome/" + memObj.getMemberId() + "/" + StringUtil.encode(page);
-        }
+
+        // set them up with the affiliate info
+        String url = ServerConfig.getServerURL() + "welcome/" + memObj.getMemberId() +
+            "/" + StringUtil.encode(page);
 
         final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
         // username is their authentication username which is their email address
@@ -945,17 +932,6 @@ public class MemberManager
             }
         }
         return false;
-    }
-
-    /**
-     * Convenience method to ensure that the specified caller is not a guest.
-     */
-    protected void ensureNotGuest (final MemberObject caller)
-        throws InvocationException
-    {
-        if (caller.isGuest()) {
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
     }
 
     /**

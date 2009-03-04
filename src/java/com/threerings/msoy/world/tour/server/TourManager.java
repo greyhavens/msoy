@@ -88,7 +88,7 @@ public class TourManager
         memObj.getLocal(MemberLocal.class).touredRooms.add(nextRoom);
         listener.requestProcessed(nextRoom);
         // maybe increment the user's TOURED stat
-        if (finishedLoadingCurrentRoom && !memObj.isGuest()) {
+        if (finishedLoadingCurrentRoom && !memObj.isViewer()) {
             _invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
                     _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);

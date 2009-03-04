@@ -68,15 +68,6 @@ public class TrophyDelegate extends PlayManagerDelegate
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject) verifyWritePermission(caller, playerId);
-
-        // guests are not currently awarded trophies; some day when we have infinite time or
-        // infinite monkeys, we will track trophies awarded to guests and transfer them to their
-        // newly created account
-        if (plobj.isGuest()) {
-            log.info("Guest " + playerId + " not awarded trophy " + ident + ".");
-            return;
-        }
-
         final int gameId = _content.game.gameId;
 
         // locate the trophy source record in question
@@ -133,13 +124,6 @@ public class TrophyDelegate extends PlayManagerDelegate
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject) verifyWritePermission(caller, playerId);
-
-        // guests are not currently awarded prizes; some day when we have infinite time or infinite
-        // monkeys, we will track prizes awarded to guests and transfer them to their newly created
-        // account
-        if (plobj.isGuest()) {
-            return;
-        }
 
         // locate the prize record in question
         Prize prize = null;
@@ -231,22 +215,6 @@ public class TrophyDelegate extends PlayManagerDelegate
     public void bodyLeft (int bodyOid)
     {
         super.bodyLeft(bodyOid);
-    }
-
-    protected List<Integer> playerOidsToMemberIds (
-        Iterable<Integer> playerOids, boolean pruneGuests)
-    {
-        final List<Integer> memberIds = Lists.newArrayList();
-        for (int playerOid : playerOids) {
-            DObject dobj = _omgr.getObject(playerOid);
-            if (dobj instanceof PlayerObject) {
-                int memberId = ((PlayerObject)dobj).getMemberId();
-                if (!MemberName.isGuest(memberId) || !pruneGuests) {
-                    memberIds.add(memberId);
-                }
-            }
-        }
-        return memberIds;
     }
 
     /** The metadata for the game being played. */

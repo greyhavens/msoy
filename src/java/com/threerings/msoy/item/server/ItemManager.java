@@ -369,15 +369,10 @@ public class ItemManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        if (user.isGuest()) {
-            throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
-        }
-
         getItem(ident, new ResultAdapter<Item>(rl) {
             public void requestCompleted (Item item) {
                 if (item.ownerId == user.getMemberId()) {
                     super.requestCompleted(item);
-
                 } else {
                     _listener.requestFailed(ItemCodes.E_ACCESS_DENIED);
                 }
@@ -465,10 +460,6 @@ public class ItemManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        if (user.isGuest()) {
-            throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
-        }
-
         if (item.type == Item.AVATAR) {
             log.warning("Tried to reclaim invalid item type", "who", user.who(), "item", item);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);

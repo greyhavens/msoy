@@ -34,14 +34,6 @@ public class PartierObject extends BodyObject
         return memberName.getMemberId();
     }
 
-    /**
-     * Return true if this user is merely a guest.
-     */
-    public boolean isGuest ()
-    {
-        return memberName.isGuest();
-    }
-
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the <code>memberName</code> field be set to the

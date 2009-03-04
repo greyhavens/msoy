@@ -86,11 +86,10 @@ public class MsoySession extends WhirledSession
         AuthenticationDomain.Account acct = (AuthenticationDomain.Account)_authdata;
         WorldCredentials credentials = (WorldCredentials)getCredentials();
 
-        // if this is a guest account, they didn't get a VisitorInfo through the resolver.
-        // so let's pull one from their flash credentials, or manufacture a brand new one.
-        // (but only do this for real guests, not lurkers!)
-        final boolean guest = _memobj.isGuest() && !_memobj.isViewer();
-        if (_memobj.visitorInfo == null && guest) {
+        // if this is a guest account, they didn't get a VisitorInfo through the resolver. so let's
+        // pull one from their flash credentials, or manufacture a brand new one.  (but only do
+        // this for real guests, not lurkers!)
+        if (_memobj.visitorInfo == null && !_memobj.isViewer()) {
             if (credentials.visitorId != null) {
                 _memobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
             } else {
@@ -174,7 +173,7 @@ public class MsoySession extends WhirledSession
         }
 
         // if this was a member, record some end of session related info to the database
-        if (!_memobj.isGuest()) {
+        if (!_memobj.isViewer()) {
             final int activeMins = Math.round(
                 (local.sessionSeconds + _connectTime - _idleTracker.getIdleTime()) / 60f);
             final int memberId = _memobj.getMemberId();

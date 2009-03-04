@@ -42,10 +42,6 @@ public class BadgeManager
      */
     public void updateBadges (MemberObject user)
     {
-        // guests are not awarded badges
-        if (user.isGuest()) {
-            return;
-        }
         MemberLocal local = user.getLocal(MemberLocal.class);
 
         // iterate the list of badges to see if the player has won any new ones

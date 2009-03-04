@@ -210,8 +210,7 @@ public class MsoyServer extends MsoyBaseServer
         // tell GameManager how to identify our users
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
-                int memberId = ((PlayerObject) bodyObj).getMemberId();
-                return MemberName.isGuest(memberId) ? 0 : memberId;
+                return ((PlayerObject) bodyObj).getMemberId();
             }
         });
 

@@ -152,7 +152,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         long startStamp = System.currentTimeMillis();
         List<Long> resolutionStamps = Lists.newArrayList();
-
         enforceConnected();
 
         // load up their member information using on their authentication (account) name
@@ -262,9 +261,9 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void finishResolution (final ClientObject clobj)
     {
         super.finishResolution(clobj);
-        final MemberObject user = (MemberObject)clobj;
 
-        if (!user.isGuest() && user.avatarCache == null) {
+        final MemberObject user = (MemberObject)clobj;
+        if (user.avatarCache == null) {
             // load up their recently used avatars
             _itemMan.loadRecentlyTouched(
                 user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,

@@ -707,11 +707,6 @@ public class RoomManager extends SpotSceneManager
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
-
-        if (member.isGuest()) {
-            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
-        }
-
         _invoker.postUnit(new WriteOnlyUnit("rateRoom") {
             public void invokePersist () throws Exception {
                 _sceneRepo.getRatingRepository().rate(getScene().getId(),

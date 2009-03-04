@@ -149,11 +149,7 @@ public class StatusServlet extends HttpServlet
         }
 
         for (ClientInfo cinfo : nodeobj.clients) {
-            if (MemberName.isGuest(((MsoyClientInfo)cinfo).getMemberId())) {
-                info.guests++;
-            } else {
-                info.members++;
-            }
+            info.clients++;
         }
 
         for (MemberLocation mloc : nodeobj.memberLocs) {
@@ -229,9 +225,7 @@ public class StatusServlet extends HttpServlet
     {
         public String name;
 
-        public int members;
-        public int guests;
-
+        public int clients;
         public int rooms;
         public int games;
         public int channels;
@@ -244,8 +238,7 @@ public class StatusServlet extends HttpServlet
         public StringBuilder modeinfo = new StringBuilder();
 
         public String toString () {
-            return name + " [members=" + members + ", guests=" + guests +
-                ", inScene=" + inScene + ", inGame=" + inGame +
+            return name + " [clients=" + clients + ", inScene=" + inScene + ", inGame=" + inGame +
                 ", rooms=" + rooms + ", games=" + games + ", channels=" + channels + "] ";
         }
     }

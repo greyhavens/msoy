@@ -38,24 +38,15 @@ public class PartyClientResolver extends ClientResolver
 
         PartierObject partObj = (PartierObject)clobj;
         PartyAuthName authName = (PartyAuthName)_username;
-        VizMemberName name;
 
-        if (authName.isGuest()) {
-            name = new VizMemberName(
-                authName.toString(), authName.getMemberId(), VizMemberName.DEFAULT_PHOTO);
-
-        } else {
-            MemberRecord member = _memberRepo.loadMember(authName.getMemberId());
-            ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
-            MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
-            name = new VizMemberName(member.name, member.memberId, photo);
-        }
+        MemberRecord member = _memberRepo.loadMember(authName.getMemberId());
+        ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
+        MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
 
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
-
-        partObj.memberName = name;
+        partObj.memberName = new VizMemberName(member.name, member.memberId, photo);
     }
 
     @Inject protected MemberRepository _memberRepo;

@@ -47,10 +47,6 @@ public class FriendManager
     // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject memobj)
     {
-        if (memobj.isGuest()) {
-            return; // no need to do anything
-        }
-
         // determine which of this member's friends are online
         memobj.startTransaction();
         try {
@@ -80,17 +76,13 @@ public class FriendManager
     // from interface MsoyPeerManager.MemberObserver
     public void memberLoggedOn (String nodeName, MemberName member)
     {
-        if (!member.isGuest()) {
-            updateOnlineStatus(member.getMemberId(), true);
-        }
+        updateOnlineStatus(member.getMemberId(), true);
     }
 
     // from interface MsoyPeerManager.MemberObserver
     public void memberLoggedOff (String nodeName, MemberName member)
     {
-        if (!member.isGuest()) {
-            updateOnlineStatus(member.getMemberId(), false);
-        }
+        updateOnlineStatus(member.getMemberId(), false);
     }
 
     // from interface MsoyPeerManager.MemberObserver

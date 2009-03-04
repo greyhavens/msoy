@@ -229,11 +229,9 @@ public class QuestDelegate extends PlayManagerDelegate
             totalSecs += playerSecs;
             totalTasks += player.tasksCompleted;
             if (player.coinsAccrued > 0) {
-                if (!player.playerObject.isGuest()) {
-                    final UserAction action = UserAction.playedGame(
-                        player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
-                    _gameReg.awardCoins(_gameId, action, player.coinsAccrued);
-                }
+                final UserAction action = UserAction.playedGame(
+                    player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
+                _gameReg.awardCoins(_gameId, action, player.coinsAccrued);
                 totalAward += player.coinsAccrued;
                 player.reset();
             }
@@ -272,7 +270,7 @@ public class QuestDelegate extends PlayManagerDelegate
         }
 
         // if they accrued any coins (and are not a guest), do the actual coin awarding
-        if (!player.playerObject.isGuest() && player.coinsAccrued > 0) {
+        if (player.coinsAccrued > 0) {
             final UserAction action = UserAction.playedGame(
                 memberId, _content.game.name, _gameId, playerSecs);
             _gameReg.awardCoins(_gameId, action, player.coinsAccrued);

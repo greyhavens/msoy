@@ -58,14 +58,6 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
-     * Return true if we represent a guest.
-     */
-    public boolean isGuest ()
-    {
-        return ((MemberName) username).isGuest();
-    }
-
-    /**
      * Get this player's partyId.
      */
     public int getPartyId ()
@@ -148,7 +140,7 @@ public class MemberInfo extends ActorInfo
             _ident = memobj.avatar.getIdent();
             _scale = memobj.avatar.scale;
         } else {
-            _media = (memobj.isGuest() || memobj.isPermaguest()) ?
+            _media = (memobj.isViewer() || memobj.isPermaguest()) ?
                 Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
             _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
             _scale = 1f;

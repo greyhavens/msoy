@@ -131,9 +131,7 @@ public class MoneyLogic
      */
     public MemberMoney getMoneyFor (int memberId)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId),
-            "Cannot retrieve money info for guests.");
-
+        Preconditions.checkArgument(memberId != 0, "Requested money for invalid member.");
         return _repo.load(memberId).getMemberMoney();
     }
 
@@ -165,7 +163,7 @@ public class MoneyLogic
      */
     public MoneyTransaction awardCoins (int memberId, int amount, boolean notify, UserAction action)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
+        Preconditions.checkArgument(memberId != 0, "Requested to award coins to invalid member.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
@@ -950,8 +948,7 @@ public class MoneyLogic
         int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending, boolean support)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId),
-            "Cannot retrieve money log for guests.");
+        Preconditions.checkArgument(memberId != 0, "Requested transactions for invalid member.");
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
@@ -1047,11 +1044,8 @@ public class MoneyLogic
         int buyerId, Object wareKey, Currency listedCurrency, int listedAmount)
     {
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
-
         PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
-        if (!MemberName.isGuest(buyerId)) {
-            _priceCache.addQuote(buyerId, wareKey, quote);
-        }
+        _priceCache.addQuote(buyerId, wareKey, quote);
         return quote;
     }
 
