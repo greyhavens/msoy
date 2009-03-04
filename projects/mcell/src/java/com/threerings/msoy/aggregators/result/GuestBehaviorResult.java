@@ -52,11 +52,13 @@ public class GuestBehaviorResult
             return false;
         }
 
+        _entry.firstEvent = timestamp;
+        _entry.tracker = tracker;
+
         // what we do depends on the event type
         final EventName name = eventData.getEventName();
 
         if (VISITOR_INFO_CREATED.equals(name)) {
-            _entry.start = timestamp;
             Boolean web = (Boolean)data.get("web");
             if (web != null) {
                 _entry.embed = !web;
@@ -71,7 +73,6 @@ public class GuestBehaviorResult
 
         } else if (EXPERIENCE.equals(name)) {
             final String action = (String)data.get("action");
-            data.get("memberId"); // throw away for testing -- TODO
             if (action == null) {
                 return false;
             }
@@ -87,8 +88,6 @@ public class GuestBehaviorResult
             }
         }
 
-        _entry.tracker = tracker;
-
         return true;
     }
 
@@ -103,15 +102,10 @@ public class GuestBehaviorResult
 
     public boolean putData (Map<String, Object> result)
     {
-        // only include entries that correspond to an actual created tracker
-        if (_entry.start == null) {
-            return false;
-        }
-
         result.put("acct_tracker", _entry.tracker);
 
         // data from VisitorInfoCreated
-        result.put("acct_start", _entry.start);
+        result.put("acct_start", _entry.firstEvent);
 
         // data from VectorAssociated
         String vector = _entry.vector;
@@ -149,9 +143,9 @@ public class GuestBehaviorResult
 
         // data from both
         int minutes = 0;
-        if (_entry.start != null && conversion != null) {
+        if (_entry.firstEvent != null && conversion != null) {
             result.put("conv_timestamp", conversion);
-            minutes = (int)(conversion.getTime() - _entry.start.getTime()) / (1000 * 60);
+            minutes = (int)(conversion.getTime() - _entry.firstEvent.getTime()) / (1000 * 60);
         } else {
             result.put("conv_timestamp", new Date(0L));
         }
@@ -170,11 +164,11 @@ public class GuestBehaviorResult
         // retention counts only if they have a valid start date, a valid conversion
         // date, and they had some experiences more than a week after converting.
         Date lastEventDate = _entry.findLastEventDate();
-        boolean cameBack = (_entry.start != null) && (conversion != null) && (lastEventDate != null);
+        boolean cameBack = (_entry.firstEvent != null) && (conversion != null) && (lastEventDate != null);
 
         int days = 0;
         if (cameBack) {
-            long msecs = (lastEventDate.getTime() - _entry.start.getTime());
+            long msecs = (lastEventDate.getTime() - _entry.firstEvent.getTime());
             days = (int)(msecs / (1000 * 60 * 60 * 24));
         }
 
@@ -229,7 +223,7 @@ public class GuestBehaviorResult
         public String vector;
         public String tracker;
 
-        public Date start;
+        public Date firstEvent;
         public Date conversion;
         public Integer conversionMember;
         public Boolean embed;
@@ -240,15 +234,6 @@ public class GuestBehaviorResult
         public GuestEntry ()
         {
         // don't initialize anything
-        }
-
-        /**
-         * Returns true if the event contains enough information to be processed as a new user
-         * bounce information, ie. it needs at least the start date.
-         */
-        public boolean isSufficient ()
-        {
-            return this.start != null;
         }
 
         /**
@@ -358,6 +343,11 @@ public class GuestBehaviorResult
                     "Won't combine entries with different keys (" + this.tracker + ", " + other.tracker + ")");
             }
 
+            if (this.firstEvent == null ||
+                    (other.firstEvent != null && other.firstEvent.before(this.firstEvent))) {
+                this.firstEvent = other.firstEvent;
+            }
+
             final Boolean otherExperienceEarlier = other.firstExperienceAsPlayer != null
                 && this.firstExperienceAsPlayer != null
                 && other.firstExperienceAsPlayer.before(this.firstExperienceAsPlayer);
@@ -373,10 +363,6 @@ public class GuestBehaviorResult
 
             if (this.embed == null) {
                 this.embed = other.embed;
-            }
-
-            if (this.start == null) {
-                this.start = other.start;
             }
 
             if (this.conversion == null) {
@@ -399,7 +385,7 @@ public class GuestBehaviorResult
             HadoopSerializationUtil.writeObject(out, vector);
             HadoopSerializationUtil.writeObject(out, embed);
             // data from VisitorInfoCreated
-            HadoopSerializationUtil.writeObject(out, start);
+            HadoopSerializationUtil.writeObject(out, firstEvent);
             // data from AccountCreated
             HadoopSerializationUtil.writeObject(out, conversion);
             HadoopSerializationUtil.writeObject(out, conversionMember);
@@ -417,7 +403,7 @@ public class GuestBehaviorResult
             this.vector = (String)HadoopSerializationUtil.readObject(in);
             this.embed = (Boolean)HadoopSerializationUtil.readObject(in);
             // data from VisitorInfoCreated
-            this.start = (Date)HadoopSerializationUtil.readObject(in);
+            this.firstEvent = (Date)HadoopSerializationUtil.readObject(in);
             // data from AccountCreated
             this.conversion = (Date)HadoopSerializationUtil.readObject(in);
             this.conversionMember = (Integer)HadoopSerializationUtil.readObject(in);
