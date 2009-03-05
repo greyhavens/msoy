@@ -87,9 +87,12 @@ public class NotificationDirector extends BasicDirector
     }
 
     public function addGenericNotification (
-        announcement :String, category :int, sender :MemberName = null) :void
+        announcement :String, category :int, sender :MemberName = null,
+        clickTracker :Function = null) :void
     {
-        addNotification(new GenericNotification(announcement, category, sender));
+        var gn :GenericNotification = new GenericNotification(announcement, category, sender);
+        gn.clickTracker = clickTracker;
+        addNotification(gn);
     }
 
     public function addNotification (notification :Notification) :void

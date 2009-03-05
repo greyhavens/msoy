@@ -23,6 +23,11 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     public static const BUTTSCRATCHING :int = 3; // your friends doing things
     public static const LOWEST :int = 4; // people coming and going, other incidentals
 
+    /** Called if the notification is clicked, client-side only. Note that this should
+     * NOT execute the primary action of the notification, this is just called if any part of it
+     * is clicked */
+    public var clickTracker :Function;
+
     /**
      * Get the chat message used to announce this notification, or null.
      * WTF are you doing with a null announcement?

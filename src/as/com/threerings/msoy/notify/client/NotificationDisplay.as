@@ -31,6 +31,7 @@ import caurina.transitions.Tweener;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexWrapper;
 
@@ -186,6 +187,7 @@ public class NotificationDisplay extends HBox
         var format :TextFormat = ChatOverlay.createChatFormat();
         format.color = getColor(notification);
         var text :TextField = new TextField();
+        TextFieldUtil.trackOnlyLinksMouseable(text);
         text.multiline = forHistory;
         text.wordWrap = forHistory;
         // I would rather not make the text selectable, but clicking on links doesn't work if it's
@@ -195,6 +197,13 @@ public class NotificationDisplay extends HBox
         text.antiAliasType = AntiAliasType.ADVANCED;
         const announcement :String = Msgs.NOTIFY.xlate(notification.getAnnouncement());
         TextUtil.setText(text, TextUtil.parseLinks(announcement, format, true, true), format);
+
+        // possibly set up the click tracker
+        if (notification.clickTracker != null) {
+            text.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
+                notification.clickTracker();
+            });
+        }
 
         if (forHistory) {
             text.width = getHistoryWidth();
@@ -296,7 +305,7 @@ public class NotificationDisplay extends HBox
     protected function getColor (notification :Notification) :uint
     {
         switch (notification.getCategory()) {
-        case Notification.SYSTEM: return 0xFFFFFF;
+        case Notification.SYSTEM: return 0xFFBBBB;
         case Notification.INVITE: return 0xFFA13D;
         case Notification.PERSONAL: return 0x40B8D2;
         case Notification.BUTTSCRATCHING: return 0x999999;
