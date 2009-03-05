@@ -23,7 +23,9 @@ public class LimitedTextArea extends VerticalPanel
 
         add(_area = new TextArea());
         _area.addKeyboardListener(_limiter);
-        _area.setCharacterWidth(width);
+        if (width > 0) {
+            _area.setCharacterWidth(width);
+        }
         _area.setVisibleLines(height);
         setHorizontalAlignment(ALIGN_RIGHT);
         add(_remaining = new Label());

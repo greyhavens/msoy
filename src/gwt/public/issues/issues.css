@@ -92,10 +92,14 @@
 }
 
 .editIssuePanel .Label {
-  width: 50px;
+  width: 90px;
   vertical-align: top;
 }
 
 .editIssuePanel .SubTitle {
   padding-top: 10px;
+}
+
+.editIssuePanel .gwt-TextArea, .editIssuePanel .gwt-TextBox {
+  width: 575px;
 }
