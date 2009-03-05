@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -18,17 +17,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlinePanel;
 
-import com.threerings.msoy.badge.data.all.Badge;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.person.gwt.AggregateFeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.gwt.FriendFeedMessage;
-import com.threerings.msoy.person.gwt.GroupFeedMessage;
-import com.threerings.msoy.person.gwt.SelfFeedMessage;
-import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
+import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -36,7 +33,6 @@ import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.NaviUtil;
 
 /**
  * Display a single news feed item, formatted based on type.
@@ -48,366 +44,168 @@ public class FeedMessagePanel extends FocusPanel
      */
     public FeedMessagePanel (FeedMessage message, boolean usePronouns)
     {
-        this._usePronouns = usePronouns;
-
-        if (message instanceof FriendFeedMessage) {
-            addFriendMessage((FriendFeedMessage)message);
-        } else if (message instanceof GroupFeedMessage) {
-            addGroupMessage((GroupFeedMessage)message);
-        } else if (message instanceof SelfFeedMessage) {
-            addSelfMessage((SelfFeedMessage)message);
-        } else if (message instanceof AggregateFeedMessage) {
-            AggregateFeedMessage aggMsg = (AggregateFeedMessage)message;
-            switch (aggMsg.style) {
-            case ACTIONS:
-                addMultiActionsMessage(aggMsg.messages);
-                break;
-
-            case ACTORS:
-                addMutliActorsMessage(aggMsg.messages);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown aggregation style: " + aggMsg.style);
+        Builder builder = new Builder() {
+            public Media createMedia (MediaDesc md, final Pages page, final String args) {
+                ClickListener clicker = new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Link.go(page, args);
+                    }
+                };
+                int size = MediaDesc.HALF_THUMBNAIL_SIZE;
+                if (page == Pages.WORLD && args.startsWith("s")) {
+                    // snapshots are unconstrained at a set size; fake a width constraint for TINY_SIZE.
+                    md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                    size = MediaDesc.SNAPSHOT_TINY_SIZE;
+                }
+                return new WidgetWrapper(MediaUtil.createMediaView(md, size, clicker));
             }
-        } else {
-            addMessage(message);
-        }
-    }
 
-    protected void addFriendMessage (FriendFeedMessage message)
-    {
-        String friendLink = profileLink(message);
-        switch (message.type) {
-        case FRIEND_ADDED_FRIEND:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriend(friendLink,
-                buildString(message))));
-            break;
-
-        case FRIEND_UPDATED_ROOM:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendUpdatedRoom(friendLink,
-                buildString(message))));
-            break;
-
-        case FRIEND_WON_TROPHY:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonTrophy(
-                            friendLink, buildString(message))));
-            break;
-
-        case FRIEND_LISTED_ITEM:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendListedItem(
-                            friendLink, buildString(message))));
-            break;
-
-        case FRIEND_GAINED_LEVEL:
-            add(new IconWidget("friend_gained_level", _pmsgs.friendGainedLevel(
-                            friendLink, buildString(message))));
-
-        case FRIEND_WON_BADGE:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(
-                            friendLink, buildString(message))));
-            break;
-
-        case FRIEND_WON_MEDAL:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(
-                            friendLink, buildString(message))));
-            break;
-        }
-    }
-
-    protected void addGroupMessage (GroupFeedMessage message)
-    {
-        switch (message.type) {
-        case GROUP_ANNOUNCEMENT:
-            String threadLink = Link.createHtml(
-                message.data[1], Pages.GROUPS, Args.compose("t", message.data[2]));
-            add(new ThumbnailWidget(buildMedia(message),
-                _pmsgs.groupAnnouncement(message.data[0], threadLink)));
-            break;
-
-        case GROUP_UPDATED_ROOM:
-            String groupLink = Link.createHtml(message.group.toString(), Pages.GROUPS,
-                Args.compose("f", message.group.getGroupId()));
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendUpdatedRoom(
-                groupLink, buildString(message))));
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    protected void addSelfMessage (SelfFeedMessage message)
-    {
-        switch (message.type) {
-        case SELF_ROOM_COMMENT:
-            if (message.actor == null) {
-                return; // TEMP: skip old pre-actor messages
+            public String createLink (String label, Pages page, String args) {
+                return Link.createHtml(label, page, args);
             }
-            String roomText = _pmsgs.selfRoomComment(profileLink(message),
-                buildString(message));
-            add(new ThumbnailWidget(buildMedia(message), roomText));
-            break;
 
-        case SELF_ITEM_COMMENT:
-            String itemText = _pmsgs.selfItemComment(profileLink(message), buildString(message));
-            add(new ThumbnailWidget(buildMedia(message), itemText));
-            break;
+            public void addMedia (Media media, String message) {
+                add(new ThumbnailWidget(((WidgetWrapper)media).widget, message));
+            }
 
-        case SELF_FORUM_REPLY:
-            String replyText = _pmsgs.selfForumReply(profileLink(message), buildString(message));
-            add(new BasicWidget(replyText));
-            break;
-        }
-    }
+            public Icon createGainedLevelIcon (String message) {
+                return new WidgetWrapper(new IconWidget("friend_gained_level", message));
+            }
 
-    protected void addMessage (FeedMessage message)
-    {
-        switch (message.type) {
-        case GLOBAL_ANNOUNCEMENT:
-            String threadLink = Link.createHtml(
-                message.data[0], Pages.GROUPS, Args.compose("t", message.data[1]));
-            add(new BasicWidget(_pmsgs.globalAnnouncement(threadLink)));
-            break;
-        }
-    }
+            public void addIcon (Icon icon) {
+                add(((WidgetWrapper)icon).widget);
+            }
 
-    protected String profileLink (FeedMessage message)
-    {
-        MemberName member;
-        if (message instanceof FriendFeedMessage) {
-            member = ((FriendFeedMessage)message).friend;
-        } else if (message instanceof SelfFeedMessage) {
-            member = ((SelfFeedMessage)message).actor;
-        } else {
-            member = null;
-        }
-        if (member == null) {
-            // very old data may not include actor/friend
-            return _pmsgs.feedProfileMemberUnknown();
-        }
-        return profileLink(member.toString(), String.valueOf(member.getMemberId()));
-    }
+            public void addMedia (Media[] media, String message) {
+                List<Widget> widgets = new ArrayList<Widget>();
+                for (Media m : media) {
+                    widgets.add(((WidgetWrapper)m).widget);
+                }
+                Widget[] widgetArray = widgets.toArray(new Widget[widgets.size()]);
+                add(new ThumbnailWidget(widgetArray, message));
+            }
 
-    protected String profileLink (String name, String id)
-    {
-        if (_usePronouns && id.trim().equals(CShell.getMemberId() + "")) {
-            return _pmsgs.feedProfileMemberYou();
-        }
-        return Link.createHtml(name, Pages.PEOPLE, id);
-    }
+            public void addText (String text) {
+                add(new BasicWidget(text));
+            }
+        };
 
-    /**
-     * Helper function which creates translated strings of a feed messages data.
-     */
-    protected String buildString (FeedMessage message)
-    {
-        switch (message.type.getCategory()) {
-        case FRIENDINGS:
-            return profileLink(message.data[0], message.data[1]);
+        Messages messages = new Messages() {
+            public String typeName (String itemType) {
+                return _dmsgs.xlate("itemType" + itemType);
+            }
 
-        case ROOMS:
-            return Link.createHtml(message.data[1], Pages.WORLD, "s" + message.data[0]);
+            public String you () {
+                return _pmsgs.feedProfileMemberYou();
+            }
 
-        case TROPHIES:
-            return Link.createHtml(message.data[0], Pages.GAMES,
-                                   NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
-                                                       NaviUtil.GameDetails.TROPHIES));
+            public String describeItem (String typeName, String itemName) {
+                return _pmsgs.descCombine(typeName, itemName);
+            }
 
-        case LISTED_ITEMS:
-            return _pmsgs.descCombine(
-                _dmsgs.xlate("itemType" + message.data[1]),
-                        Link.createHtml(message.data[0], Pages.SHOP,
-                            Args.compose("l", message.data[1], message.data[2])));
+            public String badgeName (String hexCode, String levelName) {
+                return _dmsgs.get("badge_" + hexCode, levelName);
+            }
 
-        case LEVELS:
-            return message.data[0];
-
-        case BADGES:
-            int badgeCode = Integer.parseInt(message.data[0]);
-            int badgeLevel = Integer.parseInt(message.data[1]);
-            String badgeHexCode = Integer.toHexString(badgeCode);
-            String badgeName =
-                _dmsgs.get("badge_" + badgeHexCode, Badge.getLevelName(badgeLevel));
-
-            int memberId = ((FriendFeedMessage)message).friend.getMemberId();
-            return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
-
-        case MEDALS:
-            memberId = ((FriendFeedMessage)message).friend.getMemberId();
-            String medalLink =
-                Link.createHtml(message.data[0], Pages.ME, Args.compose("medals", memberId));
-            if (message.data.length < 4) {
-                // legacy medal messages are missing group info.
+            public String noGroupForMedal (String medalLink) {
                 return _pmsgs.medalNoGroup(medalLink);
             }
-            String groupLink =
-                Link.createHtml(message.data[2], Pages.GROUPS, Args.compose("d", message.data[3]));
-            return _pmsgs.medal(medalLink, groupLink);
 
-        case COMMENTS:
-            if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
-                return Link.createHtml(message.data[1], Pages.ROOMS, Args.compose("room",
-                    message.data[0]));
-
-            } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
-                return Link.createHtml(message.data[2], Pages.SHOP, Args.compose("l",
-                    message.data[0], message.data[1]));
+            public String medal (String medal, String group) {
+                return _pmsgs.medal(medal, group);
             }
 
-        case FORUMS:
-            return Link.createHtml(message.data[1], Pages.GROUPS, Args.compose("t",
-                message.data[0]));
-        }
+            public String unknownMember () {
+                return _pmsgs.feedProfileMemberUnknown();
+            }
 
-        return null;
+            public String action (
+                FeedMessageType type, String subject, String object, Plural plural) {
+                switch (type) {
+                case GLOBAL_ANNOUNCEMENT:
+                    return _pmsgs.globalAnnouncement(object);
+
+                case FRIEND_ADDED_FRIEND:
+                    return _pmsgs.friendAddedFriend(subject, object);
+
+                case FRIEND_UPDATED_ROOM:
+                    switch (plural) {
+                    case NONE:
+                        return _pmsgs.friendUpdatedRoom(subject, object);
+                    case SUBJECT:
+                        return _pmsgs.friendsUpdatedRoom(subject);
+                    case OBJECT:
+                        return _pmsgs.friendUpdatedRooms(subject, object);
+                    }
+
+                case FRIEND_WON_TROPHY:
+                    return plural == Plural.OBJECT ?
+                        _pmsgs.friendWonTrophies(subject, object) :
+                        _pmsgs.friendWonTrophy(subject, object);
+
+                case FRIEND_LISTED_ITEM:
+                    return _pmsgs.friendListedItem(subject, object);
+
+                case FRIEND_GAINED_LEVEL:
+                    return plural == Plural.SUBJECT ?
+                        _pmsgs.friendsGainedLevel(subject) :
+                        _pmsgs.friendGainedLevel(subject, object);
+
+                case FRIEND_WON_BADGE:
+                    return plural == Plural.OBJECT ?
+                        _pmsgs.friendWonBadges(subject, object) :
+                        _pmsgs.friendWonBadge(subject, object);
+
+                case FRIEND_WON_MEDAL:
+                    return _pmsgs.friendWonMedal(subject, object);
+
+                case GROUP_ANNOUNCEMENT:
+                    return _pmsgs.groupAnnouncement(subject, object);
+
+                case GROUP_UPDATED_ROOM:
+                    return _pmsgs.friendUpdatedRoom(subject, object);
+
+                case SELF_ROOM_COMMENT:
+                    return _pmsgs.selfRoomComment(subject, object);
+
+                case SELF_ITEM_COMMENT:
+                    return _pmsgs.selfItemComment(subject, object);
+
+                case SELF_FORUM_REPLY:
+                    return _pmsgs.selfForumReply(subject, object);
+
+                default:
+                    return "Unknown message type: " + subject + " did something to " + object + ".";
+                }
+            }
+
+            public String andCombine (String list, String item) {
+                return _pmsgs.andCombine(list, item);
+            }
+
+            public String briefLevelGain (String subject, String level) {
+                return _pmsgs.colonCombine(subject, level);
+            }
+
+            public String commaCombine (String list, String item) {
+                return _pmsgs.commaCombine(list, item);
+            }
+        };
+
+        FeedItemGenerator gen = new FeedItemGenerator(
+            CShell.getMemberId(), usePronouns, builder, messages);
+        gen.addMessage(message);
     }
 
-    /**
-     * Helper function which creates a clickable widget from the supplied media information.
-     */
-    protected Widget buildMedia (final FeedMessage message)
+    protected static class WidgetWrapper
+        implements Media, Icon
     {
-        MediaDesc media;
-        ClickListener clicker;
-        switch (message.type.getCategory()) {
-        case FRIENDINGS:
-            if (message.data.length < 3) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender)
-                {
-                    Link.go(Pages.PEOPLE, message.data[1]);
-                }
-            };
-            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+        public Widget widget;
 
-        case ROOMS:
-            if (message.data.length < 3) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender)
-                {
-                    Link.go(Pages.WORLD, "s" + message.data[0]);
-                }
-            };
-            // snapshots are unconstrained at a set size; fake a width constraint for TINY_SIZE.
-            media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-            return MediaUtil.createMediaView(media, MediaDesc.SNAPSHOT_TINY_SIZE, clicker);
-
-        case TROPHIES:
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.GAMES, NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
-                                                            NaviUtil.GameDetails.TROPHIES));
-                }
-            };
-            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
-
-        case LISTED_ITEMS:
-            if (message.data.length < 4) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[3]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(
-                        Pages.SHOP, Args.compose("l", message.data[1], message.data[2]));
-                }
-            };
-            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
-
-        case BADGES:
-            int badgeCode = Integer.parseInt(message.data[0]);
-            int level = Integer.parseInt(message.data[1]);
-            int memberId = ((FriendFeedMessage)message).friend.getMemberId();
-            Image image = new Image(EarnedBadge.getImageUrl(badgeCode, level));
-            image.setWidth(MediaDesc.getWidth(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
-            image.setHeight(MediaDesc.getHeight(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
-            image.addClickListener(Link.createListener(
-                Pages.ME, Args.compose("passport", memberId)));
-            return image;
-
-        case MEDALS:
-            media = MediaDesc.stringToMD(message.data[1]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.ME, Args.compose("medals",
-                        ((FriendFeedMessage)message).friend.getMemberId()));
-                }
-            };
-            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
-
-        case ANNOUNCEMENTS:
-            if (message.data.length < 4) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[3]);
-            if (media == null) {
-                return null;
-            }
-            clicker = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.GROUPS, Args.compose("t", message.data[2]));
-                }
-            };
-            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
-
-        case COMMENTS:
-            if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
-                if (message.data.length < 3) {
-                    return null;
-                }
-                media = MediaDesc.stringToMD(message.data[2]);
-                if (media == null) {
-                    return null;
-                }
-                clicker = new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Link.go(Pages.WORLD, Args.compose("s", message.data[0]));
-                    }
-                };
-                // snapshots are unconstrained at a set size; fake a width constraint for TINY_SIZE.
-                media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-                return MediaUtil.createMediaView(media, MediaDesc.SNAPSHOT_TINY_SIZE, clicker);
-    
-            } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
-                if (message.data.length < 4) {
-                    return null;
-                }
-                media = MediaDesc.stringToMD(message.data[3]);
-                if (media == null) {
-                    return null;
-                }
-                clicker = new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Link.go(Pages.SHOP, Args.compose("l", message.data[0], message.data[1]));
-                    }
-                };
-                return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
-            }
+        public WidgetWrapper (Widget widget)
+        {
+            this.widget = widget;
         }
-        return null;
     }
 
     protected static class IconWidget extends FlexTable
@@ -460,174 +258,6 @@ public class FeedMessagePanel extends FocusPanel
         }
     }
 
-    /**
-     * Display multiple actions by the same person (eg listing new things in the shop).
-     */
-    protected void addMultiActionsMessage (List<FeedMessage> list)
-    {
-        FeedMessage message = list.get(0);
-        String friendLink = profileLink(message);
-        switch (message.type) {
-        case FRIEND_ADDED_FRIEND:
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendAddedFriend(friendLink,
-                standardCombine(list))));
-            break;
-
-        case FRIEND_UPDATED_ROOM:
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendUpdatedRooms(friendLink,
-                standardCombine(list))));
-            break;
-
-        case FRIEND_WON_TROPHY:
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonTrophies(
-                            friendLink, standardCombine(list))));
-            break;
-
-        case FRIEND_LISTED_ITEM:
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendListedItem(
-                            friendLink, standardCombine(list))));
-            break;
-
-        case FRIEND_GAINED_LEVEL:
-            // display all levels gained by all friends together
-            add(new IconWidget("friend_gained_level",
-                        _pmsgs.friendsGainedLevel(friendLinkCombine(list))));
-            break;
-
-        case FRIEND_WON_BADGE:
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonBadges(
-                            friendLink, standardCombine(list))));
-            break;
-
-        case FRIEND_WON_MEDAL:
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonMedal(
-                            friendLink, standardCombine(list))));
-            break;
-
-        default:
-            add(new BasicWidget("Unknown left aggregate type: " + message.type));
-            break;
-        }
-    }
-
-    /**
-     * Display multiple people performing the same action (eg winning the same trophy).
-     */
-    protected void addMutliActorsMessage (List<FeedMessage> list)
-    {
-        FeedMessage message = list.get(0);
-        String friendLinks = profileCombine(list);
-        switch (message.type) {
-        case FRIEND_ADDED_FRIEND:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriend(
-                friendLinks, buildString(message))));
-            break;
-
-        case FRIEND_WON_TROPHY:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonTrophy(
-                            friendLinks, buildString(message))));
-            break;
-
-        case FRIEND_WON_BADGE:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(friendLinks,
-                buildString(message))));
-            break;
-
-        case FRIEND_WON_MEDAL:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(friendLinks,
-                buildString(message))));
-            break;
-
-        case SELF_ROOM_COMMENT:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.selfRoomComment(friendLinks,
-                buildString(message))));
-            break;
-
-        case SELF_ITEM_COMMENT:
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.selfItemComment(friendLinks,
-                buildString(message))));
-            break;
-
-        default:
-            add(new BasicWidget("Unknown right aggregate type: " + message.type));
-            break;
-        }
-    }
-
-    protected String standardCombine (List<FeedMessage> list)
-    {
-        return standardCombine(list, new StringBuilder() {
-            public String build (FeedMessage message) {
-                return buildString(message);
-            }
-        });
-    }
-
-    protected String friendLinkCombine (List<FeedMessage> list)
-    {
-        return standardCombine(list, new StringBuilder() {
-            public String build (FeedMessage message) {
-                return _pmsgs.colonCombine(
-                    profileLink(message), buildString(message));
-            }
-        });
-    }
-
-    protected String profileCombine (List<FeedMessage> list)
-    {
-        return standardCombine(list, new StringBuilder() {
-            public String build (FeedMessage message) {
-                return profileLink(message);
-            }
-        });
-    }
-
-    /**
-     * Helper function which combines the core feed message data into a translated, comma
-     * separated and ending in 'and' list.
-     */
-    protected String standardCombine (List<FeedMessage> list, StringBuilder builder)
-    {
-        String combine = builder.build(list.get(0));
-        for (int ii = 1, ll = list.size(); ii < ll; ii++) {
-            FeedMessage message = list.get(ii);
-            if (ii + 1 == ll) {
-                combine = _pmsgs.andCombine(combine, builder.build(message));
-            } else {
-                combine = _pmsgs.commaCombine(combine, builder.build(message));
-            }
-        }
-        return combine;
-    }
-
-    /**
-     * Helper function which creates an array of media widgets from feed messages.
-     */
-    protected Widget[] buildMediaArray (List<FeedMessage> list)
-    {
-        List<Widget> media = new ArrayList<Widget>();
-        for (FeedMessage message : list) {
-            Widget w = buildMedia(message);
-            if (w != null) {
-                media.add(w);
-            }
-
-        }
-        if (media.isEmpty()) {
-            return null;
-        }
-        return media.toArray(new Widget[media.size()]);
-    }
-
-    protected interface StringBuilder
-    {
-        String build (FeedMessage message);
-    }
-
-    protected static final DateTimeFormat _dateFormater = DateTimeFormat.getFormat("MMMM d:");
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
-
-    /** Whether to say "You earned the trophy" or "Bob earned the trophy" */
-    protected boolean _usePronouns;
 }
