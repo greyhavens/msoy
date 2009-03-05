@@ -300,6 +300,11 @@ public /*abstract*/ class MsoyContext
         return _notifyDir;
     }
 
+    public function getUpsellDirector () :UpsellDirector
+    {
+        return _upsellDir;
+    }
+
     /**
      * Get the message manager.
      */

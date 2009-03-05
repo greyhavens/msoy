@@ -19,7 +19,7 @@ import com.threerings.msoy.notify.data.Notification;
 
 public class UpsellDirector extends BasicDirector
 {
-    public const log :Log = Log.getLog(this);
+//    public const log :Log = Log.getLog(this);
 
     public function UpsellDirector (ctx :MsoyContext)
     {
@@ -33,15 +33,29 @@ public class UpsellDirector extends BasicDirector
         super.clientDidLogoff(event);
 
         _timer.stop();
+        _locType = 0;
+// TODO:  Commented out, because you log off when you switch nodes. Fucking worthless function
+// here, then, isn't it. Just worthless. So, probably we don't want to depend too much on
+// room upsells, since if you're moving around you might continually reset your counter.
+// TODO: do something. I don't fucking know. I'm just trying to get something simple done,
+// not fix the broken everything.
+//        _shown = {};
     }
 
-    override protected function clientObjectUpdated (client :Client) :void
+    /**
+     * Hack. This is called by MsoyController. God dammit.
+     */
+    public function locationUpdated () :void
     {
-        super.clientObjectUpdated(client);
-
-        _timer.reset();
-        _timer.start();
-        _shownBubble = false;
+        var placeInfo :Array = _mctx.getMsoyController().getPlaceInfo();
+        var newLocType :int = (placeInfo[1] == null) ? 0 : (Boolean(placeInfo[0]) ? 1 : 2);
+        if (_locType != newLocType) {
+            _locType = newLocType;
+            _timer.reset();
+            if (_locType != 0) {
+                _timer.start();
+            }
+        }
     }
 
     /**
@@ -49,59 +63,55 @@ public class UpsellDirector extends BasicDirector
      */
     protected function handleTimer (event :TimerEvent) :void
     {
-        var embedded :Boolean = _mctx.getMsoyClient().isEmbedded();
-        var isGuest :Boolean = MemberObject(_mctx.getClient().getClientObject()).isPermaguest();
-        var inGame :Boolean = Boolean(_mctx.getMsoyController().getPlaceInfo()[0]);
-
-        if (showNotification(embedded, isGuest, inGame)) {
-            return;
-        }
-
-        // else: do other nutty upsell stuff.
-        if ((_timer.currentCount > 4) && /*embedded && isGuest &&*/ inGame && !_shownBubble) {
-            var msg :String =
-                RandomUtil.pickRandom(Msgs.GENERAL.getAll("x.up_gamebubble")) as String;
-            if (msg != null) {
-                BubblePopup.showHelpBubble(_mctx, _mctx.getControlBar().shareBtn, msg, -7);
-                _shownBubble = true;
-            }
-        }
-    }
-
-    /**
-     * Show a standard upsell notification.
-     */
-    protected function showNotification (
-        embedded :Boolean, isGuest :Boolean, inGame :Boolean) :Boolean
-    {
-        var embed :String = embedded ? "embed" : "site";
-        var guest :String = isGuest ?  "guest" : "mem";
-        var place :String = inGame ? "game" : "room";
+        var placeInfo :Array = _mctx.getMsoyController().getPlaceInfo();
+        var embed :String = _mctx.getMsoyClient().isEmbedded() ? "embed" : "site";
+        var guest :String = MemberObject(_mctx.getClient().getClientObject()).isPermaguest() ?
+            "guest" : "mem";
+        var place :String = Boolean(placeInfo[0]) ? "game" : "room";
         var mins :String = String(_timer.currentCount);
 
-        for (var ii :int = 0; ii < (1 << 3); ii++) {
+        for (var ii :int = 0; ii < (1 << 4); ii++) {
+            var isNotif :Boolean = ((ii >> 3) % 2 == 0);
             // see the note inside the messagebundle for wtf is up with the key
-            var key :String = "x.up_notif" +
+            var key :String = "x.up_" + (isNotif ? "notif" : "bub") + "_" +
                 ((ii % 2 == 0) ? embed : "x") + "_" +
                 (((ii >> 1) % 2 == 0) ? guest : "x") + "_" +
                 (((ii >> 2) % 2 == 0) ? place : "x") + "_" +
-                mins;
-            if (Msgs.GENERAL.exists(key)) {
-                var placeInfo :Array = _mctx.getMsoyController().getPlaceInfo();
-                var msg :String = Msgs.GENERAL.get(key, String(placeInfo[1]), String(placeInfo[2]));
-                _mctx.getNotificationDirector().addGenericNotification(
-                    MessageBundle.taint(msg), Notification.SYSTEM);
-                return true;
+                mins + ".";
+            if (Boolean(_shown[key])) {
+                continue; // skip it, we've already shown this key during this session
+            }
+            var msgs :Object = Msgs.GENERAL.getAllMapped(key);
+            var keyOptions :Array = [];
+            for (var s :String in msgs) {
+                keyOptions.push(s);
+            }
+            if (keyOptions.length > 0) {
+                // we're doing it, we're showing something
+                var actualKey :String = String(RandomUtil.pickRandom(keyOptions));
+                var msg :String = Msgs.GENERAL.get(actualKey,
+                    String(placeInfo[1]), String(placeInfo[2]));
+
+                if (isNotif) {
+                    _mctx.getNotificationDirector().addGenericNotification(
+                        MessageBundle.taint(msg), Notification.SYSTEM);
+                } else {
+                    BubblePopup.showHelpBubble(_mctx, _mctx.getControlBar().shareBtn, msg, -7);
+                }
+                _shown[key] = true; // we've shown the key, plug it up for all variations
+                break; // we did it
             }
         }
-
-        return false;
     }
 
     protected var _mctx :MsoyContext;
 
     protected var _timer :Timer = new Timer(60 * 1000);
 
-    protected var _shownBubble :Boolean;
+    /** 0 = none, 1 = game, 2 = scene. Doesn't really matter, really, we just track transitions. */
+    protected var _locType :int;
+
+    /** Contains keys that have already been shown. */
+    protected var _shown :Object = {};
 }
 }

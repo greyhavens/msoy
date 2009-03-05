@@ -428,6 +428,8 @@ public class MsoyController extends Controller
     {
         updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getControlBar());
 
+        _mctx.getUpsellDirector().locationUpdated();
+
         if (_goMenu != null) {
             _goMenu.hide();
             // will be nulled automatically...
