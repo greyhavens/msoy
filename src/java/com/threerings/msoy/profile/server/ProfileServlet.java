@@ -23,6 +23,7 @@ import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.CoinAwards;
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -302,10 +303,14 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void sendTestFeedEmail ()
+    public void sendTestFeedEmail (int profileMemberId)
         throws ServiceException
     {
-        _spamLogic.sendFeedEmail(getAuthedUser().memberId);
+        MemberRecord mrec = getAuthedUser();
+        if (!mrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+        _spamLogic.sendFeedEmail(profileMemberId);
     }
 
     /**

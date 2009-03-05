@@ -140,6 +140,6 @@ public interface ProfileService extends RemoteService
     /**
      * Sends a test feed email to the user.
      */
-    void sendTestFeedEmail ()
+    void sendTestFeedEmail (int profileMemberId)
         throws ServiceException;
 }

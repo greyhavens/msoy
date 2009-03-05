@@ -46,5 +46,5 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#sendTestFeedEmail}.
      */
-    void sendTestFeedEmail (AsyncCallback<Void> callback);
+    void sendTestFeedEmail (int profileMemberId, AsyncCallback<Void> callback);
 }
