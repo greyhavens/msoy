@@ -166,6 +166,10 @@ public class EditIssuePanel extends TableFooterPanel
     protected void fillEditPanel ()
     {
         int row = 0;
+        if (!StringUtil.isBlank(_issue.summary)) {
+            _table.setText(row++, 0, _issue.summary, 2, "Title");
+        }
+
         _table.setText(row, 0, _msgs.iType(), 1, "Label");
         _table.setWidget(row++, 1, _typeBox = new ListBox());
         for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
@@ -189,34 +193,14 @@ public class EditIssuePanel extends TableFooterPanel
             }
         });
 
-        HorizontalPanel sbits = new HorizontalPanel();
-        sbits.add(_stateBox = new ListBox());
+        _table.setText(row, 0, _msgs.iState(), 1, "Label");
+        _table.setWidget(row++, 1, _stateBox = new ListBox());
         for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
             _stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii]));
             if (_issue.state == Issue.STATE_VALUES[ii]) {
                 _stateBox.setSelectedIndex(ii);
             }
         }
-        if (_issue.issueId != 0) {
-            sbits.add(WidgetUtil.makeShim(5, 5));
-            Button closeFixed = new Button(_msgs.iCloseFixed());
-            new CommitCallback(closeFixed) {
-                protected byte getState () {
-                    return Issue.STATE_RESOLVED;
-                }
-            };
-            sbits.add(closeFixed);
-            sbits.add(WidgetUtil.makeShim(5, 5));
-            Button closeIgnored = new Button(_msgs.iCloseIgnored());
-            new CommitCallback(closeIgnored) {
-                protected byte getState () {
-                    return Issue.STATE_IGNORED;
-                }
-            };
-            sbits.add(closeIgnored);
-        }
-        _table.setText(row, 0, _msgs.iState(), 1, "Label");
-        _table.setWidget(row++, 1, sbits);
 
         _table.setText(row, 0, _msgs.iPriority(), 1, "Label");
         _table.setWidget(row++, 1, _priorityBox = new ListBox());
@@ -250,6 +234,28 @@ public class EditIssuePanel extends TableFooterPanel
             _table.setText(row, 0, _msgs.iComment(), 1, "Label");
             _table.setWidget(row++, 1, _comment);
             _comment.setText(_issue.closeComment);
+        }
+
+        if (_issue.issueId != 0) {
+            _table.setText(row, 0, _msgs.iQuickClose(), 1, "Label");
+
+            HorizontalPanel qbuts = new HorizontalPanel();
+            for (final byte state : Issue.STATE_VALUES) {
+                if (state == Issue.STATE_OPEN) {
+                    continue;
+                }
+                if (qbuts.getWidgetCount() > 0) {
+                    qbuts.add(WidgetUtil.makeShim(5, 5));
+                }
+                Button quickClose = new Button(IssueMsgs.stateMsg(state));
+                new CommitCallback(quickClose) {
+                    protected byte getState () {
+                        return state;
+                    }
+                };
+                qbuts.add(quickClose);
+            }
+            _table.setWidget(row++, 1, qbuts);
         }
 
         Button cancel = new Button(_msgs.cancel(), NaviUtil.onGoBack());

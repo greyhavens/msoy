@@ -18,11 +18,14 @@ public class Issue
     /** A state indicating the issue is open. */
     public static final int STATE_OPEN = 0;
 
-    /** A state indicating the issue is closed due to resolution. */
+    /** A state indicating the issue is closed and resolved. */
     public static final int STATE_RESOLVED = 1;
 
     /** A state indicating the issue is closed and ignored. */
     public static final int STATE_IGNORED = 2;
+
+    /** A state indicating the issue is closed and postponed. */
+    public static final int STATE_POSTPONED = 3;
 
     /** A type indicating the issue is a bug. */
     public static final int TYPE_BUG = 0;
@@ -61,6 +64,7 @@ public class Issue
         Issue.STATE_OPEN,
         Issue.STATE_RESOLVED,
         Issue.STATE_IGNORED,
+        Issue.STATE_POSTPONED,
     };
 
     public static final byte[] PRIORITY_VALUES = new byte[] {

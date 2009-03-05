@@ -71,6 +71,8 @@ public class IssueMsgs
             return _msgs.iResolved();
         case Issue.STATE_IGNORED:
             return _msgs.iIgnored();
+        case Issue.STATE_POSTPONED:
+            return _msgs.iPostponed();
         default:
             return "";
         }
