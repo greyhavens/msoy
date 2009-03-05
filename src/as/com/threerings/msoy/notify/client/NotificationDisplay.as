@@ -230,7 +230,7 @@ public class NotificationDisplay extends HBox
         if (show) {
             _nHistory = new NotificationHistoryDisplay(prepareNotifications(
                 _ctx.getNotificationDirector().getCurrentNotifications()), getHistoryWidth());
-            _nHistory.addEventListener(TextEvent.LINK, linkClicked);
+            _nHistory.addEventListener(TextEvent.LINK, dispatchEvent);
             PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
             updatePopupLocation();
             systemManager.addEventListener(MouseEvent.CLICK, maybeCloseHistory);
@@ -252,37 +252,6 @@ public class NotificationDisplay extends HBox
     protected function getHistoryWidth () :int
     {
         return this.width - 40;
-    }
-
-    protected function linkClicked (event :TextEvent) :void
-    {
-        // TODO: Find a better way to handle this.  The popup'd history display's TextEvents from
-        // clicked links aren't making their way out to the appropriate listeners.  So instead,
-        // we're listening for them here directly, and dispatching a clone of them on a local
-        // TextField that is on the display list.
-
-        // if a link was clicked in the popup, then we must have a text field currently being
-        // displayed...
-        if (_canvas.numChildren == 0) {
-            log.warning("received a TextEvent.LINK, but canvas is empty");
-            return;
-        }
-
-        var wrapper :FlexWrapper = _canvas.getChildAt(0) as FlexWrapper;
-        if (wrapper == null || wrapper.numChildren == 0) {
-            log.warning(
-                "First child of canvas is not a FlexWrapper, or it's empty [" + wrapper + "]");
-            return;
-        }
-
-        var text :TextField = wrapper.getChildAt(0) as TextField;
-        if (text == null) {
-            log.warning("First child of wrapper is not a TextField");
-            return;
-        }
-
-        // clone the event, and dispatch it on our locally displayed field
-        text.dispatchEvent(event.clone());
     }
 
     protected function prepareNotifications (notifs :Array) :Array
