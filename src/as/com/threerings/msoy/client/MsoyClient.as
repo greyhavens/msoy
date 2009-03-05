@@ -314,29 +314,31 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     protected function clientDidLogon (event :ClientEvent) :void
     {
-        // now that we logged on, we might have gotten a different referral info back
-        // from the server. so clobber whatever we have, and tell the GWT wrapper
-        // to clobber its info as well.
-
-        var member :MemberObject = _clobj as MemberObject;
-        if (_featuredPlaceView || member == null) {
-            return;
-        }
-
-        if (_embedded) {
-            var params :Object = MsoyParameters.get();
-            var vector :String = params[VisitorInfo.VECTOR_ID];
-            if (vector != null && vector.length > 0) {
-                var msvc :MemberService = requireService(MemberService) as MemberService;
-                msvc.trackVectorAssociation(this, vector);
+        // some things we only want to do when we're really logging on
+        if (!event.getClient().isSwitchingServers()) {
+            // now that we logged on, we might have gotten a different referral info back
+            // from the server. so clobber whatever we have, and tell the GWT wrapper
+            // to clobber its info as well.
+            var member :MemberObject = _clobj as MemberObject;
+            if (_featuredPlaceView || member == null) {
+                return;
             }
 
-        } else if (!member.isPermaguest()) {
-            // for members on the web site, see if we want to tell them about release notes
-            if (Prefs.setBuildTime(DeploymentConfig.buildTime)) {
-                _ctx.getNotificationDirector().addGenericNotification(
-                    MessageBundle.tcompose("m.new_release", DeploymentConfig.announceGroup),
-                    Notification.SYSTEM);
+            if (_embedded) {
+                var params :Object = MsoyParameters.get();
+                var vector :String = params[VisitorInfo.VECTOR_ID];
+                if (vector != null && vector.length > 0) {
+                    var msvc :MemberService = requireService(MemberService) as MemberService;
+                    msvc.trackVectorAssociation(this, vector);
+                }
+
+            } else if (!member.isPermaguest()) {
+                // for members on the web site, see if we want to tell them about release notes
+                if (Prefs.setBuildTime(DeploymentConfig.buildTime)) {
+                    _ctx.getNotificationDirector().addGenericNotification(
+                        MessageBundle.tcompose("m.new_release", DeploymentConfig.announceGroup),
+                        Notification.SYSTEM);
+                }
             }
         }
     }
