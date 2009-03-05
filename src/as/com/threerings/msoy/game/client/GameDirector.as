@@ -19,7 +19,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.utils.Base64Encoder;
 
 import com.threerings.msoy.item.data.all.Game;
