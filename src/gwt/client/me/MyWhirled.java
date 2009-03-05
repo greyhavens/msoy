@@ -62,11 +62,10 @@ public class MyWhirled extends FlowPanel
                     _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
                 FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
                 FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
-                feedBox.add(MsoyUI.createLabel("Feed disabled temporarily. Back soon!", null));
-//                 feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
-//                 feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
-//                 feedBox.add(feed);
-//                 feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
+                feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
+                feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
+                feedBox.add(feed);
+                feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 
                 // promo and news feed on the left, bits and friends on the right
                 HorizontalPanel horiz = new HorizontalPanel();
