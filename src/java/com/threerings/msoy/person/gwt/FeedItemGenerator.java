@@ -175,7 +175,11 @@ public class FeedItemGenerator
         case FRIEND_LISTED_ITEM:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
-            _builder.addMedia(media, text);
+            if (media != null) {
+                _builder.addMedia(media, text);
+            } else {
+                _builder.addText(text);
+            }
             break;
 
         case FRIEND_GAINED_LEVEL:
@@ -568,7 +572,7 @@ public class FeedItemGenerator
         LEVELGAIN {
             protected String build (FeedItemGenerator generator, FeedMessage message) {
                 return generator._messages.briefLevelGain(
-                    SUBJECT.build(generator, message), LEVELGAIN.build(generator, message));
+                    SUBJECT.build(generator, message), OBJECT.build(generator, message));
             }
         };
 
