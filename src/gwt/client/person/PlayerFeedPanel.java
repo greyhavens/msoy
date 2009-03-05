@@ -20,6 +20,7 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 
 import client.person.FeedMessagePanel.BasicWidget;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -112,7 +113,12 @@ public class PlayerFeedPanel extends FlowPanel
                     }
                 }
 
-                add(new FeedMessagePanel(message, false));
+                try {
+                    add(new FeedMessagePanel(message, false));
+                } catch (Exception e) {
+                    CShell.log("Failed to display feed message", "msg", message, e);
+                    add(MsoyUI.createLabel("Oops. Formatting error!", null));
+                }
             }
         }
     }

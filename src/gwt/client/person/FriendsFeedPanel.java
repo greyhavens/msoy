@@ -17,6 +17,7 @@ import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 
 import client.person.FeedMessagePanel.BasicWidget;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -73,7 +74,12 @@ public class FriendsFeedPanel extends FlowPanel
         // combine feed items performed by the same person
         List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);
         for (FeedMessage message : messages) {
-            categoryPanel.add(new FeedMessagePanel(message, true));
+            try {
+                categoryPanel.add(new FeedMessagePanel(message, true));
+            } catch (Exception e) {
+                CShell.log("Failed to display feed message", "msg", message, e);
+                add(MsoyUI.createLabel("Oops. Formatting error!", null));
+            }
         }
     }
 

@@ -14,6 +14,8 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
+import client.shell.CShell;
+
 /**
  * Generates the display for a feed message.
  */
@@ -38,37 +40,37 @@ public class FeedItemGenerator
          * Creates context-free media using the given descriptor that links to the provided page
          * and args.
          */
-        Media createMedia(MediaDesc md, Pages page, String args);
+        Media createMedia (MediaDesc md, Pages page, String args);
 
         /**
          * Creates context-free html that links to the given page + args and has the given label.
          */
-        String createLink(String label, Pages page, String args);
+        String createLink (String label, Pages page, String args);
 
         /**
          * Creates a context-free icon for when a user or users gains a level.
          */
-        Icon createGainedLevelIcon(String text);
+        Icon createGainedLevelIcon (String text);
 
         /**
          * Adds a previously created media object to the feed with the given message.
          */
-        void addMedia(Media media, String message);
+        void addMedia (Media media, String message);
 
         /**
          * Adds multiple previously created media objects to the feed with the given message.
          */
-        void addMedia(Media media[], String message);
+        void addMedia (Media media[], String message);
 
         /**
          * Adds a previously created icon to the feed.
          */
-        void addIcon(Icon icon);
+        void addIcon (Icon icon);
 
         /**
          * Adds plain text to the feed.
          */
-        void addText(String text);
+        void addText (String text);
     }
 
     /**

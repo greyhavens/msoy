@@ -53,7 +53,8 @@ public class FeedMessagePanel extends FocusPanel
                 };
                 int size = MediaDesc.HALF_THUMBNAIL_SIZE;
                 if (page == Pages.WORLD && args.startsWith("s")) {
-                    // snapshots are unconstrained at a set size; fake a width constraint for TINY_SIZE.
+                    // snapshots are unconstrained at a set size; fake a width constraint for
+                    // TINY_SIZE.
                     md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
                     size = MediaDesc.SNAPSHOT_TINY_SIZE;
                 }
