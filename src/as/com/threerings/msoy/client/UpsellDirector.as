@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.MouseEvent;
 import flash.events.TimerEvent;
+import flash.display.DisplayObject;
 import flash.utils.Timer;
 
 import com.threerings.util.ArrayUtil;
@@ -89,12 +91,34 @@ public class UpsellDirector extends BasicDirector
                 var msg :String = Msgs.GENERAL.get(actualKey,
                     String(placeInfo[1]), String(placeInfo[2]));
 
+                // TODO: someday not track every little piece of spaz?
+                var clientAction :String = "2009_03_upsell_" + actualKey;
+                var clickedTracker :Function = function () :void {
+                    // only track the click once
+                    if (!Boolean(_clicked[key])) {
+                        _mctx.getMsoyClient().trackClientAction(clientAction + "_clicked", null);
+                        _clicked[key] = true;
+                    }
+                };
+
                 if (isNotif) {
                     _mctx.getNotificationDirector().addGenericNotification(
-                        MessageBundle.taint(msg), Notification.SYSTEM);
+                        MessageBundle.taint(msg), Notification.SYSTEM, null, clickedTracker);
                 } else {
-                    BubblePopup.showHelpBubble(_mctx, _mctx.getControlBar().shareBtn, msg, -7);
+                    var shareBtn :DisplayObject = _mctx.getControlBar().shareBtn;
+                    BubblePopup.showHelpBubble(_mctx, shareBtn, msg, -7);
+                    if (_shareTracker != null) {
+                        // only track one at a time, brah
+                        shareBtn.removeEventListener(MouseEvent.CLICK, _shareTracker);
+                    }
+                    _shareTracker = function (event :MouseEvent) :void {
+                        clickedTracker(); // we're just adapting
+                    };
+                    shareBtn.addEventListener(MouseEvent.CLICK, _shareTracker, false, 1);
                 }
+
+                // and record that we've shown it
+                _mctx.getMsoyClient().trackClientAction(clientAction + "_shown", null);
                 _shown[key] = true; // we've shown the key, plug it up for all variations
                 break; // we did it
             }
@@ -110,5 +134,9 @@ public class UpsellDirector extends BasicDirector
 
     /** Contains keys that have already been shown. */
     protected var _shown :Object = {};
+
+    protected var _clicked :Object = {};
+
+    protected var _shareTracker :Function;
 }
 }
