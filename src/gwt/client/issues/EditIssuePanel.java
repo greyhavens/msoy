@@ -220,7 +220,7 @@ public class EditIssuePanel extends SmartTable
         setWidget(row++, 1, _summary);
 
         setText(row, 0, _msgs.iDescription(), 1, "Label");
-        _description = new LimitedTextArea(Issue.MAX_DESC_LENGTH, -1, 3);
+        _description = new LimitedTextArea(Issue.MAX_DESC_LENGTH, -1, 15);
         _description.setText(_issue.description);
         setWidget(row++, 1, _description);
 
