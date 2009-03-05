@@ -237,9 +237,9 @@ public class GameDirector extends BasicDirector
         log.debug("Viewing invite", "token", token, "encoded", encodedToken);
         // we encode the strings so they are valid as part of the URL and the user cannot trivially
         // see them
-        _wctx.getWorldController().displayPage("people", Args.join("invites", "game", getGameId(),
-            encodeForURI(defmsg), encodedToken, _liaison is AVRGameLiaison ? 1 : 0,
-            roomId));
+        _wctx.getWorldController().displayPage("people",
+            [ "invites", "game", getGameId(), encodeForURI(defmsg), encodedToken,
+              _liaison is AVRGameLiaison ? 1 : 0, roomId ].join("_"));
     }
 
     /**
@@ -247,9 +247,9 @@ public class GameDirector extends BasicDirector
      */
     public function viewDefaultInvitePage () :void
     {
-        _wctx.getWorldController().displayPage("people", Args.join("invites", "game", getGameId(),
-            "", "", _liaison is AVRGameLiaison ? 1 : 0,
-            _wctx.getWorldController().getCurrentSceneId()));
+        _wctx.getWorldController().displayPage("people",
+            [ "invites", "game", getGameId(), "", "", _liaison is AVRGameLiaison ? 1 : 0,
+              _wctx.getWorldController().getCurrentSceneId() ].join("_"));
     }
 
     /**
