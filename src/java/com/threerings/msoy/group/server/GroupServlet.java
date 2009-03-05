@@ -472,11 +472,15 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         final int memberId = mrec.memberId;
 
-        // Include Whirled Announcements in "my groups"
+        // load up our group memberships
         List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
-        GroupRecord announceGroup = _groupRepo.loadGroup(ServerConfig.getAnnounceGroupId());
-        if (announceGroup != null) {
-            groupRecords.add(announceGroup);
+
+        // if we're not already a member, include Whirled Announcements
+        if (!Iterables.any(groupRecords, IS_ANNOUNCE)) {
+            GroupRecord agroup = _groupRepo.loadGroup(ServerConfig.getAnnounceGroupId());
+            if (agroup != null) {
+                groupRecords.add(agroup);
+            }
         }
 
         List<MyGroupCard> myGroupCards = Lists.newArrayList();
@@ -824,6 +828,13 @@ public class GroupServlet extends MsoyServiceServlet
     /** The number of matches to return when searching against all display names in the database. */
     protected static int MAX_MEMBER_MATCHES = 100;
 
+    /** A predicate that matches the announcement group. */
+    protected static Predicate<GroupRecord> IS_ANNOUNCE = new Predicate<GroupRecord>() {
+        public boolean apply (GroupRecord record) {
+            return record.groupId == ServerConfig.getAnnounceGroupId();
+        }
+    };
+
     /** Compartor for sorting by population then by last post date. */
     protected static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
         new Comparator<MyGroupCard>() {
@@ -905,5 +916,4 @@ public class GroupServlet extends MsoyServiceServlet
                 return new VizMemberName(memberCard.name, memberCard.photo);
             }
         };
-
 }
