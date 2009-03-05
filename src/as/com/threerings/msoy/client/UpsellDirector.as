@@ -35,14 +35,12 @@ public class UpsellDirector extends BasicDirector
     {
         super.clientDidLogoff(event);
 
-        _timer.stop();
-        _locType = 0;
-// TODO:  Commented out, because you log off when you switch nodes. Fucking worthless function
-// here, then, isn't it. Just worthless. So, probably we don't want to depend too much on
-// room upsells, since if you're moving around you might continually reset your counter.
-// TODO: do something. I don't fucking know. I'm just trying to get something simple done,
-// not fix the broken everything.
-//        _shown = {};
+        if (!event.getClient().isSwitchingServers()) {
+            _timer.stop();
+            _locType = 0;
+            _shown = {};
+            _clicked = {};
+        }
     }
 
     /**
