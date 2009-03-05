@@ -362,6 +362,7 @@ public class FeedItemGenerator
                 return _builder.createLink(message.data[2], Pages.SHOP,
                     Args.compose("l", message.data[0], message.data[1]));
             }
+            break;
 
         case FORUMS:
             return _builder.createLink(
