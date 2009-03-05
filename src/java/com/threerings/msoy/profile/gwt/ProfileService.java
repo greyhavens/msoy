@@ -136,4 +136,10 @@ public interface ProfileService extends RemoteService
      */
     List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException;
+
+    /**
+     * Sends a test feed email to the user.
+     */
+    void sendTestFeedEmail ()
+        throws ServiceException;
 }

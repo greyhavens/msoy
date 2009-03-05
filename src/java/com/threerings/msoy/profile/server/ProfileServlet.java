@@ -32,6 +32,7 @@ import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.spam.server.SpamLogic;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -300,6 +301,13 @@ public class ProfileServlet extends MsoyServiceServlet
         return loadFeed(profileMemberId, cutoffDays);
     }
 
+    // from interface ProfileService
+    public void sendTestFeedEmail ()
+        throws ServiceException
+    {
+        _spamLogic.sendFeedEmail(getAuthedUser().memberId);
+    }
+
     /**
      * Helper function for {@link #loadSelfFeed} and {@link #loadProfile}.
      */
@@ -443,6 +451,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected UserActionRepository _userActionRepo;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FavoritesRepository _faveRepo;
+    @Inject protected SpamLogic _spamLogic;
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;

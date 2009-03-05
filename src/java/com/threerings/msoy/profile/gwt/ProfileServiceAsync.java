@@ -42,4 +42,9 @@ public interface ProfileServiceAsync
      */
     void loadSelfFeed (int profileMemberId, int cutoffDays,
                        AsyncCallback<List<FeedMessage>> callback);
+
+    /**
+     * The asynchronous version of {@link ProfileService#sendTestFeedEmail}.
+     */
+    void sendTestFeedEmail (AsyncCallback<Void> callback);
 }
