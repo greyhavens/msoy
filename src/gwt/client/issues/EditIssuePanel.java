@@ -273,7 +273,9 @@ public class EditIssuePanel extends TableFooterPanel
 
     protected void setMessages (List<ForumMessage> messages)
     {
-        _table.addText(_msgs.assocMessages(), 3, "SubTitle");
+        if (messages.size() > 0) {
+            _table.addText(_msgs.assocMessages(), 3, "SubTitle");
+        }
         for (ForumMessage message : messages) {
             addMessage(message);
         }

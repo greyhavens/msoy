@@ -26,10 +26,9 @@ public class IssueModels
     /** A data model that provides issues. */
     public static class Issues extends ServiceBackedDataModel<Issue, IssueService.IssueResult>
     {
-        public Issues (int type, int state)
+        public Issues (boolean open)
         {
-            _type = type;
-            _state = state;
+            _open = open;
         }
 
         /**
@@ -67,7 +66,7 @@ public class IssueModels
         protected void callFetchService (int start, int count, boolean needCount,
             AsyncCallback<IssueService.IssueResult> callback)
         {
-            _issuesvc.loadIssues(_type, _state, start, count, needCount, callback);
+            _issuesvc.loadIssues(_open, start, count, needCount, callback);
         }
 
         @Override // from ServiceBackedDataModel
@@ -84,7 +83,7 @@ public class IssueModels
             _issues.put(issue.issueId, issue);
         }
 
-        protected int _type, _state;
+        protected boolean _open;
         protected boolean _isManager;
         protected Map<Integer, Issue> _issues = new HashMap<Integer, Issue>();
     }
@@ -92,16 +91,16 @@ public class IssueModels
     /** A data model that provides owned issues. */
     public static class OwnedIssues extends Issues
     {
-        public OwnedIssues (int type, int state)
+        public OwnedIssues (boolean open)
         {
-            super(type, state);
+            super(open);
         }
 
         @Override // from Issues
         protected void callFetchService (int start, int count, boolean needCount,
             AsyncCallback<IssueService.IssueResult> callback)
         {
-            _issuesvc.loadOwnedIssues(_type, _state, start, count, needCount, callback);
+            _issuesvc.loadOwnedIssues(_open, start, count, needCount, callback);
         }
     }
 
@@ -110,51 +109,34 @@ public class IssueModels
      */
     public void flush ()
     {
-        _issuesModel.clear();
-        _ownedModel.clear();
+        _imodels.clear();
+        _imodels.clear();
     }
 
     /**
      * Returns, creating if necessary, a data model that provides all of the issues for the
-     * specified type and state.
+     * specified state.
      */
-    public Issues getIssues (int type, int state, boolean refresh)
+    public Issues getIssues (boolean open, boolean refresh)
     {
-        Map<Integer, Issues> typeIssues = getTypeMap(type, _issuesModel);
         Issues issues;
-        if (refresh || (issues = typeIssues.get(state)) == null) {
-            CShell.log("Creating new model for " + type + " " + state);
-            typeIssues.put(state, issues = new Issues(type, state));
+        if (refresh || (issues = _imodels.get(open)) == null) {
+            _imodels.put(open, issues = new Issues(open));
         }
         return issues;
     }
 
     /**
      * Returns, creating if necessary, a data model that provides all of the issues for the
-     * specified type and state.
+     * specified state.
      */
-    public OwnedIssues getOwnedIssues (int type, int state, boolean refresh)
+    public OwnedIssues getOwnedIssues (boolean open, boolean refresh)
     {
-        Map<Integer, OwnedIssues> typeIssues = getTypeMap(type, _ownedModel);
         OwnedIssues issues;
-        if (refresh || (issues = typeIssues.get(state)) == null) {
-            CShell.log("Creating owned new model for " + type + " " + state);
-            typeIssues.put(state, issues = new OwnedIssues(type, state));
+        if (refresh || (issues = _omodels.get(open)) == null) {
+            _omodels.put(open, issues = new OwnedIssues(open));
         }
         return issues;
-    }
-
-    /**
-     * Returns a mapping of states to Issues/OwnedIssues for a certain type.
-     */
-    public <V extends Issues> Map<Integer, V> getTypeMap (
-        int type, Map<Integer, Map<Integer, V>> model)
-    {
-        Map<Integer, V> typeIssues = model.get(type);
-        if (typeIssues == null) {
-            model.put(type, typeIssues = new HashMap<Integer, V>());
-        }
-        return typeIssues;
     }
 
     /**
@@ -162,33 +144,29 @@ public class IssueModels
      */
     public Issue findIssue (int issueId)
     {
-        Issue issue = findIssue(issueId, _ownedModel);
-        return issue != null ? issue : findIssue(issueId, _issuesModel);
+        Issue issue = findIssue(issueId, _omodels);
+        return issue != null ? issue : findIssue(issueId, _imodels);
     }
 
     /**
      * Finds an issue in a specified model.
      */
-    protected <V extends Issues> Issue findIssue (int issueId, Map<Integer, Map<Integer, V>> map)
+    protected <V extends Issues> Issue findIssue (int issueId, Map<Boolean, V> map)
     {
-        for (Map<Integer, V> typeIssues : map.values()) {
-            for (V model : typeIssues.values()) {
-                Issue issue = model.getIssue(issueId);
-                if (issue != null) {
-                    return issue;
-                }
+        for (V model : map.values()) {
+            Issue issue = model.getIssue(issueId);
+            if (issue != null) {
+                return issue;
             }
         }
         return null;
     }
 
     /** A cached Issues data model. */
-    protected Map<Integer, Map<Integer, Issues>> _issuesModel =
-        new HashMap<Integer, Map<Integer, Issues>>();
+    protected Map<Boolean, Issues> _imodels = new HashMap<Boolean, Issues>();
 
     /** A cached OwnedIssues data model. */
-    protected Map<Integer, Map<Integer, OwnedIssues>> _ownedModel =
-        new HashMap<Integer, Map<Integer, OwnedIssues>>();
+    protected Map<Boolean, OwnedIssues> _omodels = new HashMap<Boolean, OwnedIssues>();
 
     protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
         ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);

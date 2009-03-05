@@ -42,21 +42,19 @@ public class IssueServlet extends MsoyServiceServlet
     implements IssueService
 {
     // from interface IssueService
-    public IssueResult loadIssues (int type, int state, int offset, int count,
-                                   boolean needTotalCount)
+    public IssueResult loadIssues (boolean open, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        return loadIssues(mrec, type, state, 0, offset, count, needTotalCount);
+        return loadIssues(mrec, open, 0, offset, count, needTotalCount);
     }
 
     // from interface IssueService
-    public IssueResult loadOwnedIssues (int type, int state, int offset, int count,
-                                        boolean needTotalCount)
+    public IssueResult loadOwnedIssues (boolean open, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        return loadIssues(mrec, type, state, mrec.memberId, offset, count, needTotalCount);
+        return loadIssues(mrec, open, mrec.memberId, offset, count, needTotalCount);
     }
 
     // from interface IssueService
@@ -165,19 +163,21 @@ public class IssueServlet extends MsoyServiceServlet
         return owners;
     }
 
-    protected IssueResult loadIssues (MemberRecord mrec, int type, int state, int owner, int offset,
-            int count, boolean needTotalCount)
+    protected IssueResult loadIssues (
+        MemberRecord mrec, boolean open, int owner, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
         IssueResult result = new IssueResult();
 
         // load up the requested set of issues
-        ArrayIntSet types = new ArrayIntSet();
-        types.add(type);
         ArrayIntSet states = new ArrayIntSet();
-        states.add(state);
-        List<IssueRecord> irecs =
-            _issueRepo.loadIssues(types, states, owner, offset, count);
+        if (open) {
+            states.add(Issue.STATE_OPEN);
+        } else {
+            states.add(Issue.STATE_RESOLVED);
+            states.add(Issue.STATE_IGNORED);
+        }
+        List<IssueRecord> irecs = _issueRepo.loadIssues(states, owner, offset, count);
 
         List<Issue> issues = Lists.newArrayList();
         if (irecs.size() > 0) {
@@ -206,7 +206,7 @@ public class IssueServlet extends MsoyServiceServlet
 
         if (needTotalCount) {
             result.issueCount = (result.issues.size() < count && offset == 0) ?
-                result.issues.size() : _issueRepo.loadIssueCount(types, states);
+                result.issues.size() : _issueRepo.loadIssueCount(states);
         }
         return result;
     }

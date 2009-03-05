@@ -6,11 +6,12 @@ package client.issues;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
@@ -24,119 +25,53 @@ import client.util.ServiceUtil;
 /**
  * Displays issues.
  */
-public class IssuePanel extends TitledListPanel
+public class IssuePanel extends FlowPanel
 {
     public IssuePanel (IssueModels imodels)
     {
+        setStyleName("issuePanel");
         _imodels = imodels;
     }
 
-    public void displayIssues (int type, int state, boolean refresh)
+    public void displayIssues ()
     {
-        _type = type;
-        _state = state;
-        displayIssues(refresh);
+        displayIssues(false);
     }
 
-    public void displayIssues (boolean refresh)
+    public void displayOwnedIssues ()
     {
-        IssueListPanel issues = new IssueListPanel(this);
-        issues.displayIssues(_type, _state, _owned, _imodels, refresh);
-        setContents(createHeader(_owned ? _msgs.myIssueListHeader() :
-                    _msgs.issueListHeader(), true), issues);
+        displayIssues(true);
     }
 
-    public void displayOwnedIssues (int type, int state, boolean refresh)
+    public void displayAssignIssues (int messageId, int page)
     {
-        _owned = true;
-        displayIssues(type, state, refresh);
+//         _state = Issue.STATE_OPEN;
+//         IssueListPanel issues = new IssueListPanel(this);
+//         issues.displayAssignIssues(_state, _imodels, messageId, page);
+//         setContents(createHeader(_msgs.assignIssueListHeader(), false), issues);
     }
 
-    public void displayAssignIssues (int type, int messageId, int page)
+    protected void displayIssues (boolean owned)
     {
-        _type = type;
-        _state = Issue.STATE_OPEN;
-        IssueListPanel issues = new IssueListPanel(this);
-        issues.displayAssignIssues(_type, _state, _imodels, messageId, page);
-        setContents(createHeader(_msgs.assignIssueListHeader(), false), issues);
+        add(createHeader(owned ? _msgs.myOpenHeader() : _msgs.openHeader(), true));
+        add(new IssueListPanel(true, owned, _imodels));
+        add(WidgetUtil.makeShim(10, 10));
+        add(createHeader(owned ? _msgs.myClosedHeader() : _msgs.closedHeader(), false));
+        add(new IssueListPanel(false, owned, _imodels));
     }
 
-    public void issueUpdated (boolean newIssue, Issue issue)
+    protected Widget createHeader (String title, boolean open)
     {
-        CShell.log("Issue updated " + newIssue + " " + issue);
-        // since only admins update issues, we just flush our cached data when issues are updated
-        // and reload everything from the database
-        _imodels.flush();
-        redisplayIssues();
-    }
-
-    public void redisplayIssues ()
-    {
-        if (_owned) {
-            displayOwnedIssues(_type, _state, false);
-        } else {
-            displayIssues(_type, _state, false);
-        }
-        // Link.go(Pages.GROUPS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
-    }
-
-    protected FlexTable createHeader (String title, boolean states)
-    {
-        SmartTable header = new SmartTable(0, 2);
+        SmartTable header = new SmartTable("Header", 0, 2);
         header.setWidth("100%");
-
-        int col = 0;
-        header.setText(0, col++, _msgs.iType());
-        ListBox typeBox = new ListBox();
-        for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
-            typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], _msgs));
-            if (Issue.TYPE_VALUES[ii] == _type) {
-                typeBox.setSelectedIndex(ii);
-            }
-        }
-        typeBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                displayIssues(
-                    Issue.TYPE_VALUES[((ListBox)sender).getSelectedIndex()], _state, false);
-            }
-        });
-        header.setWidget(0, col++, typeBox);
-
-        if (states) {
-            header.setText(0, col++, _msgs.iState());
-            ListBox stateBox = new ListBox();
-            for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
-                stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], _msgs));
-                if (Issue.STATE_VALUES[ii] == _state) {
-                    stateBox.setSelectedIndex(ii);
-                }
-            }
-            stateBox.addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
-                    displayIssues(
-                        _type, Issue.STATE_VALUES[((ListBox)sender).getSelectedIndex()], false);
-                }
-            });
-            header.setWidget(0, col++, stateBox);
-        }
-
-        header.setText(0, col++, _msgs.iPriority(), 1, "Column");
-        header.setText(0, col++, _msgs.iCategory(), 1, "Column");
-        header.setText(0, col++, _msgs.iOwner(), 1, "Column");
-        String htext = (_state == Issue.STATE_OPEN) ? _msgs.iCreated() : _msgs.iClosed();
-        header.setText(0, col++, htext, 1, "Created");
-
+        header.setText(0, 0, title);
+        header.setText(0, 1, _msgs.iOwner(), 1, "Column");
+        header.setText(0, 2, open ? _msgs.iCreated() : _msgs.iClosed(), 1, "Created");
         return header;
     }
 
     /** Our issue model cache. */
     protected IssueModels _imodels;
-
-    /** Our current state and type being displayed. */
-    protected int _state, _type, _page;
-
-    /** If we're only showing owned issues. */
-    protected boolean _owned;
 
     protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
     protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)

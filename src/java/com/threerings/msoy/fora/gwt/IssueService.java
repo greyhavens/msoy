@@ -34,15 +34,15 @@ public interface IssueService extends RemoteService
     public static final String ENTRY_POINT = "/issuesvc";
 
     /**
-     * Loads issues of specific types, states.
+     * Loads the specified issues.
      */
-    IssueResult loadIssues (int type, int state, int offset, int count, boolean needTotalCount)
+    IssueResult loadIssues (boolean open, int offset, int count, boolean needTotalCount)
         throws ServiceException;
 
     /**
-     * Loads issues of specific types, states owned by the user.
+     * Loads the specified issues, owned by the caller.
      */
-    IssueResult loadOwnedIssues (int type, int state, int offset, int count, boolean needTotalCount)
+    IssueResult loadOwnedIssues (boolean open, int offset, int count, boolean needTotalCount)
         throws ServiceException;
 
     /**

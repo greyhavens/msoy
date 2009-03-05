@@ -4,6 +4,33 @@
  * CSS styles for the issues interfaces.
  */
 
+.issuePanel {
+  padding: 10px;
+}
+
+.issuePanel .Header {
+  color: #000000;
+  background: #FFFFFF;
+  border: none;
+  border-bottom: 1px solid #000000;
+  font-weight: bold;
+}
+
+.issuePanel .Header .Column {
+  width: 90px;
+  font-size: 12px;
+  vertical-align: bottom;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.issuePanel .Header .Created {
+  width: 110px;
+  font-size: 12px;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
 .issueSummaryPanel {
   width: 100%;
 }
@@ -20,10 +47,8 @@
   text-decoration: underline;
 }
 
-.issueSummaryPanel .State {
-  width: 50px;
-  font-size: 12px;
-  text-align: center;
+.issueSummaryPanel .Type {
+  width: 30px;
 }
 
 .issueSummaryPanel .Owner {
@@ -38,26 +63,23 @@
   padding: 2px 0px;
 }
 
+.ispPriority0 {
+  background: #99CCFF;
+}
+
+.ispPriority10 {
+  background: #FFFFCC;
+}
+
+.ispPriority20 {
+  background: #FF9999;
+}
+
 .issueMessageLink {
   font-size: 12px;
   color: #999999;
   display: inline;
   margin-left: 5px;
-}
-
-.titledListPanel .Header .Column {
-  width: 50px;
-  font-size: 12px;
-  vertical-align: bottom;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.titledListPanel .Header .Created {
-  width: 150px;
-  font-size: 12px;
-  vertical-align: bottom;
-  white-space: nowrap;
 }
 
 .editIssuePanel .Title {

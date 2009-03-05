@@ -20,9 +20,8 @@ public class IssuesPage extends Page
         String action = args.get(0, "");
 
         if (action.equals("mine")) {
-            int type = args.get(1, Issue.TYPE_BUG);
             IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayOwnedIssues(type, Issue.STATE_OPEN, false);
+            issues.displayOwnedIssues();
             setContent(_msgs.myIssuesTitle(), issues);
 
         } else if (action.equals("create")) {
@@ -32,10 +31,8 @@ public class IssuesPage extends Page
             setContent(_msgs.viewIssue(), EditIssuePanel.newForEdit(_imodels, args.get(1, 0)));
 
         } else { // action.equals("list") or no action
-            int type = args.get(1, Issue.TYPE_BUG), state = args.get(2, Issue.STATE_OPEN);
-            boolean refresh = args.get(3, "").equals("r");
             IssuePanel issues = new IssuePanel(_imodels);
-            issues.displayIssues(type, state, refresh);
+            issues.displayIssues();
             setContent(_msgs.issuesTitle(), issues);
         }
 

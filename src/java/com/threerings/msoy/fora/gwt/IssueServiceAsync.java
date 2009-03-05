@@ -17,13 +17,13 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueService#loadIssues}.
      */
-    void loadIssues (int type, int state, int offset, int count, boolean needTotalCount,
+    void loadIssues (boolean open, int offset, int count, boolean needTotalCount,
                      AsyncCallback<IssueService.IssueResult> callback);
 
     /**
      * The asynchronous version of {@link IssueService#loadOwnedIssues}.
      */
-    void loadOwnedIssues (int type, int state, int offset, int count, boolean needTotalCount,
+    void loadOwnedIssues (boolean open, int offset, int count, boolean needTotalCount,
                           AsyncCallback<IssueService.IssueResult> callback);
 
     /**

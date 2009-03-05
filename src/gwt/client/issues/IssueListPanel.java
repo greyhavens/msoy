@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.images.msgs.MsgsImages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -27,31 +28,33 @@ import client.util.Link;
  */
 public class IssueListPanel extends PagedGrid<Issue>
 {
-    public IssueListPanel (IssuePanel parent)
+    public IssueListPanel (boolean open, boolean owned, IssueModels imodels)
     {
-        super(ISSUES_PER_PAGE, 1, NAV_ON_BOTTOM);
-        addStyleName("dottedGrid");
+        super(open ? OPEN_ISSUES_PER_PAGE : CLOSED_ISSUES_PER_PAGE, 1, NAV_ON_BOTTOM);
         setWidth("100%");
-        _parent = parent;
-    }
 
-    public void displayIssues (
-        int type, int state, boolean owned, IssueModels imodels, boolean refresh)
-    {
+        _open = open;
+        _owned = owned;
+        _imodels = imodels;
         _linkPrefix = "i_";
-        if (owned) {
-            _linkPostfix = "_1";
-            setModel(imodels.getOwnedIssues(type, state, refresh), 0);
-        } else {
-            setModel(imodels.getIssues(type, state, refresh), 0);
-        }
+        _create.setVisible(CShell.isSupport() && open);
+
+        refreshModel();
     }
 
-    public void displayAssignIssues (
-        int type, int state, IssueModels imodels, int messageId, int page)
+//     public void displayAssignIssues (boolean open, IssueModels imodels, int messageId, int page)
+//     {
+//         _linkPrefix = "a_" + messageId + "_" + page + "_";
+//         setModel(imodels.getIssues(open, false), 0);
+//     }
+
+    protected void refreshModel ()
     {
-        _linkPrefix = "a_" + messageId + "_" + page + "_";
-        setModel(imodels.getIssues(type, state, false), 0);
+        if (_owned) {
+            setModel(_imodels.getOwnedIssues(_open, false), 0);
+        } else {
+            setModel(_imodels.getIssues(_open, false), 0);
+        }
     }
 
     @Override // from PagedGrid
@@ -86,14 +89,14 @@ public class IssueListPanel extends PagedGrid<Issue>
         // add a button for refreshing the issue list
         _refresh = new Button(_msgs.ilpRefresh(), new ClickListener() {
             public void onClick (Widget sender) {
-                _parent.displayIssues(true);
+                refreshModel();
             }
         });
         controls.setWidget(0, 0, _refresh);
-        if (CShell.isSupport()) {
-            controls.setWidget(0, 1, new Button(_msgs.newIssue(),
-                                                Link.createListener(Pages.ISSUES, "create")));
-        }
+
+        // add a button for creating a new issue (might later get hidden)
+        _create = new Button(_msgs.newIssue(), Link.createListener(Pages.ISSUES, "create"));
+        controls.setWidget(0, 1, _create);
     }
 
     @Override // from PagedGrid
@@ -112,22 +115,22 @@ public class IssueListPanel extends PagedGrid<Issue>
             setCellPadding(0);
             setCellSpacing(0);
 
+            addStyleName("ispPriority" + issue.priority);
+
             int col = 0;
+            setWidget(0, col, (issue.type == Issue.TYPE_BUG) ?
+                      _mimgs.new_issue().createImage() : // a little bug
+                      _mimgs.edit_post().createImage()); // a pencil
+            getFlexCellFormatter().setStyleName(0, col++, "Type");
+
             String summary = issue.summary;
             // TEMP: until we migrate descrips to summaries
             if (summary == null || summary.length() == 0) {
                 summary = "<no summary>";
             }
-            Widget toIssue = Link.create(
-                summary, Pages.ISSUES, _linkPrefix + issue.issueId + _linkPostfix);
+            Widget toIssue = Link.create(summary, Pages.ISSUES, _linkPrefix + issue.issueId);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
-
-            setText(0, col, IssueMsgs.priorityMsg(issue, _msgs));
-            getFlexCellFormatter().setStyleName(0, col++, "State");
-
-            setText(0, col, IssueMsgs.categoryMsg(issue, _msgs));
-            getFlexCellFormatter().setStyleName(0, col++, "State");
 
             setText(0, col, (issue.owner == null ? _msgs.iNone() : issue.owner.toString()));
             getFlexCellFormatter().setStyleName(0, col++, "Owner");
@@ -149,16 +152,15 @@ public class IssueListPanel extends PagedGrid<Issue>
         }
     }
 
-    /** The forum panel in which we're hosted. */
-    protected IssuePanel _parent;
-
-    protected Button _refresh;
-
+    protected IssueModels _imodels;
+    protected boolean _open, _owned;
     protected String _linkPrefix;
-    protected String _linkPostfix = "";
+
+    protected Button _create, _refresh;
 
     protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
+    protected static final MsgsImages _mimgs = (MsgsImages)GWT.create(MsgsImages.class);
 
-    /** The number of issues displayed per page. */
-    protected static final int ISSUES_PER_PAGE = 20;
+    protected static final int OPEN_ISSUES_PER_PAGE = 20;
+    protected static final int CLOSED_ISSUES_PER_PAGE = 10;
 }

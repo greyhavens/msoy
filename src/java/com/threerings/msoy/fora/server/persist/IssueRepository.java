@@ -50,24 +50,20 @@ public class IssueRepository extends DepotRepository
     /**
      * Load issues of specific types and states.
      */
-    public List<IssueRecord> loadIssues (IntSet types, IntSet states, int offset, int count)
+    public List<IssueRecord> loadIssues (IntSet states, int offset, int count)
     {
-        return loadIssues(types, states, 0, offset, count);
+        return loadIssues(states, 0, offset, count);
     }
 
     /**
      * Load issues of specific types, states and ownerId.
      */
-    public List<IssueRecord> loadIssues (IntSet types, IntSet states, int ownerId,
-                                         int offset, int count)
+    public List<IssueRecord> loadIssues (IntSet states, int ownerId, int offset, int count)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         ColumnExp sortColumn = IssueRecord.CREATED_TIME;
         if (ownerId > 0) {
             whereBits.add(new Conditionals.Equals(IssueRecord.OWNER_ID, ownerId));
-        }
-        if (types != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.TYPE, types));
         }
         if (states != null) {
             whereBits.add(new Conditionals.In(IssueRecord.STATE, states));
@@ -94,18 +90,14 @@ public class IssueRepository extends DepotRepository
     /**
      * Load the total number of issues with specific types, states.
      */
-    public int loadIssueCount (IntSet types, IntSet states)
+    public int loadIssueCount (IntSet states)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
-        if (types != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.TYPE, types));
-        }
         if (states != null) {
             whereBits.add(new Conditionals.In(IssueRecord.STATE, states));
         }
-        return load(CountRecord.class,
-                       new FromOverride(IssueRecord.class),
-                       new Where(new Logic.And(whereBits))).count;
+        return load(CountRecord.class, new FromOverride(IssueRecord.class),
+                    new Where(new Logic.And(whereBits))).count;
     }
 
     /**
