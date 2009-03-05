@@ -86,6 +86,12 @@ public class ForumServlet extends MsoyServiceServlet
             groups.put(card.name.getGroupId(), card.name);
         }
 
+        // if we have an announcement group, include that in their list
+        GroupRecord agroup = _groupRepo.loadGroup(ServerConfig.getAnnounceGroupId());
+        if (agroup != null) {
+            groups.put(agroup.groupId, agroup.toGroupName());
+        }
+
         // load up the thread records
         List<ForumThreadRecord> thrrecs;
         if (groups.size() == 0) {
