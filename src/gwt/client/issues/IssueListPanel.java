@@ -133,7 +133,7 @@ public class IssueListPanel extends PagedGrid<Issue>
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
             if (_open) {
-                setText(0, col, (issue.owner == null ? _msgs.iNone() : issue.owner.toString()));
+                setText(0, col, (issue.owner == null ? "" : issue.owner.toString()));
             } else {
                 setText(0, col, IssueMsgs.stateMsg(issue));
             }
