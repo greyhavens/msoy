@@ -1,0 +1,11 @@
+## Expands the list of feed categories in $feed into a text listing.
+Hello, here is your test feed
+#foreach ($cat in $feed)
+#if ($cat.items.size() > 0)
+$cat.CategoryName
+#foreach ($item in $cat.items)
+ * $item.PlainText
+#end
+
+#end
+#end
