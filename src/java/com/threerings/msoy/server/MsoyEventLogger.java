@@ -176,9 +176,9 @@ public class MsoyEventLogger
         MemberLocal local = member.getLocal(MemberLocal.class);
         PlayerMetrics.RoomVisit room = local.metrics.room;
         PlayerMetrics.Idle idle = local.metrics.idle;
-        post(new MsoyEvents.SessionMetrics(member.getMemberId(), room.timeInMyRoom,
-            room.timeInFriendRooms, room.timeInStrangerRooms, room.timeInWhirleds,
-            idle.timeActive, idle.timeIdle, sessionToken));
+        post(new MsoyEvents.SessionMetrics(member.getMemberId(), member.isPermaguest(),
+            room.timeInMyRoom, room.timeInFriendRooms, room.timeInStrangerRooms,
+            room.timeInWhirleds, idle.timeActive, idle.timeIdle, sessionToken));
     }
 
     public void mailSent (int senderId, int recipientId, int payloadType)

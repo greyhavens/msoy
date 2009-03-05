@@ -73,6 +73,7 @@ public class MsoyEvents
     {
         @Index @Field final public Date timestamp;
         @Field final public int memberId;
+        @Field final public boolean isGuest;
         @Field final public int inMyRooms;
         @Field final public int inFriendRooms;
         @Field final public int inStrangerRooms;
@@ -81,12 +82,13 @@ public class MsoyEvents
         @Field final public int totalIdle;
         @Field final public String sessionToken;
 
-        public SessionMetrics (int memberId, int timeInMyRooms, int timeInFriendRooms,
-            int timeInStrangerRooms, int timeInWhirleds, int totalTimeActive, int totalTimeIdle,
-            String sessionToken)
+        public SessionMetrics (int memberId, boolean isGuest, int timeInMyRooms,
+            int timeInFriendRooms, int timeInStrangerRooms, int timeInWhirleds,
+            int totalTimeActive, int totalTimeIdle, String sessionToken)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
+            this.isGuest = isGuest;
             this.inMyRooms = timeInMyRooms;
             this.inFriendRooms = timeInFriendRooms;
             this.inStrangerRooms = timeInStrangerRooms;
