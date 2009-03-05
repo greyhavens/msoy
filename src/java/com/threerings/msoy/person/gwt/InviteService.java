@@ -38,8 +38,9 @@ public interface InviteService extends RemoteService
      * @param anonymous if true, the invitations will not be from the caller but will be
      * anonymous. This is only allowed for admin callers.
      */
-    InvitationResults sendInvites (List<EmailContact> addresses, String fromName,
-                                   String customMessage, boolean anonymous)
+    InvitationResults sendInvites (
+        List<EmailContact> addresses, String fromName, String subject, String customMessage,
+        boolean anonymous)
         throws ServiceException;
 
     /**

@@ -38,6 +38,9 @@ public class InviteUtils
     /** Maximum length for names. */
     public static final int MAX_NAME_LENGTH = 80;
 
+    /** Maximum length for subjects. */
+    public static final int MAX_SUBJECT_LENGTH = 100;
+
     /** Maximum length for email addresses. */
     protected static final int MAX_MAIL_LENGTH = 200;
 

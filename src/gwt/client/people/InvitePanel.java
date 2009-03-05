@@ -161,20 +161,26 @@ public class InvitePanel extends VerticalPanel
             }
         };
 
-        // From and custom message box
-        SmartTable from = new SmartTable(0, 5);
-        from.setWidth("100%");
-        from.setText(0, 0, _msgs.inviteFrom(), 1, "Title");
-        from.getFlexCellFormatter().setWidth(0, 0, "10px");
-        _fromName = MsoyUI.createTextBox(CShell.creds.name.toString(),
-            InviteUtils.MAX_NAME_LENGTH, 0);
-        from.setWidget(0, 1, _fromName);
+        // From, subject and custom message box
+        SmartTable customs = new SmartTable(0, 5);
+        customs.setWidth("100%");
+        customs.setText(0, 0, _msgs.inviteFrom(), 1, "Title");
+        customs.getFlexCellFormatter().setWidth(0, 0, "10px");
+        String ourName = CShell.creds.name.toString();
+        _fromName = MsoyUI.createTextBox(ourName, InviteUtils.MAX_NAME_LENGTH, 0);
+        customs.setWidget(0, 1, _fromName);
+        customs.setText(1, 0, _msgs.inviteSubject(), 1, "Title");
+        customs.getFlexCellFormatter().setWidth(1, 0, "10px");
+        _subject = MsoyUI.createTextBox(
+            _msgs.inviteSubjectCustom(ourName), InviteUtils.MAX_SUBJECT_LENGTH, 0);
+        _subject.setWidth("100%");
+        customs.setWidget(1, 1, _subject);
         _customMessage = MsoyUI.createTextArea("", -1, 3);
-        from.setWidget(1, 0, _customMessage, 2, null);
+        customs.setWidget(2, 0, _customMessage, 2, null);
         _customMessage.setWidth("100%");
         DefaultTextListener.configure(_customMessage, _msgs.inviteCustom());
         box.add(WidgetUtil.makeShim(10, 10));
-        box.add(from);
+        box.add(customs);
 
         // Not currently used
         _anonymous = new CheckBox(_msgs.inviteAnonymous());
@@ -271,6 +277,7 @@ public class InvitePanel extends VerticalPanel
             _fromName.setFocus(true);
             return;
         }
+        String subject = _subject.getText().trim();
         String msg = _customMessage.getText().trim();
         if (msg.equals(_msgs.inviteCustom())) {
             msg = "";
@@ -278,7 +285,8 @@ public class InvitePanel extends VerticalPanel
 
         sendEvent("invited", new NoopAsyncCallback());
 
-        _invitesvc.sendInvites(invited, from, msg, anon, new MsoyCallback<InvitationResults>() {
+        _invitesvc.sendInvites(invited, from, subject, msg, anon,
+            new MsoyCallback<InvitationResults>() {
             public void onSuccess (InvitationResults ir) {
                 addPendingInvites(ir.pendingInvitations);
                 _emailList.clear();
@@ -319,6 +327,7 @@ public class InvitePanel extends VerticalPanel
     protected MemberInvites _invites;
 
     protected TextBox _fromName;
+    protected TextBox _subject;
     protected TextArea _customMessage;
     protected CheckBox _anonymous;
     protected SmartTable _penders;

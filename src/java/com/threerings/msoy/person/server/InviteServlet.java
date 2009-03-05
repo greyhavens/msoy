@@ -136,8 +136,9 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     // from InviteService
-    public InvitationResults sendInvites (List<EmailContact> addresses, String fromName,
-                                          String customMessage, boolean anonymous)
+    public InvitationResults sendInvites (
+        List<EmailContact> addresses, String fromName, String subject, String customMessage,
+        boolean anonymous)
         throws ServiceException
     {
         MemberRecord mrec = anonymous ? requireAdminUser() : requireAuthedUser();
@@ -164,7 +165,7 @@ public class InviteServlet extends MsoyServiceServlet
             }
             try {
                 penders.add(sendInvite(anonymous ? null : mrec, contact.email, contact.name,
-                            fromName, customMessage));
+                            fromName, subject, customMessage));
             } catch (NameServiceException nse) {
                 ir.results[ii] = nse.getMessage();
                 ir.names[ii] = nse.name;
@@ -269,8 +270,9 @@ public class InviteServlet extends MsoyServiceServlet
     /**
      * Helper function for {@link #sendInvites}.
      */
-    protected Invitation sendInvite (MemberRecord inviter, String email, String toName,
-                                     String fromName, String customMessage)
+    protected Invitation sendInvite (
+        MemberRecord inviter, String email, String toName, String fromName, String subject,
+        String customMessage)
         throws ServiceException
     {
         // make sure this address is valid
@@ -312,6 +314,9 @@ public class InviteServlet extends MsoyServiceServlet
         }
         if (!StringUtil.isBlank(customMessage)) {
             params.set("custom_message", customMessage);
+        }
+        if (!StringUtil.isBlank(subject)) {
+            params.set("custom_subject", subject);
         }
         params.set("invite_id", inviteId);
         params.set("server_url", ServerConfig.getServerURL());
