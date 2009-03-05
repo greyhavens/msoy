@@ -192,6 +192,17 @@ public class ProfileBlurb extends Blurb
                   Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
         addButton(buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
+        if (CShell.isAdmin()) {
+            buttons.add(new Button ("Admin: Send feed", new ClickListener() {
+                public void onClick (Widget sender) {
+                    _profilesvc.sendTestFeedEmail(new MsoyCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            MsoyUI.info("Sent");
+                        }
+                    });
+                }
+            }));
+        }
 
         // display all of our sections in a nice little layout
         SmartTable content = new SmartTable("Profile", 0, 0);
