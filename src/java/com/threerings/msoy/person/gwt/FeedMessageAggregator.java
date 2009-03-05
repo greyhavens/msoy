@@ -18,6 +18,9 @@ import com.threerings.msoy.web.gwt.DateUtil;
  */
 public class FeedMessageAggregator
 {
+    /** Break aggregate messages up into maximum this many items each */
+    public static final int MAX_AGGREGATED_ITEMS = 5;
+
     /**
      * Aggregate any messages with the same actor (left aggregate) or the same action (right
      * aggregate) and return a new message list containing aggregates and/or single messages to
@@ -295,7 +298,4 @@ public class FeedMessageAggregator
 
         protected List<FeedMessage> list = new ArrayList<FeedMessage>();
     }
-
-    /** Break aggregate messages up into maximum this many items each */
-    protected static final int MAX_AGGREGATED_ITEMS = 5;
 }
