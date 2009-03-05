@@ -1,0 +1,18 @@
+## Expands the list of feed categories in $feed into an html listing.
+<html>
+<head><base href="$server_url"/></head>
+<body>
+#foreach ($cat in $feed)
+#if ($cat.items.size() > 0)
+<p>
+<h4>$cat.CategoryName</h4>
+<ul>
+#foreach ($item in $cat.items)
+<li>$item.HTMLText</li>
+#end
+</ul>
+</p>
+#end
+#end
+</body>
+</html>
