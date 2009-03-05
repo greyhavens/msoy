@@ -9,8 +9,16 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.IntSet;
+
+import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.util.MessageBundle;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+
 import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
@@ -29,9 +37,11 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.Parameters;
+
+import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.util.MessageBundle;
+
+import static com.threerings.msoy.Log.log;
 
 @Singleton @BlockingThread
 public class SpamLogic
@@ -75,24 +85,47 @@ public class SpamLogic
          */
         public String getPlainText ()
         {
-            if (_content == null) {
-                EmailItemBuilder builder = new EmailItemBuilder();
-                FeedItemGenerator gen = new FeedItemGenerator(_memberId, true, builder, _messages);
-                gen.addMessage(_message);
-                _content = builder.buffer.toString();
-            }
+            initContent();
             return _content;
         }
 
-        protected EmailFeedItem (int memberId, FeedMessage message)
+        /**
+         * Gets the html text representation of this feed item. NOTE: this is called using
+         * reflection by velocity.
+         */
+        public String getHTMLText ()
         {
+            initContent();
+            return _htmlContent;
+        }
+
+        protected EmailFeedItem (Generator generators[], int memberId, FeedMessage message)
+        {
+            _generators = generators;
             _memberId = memberId;
             _message = message;
         }
 
+        protected void initContent ()
+        {
+            if (_content == null) {
+                _generators[0].addMessage(_message);
+                _generators[1].addMessage(_message);
+                _content = builder(0).item;
+                _htmlContent = builder(1).item;
+            }
+        }
+
+        protected EmailItemBuilder builder (int ii)
+        {
+            return ((EmailItemBuilder)_generators[ii].getBuilder());
+        }
+
+        protected Generator _generators[];
         protected int _memberId;
         protected FeedMessage _message;
         protected String _content;
+        protected String _htmlContent;
     }
 
     /**
@@ -110,6 +143,10 @@ public class SpamLogic
         List<FeedCategory> categories = _feedLogic.loadFeedCategories(
             mrec, friendIds, ITEMS_PER_CATEGORY, null);
 
+        final Generator generators[] = {
+            new Generator(memberId, new PlainTextBuilder(), _messages),
+            new Generator(memberId, new HTMLBuilder(), _messages)};
+
         // convert to our accessible versions
         List<EmailFeedCategory> ecats = Lists.newArrayList();
         int total = 0;
@@ -118,7 +155,7 @@ public class SpamLogic
                 FeedMessageAggregator.aggregate(category.messages, false),
                 new Function<FeedMessage, EmailFeedItem>() {;
                     public EmailFeedItem apply (FeedMessage fm) {
-                        return new EmailFeedItem(mrec.memberId, fm);
+                        return new EmailFeedItem(generators, mrec.memberId, fm);
                     }
                 });
             if (eitems.isEmpty()) {
@@ -139,6 +176,7 @@ public class SpamLogic
         // TODO: we'll need more parameters here 
         Parameters params = new Parameters();
         params.set("feed", ecats);
+        params.set("server_url", DeploymentConfig.serverURL);
         _mailSender.sendTemplateEmail(
             mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return true;
@@ -163,54 +201,103 @@ public class SpamLogic
     protected static class StringWrapper
         implements Media, Icon
     {
-        /** The string we wrap. */
-        public String str;
+        /** The text of the thing we wrap. */
+        public String text;
 
         /**
          * Creates a new wrapper.
          */
-        public StringWrapper (String str)
+        public StringWrapper (String text)
         {
-            this.str = str;
+            this.text = text;
         }
 
         // from Object
         public String toString ()
         {
-            return str;
+            return text;
         }
     }
 
     /**
-     * Implementation of an feed item builder that keeps a string buffer of the item so far.
-     * TODO: separate buffer for html.
+     * Base item builder for email that just records the text of the added feed item.
      */
-    protected static class EmailItemBuilder
+    protected static abstract class EmailItemBuilder
         implements Builder
     {
-        /** The buffer we append to for this item. */
-        public StringBuilder buffer = new StringBuilder();
+        /**
+         * The final item text just added (we only keep it long enough for the feed item to grab it.
+         */
+        public String item;
 
         // from Builder
         public void addIcon (Icon icon) {
-            buffer.append(icon);
+            item = icon.toString();
         }
 
         // from Builder
         public void addMedia (Media media, String message) {
-            buffer.append(message);
+            _temp.setLength(0);
+            _temp.append(media).append(message);
+            item = _temp.toString();
         }
 
         // from Builder
-        public void addMedia (Media[] media, String message) {
-            buffer.append(message);
+        public void addMedia (Media[] medias, String message) {
+            _temp.setLength(0);
+            for (Media media : medias) {
+                _temp.append(media);
+            }
+            _temp.append(message);
+            item = _temp.toString();
         }
 
         // from Builder
         public void addText (String text) {
-            buffer.append(text);
+            item = text;
         }
 
+        StringBuilder _temp = new StringBuilder();
+    }
+
+    /**
+     * Implementation of an feed item builder that keeps a string buffer of the item so far.
+     */
+    protected static class HTMLBuilder extends EmailItemBuilder
+    {
+        // from Builder
+        public Icon createGainedLevelIcon (String text) {
+            return new StringWrapper(_html.reset().open("img",
+                "src", "images/whirled/friend_gained_level.png").close().append(text).finish());
+        }
+
+        // from Builder
+        public String createLink (String label, Pages page, String args) {
+            return _html.reset().open("a", "href", link(page, args)).append(label).finish();
+        }
+
+        // from Builder
+        public Media createMedia (MediaDesc md, Pages page, String args) {
+            if (!md.isImage()) {
+                // hmm
+                return new StringWrapper(
+                    _html.reset().open("a", "href", link(page, args)).finish());
+            }
+            return new StringWrapper(_html.reset().open("a", "href", link(page, args))
+                .open("img", "src", md.getMediaPath()).finish());
+        }
+
+        protected static String link (Pages page, String args)
+        {
+            return Pages.makeLink(page, args).substring(1);
+        }
+
+        /** The buffer we append to for this item's html. */
+        protected MarkupBuilder _html = new MarkupBuilder();
+    }
+
+    protected static class PlainTextBuilder extends EmailItemBuilder
+    {
         // from Builder
         public Icon createGainedLevelIcon (String text) {
             return new StringWrapper(text);
@@ -224,6 +311,22 @@ public class SpamLogic
         // from Builder
         public Media createMedia (MediaDesc md, Pages page, String args) {
             return new StringWrapper("");
+        }
+    }
+
+    protected class Generator extends FeedItemGenerator
+    {
+        public Generator (int memberId, Builder builder, Messages messages)
+        {
+            super(memberId, true, builder, messages);
+        }
+
+        /**
+         * Returns the builder we are using to generate the feed item.
+         */
+        public Builder getBuilder ()
+        {
+            return _builder;
         }
     }
 

@@ -86,6 +86,17 @@ public class MarkupBuilder
         return toString();
     }
 
+    /**
+     * Resets the builder so we are ready to start afresh.
+     */
+    public MarkupBuilder reset ()
+    {
+        _buff.setLength(0);
+        _tagcontents.clear();
+        _tags.clear();
+        return this;
+    }
+
     // from Object
     public String toString ()
     {
