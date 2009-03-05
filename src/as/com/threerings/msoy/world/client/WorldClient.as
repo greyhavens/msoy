@@ -185,18 +185,6 @@ public class WorldClient extends MsoyClient
         _wctx.getMsoyController().handleLogon(createStartupCreds(token));
     }
 
-    /** @inheritDoc */
-    // from MsoyClient
-    override protected function clientDidLogon (event :ClientEvent) :void
-    {
-        super.clientDidLogon(event);
-
-        var member :MemberObject = _clobj as MemberObject;
-        if (member == null || _embedded) {
-            return;
-        }
-    }
-
     /**
      * Exposed to javascript so that it may notify us to move to a new location.
      */
