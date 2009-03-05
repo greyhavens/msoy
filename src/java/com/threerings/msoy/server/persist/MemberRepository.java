@@ -1338,7 +1338,8 @@ public class MemberRepository extends DepotRepository
         And bits = new And(new Like(MemberRecord.ACCOUNT_NAME, PERMA_PATTERN),
                            new LessThan(MemberRecord.LEVEL, STRONG_PERMAGUEST_LEVEL),
                            new LessThan(MemberRecord.LAST_SESSION, cutoff));
-        return Lists.transform(findAllKeys(MemberRecord.class, false, new Where(bits)),
+        return Lists.transform(findAllKeys(MemberRecord.class, false, new Where(bits),
+                                           new Limit(0, MAX_WEAK_ACCOUNTS)),
                                RecordFunctions.<MemberRecord>getIntKey());
     }
 
@@ -1463,4 +1464,7 @@ public class MemberRepository extends DepotRepository
 
     /** A permaguest that fails to achieve this level is considered weak, and purged. */
     protected static final int STRONG_PERMAGUEST_LEVEL = 5;
+
+    /** We'll only return 1000 weak accounts at a time for purging. */
+    protected static final int MAX_WEAK_ACCOUNTS = 1000;
 }
