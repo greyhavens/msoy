@@ -1290,7 +1290,9 @@ public class WorldController extends MsoyController
     override public function clientDidLogoff (event :ClientEvent) :void
     {
         super.clientDidLogoff(event);
-        if (!_wctx.getClient().isSwitchingServers()) {
+
+        // if we're actually terminating our session, clear out our AVG panel
+        if (!event.isSwitchingServers()) {
             setAVRGamePanel(null);
         }
     }

@@ -412,7 +412,7 @@ public class GameDirector extends BasicDirector
 
         // if we're actually logging off, rather than just switching servers, then shutdown any
         // active game connection
-        if (!_wctx.getClient().isSwitchingServers() && _liaison != null) {
+        if (!event.isSwitchingServers() && _liaison != null) {
             _liaison.shutdown();
         }
     }

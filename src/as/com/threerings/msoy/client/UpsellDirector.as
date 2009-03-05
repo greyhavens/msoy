@@ -35,7 +35,7 @@ public class UpsellDirector extends BasicDirector
     {
         super.clientDidLogoff(event);
 
-        if (!event.getClient().isSwitchingServers()) {
+        if (!event.isSwitchingServers()) {
             _timer.stop();
             _locType = 0;
             _shown = {};

@@ -315,7 +315,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function clientDidLogon (event :ClientEvent) :void
     {
         // some things we only want to do when we're really logging on
-        if (!event.getClient().isSwitchingServers()) {
+        if (!event.isSwitchingServers()) {
             // now that we logged on, we might have gotten a different referral info back
             // from the server. so clobber whatever we have, and tell the GWT wrapper
             // to clobber its info as well.
