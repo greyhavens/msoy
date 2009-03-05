@@ -79,8 +79,6 @@ import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetName;
 
-import com.threerings.msoy.utils.Args;
-
 /**
  * Extends the MsoyController with World specific bits.
  */
