@@ -3,6 +3,8 @@
 
 package client.issues;
 
+import com.google.gwt.core.client.GWT;
+
 import com.threerings.msoy.fora.gwt.Issue;
 
 /**
@@ -13,45 +15,45 @@ public class IssueMsgs
     /**
      * Returns the translated type string.
      */
-    public static String typeMsg (Issue issue, IssuesMessages msgs)
+    public static String typeMsg (Issue issue)
     {
-        return typeMsg(issue.type, msgs);
+        return typeMsg(issue.type);
     }
 
     /**
      * Returns the translated state string.
      */
-    public static String stateMsg (Issue issue, IssuesMessages msgs)
+    public static String stateMsg (Issue issue)
     {
-        return stateMsg(issue.state, msgs);
+        return stateMsg(issue.state);
     }
 
     /**
      * Returns the translated priority string.
      */
-    public static String priorityMsg (Issue issue, IssuesMessages msgs)
+    public static String priorityMsg (Issue issue)
     {
-        return priorityMsg(issue.priority, msgs);
+        return priorityMsg(issue.priority);
     }
 
     /**
      * Returns the translated category string.
      */
-    public static String categoryMsg (Issue issue, IssuesMessages msgs)
+    public static String categoryMsg (Issue issue)
     {
-        return categoryMsg(issue.category, msgs);
+        return categoryMsg(issue.category);
     }
 
     /**
      * Returns the translated type string.
      */
-    public static String typeMsg (int type, IssuesMessages msgs)
+    public static String typeMsg (int type)
     {
         switch (type) {
         case Issue.TYPE_BUG:
-            return msgs.iBugReport();
+            return _msgs.iBugReport();
         case Issue.TYPE_FEATURE:
-            return msgs.iFeature();
+            return _msgs.iFeature();
         default:
             return "";
         }
@@ -60,15 +62,15 @@ public class IssueMsgs
     /**
      * Returns the translated state string.
      */
-    public static String stateMsg (int state, IssuesMessages msgs)
+    public static String stateMsg (int state)
     {
         switch (state) {
         case Issue.STATE_OPEN:
-            return msgs.iOpen();
+            return _msgs.iOpen();
         case Issue.STATE_RESOLVED:
-            return msgs.iResolved();
+            return _msgs.iResolved();
         case Issue.STATE_IGNORED:
-            return msgs.iIgnored();
+            return _msgs.iIgnored();
         default:
             return "";
         }
@@ -77,15 +79,15 @@ public class IssueMsgs
     /**
      * Returns the translated priority string.
      */
-    public static String priorityMsg (int priority, IssuesMessages msgs)
+    public static String priorityMsg (int priority)
     {
         switch (priority) {
         case Issue.PRIORITY_LOW:
-            return msgs.iLow();
+            return _msgs.iLow();
         case Issue.PRIORITY_MEDIUM:
-            return msgs.iMedium();
+            return _msgs.iMedium();
         case Issue.PRIORITY_HIGH:
-            return msgs.iHigh();
+            return _msgs.iHigh();
         default:
             return "";
         }
@@ -94,13 +96,15 @@ public class IssueMsgs
     /**
      * Returns the translated category string.
      */
-    public static String categoryMsg (int category, IssuesMessages msgs)
+    public static String categoryMsg (int category)
     {
         switch (category) {
         case Issue.CAT_NONE:
-            return msgs.iNoCategory();
+            return _msgs.iNoCategory();
         default:
             return "";
         }
     }
+
+    protected static final IssuesMessages _msgs = (IssuesMessages)GWT.create(IssuesMessages.class);
 }

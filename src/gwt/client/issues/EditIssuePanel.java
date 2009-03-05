@@ -126,17 +126,17 @@ public class EditIssuePanel extends TableFooterPanel
     {
         int row = 0;
         _table.setText(row, 0, _issue.summary, 2, "Title");
-        _table.setText(row++, 1, IssueMsgs.typeMsg(_issue.type, _msgs), 1, null);
+        _table.setText(row++, 1, IssueMsgs.typeMsg(_issue.type), 1, null);
 
         _table.setText(row, 0, _msgs.iCreator() + ": " + _issue.creator);
         String otxt = (_issue.owner == null ? _msgs.iNoOwner() : _issue.owner.toString());
         _table.setText(row++, 1, _msgs.iOwner() + ": " + otxt);
 
-        _table.setText(row, 0, _msgs.iState() + ": " + IssueMsgs.stateMsg(_issue.state, _msgs));
+        _table.setText(row, 0, _msgs.iState() + ": " + IssueMsgs.stateMsg(_issue.state));
         _table.setText(
-            row, 1, _msgs.iPriority() + ": " + IssueMsgs.priorityMsg(_issue.priority, _msgs));
+            row, 1, _msgs.iPriority() + ": " + IssueMsgs.priorityMsg(_issue.priority));
         _table.setText(
-            row++, 2, _msgs.iCategory() + ": " + IssueMsgs.categoryMsg(_issue.category, _msgs));
+            row++, 2, _msgs.iCategory() + ": " + IssueMsgs.categoryMsg(_issue.category));
 
         if (!StringUtil.isBlank(_issue.description)) {
             _table.setText(row++, 0, _msgs.iDescription(), 3, "SubTitle");
@@ -169,7 +169,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(row, 0, _msgs.iType(), 1, "Label");
         _table.setWidget(row++, 1, _typeBox = new ListBox());
         for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
-            _typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], _msgs));
+            _typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii]));
             if (_issue.type == Issue.TYPE_VALUES[ii]) {
                 _typeBox.setSelectedIndex(ii);
             }
@@ -192,7 +192,7 @@ public class EditIssuePanel extends TableFooterPanel
         HorizontalPanel sbits = new HorizontalPanel();
         sbits.add(_stateBox = new ListBox());
         for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
-            _stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], _msgs));
+            _stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii]));
             if (_issue.state == Issue.STATE_VALUES[ii]) {
                 _stateBox.setSelectedIndex(ii);
             }
@@ -221,7 +221,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(row, 0, _msgs.iPriority(), 1, "Label");
         _table.setWidget(row++, 1, _priorityBox = new ListBox());
         for (int ii = 0; ii < Issue.PRIORITY_VALUES.length; ii++) {
-            _priorityBox.addItem(IssueMsgs.priorityMsg(Issue.PRIORITY_VALUES[ii], _msgs));
+            _priorityBox.addItem(IssueMsgs.priorityMsg(Issue.PRIORITY_VALUES[ii]));
             if (_issue.priority == Issue.PRIORITY_VALUES[ii]) {
                 _priorityBox.setSelectedIndex(ii);
             }
@@ -230,7 +230,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(row, 0, _msgs.iCategory(), 1, "Label");
         _table.setWidget(row++, 1, _categoryBox = new ListBox());
         for (int ii = 0; ii < Issue.CATEGORY_VALUES.length; ii++) {
-            _categoryBox.addItem(IssueMsgs.categoryMsg(Issue.CATEGORY_VALUES[ii], _msgs));
+            _categoryBox.addItem(IssueMsgs.categoryMsg(Issue.CATEGORY_VALUES[ii]));
             if (_issue.category == Issue.CATEGORY_VALUES[ii]) {
                 _categoryBox.setSelectedIndex(ii);
             }

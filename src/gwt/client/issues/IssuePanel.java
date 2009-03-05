@@ -65,7 +65,7 @@ public class IssuePanel extends FlowPanel
         SmartTable header = new SmartTable("Header", 0, 2);
         header.setWidth("100%");
         header.setText(0, 0, title);
-        header.setText(0, 1, _msgs.iOwner(), 1, "Column");
+        header.setText(0, 1, open ? _msgs.iOwner() : _msgs.iState(), 1, "Column");
         header.setText(0, 2, open ? _msgs.iCreated() : _msgs.iClosed(), 1, "Created");
         return header;
     }

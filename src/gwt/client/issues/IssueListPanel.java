@@ -132,7 +132,11 @@ public class IssueListPanel extends PagedGrid<Issue>
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
-            setText(0, col, (issue.owner == null ? _msgs.iNone() : issue.owner.toString()));
+            if (_open) {
+                setText(0, col, (issue.owner == null ? _msgs.iNone() : issue.owner.toString()));
+            } else {
+                setText(0, col, IssueMsgs.stateMsg(issue));
+            }
             getFlexCellFormatter().setStyleName(0, col++, "Owner");
 
             FlowPanel created = new FlowPanel();
