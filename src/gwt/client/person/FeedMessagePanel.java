@@ -103,7 +103,8 @@ public class FeedMessagePanel extends FocusPanel
                 return _pmsgs.descCombine(typeName, itemName);
             }
 
-            public String badgeName (String hexCode, String levelName) {
+            public String badgeName (int code, String levelName) {
+                String hexCode = Integer.toHexString(code);
                 return _dmsgs.get("badge_" + hexCode, levelName);
             }
 

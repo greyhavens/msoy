@@ -91,7 +91,7 @@ public class FeedItemGenerator
         String describeItem (String typeName, String itemName);
 
         /** Gets the name of a badge. */
-        String badgeName (String hexCode, String levelName);
+        String badgeName (int code, String levelName);
 
         /** Gets the name of a medal when no group was involved. */
         String noGroupForMedal (String medalLink);
@@ -337,8 +337,7 @@ public class FeedItemGenerator
         case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
             int badgeLevel = Integer.parseInt(message.data[1]);
-            String badgeHexCode = Integer.toHexString(badgeCode);
-            String badgeName = _messages.badgeName(badgeHexCode, Badge.getLevelName(badgeLevel));
+            String badgeName = _messages.badgeName(badgeCode, Badge.getLevelName(badgeLevel));
             int memberId = ((FriendFeedMessage)message).friend.getMemberId();
             return _builder.createLink(badgeName, Pages.ME, Args.compose("passport", memberId));
 
