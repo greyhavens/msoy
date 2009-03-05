@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.RandomUtil;
@@ -81,14 +82,10 @@ public class UpsellDirector extends BasicDirector
             if (Boolean(_shown[key])) {
                 continue; // skip it, we've already shown this key during this session
             }
-            var msgs :Object = Msgs.GENERAL.getAllMapped(key);
-            var keyOptions :Array = [];
-            for (var s :String in msgs) {
-                keyOptions.push(s);
-            }
-            if (keyOptions.length > 0) {
-                // we're doing it, we're showing something
-                var actualKey :String = String(RandomUtil.pickRandom(keyOptions));
+            var actualKey :String = RandomUtil.pickRandom(
+                ArrayUtil.keys(Msgs.GENERAL.getAllMapped(key))) as String;
+            if (actualKey != null) {
+                // we're doing it, we're actually showing something!
                 var msg :String = Msgs.GENERAL.get(actualKey,
                     String(placeInfo[1]), String(placeInfo[2]));
 
