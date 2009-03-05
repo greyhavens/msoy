@@ -35,6 +35,8 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
         if (memberId == 0) {
             return false; // this is a whirled page lurker - ignore
         }
+        
+        Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
 
         final Map<String, Object> data = eventData.getData();
         final int inOwnRoomsTotal = getClampedSeconds(data, "inMyRooms");
@@ -47,12 +49,12 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
         final GroupStats stats = new GroupStats(inOwnRoomsTotal, inFriendsRoomsTotal,
             inOtherRoomsTotal, inWhirledsTotal, idleTotal, activeTotal, memberId);
 
-        if (memberId > 0) {
-            playerStats = stats;
-            guestStats = new GroupStats();
-        } else {
+        if ((isGuest != null) ? isGuest.booleanValue() : (memberId < 0)) {
             playerStats = new GroupStats();
             guestStats = stats;
+        } else {
+            playerStats = stats;
+            guestStats = new GroupStats();
         }
         return true;
     }
