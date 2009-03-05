@@ -463,34 +463,37 @@ public class MemberLogic
         }
 
         // delete everything that we can unequivocally delete
-        _avrGameRepo.purgeMembers(purgeIds);
-        _badgeRepo.purgeMembers(purgeIds);
-        _commentRepo.purgeMembers(purgeIds);
-        _faveRepo.purgeMembers(purgeIds);
-        _feedRepo.purgeMembers(purgeIds);
-        _forumRepo.purgeMembers(purgeIds);
-        _galleryRepo.purgeMembers(purgeIds);
-        _gcookRepo.purgePlayers(purgeIds);
-        _groupRepo.purgeMembers(purgeIds);
-        _mailRepo.purgeMembers(purgeIds);
-        _medalRepo.purgeMembers(purgeIds);
-        _memberRepo.purgeMembers(purgeIds);
-        _moneyRepo.purgeMembers(purgeIds);
-        _oooAuthRepo.purgeMembers(purgeNames);
-        _profileRepo.purgeMembers(purgeIds);
-        _sceneRepo.purgeMembers(purgeIds);
-        _statRepo.purgePlayers(purgeIds);
-        _swiftlyRepo.purgeMembers(purgeIds);
-        _trophyRepo.purgeMembers(purgeIds);
-        _uactionRepo.purgeMembers(purgeIds);
+        if (!purgeIds.isEmpty()) {
+            _avrGameRepo.purgeMembers(purgeIds);
+            _badgeRepo.purgeMembers(purgeIds);
+            _commentRepo.purgeMembers(purgeIds);
+            _faveRepo.purgeMembers(purgeIds);
+            _feedRepo.purgeMembers(purgeIds);
+            _forumRepo.purgeMembers(purgeIds);
+            _galleryRepo.purgeMembers(purgeIds);
+            _gcookRepo.purgePlayers(purgeIds);
+            _groupRepo.purgeMembers(purgeIds);
+            _mailRepo.purgeMembers(purgeIds);
+            _medalRepo.purgeMembers(purgeIds);
+            _memberRepo.purgeMembers(purgeIds);
+            _moneyRepo.purgeMembers(purgeIds);
+            _profileRepo.purgeMembers(purgeIds);
+            _sceneRepo.purgeMembers(purgeIds);
+            _statRepo.purgePlayers(purgeIds);
+            _swiftlyRepo.purgeMembers(purgeIds);
+            _trophyRepo.purgeMembers(purgeIds);
+            _uactionRepo.purgeMembers(purgeIds);
+            // delete their inventory and associated data
+            for (ItemRepository<ItemRecord> irepo : _itemLogic.getRepositories()) {
+                irepo.purgeMembers(purgeIds);
+            }
+        }
+        if (!purgeNames.isEmpty()) {
+            _oooAuthRepo.purgeMembers(purgeNames);
+        }
 
         //    ItemListInfoRecord - to be removed?
         //    EventRecord - leave these around?
-
-        // delete their inventory and associated data
-        for (ItemRepository<ItemRecord> irepo : _itemLogic.getRepositories()) {
-            irepo.purgeMembers(purgeIds);
-        }
 
         // fully delete all permaguest records
         if (!killIds.isEmpty()) {
