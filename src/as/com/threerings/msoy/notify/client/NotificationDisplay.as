@@ -124,12 +124,8 @@ public class NotificationDisplay extends HBox
 
     protected function maybeCloseHistory (event :MouseEvent) :void
     {
-        if (_nHistory == null) {
-            return;
-        }
-
-        var bounds :Rectangle = _nHistory.getStageScrollBounds();
-        if (bounds != null && !bounds.contains(event.stageX, event.stageY)) {
+        // only close if they clicked outside the history
+        if (!_nHistory.getBounds(_nHistory.stage).contains(event.stageX, event.stageY)) {
             hideNotificationHistory();
         }
     }

@@ -26,16 +26,6 @@ public class NotificationHistoryDisplay extends VBox
         verticalScrollPolicy = ScrollPolicy.ON;
     }
 
-    public function getStageScrollBounds () :Rectangle
-    {
-        var scroll :ScrollBar = verticalScrollBar; // this is a getter function
-        if (scroll == null) {
-            return null;
-        }
-        var pos :Point = localToGlobal(new Point(scroll.x, scroll.y));
-        return new Rectangle(pos.x, pos.y, scroll.width, scroll.height);
-    }
-
     override protected function createChildren () :void
     {
         super.createChildren();
