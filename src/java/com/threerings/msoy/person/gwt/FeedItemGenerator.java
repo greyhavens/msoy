@@ -14,8 +14,6 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
-import client.shell.CShell;
-
 /**
  * Generates the display for a feed message.
  */
