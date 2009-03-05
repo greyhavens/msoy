@@ -96,7 +96,7 @@ public class FeedMessagePanel extends FocusPanel
             }
 
             public String you () {
-                return _pmsgs.feedProfileMemberYou();
+                return "<b>" + _pmsgs.feedProfileMemberYou() + "</b>";
             }
 
             public String describeItem (String typeName, String itemName) {
