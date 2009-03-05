@@ -18,7 +18,6 @@ import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
 
-import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
@@ -40,6 +39,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.server.RPCProfiler;
@@ -48,6 +48,9 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.notify.data.GenericNotification;
 
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.data.ServerConfigObject;
@@ -119,6 +122,14 @@ public class MsoyAdminManager
             long when = System.currentTimeMillis() + minutes*60*1000L - 5000L;
             _rebmgr.scheduleReboot(when, initiator);
         }
+    }
+
+    /**
+     * Are we scheduled to reboot soon?
+     */
+    public boolean willRebootSoon ()
+    {
+        return _rebmgr.willShutdownSoon();
     }
 
     /**
@@ -229,7 +240,7 @@ public class MsoyAdminManager
         }
 
         protected void broadcast (String message) {
-            _chatprov.broadcast(null, MsoyCodes.GENERAL_MSGS, message, true, false);
+            _memberMan.notifyAll(new GenericNotification(message, Notification.SYSTEM));
         }
 
         protected int getDayFrequency () {
@@ -299,7 +310,7 @@ public class MsoyAdminManager
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MailSender _sender;
     @Inject protected MemberLocator _locator;
-    @Inject protected ChatProvider _chatprov;
+    @Inject protected MemberManager _memberMan;
     @Inject protected MoneyExchange _exchange;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */

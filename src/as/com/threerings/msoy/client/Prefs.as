@@ -64,16 +64,19 @@ public class Prefs
     {
         _config.setPath(embedded ? null : CONFIG_PATH);
         useSoundVolume();
+    }
 
-        if (!embedded) {
-            var lastBuild :String = (_config.getValue("lastBuild", null) as String);
-            // update our stored last build time
-            if (lastBuild != DeploymentConfig.buildTime) {
-                _config.setValue("lastBuild", DeploymentConfig.buildTime);
-
-                // and right here we can do client-side transitions, if needed
-            }
+    /**
+     * Set the build time. Return true if it's changed. Should only be done on non-embedded clients.
+     */
+    public static function setBuildTime (buildTime :String) :Boolean
+    {
+        var lastBuild :String = (_config.getValue("lastBuild", null) as String);
+        if (lastBuild != buildTime) {
+            _config.setValue("lastBuild", buildTime);
+            return true;
         }
+        return false;
     }
 
     /**

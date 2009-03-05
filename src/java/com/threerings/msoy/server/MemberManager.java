@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -65,6 +66,7 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
@@ -77,7 +79,9 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.mail.server.MailLogic;
+import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -257,6 +261,12 @@ public class MemberManager
 
         // update badges
         _badgeMan.updateBadges(member);
+
+        // TODO: give a time estimate, add custom message?
+        if (_adminMan.willRebootSoon()) {
+            _notifyMan.notify(
+                member, new GenericNotification("m.reboot_soon", Notification.SYSTEM));
+        }
     }
 
     // from interface MemberLocator.Observer
@@ -863,6 +873,23 @@ public class MemberManager
     }
 
     /**
+     * Broadcast a notification to all members, on this server only.
+     */
+    public void notifyAll (Notification note)
+    {
+        Iterator<ClientObject> itr = _clmgr.enumerateClientObjects();
+        while (itr.hasNext()) {
+            ClientObject clobj = itr.next();
+            if (clobj instanceof MemberObject) {
+                MemberObject mem = (MemberObject) clobj;
+                if (!mem.isViewer()) {
+                    _notifyMan.notify(mem, note);
+                }
+            }
+        }
+    }
+
+    /**
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
      */
@@ -1064,6 +1091,7 @@ public class MemberManager
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected MsoyAdminManager _adminMan;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ClientManager _clmgr;
     @Inject protected PresentsDObjectMgr _omgr;

@@ -539,6 +539,7 @@
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="log_levels_config" value="${log_levels_config}"/>
         <filter token="billing_url" value="${billing_url}"/>
+        <filter token="announce_group_id" value="${announce_group_id}"/>
       </filterset>
     </copy>
   </target>

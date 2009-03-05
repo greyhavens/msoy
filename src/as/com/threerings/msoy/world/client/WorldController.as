@@ -410,6 +410,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_DISCUSSIONS command.
+     */
+    public function handleViewDiscussions (groupId :int) :void
+    {
+        displayPage("groups", "f_" + groupId);
+    }
+
+    /**
      * Handles the VIEW_ROOM command.
      */
     public function handleViewRoom (sceneId :int) :void

@@ -17,6 +17,7 @@ import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
 import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
@@ -40,6 +41,8 @@ import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.data.all.VisitorInfo;
+
+import com.threerings.msoy.notify.data.Notification;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -326,6 +329,14 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             if (vector != null && vector.length > 0) {
                 var msvc :MemberService = requireService(MemberService) as MemberService;
                 msvc.trackVectorAssociation(this, vector);
+            }
+
+        } else if (!member.isPermaguest()) {
+            // for members on the web site, see if we want to tell them about release notes
+            if (Prefs.setBuildTime(DeploymentConfig.buildTime)) {
+                _ctx.getNotificationDirector().addGenericNotification(
+                    MessageBundle.tcompose("m.new_release", DeploymentConfig.announceGroup),
+                    Notification.SYSTEM);
             }
         }
     }

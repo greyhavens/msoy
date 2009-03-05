@@ -120,6 +120,9 @@ public class MsoyController extends Controller
     /** Command to view a groups's page, arg is [ groupId ] */
     public static const VIEW_GROUP :String = "ViewGroup";
 
+    /** Command to view a groups's discussions, arg is [ groupId ] */
+    public static const VIEW_DISCUSSIONS :String = "ViewDiscussions";
+
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
