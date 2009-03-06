@@ -1,5 +1,8 @@
 ## Expands the list of feed categories in $feed into a text listing.
-Hello, here is your test feed
+Your Whirled, $name
+Here are a few things that have been happening on Whirled. Come on back and
+get in the game!
+
 #foreach ($cat in $feed)
 #if ($cat.items.size() > 0)
 $cat.CategoryName
@@ -9,3 +12,7 @@ $cat.CategoryName
 
 #end
 #end
+
+You can also see this feed on your Whirled home page here:
+
+$server_url#me

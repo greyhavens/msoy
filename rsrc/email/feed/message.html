@@ -1,7 +1,48 @@
 ## Expands the list of feed categories in $feed into an html listing.
 <html>
-<head><base href="$server_url"/></head>
+<head>
+<base href="$server_url"/>
+<style type="text/css">
+<!--
+body {
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+a {
+  color: #3092c6;
+  text-decoration: none;
+}
+img {
+  border: 0px;
+  padding: 2px;
+  margin: 2px;
+  vertical-align: middle;
+}
+h3 {
+  font-size: 14px;
+  border-bottom: 1px solid gray;
+}
+h4 {
+  font-size: 13px;
+}
+ul, li {
+  list-style-type: none;
+}
+h4, ul, li {
+  padding: 0px;
+}
+p.footer {
+  border-top: 1px solid gray
+}
+-->
+</style>
+</head>
 <body>
+<h3>
+Here are a few things that have been happening on <a href="$server_url">Whirled</a>. Come on back
+and get in the game!
+</h3>
 #foreach ($cat in $feed)
 #if ($cat.items.size() > 0)
 <p>
@@ -14,5 +55,8 @@
 </p>
 #end
 #end
+<p class="footer">
+You can also see this feed on your Whirled <a href="$server_url#me">home page</a>.
+</p>
 </body>
 </html>

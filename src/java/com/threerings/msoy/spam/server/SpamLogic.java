@@ -177,6 +177,8 @@ public class SpamLogic
         Parameters params = new Parameters();
         params.set("feed", ecats);
         params.set("server_url", DeploymentConfig.serverURL);
+        params.set("name", mrec.name);
+        params.set("member_id", mrec.memberId);
         _mailSender.sendTemplateEmail(
             mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return true;
@@ -268,7 +270,8 @@ public class SpamLogic
         // from Builder
         public Icon createGainedLevelIcon (String text) {
             return new StringWrapper(_html.reset().open("img",
-                "src", "images/whirled/friend_gained_level.png").close().append(text).finish());
+                "src", "images/whirled/friend_gained_level.png", "width", "30px", "height", "20px")
+                    .close().append(text).finish());
         }
 
         // from Builder
@@ -283,8 +286,11 @@ public class SpamLogic
                 return new StringWrapper(
                     _html.reset().open("a", "href", link(page, args)).finish());
             }
+            int size = MediaDesc.HALF_THUMBNAIL_SIZE;
+            String width = MediaDesc.getWidth(size) + "px";
+            String height = MediaDesc.getHeight(size) + "px";
             return new StringWrapper(_html.reset().open("a", "href", link(page, args))
-                .open("img", "src", md.getMediaPath()).finish());
+                .open("img", "src", md.getMediaPath(), "width", width, "height", height).finish());
         }
 
         protected static String link (Pages page, String args)
