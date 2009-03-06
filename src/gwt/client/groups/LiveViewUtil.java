@@ -1,9 +1,6 @@
 //
 // $Id$
 
-/**
- *
- */
 package client.groups;
 
 import client.ui.MsoyUI;
