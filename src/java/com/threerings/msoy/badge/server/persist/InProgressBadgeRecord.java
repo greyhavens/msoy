@@ -4,6 +4,7 @@
 package com.threerings.msoy.badge.server.persist;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -66,6 +67,7 @@ public class InProgressBadgeRecord extends PersistentRecord
      */
     public InProgressBadgeRecord (int memberId, InProgressBadge badge)
     {
+        Preconditions.checkArgument(memberId > 0, "memberId must be positive.");
         this.memberId = memberId;
         this.badgeCode = badge.badgeCode;
         this.nextLevel = badge.level;

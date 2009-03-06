@@ -6,6 +6,7 @@ package com.threerings.msoy.badge.server.persist;
 import java.sql.Timestamp;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
 import com.samskivert.util.StringUtil;
 
@@ -65,6 +66,7 @@ public class EarnedBadgeRecord extends PersistentRecord
      */
     public EarnedBadgeRecord (int memberId, EarnedBadge badge)
     {
+        Preconditions.checkArgument(memberId > 0, "memberId must be positive.");
         this.memberId = memberId;
         this.badgeCode = badge.badgeCode;
         this.level = badge.level;
