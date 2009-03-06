@@ -79,6 +79,7 @@ import com.threerings.msoy.room.server.MsoySceneFactory;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.spam.server.SpamLogic;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.tour.server.TourManager;
@@ -239,6 +240,9 @@ public class MsoyServer extends MsoyBaseServer
             }
         };
         _feedPruner.schedule(FEED_PRUNING_INTERVAL, true);
+
+        // kick off spam jobs
+        _spamLogic.init();
 
         log.info("Msoy server initialized.");
     }
@@ -465,6 +469,9 @@ public class MsoyServer extends MsoyBaseServer
     
     /** The feed repository, so that we may prune. */
     @Inject protected FeedRepository _feedRepo;
+
+    /** The spam logic mail sender, it needs to be told to kick off its jobs. */
+    @Inject protected SpamLogic _spamLogic;
 
     /** Prune the feeds once every 3 hours. On all servers at once? @TODO Fix. */
     protected static final long FEED_PRUNING_INTERVAL = 3 * 60 * 60 * 1000;

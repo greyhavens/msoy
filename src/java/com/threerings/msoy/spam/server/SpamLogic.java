@@ -16,6 +16,7 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CountHashMap;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -38,9 +39,11 @@ import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.FeedLogic;
 
+import com.threerings.msoy.server.CronLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -161,6 +164,31 @@ public class SpamLogic
     {
         _pmsgs = messages.getBundle("feed.PersonMessages");
         _dmsgs = messages.getBundle("feed.DynamicMessages");
+    }
+
+    /**
+     * Initializes our spam jobs.
+     */
+    public void init ()
+    {
+        Runnable job = new Runnable () {
+            public void run () {
+                sendFeedEmails();
+            }
+
+            public String toString () {
+                return "News feed emailer";
+            }
+        };
+
+        // TODO: dev is not special, I just want to check this on our old alpha DB snapshot
+        if (DeploymentConfig.devDeployment) {
+            _batchInvoker.postRunnable(job);
+
+        } else {
+            // Run nightly around 1am
+            _cronLogic.scheduleAt(1, job);
+        }
     }
 
     /**
@@ -355,6 +383,13 @@ public class SpamLogic
 
         // Sort to CATEGORIES order
         Collections.sort(ecats);
+
+        // don't send email to alpha registrants, but log so we can test
+        if (DeploymentConfig.devDeployment) {
+            log.info("Suppressing feed email from dev", "member", mrec.accountName,
+                "created", mrec.created);
+            return successResult;
+        }
 
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
@@ -678,6 +713,8 @@ public class SpamLogic
     @Inject protected MailSender _mailSender;
     @Inject protected SpamRepository _spamRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected CronLogic _cronLogic;
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
 
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";
@@ -685,7 +722,7 @@ public class SpamLogic
     protected static final int SECOND_EMAIL_CUTOFF = 7 * 24*60*60*1000;
     protected static final int MIN_FRIEND_COUNT = 1;
     protected static final int MIN_ITEM_COUNT = 5;
-    protected static final int SEND_LIMIT = 1000;
+    protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;
 
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
