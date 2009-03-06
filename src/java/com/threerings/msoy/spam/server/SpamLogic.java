@@ -244,7 +244,7 @@ public class SpamLogic
      * Returns a writable shuffled list of member ids whose last login meets the criteria for a
      * retention message.
      */
-    List<Integer> findRetentionCandidates(Date cutoff)
+    protected List<Integer> findRetentionCandidates (Date cutoff)
     {
         List<Integer> lapsedIds = Lists.newArrayList(
             _memberRepo.findRetentionCandidates(new Date(0), cutoff));
@@ -343,16 +343,16 @@ public class SpamLogic
     /**
      * Does the heavy lifting of sending a feed email. If successful, returns the given result,
      * otherwise returns an unsuccessful result.
-     * @param doChecks testing flag; if false, checks for min friends etc are not done
+     * @param realDeal testing flag; if false, we make sure the mail is sent regardless
      */
     protected Result sendFeedEmail (
-        final MemberRecord mrec, Result successResult, boolean doChecks)
+        final MemberRecord mrec, Result successResult, boolean realDeal)
     {
         int memberId = mrec.memberId;
 
         // load up friends, bail if not enough
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        if (doChecks && friendIds.size() < MIN_FRIEND_COUNT) {
+        if (realDeal && friendIds.size() < MIN_FRIEND_COUNT) {
             return Result.NOT_ENOUGH_FRIENDS;
         }
 
@@ -365,7 +365,7 @@ public class SpamLogic
         for (FeedCategory cat : categories) {
             count += cat.messages.length;
         }
-        if (doChecks && count < MIN_ITEM_COUNT) {
+        if (realDeal && count < MIN_ITEM_COUNT) {
             return Result.NOT_ENOUGH_NEWS;
         }
 
@@ -396,7 +396,7 @@ public class SpamLogic
         Collections.sort(ecats);
 
         // don't send email to alpha registrants
-        if (DeploymentConfig.devDeployment) {
+        if (realDeal && DeploymentConfig.devDeployment) {
             return successResult;
         }
 
@@ -409,8 +409,8 @@ public class SpamLogic
         params.set("server_url", DeploymentConfig.serverURL);
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
-        _mailSender.sendTemplateEmail(MailSender.By.COMPUTER, mrec.accountName,
-                                      ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
+        _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
+            mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return successResult;
     }
 
@@ -487,23 +487,26 @@ public class SpamLogic
         // from Builder
         public Icon createGainedLevelIcon (String text) {
             return new StringWrapper(_html.reset().open("img",
-                "src", "images/whirled/friend_gained_level.png", "width", "30px", "height", "20px")
-                    .close().append(text).finish());
+                "src", "images/whirled/friend_gained_level.png",
+                "style", imgStyle(new Dimensions("30px", "20px"))).close().append(text).finish());
         }
 
         // from Builder
         public String createLink (String label, Pages page, String args) {
-            return _html.reset().open("a", "href", link(page, args)).append(label).finish();
+            return _html.reset().open("a", "href", link(page, args),"style", A_STYLE).append(label)
+                .finish();
         }
 
         // from Builder
         public Media createMedia (MediaDesc md, Pages page, String args) {
+            // start with the anchor
+            _html.reset().open("a", "href", link(page, args), "style", A_STYLE);
+
             if (!md.isImage()) {
-                // don't bother with other media types, just revert back to a link
+                // don't bother with other media types, just use some fakey text
                 // TODO: should we worry about this? I don't think I've ever seen any non-image
                 // media in my feed before...
-                return new StringWrapper(
-                    _html.reset().open("a", "href", link(page, args)).append("[X]").finish());
+                return new StringWrapper(_html.append("[X]").finish());
             }
             int size = MediaDesc.HALF_THUMBNAIL_SIZE;
             if (page == Pages.WORLD && args.startsWith("s")) {
@@ -512,22 +515,24 @@ public class SpamLogic
                 md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
                 size = MediaDesc.SNAPSHOT_TINY_SIZE;
             }
-            Dimensions dim = SharedMediaUtil.resolveImageSize(
-                md, MediaDesc.getWidth(size), MediaDesc.getHeight(size));
+            int width = MediaDesc.getWidth(size);
+            int height = MediaDesc.getHeight(size);
+            Dimensions dim = SharedMediaUtil.resolveImageSize(md, width, height);
             if (dim == null) {
-                return new StringWrapper(_html.reset()
-                    .open("a", "href", link(page, args))
-                    .open("img", "src", md.getMediaPath()).finish());
+                dim = new Dimensions(width + "px", height + "px");
             }
-            return new StringWrapper(_html.reset()
-                .open("a", "href", link(page, args))
-                .open("img", "src", md.getMediaPath(), "width", dim.width, "height", dim.height)
-                .finish());
+            return new StringWrapper(_html.open("img", "src", md.getMediaPath(),
+                "style", imgStyle(dim)).finish());
         }
 
         protected static String link (Pages page, String args)
         {
             return Pages.makeLink(page, args).substring(1);
+        }
+
+        protected static String imgStyle (Dimensions dim)
+        {
+            return IMG_STYLE + " width: " + dim.width + "; height: " + dim.height + ";";
         }
 
         /** The buffer we append to for this item's html. */
@@ -732,6 +737,10 @@ public class SpamLogic
     protected static final int MIN_FRIEND_COUNT = 1;
     protected static final int MIN_ITEM_COUNT = 5;
     protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;
+
+    protected static final String IMG_STYLE = "border: 0px; padding: 2px; margin: 2px; " +
+        "vertical-align: middle;";
+    protected static final String A_STYLE = "text-decoration: none;";
 
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
