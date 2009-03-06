@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.spam.server;
 
+import java.sql.Date;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -10,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -18,6 +21,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberMailUtil;
 
 import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
@@ -31,6 +35,7 @@ import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.FeedLogic;
+
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -38,11 +43,20 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.Parameters;
 
+import com.threerings.msoy.spam.server.persist.SpamRecord;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
+
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedMediaUtil;
 import com.threerings.msoy.web.gwt.SharedMediaUtil.Dimensions;
 
+import static com.threerings.msoy.Log.log;
+
+/**
+ * Handles activities relating to sending users unsolicited email. On the less cynical side it
+ * could be called MarketingLogic.
+ */
 @Singleton @BlockingThread
 public class SpamLogic
 {
@@ -129,27 +143,171 @@ public class SpamLogic
     }
 
     /**
-     * Sends a feed email to the given member id. Returns true unless there were no feed items in
-     * the user's feed.
+     * Loads up all candidate users for getting their feeds mailed to them, does various bits
+     * of pruning and sends emails to a random subset of qualifying users.
      */
-    public boolean sendFeedEmail (int memberId)
+    public void sendFeedEmails ()
     {
+        log.info("Starting feed mailing");
+
+        Date now = new Date(System.currentTimeMillis());
+        Date lapsedCutoff = new Date(now.getTime() - LAPSED_CUTOFF);
+        Date secondEmailCutoff = new Date(now.getTime() - SECOND_EMAIL_CUTOFF);
+
+        // find everyone who is lapsed
+        List<Integer> lapsedIds = _memberRepo.findRetentionCandidates(new Date(0), lapsedCutoff);
+        log.info("Found lapsed members", "size", lapsedIds.size());
+
+        // shuffle so we can do the first N and still get a good random subset
+        Collections.shuffle(lapsedIds);
+
+        // do the sending and record results
+        int totalSent = 0;
+        int[] stats = new int[Result.values().length];
+        for (Integer memberId : lapsedIds) {
+            Result result = sendFeedEmail(memberId, secondEmailCutoff);
+            stats[result.ordinal()]++;
+            if (result.success && ++totalSent >= SEND_LIMIT) {
+                break;
+            }
+        }
+
+        // log results
+        Object[] statLog = new Object[Result.values().length * 2];
+        for (Result r : Result.values()) {
+            statLog[r.ordinal() * 2] = r.name();
+            statLog[r.ordinal() * 2 + 1] = stats[r.ordinal()];
+        }
+        log.info("Finished feed mailing", statLog);
+    }
+
+    /**
+     * For testing the feed email content, just sends a message to the given member id with no
+     * checking.
+     * TODO: remove
+     */
+    public boolean testFeedEmail (int memberId)
+    {
+        return sendFeedEmail(_memberRepo.loadMember(memberId), Result.SENT_LAPSED, false).success;
+    }
+
+    /**
+     * Checks all relevant spam history and tries to send the feed to the given member id. The
+     * cutoff date is passed in for consistency since the feed mailer job could take a long time to
+     * run.
+     */
+    protected Result sendFeedEmail (int memberId, Date secondEmailCutoff)
+    {
+        try {
+            return trySendFeedEmail(memberId, secondEmailCutoff);
+
+        } catch (Exception e) {
+            log.warning("Failed to send feed", "memberId", e);
+            return Result.OTHER;
+        }
+    }
+
+    /**
+     * Non-exception-aware version of the above.
+     */
+    protected Result trySendFeedEmail (int memberId, Date secondEmailCutoff)
+    {
+        SpamRecord spamRec = _spamRepo.loadSpamRecord(memberId);
+        Date last = spamRec == null ? null : spamRec.lastRetentionEmailSent;
+
+        if (last != null && last.after(secondEmailCutoff)) {
+            // spammed recently, skip
+            return Result.TOO_RECENTLY_SPAMMED;
+        }
+
+        // load the member
+        MemberRecord mrec = _memberRepo.loadMember(spamRec.memberId);
+        if (mrec == null) {
+            log.warning("Member deleted during feed mailing?", "memberId", memberId);
+            return Result.MEMBER_DELETED;
+        }
+
+        // skip placeholder addresses
+        if (MemberMailUtil.isPlaceholderAddress(mrec.accountName)) {
+            return Result.PLACEHOLDER_ADDRESS;
+        }
+
+        // skip invalid addresses
+        if (!MailUtil.isValidAddress(mrec.accountName)) {
+            return Result.IVALID_ADDRESS;
+        }
+
+        // oh look, they've logged in! maybe the email(s) worked. clear counter
+        boolean persuaded = last != null && mrec.lastSession.after(last);
+        if (persuaded) {
+            spamRec.retentionEmailCountSinceLastLogin = 0;
+        }
+
+        // they are never coming back... oh well, there are plenty of other fish in the sea
+        if (spamRec.retentionEmailCountSinceLastLogin >= 2) {
+            return Result.LOST_CAUSE;
+        }
+
+        // sending the email could take a while so update the spam record here to reduce window
+        // where other peers may conflict with us 
+        _spamRepo.noteRetentionEmailSending(memberId, spamRec);
+
+        // choose a successful result based on previous attempts
+        Result result = Result.SENT_DORMANT;
+        if (persuaded) {
+            result = Result.SENT_PERSUADED;
+        } else if (spamRec.retentionEmailCount == 0) {
+            result = Result.SENT_LAPSED;
+        }
+
+        // now send the email, overwriting result in case of not enough friends etc
+        // TODO: algorithm for resurrecting these failures (e.g. if they failed due to no feed
+        // activity, maybe their friends have since been persuaded and created some activity)
+        result = sendFeedEmail(mrec, result, true);
+        _spamRepo.noteRetentionEmailResult(memberId, result.code);
+        return result;
+    }
+
+    /**
+     * Does the heavy lifting of sending a feed email. If successful, returns the given result,
+     * otherwise returns an unsuccessful result.
+     * @param doChecks testing flag; if false, checks for min friends etc are not done
+     */
+    protected Result sendFeedEmail (
+        final MemberRecord mrec, Result successResult, boolean doChecks)
+    {
+        int memberId = mrec.memberId;
+
         // lazy init message bundles for now
+        // TODO: fix. this is dangerous
         initMessageBundles();
 
-        // load up the data
-        final MemberRecord mrec = _memberRepo.loadMember(memberId);
+        // load up friends, bail if not enough
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
+        if (doChecks && friendIds.size() < MIN_FRIEND_COUNT) {
+            return Result.NOT_ENOUGH_FRIENDS;
+        }
+
+        // load the feed by categories
         List<FeedCategory> categories = _feedLogic.loadFeedCategories(
             mrec, friendIds, ITEMS_PER_CATEGORY, null);
 
+        // count up all messages
+        int count = 0;
+        for (FeedCategory cat : categories) {
+            count += cat.messages.length;
+        }
+        if (doChecks && count < MIN_ITEM_COUNT) {
+            return Result.NOT_ENOUGH_NEWS;
+        }
+
+        // prepare the generators!
         final Generator generators[] = {
             new Generator(memberId, new PlainTextBuilder(), _messages),
             new Generator(memberId, new HTMLBuilder(), _messages)};
 
-        // convert to our accessible versions
+        // convert to our wrapped categories and items
         List<EmailFeedCategory> ecats = Lists.newArrayList();
-        int total = 0;
         for (FeedCategory category : categories) {
             List<EmailFeedItem> eitems = Lists.transform(
                 FeedMessageAggregator.aggregate(category.messages, false),
@@ -163,17 +321,13 @@ public class SpamLogic
             }
             EmailFeedCategory ecat = new EmailFeedCategory(
                 Category.values()[category.category], eitems);
-            total += eitems.size();
             ecats.add(ecat);
         }
 
-        // bail if we've got no items
-        if (total == 0) {
-            return false;
-        }
-
         // fire off the email, the template will take care of looping over categories and items
-        // TODO: we'll need more parameters here 
+        // TODO: it would be great if we could somehow get the final result of actually sending the
+        // mail. A lot of users have emails like 123@myass.com and we are currently counting them
+        // as sent.
         Parameters params = new Parameters();
         params.set("feed", ecats);
         params.set("server_url", DeploymentConfig.serverURL);
@@ -181,11 +335,12 @@ public class SpamLogic
         params.set("member_id", mrec.memberId);
         _mailSender.sendTemplateEmail(
             mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
-        return true;
+        return successResult;
     }
 
     /**
      * Sets up the message bundles if they are not already.
+     * TODO: not thread safe
      */
     protected void initMessageBundles ()
     {
@@ -351,6 +506,36 @@ public class SpamLogic
         }
     }
 
+    /**
+     * The result of attempting to send a feed email.
+     */
+    protected enum Result
+    {
+        // successful results
+        SENT_LAPSED(1, true), SENT_PERSUADED(2, true), SENT_DORMANT(3, true),
+
+        // failed results
+        TOO_RECENTLY_SPAMMED(4), NOT_ENOUGH_FRIENDS(5), NOT_ENOUGH_NEWS(6), MEMBER_DELETED(7),
+        PLACEHOLDER_ADDRESS(8), IVALID_ADDRESS(9), LOST_CAUSE(10), OTHER(11);
+
+        /** Persisted value for results. */
+        public int code;
+
+        /** Whether the results indicates a successfully sent message. */
+        public boolean success;
+
+        Result (int code)
+        {
+            this(code, false);
+        }
+
+        Result (int code, boolean success)
+        {
+            this.code = code;
+            this.success = success;
+        }
+    }
+
     /** Messages instance that delegates to the bundles in our parent class. */
     protected Messages _messages = new Messages () {
         // from Messages
@@ -474,7 +659,13 @@ public class SpamLogic
     @Inject protected FeedLogic _feedLogic;
     @Inject protected MailSender _mailSender;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected SpamRepository _spamRepo;
 
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";
+    protected static final int LAPSED_CUTOFF = 3 * 24*60*60*1000;
+    protected static final int SECOND_EMAIL_CUTOFF = 7 * 24*60*60*1000;
+    protected static final int MIN_FRIEND_COUNT = 1;
+    protected static final int MIN_ITEM_COUNT = 5;
+    protected static final int SEND_LIMIT = 1000;
 }

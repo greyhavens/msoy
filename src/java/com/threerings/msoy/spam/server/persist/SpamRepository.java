@@ -3,20 +3,14 @@
 
 package com.threerings.msoy.spam.server.persist;
 
-import java.util.Collection;
 import java.util.Set;
 
 import java.sql.Date;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 
@@ -50,58 +44,47 @@ public class SpamRepository extends DepotRepository
     }
 
     /**
-     * Filters the given set by removing ids of members that have had a retention email sent since
-     * the given time stamp *or* have had at least the given count sent. Updates the remaining
-     * members' last retention email time stamp with the given current time.
+     * Loads the spam records for each member id in the given set.
      */
-    public void prepateToRetain (
-        Set<Integer> memberIds, long sinceCutoff, int maxEmailCount, long now)
+    public SpamRecord loadSpamRecord (Integer memberId)
     {
-        Date cutoff = new Date(sinceCutoff);
-        Date nowDate = new Date(now);
-
-        // first update existing spam records if they qualify
-        Set<Integer> updates = Sets.newHashSet();
-        for (SpamRecord rec : loadSpamRecords(memberIds)) {
-            // too many messages or too recently sent
-            if (rec.retentionEmailCount > maxEmailCount || (rec.lastRetentionEmailSent != null &&
-                rec.lastRetentionEmailSent.after(cutoff))) {
-                memberIds.remove(rec.memberId);
-                continue;
-            }
-
-            // do the update, just our fields
-            updatePartial(SpamRecord.getKey(rec.memberId),
-                SpamRecord.LAST_RETENTION_EMAIL_SENT, nowDate,
-                SpamRecord.RETENTION_EMAIL_COUNT, rec.retentionEmailCount + 1);
-            updates.add(rec.memberId);
-        }
-
-        // now insert new records for anyone that wasn't updated
-        for (Integer memberId : memberIds) {
-            if (updates.contains(memberId)) {
-                continue;
-            }
-            SpamRecord rec = new SpamRecord();
-            rec.memberId = memberId;
-            rec.lastRetentionEmailSent = nowDate;
-            rec.retentionEmailCount++;
-            insert(rec);
-        }
+        return load(SpamRecord.class, memberId);
     }
 
     /**
-     * Loads the spam records for each member id in the given set.
+     * Updates all statistics associated with sending a retention email to the given user id. The
+     * previously loaded record should be passed in to avoid re-reading it and do consistency
+     * checking.
+     * TODO: consistency checking
      */
-    public Collection<SpamRecord> loadSpamRecords (Set<Integer> memberIds)
+    public void noteRetentionEmailSending (int memberId, SpamRecord spamRec)
     {
-        Set<Key<SpamRecord>> keys = Sets.newHashSet(Iterables.transform(memberIds,
-            new Function<Integer, Key<SpamRecord>>() {
-                public Key<SpamRecord> apply (Integer memberId) {
-                    return SpamRecord.getKey(memberId);
-                }
-        }));
-        return loadAll(keys);
+        boolean newRecord = spamRec == null;
+        if (spamRec == null) {
+            spamRec = new SpamRecord();
+            spamRec.memberId = memberId;
+        }
+        spamRec.retentionEmailCount++;
+        spamRec.retentionEmailCountSinceLastLogin++;
+        spamRec.lastRetentionEmailSent = new Date(System.currentTimeMillis());
+        spamRec.lastRetentionEmailResult = -1;
+        if (newRecord) {
+            insert(spamRec);
+
+        } else {
+            // do the update, just retention fields
+            updatePartial(SpamRecord.getKey(spamRec.memberId),
+                SpamRecord.LAST_RETENTION_EMAIL_SENT, spamRec.lastRetentionEmailSent,
+                SpamRecord.RETENTION_EMAIL_COUNT, spamRec.retentionEmailCount,
+                SpamRecord.LAST_RETENTION_EMAIL_RESULT, spamRec.lastRetentionEmailResult,
+                SpamRecord.RETENTION_EMAIL_COUNT_SINCE_LAST_LOGIN,
+                    spamRec.retentionEmailCountSinceLastLogin);
+        }
+    }
+
+    public void noteRetentionEmailResult (int memberId, int cause)
+    {
+        updatePartial(SpamRecord.getKey(memberId), SpamRecord.LAST_RETENTION_EMAIL_RESULT, cause);
     }
 
     @Override

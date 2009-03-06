@@ -44,6 +44,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
@@ -56,6 +57,7 @@ import com.samskivert.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Conditionals.LessThan;
+import com.samskivert.depot.operator.Conditionals.LessThanEquals;
 import com.samskivert.depot.operator.Conditionals.Like;
 import com.samskivert.depot.operator.Conditionals.NotEquals;
 
@@ -80,6 +82,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.server.persist.MemberRecord.Flag;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
@@ -355,15 +358,18 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads ids of member records that have had their last session between two given times. This
-     * can be used, for example, to find all members who have logged in at some point in the last
-     * 30 days but not in the last 2 days.
+     * Loads ids of member records that are initial candidates for a retention email. Members are
+     * selected if 1. their last login time is between two timestamps, and 2. if they have not 
+     * decided to forego announcement emails.
      */
-    public List<Integer> findMembersWithLastSessionInRange (long earliest, long latest)
+    public List<Integer> findRetentionCandidates (Date earliestLastSession, Date latestLastSession)
     {
+        ColumnExp lastSess = MemberRecord.LAST_SESSION;
         Where where = new Where(new And(
-            new GreaterThan(MemberRecord.LAST_SESSION, new ValueExp(new Date(earliest))),
-            new LessThan(MemberRecord.LAST_SESSION, new ValueExp(new Date(latest)))));
+            new GreaterThan(lastSess, new ValueExp(earliestLastSession)),
+            new LessThanEquals(lastSess, new ValueExp(latestLastSession)),
+            new Equals(new Arithmetic.BitAnd(
+                MemberRecord.FLAGS, Flag.NO_ANNOUNCE_EMAIL.getBit()), 0)));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                RecordFunctions.<MemberRecord>getIntKey());
     }
