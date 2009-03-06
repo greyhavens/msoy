@@ -116,6 +116,23 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="RetentionMailSent") // note: do not change this event name
+    public static class RetentionMailSent implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int recipientId;
+        @Field final public String visitorId;
+        @Field final public String lapseStatus;
+
+        public RetentionMailSent (int recipientId, String visitorId, String lapseStatus)
+        {
+            this.timestamp = new Date();
+            this.recipientId = recipientId;
+            this.visitorId = visitorId;
+            this.lapseStatus = lapseStatus;
+        }
+    }
+
     @Event(name="ExchangeRate") // note: do not change this event name
     public static class ExchangeRate implements MsoyEvent
     {

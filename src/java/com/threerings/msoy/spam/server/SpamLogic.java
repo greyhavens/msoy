@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -36,6 +37,7 @@ import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.FeedLogic;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -65,6 +67,7 @@ public class SpamLogic
      * be public so velocity can reflect its methods and members.
      */
     public class EmailFeedCategory
+        implements Comparable<EmailFeedCategory>
     {
         /** The category. */
         public Category category;
@@ -78,6 +81,14 @@ public class SpamLogic
         public String getCategoryName ()
         {
             return _dmsgs.get("feedCategory" + category.ordinal());
+        }
+
+        // from Comparable
+        public int compareTo (EmailFeedCategory o)
+        {
+            int thisIdx = ArrayUtil.indexOf(CATEGORIES, category);
+            int thatIdx = ArrayUtil.indexOf(CATEGORIES, o.category);
+            return (thisIdx == -1 ? 100 : thisIdx) - (thatIdx == -1 ? 100 : thatIdx);
         }
 
         protected EmailFeedCategory (Category category, List<EmailFeedItem> items)
@@ -143,6 +154,15 @@ public class SpamLogic
     }
 
     /**
+     * Creates new spam logic.
+     */
+    @Inject public SpamLogic (ServerMessages messages)
+    {
+        _pmsgs = messages.getBundle("feed.PersonMessages");
+        _dmsgs = messages.getBundle("feed.DynamicMessages");
+    }
+
+    /**
      * Loads up all candidate users for getting their feeds mailed to them, does various bits
      * of pruning and sends emails to a random subset of qualifying users.
      */
@@ -188,7 +208,9 @@ public class SpamLogic
      */
     public boolean testFeedEmail (int memberId)
     {
-        return sendFeedEmail(_memberRepo.loadMember(memberId), Result.SENT_LAPSED, false).success;
+        Result result = sendFeedEmail(_memberRepo.loadMember(memberId), Result.SENT_LAPSED, false);
+        log.info("Sent test feed email", "result", result);
+        return result.success;
     }
 
     /**
@@ -265,6 +287,12 @@ public class SpamLogic
         // activity, maybe their friends have since been persuaded and created some activity)
         result = sendFeedEmail(mrec, result, true);
         _spamRepo.noteRetentionEmailResult(memberId, result.code);
+
+        // log an event for successes. the result is the lapse status
+        if (result.success) {
+            _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, result.name());
+        }
+
         return result;
     }
 
@@ -277,10 +305,6 @@ public class SpamLogic
         final MemberRecord mrec, Result successResult, boolean doChecks)
     {
         int memberId = mrec.memberId;
-
-        // lazy init message bundles for now
-        // TODO: fix. this is dangerous
-        initMessageBundles();
 
         // load up friends, bail if not enough
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
@@ -324,6 +348,9 @@ public class SpamLogic
             ecats.add(ecat);
         }
 
+        // Sort to CATEGORIES order
+        Collections.sort(ecats);
+
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them
@@ -336,20 +363,6 @@ public class SpamLogic
         _mailSender.sendTemplateEmail(
             mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return successResult;
-    }
-
-    /**
-     * Sets up the message bundles if they are not already.
-     * TODO: not thread safe
-     */
-    protected void initMessageBundles ()
-    {
-        if (_pmsgs == null) {
-            _pmsgs = _serverMsgs.getBundle("feed.PersonMessages");
-        }
-        if (_dmsgs == null) {
-            _dmsgs = _serverMsgs.getBundle("feed.DynamicMessages");
-        }
     }
 
     /**
@@ -658,8 +671,8 @@ public class SpamLogic
     @Inject protected MemberRepository _memberRepo; 
     @Inject protected FeedLogic _feedLogic;
     @Inject protected MailSender _mailSender;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected SpamRepository _spamRepo;
+    @Inject protected MsoyEventLogger _eventLog;
 
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";
@@ -668,4 +681,8 @@ public class SpamLogic
     protected static final int MIN_FRIEND_COUNT = 1;
     protected static final int MIN_ITEM_COUNT = 5;
     protected static final int SEND_LIMIT = 1000;
+
+    /** We want these categories first. */
+    protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
+        Category.ROOMS, Category.TROPHIES, Category.FRIENDINGS};
 }
