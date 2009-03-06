@@ -181,7 +181,7 @@ public class NotificationDisplay extends HBox
         notification :Notification, forHistory :Boolean = false) :UIComponent
     {
         var format :TextFormat = ChatOverlay.createChatFormat();
-        format.size = Math.min(16, format.size);
+        format.size = Math.min(16, int(format.size));
         format.color = getColor(notification);
         var text :TextField = new TextField();
         TextFieldUtil.trackOnlyLinksMouseable(text);
