@@ -171,8 +171,7 @@ public class InvitePanel extends VerticalPanel
         customs.setWidget(0, 1, _fromName);
         customs.setText(1, 0, _msgs.inviteSubject(), 1, "Title");
         customs.getFlexCellFormatter().setWidth(1, 0, "10px");
-        _subject = MsoyUI.createTextBox(
-            _msgs.inviteSubjectCustom(ourName), InviteUtils.MAX_SUBJECT_LENGTH, 0);
+        _subject = MsoyUI.createTextBox(null, InviteUtils.MAX_SUBJECT_LENGTH, 0);
         _subject.setWidth("100%");
         customs.setWidget(1, 1, _subject);
         _customMessage = MsoyUI.createTextArea("", -1, 3);
@@ -278,6 +277,12 @@ public class InvitePanel extends VerticalPanel
             return;
         }
         String subject = _subject.getText().trim();
+        if (subject.length() < InviteUtils.MIN_SUBJECT_LENGTH) {
+            MsoyUI.error(
+                _msgs.inviteSubjectTooShort(String.valueOf(InviteUtils.MIN_SUBJECT_LENGTH)));
+            _subject.setFocus(true);
+            return;
+        }
         String msg = _customMessage.getText().trim();
         if (msg.equals(_msgs.inviteCustom())) {
             msg = "";

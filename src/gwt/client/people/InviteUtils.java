@@ -38,6 +38,9 @@ public class InviteUtils
     /** Maximum length for names. */
     public static final int MAX_NAME_LENGTH = 80;
 
+    /** Minimum length for subjects. */
+    public static final int MIN_SUBJECT_LENGTH = 8;
+
     /** Maximum length for subjects. */
     public static final int MAX_SUBJECT_LENGTH = 100;
 
