@@ -1,5 +1,5 @@
 //
-// $Id: TrophiesBlurb.java 11654 2008-09-11 18:03:51Z mdb $
+// $Id$
 
 package client.people;
 

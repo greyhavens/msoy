@@ -1,5 +1,5 @@
 //
-// $Id: BuyPanel.java 14685 2009-02-05 02:41:10Z ray $
+// $Id$
 
 package client.money;
 

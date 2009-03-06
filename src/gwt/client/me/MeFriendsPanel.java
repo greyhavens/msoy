@@ -1,5 +1,5 @@
 //
-// $Id: WhatsNextPanel.java 12616 2008-10-17 21:40:55Z mdb $
+// $Id$
 
 package client.me;
 

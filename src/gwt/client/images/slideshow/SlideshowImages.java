@@ -1,5 +1,5 @@
 //
-// $Id: StuffImages.java 12359 2008-10-08 00:50:41Z sarah $
+// $Id$
 
 package client.images.slideshow;
 

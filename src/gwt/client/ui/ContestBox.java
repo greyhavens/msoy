@@ -1,5 +1,5 @@
 //
-// $Id: PromotionBox.java 13554 2008-11-26 21:49:32Z mdb $
+// $Id$
 
 package client.ui;
 

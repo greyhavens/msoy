@@ -1,5 +1,5 @@
 //
-// $Id: FeedPanel.java 12917 2008-10-28 20:10:30Z sarah $
+// $Id$
 
 package client.person;
 

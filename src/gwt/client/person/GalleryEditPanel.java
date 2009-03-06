@@ -1,3 +1,4 @@
+//
 // $Id$
 
 package client.person;
