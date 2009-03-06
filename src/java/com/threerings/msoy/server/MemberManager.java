@@ -70,6 +70,7 @@ import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
+import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
@@ -519,8 +520,11 @@ public class MemberManager
             }
             @Override public void handleSuccess () {
                 user.updateDisplayName(name);
-                _bodyMan.updateOccupantInfo(user,
-                    new MemberInfo.NameUpdater(user.getVisibleName()));
+                // update their name on this world server
+                _bodyMan.updateOccupantInfo(
+                    user, new MemberInfo.NameUpdater(user.getVisibleName()));
+                // if they're playing a game, let it know about the new name as well
+                _playerActions.displayNameUpdated(user.memberName);
                 super.handleSuccess();
             }
         });
@@ -1107,6 +1111,7 @@ public class MemberManager
     @Inject protected ItemManager _itemMan;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
