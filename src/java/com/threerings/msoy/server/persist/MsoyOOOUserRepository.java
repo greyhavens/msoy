@@ -101,12 +101,14 @@ public class MsoyOOOUserRepository extends DepotUserRepository
             findAllKeys(OOOUserRecord.class, false,
                         new Where(new Conditionals.In(OOOUserRecord.EMAIL, emails))),
             RecordFunctions.<OOOUserRecord>getIntKey());
-        deleteAll(OOOUserRecord.class,
-                  new Where(new Conditionals.In(OOOUserRecord.USER_ID, userIds)));
-        deleteAll(HistoricalUserRecord.class,
-                  new Where(new Conditionals.In(HistoricalUserRecord.USER_ID, userIds)));
-        deleteAll(UserIdentRecord.class,
-                  new Where(new Conditionals.In(UserIdentRecord.USER_ID, userIds)));
+        if (!userIds.isEmpty()) {
+            deleteAll(OOOUserRecord.class,
+                      new Where(new Conditionals.In(OOOUserRecord.USER_ID, userIds)));
+            deleteAll(HistoricalUserRecord.class,
+                      new Where(new Conditionals.In(HistoricalUserRecord.USER_ID, userIds)));
+            deleteAll(UserIdentRecord.class,
+                      new Where(new Conditionals.In(UserIdentRecord.USER_ID, userIds)));
+        }
     }
 
     // from SupportRepository
