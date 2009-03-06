@@ -386,6 +386,7 @@ public class SpamLogic
 
             case FRIEND_UPDATED_ROOM:
                 switch (plural) {
+                default:
                 case NONE:
                     return _pmsgs.get("friendUpdatedRoom", subject, object);
                 case SUBJECT:
