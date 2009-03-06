@@ -9,13 +9,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.web.gwt.SharedMediaUtil;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
 /**
- * Utility routines for displaying media.
+ * Extends the server-side shared media utilities with client specific routines for displaying
+ * media.
  */
-public class MediaUtil
+public class MediaUtil extends SharedMediaUtil
 {
     /**
      * Create a widget to display the supplied media.
@@ -59,29 +61,11 @@ public class MediaUtil
 
         } else if (desc.isImage()) {
             view = new Image(path);
-            switch (desc.constraint) {
-            case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
-                if (width < MediaDesc.THUMBNAIL_WIDTH) {
-                    view.setHeight("auto");
-                    view.setWidth(width + "px");
-                }
-                break;
-            case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
-                if (height < MediaDesc.THUMBNAIL_HEIGHT) {
-                    view.setHeight(height + "px");
-                    view.setWidth("auto");
-                }
-                break;
-            case MediaDesc.HORIZONTALLY_CONSTRAINED:
-                view.setHeight("auto");
-                view.setWidth(width + "px");
-                break;
-            case MediaDesc.VERTICALLY_CONSTRAINED:
-                view.setHeight(height + "px");
-                view.setWidth("auto");
-                break;
+            Dimensions dims = resolveImageConstraints(desc, width, height);
+            if (dims != null) {
+                view.setWidth(dims.width);
+                view.setHeight(dims.height);
             }
-
         } else {
             view = new Image(UNKNOWN_DESC.getMediaPath());
         }

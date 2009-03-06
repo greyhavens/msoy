@@ -40,8 +40,8 @@ import com.threerings.msoy.server.util.MailSender.Parameters;
 
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.web.gwt.SharedMediaUtil;
+import com.threerings.msoy.web.gwt.SharedMediaUtil.Dimensions;
 
 @Singleton @BlockingThread
 public class SpamLogic
@@ -282,15 +282,30 @@ public class SpamLogic
         // from Builder
         public Media createMedia (MediaDesc md, Pages page, String args) {
             if (!md.isImage()) {
-                // hmm
+                // don't bother with other media types, just revert back to a link
+                // TODO: should we worry about this? I don't think I've ever seen any non-image
+                // media in my feed before...
                 return new StringWrapper(
-                    _html.reset().open("a", "href", link(page, args)).finish());
+                    _html.reset().open("a", "href", link(page, args)).append("[X]").finish());
             }
             int size = MediaDesc.HALF_THUMBNAIL_SIZE;
-            String width = MediaDesc.getWidth(size) + "px";
-            String height = MediaDesc.getHeight(size) + "px";
-            return new StringWrapper(_html.reset().open("a", "href", link(page, args))
-                .open("img", "src", md.getMediaPath(), "width", width, "height", height).finish());
+            if (page == Pages.WORLD && args.startsWith("s")) {
+                // snapshots are unconstrained at a set size; fake a width constraint for
+                // TINY_SIZE.
+                md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                size = MediaDesc.SNAPSHOT_TINY_SIZE;
+            }
+            Dimensions dim = SharedMediaUtil.resolveImageConstraints(
+                md, MediaDesc.getWidth(size), MediaDesc.getHeight(size));
+            if (dim == null) {
+                return new StringWrapper(_html.reset()
+                    .open("a", "href", link(page, args))
+                    .open("img", "src", md.getMediaPath()).finish());
+            }
+            return new StringWrapper(_html.reset()
+                .open("a", "href", link(page, args))
+                .open("img", "src", md.getMediaPath(), "width", dim.width, "height", dim.height)
+                .finish());
         }
 
         protected static String link (Pages page, String args)
@@ -386,7 +401,6 @@ public class SpamLogic
 
             case FRIEND_UPDATED_ROOM:
                 switch (plural) {
-                default:
                 case NONE:
                     return _pmsgs.get("friendUpdatedRoom", subject, object);
                 case SUBJECT:
@@ -394,6 +408,7 @@ public class SpamLogic
                 case OBJECT:
                     return _pmsgs.get("friendUpdatedRooms", subject, object);
                 }
+                break;
 
             case FRIEND_WON_TROPHY:
                 return plural == Plural.OBJECT ?
@@ -430,10 +445,8 @@ public class SpamLogic
 
             case SELF_FORUM_REPLY:
                 return _pmsgs.get("selfForumReply", subject, object);
-
-            default:
-                return "Unknown message type: " + subject + " did something to " + object + ".";
             }
+            return "Unknown message type: " + subject + " did something to " + object + ".";
         }
 
         // from Messages
