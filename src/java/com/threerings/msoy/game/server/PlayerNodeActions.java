@@ -6,8 +6,12 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.server.BodyManager;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -82,10 +86,17 @@ public class PlayerNodeActions
         }
 
         protected void execute (PlayerObject plobj) {
-            // TODO
+            // update their player object
+            plobj.setMemberName(
+                new VizMemberName(_name, plobj.getMemberId(), plobj.getHeadShotMedia()));
+
+            // update their name in their occupied "place" (game) if any
+            _bodyMan.updateOccupantInfo(
+                plobj, new OccupantInfo.NameUpdater(plobj.getVisibleName()));
         }
 
         protected String _name;
+        @Inject protected transient BodyManager _bodyMan;
     }
 
     @Inject protected MsoyPeerManager _peerMan;
