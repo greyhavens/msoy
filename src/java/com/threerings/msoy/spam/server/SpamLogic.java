@@ -295,7 +295,7 @@ public class SpamLogic
                 md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
                 size = MediaDesc.SNAPSHOT_TINY_SIZE;
             }
-            Dimensions dim = SharedMediaUtil.resolveImageConstraints(
+            Dimensions dim = SharedMediaUtil.resolveImageSize(
                 md, MediaDesc.getWidth(size), MediaDesc.getHeight(size));
             if (dim == null) {
                 return new StringWrapper(_html.reset()

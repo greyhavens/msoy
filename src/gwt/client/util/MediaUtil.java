@@ -61,7 +61,7 @@ public class MediaUtil extends SharedMediaUtil
 
         } else if (desc.isImage()) {
             view = new Image(path);
-            Dimensions dims = resolveImageConstraints(desc, width, height);
+            Dimensions dims = resolveImageSize(desc, width, height);
             if (dims != null) {
                 view.setWidth(dims.width);
                 view.setHeight(dims.height);
