@@ -75,6 +75,7 @@ public class PlayerNodeActions
         }
     }
 
+    /** Handles informing a game server that a player's display name has changed. */
     protected static class DisplayNameUpdated extends PlayerNodeAction
     {
         public DisplayNameUpdated (MemberName name) {
