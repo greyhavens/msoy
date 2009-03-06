@@ -198,20 +198,15 @@ public class SpamLogic
     public void sendFeedEmails ()
     {
         log.info("Starting feed mailing");
-
         long now = System.currentTimeMillis();
-        Date lapsedCutoff = new Date(now - LAPSED_CUTOFF);
-        Date secondEmailCutoff = new Date(now - SECOND_EMAIL_CUTOFF);
 
-        // find everyone who is lapsed
-        List<Integer> lapsedIds = _memberRepo.findRetentionCandidates(new Date(0), lapsedCutoff);
+        // find everyone who is lapsed, shuffled
+        List<Integer> lapsedIds = findRetentionCandidates(new Date(now - LAPSED_CUTOFF));
         log.info("Found lapsed members", "size", lapsedIds.size());
-
-        // shuffle so we can do the first N and still get a good random subset
-        Collections.shuffle(lapsedIds);
 
         // do the sending and record results
         int totalSent = 0;
+        Date secondEmailCutoff = new Date(now - SECOND_EMAIL_CUTOFF);
         CountHashMap<Result> stats = new CountHashMap<Result>();
         for (Integer memberId : lapsedIds) {
             Result result = sendFeedEmail(memberId, secondEmailCutoff);
@@ -243,6 +238,18 @@ public class SpamLogic
         Result result = sendFeedEmail(_memberRepo.loadMember(memberId), Result.SENT_LAPSED, false);
         log.info("Sent test feed email", "result", result);
         return result.success;
+    }
+
+    /**
+     * Returns a writable shuffled list of member ids whose last login meets the criteria for a
+     * retention message.
+     */
+    List<Integer> findRetentionCandidates(Date cutoff)
+    {
+        List<Integer> lapsedIds = Lists.newArrayList(
+            _memberRepo.findRetentionCandidates(new Date(0), cutoff));
+        Collections.shuffle(lapsedIds);
+        return lapsedIds;
     }
 
     /**

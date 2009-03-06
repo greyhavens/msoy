@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.CacheKey;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.depot.Key;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
@@ -362,10 +360,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads ids of member records that are initial candidates for a retention email. Members are
      * selected if 1. their last login time is between two timestamps, and 2. if they have not 
-     * decided to forego announcement emails. The returned list will be writable.
+     * decided to forego announcement emails.
      */
-    public List<Integer> findRetentionCandidates (
-        Date earliestLastSession, Date latestLastSession)
+    public List<Integer> findRetentionCandidates (Date earliestLastSession, Date latestLastSession)
     {
         ColumnExp lastSess = MemberRecord.LAST_SESSION;
         Where where = new Where(new And(
@@ -373,13 +370,8 @@ public class MemberRepository extends DepotRepository
             new LessThanEquals(lastSess, new ValueExp(latestLastSession)),
             new Equals(new Arithmetic.BitAnd(
                 MemberRecord.FLAGS, Flag.NO_ANNOUNCE_EMAIL.getBit()), 0)));
-
-        // the caller will need to write to the list and since we are allocating a new one anyway,
-        // enable that here
-        List<Key<MemberRecord>> keys = findAllKeys(MemberRecord.class, false, where);
-        List<Integer> result = Lists.newArrayList(keys.size());
-        result.addAll(Lists.transform(keys, RecordFunctions.<MemberRecord>getIntKey()));
-        return result;
+        return Lists.transform(findAllKeys(MemberRecord.class, false, where),
+                               RecordFunctions.<MemberRecord>getIntKey());
     }
 
     /**
