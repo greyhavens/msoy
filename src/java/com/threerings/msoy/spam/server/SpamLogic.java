@@ -225,7 +225,7 @@ public class SpamLogic
             statLog.add(r);
             statLog.add(stats.getCount(r));
         }
-        log.info("Finished feed mailing", statLog);
+        log.info("Finished feed mailing", statLog.toArray(new Object[statLog.size()]));
     }
 
     /**
