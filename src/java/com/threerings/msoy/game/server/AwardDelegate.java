@@ -99,8 +99,10 @@ public class AwardDelegate extends RatingDelegate
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
             Player player = createPlayer(playerOids[ii], scores[ii], availFlow);
-            players.put(playerOids[ii], player);
-            highestScore = Math.max(highestScore, player.score); // used capped score
+            if (player != null) {
+                players.put(playerOids[ii], player);
+                highestScore = Math.max(highestScore, player.score); // used capped score
+            }
         }
 
         // note whether any guests were involved in this game
@@ -183,15 +185,19 @@ public class AwardDelegate extends RatingDelegate
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
             Player pl = createPlayer(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
-            // everyone gets ranked as a 50% performance in multiplayer and we award portions of
-            // the losers' winnings to the winners
-            pl.percentile = 49;
-            players.put(winnerOids[ii], pl);
+            if (pl != null) {
+                // everyone gets ranked as a 50% performance in multiplayer and we award portions of
+                // the losers' winnings to the winners
+                pl.percentile = 49;
+                players.put(winnerOids[ii], pl);
+            }
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
             Player pl = createPlayer(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
-            pl.percentile = 49;
-            players.put(loserOids[ii], pl);
+            if (pl != null) {
+                pl.percentile = 49;
+                players.put(loserOids[ii], pl);
+            }
         }
 
         // note whether any guests were involved in this game
@@ -375,11 +381,14 @@ public class AwardDelegate extends RatingDelegate
     {
         FlowRecord record = _flowRecords.get(playerOid);
         if (record == null) {
-            log.warning("Missing flow record for player", "game", where(), "oid", playerOid);
-            return new Player(new MemberName("", 0), true, playerOid, score, availFlow);
-        } else {
-            return new Player(record.name, record.isGuest, playerOid, score, availFlow);
+            // playerOid came from the game, which may have been smoking up the crack, so only
+            // complain if they provide a positive playerOid which does not correspond to a player
+            if (playerOid > 0) {
+                log.warning("Missing flow record for player", "game", where(), "oid", playerOid);
+            }
+            return null;
         }
+        return new Player(record.name, record.isGuest, playerOid, score, availFlow);
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -873,13 +882,9 @@ public class AwardDelegate extends RatingDelegate
             return Comparators.compare(playerOid, other.playerOid);
         }
 
-        @Override
+        @Override // from Object
         public String toString () {
-            StringBuilder buf = new StringBuilder("[");
-            buf.append("memberId=").append(name.getMemberId()).append(", ");
-            StringUtil.fieldsToString(buf, this);
-            buf.append("]");
-            return buf.toString();
+            return StringUtil.fieldsToString(this);
         }
     }
 
