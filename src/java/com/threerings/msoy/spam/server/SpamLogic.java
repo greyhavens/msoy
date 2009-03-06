@@ -14,6 +14,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.CountHashMap;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -170,9 +171,9 @@ public class SpamLogic
     {
         log.info("Starting feed mailing");
 
-        Date now = new Date(System.currentTimeMillis());
-        Date lapsedCutoff = new Date(now.getTime() - LAPSED_CUTOFF);
-        Date secondEmailCutoff = new Date(now.getTime() - SECOND_EMAIL_CUTOFF);
+        long now = System.currentTimeMillis();
+        Date lapsedCutoff = new Date(now - LAPSED_CUTOFF);
+        Date secondEmailCutoff = new Date(now - SECOND_EMAIL_CUTOFF);
 
         // find everyone who is lapsed
         List<Integer> lapsedIds = _memberRepo.findRetentionCandidates(new Date(0), lapsedCutoff);
@@ -183,20 +184,20 @@ public class SpamLogic
 
         // do the sending and record results
         int totalSent = 0;
-        int[] stats = new int[Result.values().length];
+        CountHashMap<Result> stats = new CountHashMap<Result>();
         for (Integer memberId : lapsedIds) {
             Result result = sendFeedEmail(memberId, secondEmailCutoff);
-            stats[result.ordinal()]++;
+            stats.incrementCount(result, 1);
             if (result.success && ++totalSent >= SEND_LIMIT) {
                 break;
             }
         }
 
-        // log results
-        Object[] statLog = new Object[Result.values().length * 2];
+        // log results, we could use keys here but seeing e.g. OTHER = 0 might be comforting
+        List<Object> statLog = Lists.newArrayList();
         for (Result r : Result.values()) {
-            statLog[r.ordinal() * 2] = r.name();
-            statLog[r.ordinal() * 2 + 1] = stats[r.ordinal()];
+            statLog.add(r);
+            statLog.add(stats.getCount(r));
         }
         log.info("Finished feed mailing", statLog);
     }
@@ -243,7 +244,7 @@ public class SpamLogic
         }
 
         // load the member
-        MemberRecord mrec = _memberRepo.loadMember(spamRec.memberId);
+        MemberRecord mrec = _memberRepo.loadMember(memberId);
         if (mrec == null) {
             log.warning("Member deleted during feed mailing?", "memberId", memberId);
             return Result.MEMBER_DELETED;
@@ -256,29 +257,30 @@ public class SpamLogic
 
         // skip invalid addresses
         if (!MailUtil.isValidAddress(mrec.accountName)) {
-            return Result.IVALID_ADDRESS;
+            return Result.INVALID_ADDRESS;
         }
 
         // oh look, they've logged in! maybe the email(s) worked. clear counter
         boolean persuaded = last != null && mrec.lastSession.after(last);
         if (persuaded) {
             spamRec.retentionEmailCountSinceLastLogin = 0;
-        }
+            // fall through, we'll send a mail and save the record below
 
-        // they are never coming back... oh well, there are plenty of other fish in the sea
-        if (spamRec.retentionEmailCountSinceLastLogin >= 2) {
+        } else if (spamRec != null && spamRec.retentionEmailCountSinceLastLogin >= 2) {
+            // they are never coming back... oh well, there are plenty of other fish in the sea
             return Result.LOST_CAUSE;
         }
 
         // sending the email could take a while so update the spam record here to reduce window
-        // where other peers may conflict with us 
+        // where other peers may conflict with us. NOTE: we do plan to run this job on multiple
+        // servers some day
         _spamRepo.noteRetentionEmailSending(memberId, spamRec);
 
         // choose a successful result based on previous attempts
         Result result = Result.SENT_DORMANT;
         if (persuaded) {
             result = Result.SENT_PERSUADED;
-        } else if (spamRec.retentionEmailCount == 0) {
+        } else if (spamRec == null || spamRec.retentionEmailCount == 0) {
             result = Result.SENT_LAPSED;
         }
 
@@ -286,6 +288,9 @@ public class SpamLogic
         // TODO: algorithm for resurrecting these failures (e.g. if they failed due to no feed
         // activity, maybe their friends have since been persuaded and created some activity)
         result = sendFeedEmail(mrec, result, true);
+
+        // NOTE: this is sort of redundant but increases the integrity of the spam record and
+        // reduces chance of a user getting two emails when we are 1M strong
         _spamRepo.noteRetentionEmailResult(memberId, result.code);
 
         // log an event for successes. the result is the lapse status
@@ -354,7 +359,7 @@ public class SpamLogic
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them
-        // as sent.
+        // as sent. I also like my pie at 30,000 feet please.
         Parameters params = new Parameters();
         params.set("feed", ecats);
         params.set("server_url", DeploymentConfig.serverURL);
@@ -529,7 +534,7 @@ public class SpamLogic
 
         // failed results
         TOO_RECENTLY_SPAMMED(4), NOT_ENOUGH_FRIENDS(5), NOT_ENOUGH_NEWS(6), MEMBER_DELETED(7),
-        PLACEHOLDER_ADDRESS(8), IVALID_ADDRESS(9), LOST_CAUSE(10), OTHER(11);
+        PLACEHOLDER_ADDRESS(8), INVALID_ADDRESS(9), LOST_CAUSE(10), OTHER(11);
 
         /** Persisted value for results. */
         public int code;
