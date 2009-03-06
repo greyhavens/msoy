@@ -215,6 +215,9 @@ public class SpamLogic
         CountHashMap<Result> stats = new CountHashMap<Result>();
         for (Integer memberId : lapsedIds) {
             Result result = sendFeedEmail(memberId, secondEmailCutoff);
+            if (DeploymentConfig.devDeployment) {
+                log.info("Feed email result (not sent)", "member", memberId, "result", result);
+            }
             stats.incrementCount(result, 1);
             if (result.success && ++totalSent >= SEND_LIMIT) {
                 break;
@@ -249,13 +252,14 @@ public class SpamLogic
      */
     protected Result sendFeedEmail (int memberId, Date secondEmailCutoff)
     {
+        Result result = Result.OTHER;
         try {
-            return trySendFeedEmail(memberId, secondEmailCutoff);
+            result = trySendFeedEmail(memberId, secondEmailCutoff);
 
         } catch (Exception e) {
             log.warning("Failed to send feed", "memberId", e);
-            return Result.OTHER;
         }
+        return result;
     }
 
     /**
@@ -384,10 +388,8 @@ public class SpamLogic
         // Sort to CATEGORIES order
         Collections.sort(ecats);
 
-        // don't send email to alpha registrants, but log so we can test
+        // don't send email to alpha registrants
         if (DeploymentConfig.devDeployment) {
-            log.info("Suppressing feed email from dev", "member", mrec.accountName,
-                "created", mrec.created);
             return successResult;
         }
 
