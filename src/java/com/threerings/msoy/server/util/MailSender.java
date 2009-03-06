@@ -35,7 +35,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.spam.server.SpamUtil;
 import com.threerings.presents.server.ShutdownManager;
 
@@ -63,6 +65,15 @@ public class MailSender
         protected VelocityContext _ctx = new VelocityContext();
     }
 
+    /** Identifies the initiator of an email. */
+    public static enum By {
+        /** A mail that was initiated by a human being, not an automated system. */
+        HUMAN,
+        /** A mail that was initiated by an automated system. We will drop the delivery of mail of
+         * this type on anything but the production server. */
+        COMPUTER
+    };
+
     @Inject public MailSender (ShutdownManager shutmgr)
     {
         shutmgr.registerShutdowner(this);
@@ -77,34 +88,40 @@ public class MailSender
     /**
      * Delivers an email using the supplied template and parameters.
      *
+     * @param initer indicates whether a computer or human initiated this email.
      * @param recip the recipient address.
      * @param sender the sender address.
      * @param template the identifier of the template to use for the body of the mail.
      * @param params an alternating list of string, object which are key/value pairs for
      * substitution into the template.
      */
-    public void sendTemplateEmail (String recip, String sender, String template, Object ... params)
+    public void sendTemplateEmail (
+        By initer, String recip, String sender, String template, Object ... params)
     {
         Parameters pobj = new Parameters();
         for (int ii = 0; ii < params.length; ii += 2) {
             pobj.set((String)params[ii], params[ii+1]);
         }
-        sendTemplateEmail(recip, sender, template, pobj);
+        sendTemplateEmail(initer, recip, sender, template, pobj);
     }
 
     /**
      * Delivers an email using the supplied template and parameters.
      *
+     * @param initer indicates whether a computer or human initiated this email.
      * @param recip the recipient address.
      * @param sender the sender address.
      * @param template the identifier of the template to use for the body of the mail.
      * @param params a filled-in Parameters instance.
      */
-    public void sendTemplateEmail (String recip, String sender, String template, Parameters params)
+    public void sendTemplateEmail (
+        By initer, String recip, String sender, String template, Parameters params)
     {
         // skip emails to placeholder addresses
-        if (!isPlaceholderAddress(recip)) {
+        if (!isPlaceholderAddress(recip) && shouldDeliver(initer)) {
             _executor.execute(new TemplateMailTask(recip, sender, template, params));
+        } else {
+            log.info("Dropping template message", "recip", recip, "template", template);
         }
     }
 
@@ -112,6 +129,7 @@ public class MailSender
      * Delivers a mass mailing email with the supplied subject and body to the supplied list of
      * recipients.
      *
+     * @param initer indicates whether a computer or human initiated this email.
      * @param recips {memberId, email} for each of the recipients.
      * @param sender the address of the sender.
      * @param headers optional additional headers to add to the mail { key, value, key, value,
@@ -119,19 +137,27 @@ public class MailSender
      * @param subject the subject of the email.
      * @param body the body of the email.
      */
-    public void sendSpam (List<Tuple<Integer, String>> recips, String sender, String[] headers,
-                          String subject, String body)
+    public void sendSpam (By initer, List<Tuple<Integer, String>> recips, String sender,
+                          String[] headers, String subject, String body)
     {
-        _executor.execute(new SpamTask(recips, sender, headers, subject, body));
+        if (shouldDeliver(initer)) {
+            _executor.execute(new SpamTask(recips, sender, headers, subject, body));
+        } else {
+            log.info("Dropping spam message", "subject", subject);
+        }
     }
 
     /**
      * Sends a text email to the supplied recipient.
+     *
+     * @param initer indicates whether a computer or human initiated this email.
      */
-    public void sendEmail (String recip, String sender, String subject, String body)
+    public void sendEmail (By initer, String recip, String sender, String subject, String body)
     {
-        if (!isPlaceholderAddress(recip)) {
+        if (!isPlaceholderAddress(recip) && shouldDeliver(initer)) {
             _executor.execute(new MailTask(recip, sender, subject, body));
+        } else {
+            log.info("Dropping plain message", "recip", recip, "subject", subject);
         }
     }
 
@@ -289,6 +315,25 @@ public class MailSender
         }
 
         protected String _recip, _sender, _subject, _body;
+    }
+
+    /**
+     * Returns whether or not we should deliver or drop a message of the specified type.
+     */
+    protected static boolean shouldDeliver (By initer)
+    {
+        switch (initer) {
+        case HUMAN:
+            // human initiated mail always goes through, to faciliated testing
+            return true;
+        case COMPUTER:
+            // we want to make ultra sure we're not sending spam from the dev server or from any
+            // "clone" of the production servers that does not appear to be the real deal!
+            return !DeploymentConfig.devDeployment &&
+                ServerConfig.serverHost.equals("www.whirled.com");
+        default:
+            throw new IllegalArgumentException("ZOMG! Unknown mail initiator " + initer);
+        }
     }
 
     /** The executor on which we will dispatch mail sending tasks. */

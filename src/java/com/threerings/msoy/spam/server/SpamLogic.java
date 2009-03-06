@@ -402,8 +402,8 @@ public class SpamLogic
         params.set("server_url", DeploymentConfig.serverURL);
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
-        _mailSender.sendTemplateEmail(
-            mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
+        _mailSender.sendTemplateEmail(MailSender.By.COMPUTER, mrec.accountName,
+                                      ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return successResult;
     }
 

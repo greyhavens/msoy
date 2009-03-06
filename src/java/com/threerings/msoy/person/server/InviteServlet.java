@@ -179,6 +179,7 @@ public class InviteServlet extends MsoyServiceServlet
         return ir;
     }
 
+    // from InviteService
     public InvitationResults sendGameInvites (
         List<EmailContact> addresses, int gameId, String from, String url, String customMessage)
         throws ServiceException
@@ -222,6 +223,7 @@ public class InviteServlet extends MsoyServiceServlet
         return ir;
     }
 
+    // from InviteService
     public void sendWhirledMailGameInvites (Set<Integer> recipientIds, int gameId, String subject,
         String body, String args)
         throws ServiceException
@@ -324,7 +326,7 @@ public class InviteServlet extends MsoyServiceServlet
         params.set("server_url", ServerConfig.getServerURL());
 
         String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
-        _mailer.sendTemplateEmail(email, from, "memberInvite", params);
+        _mailer.sendTemplateEmail(MailSender.By.HUMAN, email, from, "memberInvite", params);
 
         // record the invite and that we sent it
         _memberRepo.addInvite(email, inviterId, inviteId);
@@ -390,7 +392,7 @@ public class InviteServlet extends MsoyServiceServlet
         params.set("invite_id", inviteId);
 
         String from = inviter.accountName;
-        _mailer.sendTemplateEmail(email, from, "gameInvite", params);
+        _mailer.sendTemplateEmail(MailSender.By.HUMAN, email, from, "gameInvite", params);
 
         // record the invite and that we sent it
         _memberRepo.addGameInvite(email, inviteId);

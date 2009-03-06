@@ -196,14 +196,12 @@ public class WebUserServlet extends MsoyServiceServlet
             }
         }
 
-        // send a welcome email to everyone except test group A
-        MailSender.Parameters params = new MailSender.Parameters();
-        params.set("server_url", ServerConfig.getServerURL());
-        params.set("name", info.displayName);
-        params.set("email", info.email);
-        params.set("memberId", mrec.memberId);
-        params.set("code", _accountLogic.generateValidationCode(mrec));
-        _mailer.sendTemplateEmail(info.email, ServerConfig.getFromAddress(), "welcome", params);
+        // send a welcome email to our new registrant
+        _mailer.sendTemplateEmail(
+            MailSender.By.HUMAN, info.email, ServerConfig.getFromAddress(), "welcome",
+            "server_url", ServerConfig.getServerURL(), "name", info.displayName,
+            "email", info.email, "memberId", mrec.memberId,
+            "code", _accountLogic.generateValidationCode(mrec));
 
         // start our first session with the newly created account
         RegisterData data = new RegisterData();
@@ -311,7 +309,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // create and send a forgot password email
         _mailer.sendTemplateEmail(
-            email, ServerConfig.getFromAddress(), "forgotPassword",
+            MailSender.By.HUMAN, email, ServerConfig.getFromAddress(), "forgotPassword",
             "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
             "memberId", mrec.memberId, "code", code);
     }
@@ -530,7 +528,7 @@ public class WebUserServlet extends MsoyServiceServlet
     protected void sendValidationEmail (MemberRecord mrec)
     {
         _mailer.sendTemplateEmail(
-            mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
+            MailSender.By.HUMAN, mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
             "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
             "memberId", mrec.memberId, "code", _accountLogic.generateValidationCode(mrec));
     }

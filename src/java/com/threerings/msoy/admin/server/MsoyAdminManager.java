@@ -227,16 +227,10 @@ public class MsoyAdminManager
          * development deployments, just log a message instead.
          */
         protected void adviseAgents (Date rebootTime, String initiator) {
-            if (DeploymentConfig.devDeployment) {
-                log.info("Suppressing reboot email to agents on dev deployment",
-                    "rebootTime", rebootTime, "initiator", initiator);
-
-            } else {
-                final String body = "A Whirled reboot has been scheduled for " + rebootTime +
-                    " by " + initiator + ".\n\nThank you. Please drive through.";
-                _sender.sendEmail(ServerConfig.getAgentsAddress(), ServerConfig.getFromAddress(),
-                              "Whirled Reboot Scheduled", body);
-            }
+            final String body = "A Whirled reboot has been scheduled for " + rebootTime +
+                " by " + initiator + ".\n\nThank you. Please drive through.";
+            _sender.sendEmail(MailSender.By.COMPUTER, ServerConfig.getAgentsAddress(),
+                              ServerConfig.getFromAddress(), "Whirled Reboot Scheduled", body);
         }
 
         protected void broadcast (String message) {

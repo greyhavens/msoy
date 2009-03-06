@@ -75,8 +75,9 @@ public class MsoyGameActionHandler extends GameActionHandler
                      "recip", recipAccount);
             return;
         }
-        _mailer.sendTemplateEmail(recRec.accountName, ServerConfig.getFromAddress(), "supportReply",
-                                  "reqsub", message, "server_url", ServerConfig.getServerURL());
+        _mailer.sendTemplateEmail(
+            MailSender.By.HUMAN, recRec.accountName, ServerConfig.getFromAddress(), "supportReply",
+            "reqsub", message, "server_url", ServerConfig.getServerURL());
     }
 
     /**

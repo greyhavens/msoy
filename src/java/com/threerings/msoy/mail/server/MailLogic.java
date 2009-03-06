@@ -200,7 +200,7 @@ public class MailLogic
         }
 
         // ship our giant list off to the mail sender
-        _mailer.sendSpam(emails, ServerConfig.getFromAddress(),
+        _mailer.sendSpam(MailSender.By.COMPUTER, emails, ServerConfig.getFromAddress(),
                          SpamUtil.makeSpamHeaders(subject), subject, body);
 
         log.info("Queued up announcement email", "subject", subject, "count", emails.size());
@@ -230,7 +230,7 @@ public class MailLogic
         }
 
         // ship all this off to the mail sender
-        _mailer.sendSpam(emails, ServerConfig.getFromAddress(),
+        _mailer.sendSpam(MailSender.By.HUMAN, emails, ServerConfig.getFromAddress(),
                          SpamUtil.makeSpamHeaders(subject), subject, body);
     }
 
@@ -282,7 +282,7 @@ public class MailLogic
             return;
         }
         _mailer.sendTemplateEmail(
-            recip.accountName, ServerConfig.getFromAddress(), "gotMail",
+            MailSender.By.HUMAN, recip.accountName, ServerConfig.getFromAddress(), "gotMail",
             "subject", subject,"sender", sender.name, "senderId", sender.memberId,
             "body", body, "server_url", ServerConfig.getServerURL());
     }

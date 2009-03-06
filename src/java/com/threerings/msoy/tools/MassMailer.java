@@ -105,7 +105,7 @@ public class MassMailer
         }
 
         // pass all this data on to the mail sender
-        mailer.sendSpam(emails, ServerConfig.getFromAddress(),
+        mailer.sendSpam(MailSender.By.COMPUTER, emails, ServerConfig.getFromAddress(),
                         SpamUtil.makeSpamHeaders(ftr.subject), ftr.subject, body);
 
         log.info("Queued up announcement email", "subject", ftr.subject, "count", emails.size());

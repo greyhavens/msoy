@@ -1478,11 +1478,11 @@ public class RoomManager extends SpotSceneManager
     {
         String memmail = sender.username.toString();
         for (String recip : recips) {
-            _mailer.sendTemplateEmail(recip, memmail, "postcard", "sender", sender.memberName,
-                                      "sender_email", memmail, "sender_id", sender.getMemberId(),
-                                      "subject", subject, "caption", caption, "snap_url", snapURL,
-                                      "title", getScene().getName(), "scene_id", getScene().getId(),
-                                      "server_url", DeploymentConfig.serverURL);
+            _mailer.sendTemplateEmail(
+                MailSender.By.HUMAN, recip, memmail, "postcard", "sender", sender.memberName,
+                "sender_email", memmail, "sender_id", sender.getMemberId(), "subject", subject,
+                "caption", caption, "snap_url", snapURL, "title", getScene().getName(),
+                "scene_id", getScene().getId(), "server_url", DeploymentConfig.serverURL);
         }
     }
 
