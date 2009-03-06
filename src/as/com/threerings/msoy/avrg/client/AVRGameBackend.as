@@ -256,8 +256,8 @@ public class AVRGameBackend extends ControlBackend
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
         o["locationToRoom_v1"] = locationToRoom_v1;
-        o["paintableToLocationAtDepth_v1"] = stageToLocationAtDepth_v1;
-        o["paintableToLocationAtHeight_v1"] = stageToLocationAtHeight_v1;
+        o["stageToLocationAtDepth_v1"] = stageToLocationAtDepth_v1;
+        o["stageToLocationAtHeight_v1"] = stageToLocationAtHeight_v1;
         o["roomToLocationAtDepth_v1"] = stageToLocationAtDepth_v1; // backwards compat.
         o["roomToLocationAtHeight_v1"] = stageToLocationAtHeight_v1; // backwards compat.
         o["showInvitePage_v1"] = showInvitePage_v1;
