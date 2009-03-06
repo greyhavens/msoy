@@ -733,7 +733,7 @@ public class SpamLogic
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";
     protected static final int LAPSED_CUTOFF = 3 * 24*60*60*1000;
-    protected static final int SECOND_EMAIL_CUTOFF = 7 * 24*60*60*1000;
+    protected static final int SECOND_EMAIL_CUTOFF = 10 * 24*60*60*1000;
     protected static final int MIN_FRIEND_COUNT = 1;
     protected static final int MIN_ITEM_COUNT = 5;
     protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;
