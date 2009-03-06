@@ -19,6 +19,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.utils.Base64Encoder;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -237,8 +238,8 @@ public class GameDirector extends BasicDirector
         // we encode the strings so they are valid as part of the URL and the user cannot trivially
         // see them
         _wctx.getWorldController().displayPage("people",
-            [ "invites", "game", getGameId(), encodeForURI(defmsg), encodedToken,
-              _liaison is AVRGameLiaison ? 1 : 0, roomId ].join("_"));
+            Args.join("invites", "game", getGameId(), defmsg, encodedToken,
+                _liaison is AVRGameLiaison ? 1 : 0, roomId));
     }
 
     /**
@@ -247,8 +248,8 @@ public class GameDirector extends BasicDirector
     public function viewDefaultInvitePage () :void
     {
         _wctx.getWorldController().displayPage("people",
-            [ "invites", "game", getGameId(), "", "", _liaison is AVRGameLiaison ? 1 : 0,
-              _wctx.getWorldController().getCurrentSceneId() ].join("_"));
+            Args.join("invites", "game", getGameId(), "", "", _liaison is AVRGameLiaison ? 1 : 0,
+                _wctx.getWorldController().getCurrentSceneId()));
     }
 
     /**
@@ -460,30 +461,6 @@ public class GameDirector extends BasicDirector
         }
         _liaison = new LobbyGameLiaison(_wctx, gameId);
         _liaison.start(ghost, gport);
-    }
-
-    protected static function replaceAll (str :String, pattern :String, repl :String) :String
-    {
-        var pos :int = 0;
-        var buf :String = "";
-        while (true) {
-            var patpos :int = str.indexOf(pattern, pos);
-            if (patpos == -1) {
-                break;
-            }
-            buf += str.substring(pos, patpos);
-            buf += repl;
-            pos = patpos + pattern.length;
-        }
-        buf += str.substr(pos);
-        return buf.toString();
-    }
-
-    protected static function encodeForURI (str :String) :String
-    {
-        str = replaceAll(str, "%", "%%");
-        str = replaceAll(str, "_", "%-");
-        return str;
     }
 
     protected static function encodeBase64 (str :String) :String
