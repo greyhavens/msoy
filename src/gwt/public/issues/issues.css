@@ -25,7 +25,7 @@
 }
 
 .issuePanel .Header .Created {
-  width: 110px;
+  width: 80px;
   font-size: 12px;
   vertical-align: bottom;
   white-space: nowrap;
@@ -58,7 +58,7 @@
 }
 
 .issueSummaryPanel .Created {
-  width: 110px;
+  width: 80px;
   font-size: 12px;
   padding: 2px 0px;
 }
