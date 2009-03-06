@@ -154,6 +154,8 @@ public class InviteServlet extends MsoyServiceServlet
 //                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
 //             }
 
+        log.info("Member inviting", "addresses", addresses.size(), "subject", subject);
+
         InvitationResults ir = new InvitationResults();
         ir.results = new String[addresses.size()];
         ir.names = new MemberName[addresses.size()];
