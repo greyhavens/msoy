@@ -494,12 +494,14 @@ public class MsoySceneRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         // delete all scenes owned by these members
-        List<Key<SceneRecord>> scenes = findAllKeys(
+        List<Key<SceneRecord>> skeys = findAllKeys(
             SceneRecord.class, false, new Where(new In(SceneRecord.OWNER_ID, memberIds)));
-        deleteAll(SceneRecord.class, KeySet.newKeySet(SceneRecord.class, scenes));
-        // delete all furni from all of those scenes
-        List<Integer> sceneIds = Lists.transform(scenes, RecordFunctions.<SceneRecord>getIntKey());
-        deleteAll(SceneFurniRecord.class, new Where(new In(SceneFurniRecord.SCENE_ID, sceneIds)));
+        if (!skeys.isEmpty()) {
+            deleteAll(SceneRecord.class, KeySet.newKeySet(SceneRecord.class, skeys));
+            // delete all furni from all of those scenes
+            List<Integer> scids = Lists.transform(skeys, RecordFunctions.<SceneRecord>getIntKey());
+            deleteAll(SceneFurniRecord.class, new Where(new In(SceneFurniRecord.SCENE_ID, scids)));
+        }
         // delete all scene ratings by these members
         _ratingRepo.purgeMembers(memberIds);
     }
