@@ -78,6 +78,23 @@ public class WebRoomServlet extends MsoyServiceServlet
         return detail;
     }
 
+    // from interface WebRoomService
+    public void canGiftRoom (int sceneId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        if (mrec.homeSceneId == sceneId) {
+            throw new ServiceException("errCantGiftHome");
+        }
+
+        // double-make-sure they own the fucker
+        SceneRecord screc = _sceneRepo.loadScene(sceneId);
+        if ((screc == null) || (screc.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER) ||
+                (screc.ownerId != mrec.memberId)) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     public RatingResult rateRoom (int sceneId, byte rating)
         throws ServiceException
     {

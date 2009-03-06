@@ -45,6 +45,11 @@ public abstract class MailPayload
     public static final int TYPE_GAME_INVITE = 6;
 
     /**
+     * The id for a RoomGiftPayload.
+     */
+    public static final int TYPE_ROOM_GIFT = 7;
+
+    /**
      * Returns the type associated with this payload instance.
      */
     public abstract int getType ();

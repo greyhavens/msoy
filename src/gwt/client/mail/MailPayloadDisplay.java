@@ -48,6 +48,9 @@ public class MailPayloadDisplay
         case MailPayload.TYPE_GAME_INVITE:
             display = new GameInviteDisplay();
             break;
+        case MailPayload.TYPE_ROOM_GIFT:
+            display = new RoomGiftDisplay();
+            break;
         default:
             throw new IllegalArgumentException(
                 "Unknown payload requested [type=" + message.payload.getType() + "]");

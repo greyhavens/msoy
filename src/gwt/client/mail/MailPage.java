@@ -35,6 +35,8 @@ public class MailPage extends Page
                     compose.setGroupInviteId(args.get(++ii, 0));
                 } else if (extra.equals("i")) {
                     compose.setGiftItem((byte)args.get(++ii, 0), args.get(++ii, 0));
+                } else if (extra.equals("r")) {
+                    compose.setGiftRoom((int)args.get(++ii, 0));
                 }
             }
             setContent(_msgs.mailTitle(), compose);

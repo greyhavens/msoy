@@ -23,6 +23,11 @@ public interface WebRoomServiceAsync
     void loadRoomDetail (int sceneId, AsyncCallback<RoomDetail> callback);
 
     /**
+     * The asynchronous version of {@link WebRoomService#canGiftRoom}.
+     */
+    void canGiftRoom (int sceneId, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link WebRoomService#loadMemberRooms}.
      */
     void loadMemberRooms (int memberId, AsyncCallback<WebRoomService.MemberRoomsResult> callback);

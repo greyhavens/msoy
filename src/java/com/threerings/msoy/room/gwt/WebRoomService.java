@@ -73,6 +73,12 @@ public interface WebRoomService extends RemoteService
         throws ServiceException;
 
     /**
+     * Can the current user gift this particular room?
+     */
+    void canGiftRoom (int sceneId) 
+        throws ServiceException;
+
+    /**
      * Loads the list of rooms owned by a given member, excluding ones locked to the calling user.
      */
     MemberRoomsResult loadMemberRooms (int memberId)

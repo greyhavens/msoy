@@ -33,12 +33,17 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
+import com.threerings.msoy.mail.gwt.RoomGiftPayload;
 import com.threerings.msoy.mail.server.persist.ConvMessageRecord;
 import com.threerings.msoy.mail.server.persist.ConversationRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
@@ -235,39 +240,72 @@ public class MailLogic
     }
 
     /**
-     * Handles any side-effects of mail payload delivery. Currently that is only the transfer of an
-     * item from the sender to the recipient for {@link PresentPayload}.
+     * Handles any side-effects of mail payload delivery.
      */
-    protected void processPayload (final int senderId, final int recipId, MailPayload attachment)
+    protected void processPayload (int senderId, int recipId, MailPayload payload)
         throws ServiceException
     {
-        if (attachment instanceof PresentPayload) {
-            ItemIdent ident = ((PresentPayload)attachment).ident;
-            ItemRepository<?> repo = _itemLogic.getRepository(ident.type);
-            final ItemRecord item = repo.loadItem(ident.itemId);
+        if (payload instanceof PresentPayload) {
+            processPresentPayload(senderId, recipId, (PresentPayload) payload);
 
-            // validate that they're allowed to gift this item (these are all also checked on the
-            // client so we don't need useful error messages)
-            String errmsg = null;
-            if (item == null) {
-                errmsg = "Trying to gift non-existent item";
-            } else if (item.ownerId != senderId) {
-                errmsg = "Trying to gift un-owned item";
-            } else if (item.used != Item.UNUSED) {
-                errmsg = "Trying to gift in-use item";
-            }
-            if (errmsg != null) {
-                log.warning(errmsg + " [sender=" + senderId + ", recip=" + recipId +
-                            ", ident=" + ident + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            final ItemRecord oitem = (ItemRecord)item.clone();
-            repo.updateOwnerId(item, recipId);
-
-            // notify the item system that the item has moved
-            _itemLogic.itemUpdated(oitem, item);
+        } else if (payload instanceof RoomGiftPayload) {
+            processRoomGiftPayload(senderId, recipId, (RoomGiftPayload) payload);
         }
+    }
+
+    /**
+     * Process gifting an item.
+     */
+    protected void processPresentPayload (int senderId, int recipId, PresentPayload payload)
+        throws ServiceException
+    {
+        ItemIdent ident = payload.ident;
+        ItemRepository<?> repo = _itemLogic.getRepository(ident.type);
+        ItemRecord item = repo.loadItem(ident.itemId);
+
+        // validate that they're allowed to gift this item (these are all also checked on the
+        // client so we don't need useful error messages)
+        String errmsg = null;
+        if (item == null) {
+            errmsg = "Trying to gift non-existent item";
+        } else if (item.ownerId != senderId) {
+            errmsg = "Trying to gift un-owned item";
+        } else if (item.used != Item.UNUSED) {
+            errmsg = "Trying to gift in-use item";
+        }
+        if (errmsg != null) {
+            log.warning(errmsg, "sender", senderId, "recip", recipId, "ident", ident);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        ItemRecord oitem = (ItemRecord)item.clone();
+        repo.updateOwnerId(item, recipId);
+
+        // notify the item system that the item has moved
+        _itemLogic.itemUpdated(oitem, item);
+    }
+
+    /**
+     * Process gifting a room.
+     */
+    protected void processRoomGiftPayload (int senderId, int recipId, RoomGiftPayload payload)
+        throws ServiceException
+    {
+        // TODO: combine this with canGiftRoom? RoomLogic needed...
+        SceneRecord scene = _sceneRepo.loadScene(payload.sceneId);
+        if ((scene == null) || (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER) ||
+                (scene.ownerId != senderId)) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        // TODO: make sure it's not the sender's home scene!
+        _sceneRepo.transferSceneOwnership(
+            payload.sceneId, MsoySceneModel.OWNER_TYPE_MEMBER, recipId);
+        // TODO:
+        // - change room's access policy to ACCESS_OWNER_ONLY
+        // - reflect any changes in the runtime representation of the room
+        // - find all items owned by the sender that are in use in the room, and update the owner
+        // to be the recipient. Items not owned by the sender are not transferred.
+        // - reflect item changes in the runtime
     }
 
     /**
@@ -292,6 +330,7 @@ public class MailLogic
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MailSender _mailer;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
 }

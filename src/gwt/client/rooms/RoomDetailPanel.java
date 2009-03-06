@@ -4,8 +4,10 @@
 package client.rooms;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
@@ -16,6 +18,9 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
+
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
@@ -40,7 +45,7 @@ public class RoomDetailPanel extends SmartTable
     {
         super("roomDetailPanel", 0, 10);
 
-        _worldsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
+        _roomsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
             public void onSuccess (RoomDetail detail) {
                 init(detail);
             }
@@ -73,9 +78,23 @@ public class RoomDetailPanel extends SmartTable
         obits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
             @Override
             protected void handleRate (byte newRating , MsoyCallback<RatingResult> callback) {
-                _worldsvc.rateRoom(detail.info.sceneId, newRating, callback);
+                _roomsvc.rateRoom(detail.info.sceneId, newRating, callback);
             }
         });
+//        // maybe add the gifting option
+//        if ((detail.owner instanceof MemberName) &&
+//                CShell.getMemberId() == ((MemberName) detail.owner).getMemberId()) {
+//            obits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickListener() {
+//                public void onClick (Widget sender) {
+//                    _roomsvc.canGiftRoom(detail.info.sceneId, new MsoyCallback<Void>() {
+//                        public void onSuccess (Void nada) {
+//                            Link.go(Pages.MAIL, Args.compose("w", "r", detail.info.sceneId));
+//                        }
+//                    });
+//                }
+//            }));
+//            // TODO: verbiage about gifting: all items, bla bla bla?
+//        }
         setWidget(0, 1, obits);
 
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
@@ -88,6 +107,6 @@ public class RoomDetailPanel extends SmartTable
     }
 
     protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
-    protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
+    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 }

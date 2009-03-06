@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -30,6 +31,11 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
+import com.threerings.msoy.mail.gwt.RoomGiftPayload;
+import com.threerings.msoy.room.gwt.RoomDetail;
+import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.room.gwt.WebRoomService;
+import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -37,6 +43,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
+import client.room.RoomWidget;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -160,6 +167,26 @@ public class ComposePanel extends FlowPanel
         });
     }
 
+    public void setGiftRoom (int sceneId)
+    {
+        // TODO: don't load detail, but create a new service for getting one RoomInfo ?
+        _roomsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
+            public void onSuccess (RoomDetail detail) {
+                RoomGiftPayload payload = new RoomGiftPayload(
+                    detail.info.sceneId, detail.info.name, detail.info.thumbnail);
+                _contents.setText(3, 0, _msgs.composeAttachment(), 1, "Label");
+                _contents.getFlexCellFormatter().setVerticalAlignment(
+                    3, 0, HasAlignment.ALIGN_TOP);
+                SmartTable preview = new SmartTable(0, 0);
+                preview.setWidget(0, 0, new RoomWidget(detail.info));
+                preview.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+                preview.setText(0, 2, _msgs.roomGiftPreSendWarning());
+                _contents.setWidget(3, 1, preview);
+                _payload = payload;
+            }
+        });
+    }
+
     public void setGroupInviteId (int groupId)
     {
         _groupsvc.getGroupInfo(groupId, new MsoyCallback<GroupService.GroupInfo>() {
@@ -225,4 +252,6 @@ public class ComposePanel extends FlowPanel
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
+        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 }
