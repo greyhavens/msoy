@@ -776,7 +776,7 @@ public class ChatOverlay
                     String(PetName(name).getPetId());
             }
             var texts2 :Array = TextUtil.parseLinks(
-                Msgs.CHAT.get(format, name, cmd) + " ", _defaultFmt, true);
+                Msgs.CHAT.get(format, name, cmd) + " ", _defaultFmt, true, true);
             texts.unshift.apply(null, texts2);
         }
 
