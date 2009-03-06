@@ -144,6 +144,19 @@ public class WorldGameRegistry
         _peerMan.updateMemberLocation(memObj);
     }
 
+    /**
+     * Called when we're no longer hosting the game in question. Called by the GameGameRegistry and
+     * ourselves.
+     */
+    public void clearGame (int gameId)
+    {
+        if (!_games.remove(gameId)) {
+            log.warning("Requested to clear game that we're not hosting?", "game", gameId);
+        } else {
+            _peerMan.gameDidShutdown(gameId);
+        }
+    }
+
     // from interface MsoyGameProvider
     public void locateGame (ClientObject caller, final int gameId,
                             WorldGameService.LocationListener listener)
@@ -235,19 +248,6 @@ public class WorldGameRegistry
     public void disconnectedFromPeer (String node)
     {
         // nada
-    }
-
-    /**
-     * Called when we're no longer hosting the game in question. Called by the GameGameRegistry and
-     * ourselves.
-     */
-    public void clearGame (int gameId)
-    {
-        if (!_games.remove(gameId)) {
-            log.warning("Requested to clear game that we're not hosting?", "game", gameId);
-        } else {
-            _peerMan.gameDidShutdown(gameId);
-        }
     }
 
     protected boolean checkAndSendToNode (int gameId, WorldGameService.LocationListener listener)
