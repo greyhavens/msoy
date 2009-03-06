@@ -29,5 +29,5 @@ public class RoomInfo
     public int population;
 
     /** Some rooms are winners or runners-up of a contest; if so designate them here. */
-    public String winnerRank;
+    public transient String winnerRank; // assigned on the client
 }
