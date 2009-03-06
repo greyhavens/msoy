@@ -1,5 +1,5 @@
 //
-// $Id: Promotion.java 13403 2008-11-20 01:41:58Z mdb $
+// $Id$
 
 package com.threerings.msoy.web.gwt;
 

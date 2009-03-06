@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.person.tests;
 
 import java.io.PrintStream;

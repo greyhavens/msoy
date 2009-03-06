@@ -1,5 +1,5 @@
 //
-// $Id: MsoySceneRepository.java 13650 2008-12-04 18:25:53Z zell $
+// $Id$
 
 package com.threerings.msoy.room.server;
 

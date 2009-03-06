@@ -1,5 +1,5 @@
 //
-// $Id: CommentRecord.java 13300 2008-11-16 08:05:06Z mdb $
+// $Id$
 
 package com.threerings.msoy.comment.server.persist;
 

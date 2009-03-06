@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.badge.data.all;
 
 // AUTO GENERATED from com.threerings.msoy.badge.data.BadgeType

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;

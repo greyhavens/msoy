@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.web.gwt;
 
 import java.util.ArrayList;

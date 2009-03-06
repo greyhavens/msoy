@@ -1,5 +1,5 @@
 //
-//
+// $Id$
 
 package com.threerings.msoy.party.data;
 

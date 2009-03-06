@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.person.server;
 
 import java.util.Collections;
