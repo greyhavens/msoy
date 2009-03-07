@@ -324,13 +324,13 @@ public class MailSender
     {
         switch (initer) {
         case HUMAN:
-            // human initiated mail always goes through, to faciliated testing
+            // human initiated mail always goes through, to facilitate testing
             return true;
         case COMPUTER:
             // we want to make ultra sure we're not sending spam from the dev server or from any
             // "clone" of the production servers that does not appear to be the real deal!
             return !DeploymentConfig.devDeployment &&
-                ServerConfig.serverHost.equals("www.whirled.com");
+                ServerConfig.getServerURL().equals("http://www.whirled.com/");
         default:
             throw new IllegalArgumentException("ZOMG! Unknown mail initiator " + initer);
         }
