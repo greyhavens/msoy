@@ -5,9 +5,8 @@ package com.threerings.msoy.person.tests;
 
 import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
-import com.google.common.collect.Maps;
+import com.samskivert.util.CountHashMap;
 
 /**
  * Simple class to count what methods are called by name only.
@@ -22,14 +21,7 @@ public class MethodCounter
     {
         Throwable t = new Throwable();
         StackTraceElement caller = t.getStackTrace()[1];
-        String method = caller.getMethodName();
-        Integer count = _counts.get(method);
-        if (count == null) {
-            count = 1;
-        } else {
-            count = count + 1;
-        }
-        _counts.put(method, count);
+        _counts.incrementCount(caller.getMethodName(), 1);
     }
 
     /**
@@ -37,8 +29,7 @@ public class MethodCounter
      */
     public int getCount (String methodName)
     {
-        Integer count = _counts.get(methodName);
-        return count == null ? 0 : count;
+        return _counts.getCount(methodName);
     }
 
     /**
@@ -65,5 +56,5 @@ public class MethodCounter
         }
     }
 
-    protected HashMap<String, Integer> _counts = Maps.newHashMap();
+    protected CountHashMap<String> _counts = new CountHashMap<String>();
 }
