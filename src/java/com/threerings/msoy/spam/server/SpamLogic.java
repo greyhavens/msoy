@@ -395,11 +395,6 @@ public class SpamLogic
         // Sort to CATEGORIES order
         Collections.sort(ecats);
 
-        // don't send email to alpha registrants
-        if (realDeal && DeploymentConfig.devDeployment) {
-            return successResult;
-        }
-
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them

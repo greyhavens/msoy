@@ -118,10 +118,11 @@ public class MailSender
         By initer, String recip, String sender, String template, Parameters params)
     {
         // skip emails to placeholder addresses
-        if (!isPlaceholderAddress(recip) && shouldDeliver(initer)) {
-            _executor.execute(new TemplateMailTask(recip, sender, template, params));
+        if (!isPlaceholderAddress(recip)) {
+            _executor.execute(new TemplateMailTask(initer, recip, sender, template, params));
         } else {
-            log.info("Dropping template message", "recip", recip, "template", template);
+            log.info("Dropping template message", "recip", recip, "template", template,
+                     "why", "recipient");
         }
     }
 
@@ -164,11 +165,13 @@ public class MailSender
     /** Handles the formatting and delivery of a mail message. */
     protected static class TemplateMailTask implements Runnable
     {
-        public TemplateMailTask (String recip, String sender, String template, Parameters params) {
+        public TemplateMailTask (By initer, String recip, String sender, String template,
+                                 Parameters params) {
             _recip = recip;
             _sender = sender;
             _template = template;
             _params = params;
+            _initer = initer;
         }
 
         public void run () {
@@ -242,7 +245,13 @@ public class MailSender
                 // finally send that message off to the lucky recipient
                 MimeMessage message = MailUtil.createEmptyMessage();
                 message.setContent(parts);
-                MailUtil.deliverMail(new String[] { _recip }, _sender, subject, message);
+
+                if (shouldDeliver(_initer)) {
+                    MailUtil.deliverMail(new String[] { _recip }, _sender, subject, message);
+                } else {
+                    log.info("Dropping template message", "recip", recip, "template", template,
+                             "why", "initiator");
+                }
 
             } catch (Exception e) {
                 log.warning("Failed to send email", "recip", _recip, "sender", _sender,
@@ -252,6 +261,7 @@ public class MailSender
 
         protected String _recip, _sender, _template;
         protected Parameters _params;
+        protected By _initer;
     }
 
     /** Handles the delivery of a mass email message. */
