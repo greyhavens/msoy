@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.*;
 
+import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -19,6 +20,9 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
+import com.threerings.msoy.person.gwt.GroupFeedMessage;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
+import com.threerings.msoy.person.gwt.AggregateFeedMessage.Style;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
@@ -63,6 +67,91 @@ public class FeedItemGeneratorUnitTest
         assertEquals(messages.calls.getCount("andCombine"), 1);
     }
 
+    @Test public void testNullFriendMedia ()
+    {
+        FriendFeedMessage ffm = new FriendFeedMessage();
+        ffm.type = FeedMessageType.FRIEND_ADDED_FRIEND;
+        ffm.friend = new MemberName("Member", 1);
+        ffm.data = new String[]{"Friend", "2"};
+        genMessage(ffm);
+    }
+
+    @Test public void testNullGroupMedia ()
+    {
+        GroupFeedMessage gfm = new GroupFeedMessage();
+        gfm.type = FeedMessageType.GROUP_ANNOUNCEMENT;
+        gfm.data = new String[]{null, "Subject", "1234"};
+        genMessage(gfm);
+    }
+
+    @Test public void testNullRoomMedia ()
+    {
+        SelfFeedMessage sfm = new SelfFeedMessage();
+        sfm.type = FeedMessageType.SELF_ROOM_COMMENT;
+        sfm.actor = new MemberName("Commentor", 1);
+        sfm.data = new String[]{"1234", "Room Name"};
+        genMessage(sfm);
+    }
+
+    @Test public void testNullActionsMedia ()
+    {
+        FriendFeedMessage msgs[] = {new FriendFeedMessage(), new FriendFeedMessage()};
+        msgs[0].type = msgs[1].type = FeedMessageType.FRIEND_LISTED_ITEM;
+        msgs[0].friend = msgs[1].friend = new MemberName("Member", 1);
+        msgs[0].data = new String[]{"1st Item Name", "1", "1234"};
+        msgs[1].data = new String[]{"2nd Item Name", "2", "5678"};
+        genAggMessage(Style.ACTIONS, msgs);
+    }
+
+    @Test public void testNullActorsMedia ()
+    {
+        SelfFeedMessage msgs[] = {new SelfFeedMessage(), new SelfFeedMessage()};
+        msgs[0].type = msgs[1].type = FeedMessageType.SELF_ROOM_COMMENT;
+        msgs[0].actor = new MemberName("Commentor 1", 1);
+        msgs[1].actor = new MemberName("Commentor 2", 2);
+        msgs[0].data = new String[]{"1234", "Room Name"};
+        msgs[1].data = new String[]{"1234", "Room Name"};
+        genAggMessage(Style.ACTORS, msgs);
+    }
+
+    public void genMessage (FeedMessage msg)
+    {
+        new StubGenerator().addMessage(msg);
+    }
+
+    public void genAggMessage (Style style, FeedMessage ...msgs)
+    {
+        List<FeedMessage> list = Lists.newArrayList();
+        for (FeedMessage msg : msgs) {
+            list.add(msg);
+        }
+        new StubGenerator().addMessage(new AggregateFeedMessage(style, msgs[0].type, 0L, list));
+    }
+
+    public static class StubGenerator
+    {
+        public StubMessages messages;
+        public StubBuilder builder;
+        public FeedItemGenerator generator;
+
+        public StubGenerator ()
+        {
+            this(1, true, false);
+        }
+
+        public StubGenerator (int memberId, boolean usePronouns, boolean echo)
+        {
+            builder = new StubBuilder(echo);
+            messages = new StubMessages();
+            generator = new FeedItemGenerator(1, true, builder, messages);
+        }
+
+        public void addMessage (FeedMessage msg)
+        {
+            generator.addMessage(msg);
+        }
+    }
+
     public static class StubBuilder
         implements Builder
     {
@@ -75,36 +164,48 @@ public class FeedItemGeneratorUnitTest
 
         public void addIcon (Icon icon) {
             calls.count();
+            assertNotNull(icon);
             echo(icon);
         }
 
         public void addMedia (Media media, String message) {
             calls.count();
+            assertNotNull(media);
             echo(media + ", message: " + message);
         }
 
         public void addMedia (Media[] media, String message) {
             calls.count();
+            assertNotNull(media);
+            assertTrue(media.length > 0);
             echo(StringUtil.toString(media) + ", message: " + message);
         }
 
         public void addText (String text) {
             calls.count();
+            assertNotNull(text);
             echo(text);
         }
 
         public Icon createGainedLevelIcon (String text) {
             calls.count();
+            assertNotNull(text);
             return new StubItem(text);
         }
 
         public String createLink (String label, Pages page, String args) {
             calls.count();
+            assertNotNull(label);
+            assertNotNull(page);
+            assertNotNull(args);
             return simpleToString("link", "label", label, "page", page, "args", args);
         }
 
         public Media createMedia (MediaDesc md, Pages page, String args) {
             calls.count();
+            assertNotNull(md);
+            assertNotNull(page);
+            assertNotNull(args);
             return new StubItem(md, page, args);
         }
 

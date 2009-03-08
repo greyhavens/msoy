@@ -51,12 +51,14 @@ public class FeedItemGenerator
         Icon createGainedLevelIcon (String text);
 
         /**
-         * Adds a previously created media object to the feed with the given message.
+         * Adds a previously created media object to the feed with the given message. The passed
+         * media will neve be null.
          */
         void addMedia (Media media, String message);
 
         /**
-         * Adds multiple previously created media objects to the feed with the given message.
+         * Adds multiple previously created media objects to the feed with the given message. The
+         * passed array will never be null nor empty.
          */
         void addMedia (Media media[], String message);
 
@@ -175,11 +177,7 @@ public class FeedItemGenerator
         case FRIEND_LISTED_ITEM:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
-            if (media != null) {
-                _builder.addMedia(media, text);
-            } else {
-                _builder.addText(text);
-            }
+            addMedia(media, text);
             break;
 
         case FRIEND_GAINED_LEVEL:
@@ -198,14 +196,14 @@ public class FeedItemGenerator
         String object = buildObject(message);
         switch (message.type) {
         case GROUP_ANNOUNCEMENT:
-            _builder.addMedia(media, _messages.action(
+            addMedia(media, _messages.action(
                 message.type, message.data[0], object, Plural.NONE));
             break;
 
         case GROUP_UPDATED_ROOM:
             String groupLink = _builder.createLink(message.group.toString(), Pages.GROUPS,
                 Args.compose("f", message.group.getGroupId()));
-            _builder.addMedia(media, _messages.action(
+            addMedia(media, _messages.action(
                 message.type, groupLink, object, Plural.NONE));
             break;
 
@@ -228,7 +226,7 @@ public class FeedItemGenerator
             if (message.actor == null) {
                 return; // TEMP: skip old pre-actor messages
             }
-            _builder.addMedia(media, text);
+            addMedia(media, text);
             break;
 
         case SELF_ITEM_COMMENT:
@@ -256,7 +254,7 @@ public class FeedItemGenerator
         case FRIEND_LISTED_ITEM:
             String text = _messages.action(
                 message.type, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
-            _builder.addMedia(media, text);
+            addMedia(media, text);
             break;
 
         case FRIEND_GAINED_LEVEL:
@@ -289,7 +287,7 @@ public class FeedItemGenerator
         case FRIEND_WON_MEDAL:
         case SELF_ROOM_COMMENT:
         case SELF_ITEM_COMMENT:
-            _builder.addMedia(media, text);
+            addMedia(media, text);
             break;
 
         default:
@@ -550,6 +548,30 @@ public class FeedItemGenerator
             }
         }
         return combine;
+    }
+
+    /**
+     * Wrapper for adding media to the build to make sure no null values are passed along.
+     */
+    protected void addMedia (Media media, String text)
+    {
+        if (media != null) {
+            _builder.addMedia(media, text);
+        } else {
+            _builder.addText(text);
+        }
+    }
+
+    /**
+     * Wrapper for adding media to the build to make sure no null values are passed along.
+     */
+    protected void addMedia (Media[] media, String text)
+    {
+        if (media != null && media.length != 0) {
+            _builder.addMedia(media, text);
+        } else {
+            _builder.addText(text);
+        }
     }
 
     /**
