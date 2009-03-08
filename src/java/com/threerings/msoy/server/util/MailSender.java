@@ -249,7 +249,7 @@ public class MailSender
                 if (shouldDeliver(_initer)) {
                     MailUtil.deliverMail(new String[] { _recip }, _sender, subject, message);
                 } else {
-                    log.info("Dropping template message", "recip", recip, "template", template,
+                    log.info("Dropping template message", "recip", _recip, "template", _template,
                              "why", "initiator");
                 }
 
