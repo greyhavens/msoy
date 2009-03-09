@@ -54,12 +54,12 @@ public class FullLogonPanel extends LogonPanel
                 }
                 // TODO: send permaguest member id here
                 _usersvc.externalLogon(
-                    DeploymentConfig.version, creds, CShell.visitor, WebUserService.SESSION_DAYS,
-                    new MsoyCallback<SessionData>() {
-                        public void onSuccess (SessionData data) {
-                            CShell.frame.dispatchDidLogon(data);
-                        }
-                    });
+                    DeploymentConfig.version, creds, CShell.frame.getVisitorInfo(),
+                    WebUserService.SESSION_DAYS, new MsoyCallback<SessionData>() {
+                    public void onSuccess (SessionData data) {
+                        CShell.frame.dispatchDidLogon(data);
+                    }
+                });
             }
         });
     }

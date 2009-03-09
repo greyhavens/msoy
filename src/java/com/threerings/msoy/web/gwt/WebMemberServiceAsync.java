@@ -50,8 +50,7 @@ public interface WebMemberServiceAsync
     /**
      * The asynchronous version of {@link WebMemberService#isAutomaticFriender}.
      */
-    void isAutomaticFriender (int friendId, AsyncCallback<Boolean> callback)
-        throws ServiceException;
+    void isAutomaticFriender (int friendId, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#getInvitation}.
@@ -111,10 +110,4 @@ public interface WebMemberServiceAsync
      */
     void trackHttpReferrerAssociation (VisitorInfo info, String referrer,
                                        AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link WebMemberService#trackSessionStatusChange}.
-     */
-    void trackSessionStatusChange (VisitorInfo info, boolean guest, boolean newInfo,
-                                   AsyncCallback<Void> callback);
 }

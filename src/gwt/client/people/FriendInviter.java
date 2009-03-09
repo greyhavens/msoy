@@ -21,10 +21,10 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
  * Click listener that invites or adds a friend when clicked. First asks the server if the target
  * is an automatic friender (socialite), and if so adds the friend immediately. Otherwise, pops
  * up an invite conversation dialog.
- * 
+ *
  * TODO: take a widget parameter and use ClickCallback (this requires significant work in
  * callers). For now, just prevent reentrancy and don't reimplement widget-less ClickCallback.
- * 
+ *
  * TODO: we actually need to hide the control if the friending takes place automatically...
  * or maybe leaving it disabled would work
  */
@@ -47,27 +47,20 @@ public class FriendInviter
         if (!MsoyUI.requireRegistered()) {
             return; // permaguests can't make friends
         }
-
         // guard against reentry
         if (_clicked) {
             return;
         }
-
-        try {
-            _clicked = true;
-            doClick();
-        } catch (ServiceException sex) {
-        }
+        _clicked = true;
+        doClick();
     }
-        
+
     protected void doClick ()
-        throws ServiceException
     {
         _membersvc.isAutomaticFriender(_target.getMemberId(), new AsyncCallback<Boolean>() {
             public void onFailure (Throwable caught) {
                 _clicked = false;
             }
-
             public void onSuccess (Boolean automatic) {
                 _clicked = false;
                 if (automatic) {
@@ -78,18 +71,18 @@ public class FriendInviter
             }
         });
     }
-    
+
     protected void doAutomaticFriending ()
     {
         _membersvc.addFriend(_target.getMemberId(), new AsyncCallback<Void>() {
             public void onFailure (Throwable caught) {
                 MsoyUI.error(CShell.serverError(caught));
             }
-
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.ifriendAdded());
                 _membersvc.trackClientAction(
-                    CShell.visitor, "autoFriended" + _callerId, null, new NoopAsyncCallback());
+                    CShell.frame.getVisitorInfo(), "autoFriended" + _callerId, null,
+                    new NoopAsyncCallback());
             }
         });
     }

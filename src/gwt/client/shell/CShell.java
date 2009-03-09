@@ -8,8 +8,6 @@ import java.util.MissingResourceException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
-import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -23,9 +21,6 @@ public class CShell
 
     /** Used to communicate with the frame. */
     public static Frame frame;
-
-    /** Current player's visitor info, valid for both logged in and guest players. */
-    public static VisitorInfo visitor;
 
     /**
      * Returns our authentication token, or null if we don't have one.

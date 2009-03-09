@@ -304,8 +304,8 @@ public class InvitePanel extends VerticalPanel
     {
         // only send one event per instance of this
         if (_sendEvents) {
-            _membersvc.trackTestAction(
-                CShell.visitor, name, "2008 12 find friends on registration", callback);
+            _membersvc.trackTestAction(CShell.frame.getVisitorInfo(), name,
+                                       "2008 12 find friends on registration", callback);
             _sendEvents = false;
         }
     }

@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -56,6 +57,7 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
@@ -180,11 +182,6 @@ public class FrameEntryPoint
             return;
         }
 
-        // we either got a canonical VisitorInfo when we logged in, or we failed to log in (had no
-        // credentials, in which case a VisitorCookie was created by Session and
-        // VisitorCookie.get() should always that non-null instance)
-        final VisitorInfo info = (CShell.visitor != null) ? CShell.visitor : VisitorCookie.get();
-
         // pull out the vector id from the URL; it will be of the form: "vec_VECTOR"
         String vector = null;
         ExtractedParam afterVector = extractParams("vec", pagename, token, args);
@@ -196,9 +193,9 @@ public class FrameEntryPoint
 
         // if we got a new vector from the URL, tell the server to associate it with our visitor id
         if (vector != null) {
-            _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
+            _membersvc.trackVectorAssociation(getVisitorInfo(), vector, new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
-                    CShell.log("Saved vector association for " + info);
+                    CShell.log("Saved vector association for " + getVisitorInfo());
                 }
                 public void onFailure (Throwable caught) {
                     CShell.log("Failed to send vector creation to server.", caught);
@@ -206,19 +203,17 @@ public class FrameEntryPoint
             });
         }
 
-        // if we have a new visitor info, use that as well
-        if (CShell.visitor == null ||
-            (CShell.visitor.id != info.id && !CShell.visitor.isAuthoritative)) {
-            CShell.log("Updating visitor info from " + CShell.visitor + " to " + info);
-            CShell.visitor = info;
-            VisitorCookie.save(info, true);
-        }
+        // if we have no "who" cookie (which means we've seen someone on this computer before),
+        // force the creation of our visitor info because we're very probably a real new user
+        if (!StringUtil.isBlank(CookieUtil.get("who"))) {
+            VisitorInfo info = getVisitorInfo(); // creates a visitorId and reports it
 
-        // if this is a guest, and we have a referrer cookie from them, record it
-        if (!info.isAuthoritative && HttpReferrerCookie.available()) {
-            String ref = HttpReferrerCookie.get();
-            _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
-            HttpReferrerCookie.disable();
+            // if this is a guest, and we have a referrer cookie from them, record it
+            if (!info.isAuthoritative && HttpReferrerCookie.available()) {
+                String ref = HttpReferrerCookie.get();
+                _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
+                HttpReferrerCookie.disable();
+            }
         }
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
@@ -421,14 +416,20 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
+    public VisitorInfo getVisitorInfo ()
+    {
+        return Session.frameGetVisitorInfo();
+    }
+
+    // from interface Frame
     public void reportClientAction (String test, String action, String details)
     {
         if (test == null) {
             CShell.log("Reporting tracking action", "action", action, "details", details);
-            _membersvc.trackClientAction(CShell.visitor, action, details, new NoopAsyncCallback());
+            _membersvc.trackClientAction(getVisitorInfo(), action, details, new NoopAsyncCallback());
         } else {
             CShell.log("Reporting test action", "test", test, "action", action);
-            _membersvc.trackTestAction(CShell.visitor, action, test, new NoopAsyncCallback());
+            _membersvc.trackTestAction(getVisitorInfo(), action, test, new NoopAsyncCallback());
         }
     }
 
@@ -841,8 +842,7 @@ public class FrameEntryPoint
         case GET_ACTIVE_INVITE:
             return _activeInvite == null ? null : _activeInvite.flatten().toArray(new String[0]);
         case GET_VISITOR_INFO:
-            return (CShell.visitor == null) ? null
-                : CShell.visitor.flatten().toArray(new String[0]);
+            return getVisitorInfo().flatten().toArray(new String[0]);
         case CLIENT_ACTION:
             reportClientAction(args[0], args[1], args[2]);
             return null;
@@ -929,7 +929,7 @@ public class FrameEntryPoint
 
     protected String getVisitorId ()
     {
-        return CShell.visitor.id;
+        return getVisitorInfo().id;
     }
 
     protected Panel makeClientPanel ()

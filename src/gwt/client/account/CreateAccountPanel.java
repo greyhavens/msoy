@@ -170,7 +170,7 @@ public class CreateAccountPanel extends FlowPanel
                 Invitation invite = CShell.frame.getActiveInvitation();
                 info.inviteId = (invite == null) ? null : invite.inviteId;
                 info.permaguestId = CShell.isPermaguest() ? CShell.getMemberId() : 0;
-                info.visitor = CShell.visitor;
+                info.visitor = CShell.frame.getVisitorInfo();
                 info.captchaChallenge =
                     RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
                 info.captchaResponse =
@@ -208,12 +208,12 @@ public class CreateAccountPanel extends FlowPanel
         };
 
         // A/B test different header images on this page
-        _membersvc.getABTestGroup(CShell.visitor, "2008 12 AccountCreationHeader", true,
+        _membersvc.getABTestGroup(
+            CShell.frame.getVisitorInfo(), "2008 12 AccountCreationHeader", true,
             new AsyncCallback<Integer>() {
             public void onSuccess (Integer group) {
                 gotABTestGroup(group);
             }
-
             public void onFailure (Throwable cause) {
                 gotABTestGroup(-1);
             }

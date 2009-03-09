@@ -99,8 +99,8 @@ public class ABTestListPanel extends FlowPanel
 
             ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    _membersvc.getABTestGroup(
-                        CShell.visitor, test.name, true, new MsoyCallback<Integer>() {
+                    _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(), test.name, true,
+                                              new MsoyCallback<Integer>() {
                             public void onSuccess (Integer group) {
                                 MsoyUI.info("You are in group #" + group);
                             }

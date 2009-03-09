@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -111,6 +112,14 @@ public interface Frame
      * Returns the invitation via which the current user arrived or null.
      */
     Invitation getActiveInvitation ();
+
+    /**
+     * Returns our visitor identification. If we are in an anonmyous web session, this will be
+     * created on demand the first time it is requested so that we avoid creating spurious visitor
+     * info records when returning registered users show up at the landing page and immediately log
+     * in, or log out and then close their browser.
+     */
+    VisitorInfo getVisitorInfo ();
 
     /**
      * Reports a client action to the server for statistical grindizations.

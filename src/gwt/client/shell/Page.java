@@ -100,6 +100,10 @@ public abstract class Page
                     return Invitation.unflatten(
                         ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE)));
                 }
+                public VisitorInfo getVisitorInfo () {
+                    return VisitorInfo.unflatten(
+                        ArrayUtil.toIterator(frameCall(Frame.Calls.GET_VISITOR_INFO)));
+                }
                 public void reportClientAction (String testId, String action, String details) {
                     frameCall(Frame.Calls.CLIENT_ACTION, testId, action, details);
                 }
@@ -108,8 +112,6 @@ public abstract class Page
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(
                 ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS)));
-            CShell.visitor = VisitorInfo.unflatten(
-                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_VISITOR_INFO)));
 
             // and get our current page token from our containing frame
             setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN)[0]);
@@ -157,6 +159,9 @@ public abstract class Page
                 }
                 public Invitation getActiveInvitation () {
                     return null; // we're testing, no one invited us
+                }
+                public VisitorInfo getVisitorInfo () {
+                    return Session.frameGetVisitorInfo();
                 }
                 public void reportClientAction (String testId, String action, String details) {
                     CShell.log("Client action", "test", testId, "action", action, "deets", details);

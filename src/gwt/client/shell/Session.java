@@ -30,16 +30,6 @@ import client.util.ServiceUtil;
  */
 public class Session
 {
-    public enum LogoffCondition
-    {
-        /** Player hit the 'logoff' button. */
-        LOGOFF_REQUESTED,
-        /** Player tried to log on, and failed. */
-        LOGON_ATTEMPT_FAILED,
-        /** Visitor showed up without a credentials cookie - probably a new visitor. */
-        NO_CREDENTIALS;
-    }
-
     /** An interface used for observing logon and logoff. */
     public static interface Observer {
         /** Called when we have just logged on. */
@@ -95,12 +85,9 @@ public class Session
         // fill in our global creds info
         CShell.creds = data.creds;
 
-        // we're logged in! clear out any leftover cookie, and load up visitor info from the server
+        // clear out any old visitor cookie, and use the data from the server
         VisitorCookie.clear();
-        CShell.visitor = data.visitor;
-
-        // tell it from the mountain
-        _membersvc.trackSessionStatusChange(data.visitor, false, false, new NoopAsyncCallback());
+        _visitor = data.visitor;
 
         // let our observers know that we've just logged on
         for (Observer observer : _observers) {
@@ -116,31 +103,13 @@ public class Session
      * Call this method if you know we've just logged off and want to let everyone who cares know
      * about it.
      */
-    public static void didLogoff (LogoffCondition condition)
+    public static void didLogoff ()
     {
         // clear out our credentials cookie
         CookieUtil.clear("/", WebCreds.credsCookie());
 
         // clear out our global creds info
         CShell.creds = null;
-
-        // we're logged out, or maybe we're just a guest player.
-        // if we don't already have a visitor token, create a brand new shiny one
-        boolean newInfo = false;
-        if (!VisitorCookie.exists()) {
-            CShell.visitor = new VisitorInfo();
-            VisitorCookie.save(CShell.visitor, false);
-            _membersvc.trackVisitorInfoCreation(CShell.visitor, new NoopAsyncCallback());
-            newInfo = true;
-        } else {
-            // we already have one, just load it back in
-            CShell.visitor = VisitorCookie.get();
-        }
-
-        // log me
-        boolean guest = (condition == LogoffCondition.NO_CREDENTIALS);
-        _membersvc.trackSessionStatusChange(
-            CShell.visitor, guest, newInfo, new NoopAsyncCallback());
 
         // let our observers know that we've just logged off
         for (Observer observer : _observers) {
@@ -193,6 +162,23 @@ public class Session
         }
     }
 
+    /**
+     * Provides our visitor info to the {@link Frame}. Don't call this method, call {@link
+     * Frame#getVisitorInfo}.
+     */
+    public static VisitorInfo frameGetVisitorInfo ()
+    {
+        if (_visitor != null) {
+            return _visitor;
+        } else if (VisitorCookie.exists()) {
+            return (_visitor = VisitorCookie.get());
+        } else {
+            VisitorCookie.save(_visitor = new VisitorInfo(), false);
+            _membersvc.trackVisitorInfoCreation(_visitor, new NoopAsyncCallback());
+            return _visitor;
+        }
+    }
+
     protected static void setSessionCookie (String token)
     {
         CookieUtil.set("/", WebUserService.SESSION_DAYS, WebCreds.credsCookie(), token);
@@ -207,7 +193,7 @@ public class Session
             // some later time after the current call stack has completed
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    didLogoff(LogoffCondition.NO_CREDENTIALS);
+                    didLogoff();
                 }
             });
             return;
@@ -217,18 +203,19 @@ public class Session
         AsyncCallback<SessionData> onValidate = new AsyncCallback<SessionData>() {
             public void onSuccess (SessionData data) {
                 if (data == null) {
-                    didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
+                    didLogoff();
                 } else {
                     didLogon(data);
                 }
             }
             public void onFailure (Throwable t) {
-                didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
+                didLogoff();
             }
         };
         _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
     }
 
+    protected static VisitorInfo _visitor;
     protected static List<Observer> _observers = new ArrayList<Observer>();
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
