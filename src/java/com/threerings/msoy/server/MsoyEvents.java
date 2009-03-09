@@ -423,17 +423,20 @@ public class MsoyEvents
         @Field final public int gameId;
         @Field final public int inviterId;
         @Field final public String recipient;
+        @Field final public String type;
 
-        public GameInviteSent (int gameId, int inviterId, String recipient)
+        public GameInviteSent (int gameId, int inviterId, String recipient, String type)
         {
             this.timestamp = new Date();
             this.gameId = gameId;
             this.inviterId = inviterId;
             this.recipient = toValue(recipient);
+            this.type = type;
         }
     }
 
     @Event(name="WhirledMailGameInviteSent") // note: do not change this event name
+    @Deprecated
     public static class WhieldMailGameInviteSent implements MsoyEvent
     {
         @Index @Field final public Date timestamp;
@@ -451,6 +454,7 @@ public class MsoyEvents
     }
 
     @Event(name="FacebookGameInvitesSent") // note: do not change this event name
+    @Deprecated
     public static class FacebookGameInvitesSent implements MsoyEvent
     {
         @Index @Field final public Date timestamp;

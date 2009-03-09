@@ -274,19 +274,9 @@ public class MsoyEventLogger
         post(new MsoyEvents.InviteSent(inviteId, inviterId, recipient));
     }
 
-    public void gameInviteSent (int gameId, int inviterId, String recipient)
+    public void gameInviteSent (int gameId, int inviterId, String recipient, String type)
     {
-        post(new MsoyEvents.GameInviteSent(gameId, inviterId, recipient));
-    }
-
-    public void whirledMailGameInviteSent (int gameId, int inviterId, int recipId)
-    {
-        post(new MsoyEvents.WhieldMailGameInviteSent(gameId, inviterId, recipId));
-    }
-
-    public void facebookGameInvitesSent (int gameId, int inviterId, int count)
-    {
-        post(new MsoyEvents.FacebookGameInvitesSent(gameId, inviterId, count));
+        post(new MsoyEvents.GameInviteSent(gameId, inviterId, recipient, type));
     }
 
     public void inviteViewed (String inviteId)

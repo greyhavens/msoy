@@ -233,7 +233,7 @@ public class InviteServlet extends MsoyServiceServlet
         for (int memberId : recipientIds) {
             MemberRecord recip = _memberRepo.loadMember(memberId);
             _mailLogic.startBulkConversation(mrec, recip, subject, body, payload);
-            _eventLog.whirledMailGameInviteSent(gameId, mrec.memberId, recip.memberId);
+            _eventLog.gameInviteSent(gameId, mrec.memberId, recip.memberId + "", "whirled");
         }
     }
 
@@ -396,7 +396,7 @@ public class InviteServlet extends MsoyServiceServlet
 
         // record the invite and that we sent it
         _memberRepo.addGameInvite(email, inviteId);
-        _eventLog.gameInviteSent(gameId, inviter.memberId, email);
+        _eventLog.gameInviteSent(gameId, inviter.memberId, email, "email");
     }
 
     protected class NameServiceException extends ServiceException

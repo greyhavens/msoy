@@ -208,21 +208,20 @@ public class FacebookInviteServlet extends HttpServlet
             log.warning("Failed to get game id of sent invites", e);
         }
 
-        // count the number of ids (it currently is always just 1)
+        // report an invite sent for each id
         // TODO: why is facebook not giving us the promised comma-separated list of users ids?
         // http://wiki.developers.facebook.com/index.php/Fb:request-form#POST_Variables
-        int count = 0;
         if (ids.length() > 0) {
-            for (int pos = 0; pos != -1; ++count) {
-                pos = ids.indexOf(',', pos);
-                if (pos != -1) {
-                    ++pos;
+            for (int pos, npos = 0; npos != -1; ) {
+                pos = npos;
+                npos = ids.indexOf(',', pos);
+                String recip = npos == -1 ? ids.substring(pos) : ids.substring(pos, npos);
+                _logger.gameInviteSent(gameId, memberId, recip, "facebook");
+                if (npos != -1) {
+                    ++npos;
                 }
             }
         }
-
-        _logger.facebookGameInvitesSent(gameId, memberId, count);    
-
     }
 
     // dependencies
