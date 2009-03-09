@@ -349,6 +349,14 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Get a custom configuration panel for this piece of furniture, if any.
+     */
+    public function getCustomConfigPanel () :DisplayObject
+    {
+        return callUserCode("getConfigPanel_v1") as DisplayObject;
+    }
+
+    /**
      * Receives a chat message from the room, and forwards it over to user land.
      */
     public function processChatMessage (

@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
@@ -350,6 +351,8 @@ public class RoomController extends SceneController
     protected function addSelfMenuItems (
         avatar :MemberSprite, menuItems :Array, canControl :Boolean) :void
     {
+        CommandMenu.addSeparator(menuItems);
+
         // create a sub-menu for playing avatar actions
         var actions :Array = avatar.getAvatarActions();
         if (actions.length > 0) {
@@ -377,6 +380,14 @@ public class RoomController extends SceneController
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avStates"),
                 children: worldStates, enabled: canControl });
+        }
+
+        // custom config
+        var config :DisplayObject = avatar.getCustomConfigPanel();
+        if (config != null) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.config_item", "avatar"),
+                callback: showEntityPopup, arg: [ avatar, Msgs.GENERAL.get("t.config_item"),
+                    config, config.width, config.height, 0xFFFFFF, 1.0, false ] });
         }
     }
 

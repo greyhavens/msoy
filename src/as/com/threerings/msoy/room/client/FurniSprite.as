@@ -148,14 +148,6 @@ public class FurniSprite extends MsoySprite
     }
 
     /**
-     * Get a custom configuration panel for this piece of furniture, if any.
-     */
-    public function getCustomConfigPanel () :DisplayObject
-    {
-        return callUserCode("getConfigPanel_v1") as DisplayObject;
-    }
-
-    /**
      * If we're a portal furniture, called to animate a player entering
      * or leaving.
      */
