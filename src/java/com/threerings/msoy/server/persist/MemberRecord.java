@@ -302,7 +302,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isPermaguest ()
     {
-        return isPermaguest(accountName);
+        return MemberMailUtil.isPermaguest(accountName);
     }
 
     /**
@@ -381,19 +381,11 @@ public class MemberRecord extends PersistentRecord
             return WebCreds.Role.SUPPORT;
         } else if (isSet(flags, Flag.VALIDATED)) {
             return WebCreds.Role.VALIDATED;
-        } else if (!isPermaguest(accountName)) {
+        } else if (!MemberMailUtil.isPermaguest(accountName)) {
             return WebCreds.Role.REGISTERED;
         } else {
             return WebCreds.Role.PERMAGUEST;
         }
-    }
-
-    /**
-     * Returns true if a given account name is an anonymous guest.
-     */
-    public static boolean isPermaguest (String accountName)
-    {
-        return MemberMailUtil.isPermaguest(accountName);
     }
 
     /**
