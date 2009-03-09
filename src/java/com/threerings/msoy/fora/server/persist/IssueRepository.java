@@ -61,22 +61,20 @@ public class IssueRepository extends DepotRepository
     public List<IssueRecord> loadIssues (IntSet states, int ownerId, int offset, int count)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
-        ColumnExp sortColumn = IssueRecord.CREATED_TIME;
+        whereBits.add(new Conditionals.In(IssueRecord.STATE, states));
         if (ownerId > 0) {
             whereBits.add(new Conditionals.Equals(IssueRecord.OWNER_ID, ownerId));
         }
-        if (states != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.STATE, states));
-            if (!states.contains(Issue.STATE_OPEN)) {
-                sortColumn = IssueRecord.CLOSED_TIME;
-            }
+        OrderBy orderBy;
+        if (!states.contains(Issue.STATE_OPEN)) {
+            orderBy = OrderBy.descending(IssueRecord.CLOSED_TIME);
+        } else {
+            orderBy = new OrderBy(
+                new SQLExpression[] { IssueRecord.PRIORITY, IssueRecord.CREATED_TIME },
+                new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC });
         }
-        return findAll(IssueRecord.class,
-                       new Where(new Logic.And(whereBits)),
-                       new Limit(offset, count),
-                       new OrderBy(
-                           new SQLExpression[] { IssueRecord.PRIORITY, sortColumn },
-                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
+        return findAll(IssueRecord.class, new Where(new Logic.And(whereBits)),
+                       new Limit(offset, count), orderBy);
     }
 
     /**
