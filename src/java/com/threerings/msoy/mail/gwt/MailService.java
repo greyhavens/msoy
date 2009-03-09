@@ -81,6 +81,12 @@ public interface MailService extends RemoteService
         throws ServiceException;
 
     /**
+     * Deletes multiple conversations (for the calling user).
+     */
+    void deleteConversations (List<Integer> convoIds)
+        throws ServiceException;
+
+    /**
      * Updates the payload on the specified message.
      */
     void updatePayload (int convoId, long sent, MailPayload payload)

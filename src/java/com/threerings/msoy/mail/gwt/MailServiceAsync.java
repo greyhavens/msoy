@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.mail.gwt;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.group.gwt.GroupService;
@@ -39,6 +41,11 @@ public interface MailServiceAsync
      * The asynchronous version of {@link MailService#deleteConversation}
      */
     void deleteConversation (int convoId, boolean ignoreUnread, AsyncCallback<Boolean> callback);
+
+    /**
+     * The asynchronous version of {@link MailService#deleteConversations}
+     */
+    void deleteConversations (List<Integer> convoIds, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link MailService#updatePayload}

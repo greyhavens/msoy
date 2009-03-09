@@ -3,10 +3,12 @@
 
 package client.mail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -57,7 +59,10 @@ public class MailPanel extends FlowPanel
         @Override // from PagedGrid
         protected Widget createWidget (Conversation convo)
         {
-            return new ConvoWidget(this, convo);
+            // it's a PITA to extract this widget from PagedGrid, so we keep it around manually
+            ConvoWidget cw = new ConvoWidget(this, convo);
+            _convos.add(cw);
+            return cw;
         }
 
         @Override // from PagedGrid
@@ -79,14 +84,58 @@ public class MailPanel extends FlowPanel
         @Override // from PagedGrid
         protected void displayResults (int start, int count, List<Conversation> list)
         {
+            // reset our list of displayed conversation widgets
+            _convos = new ArrayList<ConvoWidget>();
+
+            // create all of our conversation widgets
             super.displayResults(start, count, list);
 
+            // create and add our custom footer
+            int col = 0;
             SmartTable footer = new SmartTable("Footer", 0, 0);
             footer.setWidth("100%");
-            footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
-            footer.setHTML(0, 1, "&nbsp;");
-            footer.setHTML(0, 2, "&nbsp;", 1, "BottomRight");
+            footer.setHTML(0, col++, "&nbsp;", 1, "BottomLeft");
+            CheckBox selall = new CheckBox(_msgs.mailSelAll());
+            selall.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    boolean select = ((CheckBox)sender).isChecked();
+                    for (ConvoWidget cw : _convos) {
+                        cw.setSelected(select);
+                    }
+                }
+            });
+            footer.setWidget(0, col++, selall, 1, "SelectAll");
+            Button delsel = new Button(_msgs.mailDelSel());
+            footer.setWidget(0, col++, delsel, 1, null);
+            footer.getFlexCellFormatter().setWidth(0, col, "50%");
+            footer.setHTML(0, col++, "&nbsp;");
+            footer.setHTML(0, col++, "&nbsp;", 1, "BottomRight");
             add(footer);
+
+            // wire up a callback for delete selected
+            new ClickCallback<Void>(delsel) {
+                @Override protected boolean callService () {
+                    _convoIds = new ArrayList<Integer>();
+                    for (ConvoWidget cw : _convos) {
+                        if (cw.isSelected()) {
+                            _convoIds.add(cw.getConvoId());
+                        }
+                    }
+                    if (_convoIds.size() == 0) {
+                        return false;
+                    }
+                    _mailsvc.deleteConversations(_convoIds, this);
+                    return true;
+                }
+                @Override protected boolean gotResult (Void result) {
+                    for (int convoId : _convoIds) {
+                        ((ConvosModel)_model).conversationDeleted(convoId);
+                    }
+                    displayPage(_page, true);
+                    return true;
+                }
+                protected List<Integer> _convoIds;
+            };
         }
 
         @Override // from PagedGrid
@@ -122,33 +171,17 @@ public class MailPanel extends FlowPanel
             customControls.add(composeLink);
             controls.setWidget(0, 0, customControls);
         }
+
+        protected List<ConvoWidget> _convos;
     }
 
     protected static class ConvoWidget extends SmartTable
     {
-        public ConvoWidget (final ConvosGrid grid, final Conversation convo)
-        {
+        public ConvoWidget (final ConvosGrid grid, final Conversation convo) {
             super("Convo", 0, 0);
+            _convo = convo;
 
-            Image delete = new Image("/images/profile/remove.png");
-            delete.setTitle(_msgs.mailDeleteTip());
-            delete.addStyleName("actionLabel");
-            String confirm = convo.hasUnread ? _msgs.deleteUnreadConfirm() : _msgs.deleteConfirm();
-            new ClickCallback<Boolean>(delete, confirm) {
-                @Override protected boolean callService () {
-                    _mailsvc.deleteConversation(convo.conversationId, convo.hasUnread, this);
-                    return true;
-                }
-                @Override protected boolean gotResult (Boolean deleted) {
-                    if (!deleted) {
-                        MsoyUI.info(_msgs.deleteNotDeleted());
-                    } else {
-                        grid.removeItem(convo);
-                    }
-                    return !deleted;
-                }
-            };
-            setWidget(0, 0, delete, 1, "Delete");
+            setWidget(0, 0, _select = new CheckBox(), 1, "Select");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
             MediaDesc photo;
@@ -173,6 +206,21 @@ public class MailPanel extends FlowPanel
             setWidget(0, 3, link, 1, "Subject");
             setText(1, 1, convo.lastSnippet, 1, "Snippet");
         }
+
+        public int getConvoId () {
+            return _convo.conversationId;
+        }
+
+        public boolean isSelected () {
+            return _select.isChecked();
+        }
+
+        public void setSelected (boolean selected) {
+            _select.setChecked(selected);
+        }
+
+        protected Conversation _convo;
+        protected CheckBox _select;
     }
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);

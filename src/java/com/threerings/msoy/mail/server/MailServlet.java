@@ -197,6 +197,17 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
+    public void deleteConversations (List<Integer> convoIds)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireRegisteredUser();
+        // blow them away, if they have unread messages, fuck 'em
+        for (int convoId : convoIds) {
+            _mailRepo.deleteConversation(convoId, memrec.memberId, true);
+        }
+    }
+
+    // from interface MailService
     public void updatePayload (int convoId, long sent, MailPayload payload)
         throws ServiceException
     {

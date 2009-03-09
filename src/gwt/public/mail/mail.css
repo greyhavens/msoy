@@ -39,6 +39,10 @@
   height: 29px;
 }
 
+.mail .Folder .Footer .SelectAll {
+  padding-bottom: 5px;
+}
+
 .mail .Folder .Grid .Unread {
   background: #F0FCFF;
 }
@@ -50,7 +54,7 @@
   text-align: left;
 }
 
-.mail .Folder .Convo .Delete {
+.mail .Folder .Convo .Select {
   width: 15px;
   padding-right: 10px;
 }
