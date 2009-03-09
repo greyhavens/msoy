@@ -9,6 +9,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
+import com.threerings.msoy.web.gwt.WebCreds.Role;
+
 /**
  * Contains a member's name, profile picture and other bits.
  */
@@ -109,9 +111,12 @@ public class MemberCard
     /** This member's current status. */
     public Status status;
 
+    /** This member's role on the site. */
+    public Role role;
+
     /** This member's level. */
     public int level;
 
-    /** Whether or not this member is the requester's friend. */
+    /** One bit data, laid out by {@link Flag#bit}. */
     public boolean isFriend;
 }

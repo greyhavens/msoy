@@ -29,6 +29,8 @@ public class MemberCardRecord extends PersistentRecord
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp NAME = colexp(_R, "name");
     public static final ColumnExp LAST_SESSION = colexp(_R, "lastSession");
+    public static final ColumnExp FLAGS = colexp(_R, "flags");
+    public static final ColumnExp ACCOUNT_NAME = colexp(_R, "accountName");
     public static final ColumnExp PHOTO_HASH = colexp(_R, "photoHash");
     public static final ColumnExp PHOTO_MIME_TYPE = colexp(_R, "photoMimeType");
     public static final ColumnExp PHOTO_CONSTRAINT = colexp(_R, "photoConstraint");
@@ -47,6 +49,14 @@ public class MemberCardRecord extends PersistentRecord
     /** The time at which the player ended their last session. */
     @Computed(shadowOf=MemberRecord.class)
     public Timestamp lastSession;
+
+    /** The flags for this player. */
+    @Computed(shadowOf=MemberRecord.class)
+    public int flags;
+
+    /** The account name of this player. */
+    @Computed(shadowOf=MemberRecord.class)
+    public String accountName;
 
     /** The hash code of the user's profile photo. */
     @Computed(shadowOf=ProfileRecord.class)
@@ -90,6 +100,7 @@ public class MemberCardRecord extends PersistentRecord
         status.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
         card.status = status;
         card.level = level;
+        card.role = MemberRecord.toRole(memberId, flags, accountName);
         return card;
     }
 

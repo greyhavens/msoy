@@ -223,20 +223,7 @@ public class MemberRecord extends PersistentRecord
      */
     public WebCreds toCreds (final String authtok)
     {
-        WebCreds.Role role;
-        if (isMaintainer()) {
-            role = WebCreds.Role.MAINTAINER;
-        } else if (isSet(Flag.ADMIN)) {
-            role = WebCreds.Role.ADMIN;
-        } else if (isSet(Flag.SUPPORT)) {
-            role = WebCreds.Role.SUPPORT;
-        } else if (isValidated()) {
-            role = WebCreds.Role.VALIDATED;
-        } else if (!isPermaguest()) {
-            role = WebCreds.Role.REGISTERED;
-        } else {
-            role = WebCreds.Role.PERMAGUEST;
-        }
+        WebCreds.Role role = toRole(memberId, flags, accountName);
         return new WebCreds(authtok, accountName, getName(), permaName, role);
     }
 
@@ -315,7 +302,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isPermaguest ()
     {
-        return MemberMailUtil.isPermaguest(accountName);
+        return isPermaguest(accountName);
     }
 
     /**
@@ -325,7 +312,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isRoot ()
     {
-        return memberId == 1;
+        return isRoot(memberId);
     }
 
     /**
@@ -333,7 +320,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isSet (final Flag flag)
     {
-        return (flags & flag.getBit()) != 0;
+        return isSet(flags, flag);
     }
 
     /**
@@ -379,6 +366,60 @@ public class MemberRecord extends PersistentRecord
     public String toString ()
     {
         return StringUtil.fieldsToString(this);
+    }
+
+    /**
+     * Deduces the role given a memberId, flags and account name.
+     */
+    public static WebCreds.Role toRole (int memberId, int flags, String accountName)
+    {
+        if (isMaintainer(memberId, flags)) {
+            return WebCreds.Role.MAINTAINER;
+        } else if (isSet(flags, Flag.ADMIN)) {
+            return WebCreds.Role.ADMIN;
+        } else if (isSet(flags, Flag.SUPPORT)) {
+            return WebCreds.Role.SUPPORT;
+        } else if (isSet(flags, Flag.VALIDATED)) {
+            return WebCreds.Role.VALIDATED;
+        } else if (!isPermaguest(accountName)) {
+            return WebCreds.Role.REGISTERED;
+        } else {
+            return WebCreds.Role.PERMAGUEST;
+        }
+    }
+
+    /**
+     * Returns true if a given account name is an anonymous guest.
+     */
+    public static boolean isPermaguest (String accountName)
+    {
+        return MemberMailUtil.isPermaguest(accountName);
+    }
+
+    /**
+     * Returns true if a member with the given id and flags has maintainer privileges.
+     */
+    public static boolean isMaintainer (int memberId, int flags)
+    {
+        return isSet(flags, Flag.MAINTAINER) || isRoot(memberId);
+    }
+
+    /**
+     * Returns true if a given member id has "root" privileges. The first member in the database
+     * has these privileges and this status is used to allow all other privileges to be assigned
+     * without resorting to database hackery.
+     */
+    public static boolean isRoot (int memberId)
+    {
+        return memberId == 1;
+    }
+
+    /**
+     * Tests whether a given integer has a given flag set.
+     */
+    public static boolean isSet (int flags, final Flag flag)
+    {
+        return (flags & flag.getBit()) != 0;
     }
 
     // AUTO-GENERATED: METHODS START
