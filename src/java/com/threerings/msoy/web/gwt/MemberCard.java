@@ -117,6 +117,6 @@ public class MemberCard
     /** This member's level. */
     public int level;
 
-    /** One bit data, laid out by {@link Flag#bit}. */
+    /** Whether or not this member is the requester's friend. */
     public boolean isFriend;
 }
