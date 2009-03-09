@@ -45,6 +45,12 @@ public class DoListItemPopup extends VerticalPanel
 
     public static void show (Item item, CatalogListing listing, ListedListener listener)
     {
+        // make sure the item in question has a thumbnmail image, reject if not
+        if (item.getRawThumbnailMedia() == null) {
+            MsoyUI.error(_imsgs.doListNeedThumb());
+            return;
+        }
+
         String title = (item.catalogId == 0) ? _imsgs.doListCreateTitle()
                                              : _imsgs.doListUpdateTitle();
         CShell.frame.showDialog(title, new DoListItemPopup(item, listing, listener));
