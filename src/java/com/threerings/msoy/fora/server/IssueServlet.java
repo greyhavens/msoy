@@ -128,8 +128,6 @@ public class IssueServlet extends MsoyServiceServlet
             issue.closeComment = null;
         } else if (issue.owner == null) {
             throw new ServiceException(IssueCodes.E_ISSUE_CLOSE_NO_OWNER);
-        } else if (issue.owner.getMemberId() != mrec.memberId) {
-            throw new ServiceException(IssueCodes.E_ISSUE_CLOSE_NOT_OWNER);
         }
 
         _issueRepo.updateIssue(issue);
