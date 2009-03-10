@@ -391,6 +391,16 @@ public class ItemLogic
     }
 
     /**
+     * Transfer all the items used in the specified scene to the new owner.
+     */
+    public void transferRoomItems (int oldOwnerId, int newOwnerId, int sceneId)
+    {
+        for (ItemRepository<ItemRecord> repo : getRepositories()) {
+            repo.transferRoomItems(sceneId, oldOwnerId, newOwnerId);
+        }
+    }
+
+    /**
      * Called after an item is created or updated. Performs any post create/update actions needed.
      *
      * @param orecord the unmodified record in the case of an update, null in the case of a create.

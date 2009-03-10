@@ -290,6 +290,7 @@ public class MailLogic
         throws ServiceException
     {
         _roomLogic.processRoomGift(senderId, recipId, payload.sceneId);
+        _itemLogic.transferRoomItems(senderId, recipId, payload.sceneId);
     }
 
     /**

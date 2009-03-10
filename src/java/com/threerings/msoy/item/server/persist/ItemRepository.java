@@ -457,6 +457,28 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Transfer all items owned by the old owner and in-use in the specified scene.
+     */
+    public void transferRoomItems (int sceneId, int oldOwnerId, int newOwnerId)
+    {
+        // TODO: non-null cache invalidators?
+        updatePartial(getItemClass(), new Where(new And(
+            new Equals(getItemColumn(ItemRecord.OWNER_ID), oldOwnerId),
+            new Equals(getItemColumn(ItemRecord.LOCATION), sceneId),
+            new In(getItemColumn(ItemRecord.USED),
+                Item.USED_AS_BACKGROUND, Item.USED_AS_FURNITURE, Item.USED_AS_PET))),
+            null,
+            getItemColumn(ItemRecord.OWNER_ID), newOwnerId);
+        updatePartial(getCloneClass(), new Where(new And(
+            new Equals(getCloneColumn(CloneRecord.OWNER_ID), oldOwnerId),
+            new Equals(getCloneColumn(CloneRecord.LOCATION), sceneId),
+            new In(getCloneColumn(CloneRecord.USED),
+                Item.USED_AS_BACKGROUND, Item.USED_AS_FURNITURE, Item.USED_AS_PET))),
+            null,
+            getCloneColumn(CloneRecord.OWNER_ID), newOwnerId);
+    }
+
+    /**
      * Loads up the owner information for the supplied set of items. The ids may include original
      * and clone records.
      */
