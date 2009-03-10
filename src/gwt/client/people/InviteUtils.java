@@ -60,6 +60,7 @@ public class InviteUtils
             return;
 
         } else if (!email.getText().matches(MsoyUI.EMAIL_REGEX)) {
+            CShell.log("Invalid address '" + email.getText() + "'.");
             MsoyUI.info(_msgs.inviteInvalidEmail());
 
         } else if (name.getText().length() == 0 ||
