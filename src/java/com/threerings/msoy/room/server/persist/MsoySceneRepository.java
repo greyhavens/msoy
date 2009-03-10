@@ -467,12 +467,6 @@ public class MsoySceneRepository extends DepotRepository
         return record;
     }
 
-    public void transferSceneOwnership (int sceneId, byte ownerType, int ownerId)
-    {
-        updatePartial(SceneRecord.class, sceneId, SceneRecord.OWNER_TYPE, ownerType,
-                      SceneRecord.OWNER_ID, ownerId);
-    }
-
     /** Loads the room properties. */
     public List<RoomPropertyRecord> loadProperties (int ownerId, int sceneId)
     {

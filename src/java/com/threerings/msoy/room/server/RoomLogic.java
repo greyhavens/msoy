@@ -8,6 +8,8 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.ResultListener;
 
+import com.threerings.util.Name;
+
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
@@ -54,7 +56,7 @@ public class RoomLogic
         }
     }
 
-    public void processRoomGift (final int senderId, final int receiverId, final int sceneId)
+    public void processRoomGift (int senderId, int receiverId, int sceneId)
         throws ServiceException
     {
         final MemberRecord receiver = _memberRepo.loadMember(receiverId);
@@ -63,11 +65,26 @@ public class RoomLogic
         }
         MemberRecord sender = _memberRepo.loadMember(senderId);
         checkCanGiftRoom(sender, sceneId);
+        enactRoomTransfer(sceneId, MsoySceneModel.OWNER_TYPE_MEMBER, receiverId,
+            receiver.getName(), true);
 
+        // TODO
+        // - find all items owned by the sender that are in use in the room, and update the owner
+        // to be the recipient. Items not owned by the sender are not transferred.
+        // - reflect item changes in the runtime
+    }
+
+    /**
+     * Enact the transfer of a room with no further checks.
+     */
+    public void enactRoomTransfer (
+        final int sceneId, final byte ownerType, final int ownerId, final Name ownerName,
+        final boolean lockToOwner)
+    {
         _omgr.postRunnable(new Runnable() {
             public void run () {
                 ((MsoySceneRegistry) _sceneReg).transferOwnership(sceneId,
-                    MsoySceneModel.OWNER_TYPE_MEMBER, receiverId, receiver.getName(), true,
+                    ownerType, ownerId, ownerName, lockToOwner,
                     new ResultListener<Void>() {
                         public void requestCompleted (Void result) {}
                         public void requestFailed (Exception cause) {
@@ -76,13 +93,6 @@ public class RoomLogic
                     });
             }
         });
-
-        // TODO
-        // - change room's access policy to ACCESS_OWNER_ONLY
-        // - reflect any changes in the runtime representation of the room
-        // - find all items owned by the sender that are in use in the room, and update the owner
-        // to be the recipient. Items not owned by the sender are not transferred.
-        // - reflect item changes in the runtime
     }
 
     @Inject protected MsoySceneRepository _sceneRepo;

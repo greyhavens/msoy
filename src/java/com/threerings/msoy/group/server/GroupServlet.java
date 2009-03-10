@@ -63,6 +63,7 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.RoomLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
@@ -215,21 +216,18 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
+        _roomLogic.checkCanGiftRoom(mrec, sceneId);
 
         // ensure the caller is a manager of this group
         if (_groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
-
-        // ensure the caller is the owner of this scene
-        SceneRecord scene = _sceneRepo.loadScene(sceneId);
-        if (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER ||
-            scene.ownerId != mrec.memberId) {
-            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        // sign the deed over
-        _sceneRepo.transferSceneOwnership(sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        _roomLogic.enactRoomTransfer(sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId,
+            grec.toGroupName(), false);
     }
 
     // from interface GroupService
@@ -823,6 +821,7 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
+    @Inject protected RoomLogic _roomLogic;
     @Inject protected MsoyChatChannelManager _channelMan;
 
     /** The number of matches to return when searching against all display names in the database. */
