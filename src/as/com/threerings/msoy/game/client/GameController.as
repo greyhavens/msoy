@@ -33,7 +33,7 @@ public class GameController extends MsoyController
     {
         // give the handlers a chance to popup
         if (!sanctionClosePlaceView()) {
-            continue;
+            return;
         }
 
         // if we're in the whirled, closing means closing the flash client totally
