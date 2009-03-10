@@ -43,7 +43,11 @@ public class MessagePanel extends FlexTable
 
         ThumbBox box = getThumbBox(poster);
         if (box != null) {
-            setWidget(0, 0, box);
+            if (shouldShowRoleCaption()) {
+                setWidget(0, 0, RoleCaptioner.add(box, poster.role));
+            } else {
+                setWidget(0, 0, box);
+            }
             if (text != null) {
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
             }
@@ -114,6 +118,15 @@ public class MessagePanel extends FlexTable
     {
         return new ThumbBox(poster.photo, getThumbnailSize(),
                             Pages.PEOPLE, ""+poster.name.getMemberId());
+    }
+
+    /**
+     * Whether a caption explaining the role of the poster should be shown with the profile photo.
+     * Subclasses can override to allow this.
+     */
+    protected boolean shouldShowRoleCaption ()
+    {
+        return false;
     }
 
     /**

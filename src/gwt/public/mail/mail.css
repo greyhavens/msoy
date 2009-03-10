@@ -120,6 +120,10 @@
   padding-left: 15px;
 }
 
+.convo .Message .Thumb .caption {
+  font-size: 11px;
+}
+
 .convo .Message .Body {
   padding-right: 15px;
 }

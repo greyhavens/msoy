@@ -169,6 +169,10 @@ public class ThreadPanel extends TitledListPanel
                     public boolean textIsHTML () {
                         return true;
                     }
+                    @Override // from MessagePanel
+                    protected boolean shouldShowRoleCaption () {
+                        return true;
+                    }
                 };
                 reply.setMessage(inReplyTo.poster, inReplyTo.created, inReplyTo.message);
 

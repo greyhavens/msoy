@@ -248,6 +248,12 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         }
 
         @Override // from MessagePanel
+        protected boolean shouldShowRoleCaption ()
+        {
+            return true;
+        }
+
+        @Override // from MessagePanel
         protected void addInfo (FlowPanel info)
         {
             super.addInfo(info);
