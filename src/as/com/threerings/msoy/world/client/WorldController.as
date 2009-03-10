@@ -1203,7 +1203,6 @@ public class WorldController extends MsoyController
     {
         // give the handlers a chance to prevent closure
         if (!sanctionClosePlaceView()) {
-            log.info("Closeplaceview prevented");
             return;
         }
         if (_wctx.getPlaceView() is MsoyGamePanel) {

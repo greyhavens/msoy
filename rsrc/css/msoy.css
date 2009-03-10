@@ -1384,12 +1384,12 @@ Stars {
   horizontalGap: 0;
 }
 
-.trophyPanelTitle {
+.trophyPanelTitle, .trophyFeederPanelTitle {
   fontSize: 16;
   fontWeight: bold;
 }
 
-.trophyPanelName {
+.trophyPanelName, .trophyFeederPanelName {
   fontSize: 14;
   fontWeight: bold;
 }

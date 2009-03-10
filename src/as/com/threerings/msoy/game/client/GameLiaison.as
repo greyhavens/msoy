@@ -22,6 +22,8 @@ import caurina.transitions.Tweener;
 
 import com.threerings.msoy.utils.Base64Decoder;
 
+import com.threerings.io.TypedArray;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
@@ -241,6 +243,11 @@ public class GameLiaison
     {
         // listen for message events on our player object
         _gctx.getPlayerObject().addListener(this);
+
+        if (DeploymentConfig.devDeployment) {
+            // register some code to run when the users clicks the close button
+            _wctx.getWorldController().addPlaceExitHandler(onPlaceExit);
+        }
     }
 
     // from interface ClientObserver
@@ -303,6 +310,8 @@ public class GameLiaison
                 _wctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
                     trophy.gameId, gameName, trophy.name, trophy.description,
                     trophy.trophyMedia.getMediaPath() ]);
+                // store in our list of trophies so we can offer to post a facebook news story later
+                _trophies.push(trophy);
             }
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE) {
@@ -422,6 +431,19 @@ public class GameLiaison
             });
     }
 
+    protected function onPlaceExit () :Boolean
+    {
+        // remove the handler, we don't want to show this twice
+        _wctx.getWorldController().removePlaceExitHandler(onPlaceExit);
+
+        // show the trophy feeder; have it close the place view when it closes
+        var onClose :Function = _wctx.getWorldController().handleClosePlaceView;
+        TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
+
+        // prevent the closure from proceeding
+        return false;
+    }
+
     /** Provides access to main client services. */
     protected var _wctx :WorldContext;
 
@@ -443,6 +465,9 @@ public class GameLiaison
 
     /** Which one of the rotating flow panel messages will be seen next? */
     protected var _flowPanelNoteNext :int = 0;
+
+    /** Trophies we've earned in this session. */
+    protected var _trophies :TypedArray = TypedArray.create(Trophy);
 
     /** Used to note that we're loading an embedded SWF. */
     protected static const LOADING :Sprite = new Sprite();
