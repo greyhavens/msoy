@@ -1201,6 +1201,11 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function handleClosePlaceView () :void
     {
+        // give the handlers a chance to prevent closure
+        if (!sanctionClosePlaceView()) {
+            log.info("Closeplaceview prevented");
+            return;
+        }
         if (_wctx.getPlaceView() is MsoyGamePanel) {
             // if we're in a game, closing means closing the game and going back to our place
             handleMoveBack(true);

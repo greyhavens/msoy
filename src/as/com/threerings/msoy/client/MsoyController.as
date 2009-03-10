@@ -246,6 +246,26 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Adds a place exit handler to be invoked whenever the user requests to leave the current
+     * place. The function should take no arguments and return a Boolean. A true return value means
+     * carry on closing the place view. A false value means ignore the current request. In the
+     * latter case, the handler ought to automatically re-close the place view when it is finished
+     * with its business.
+     */
+    public function addPlaceExitHandler (fn :Function) :void
+    {
+        _placeExitHandlers.push(fn);
+    }
+
+    /**
+     * Removes a previously added place exit handler.
+     */
+    public function removePlaceExitHandler (fn :Function) :void
+    {
+        ArrayUtil.removeAll(_placeExitHandlers, fn);
+    }
+
+    /**
      * Update our away status.
      */
     public function setAway (nowAway :Boolean, message :String = null) :void
@@ -325,7 +345,7 @@ public class MsoyController extends Controller
     /**
      * Handles the CLOSE_PLACE_VIEW command.
      */
-    public function handleClosePlaceView () : void
+    public function handleClosePlaceView () :void
     {
         // handled by our derived classes
     }
@@ -521,6 +541,22 @@ public class MsoyController extends Controller
     {
         _idleStamp = getTimer();
         setIdle(false);
+    }
+
+    /**
+     * Returns true if all installed exit handlers have sanctioned the closure of the place view,
+     * or false if we need to abort.
+     */
+    public function sanctionClosePlaceView () :Boolean
+    {
+        // give the handlers a chance to prevent closure
+        for each (var fn :Function in _placeExitHandlers.slice()) {
+            var okay :Boolean = fn();
+            if (!okay) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -778,6 +814,10 @@ public class MsoyController extends Controller
 
     /** Functions that can be called to populate the "go" menu. */
     protected var _goMenuProviders :Array = [];
+
+    /** Handlers that can perform actions and/or abort the exiting of a place. */
+    protected var _placeExitHandlers :Array = [];
+
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";

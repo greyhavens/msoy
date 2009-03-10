@@ -31,6 +31,11 @@ public class GameController extends MsoyController
     // from MsoyController
     override public function handleClosePlaceView () : void
     {
+        // give the handlers a chance to popup
+        if (!sanctionClosePlaceView()) {
+            continue;
+        }
+
         // if we're in the whirled, closing means closing the flash client totally
         _mctx.getMsoyClient().closeClient();
     }
