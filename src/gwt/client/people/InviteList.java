@@ -6,6 +6,7 @@ package client.people;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -30,13 +31,13 @@ public class InviteList extends FlexTable
     {
         setStyleName("InviteList");
         setCellSpacing(0);
-        setText(0, 0, InvitePanel._msgs.inviteListName());
+        setText(0, 0, _msgs.inviteListName());
         getFlexCellFormatter().setWidth(0, 0, "190px");
         getFlexCellFormatter().setStyleName(0, 0, "Header");
-        setText(0, 1, InvitePanel._msgs.inviteListRemove());
+        setText(0, 1, _msgs.inviteListRemove());
         getFlexCellFormatter().setWidth(0, 1, "40px");
         getFlexCellFormatter().setStyleName(0, 1, "Header");
-        setText(0, 2, InvitePanel._msgs.inviteListEmail());
+        setText(0, 2, _msgs.inviteListEmail());
         getFlexCellFormatter().setWidth(0, 2, "364px");
         getFlexCellFormatter().setStyleName(0, 2, "Header");
 
@@ -109,4 +110,6 @@ public class InviteList extends FlexTable
 
     protected List<EmailContact> _items = new ArrayList<EmailContact>();
     protected FlexTable _listTable;
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

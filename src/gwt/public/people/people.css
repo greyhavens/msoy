@@ -306,121 +306,24 @@
   color: #B4E0F1;
 }
 
-.invite {
-  color: #316C94;
-  font-size: 12px;
-}
-
-.invite .Banner {
-  background: url(/images/people/invite_header.png) no-repeat top left;
-  width: 322px;
-  height: 58px;
-  padding: 20px 20px 10px 310px;
-  text-align: center;
-  color: #FFFFFF;
-}
-
-.invite .FindFriends .Title {
-  font-size: 24px;
-}
-
-.invite .roundBox {
-  color: white;
-}
-
-.invite .gwt-TextBox {
-  width: 200px;
-}
-.invite .gwt-PasswordTextBox {
-  width: 130px;
-}
-.invite .gwt-TextBox, .invite .gwt-PasswordTextBox, .invite .gwt-TextArea {
-  border: 1px solid #316C94;
-}
-.invite td.skip {
-  text-align: right;
-  padding: 5px 2px 0 0;
-}
-
-.invite .Title {
-  font-weight: bold;
-}
-
-.invite .Tip {
-  font-size: 11px;
-  padding-right: 10px;
-}
-
-.invite .Header, .invitation .Header {
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.inviteResultsPopup .ScrollPanel {
-  max-height: 300px;
-  margin-bottom: 10px;
-  text-align: left;
-}
-
-.invite .InviteList, .emailListPanel .InviteList {
-  width: 100%;
-  border: 1px solid #316C94;
-  background: #E9F6FB;
-}
-
-.invite .InviteList .Header, .emailListPanel .InviteList .Header {
-  height: 20px;
-  color: #316C94;
-  font-weight: normal;
-  font-size: 12px;
-  border: 0px;
-  padding: 5px;
-}
-
-.invite .InviteList .Scroll, .emailListPanel .InviteList .Scroll {
-  height: 130px;
-  background: #FFFFFF;
-  width: 100%;
-}
-
-.invite .InviteListTable, .emailListPanel .InviteListTable {
-  background: #FFFFFF;
-  font-size: 12px;
-  color: #316C94;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-}
-
-.invite .InviteListTable td, .emailListPanel .InviteListTable td {
-  padding: 1px 5px;
-}
-
-.invite .ImportSupportLink {
-  font-size: 10px;
-}
-
-.importSupportList {
-  padding: 8px;
-}
+/* -------------------------------
+  RoomsPanel
+ --------------------------------- */
 
 .roomsPanel .Room .gwt-Image {
   margin: 0px; /* undo centering */
 }
 
-.share .roundBox {
-  width: 100%;
-}
-.share .MainHeaderText, .share .SubHeaderText {
-  font-size: 14px;
-  padding-left: 10px;
-}
-.share .SubHeaderText, .share .SubHeaderText a {
-  color: white;
-}
+/* -------------------------------
+  LinkToWhirledPanel
+ --------------------------------- */
+
 .linkToWhirled {
   font-size: 14px;
   padding-left: 20px;
   padding-right: 20px;
 }
+
 .linkToWhirled .Title {
   background: url(/images/whirled/orange_header.png) no-repeat;
   width: 233px;
@@ -432,29 +335,35 @@
   padding-top: 3px;
   margin-bottom: 10px;
 }
+
 .linkToWhirled .ImageGridLabel {
   color: #3382AD;
   font-weight: bold;
   font-size: 14px;
   padding: 15px 0 5px;
 }
+
 .linkToWhirled .Instructions {
   width: 100%;
   padding: 15px 0 10px;
 }
+
 .linkToWhirled .LogoImagePanel {
   text-align: center;
 }
+
 .linkToWhirled .ImageGridCell {
   text-align: center;
   font-size: 1px;
   padding: 8px 0 8px;
 }
+
 .linkToWhirled .LogoImage {
   text-align: center;
   font-size: 1px;
   display: inline;
 }
+
 .linkToWhirled hr {
   color: #dfdfdf;
   background-color: #dfdfdf;
@@ -471,16 +380,16 @@
     font-size: 12px;
 }
 
-.emailListPanel .privacy, .emailListPanel .ImportSupportLink {
+.emailListPanel .Privacy, .emailListPanel .ImportSupportLink {
     font-size: 10px;
 }
 
-.emailListPanel .toggle {
+.emailListPanel .Toggle {
     text-align: right;
     font-size: 10px;
 }
 
-.emailListPanel .smalllabel {
+.emailListPanel .Small {
     color: #404040;
 }
 
@@ -492,49 +401,92 @@
     width: 100%;
 }
 
+.emailListPanel .InviteList {
+  width: 100%;
+  border: 1px solid #316C94;
+  background: #E9F6FB;
+}
+
+.emailListPanel .InviteList .Header {
+  height: 20px;
+  color: #316C94;
+  font-weight: normal;
+  font-size: 12px;
+  border: 0px;
+  padding: 5px;
+}
+
+.emailListPanel .InviteList .Scroll {
+  height: 130px;
+  background: #FFFFFF;
+  width: 100%;
+}
+
+.emailListPanel .InviteListTable {
+  background: #FFFFFF;
+  font-size: 12px;
+  color: #316C94;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.emailListPanel .InviteListTable td {
+  padding: 1px 5px;
+}
+
+.emailSupported {
+  padding: 8px;
+}
+
+/* -------------------------------
+  InvitePanel
+ --------------------------------- */
+
+.invitePanel {
+  border: 10px solid white;
+}
+
+.invitePanel .Intro {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.invitePanel .Bold {
+  color: #2356bf;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.gameInvitePanel .labelparen {
+  color: #303030;
+  font-size: 10px;
+  width: 90%;
+}
+
+.invitePanel .IM {
+  font-size: 14px;
+}
+
+.invitePanel .IM .gwt-TextBox {
+  border: 2px solid black;
+  width: 100%;
+}
+
+.inviteResultsPopup .ScrollPanel {
+  max-height: 300px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
 /* -------------------------------
   GameInvitePanel
  --------------------------------- */
 
-.gameInvitePanel .intro {
-    font-weight: bold;
-    font-size: 14px;
-    width: 85%;
-}
-
-.gameInvitePanel .whirled {
-    font-size: 12px;
-}
-
-.gameInvitePanel .biglabel {
-    color: #2356bf;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.gameInvitePanel .labelparen {
-   color: #303030;
-   font-size: 10px;
-   width: 90%;
-}
-
-.gameInvitePanel .im {
-    font-size: 14px;
-}
-
-.gameInvitePanel .im .intro {
-    font-size: 12px;
-    width: 100%;
-    font-weight: normal;
-}
-
-.gameInvitePanel .im .urlBox {
-    border: 2px solid black;
-    width: 100%;
+.gameInvitePanel .Whirled {
+  font-size: 12px;
 }
 
 .gameInvitePanel .whirled .memberName {
-    max-width: 165px; /* Overflow doesn't work without this */
-    overflow: hidden;
-    white-space: nowrap;
+  max-width: 165px; /* Overflow doesn't work without this */
+  overflow: hidden;
+  white-space: nowrap;
 }

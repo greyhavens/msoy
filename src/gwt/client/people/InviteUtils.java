@@ -64,13 +64,13 @@ public class InviteUtils
             MsoyUI.info(_msgs.inviteInvalidEmail());
 
         } else if (name.getText().length() == 0 ||
-                name.getText().equals(_msgs.inviteFriendName())) {
+                   name.getText().equals(_msgs.emailFriendName())) {
             MsoyUI.info(_msgs.inviteInvalidName());
 
         } else {
             list.addItem(name.getText(), email.getText());
-            name.setText(_msgs.inviteFriendName());
-            email.setText(_msgs.inviteFriendEmail());
+            name.setText(_msgs.emailFriendName());
+            email.setText(_msgs.emailFriendEmail());
         }
     }
 
@@ -207,7 +207,7 @@ public class InviteUtils
                     leftovers.add(ec);
                 }
             }
-            _address.setText(_msgs.inviteWebAddress());
+            _address.setText(_msgs.emailWebAddress());
             _password.setText("");
             handleLeftovers(leftovers);
             if (added == 0) {

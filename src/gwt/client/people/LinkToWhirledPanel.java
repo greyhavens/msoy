@@ -124,7 +124,7 @@ public class LinkToWhirledPanel extends VerticalPanel
         public Logo (String image, Pages page, Object ...args)
         {
             _image = image;
-            _url = SharePanel.getAffiliateLandingUrl(page, args);
+            _url = ShareUtil.getAffiliateLandingUrl(page, args);
         }
 
         public String getImage ()

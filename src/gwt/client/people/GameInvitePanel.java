@@ -13,10 +13,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -46,9 +46,8 @@ import client.ui.ThumbBox;
 /**
  * Panel for inviting friends to come and play a game, usually issued by a game API call that
  * includes a token and message.
- * TODO: i18n
  */
-public class GameInvitePanel extends VerticalPanel
+public class GameInvitePanel extends InvitePanel
 {
     /**
      * Create a new invite panel with arguments from the game API. The arguments are assembled in
@@ -56,9 +55,7 @@ public class GameInvitePanel extends VerticalPanel
      */
     public GameInvitePanel (final Args args)
     {
-        setStyleName("gameInvitePanel");
-        setWidth("100%");
-        setSpacing(10);
+        addStyleName("gameInvitePanel");
 
         int gameId = args.get(2, 0);
 
@@ -111,16 +108,14 @@ public class GameInvitePanel extends VerticalPanel
         info.setWidget(0, 0, new ThumbBox(detail.item.getThumbnailMedia(),
                                           MediaDesc.THUMBNAIL_SIZE), 1, "thumbnail");
         info.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        info.setText(0, 1, _msgs.gameInviteIntro(detail.item.name), 1, "intro");
+        info.setText(0, 1, _msgs.gameInviteIntro(detail.item.name), 1, "Intro");
         info.setText(1, 0, _msgs.gameInviteTip(), 1, null);
         add(info);
 
         // buttons to invoke the various ways to invite
-        _methodButtons = new SmartTable();
-        _methodButtons.setWidth("100%");
         addMethodButton("Email", new InviteMethodCreator() {
             public Widget create () {
-                return new EmailListPanel(message) {
+                EmailListPanel panel = new EmailListPanel() {
                     protected void handleSend (
                         String from, String msg, final List<EmailContact> addrs) {
                         _invitesvc.sendGameInvites(addrs, detail.gameId, from, url, msg,
@@ -134,6 +129,8 @@ public class GameInvitePanel extends VerticalPanel
                         });
                     }
                 };
+                panel.setDefaultMessage(message);
+                return panel;
             }
         });
         addMethodButton("IM", new InviteMethodCreator() {
@@ -152,40 +149,7 @@ public class GameInvitePanel extends VerticalPanel
                 return null;
             }
         });
-        add(_methodButtons);
-
-        // method panel will on the bottom row
-        _methodRow = this.getWidgetCount();
-    }
-
-    /**
-     * Adds a button to the button bar that invokes the given creator on click.
-     */
-    protected void addMethodButton (String label, final InviteMethodCreator creator)
-    {
-        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THICK, label, new ClickListener() {
-            public void onClick (Widget sender) {
-                setMethod(creator.create()); //new SendURLPanel();
-            }
-        });
-        button.addStyleName("methodButton");
-        int col = _methodButtons.getRowCount() == 0 ? 0 : _methodButtons.getCellCount(0);
-        _methodButtons.setWidget(0, col, button);
-        _methodButtons.getFlexCellFormatter().setHorizontalAlignment(
-            0, col, HasHorizontalAlignment.ALIGN_CENTER);
-    }
-
-    /**
-     * Removes the most recent invite method, if any and sets this to be the new invite method.
-     */
-    protected void setMethod (Widget panel)
-    {
-        if (getWidgetCount() > _methodRow) {
-            remove(_methodRow);
-        }
-        if (panel != null) {
-            add(panel);
-        }
+        addMethodButtons();
     }
 
     protected static void showFBInvitePopup (int gameId, String message, String acceptPath)
@@ -195,42 +159,6 @@ public class GameInvitePanel extends VerticalPanel
         String popupURL = "/fbinvite/do?gameId=" + gameId + "&path=" + acceptPath;
         Window.open(popupURL, FBINVITE_WINDOW_NAME,
             "location=no,status=no,width=655,height=600,left=50,top=50");
-    }
-
-    /**
-     * Allows various invite methods to be hooked up to click listeners.
-     */
-    protected static interface InviteMethodCreator
-    {
-        /**
-         * Creates the widget that will display this invite method.
-         */
-        Widget create ();
-    }
-
-    /**
-     * Invite method consisting of a text area to copy a URL from.
-     */
-    protected static class IMPanel extends SmartTable
-    {
-        public IMPanel (String url)
-        {
-            setStyleName("im");
-            setWidth("100%");
-
-            // basic instructions
-            setText(0, 0, "Copy This URL", 1, "biglabel");
-
-            // a little detail
-            setText(1, 0, "Paste it somewhere your friends can open it and come join you in " +
-                "Whirled.", 1, "intro");
-
-            // link
-            TextArea link = MsoyUI.createTextArea(url, 60, 3);
-            MsoyUI.selectAllOnFocus(link);
-            link.setStyleName("urlBox");
-            setWidget(2, 0, link);
-        }
     }
 
     /**
@@ -245,13 +173,13 @@ public class GameInvitePanel extends VerticalPanel
             final String gameName, final String args)
         {
             super(0, 5);
-            setStyleName("whirled");
+            setStyleName("Whirled");
             setWidth("100%");
 
             int row = 0;
 
             // instructions
-            setText(row++, 0, "Select the friends you want to invite", 1, "biglabel");
+            setText(row++, 0, "Select the friends you want to invite", 1, "Bold");
             setText(row++, 0, "These are your most recently online friends. Select the ones you " +
                 "want to invite by checking the boxes next to their names. Then click Send to " +
                 "send a Whirled mail message to each selected friend.");
@@ -278,7 +206,7 @@ public class GameInvitePanel extends VerticalPanel
 
             // message label
             SmartTable messageLabel = new SmartTable();
-            messageLabel.setText(0, 0, "Message", 1, "biglabel");
+            messageLabel.setText(0, 0, "Message", 1, "Bold");
             messageLabel.setText(0, 1, "(optional)", 1, "labelparen");
             setWidget(row++, 0, messageLabel);
 
@@ -414,13 +342,6 @@ public class GameInvitePanel extends VerticalPanel
         protected MemberCard _card;
     }
 
-    /** The row where the invite method is. */
-    protected int _methodRow;
-
-    /** The buttons for the various invite methods. */
-    protected SmartTable _methodButtons;
-
-    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)

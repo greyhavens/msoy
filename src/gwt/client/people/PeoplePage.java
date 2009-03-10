@@ -82,20 +82,14 @@ public class PeoplePage extends Page
             setContent(new ProfilePanel(CShell.getMemberId()));
 
         } else if (action.equals("invites")) { // !guest
-            boolean justRegistered = args.get(1, "").equals("newuser");
-            boolean linksPage = args.get(1, "").equals("links");
-            boolean sharePage = args.get(1, "").equals("share");
             if (args.get(1, "").equals("game")) {
                 setContent(_msgs.gameInviteTitle(), new GameInvitePanel(args));
-            } else if (justRegistered) {
-                setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, null));
-            } else if (linksPage) {
+            } else if (args.get(1, "").equals("newuser")) {
+                // TODO
+            } else if (args.get(1, "").equals("links")) {
                 setContent(_msgs.linkToWhirledTitle(), new LinkToWhirledPanel());
-            } else if (sharePage) {
-                setContent(_msgs.inviteTitle(), new SharePanel(args.get(2, ""), args.get(3, ""),
-                    args.get(4, ""), args.get(5, "")));
             } else {
-                setContent(_msgs.inviteTitle(), new SharePanel());
+                setContent(_msgs.inviteTitle(), new WhirledInvitePanel());
             }
 
         } else if (action.equals("friendly")) { // !guest
