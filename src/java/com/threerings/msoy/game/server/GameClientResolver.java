@@ -12,7 +12,6 @@ import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;

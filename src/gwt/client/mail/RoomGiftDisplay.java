@@ -4,7 +4,6 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -13,7 +12,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.mail.gwt.RoomGiftPayload;
 
 import client.room.RoomWidget;
-import client.ui.MsoyUI;
 
 /**
  * Displays item gift mail payloads.

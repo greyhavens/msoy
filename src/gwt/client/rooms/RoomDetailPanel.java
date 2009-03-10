@@ -4,10 +4,8 @@
 package client.rooms;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
@@ -18,9 +16,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
-
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;

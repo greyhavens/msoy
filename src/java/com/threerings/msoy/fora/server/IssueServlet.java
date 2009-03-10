@@ -118,7 +118,7 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue updateIssue (Issue issue)
         throws ServiceException
     {
-        MemberRecord mrec = requireSupportUser();
+        requireSupportUser();
 
         IssueRecord irec = _issueRepo.loadIssue(issue.issueId);
         if (irec.state != Issue.STATE_OPEN) {

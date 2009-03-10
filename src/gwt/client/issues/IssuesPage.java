@@ -5,11 +5,9 @@ package client.issues;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.shell.Page;
 
 public class IssuesPage extends Page

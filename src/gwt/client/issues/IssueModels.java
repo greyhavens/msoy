@@ -14,7 +14,6 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 

@@ -33,7 +33,6 @@ import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
 import com.threerings.msoy.mail.gwt.RoomGiftPayload;
 import com.threerings.msoy.room.gwt.RoomDetail;
-import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService;

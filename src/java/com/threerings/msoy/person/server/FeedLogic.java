@@ -51,7 +51,7 @@ public class FeedLogic
      * itemsPerCategory items will be returned, or in the case of aggregation only items from the
      * first itemsPerCategory actors.
      *
-     * @param category If null, load all categories, otherwise only load that one.
+     * @param onlyCategory If null, load all categories, otherwise only load that one.
      */
     public List<FeedCategory> loadFeedCategories (
         MemberRecord mrec, IntSet friendIds, int itemsPerCategory, Category onlyCategory)

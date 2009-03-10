@@ -60,7 +60,6 @@ import com.whirled.game.server.RepoCookieManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;

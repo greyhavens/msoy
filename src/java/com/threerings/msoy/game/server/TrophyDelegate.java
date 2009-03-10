@@ -15,7 +15,6 @@ import com.threerings.util.MessageBundle;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -30,7 +29,6 @@ import com.whirled.game.data.LevelData;
 import com.whirled.game.data.TrophyData;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;

@@ -36,7 +36,6 @@ import com.threerings.presents.server.RebootManager;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;

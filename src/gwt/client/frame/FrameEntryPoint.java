@@ -47,7 +47,6 @@ import client.shell.CShell;
 import client.shell.HttpReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
-import client.shell.VisitorCookie;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.util.ArrayUtil;

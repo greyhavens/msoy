@@ -31,10 +31,8 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MsoyEventLogger;
