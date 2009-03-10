@@ -142,7 +142,8 @@ public class AccountLogic
 
         // tell panopticon that we "created" an account
         final String inviteId = (invite == null) ? null : invite.inviteId;
-        _eventLog.accountCreated(mrec.memberId, inviteId, mrec.affiliateMemberId, mrec.visitorId);
+        _eventLog.accountCreated(
+            mrec.memberId, false, inviteId, mrec.affiliateMemberId, mrec.visitorId);
 
         // fill in fields so we are returning up-to-date information
         mrec.accountName = email;
@@ -349,11 +350,10 @@ public class AccountLogic
                 mrec.memberId, data.isRegistering ? CoinAwards.CREATED_ACCOUNT : 0);
 
             // record to the event log that we created a new account
-            if (data.isRegistering) {
-                final String iid = (data.invite == null) ? null : data.invite.inviteId;
-                final String vid = (data.vinfo == null) ? null : data.vinfo.id;
-                _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
-            }
+            String iid = (data.invite == null) ? null : data.invite.inviteId;
+            String vid = (data.vinfo == null) ? null : data.vinfo.id;
+            _eventLog.accountCreated(
+                mrec.memberId, !data.isRegistering, iid, mrec.affiliateMemberId, vid);
 
             // clear out account and stalerec to let the finally block know that all went well and
             // we need not roll back the domain account and member record creation

@@ -498,14 +498,17 @@ public class MsoyEvents
     {
         @Index @Field final public Date timestamp;
         @Field final public int newMemberId;
+        @Field final public boolean isGuest;
         @Field final public String inviteId;
         @Field final public int affiliateId;
         @Field final public String tracker;
 
-        public AccountCreated (int newMemberId, String inviteId, int affiliateId, String tracker)
+        public AccountCreated (
+            int newMemberId, boolean isGuest, String inviteId, int affiliateId, String tracker)
         {
             this.timestamp = new Date();
             this.newMemberId = newMemberId;
+            this.isGuest = isGuest;
             this.inviteId = toValue(inviteId);
             this.affiliateId = affiliateId;
             this.tracker = toValue(tracker);
