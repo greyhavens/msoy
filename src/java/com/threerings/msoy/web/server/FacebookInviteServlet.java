@@ -135,10 +135,11 @@ public class FacebookInviteServlet extends HttpServlet
         // html and javascript code to show a facebook invitation page
         MarkupBuilder b = new MarkupBuilder();
         String js = "text/javascript";
-        b.open("html", "xmlns", "http://www.w3.org/1999/xhtml", "xmlns:fb", FBMLNS).open("body");
-        b.open("script", "type", js, "src", FBLOADERCODE).append().close();
-        b.open("script", "type", js, "src", INVITE_JS).append().close();
-        b.open("div", "id", FORM_TAG_ID).append().close();
+        b.open("html", "xmlns", "http://www.w3.org/1999/xhtml", "xmlns:fb", FBMLNS);
+        b.open("body").append("\n");
+        b.open("script", "type", js, "src", FBLOADERCODE).append().close().append("\n");
+        b.open("script", "type", js, "src", INVITE_JS).append().close().append("\n");
+        b.open("div", "id", FORM_TAG_ID).append().close().append("\n");
         b.open("script", "type", js).append("\n//<!--\n");
         String dataName = "whirledInviteData";
         b.append("var ").append(dataName).append(" = {};\n");
@@ -148,7 +149,7 @@ public class FacebookInviteServlet extends HttpServlet
         }
         b.append("FBInit(").append(dataName).append(");\n");
         b.append("FBShowInvite(").append(dataName).append(");");
-        b.append("\n//-->").close();
+        b.append("\n//-->").close().append("\n");
 
         // send
         rsp.getOutputStream().println(b.finish());
