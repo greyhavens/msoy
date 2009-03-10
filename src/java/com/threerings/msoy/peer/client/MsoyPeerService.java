@@ -8,6 +8,8 @@ import com.threerings.io.Streamable;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+import com.threerings.util.Name;
+
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -27,4 +29,11 @@ public interface MsoyPeerService extends InvocationService
      */
     void reclaimItem (
         Client client, int sceneId, int memberId, ItemIdent item, ConfirmListener listener);
+
+    /**
+     * Forwards a request to transfer room ownership.
+     */
+    void transferRoomOwnership (
+        Client client, int sceneId, byte ownerType, int ownerId, Name ownerName,
+        boolean lockToOwner, ConfirmListener listener);
 }

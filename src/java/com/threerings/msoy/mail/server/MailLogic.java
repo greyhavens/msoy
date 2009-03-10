@@ -33,9 +33,7 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.room.server.RoomLogic;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -291,21 +289,7 @@ public class MailLogic
     protected void processRoomGiftPayload (int senderId, int recipId, RoomGiftPayload payload)
         throws ServiceException
     {
-        // TODO: combine this with canGiftRoom? RoomLogic needed...
-        SceneRecord scene = _sceneRepo.loadScene(payload.sceneId);
-        if ((scene == null) || (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER) ||
-                (scene.ownerId != senderId)) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-        // TODO: make sure it's not the sender's home scene!
-        _sceneRepo.transferSceneOwnership(
-            payload.sceneId, MsoySceneModel.OWNER_TYPE_MEMBER, recipId);
-        // TODO:
-        // - change room's access policy to ACCESS_OWNER_ONLY
-        // - reflect any changes in the runtime representation of the room
-        // - find all items owned by the sender that are in use in the room, and update the owner
-        // to be the recipient. Items not owned by the sender are not transferred.
-        // - reflect item changes in the runtime
+        _roomLogic.processRoomGift(senderId, recipId, payload.sceneId);
     }
 
     /**
@@ -330,7 +314,7 @@ public class MailLogic
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MailSender _mailer;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected RoomLogic _roomLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
 }

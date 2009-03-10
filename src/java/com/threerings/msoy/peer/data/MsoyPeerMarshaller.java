@@ -10,6 +10,7 @@ import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.util.Name;
 
 /**
  * Provides the implementation of the {@link MsoyPeerService} interface
@@ -42,6 +43,19 @@ public class MsoyPeerMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, RECLAIM_ITEM, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+        });
+    }
+
+    /** The method id used to dispatch {@link #transferRoomOwnership} requests. */
+    public static final int TRANSFER_ROOM_OWNERSHIP = 3;
+
+    // from interface MsoyPeerService
+    public void transferRoomOwnership (Client arg1, int arg2, byte arg3, int arg4, Name arg5, boolean arg6, InvocationService.ConfirmListener arg7)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener7 = new InvocationMarshaller.ConfirmMarshaller();
+        listener7.listener = arg7;
+        sendRequest(arg1, TRANSFER_ROOM_OWNERSHIP, new Object[] {
+            Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4), arg5, Boolean.valueOf(arg6), listener7
         });
     }
 }

@@ -11,6 +11,8 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.threerings.util.Name;
+
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -182,6 +184,30 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 listener.requestFailed(reason);
             }
         });
+    }
+
+    /**
+     * Transfer room ownership.
+     */
+    public void transferOwnership (
+        final int sceneId, final byte ownerType, final int ownerId, final Name ownerName,
+        final boolean lockToOwner, final ResultListener<Void> listener)
+    {
+        resolvePeerScene(sceneId, new PeerSceneResolutionListener() {
+            public void sceneWasResolved (SceneManager scmgr) {
+                ((RoomManager)scmgr).transferOwnership(ownerType, ownerId, ownerName, lockToOwner);
+                listener.requestCompleted(null);
+            }
+
+            public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo) {
+                _peerMan.transferRoomOwnership(nodeInfo.left, sceneId,
+                    ownerType, ownerId, ownerName, lockToOwner, listener);
+            }
+
+            public void sceneFailedToResolve (int sceneId, Exception reason) {
+                listener.requestFailed(reason);
+            }
+            });
     }
 
     // TODO: the other version of moveTo() needs to also become peer-aware

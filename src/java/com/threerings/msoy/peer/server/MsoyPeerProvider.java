@@ -11,6 +11,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
+import com.threerings.util.Name;
 
 /**
  * Defines the server-side of the {@link MsoyPeerService}.
@@ -26,5 +27,11 @@ public interface MsoyPeerProvider extends InvocationProvider
      * Handles a {@link MsoyPeerService#reclaimItem} request.
      */
     void reclaimItem (ClientObject caller, int arg1, int arg2, ItemIdent arg3, InvocationService.ConfirmListener arg4)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MsoyPeerService#transferRoomOwnership} request.
+     */
+    void transferRoomOwnership (ClientObject caller, int arg1, byte arg2, int arg3, Name arg4, boolean arg5, InvocationService.ConfirmListener arg6)
         throws InvocationException;
 }

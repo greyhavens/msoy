@@ -468,6 +468,34 @@ public class MsoyPeerManager extends CrowdPeerManager
             });
     }
 
+    /**
+     * Requests to forward a room ownership change to the appropriate peer.
+     */
+    public void transferRoomOwnership (
+        String nodeName, int sceneId, byte ownerType, int ownerId, Name ownerName,
+        boolean lockToOwner, final ResultListener<Void> listener)
+    {
+        // locate the peer in question
+        PeerNode node = _peers.get(nodeName);
+        if (node == null || node.nodeobj == null) {
+            // this should never happen.
+            log.warning("Unable to transfer room ownership on unready peer",
+               "peer", nodeName, "connected", (node != null), "sceneId", sceneId);
+            listener.requestFailed(new Exception());
+            return;
+        }
+        ((MsoyNodeObject)node.nodeobj).msoyPeerService.transferRoomOwnership(
+            node.getClient(), sceneId, ownerType, ownerId, ownerName, lockToOwner,
+            new InvocationService.ConfirmListener() {
+                public void requestProcessed () {
+                    listener.requestCompleted(null);
+                }
+                public void requestFailed (String cause) {
+                    listener.requestFailed(new InvocationException(cause));
+                }
+            });
+    }
+
     // from interface MsoyPeerProvider
     public void reclaimItem (
         ClientObject caller, int sceneId, int memberId, ItemIdent item,
@@ -476,6 +504,16 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         ((MsoySceneRegistry) _screg).reclaimItem(sceneId, memberId, item,
             new ConfirmAdapter(listener));
+    }
+
+    // from interface MsoyPeerProvider
+    public void transferRoomOwnership (
+        ClientObject caller, int sceneId, byte ownerType, int ownerId, Name ownerName,
+        boolean lockToOwner, InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        ((MsoySceneRegistry) _screg).transferOwnership(sceneId, ownerType, ownerId, ownerName,
+            lockToOwner, new ConfirmAdapter(listener));
     }
 
     @Override // from PeerManager

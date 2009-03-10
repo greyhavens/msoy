@@ -6,10 +6,12 @@ package com.threerings.msoy.room.server.persist;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -23,6 +25,7 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
@@ -66,6 +69,7 @@ import com.threerings.msoy.room.data.FurniUpdate;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 import com.threerings.msoy.room.server.RoomExtras;
 
 import static com.threerings.msoy.Log.log;
@@ -380,6 +384,16 @@ public class MsoySceneRepository extends DepotRepository
                 SceneRecord.ENTRANCE_X, scup.entrance.x,
                 SceneRecord.ENTRANCE_Y, scup.entrance.y,
                 SceneRecord.ENTRANCE_Z, scup.entrance.z);
+
+        } else if (update instanceof SceneOwnershipUpdate) {
+            SceneOwnershipUpdate sou = (SceneOwnershipUpdate)update;
+            Map<ColumnExp,Object> updates = Maps.newHashMap();
+            updates.put(SceneRecord.OWNER_TYPE, sou.ownerType);
+            updates.put(SceneRecord.OWNER_ID, sou.ownerId);
+            if (sou.lockToOwner) {
+                updates.put(SceneRecord.ACCESS_CONTROL, MsoySceneModel.ACCESS_OWNER_ONLY);
+            }
+            updatePartial(SceneRecord.class, update.getSceneId(), updates);
 
         } else {
             log.warning("Unable to apply unknown furni update", "class", update.getClass(),

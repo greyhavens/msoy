@@ -121,6 +121,7 @@ import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 import com.threerings.msoy.room.server.RoomExtras;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
@@ -375,6 +376,16 @@ public class RoomManager extends SpotSceneManager
                 }
             }
         }
+    }
+
+    public void transferOwnership (byte ownerType, int ownerId, Name ownerName, boolean lockToOwner)
+    {
+        SceneOwnershipUpdate update = new SceneOwnershipUpdate();
+        update.ownerType = ownerType;
+        update.ownerId = ownerId;
+        update.ownerName = ownerName;
+        update.lockToOwner = lockToOwner;
+        doRoomUpdate(update, 0, null);
     }
 
     public void occupantLeftAVRGame (MemberObject member)
@@ -1276,6 +1287,13 @@ public class RoomManager extends SpotSceneManager
                     msoyScene.getOwnerId(), msoyScene.getOwnerType(),
                     up.accessControl);
             }
+
+        } else if (update instanceof SceneOwnershipUpdate) {
+            SceneOwnershipUpdate sou = (SceneOwnershipUpdate) update;
+            _peerMan.roomUpdated(_scene.getId(), _scene.getName(), sou.ownerId, sou.ownerType,
+                sou.lockToOwner ? MsoySceneModel.ACCESS_OWNER_ONLY
+                                : ((MsoyScene) _scene).getAccessControl());
+
         }
 
         // furniture modification updates require us to mark item usage
