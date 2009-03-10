@@ -362,13 +362,13 @@
   text-align: left;
 }
 
-.invite .InviteList, .gameInvitePanel .email .InviteList {
+.invite .InviteList, .emailListPanel .InviteList {
   width: 100%;
   border: 1px solid #316C94;
   background: #E9F6FB;
 }
 
-.invite .InviteList .Header, .gameInvitePanel .email .InviteList .Header {
+.invite .InviteList .Header, .emailListPanel .InviteList .Header {
   height: 20px;
   color: #316C94;
   font-weight: normal;
@@ -377,20 +377,20 @@
   padding: 5px;
 }
 
-.invite .InviteList .Scroll, .gameInvitePanel .email .InviteList .Scroll {
+.invite .InviteList .Scroll, .emailListPanel .InviteList .Scroll {
   height: 130px;
   background: #FFFFFF;
   width: 100%;
 }
 
-.invite .InviteListTable, .gameInvitePanel .email .InviteListTable {
+.invite .InviteListTable, .emailListPanel .InviteListTable {
   background: #FFFFFF;
   font-size: 12px;
   color: #316C94;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
-.invite .InviteListTable td, .gameInvitePanel .email .InviteListTable td {
+.invite .InviteListTable td, .emailListPanel .InviteListTable td {
   padding: 1px 5px;
 }
 
@@ -464,6 +464,35 @@
 }
 
 /* -------------------------------
+  EmailListPanel
+ --------------------------------- */
+
+.emailListPanel {
+    font-size: 12px;
+}
+
+.emailListPanel .privacy, .emailListPanel .ImportSupportLink {
+    font-size: 10px;
+}
+
+.emailListPanel .toggle {
+    text-align: right;
+    font-size: 10px;
+}
+
+.emailListPanel .smalllabel {
+    color: #404040;
+}
+
+.emailListPanel .gwt-TextArea, .emailListPanel .gwt-TextBox {
+    border: 1px solid #cccccc;
+}
+
+.emailListPanel .gwt-TextArea {
+    width: 100%;
+}
+
+/* -------------------------------
   GameInvitePanel
  --------------------------------- */
 
@@ -473,17 +502,8 @@
     width: 85%;
 }
 
-.gameInvitePanel .email, .gameInvitePanel .whirled {
+.gameInvitePanel .whirled {
     font-size: 12px;
-}
-
-.gameInvitePanel .email .privacy, .gameInvitePanel .email .ImportSupportLink {
-    font-size: 10px;
-}
-
-.gameInvitePanel .email .toggle {
-    text-align: right;
-    font-size: 10px;
 }
 
 .gameInvitePanel .biglabel {
@@ -492,22 +512,10 @@
     font-size: 14px;
 }
 
-.gameInvitePanel .email .smalllabel {
-    color: #404040;
-}
-
 .gameInvitePanel .labelparen {
    color: #303030;
    font-size: 10px;
    width: 90%;
-}
-
-.gameInvitePanel .input {
-    border: 1px solid #cccccc;
-}
-
-.gameInvitePanel .message {
-    width: 100%;
 }
 
 .gameInvitePanel .im {

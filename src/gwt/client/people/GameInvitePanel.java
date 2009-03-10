@@ -14,12 +14,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,8 +39,6 @@ import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
-import client.ui.BorderedPopup;
-import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
@@ -104,52 +98,60 @@ public class GameInvitePanel extends VerticalPanel
 
         // build the invite url; this will be a play now link for lobbied games (type 0) or a
         // start-in-room link for avrgs (type 1)
-        final String inviteArgs = (gameType == 1) ? 
+        final String iargs = (gameType == 1) ? 
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token, roomId) :
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token);
         final String url =
-            DeploymentConfig.serverURL + "#" + Pages.makeToken(Pages.WORLD, inviteArgs);
+            DeploymentConfig.serverURL + "#" + Pages.makeToken(Pages.WORLD, iargs);
 
         // game information
-        SmartTable gameInfo = new SmartTable();
-        gameInfo.setWidth("100%");
-        gameInfo.setStyleName("gameInfo");
-        ThumbBox thumbnail = new ThumbBox(
-            detail.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-        gameInfo.setWidget(0, 0, thumbnail, 1, "thumbnail");
-        gameInfo.getFlexCellFormatter().setHorizontalAlignment(
-            0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-        gameInfo.setText(0, 1, _msgs.gameInviteIntro(detail.item.name), 1, "intro");
-        add(gameInfo);
+        SmartTable info = new SmartTable();
+        info.setWidth("100%");
+        info.setStyleName("gameInfo");
+        info.setWidget(0, 0, new ThumbBox(detail.item.getThumbnailMedia(),
+                                          MediaDesc.THUMBNAIL_SIZE), 1, "thumbnail");
+        info.getFlexCellFormatter().setRowSpan(0, 0, 2);
+        info.setText(0, 1, _msgs.gameInviteIntro(detail.item.name), 1, "intro");
+        info.setText(1, 0, _msgs.gameInviteTip(), 1, null);
+        add(info);
 
         // buttons to invoke the various ways to invite
         _methodButtons = new SmartTable();
         _methodButtons.setWidth("100%");
-        addMethodButton("Email", new InviteMethodCreator () {
+        addMethodButton("Email", new InviteMethodCreator() {
             public Widget create () {
-                return new EmailPanel(message, detail.gameId, url);
+                return new EmailListPanel(message) {
+                    protected void handleSend (
+                        String from, String msg, final List<EmailContact> addrs) {
+                        _invitesvc.sendGameInvites(addrs, detail.gameId, from, url, msg,
+                                                   new MsoyCallback<InvitationResults>() {
+                            public void onSuccess (InvitationResults ir) {
+                                _addressList.clear();
+                                // show the results (once we implement sending invites to
+                                // registered users, it will just serve as an error dialog)
+                                InviteUtils.showInviteResults(addrs, ir);
+                            }
+                        });
+                    }
+                };
             }
         });
-        addMethodButton("IM",
-            new InviteMethodCreator () {
-                public Widget create () {
-                    return new IMPanel(url);
-                }
-            });
-        addMethodButton("Whirled",
-            new InviteMethodCreator () {
-                public Widget create () {
-                    return new WhirledFriendsPanel(
-                        message, detail.gameId, detail.item.name, inviteArgs);
-                }
-            });
-        addMethodButton("Facebook",
-            new InviteMethodCreator () {
-                public Widget create () {
-                    showFBInvitePopup(detail.item.gameId, message, inviteArgs);
-                    return null;
-                }
-            });
+        addMethodButton("IM", new InviteMethodCreator() {
+            public Widget create () {
+                return new IMPanel(url);
+            }
+        });
+        addMethodButton("Whirled", new InviteMethodCreator() {
+            public Widget create () {
+                return new WhirledFriendsPanel(message, detail.gameId, detail.item.name, iargs);
+            }
+        });
+        addMethodButton("Facebook", new InviteMethodCreator() {
+            public Widget create () {
+                showFBInvitePopup(detail.item.gameId, message, iargs);
+                return null;
+            }
+        });
         add(_methodButtons);
 
         // method panel will on the bottom row
@@ -204,218 +206,6 @@ public class GameInvitePanel extends VerticalPanel
          * Creates the widget that will display this invite method.
          */
         Widget create ();
-    }
-
-    /**
-     * Invite method consisting of a panel with lots of email controls.
-     */
-    protected static class EmailPanel extends SmartTable
-    {
-        /**
-         * Creates a new email panel.
-         * TODO: support a more advanced address list that shows whether each of your contacts is
-         * a non-member, a member non-friend or a friend. 
-         */
-        public EmailPanel (String defaultMessage, int gameId, String url)
-        {
-            _gameId = gameId;
-            _url = url;
-            setStyleName("email");
-            setWidth("100%");
-
-            _addressList = new InviteList();
-
-            // create our two control sets for getting email addresses
-            final WebMailControls webmail = new WebMailControls(_addressList);
-            final ManualControls manual = new ManualControls(_addressList);
-
-            int row = 0;
-
-            // entry method, default to webmail
-            setWidget(row, 0, webmail, 2, null);
-
-            // mark the coordinates of the method widget, just for clarity
-            final int methodRow = row++;
-            final int methodColumn = 0;
-
-            // the address list
-            setWidget(row++, 0, _addressList, 2, null);
-
-            // method toggle
-            Label toggle = MsoyUI.createActionLabel("Enter More Addresses...", "toggle",
-                new ClickListener () {
-                    public void onClick (Widget sender) {
-                        if (getWidget(methodRow, methodColumn) == webmail) {
-                            setWidget(methodRow, methodColumn, manual, 2, null);
-                            ((Label)sender).setText("Import From Webmail...");
-    
-                        } else {
-                            setWidget(methodRow, methodColumn, webmail, 2, null);
-                            ((Label)sender).setText("Enter More Addresses...");
-                        }
-                    }
-                });
-            setWidget(row++, 0, toggle, 2, "toggle");
-
-            // from
-            setText(row, 0, "From:", 1, "biglabel");
-            _from = MsoyUI.createTextBox(
-                CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 25);
-            _from.addStyleName("input");
-            setWidget(row++, 1, _from);
-
-            // message label
-            setText(row, 0, "Message", 1, "biglabel");
-            setText(row++, 1, "(optional)", 1, "labelparen");
-
-            _message = MsoyUI.createTextArea(defaultMessage, 80, 4);
-            _message.setStyleName("message");
-            _message.addStyleName("input");
-            setWidget(row++, 0, _message, 2, null);
-
-            PushButton send = MsoyUI.createButton("shortThin", "Send", new ClickListener() {
-                public void onClick (Widget sender) {
-                    send();
-                }
-            });
-            setWidget(row, 0, send, 2, null);
-            getFlexCellFormatter().setHorizontalAlignment(
-                row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-        }
-
-        /**
-         * Sends the invite to all the addresses added so far.
-         */
-        protected void send ()
-        {
-            final List<EmailContact> contacts = InviteUtils.getValidUniqueAddresses(_addressList);
-
-            String from = _from.getText().trim();
-            if (from.length() == 0) {
-                MsoyUI.error(_msgs.inviteEmptyFromField());
-                _from.setFocus(true);
-                return;
-            }
-            String msg = _message.getText().trim();
-            _invitesvc.sendGameInvites(contacts, _gameId, from, _url, msg,
-                new MsoyCallback<InvitationResults>() {
-                    public void onSuccess (InvitationResults ir) {
-                        _addressList.clear();
-                        // show the results (once we implement sending invites to registered users,
-                        // it will just serve as an error dialog)
-                        InviteUtils.showInviteResults(contacts, ir);
-                    }
-                });
-        }
-
-        int _gameId;
-        String _url;
-        InviteList _addressList;
-        TextArea _message;
-        TextBox _from;
-    }
-
-    /**
-     * Shows controls for importing webmail contacts into an address list.
-     */
-    protected static class WebMailControls extends VerticalPanel
-    {
-        public WebMailControls (InviteList addressList)
-        {
-            setWidth("100%");
-
-            // labels line
-            SmartTable row = new SmartTable(0, 5);
-            row.setWidth("100%");
-
-            int col = 0;
-            row.setText(0, col++, "Import Webmail Contacts", 1, "biglabel");
-            row.setWidget(0, col++, new Image(
-                "/images/people/invite/webmail_providers_small_horizontal.png"));
-            Widget showSupported = MsoyUI.createActionLabel("Show Supported Accounts",
-                "ImportSupportLink", new ClickListener() {
-                    public void onClick (Widget widget) {
-                        BorderedPopup popup = new BorderedPopup(true);
-                        popup.setWidget(MsoyUI.createHTML(
-                            _msgs.inviteSupportedList(), "importSupportList"));
-                        popup.show();
-                    }
-                });
-            row.setWidget(0, col, showSupported);
-            row.getFlexCellFormatter().setHorizontalAlignment(0, col++,
-                HasHorizontalAlignment.ALIGN_RIGHT);
-            add(row);
-
-            // account entry line
-            row = new SmartTable(0, 5);
-            row.setWidth("100%");
-
-            col = 0;
-            row.setText(0, col++, "Account", 1, "smalllabel");
-            TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
-            account.setStyleName("input");
-            DefaultTextListener.configure(account, _msgs.inviteWebAddress());
-            row.setWidget(0, col++, account);
-            row.setText(0, col++, "Password", 1, "smalllabel");
-            TextBox password = new PasswordTextBox();
-            password.setStyleName("input");
-            row.setWidget(0, col++, password);
-            PushButton doimport = MsoyUI.createButton("shortThin", "Import", null);
-            new InviteUtils.WebmailImporter(doimport, account, password, addressList, false);
-            row.setWidget(0, col++, doimport);
-            add(row);
-
-            // privacy soother
-            row = new SmartTable(0, 5);
-            row.setWidth("100%");
-            row.setText(0, 0, "We will not store any of your contacts and will only use them " +
-                "for this invitation. We will never spam your friends.", 1, "privacy");
-            add(row);
-        }
-    }
-
-    /**
-     * Shows controls for manually adding addresses to an address list.
-     */
-    protected static class ManualControls extends VerticalPanel
-    {
-        public ManualControls (InviteList addressList)
-        {
-            _list = addressList;
-
-            setWidth("100%");
-
-            SmartTable row = new SmartTable(0, 5);
-            row.setWidth("100%");
-            row.setText(0, 0, "Enter Names and Addresses ", 1, "biglabel");
-            add(row);
-
-            row = new SmartTable(0, 5);
-            row.setWidth("100%");
-
-            int col = 0;
-            row.setText(0, col++, "Name", 1, "smalllabel");
-            _name = MsoyUI.createTextBox("", InviteUtils.MAX_NAME_LENGTH, 25);
-            _name.setStyleName("input");
-            DefaultTextListener.configure(_name, _msgs.inviteFriendName());
-            row.setWidget(0, col++, _name);
-            row.setText(0, col++, "Address", 1, "smalllabel");
-            _address = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
-            _address.setStyleName("input");
-            DefaultTextListener.configure(_address, _msgs.inviteFriendEmail());
-            row.setWidget(0, col++, _address);
-            PushButton add = MsoyUI.createButton("shortThin", "Add", new ClickListener() {
-                public void onClick (Widget sender) {
-                    InviteUtils.addEmailIfValid(_name, _address, _list);
-                }
-            });
-            row.setWidget(0, col++, add);
-            add(row);
-        }
-
-        InviteList _list;
-        TextBox _name;
-        TextBox _address;
     }
 
     /**
@@ -628,7 +418,7 @@ public class GameInvitePanel extends VerticalPanel
     protected int _methodRow;
 
     /** The buttons for the various invite methods. */
-    SmartTable _methodButtons;
+    protected SmartTable _methodButtons;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
