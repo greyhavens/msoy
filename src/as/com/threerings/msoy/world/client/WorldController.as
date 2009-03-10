@@ -1388,26 +1388,11 @@ public class WorldController extends MsoyController
         // if we moved to a scene, set things up thusly
         var scene :Scene = _wctx.getSceneDirector().getScene();
         if (scene != null) {
-            _wctx.getMsoyClient().setWindowTitle(scene.getName());
-            headerBar.setLocationName(scene.getName());
-
-            // update the owner link
-            var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
-            if (model != null) {
-                if (model.ownerName != null) {
-                    headerBar.setOwnerLink(model.ownerName.toString(),
-                        (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) ? handleViewMember
-                                                                              : handleViewGroup,
-                        model.ownerId);
-                } else {
-                    headerBar.setOwnerLink("");
-                }
-            }
-
             addRecentScene(scene);
             return;
         }
 
+        // TODO:  move this to MsoyGamePanel
         // if we're in a game, display the game name and activate the back button
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
         if (cfg != null) {

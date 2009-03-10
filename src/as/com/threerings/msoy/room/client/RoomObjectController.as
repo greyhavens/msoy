@@ -29,6 +29,7 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.BubblePopup;
+import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
@@ -75,6 +76,7 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
 
@@ -713,6 +715,7 @@ public class RoomObjectController extends RoomController
 
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
+        configureLocationName();
 
         _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
         _wdctx.getMuteDirector().addMuteObserver(this);
@@ -1000,12 +1003,6 @@ public class RoomObjectController extends RoomController
                 }
             }
 
-            var newName :String = attrsUpdate.name;
-            var oldName :String = _scene.getName();
-            if (newName != oldName) {
-                _wdctx.getMsoyClient().setWindowTitle(newName);
-            }
-
         } else if (update is FurniUpdate_Add) {
             data = (update as FurniUpdate_Add).data;
             _wdctx.getWorldClient().itemUsageChangedToGWT(
@@ -1021,6 +1018,30 @@ public class RoomObjectController extends RoomController
         _roomObjectView.processUpdate(update);
         if (_editor != null) {
             _editor.processUpdate(update);
+        }
+
+        if ((update is SceneAttrsUpdate) || (update is SceneOwnershipUpdate)) {
+            configureLocationName();
+        }
+    }
+
+    /**
+     * Set up the location name.
+     */
+    protected function configureLocationName () :void
+    {
+        _wdctx.getMsoyClient().setWindowTitle(_scene.getName());
+        var headerBar :HeaderBar = _wdctx.getTopPanel().getHeaderBar();
+        headerBar.setLocationName(_scene.getName());
+
+        var model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
+        if (model.ownerName != null) {
+            headerBar.setOwnerLink(model.ownerName.toString(),
+                (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) ? WorldController.VIEW_MEMBER
+                                                                      : MsoyController.VIEW_GROUP,
+                model.ownerId);
+        } else {
+            headerBar.setOwnerLink("");
         }
     }
 

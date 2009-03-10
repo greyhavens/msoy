@@ -69,6 +69,7 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+import com.threerings.msoy.room.data.SceneOwnershipUpdate;
 
 /**
  * Extends the base roomview with the ability to view a RoomObject, view chat, and edit.
@@ -199,6 +200,8 @@ public class RoomObjectView extends RoomView
             rereadScene(); // re-read our scene
             updateBackground();
             updateBackgroundAudio();
+        } else if (update is SceneOwnershipUpdate) {
+            rereadScene();
         }
 
         // this will take care of anything added
