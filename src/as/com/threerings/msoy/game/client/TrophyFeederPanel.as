@@ -11,17 +11,25 @@ import mx.core.ScrollPolicy;
 import mx.controls.Label;
 import mx.controls.Text;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+
 import com.threerings.io.TypedArray;
+
+import com.threerings.util.Log;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+
 import com.threerings.msoy.data.MsoyCodes;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyMediaContainer;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.data.all.Trophy;
+
 import com.threerings.msoy.item.data.all.TrophySource;
 
 /**
@@ -30,6 +38,8 @@ import com.threerings.msoy.item.data.all.TrophySource;
  */
 public class TrophyFeederPanel extends FloatingPanel
 {
+    public var log :Log = Log.getLog(this);
+
     public static function show (gctx :GameContext, gameId :int, gameName :String,
                                  trophies :TypedArray /* of Trophy */, onClose :Function) :void
     {
@@ -90,8 +100,13 @@ public class TrophyFeederPanel extends FloatingPanel
                 grid.addChild(row);
             }
             var tbox :HBox = new HBox();
-            tbox.addChild(new MediaWrapper(new MsoyMediaContainer(trophy.trophyMedia),
-                    TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
+            var tbtn :CommandButton = new CommandButton();
+            tbtn.styleName = "trophyFeedTrophy";
+            tbtn.setStyle("image", new MsoyMediaContainer(trophy.trophyMedia));
+            tbtn.setCallback(postTrophyToFeed, trophy);
+            tbtn.width = TrophySource.TROPHY_WIDTH;
+            tbtn.height = TrophySource.TROPHY_HEIGHT;
+            tbox.addChild(tbtn);
             var bits :VBox = new VBox();
             bits.setStyle("verticalGap", 0);
             var name :Label = new Label();
@@ -100,7 +115,7 @@ public class TrophyFeederPanel extends FloatingPanel
             bits.addChild(name);
             var descrip :Text = new Text();
             descrip.width = 200;
-            descrip.text = (trophy.description == null) ? "" : trophy.description;
+            descrip.text = trophy.description;
             bits.addChild(descrip);
             tbox.addChild(bits);
             GridUtil.addToRow(row, tbox);
@@ -112,7 +127,12 @@ public class TrophyFeederPanel extends FloatingPanel
         showCloseButton = true;
     }
 
-    protected var _trophies :Array /*of Trophy*/;
+    protected function postTrophyToFeed (trophy :Trophy) :void
+    {
+        log.info("Here we go...", "trophy", trophy);
+    }
+
+    protected var _trophies :TypedArray /*of Trophy*/;
     protected var _gameName :String;
 }
 }

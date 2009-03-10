@@ -559,7 +559,7 @@ TabNavigator, TabBar {
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
 .roomEditUndo, .roomEditButtonMakeMyHome,
-.roomEditResetLocation, .roomEditResetScale, .roomEditResetRotation, .tourNext {
+.roomEditResetLocation, .roomEditResetScale, .roomEditResetRotation, .tourNext, .trophyFeedTrophy {
   upSkin: ClassReference(null);
   downSkin: ClassReference(null);
   overSkin: ClassReference(null);
