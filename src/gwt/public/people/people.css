@@ -377,28 +377,23 @@
  --------------------------------- */
 
 .emailListPanel {
-    font-size: 12px;
+  font-size: 12px;
 }
 
-.emailListPanel .Privacy, .emailListPanel .ImportSupportLink {
-    font-size: 10px;
+.emailListPanel .WebMailControls .gwt-Image {
+  margin-right: none;
 }
 
 .emailListPanel .Toggle {
-    text-align: right;
-    font-size: 10px;
-}
-
-.emailListPanel .Small {
-    color: #404040;
+  text-align: right;
 }
 
 .emailListPanel .gwt-TextArea, .emailListPanel .gwt-TextBox {
-    border: 1px solid #cccccc;
+  border: 1px solid #cccccc;
 }
 
 .emailListPanel .gwt-TextArea {
-    width: 100%;
+  width: 100%;
 }
 
 .emailListPanel .InviteList {
@@ -456,7 +451,7 @@
   font-size: 14px;
 }
 
-.gameInvitePanel .labelparen {
+.gameInvite .labelparen {
   color: #303030;
   font-size: 10px;
   width: 90%;
@@ -481,12 +476,25 @@
   GameInvitePanel
  --------------------------------- */
 
-.gameInvitePanel .Whirled {
+.gameInvite .Whirled {
   font-size: 12px;
 }
 
-.gameInvitePanel .whirled .memberName {
+.gameInvite .whirled .memberName {
   max-width: 165px; /* Overflow doesn't work without this */
   overflow: hidden;
   white-space: nowrap;
+}
+
+/* -------------------------------
+  FindFriendsPanel
+ --------------------------------- */
+
+.findFriends {
+  border: none;
+}
+
+.findFriends .Title {
+  font-size: 16px;
+  padding: 10px;
 }

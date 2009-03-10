@@ -12,14 +12,12 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
-import client.util.ClickCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,6 +47,34 @@ public class InviteUtils
 
     /** Maximum length for email addresses. */
     protected static final int MAX_MAIL_LENGTH = 200;
+
+    public static class ResultsPopup extends BorderedDialog
+    {
+        public ResultsPopup (String title)
+        {
+            addStyleName("sendInvitesResultsPopup");
+            setHeaderTitle(title);
+    
+            _contents = new SmartTable();
+            _contents.setCellSpacing(3);
+            ScrollPanel scroll = new ScrollPanel(_contents);
+            scroll.setStyleName("ScrollPanel");
+            setContents(scroll);
+    
+            addButton(new Button(_cmsgs.close(), new ClickListener() {
+                public void onClick (Widget widget) {
+                    hide();
+                }
+            }));
+        }
+    
+        public SmartTable getContents ()
+        {
+            return _contents;
+        }
+    
+        protected SmartTable _contents;
+    }
 
     /**
      * Adds a name and email address to the invite list if both are valid. Reports errors to the
@@ -157,114 +183,6 @@ public class InviteUtils
             contents.setText(row++, 0, result, 3, null);
         }
         rp.show();
-    }
-
-    /**
-     * Handles the standard bits of importing webmail addresses and delegates the optional bits.
-     */
-    public static class WebmailImporter extends ClickCallback<List<EmailContact>>
-    {
-        public WebmailImporter (
-            SourcesClickEvents trigger, TextBox address, TextBox password, InviteList list,
-            boolean skipFriends)
-        {
-            super(trigger);
-            _address = address;
-            _password = password;
-            _list = list;
-            _skipFriends = skipFriends;
-        }
-
-        @Override protected boolean callService ()
-        {
-            if ("".equals(_address.getText())) {
-                MsoyUI.info(_msgs.inviteEnterWebAddress());
-                return false;
-            }
-            if ("".equals(_address.getText())) {
-                MsoyUI.info(_msgs.inviteEnterWebPassword());
-                return false;
-            }
-            _invitesvc.getWebMailAddresses(
-                _sentAddress = _address.getText(), _password.getText(), _skipFriends, this);
-            return true;
-        }
-
-        @Override protected boolean gotResult (List<EmailContact> addresses)
-        {
-            if (addresses.size() == 0) {
-                MsoyUI.info(_msgs.inviteNoContacts(_sentAddress));
-                return true;
-            }
-            List<EmailContact> leftovers = new ArrayList<EmailContact>();
-            int added = 0;
-            for (EmailContact ec : addresses) {
-                if (shouldAddToList(ec)) {
-                    if (_list.addItem(ec.name, ec.email)) {
-                        added++;
-                    }
-                } else {
-                    leftovers.add(ec);
-                }
-            }
-            _address.setText(_msgs.emailWebAddress());
-            _password.setText("");
-            handleLeftovers(leftovers);
-            if (added == 0) {
-                MsoyUI.info(_msgs.inviteNoNewNonMembers(_sentAddress));
-            }
-            return true;
-        }
-
-        /**
-         * Returns true if the given contact meets our criteria and should be added to the list.
-         * By default, everything is added to the list.
-         */
-        protected boolean shouldAddToList (EmailContact contact)
-        {
-            return true;
-        }
-
-        /**
-         * Processes contacts that were not added to the list. By default, this does nothing.
-         */
-        protected void handleLeftovers (List<EmailContact> addresses)
-        {
-        }
-
-        protected TextBox _address;
-        protected TextBox _password;
-        protected String _sentAddress;
-        protected InviteList _list;
-        protected boolean _skipFriends;
-    }
-
-    public static class ResultsPopup extends BorderedDialog
-    {
-        public ResultsPopup (String title)
-        {
-            addStyleName("sendInvitesResultsPopup");
-            setHeaderTitle(title);
-    
-            _contents = new SmartTable();
-            _contents.setCellSpacing(3);
-            ScrollPanel scroll = new ScrollPanel(_contents);
-            scroll.setStyleName("ScrollPanel");
-            setContents(scroll);
-    
-            addButton(new Button(_cmsgs.close(), new ClickListener() {
-                public void onClick (Widget widget) {
-                    hide();
-                }
-            }));
-        }
-    
-        public SmartTable getContents ()
-        {
-            return _contents;
-        }
-    
-        protected SmartTable _contents;
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

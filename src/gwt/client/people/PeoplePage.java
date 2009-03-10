@@ -85,7 +85,7 @@ public class PeoplePage extends Page
             if (args.get(1, "").equals("game")) {
                 setContent(_msgs.gameInviteTitle(), new GameInvitePanel(args));
             } else if (args.get(1, "").equals("newuser")) {
-                // TODO
+                setContent(_msgs.findFriendsTitle(), new FindFriendsPanel());
             } else if (args.get(1, "").equals("links")) {
                 setContent(_msgs.linkToWhirledTitle(), new LinkToWhirledPanel());
             } else {

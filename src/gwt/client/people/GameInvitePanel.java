@@ -13,7 +13,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
@@ -55,7 +54,7 @@ public class GameInvitePanel extends InvitePanel
      */
     public GameInvitePanel (final Args args)
     {
-        addStyleName("gameInvitePanel");
+        addStyleName("gameInvite");
 
         int gameId = args.get(2, 0);
 
@@ -115,7 +114,7 @@ public class GameInvitePanel extends InvitePanel
         // buttons to invoke the various ways to invite
         addMethodButton("Email", new InviteMethodCreator() {
             public Widget create () {
-                EmailListPanel panel = new EmailListPanel() {
+                EmailListPanel panel = new EmailListPanel(false) {
                     protected void handleSend (
                         String from, String msg, final List<EmailContact> addrs) {
                         _invitesvc.sendGameInvites(addrs, detail.gameId, from, url, msg,
@@ -346,5 +345,6 @@ public class GameInvitePanel extends InvitePanel
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
         ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+
     protected static final String FBINVITE_WINDOW_NAME = "_whirled_fbinvite";
 }

@@ -3,16 +3,14 @@
 
 package client.people;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,7 +19,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.shell.CShell;
-import client.ui.BorderedPopup;
 import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 
@@ -30,12 +27,7 @@ import client.ui.MsoyUI;
  */
 public abstract class EmailListPanel extends SmartTable
 {
-    /**
-     * Creates a new email panel.
-     * TODO: support a more advanced address list that shows whether each of your contacts is
-     * a non-member, a member non-friend or a friend.
-     */
-    public EmailListPanel ()
+    public EmailListPanel (final boolean filterMembers)
     {
         setStyleName("emailListPanel");
         setWidth("100%");
@@ -43,11 +35,27 @@ public abstract class EmailListPanel extends SmartTable
         _addressList = new InviteList();
 
         // create our two control sets for getting email addresses
-        final WebMailControls webmail = new WebMailControls(_addressList);
         final ManualControls manual = new ManualControls(_addressList);
+        final WebMailControls webmail = new WebMailControls(
+            _msgs.emailImportTitle(), _msgs.emailImport()) {
+            protected void handleAddresses (List<EmailContact> addrs) {
+                List<EmailContact> members = new ArrayList<EmailContact>();
+                for (EmailContact ec : addrs) {
+                    // don't add existing members to the to be invited list, those will be handled
+                    // by virtue of being on the members list
+                    if (!filterMembers || ec.mname == null) {
+                        _addressList.addItem(ec.name, ec.email);
+                    } else {
+                        members.add(ec);
+                    }
+                }
+                if (members.size() > 0) {
+                    handleExistingMembers(members);
+                }
+            }
+        };
 
         int row = 0;
-
         // entry method, default to webmail
         setWidget(row, 0, webmail, 2, null);
 
@@ -74,14 +82,11 @@ public abstract class EmailListPanel extends SmartTable
         setWidget(row++, 0, toggle, 2, "Toggle");
 
         // from
-        setText(row, 0, _msgs.emailFrom(), 1, "Bold");
-        _from = MsoyUI.createTextBox(CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 25);
-        setWidget(row++, 1, _from);
+        row = addFrom(row);
 
         // message
-        setText(row, 0, _msgs.emailMessage(), 1, "Bold");
-        setText(row++, 1, _msgs.emailOptional(), 1, "labelparen");
         setWidget(row++, 0, _message = MsoyUI.createTextArea("", 80, 4), 2, null);
+        DefaultTextListener.configure(_message, _msgs.emailMessage());
 
         setWidget(row, 0, MsoyUI.createButton("shortThin", _msgs.emailSend(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -96,6 +101,15 @@ public abstract class EmailListPanel extends SmartTable
         _message.setText(message);
     }
 
+    protected int addFrom (int row)
+    {
+        setText(row, 0, _msgs.emailFrom(), 1, "Bold");
+        getFlexCellFormatter().setWidth(row, 0, "10px"); // squeezy!
+        _from = MsoyUI.createTextBox(CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 25);
+        setWidget(row, 1, _from);
+        return row+1;
+    }
+
     /**
      * Sends the invite to all the addresses added so far.
      */
@@ -107,8 +121,20 @@ public abstract class EmailListPanel extends SmartTable
             _from.setFocus(true);
             return;
         }
-        handleSend(from, _message.getText().trim(),
-                   InviteUtils.getValidUniqueAddresses(_addressList));
+        String msg = _message.getText().trim();
+        if (msg.equals(_msgs.emailMessage())) {
+            msg = "";
+        }
+        handleSend(from, msg, InviteUtils.getValidUniqueAddresses(_addressList));
+    }
+
+    /**
+     * Called with the members of the caller's address book that are already Whirled members, iff
+     * <code>filterMembers</code> was true in our constructor.
+     */
+    protected void handleExistingMembers (List<EmailContact> addrs)
+    {
+        // nothing by default
     }
 
     /**
@@ -116,59 +142,6 @@ public abstract class EmailListPanel extends SmartTable
      * from value. We don't validate that contacts is non-empty nor that message is non-blank.
      */
     protected abstract void handleSend (String from, String message, List<EmailContact> contacts);
-
-    protected static class WebMailControls extends FlowPanel
-    {
-        public WebMailControls (InviteList addressList)
-        {
-            setWidth("100%");
-
-            // labels line
-            SmartTable row = new SmartTable(0, 5);
-            row.setWidth("100%");
-
-            int col = 0;
-            row.setText(0, col++, _msgs.emailImportTitle(), 1, "Bold");
-            row.setWidget(0, col++, new Image(
-                "/images/people/invite/webmail_providers_small_horizontal.png"));
-            Widget showSupported = MsoyUI.createActionLabel(
-                _msgs.emailSupported(), "ImportSupportLink", new ClickListener() {
-                public void onClick (Widget widget) {
-                    new BorderedPopup(true) { /*constructor*/ {
-                        setWidget(MsoyUI.createHTML(_msgs.emailWebmails(), "emailSupported"));
-                    }}.show();
-                }
-            });
-            row.setWidget(0, col, showSupported);
-            row.getFlexCellFormatter().setHorizontalAlignment(
-                0, col++, HasHorizontalAlignment.ALIGN_RIGHT);
-            add(row);
-
-            // account entry line
-            row = new SmartTable(0, 5);
-            row.setWidth("100%");
-
-            col = 0;
-            row.setText(0, col++, _msgs.emailAccount(), 1, "Small");
-            TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
-            DefaultTextListener.configure(account, _msgs.emailWebAddress());
-            row.setWidget(0, col++, account);
-            row.setText(0, col++, _msgs.emailPassword(), 1, "Small");
-            TextBox password = new PasswordTextBox();
-            row.setWidget(0, col++, password);
-
-            PushButton doimp = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailImport(), null);
-            new InviteUtils.WebmailImporter(doimp, account, password, addressList, false);
-            row.setWidget(0, col++, doimp);
-            add(row);
-
-            // privacy soother
-            row = new SmartTable(0, 5);
-            row.setWidth("100%");
-            row.setText(0, 0, _msgs.emailCaveat(), 1, "Privacy");
-            add(row);
-        }
-    }
 
     protected static class ManualControls extends FlowPanel
     {
@@ -187,11 +160,11 @@ public abstract class EmailListPanel extends SmartTable
             row.setWidth("100%");
 
             int col = 0;
-            row.setText(0, col++, _msgs.emailName(), 1, "Small");
+            row.setText(0, col++, _msgs.emailName(), 1, null);
             _name = MsoyUI.createTextBox("", InviteUtils.MAX_NAME_LENGTH, 25);
             DefaultTextListener.configure(_name, _msgs.emailFriendName());
             row.setWidget(0, col++, _name);
-            row.setText(0, col++, _msgs.emailAddress(), 1, "Small");
+            row.setText(0, col++, _msgs.emailAddress(), 1, null);
             _address = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
             DefaultTextListener.configure(_address, _msgs.emailFriendEmail());
             row.setWidget(0, col++, _address);
