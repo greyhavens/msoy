@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Config,com.threerings.util.Config,_so,ensureCapacity,getValue,remove,setValue" name="keywords">
+<meta content="Config,com.threerings.util.Config,_data,_so,ensureCapacity,getValue,isPersisting,remove,setPath,setValue" name="keywords">
 <title>com.threerings.util.Config</title>
 </head>
 <body>
@@ -54,6 +54,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_data">_data</a> : Object<div class="summaryTableDescription"> The object in which we store things, usually _so.data.</div>
+</td><td class="summaryTableOwnerCol">Config</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_so">_so</a> : SharedObject<div class="summaryTableDescription"> The shared object that contains our preferences.</div>
 </td><td class="summaryTableOwnerCol">Config</td>
 </tr>
@@ -94,9 +98,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#isPersisting()">isPersisting</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Are we persisting settings?
+     </div>
+</td><td class="summaryTableOwnerCol">Config</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#remove()">remove</a>(name:String):void</div>
 <div class="summaryTableDescription">
      Remove any set value for the specified preference.</div>
+</td><td class="summaryTableOwnerCol">Config</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setPath()">setPath</a>(path:String):void</div>
+<div class="summaryTableDescription">
+     Set the path, if null then we aren't persisting settings.</div>
 </td><td class="summaryTableOwnerCol">Config</td>
 </tr>
 <tr class="">
@@ -133,10 +154,18 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_data"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_data</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _data:Object</code><p> The object in which we store things, usually _so.data. </p></div>
 <a name="_so"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_so</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_so</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -218,6 +247,23 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="isPersisting()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isPersisting</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isPersisting():Boolean</code><p>
+     Are we persisting settings?
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="remove()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -227,10 +273,28 @@ showHideInherited();
 <div class="detailBody">
 <code>public function remove(name:String):void</code><p>
      Remove any set value for the specified preference.
+     This does not dispatch an event because this would only be done to remove an
+     obsolete preference.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="setPath()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setPath</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setPath(path:String):void</code><p>
+     Set the path, if null then we aren't persisting settings.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">path</span>:String</code></td>
 </tr>
 </table>
 </div>

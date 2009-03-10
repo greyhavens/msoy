@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerCustomConfig,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -228,6 +228,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      loaded up our SWF by itself?
      </div>
 </td><td class="summaryTableOwnerCol"><a href="AbstractControl.html">AbstractControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#registerCustomConfig()">registerCustomConfig</a>(func:Function):void</div>
+<div class="summaryTableDescription">
+     Register a function used for generating a custom config panel.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -871,6 +879,28 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="registerCustomConfig()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">registerCustomConfig</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function registerCustomConfig(func:Function):void</code><p>
+     Register a function used for generating a custom config panel. This will
+     be called when this piece of furniture is being edited inside whirled.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">func</span>:Function</code> &mdash; signature: function () :DisplayObject
+     <p>Your function should return a DisplayObject as a configuration panel.
+     The width/height of the object at return time will be used to configure the amount
+     of space given it. Any changes made by the user should effect immediately, or
+     you should provide buttons to apply the change, if absolutely necessary.</p>
+          </td>
 </tr>
 </table>
 </div>

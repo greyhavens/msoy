@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="SpawnMessage,com.whirled.contrib.platformer.net.SpawnMessage,DYNAMIC,NAME,OWNER,PLAYER,REMOVE,SPAWN,id,idx,state,x,y,name,changeOwner,create,fromBytes,removeDynamic,spawnDynamic,spawnIndex,spawnPlayer,toBytes" name="keywords">
+<meta content="SpawnMessage,com.whirled.contrib.platformer.net.SpawnMessage,DYNAMIC,NAME,OWNER,PLAYER,REMOVE,REQUEST_OWNER,SPAWN,id,idx,state,x,y,name,changeOwner,create,fromBytes,removeDynamic,requestOwnerChange,spawnDynamic,spawnIndex,spawnPlayer,toBytes" name="keywords">
 <title>com.whirled.contrib.platformer.net.SpawnMessage</title>
 </head>
 <body>
@@ -120,6 +120,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#requestOwnerChange()">requestOwnerChange</a>(id:int, owner:int):<a href="../net/SpawnMessage.html">SpawnMessage</a>
+</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">SpawnMessage</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#spawnDynamic()">spawnDynamic</a>(id:int, owner:int):<a href="../net/SpawnMessage.html">SpawnMessage</a>
 </div>
 <div class="summaryTableDescription">[static]</div>
@@ -175,6 +183,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#REMOVE">REMOVE</a> : int = 3<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">SpawnMessage</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#REQUEST_OWNER">REQUEST_OWNER</a> : int = 6<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SpawnMessage</td>
 </tr>
 <tr class="">
@@ -362,6 +374,33 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="requestOwnerChange()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">requestOwnerChange</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function requestOwnerChange(id:int, owner:int):<a href="../net/SpawnMessage.html">SpawnMessage</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">id</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">owner</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../net/SpawnMessage.html">SpawnMessage</a></code></td>
+</tr>
+</table>
+</div>
 <a name="spawnDynamic()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -528,6 +567,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const REMOVE:int = 3</code>
+</div>
+<a name="REQUEST_OWNER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">REQUEST_OWNER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const REQUEST_OWNER:int = 6</code>
 </div>
 <a name="SPAWN"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

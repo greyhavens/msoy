@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="OnlineTickedMessageManager,com.whirled.contrib.simplegame.net.OnlineTickedMessageManager,_events,_gameCtrl,_isInControl,_lastSendTime,_maxPendingSends,_minSendDelayMS,_pendingSends,_receivedFirstTick,_tickIntervalMS,_tickName,_ticks,log,isReady,unprocessedTickCount,maxPendingSends,maxSendsPerSecond,canSendMessage,canSendMessageNow,getNextTick,onMessageReceived,run,sendMessage,sendMessageNow,stop,update" name="keywords">
+<meta content="OnlineTickedMessageManager,com.whirled.contrib.simplegame.net.OnlineTickedMessageManager,_events,_gameCtrl,_isInControl,_lastSendTime,_maxPendingSends,_minSendDelayMS,_pendingSends,_receivedFirstTick,_tickIntervalMS,_tickName,_ticks,isReady,unprocessedTickCount,maxPendingSends,maxSendsPerSecond,canSendMessage,canSendMessageNow,getNextTick,onMessageReceived,run,sendMessage,sendMessageNow,stop,update" name="keywords">
 <title>com.whirled.contrib.simplegame.net.OnlineTickedMessageManager</title>
 </head>
 <body>
@@ -38,7 +38,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class OnlineTickedMessageManager</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">OnlineTickedMessageManager <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> <a href="BasicMessageManager.html">BasicMessageManager</a></td>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">OnlineTickedMessageManager <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> <a href="BasicMessageManager.html">BasicMessageManager</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 <tr>
 <td class="classHeaderTableLabel">Implements</td><td><a href="TickedMessageManager.html">TickedMessageManager</a></td>
@@ -208,13 +208,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="BasicMessageManager.html#serializeMsg()">serializeMsg</a>(msg:<a href="../net/Message.html">Message</a>):Object</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="BasicMessageManager.html">BasicMessageManager</a></td>
-</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -264,13 +257,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a name="constantSummary"></a><a name="protectedConstantSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Constants</div>
-<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<div class="showHideLinks">
+<div class="hideInheritedProtectedConstant" id="hideInheritedProtectedConstant">
+<a onclick="javascript:setInheritedVisible(false,'ProtectedConstant');" href="#protectedConstantSummary" class="showHideLink"><img src="../../../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Constants</a>
+</div>
+<div class="showInheritedProtectedConstant" id="showInheritedProtectedConstant">
+<a onclick="javascript:setInheritedVisible(true,'ProtectedConstant');" href="#protectedConstantSummary" class="showHideLink"><img src="../../../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Constants</a>
+</div>
+</div>
+<table id="summaryTableProtectedConstant" class="summaryTable hideInheritedProtectedConstant" cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#log">log</a> : Log<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
+<tr class="hideInheritedProtectedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="BasicMessageManager.html#log">log</a> : Log<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="BasicMessageManager.html">BasicMessageManager</a></td>
 </tr>
 </table>
 </div>
@@ -597,17 +598,6 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">dt</span>:Number</code></td>
 </tr>
 </table>
-</div>
-<a name="constantDetail"></a>
-<div class="detailSectionHeader">Constant detail</div>
-<a name="log"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">log</td><td class="detailHeaderType">constant</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected static const log:Log</code>
 </div>
 <br>
 <br>

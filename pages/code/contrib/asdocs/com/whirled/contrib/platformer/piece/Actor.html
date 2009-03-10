@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Actor,com.whirled.contrib.platformer.piece.Actor,ACT_COUNT,HIT_BACK,HIT_BIG,HIT_FRONT,ORIENT_LEFT,ORIENT_RIGHT,ORIENT_SHOOT_B,ORIENT_SHOOT_D,ORIENT_SHOOT_F,ORIENT_SHOOT_MASK,ORIENT_SHOOT_U,ORIENT_TURNING,U_ACCEL,U_ATTACH,U_HEALTH,U_HIT,U_ORIENT,U_SHOOT,U_UPGRADE,_accelX,_accelY,_attached,_attachedId,_bounds,_health,_height,_justShot,_killer,_orient,_shooting,_startHealth,_wasHit,_width,events,maxAttachable,maxWalkable,projCollider,accelX,accelY,attached,attachedId,health,height,justShot,killer,orient,shooting,startHealth,wasHit,width,doesHit,fromBytes,getBounds,isOrientShootDown,isOrientShootUp,orientBody,orientShoot,setAttached,shouldSpawn,toBytes,toString" name="keywords">
+<meta content="Actor,com.whirled.contrib.platformer.piece.Actor,ACT_COUNT,HIT_BACK,HIT_BIG,HIT_FRONT,ORIENT_LEFT,ORIENT_RIGHT,ORIENT_SHOOT_B,ORIENT_SHOOT_D,ORIENT_SHOOT_F,ORIENT_SHOOT_MASK,ORIENT_SHOOT_U,ORIENT_TURNING,U_ACCEL,U_ATTACH,U_HEALTH,U_HIT,U_ORIENT,U_SHOOT,U_UPGRADE,_accelX,_accelY,_attached,_attachedId,_bounds,_disabled,_health,_height,_justShot,_killer,_orient,_shooting,_startHealth,_wasHit,_width,events,maxAttachable,maxWalkable,projCollider,accelX,accelY,attached,attachedId,disabled,health,height,justShot,killer,orient,shooting,startHealth,wasHit,width,applyForce,doesHit,fromBytes,getBounds,isAlive,isOrientShootDown,isOrientShootUp,orientBody,orientShoot,setAttached,shouldSpawn,toBytes,toString,xmlInstance" name="keywords">
 <title>com.whirled.contrib.platformer.piece.Actor</title>
 </head>
 <body>
@@ -79,6 +79,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#attachedId">attachedId</a> : int<div class="summaryTableDescription">[read-only]</div>
 </td><td class="summaryTableOwnerCol">Actor</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#disabled">disabled</a> : Boolean<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Actor</td>
+</tr>
 <tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="Dynamic.html#dx">dx</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
@@ -133,6 +137,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="Dynamic.html#owner">owner</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
+</tr>
+<tr class="hideInheritedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="Dynamic.html#ownerRequest">ownerRequest</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
 </tr>
 <tr class="">
@@ -212,6 +220,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_bounds">_bounds</a> : <a href="../piece/Rect.html">Rect</a>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Actor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_disabled">_disabled</a> : Boolean<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Actor</td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
@@ -311,7 +323,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#doesHit()">doesHit</a>(x:Number, y:Number, source:Object):Boolean</div>
+<a class="signatureLink" href="#applyForce()">applyForce</a>(fx:Number, fy:Number):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Actor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#doesHit()">doesHit</a>(x:Number, y:Number, source:Object):<a href="../game/Collision.html">Collision</a>
+</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Actor</td>
 </tr>
@@ -344,12 +364,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="Dynamic.html#isAlive()">isAlive</a>():Boolean</div>
+<a class="signatureLink" href="#isAlive()">isAlive</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
+</td><td class="summaryTableOwnerCol">Actor</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -428,12 +448,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="Dynamic.html#xmlInstance()">xmlInstance</a>():XML</div>
+<a class="signatureLink" href="#xmlInstance()">xmlInstance</a>():XML</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
+</td><td class="summaryTableOwnerCol">Actor</td>
 </tr>
 </table>
 </div>
@@ -681,6 +701,29 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _bounds:<a href="../piece/Rect.html">Rect</a></code>
+</div>
+<a name="_disabled"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_disabled</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _disabled:Boolean</code>
+</div>
+<a name="disabled"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">disabled</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>disabled:Boolean</code>&nbsp;&nbsp;[read-write]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get disabled():Boolean</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set disabled(value:Boolean):void</code>
+<br>
 </div>
 <a name="events"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -943,14 +986,34 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="doesHit()"></a>
+<a name="applyForce()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">doesHit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">applyForce</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function doesHit(x:Number, y:Number, source:Object):Boolean</code><span class="label">Parameters</span>
+<code>public function applyForce(fx:Number, fy:Number):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">fx</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">fy</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="doesHit()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">doesHit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function doesHit(x:Number, y:Number, source:Object):<a href="../game/Collision.html">Collision</a></code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
@@ -972,7 +1035,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Boolean</code></td>
+<td width="20"></td><td><code><a href="../game/Collision.html">Collision</a></code></td>
 </tr>
 </table>
 </div>
@@ -1003,6 +1066,22 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../piece/Rect.html">Rect</a></code></td>
+</tr>
+</table>
+</div>
+<a name="isAlive()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isAlive</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function isAlive():Boolean</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -1136,6 +1215,22 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="xmlInstance()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">xmlInstance</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function xmlInstance():XML</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>XML</code></td>
 </tr>
 </table>
 </div>

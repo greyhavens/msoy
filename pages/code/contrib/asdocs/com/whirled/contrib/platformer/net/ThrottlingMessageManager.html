@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ThrottlingMessageManager,com.whirled.contrib.platformer.net.ThrottlingMessageManager,DEBUG,_lastSent,_queue,_sent,_timer,onTimer,sendMessage,shutdown" name="keywords">
+<meta content="ThrottlingMessageManager,com.whirled.contrib.platformer.net.ThrottlingMessageManager,DEBUG,_lastSent,_lastTrackAdjust,_maxRate,_minRate,_queue,_sent,_timer,_trackAdjustRate,_trackReceived,_trackingId,onMessageReceived,onTimer,sendMessage,shutdown,trackRateAgainstId" name="keywords">
 <title>com.whirled.contrib.platformer.net.ThrottlingMessageManager</title>
 </head>
 <body>
@@ -73,6 +73,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lastSent">_lastSent</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lastTrackAdjust">_lastTrackAdjust</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxRate">_maxRate</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_minRate">_minRate</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
 <tr class="hideInheritedProtectedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="MessageManager.html#_msgTypes">_msgTypes</a> : HashMap<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="MessageManager.html">MessageManager</a></td>
@@ -92,6 +104,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_timer">_timer</a> : Timer<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_trackAdjustRate">_trackAdjustRate</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_trackingId">_trackingId</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_trackReceived">_trackReceived</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
 </tr>
 </table>
@@ -163,6 +187,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#trackRateAgainstId()">trackRateAgainstId</a>(id:int = 0, adjustRate:int = 0, maxRate:int = 0):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
+</tr>
 </table>
 </div>
 <a name="protectedMethodSummary"></a>
@@ -187,12 +218,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="MessageManager.html">MessageManager</a></td>
 </tr>
-<tr class="hideInheritedProtectedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="MessageManager.html#onMessageReceived()">onMessageReceived</a>(e:MessageReceivedEvent):void</div>
+<a class="signatureLink" href="#onMessageReceived()">onMessageReceived</a>(e:MessageReceivedEvent):void</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="MessageManager.html">MessageManager</a></td>
+</td><td class="summaryTableOwnerCol">ThrottlingMessageManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -232,6 +263,33 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _lastSent:int</code>
 </div>
+<a name="_lastTrackAdjust"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_lastTrackAdjust</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _lastTrackAdjust:int</code>
+</div>
+<a name="_maxRate"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_maxRate</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _maxRate:int</code>
+</div>
+<a name="_minRate"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_minRate</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _minRate:int</code>
+</div>
 <a name="_queue"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -259,6 +317,33 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _timer:Timer</code>
 </div>
+<a name="_trackAdjustRate"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_trackAdjustRate</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _trackAdjustRate:int</code>
+</div>
+<a name="_trackingId"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_trackingId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _trackingId:int</code>
+</div>
+<a name="_trackReceived"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_trackReceived</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _trackReceived:int</code>
+</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="ThrottlingMessageManager()"></a>
@@ -283,10 +368,24 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="onMessageReceived()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">onMessageReceived</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected override function onMessageReceived(e:MessageReceivedEvent):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">e</span>:MessageReceivedEvent</code></td>
+</tr>
+</table>
+</div>
 <a name="onTimer()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">onTimer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">onTimer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -319,6 +418,32 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public override function shutdown():void</code>
+</div>
+<a name="trackRateAgainstId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">trackRateAgainstId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function trackRateAgainstId(id:int = 0, adjustRate:int = 0, maxRate:int = 0):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">id</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">adjustRate</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">maxRate</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Metrics,com.whirled.contrib.platformer.util.Metrics,_height,_set,_tile,_width,_winHeight,_winWidth,DISPLAY_HEIGHT,DISPLAY_WIDTH,INITIALIZED,TILE_SIZE,WINDOW_HEIGHT,WINDOW_WIDTH,init,isSet" name="keywords">
+<meta content="Metrics,com.whirled.contrib.platformer.util.Metrics,_height,_scale,_set,_stile,_tile,_width,_winHeight,_winWidth,DISPLAY_HEIGHT,DISPLAY_WIDTH,INITIALIZED,SCALE,SOURCE_TILE_SIZE,TILE_SIZE,WINDOW_HEIGHT,WINDOW_WIDTH,init,isSet" name="keywords">
 <title>com.whirled.contrib.platformer.util.Metrics</title>
 </head>
 <body>
@@ -64,6 +64,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Metrics</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SCALE">SCALE</a> : Number<div class="summaryTableDescription">[static][read-only]</div>
+</td><td class="summaryTableOwnerCol">Metrics</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SOURCE_TILE_SIZE">SOURCE_TILE_SIZE</a> : int<div class="summaryTableDescription">[static][read-only]</div>
+</td><td class="summaryTableOwnerCol">Metrics</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TILE_SIZE">TILE_SIZE</a> : int<div class="summaryTableDescription">[static][read-only]</div>
 </td><td class="summaryTableOwnerCol">Metrics</td>
 </tr>
@@ -89,7 +97,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Metrics</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_scale">_scale</a> : Number<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Metrics</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_set">_set</a> : Boolean = false<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Metrics</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_stile">_stile</a> : int<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Metrics</td>
 </tr>
 <tr class="">
@@ -120,7 +136,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#init()">init</a>(width:int, height:int, tile:int):void</div>
+<a class="signatureLink" href="#init()">init</a>(width:int, height:int, tile:int, stile:int = 0):void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Metrics</td>
 </tr>
@@ -136,7 +152,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#isSet()">isSet</a>(value:int):int</div>
+<a class="signatureLink" href="#isSet()">isSet</a>(value:*):*</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Metrics</td>
 </tr>
@@ -194,6 +210,27 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public static function get INITIALIZED():Boolean</code>
 <br>
 </div>
+<a name="_scale"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_scale</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static var _scale:Number</code>
+</div>
+<a name="SCALE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SCALE</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>SCALE:Number</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public static function get SCALE():Number</code>
+<br>
+</div>
 <a name="_set"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -202,6 +239,27 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static var _set:Boolean = false</code>
+</div>
+<a name="SOURCE_TILE_SIZE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SOURCE_TILE_SIZE</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>SOURCE_TILE_SIZE:int</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public static function get SOURCE_TILE_SIZE():int</code>
+<br>
+</div>
+<a name="_stile"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_stile</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static var _stile:int</code>
 </div>
 <a name="_tile"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -284,7 +342,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function init(width:int, height:int, tile:int):void</code><span class="label">Parameters</span>
+<code>public static function init(width:int, height:int, tile:int, stile:int = 0):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">width</span>:int</code></td>
@@ -301,6 +359,12 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">tile</span>:int</code></td>
 </tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">stile</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
 </table>
 </div>
 <a name="isSet()"></a>
@@ -310,17 +374,17 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static function isSet(value:int):int</code><span class="label">Parameters</span>
+<code>protected static function isSet(value:*):*</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">value</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">value</span>:*</code></td>
 </tr>
 </table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code></td>
+<td width="20"></td><td><code>*</code></td>
 </tr>
 </table>
 </div>
