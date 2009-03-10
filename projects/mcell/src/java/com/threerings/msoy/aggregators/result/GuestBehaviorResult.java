@@ -68,8 +68,15 @@ public class GuestBehaviorResult
             _entry.vector = (String)data.get("vector");
 
         } else if (ACCOUNT_CREATED.equals(name)) {
-            _entry.conversion = timestamp;
-            _entry.conversionMember = (Integer)data.get("newMemberId");
+            Boolean isGuest = (Boolean) data.get("isGuest");
+            if (isGuest != null && isGuest.booleanValue()) {
+                // if they created a permaguest account, they played Whirled
+                _entry.played = timestamp;
+            } else {
+                // if they saved their permaguest account, they're fully converted
+                _entry.converted = timestamp;
+            }
+            _entry.member = (Integer)data.get("newMemberId");
 
         } else if (EXPERIENCE.equals(name)) {
             final String action = (String)data.get("action");
@@ -77,15 +84,6 @@ public class GuestBehaviorResult
                 return false;
             }
             _entry.addEvent(action, timestamp);
-
-            final Integer memberId = (Integer)data.get("memberId");
-            if (memberId != null && memberId > 0) {
-                if (_entry.firstExperienceAsPlayer != null) {
-                    throw new RuntimeException("Eek! Has had first experience!");
-                }
-                _entry.firstExperienceAsPlayer = timestamp;
-                _entry.conversionMember = memberId;
-            }
         }
 
         return true;
@@ -125,15 +123,14 @@ public class GuestBehaviorResult
         result.put("acct_vector", vector);
         result.put("acct_vector_from_ad", vector.startsWith("a."));
 
-        // data from AccountCreated
-        final Date conversion = _entry.getConversion();
-        result.put("conv", conversion != null ? 1 : 0); // 1 if someone converted, 0 otherwise
+        result.put("conv", _entry.converted != null ? 1 : 0); // 1 if someone converted, 0 otherwise
+        result.put("played", _entry.played != null ? 1 : 0); // 1 if someone played, 0 otherwise
 
         // data from Experiences
-        final Map<String, Integer> conversionEvents = _entry.countByConversion(conversion,
-            CheckType.CONVERSION_PERIOD);
-        final Map<String, Integer> retentionWeekEvents = _entry.countByConversion(conversion,
-            CheckType.RETENTION_WEEK);
+        final Map<String, Integer> conversionEvents =
+            _entry.countByConversion(_entry.converted, CheckType.CONVERSION_PERIOD);
+        final Map<String, Integer> retentionWeekEvents =
+            _entry.countByConversion(_entry.converted, CheckType.RETENTION_WEEK);
 
         result.put("events_till_conversion", toCounts(conversionEvents));
         result.put("events_till_retention", toCounts(retentionWeekEvents));
@@ -143,15 +140,15 @@ public class GuestBehaviorResult
 
         // data from both
         int minutes = 0;
-        if (_entry.firstEvent != null && conversion != null) {
-            result.put("conv_timestamp", conversion);
-            minutes = (int)(conversion.getTime() - _entry.firstEvent.getTime()) / (1000 * 60);
+        if (_entry.firstEvent != null && _entry.converted != null) {
+            result.put("conv_timestamp", _entry.converted);
+            minutes = (int)(_entry.converted.getTime() - _entry.firstEvent.getTime()) / (1000 * 60);
         } else {
             result.put("conv_timestamp", new Date(0L));
         }
         
-        if (_entry.conversionMember != null) {
-            result.put("conv_member", _entry.conversionMember);
+        if (_entry.member != null) {
+            result.put("conv_member", _entry.member);
         } else {
             result.put("conv_member", Integer.valueOf(0));
         }
@@ -164,7 +161,7 @@ public class GuestBehaviorResult
         // retention counts only if they have a valid start date, a valid conversion
         // date, and they had some experiences more than a week after converting.
         Date lastEventDate = _entry.findLastEventDate();
-        boolean cameBack = (_entry.firstEvent != null) && (conversion != null) && (lastEventDate != null);
+        boolean cameBack = (_entry.firstEvent != null) && (_entry.converted != null) && (lastEventDate != null);
 
         int days = 0;
         if (cameBack) {
@@ -179,7 +176,7 @@ public class GuestBehaviorResult
 
         // pull out conversion / retention status
         String status = "1. did not convert";
-        if (conversion != null) {
+        if (_entry.converted != null) {
             status = !retained ? "2. converted" : "3. retained";
         }
         result.put("conv_status", status);
@@ -222,34 +219,19 @@ public class GuestBehaviorResult
     {
         public String vector;
         public String tracker;
-
         public Date firstEvent;
-        public Date conversion;
-        public Integer conversionMember;
+        
         public Boolean embed;
 
+        public Integer member;
+        public Date converted;
+        public Date played;
+        
         public Multimap<String, Date> events = Multimaps.newArrayListMultimap();
-        public Date firstExperienceAsPlayer;
 
         public GuestEntry ()
         {
-        // don't initialize anything
-        }
-
-        /**
-         * Returns the conversion date from AccountCreated, or the date of the first experience
-         * with a player's memberId, whichever is first. Returns null if neither is available.
-         */
-        public Date getConversion ()
-        {
-            if (conversion != null) {
-                return conversion;
-            }
-            if (firstExperienceAsPlayer != null) {
-                return firstExperienceAsPlayer;
-            }
-
-            return null;
+            // don't initialize anything
         }
 
         /** Returns the ternary 'embed' as a string. */
@@ -348,15 +330,6 @@ public class GuestBehaviorResult
                 this.firstEvent = other.firstEvent;
             }
 
-            final Boolean otherExperienceEarlier = other.firstExperienceAsPlayer != null
-                && this.firstExperienceAsPlayer != null
-                && other.firstExperienceAsPlayer.before(this.firstExperienceAsPlayer);
-
-            if (this.firstExperienceAsPlayer == null || otherExperienceEarlier) {
-                this.conversionMember = other.conversionMember;
-                this.firstExperienceAsPlayer = other.firstExperienceAsPlayer;
-            }
-
             if (this.vector == null) {
                 this.vector = other.vector;
             }
@@ -365,9 +338,14 @@ public class GuestBehaviorResult
                 this.embed = other.embed;
             }
 
-            if (this.conversion == null) {
-                this.conversion = other.conversion;
-                this.conversionMember = other.conversionMember;
+            if (this.converted == null) {
+                this.converted = other.converted;
+                this.member = other.member;
+            }
+            
+            if (this.played == null) {
+                this.played = other.played;
+                this.member = other.member;
             }
 
             for (Map.Entry<String, Collection<Date>> entry : other.events.asMap().entrySet()) {
@@ -387,11 +365,11 @@ public class GuestBehaviorResult
             // data from VisitorInfoCreated
             HadoopSerializationUtil.writeObject(out, firstEvent);
             // data from AccountCreated
-            HadoopSerializationUtil.writeObject(out, conversion);
-            HadoopSerializationUtil.writeObject(out, conversionMember);
-                       // data from Experiences
+            HadoopSerializationUtil.writeObject(out, converted);
+            HadoopSerializationUtil.writeObject(out, played);
+            HadoopSerializationUtil.writeObject(out, member);
+            // data from Experiences
             HadoopSerializationUtil.writeObject(out, events);
-            HadoopSerializationUtil.writeObject(out, firstExperienceAsPlayer);
         }
 
         @SuppressWarnings("unchecked")
@@ -405,11 +383,11 @@ public class GuestBehaviorResult
             // data from VisitorInfoCreated
             this.firstEvent = (Date)HadoopSerializationUtil.readObject(in);
             // data from AccountCreated
-            this.conversion = (Date)HadoopSerializationUtil.readObject(in);
-            this.conversionMember = (Integer)HadoopSerializationUtil.readObject(in);
+            this.converted = (Date)HadoopSerializationUtil.readObject(in);
+            this.played = (Date)HadoopSerializationUtil.readObject(in);
+            this.member = (Integer)HadoopSerializationUtil.readObject(in);
             // more data from Experiences
             this.events = (Multimap<String, Date>)HadoopSerializationUtil.readObject(in);
-            this.firstExperienceAsPlayer = (Date)HadoopSerializationUtil.readObject(in);
         }
     }
 
