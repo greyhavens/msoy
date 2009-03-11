@@ -297,9 +297,8 @@ public class SwiftlyRepository extends DepotRepository
      */
     public void updateBuildResultItem (int projectId, int memberId, int buildResultItemId)
     {
-        Key<SwiftlyCollaboratorsRecord> key =
-            SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
-        int rows = updatePartial(SwiftlyCollaboratorsRecord.class, key, key,
+        int rows = updatePartial(
+            SwiftlyCollaboratorsRecord.getKey(projectId, memberId),
             SwiftlyCollaboratorsRecord.BUILD_RESULT_ITEM_ID, buildResultItemId);
         if (rows == 0) {
             throw new DatabaseException(
