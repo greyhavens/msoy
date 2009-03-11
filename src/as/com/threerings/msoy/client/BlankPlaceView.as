@@ -36,13 +36,15 @@ public class BlankPlaceView extends Canvas
         addChild(new FlexWrapper(spinner));
         spinner.x = (swidth - LoadingSpinner.WIDTH) / 2;
         spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2;
-        spinner.setStatus(Msgs.GENERAL.get("m.ls_connecting"));
 
         // if we're embedded, we want to preserve continuity with the preloader splash
         if (ctx.getMsoyClient().isEmbedded()) {
+            spinner.setStatus(""); // use a blank status, we have our splash text already
             // TODO: could use createSharableLink here except we're not logged on
             var msg :String = Msgs.GENERAL.get("m.embed_splash", DeploymentConfig.serverURL);
             addChild(new FlexWrapper(Preloader.makeSplashText(msg, swidth, spinner.y)));
+        } else {
+            spinner.setStatus(Msgs.GENERAL.get("m.ls_connecting"));
         }
     }
 
