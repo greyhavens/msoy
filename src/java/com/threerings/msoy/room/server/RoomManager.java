@@ -595,9 +595,8 @@ public class RoomManager extends SpotSceneManager
 
         Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
         if (_mobs.containsKey(key)) {
-            log.warning(
-                "Tried to spawn mob that's already present", "gameId", gameId, "mobId", mobId);
-            listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+            // this will only ever show up in an AVRG server agent log 
+            listener.requestFailed("e.duplicate_mob_id " + mobId);
             return;
         }
 
@@ -633,9 +632,8 @@ public class RoomManager extends SpotSceneManager
 
         final MobObject mobObj = _mobs.get(key);
         if (mobObj == null) {
-            log.warning(
-                "Tried to move mob that's not present", "gameId", gameId, "mobId", mobId);
-            listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+            // this will only ever show up in an AVRG server agent log 
+            listener.requestFailed("e.mob_not_found " + mobId);
             return;
         }
 
@@ -656,9 +654,8 @@ public class RoomManager extends SpotSceneManager
 
         final MobObject mobObj = _mobs.get(key);
         if (mobObj == null) {
-            log.warning(
-                "Tried to despawn mob that's not present", "gameId", gameId, "mobId", mobId);
-            listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+            // this will only ever show up in an AVRG server agent log 
+            listener.requestFailed("e.mob_not_found " + mobId);
             return;
         }
 
