@@ -226,6 +226,7 @@ public class AVRGameBackend extends ControlBackend
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
         o["room_getRoomId_v1"] = room_getRoomId_v1;
         o["room_getRoomName_v1"] = room_getRoomName_v1;
+        o["room_canEditRoom_v1"] = room_canEditRoom_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
         o["getEntityIds_v1"] = getEntityIds_v1;
@@ -342,6 +343,14 @@ public class AVRGameBackend extends ControlBackend
         }
 
         return BackendUtils.getPlayerIds(_gameObj, _ctrl.getRoom(), getRoomId());
+    }
+
+    // RoomSubControl
+    protected function room_canEditRoom_v1 (targetId :int /* ignored */, memberId :int) :Boolean
+    {
+        validateRoomTargetId(targetId);
+        var ctrl :RoomController = getRoomController("room_canEditRoom(" + memberId + ")");
+        return (ctrl != null) && ctrl.canManageRoom(memberId);
     }
 
     // RoomSubControl
