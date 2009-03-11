@@ -56,7 +56,7 @@ public class LiaisonGameContext
         _client.addServiceGroup(MsoyCodes.GAME_GROUP);
 
         // create our directors
-        _locDtr = new LocationDirector(this);
+        _locDtr = new GameLocationDirector(this);
         _chatDtr = new GameChatDirector(this);
         _parDtr = new ParlorDirector(this);
         // use all the same chat filters for games
@@ -185,4 +185,48 @@ public class LiaisonGameContext
     protected var _chatDtr :ChatDirector;
     protected var _parDtr :ParlorDirector;
 }
+}
+
+import flash.events.TimerEvent;
+import flash.utils.Timer;
+import flash.utils.getTimer;
+
+import com.threerings.crowd.client.LocationDirector;
+import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.util.CrowdContext;
+
+import com.threerings.msoy.client.Preloader;
+
+import com.threerings.msoy.game.client.GameContext;
+
+class GameLocationDirector extends LocationDirector
+{
+    public function GameLocationDirector (ctx :CrowdContext)
+    {
+        super(ctx);
+    }
+
+    override public function didMoveTo (placeId :int, config :PlaceConfig) :void
+    {
+        // if we're in the embed client and it has been less than 5 seconds since the preloader
+        // started, delay this move so that we continue to display our Whirled splash ad for the
+        // minimum desired amount of time
+        var elapsed :int = getTimer() - Preloader.preloaderStart;
+        if ((_ctx as GameContext).getMsoyContext().getMsoyClient().isEmbedded() &&
+            (elapsed < MIN_EMBED_SPLASH_TIME)) {
+            trace("Delaying move for " + (MIN_EMBED_SPLASH_TIME - elapsed) + "ms: " + config);
+            // TODO: there must be an easier way to do this
+            var timer :Timer = new Timer(MIN_EMBED_SPLASH_TIME - elapsed, 1);
+            timer.addEventListener(TimerEvent.TIMER, function () :void {
+                didMoveTo(placeId, config); // can't use super here, yay actionscript!
+            });
+            timer.start();
+        } else {
+            trace("Moving now: " + config);
+            super.didMoveTo(placeId, config);
+        }
+    }
+
+    /** We require that our splash screen show for at least this many millis in the embed client. */
+    protected static const MIN_EMBED_SPLASH_TIME :int = 5000;
 }
