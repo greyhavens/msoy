@@ -48,6 +48,7 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
+import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -243,11 +244,14 @@ public class ProfileServlet extends MsoyServiceServlet
             MemberNodeActions.infoChanged(
                 memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
         }
+        if (nameChanged) {
+            // let the game servers know about the name change
+            _playerActions.displayNameUpdated(new MemberName(displayName, memrec.memberId));
+        }
 
         if (greeterChanged) {
             // let the world servers know about the info change
-            MemberNodeActions.tokensChanged(
-                memrec.memberId, memrec.toTokenRing());
+            MemberNodeActions.tokensChanged(memrec.memberId, memrec.toTokenRing());
         }
     }
 
@@ -442,6 +446,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
