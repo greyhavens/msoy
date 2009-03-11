@@ -177,6 +177,11 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("signalReceived_v1", name, ObjectMarshaller.decode(value));        
     }
 
+    public function processChatMessage (entityIdent :String, msg :String) :void
+    {
+        callUserCode("receivedChat_v2", entityIdent, msg);
+    }
+
     override protected function handleUserCodeConnect (evt :Object) :void
     {
         super.handleUserCodeConnect(evt);

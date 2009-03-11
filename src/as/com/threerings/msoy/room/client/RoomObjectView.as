@@ -36,6 +36,8 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.msoy.avrg.client.AVRGameBackend;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -371,6 +373,18 @@ public class RoomObjectView extends RoomView
             var name :String = speaker.getOccupantInfo().username.toString();
             for each (var entity :MsoySprite in _entities.values()) {
                 entity.processChatMessage(ident, name, msg.message);
+            }
+
+            // TODO: ugh
+            // What should happen is that we should do many operations straight on the backend
+            // (not on the sprite)
+            // then, all the backends can be iterated.
+            // Then, when an avrg is running, it just adds its own entity backend to the list
+            // and it's iterated and called just like everything else
+            // and we won't forget to add methods to avrg.
+            var avrg :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
+            if (avrg != null) {
+                avrg.processChatMessage(ident, msg.message);
             }
         }
     }
