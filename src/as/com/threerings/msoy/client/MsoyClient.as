@@ -53,14 +53,6 @@ import com.threerings.msoy.notify.data.Notification;
 [Event(name="miniWillChange", type="com.threerings.util.ValueEvent")]
 
 /**
- * Dispatched when the client is known to be either embedded or not. This happens shortly after the
- * client is initialized.
- *
- * @eventType com.threerings.msoy.client.MsoyClient.EMBEDDED_STATE_KNOWN
- */
-[Event(name="embeddedStateKnown", type="com.threerings.util.ValueEvent")]
-
-/**
  * A client shared by both our world and game incarnations.
  */
 public /*abstract*/ class MsoyClient extends CrowdClient
@@ -73,13 +65,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      * @eventType miniWillChange
      */
     public static const MINI_WILL_CHANGE :String = "miniWillChange";
-
-    /**
-     * An event dispatched when we learn whether or not the client is embedded.
-     *
-     * @eventType clientEmbedded
-     */
-    public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
 
     // statically reference classes we require
     MsoyBootstrapData;
@@ -97,16 +82,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         log.info("Starting up", "capabilities", Capabilities.serverString,
             "preloader", (getTimer() - Preloader.preloaderStart));
 
-        // first things first: create our credentials and context
-        _creds = createStartupCreds(null);
-        _ctx = createContext();
-
-        // wire up a listener for bridge events from the embed stub
-        configureBridgeFunctions(UberClient.getApplication().loaderInfo.sharedEvents);
-        // then report to the embed stub that we're ready to receive bridge events
-        UberClient.getApplication().loaderInfo.sharedEvents.dispatchEvent(
-            new Event(UberClientModes.CLIENT_READY, true));
-
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
@@ -123,9 +98,17 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         } else {
             Prefs.setEmbedded(_embedded);
         }
-        // after we've created our context, dispatch the status of whether we're embedded
-        // AND: this must be done _after_ we set Prefs.setEmbedded().
-        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
+
+        // now create our credentials and context (NOTE: we do this after we've wired up our
+        // external functions which determines whether or not we're embedded)
+        _creds = createStartupCreds(null);
+        _ctx = createContext();
+
+        // wire up a listener for bridge events from the embed stub
+        configureBridgeFunctions(UberClient.getApplication().loaderInfo.sharedEvents);
+        // then report to the embed stub that we're ready to receive bridge events
+        UberClient.getApplication().loaderInfo.sharedEvents.dispatchEvent(
+            new Event(UberClientModes.CLIENT_READY, true));
 
         // allow connecting the media server if it differs from the game server
         if ((Security.sandboxType != Security.LOCAL_WITH_FILE) &&

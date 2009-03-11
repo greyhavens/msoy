@@ -97,31 +97,24 @@ public class ChatOverlay
     }
 
     public function ChatOverlay (
-        ctx :MsoyContext, target :LayeredContainer,
-        scrollBarSide :int = SCROLL_BAR_LEFT, includeOccupantList :Boolean = true)
+        ctx :MsoyContext, target :LayeredContainer, scrollBarSide :int = SCROLL_BAR_LEFT,
+        includeOccupantList :Boolean = true)
     {
         _ctx = ctx;
-        _ctx.getClient().addEventListener(MsoyClient.EMBEDDED_STATE_KNOWN, handleEmbeddedKnown);
         _includeOccList = includeOccupantList;
         _scrollBarSide = scrollBarSide;
-
-        createStandardFormats();
+        _target = target;
 
         // overlay for history chat that may get pulled out and put on the side in slide chat mode
         _historyOverlay.mouseEnabled = false;
         _historyOverlay.blendMode = BlendMode.LAYER;
 
-        _target = target;
+        Prefs.events.addEventListener(
+            ConfigValueSetEvent.CONFIG_VALUE_SET, handlePrefsUpdated, false, 0, true);
+        createStandardFormats();
+
         layout();
         displayChat(true);
-    }
-
-    protected function handleEmbeddedKnown (event :Event) :void
-    {
-        // we don't care about the embedded state, but we now know to listen for prefs changes
-        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
-            handlePrefsUpdated, false, 0, true);
-        createStandardFormats();
     }
 
     /**

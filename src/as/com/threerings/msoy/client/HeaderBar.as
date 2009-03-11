@@ -56,8 +56,6 @@ public class HeaderBar extends HBox
         addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
             _ctx.getMsoyClient().setWindowTitle(getChatTabs().locationName);
         });
-
-        _ctx.getMsoyClient().addEventListener(MsoyClient.EMBEDDED_STATE_KNOWN, handleEmbeddedKnown);
     }
 
     public function getChatTabs () :ChatTabBar
@@ -157,16 +155,13 @@ public class HeaderBar extends HBox
 
         _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, handleUIStateChange);
         handleUIStateChange(null);
-    }
 
-    protected function handleEmbeddedKnown (event :ValueEvent) :void
-    {
-        const embedded :Boolean = event.value as Boolean;
+        // configure some bits if we're embedded
+        const embedded :Boolean = _ctx.getMsoyClient().isEmbedded();
         setCompVisible(_closeBox, !embedded);
 
         // add a coins display
         if (embedded) {
-
             // disabled for the time being
             // TODO: remove permanently
             if (_moneyEnabled) {
@@ -206,8 +201,7 @@ public class HeaderBar extends HBox
     }
 
     /**
-     * Only used in an embedded client.
-     * Called when the client object is set up or changes.
+     * Called when the client object is set up or changes. Only used in an embedded client.
      */
     protected function clientDidChange (... ignored) :void
     {
