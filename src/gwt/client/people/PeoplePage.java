@@ -84,13 +84,15 @@ public class PeoplePage extends Page
         } else if (action.equals("invites")) { // !guest
             if (args.get(1, "").equals("game")) {
                 setContent(_msgs.gameInviteTitle(), new GameInvitePanel(args));
-            } else if (args.get(1, "").equals("newuser")) {
-                setContent(_msgs.findFriendsTitle(), new FindFriendsPanel());
             } else if (args.get(1, "").equals("links")) {
                 setContent(_msgs.linkToWhirledTitle(), new LinkToWhirledPanel());
             } else {
-                setContent(_msgs.inviteTitle(), new WhirledInvitePanel());
+                boolean justRegistered = args.get(1, "").equals("newuser");
+                setContent(_msgs.inviteTitle(), new WhirledInvitePanel(justRegistered));
             }
+
+        } else if (action.equals("ff")) { // !guest
+            setContent(_msgs.findFriendsTitle(), new FindFriendsPanel());
 
         } else if (action.equals("friendly")) { // !guest
             setContent(_msgs.greetersTitle(), new GreeterPanel());

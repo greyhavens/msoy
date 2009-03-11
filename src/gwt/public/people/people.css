@@ -490,11 +490,11 @@
   FindFriendsPanel
  --------------------------------- */
 
-.findFriends {
-  border: none;
-}
-
 .findFriends .Title {
   font-size: 16px;
-  padding: 10px;
+}
+
+.findFriends .Header {
+  font-size: 12px;
+  text-decoration: underline;
 }
