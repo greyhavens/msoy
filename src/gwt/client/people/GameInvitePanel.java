@@ -97,8 +97,7 @@ public class GameInvitePanel extends InvitePanel
         final String iargs = (gameType == 1) ? 
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token, roomId) :
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token);
-        final String url =
-            DeploymentConfig.serverURL + "#" + Pages.makeToken(Pages.WORLD, iargs);
+        final String url = Pages.makeURL(Pages.WORLD, iargs);
 
         // game information
         SmartTable info = new SmartTable();

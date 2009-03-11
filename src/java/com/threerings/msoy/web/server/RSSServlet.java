@@ -18,6 +18,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -125,8 +126,8 @@ public class RSSServlet extends HttpServlet
         StringBuilder rss = new StringBuilder("<?xml version=\"1.0\"?>");
         rss.append("<rss version=\"2.0\"><channel>");
         rss.append("<title>").append(group.name).append("</title>");
-        rss.append("<link>").append(url);
-        rss.append("#" + Pages.GROUPS.getPath() + "-f_").append(group.groupId).append("</link>");
+        rss.append("<link>").append(Pages.makeURL(Pages.GROUPS, Args.compose("f", group.groupId)));
+        rss.append("</link>");
         rss.append("<description>").append(group.blurb).append("</description>");
         if (messages.size() > 0) {
             String createdDate = _sdf.format(messages.get(0).created);
@@ -141,14 +142,15 @@ public class RSSServlet extends HttpServlet
             }
             rss.append("<item>");
             rss.append("<title>").append(thread.subject).append("</title>");
-            rss.append("<link>").append(url);
-            rss.append("#").append(Pages.GROUPS.getPath()).append("-t_").append(thread.threadId);
+            rss.append("<link>");
+            rss.append(Pages.makeURL(Pages.GROUPS, Args.compose("t", thread.threadId)));
             rss.append("</link>");
-            rss.append("<description><![CDATA[ ").append(MessageUtil.expandMessage(message.message));
+            rss.append("<description>");
+            rss.append("<![CDATA[ ").append(MessageUtil.expandMessage(message.message));
             rss.append("]]></description>");
             rss.append("<pubDate>").append(_sdf.format(message.created)).append("</pubDate>");
-            rss.append("<guid>").append(url);
-            rss.append("#").append(Pages.GROUPS.getPath()).append("-t_").append(thread.threadId);
+            rss.append("<guid>");
+            rss.append(Pages.makeURL(Pages.GROUPS, Args.compose("t", thread.threadId)));
             rss.append("</guid>");
             rss.append("</item>");
         }
