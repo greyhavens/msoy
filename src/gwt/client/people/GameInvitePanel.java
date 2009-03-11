@@ -152,6 +152,9 @@ public class GameInvitePanel extends InvitePanel
 
     protected static void showFBInvitePopup (int gameId, String message, String acceptPath)
     {
+        // append an entry vector
+        acceptPath += Args.compose("vec", "v.fbgameinvite");
+
         // TODO: pass along the default message too. This is complicated because the servlet must
         // convert it to javascript
         String popupURL = "/fbinvite/do?gameId=" + gameId + "&path=" + acceptPath;
