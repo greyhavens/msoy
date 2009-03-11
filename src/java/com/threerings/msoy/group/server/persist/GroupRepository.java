@@ -312,9 +312,8 @@ public class GroupRepository extends DepotRepository
      */
     public void setRank (int groupId, int memberId, byte newRank)
     {
-        Key<GroupMembershipRecord> key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = updatePartial(
-            GroupMembershipRecord.class, key, key,
+            GroupMembershipRecord.getKey(memberId, groupId),
             GroupMembershipRecord.RANK, newRank,
             GroupMembershipRecord.RANK_ASSIGNED, new Timestamp(System.currentTimeMillis()));
         if (rows == 0) {
