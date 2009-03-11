@@ -53,7 +53,6 @@ import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;

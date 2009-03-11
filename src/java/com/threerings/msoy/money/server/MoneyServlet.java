@@ -17,7 +17,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;

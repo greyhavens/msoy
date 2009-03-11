@@ -50,12 +50,12 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;

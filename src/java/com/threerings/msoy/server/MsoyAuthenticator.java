@@ -13,7 +13,6 @@ import com.google.inject.Singleton;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;

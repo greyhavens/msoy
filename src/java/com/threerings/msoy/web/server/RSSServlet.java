@@ -17,7 +17,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
@@ -122,7 +121,6 @@ public class RSSServlet extends HttpServlet
     protected String generateRSS (Group group, List<ForumThreadRecord> threads,
                                   List<ForumMessageRecord> messages, int numThreads)
     {
-        String url = ServerConfig.getServerURL();
         StringBuilder rss = new StringBuilder("<?xml version=\"1.0\"?>");
         rss.append("<rss version=\"2.0\"><channel>");
         rss.append("<title>").append(group.name).append("</title>");

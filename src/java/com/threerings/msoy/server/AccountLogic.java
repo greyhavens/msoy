@@ -28,9 +28,9 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
-import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;

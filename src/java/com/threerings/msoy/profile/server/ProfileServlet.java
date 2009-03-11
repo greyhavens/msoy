@@ -22,10 +22,10 @@ import com.samskivert.util.IntSet;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
-import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;

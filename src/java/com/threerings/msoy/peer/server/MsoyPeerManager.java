@@ -42,7 +42,6 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
-import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
@@ -50,7 +49,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.MsoySession;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.data.GameAuthName;

@@ -65,7 +65,6 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.RoomLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
