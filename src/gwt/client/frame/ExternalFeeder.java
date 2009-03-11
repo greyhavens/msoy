@@ -35,12 +35,12 @@ public class ExternalFeeder
                                          String mediaURL, String trophyURL)
     /*-{
         var ids = new Array();
-        var data = new Object();
-        data.game_id = gameId;
-        data.game = game;
-        data.trophy = trophy;
-        data.descrip = descrip;
-        data.images = [ {'src':mediaURL, 'href':trophyURL} ]
+        var data = {
+            "game_id": gameId,
+            "game": game,
+            "trophy": trophy,
+            "descrip": descrip,
+            "images": [ {"src": mediaURL, "href": trophyURL} ] };
         $wnd.FB_PostTrophy(data, ids);
     }-*/;
 }

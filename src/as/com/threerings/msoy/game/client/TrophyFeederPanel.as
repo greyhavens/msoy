@@ -131,7 +131,7 @@ public class TrophyFeederPanel extends FloatingPanel
     protected function postTrophyToFeed (trophy :Trophy) :void
     {
         log.info("Here we go...", "trophy", trophy);
-        _wctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
+        _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
             trophy.gameId, _gameName, trophy.name, trophy.description,
             trophy.trophyMedia.getMediaPath() ]);
     }
