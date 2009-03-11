@@ -376,8 +376,8 @@ public /*abstract*/ class MsoyContext
     public function saveSessionToken (arsp :AuthResponseData) :void
     {
         var rdata :MsoyAuthResponseData = (arsp as MsoyAuthResponseData);
-        Log.getLog(MsoyContext).info("Using session token " + rdata.sessionToken);
         if (rdata.sessionToken != null) {
+            Log.getLog(MsoyContext).info("Using session token " + rdata.sessionToken);
             MsoyCredentials(getClient().getCredentials()).sessionToken = rdata.sessionToken;
         }
     }
