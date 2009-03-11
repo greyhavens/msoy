@@ -26,16 +26,16 @@ public class BlankPlaceView extends Canvas
         // going to be sullied by the header bar, embed bar and control bar *and* we are created
         // during TopPanel's constructor, so we can't ask it how big it is
         var swidth :int = UberClient.getApplication().stage.stageWidth;
-        var sheight :int = UberClient.getApplication().stage.stageHeight -
-            HeaderBar.HEIGHT - ControlBar.HEIGHT;
+        var sheight :int = UberClient.getApplication().stage.stageHeight;
+        var hheight :int = HeaderBar.HEIGHT;
         if (ctx.getMsoyClient().isEmbedded()) {
-            sheight -= EmbedHeader.HEIGHT;
+            hheight += EmbedHeader.HEIGHT;
         }
 
         var spinner :LoadingSpinner = new LoadingSpinner();
         addChild(new FlexWrapper(spinner));
         spinner.x = (swidth - LoadingSpinner.WIDTH) / 2;
-        spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2;
+        spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2 - hheight;
 
         // if we're embedded, we want to preserve continuity with the preloader splash
         if (ctx.getMsoyClient().isEmbedded()) {
