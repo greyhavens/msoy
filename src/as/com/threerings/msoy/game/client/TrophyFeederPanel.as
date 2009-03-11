@@ -42,10 +42,10 @@ public class TrophyFeederPanel extends FloatingPanel
     public var log :Log = Log.getLog(this);
 
     public static function show (gctx :GameContext, gameId :int, gameName :String,
-                                 trophies :TypedArray /* of Trophy */, onClose :Function) :void
+                                 trophies :Array /* of Trophy */, onClose :Function) :void
     {
         if (trophies != null) {
-            trophies.filter(function (trophy :Trophy, index :int, arr :Array) :Boolean {
+            trophies = trophies.filter(function (trophy :Trophy, index :int, arr :Array) :Boolean {
                 return trophy.whenEarned != null;
             });
         }
@@ -71,7 +71,7 @@ public class TrophyFeederPanel extends FloatingPanel
         }
     }
 
-    public function TrophyFeederPanel (ctx :MsoyContext, trophies :TypedArray, gameName :String)
+    public function TrophyFeederPanel (ctx :MsoyContext, trophies :Array, gameName :String)
     {
         super(ctx, Msgs.GAME.get("t.trophy_feeder"));
         _trophies = trophies;
@@ -130,13 +130,12 @@ public class TrophyFeederPanel extends FloatingPanel
 
     protected function postTrophyToFeed (trophy :Trophy) :void
     {
-        log.info("Here we go...", "trophy", trophy);
         _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
             trophy.gameId, _gameName, trophy.name, trophy.description,
             trophy.trophyMedia.getMediaPath() ]);
     }
 
-    protected var _trophies :TypedArray /*of Trophy*/;
+    protected var _trophies :Array /*of Trophy*/;
     protected var _gameName :String;
 
     /** Event dispatched to GWT when the user clicks a trophy. */
