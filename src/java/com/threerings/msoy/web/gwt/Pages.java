@@ -67,7 +67,7 @@ public enum Pages
      * an affiliate of the given member and then redirect to the given page with the given args.
      * The member id may be zero, in which case the link will only redirect with no affiliation.
      */
-    public static String makeAffiliateUrl (int memberId, Pages page, String args)
+    public static String makeAffiliateURL (int memberId, Pages page, String args)
     {
         return DeploymentConfig.serverURL + "welcome/" + memberId + "/" + makeToken(page, args);
     }
