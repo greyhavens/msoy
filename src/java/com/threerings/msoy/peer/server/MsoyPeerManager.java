@@ -531,11 +531,20 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
+    protected void didInit ()
+    {
+        super.didInit();
+
+        // register our custom invocation service
+        _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
+    }
+
+    @Override // from PeerManager
     protected void clientLoggedOn (String nodeName, ClientInfo clinfo)
     {
         super.clientLoggedOn(nodeName, clinfo);
 
-        if (clinfo instanceof MsoyClientInfo) {
+        if (clinfo.username instanceof MsoyAuthName) {
             memberLoggedOn(nodeName, (MsoyClientInfo)clinfo);
         }
     }
@@ -545,7 +554,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         super.clientLoggedOff(nodeName, clinfo);
 
-        if (clinfo instanceof MsoyClientInfo) {
+        if (clinfo.username instanceof MsoyAuthName) {
             memberLoggedOff(nodeName, (MsoyClientInfo)clinfo);
         }
     }
@@ -606,15 +615,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         super.initClientInfo(client, info);
 
-        // this is called when the client starts their session, so we can add our location tracking
-        // listener here; we need never remove it as it should live for the duration of the session
-        client.getClientObject().addListener(new LocationTracker());
+        // if this is the primary session, add a location tracker
+        if (info.username instanceof MsoyAuthName) {
+            // we need never remove this as it should live for the duration of the session
+            client.getClientObject().addListener(new LocationTracker());
 
-        // register our custom invocation service
-        _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
-
-        // notify observers
-        memberLoggedOn(_nodeName, (MsoyClientInfo)info);
+            // let observers know that a member logged onto this node
+            memberLoggedOn(_nodeName, (MsoyClientInfo)info);
+        }
     }
 
     @Override // from PeerManager
@@ -622,15 +630,17 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         super.clearClientInfo(client, info);
 
-        // clear out their location in our node object (if they were in one)
-        Integer memberId = ((MsoyClientInfo)info).getMemberId();
-        if (_mnobj.memberLocs.containsKey(memberId)) {
-            // log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
-            _mnobj.removeFromMemberLocs(memberId);
-        }
+        if (info.username instanceof MsoyAuthName) {
+            // clear out their location in our node object (if they were in one)
+            Integer memberId = ((MsoyClientInfo)info).getMemberId();
+            if (_mnobj.memberLocs.containsKey(memberId)) {
+                // log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
+                _mnobj.removeFromMemberLocs(memberId);
+            }
 
-        // notify observers
-        memberLoggedOff(_nodeName, (MsoyClientInfo)info);
+            // notify observers that a member logged off of this node
+            memberLoggedOff(_nodeName, (MsoyClientInfo)info);
+        }
     }
 
     @Override // from PeerManager
