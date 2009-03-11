@@ -106,8 +106,8 @@ public class MoneyServlet extends MsoyServiceServlet
         // Spam the cash out mailing list
         _mailer.sendTemplateEmail(
             MailSender.By.HUMAN, CASHOUT_NOTIFY_EMAIL, "no-reply@whirled.com", "blingCashOutNotice",
-            "memberId", mrec.memberId, "name", mrec.name, "url", DeploymentConfig.serverURL + "#" +
-            Pages.makeToken(Pages.ADMINZ, "cashout")); // TODO: A more meaningful URL
+            "memberId", mrec.memberId, "name", mrec.name,
+            "url", Pages.makeURL(Pages.ADMINZ, "cashout")); // TODO: A more meaningful URL
 
         return result;
     }
