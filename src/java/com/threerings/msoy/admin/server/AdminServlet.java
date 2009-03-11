@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.servlet.util.ServiceWaiter;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -606,16 +607,6 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     /**
-     * Detect if an item is in use in a scene.
-     * TODO: share code with {@link ItemManager#reclaimItem}
-     */
-    public static boolean isUsed (ItemRecord item)
-    {
-        return (item.location != 0 && (item.used == Item.USED_AS_FURNITURE ||
-            item.getType() == Item.AUDIO || item.getType() == Item.DECOR));
-    }
-
-    /**
      * Manages the reclamation of all items or item clones from scenes in which they are used. Must
      * be posted to the domgr thread. Provides a means of waiting for all reclamations to finish by
      * extending the waiter.
@@ -644,7 +635,9 @@ public class AdminServlet extends MsoyServiceServlet
          */
         public void addItem (ItemRecord item)
         {
-            if (!isUsed(item)) {
+            // only if it's used in a room
+            if ((item.location == 0) ||
+                    (-1 == ArrayUtil.indexOf(Item.ROOM_TYPES, item.getType()))) {
                 return;
             }
 
