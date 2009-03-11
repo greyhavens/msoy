@@ -22,6 +22,9 @@ window.FB_PostStory = function(bundleId, data, targetIds, body) {
                               FB.RequireConnect.promptConnect, function () { /*noop*/ });
   });
 };
+window.FB_PostTrophy = function(data, targetIds) {
+  FB_PostStory(@FB_TROPHY_TEMPLATE_ID@, data, targetIds, "");
+};
 window.FB_Logout = function() {
   FB_WithInit(function() {
     FB.Connect.logout(null);

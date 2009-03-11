@@ -34,7 +34,8 @@ import com.threerings.msoy.item.data.all.TrophySource;
 
 /**
  * Displays a grid of trophies and allows the user to post the winning of each trophy as an
- * external news feed item.
+ * external news feed item. TODO: if people like this, allow selecting multiple trophies to
+ * send.
  */
 public class TrophyFeederPanel extends FloatingPanel
 {
@@ -89,7 +90,7 @@ public class TrophyFeederPanel extends FloatingPanel
         var grid :Grid = new Grid();
         grid.maxHeight = 400;
         grid.horizontalScrollPolicy = ScrollPolicy.OFF;
-        grid.verticalScrollPolicy = ScrollPolicy.ON;
+        grid.verticalScrollPolicy = ScrollPolicy.AUTO;
         addChild(grid);
 
         var row :GridRow = null;
@@ -130,9 +131,15 @@ public class TrophyFeederPanel extends FloatingPanel
     protected function postTrophyToFeed (trophy :Trophy) :void
     {
         log.info("Here we go...", "trophy", trophy);
+        _wctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
+            trophy.gameId, _gameName, trophy.name, trophy.description,
+            trophy.trophyMedia.getMediaPath() ]);
     }
 
     protected var _trophies :TypedArray /*of Trophy*/;
     protected var _gameName :String;
+
+    /** Event dispatched to GWT when the user clicks a trophy. */
+    protected static const TROPHY_EVENT :String = "trophy";
 }
 }

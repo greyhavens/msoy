@@ -307,9 +307,6 @@ public class GameLiaison
             // if this was a trophy award, also pass that info on to GWT
             if (name == MsoyGameCodes.TROPHY_AWARDED) {
                 var trophy :Trophy = (args[0] as Trophy);
-                _wctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
-                    trophy.gameId, gameName, trophy.name, trophy.description,
-                    trophy.trophyMedia.getMediaPath() ]);
                 // store in our list of trophies so we can offer to post a facebook news story later
                 _trophies.push(trophy);
             }
@@ -483,8 +480,5 @@ public class GameLiaison
     [Embed(source="../../../../../../../rsrc/media/guest_flow_panel.swf",
            mimeType="application/octet-stream")]
     protected static const GUEST_FLOW_PANEL :Class;
-
-    /** Event dispatched to GWT when we earn a trophy. */
-    protected static const TROPHY_EVENT :String = "trophy";
 }
 }

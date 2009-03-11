@@ -324,6 +324,7 @@
     <copy file="pages/js/facebook.js.in" tofile="pages/js/facebook.js" overwrite="true">
       <filterset>
         <filter token="FB_API_KEY" value="${facebook.api_key}"/>
+        <filter token="FB_TROPHY_TEMPLATE_ID" value="${facebook.trophy_template_id}"/>
       </filterset>
     </copy>
 
