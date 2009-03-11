@@ -9,7 +9,7 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -32,7 +32,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {
-        return ((MsoyNodeObject)nodeobj).clients.containsKey(MemberName.makeKey(_memberId));
+        return ((MsoyNodeObject)nodeobj).clients.containsKey(MsoyAuthName.makeKey(_memberId));
     }
 
     @Override // from PeerManager.NodeAction

@@ -88,43 +88,21 @@ public class MsoyPeerNode extends PeerNode
      */
     protected class MsoyNodeObjectListener extends NodeObjectListener
     {
-        @Override
-        public void entryAdded (EntryAddedEvent<DSet.Entry> event)
-        {
+        @Override public void entryAdded (EntryAddedEvent<DSet.Entry> event) {
             super.entryAdded(event);
-
             String name = event.getName();
             if (MsoyNodeObject.MEMBER_LOCS.equals(name)) {
                 ((MsoyPeerManager)_peermgr).memberEnteredScene(
                     getNodeName(), (MemberLocation)event.getEntry());
-
-            } else if (NodeObject.CLIENTS.equals(name)) {
-                ((MsoyPeerManager)_peermgr).memberLoggedOn(
-                    getNodeName(), (MsoyClientInfo)event.getEntry());
             }
         }
 
-        @Override
-        public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
-        {
+        @Override public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event) {
             super.entryUpdated(event);
-
             String name = event.getName();
             if (MsoyNodeObject.MEMBER_LOCS.equals(name)) {
                 ((MsoyPeerManager)_peermgr).memberEnteredScene(
                     getNodeName(), (MemberLocation)event.getEntry());
-            }
-        }
-
-        @Override
-        public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
-        {
-            super.entryRemoved(event);
-
-            String name = event.getName();
-            if (NodeObject.CLIENTS.equals(name)) {
-                ((MsoyPeerManager)_peermgr).memberLoggedOff(
-                    getNodeName(), (MsoyClientInfo)event.getOldEntry());
             }
         }
     } // END: class MsoyNodeObjectListener

@@ -8,6 +8,9 @@ import com.google.inject.Inject;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+
+import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.PlayerObject;
 
 /**
@@ -31,9 +34,7 @@ public abstract class PlayerNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {
-        // TODO: fixy fixy
-        // return ((MsoyNodeObject)nodeobj).clients.containsKey(MemberName.makeKey(_playerId));
-        return false;
+        return ((MsoyNodeObject)nodeobj).clients.containsKey(GameAuthName.makeKey(_playerId));
     }
 
     @Override // from PeerManager.NodeAction

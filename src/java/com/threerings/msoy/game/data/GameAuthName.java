@@ -10,6 +10,14 @@ import com.threerings.msoy.data.AuthName;
  */
 public class GameAuthName extends AuthName
 {
+    /**
+     * Creates an instance that can be used as a DSet key.
+     */
+    public static GameAuthName makeKey (int memberId)
+    {
+        return new GameAuthName("", memberId);
+    }
+
     /** Creates a name for the member with the supplied account name and member id. */
     public GameAuthName (String accountName, int memberId)
     {

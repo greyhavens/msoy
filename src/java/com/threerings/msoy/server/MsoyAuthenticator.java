@@ -23,6 +23,7 @@ import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -226,13 +227,13 @@ public class MsoyAuthenticator extends Authenticator
 
             } else if (!creds.featuredPlaceView) {
                 // create a new guest account
-                MemberRecord newMember = _accountLogic.createGuestAccount(
+                MemberRecord mrec = _accountLogic.createGuestAccount(
                     conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
 
                 // now authenticate just to make sure everything is in order and get the token
-                creds.setUsername(new Name(newMember.accountName));
-                rsp.authdata = authenticateMember(creds, rdata, newMember, true,
-                    newMember.accountName, AccountLogic.PERMAGUEST_PASSWORD);
+                creds.setUsername(new MsoyAuthName(mrec.accountName, mrec.memberId));
+                rsp.authdata = authenticateMember(
+                    creds, rdata, mrec, true, mrec.accountName, AccountLogic.PERMAGUEST_PASSWORD);
 
             } else {
                 // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
@@ -324,7 +325,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         // rewrite this member's username to their canonical account name
-        creds.setUsername(new Name(account.accountName));
+        creds.setUsername(new MsoyAuthName(member.accountName, member.memberId));
 
         // log.info("User logged on [user=" + user.username + "].");
         rdata.code = MsoyAuthResponseData.SUCCESS;

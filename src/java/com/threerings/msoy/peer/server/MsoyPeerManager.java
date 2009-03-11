@@ -42,11 +42,10 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
-import com.threerings.msoy.web.gwt.ConnectConfig;
-
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyReportManager;
@@ -54,10 +53,12 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.MsoySession;
 import com.threerings.msoy.server.ServerConfig;
 
+import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
+import com.threerings.msoy.web.gwt.ConnectConfig;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedProject;
@@ -187,7 +188,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void updateMemberLocation (MemberObject memobj)
     {
-        MsoyClientInfo info = (MsoyClientInfo)_nodeobj.clients.get(memobj.memberName);
+        MsoyClientInfo info = (MsoyClientInfo)_nodeobj.clients.get(memobj.username);
         if (info == null) {
             return; // they're leaving or left, so no need to worry
         }
@@ -529,27 +530,47 @@ public class MsoyPeerManager extends CrowdPeerManager
         });
     }
 
+    @Override // from PeerManager
+    protected void clientLoggedOn (String nodeName, ClientInfo clinfo)
+    {
+        super.clientLoggedOn(nodeName, clinfo);
+
+        if (clinfo instanceof MsoyClientInfo) {
+            memberLoggedOn(nodeName, (MsoyClientInfo)clinfo);
+        }
+    }
+
+    @Override // from PeerManager
+    protected void clientLoggedOff (String nodeName, ClientInfo clinfo)
+    {
+        super.clientLoggedOff(nodeName, clinfo);
+
+        if (clinfo instanceof MsoyClientInfo) {
+            memberLoggedOff(nodeName, (MsoyClientInfo)clinfo);
+        }
+    }
+
     /**
-     * Called when a member logs onto a server. Notifies observers.
+     * Called when a member logs onto this or any other peer.
      */
-    protected void memberLoggedOn (final String node, final MsoyClientInfo info)
+    protected void memberLoggedOn (final String nodeName, final MsoyClientInfo info)
     {
         memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
-                observer.memberLoggedOn(node, (MemberName)info.visibleName);
+                observer.memberLoggedOn(nodeName, (MemberName)info.visibleName);
                 return true;
             }
         });
     }
 
     /**
-     * Called when a member logs off of a server. Notifies observers.
+     * Called when a member logs off of this or any other peer.
      */
-    protected void memberLoggedOff (final String node, final MsoyClientInfo info)
+    protected void memberLoggedOff (final String nodeName, final MsoyClientInfo info)
     {
         memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
-                observer.memberLoggedOff(node, (MemberName)info.visibleName);
+                observer.memberLoggedOff(nodeName, (MemberName)info.visibleName);
                 return true;
             }
         });
@@ -621,9 +642,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Override // from PeerManager
     protected boolean ignoreClient (PresentsSession client)
     {
-        // don't publish information about anonymous lurkers to our peers
-        return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName) ||
-            !(client instanceof MsoySession);
+        // we only publish information about certain types of sessions
+        return super.ignoreClient(client) || !isPublishedName(client.getUsername());
     }
 
     @Override // from PeerManager
@@ -666,6 +686,15 @@ public class MsoyPeerManager extends CrowdPeerManager
                 return true;
             }
         });
+    }
+
+    /**
+     * Returns true if the supplied authentication username is a type that we publish in our
+     * NodeObject. Currently we do this for world and game sessions (but not for party sessions).
+     */
+    protected static boolean isPublishedName (Name authname)
+    {
+        return (authname instanceof MsoyAuthName) || (authname instanceof GameAuthName);
     }
 
     /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */

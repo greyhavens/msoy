@@ -24,6 +24,7 @@ import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyTokenRing;
 
 import com.threerings.msoy.data.all.FriendEntry;
@@ -526,7 +527,7 @@ public class MemberNodeActions
         {
             final MsoyNodeObject msoyNode = (MsoyNodeObject)nodeobj;
             for (int friendId : _friends) {
-                if (msoyNode.clients.containsKey(MemberName.makeKey(friendId))) {
+                if (msoyNode.clients.containsKey(MsoyAuthName.makeKey(friendId))) {
                     return true;
                 }
             }

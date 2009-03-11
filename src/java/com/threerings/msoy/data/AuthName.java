@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import com.google.common.collect.Comparators;
+
 import com.threerings.util.Name;
 
 /**
@@ -26,6 +28,26 @@ public class AuthName extends Name
     public int getMemberId ()
     {
         return _memberId;
+    }
+
+    @Override // from Name
+    public int hashCode ()
+    {
+        return _memberId;
+    }
+
+    @Override // from Name
+    public boolean equals (Object other)
+    {
+        return other.getClass().equals(getClass()) &&
+            ((AuthName)other).getMemberId() == getMemberId();
+    }
+
+    @Override // from Name
+    public int compareTo (Name o)
+    {
+        int rv = getClass().getName().compareTo(o.getClass().getName());
+        return (rv != 0) ? rv : Comparators.compare(getMemberId(), ((AuthName)o).getMemberId());
     }
 
     protected int _memberId;

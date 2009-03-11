@@ -33,6 +33,8 @@ import com.threerings.msoy.item.data.all.Avatar;
  */
 public class MemberObject extends MsoyBodyObject
 {
+    MsoyAuthName // filled into username
+
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
 
