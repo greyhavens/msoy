@@ -1112,7 +1112,7 @@ public class FrameEntryPoint
 
     /** Handles publishing info to external feeds. It registers event listeners in its constructor,
      * so we don't ever need to actually talk to this instance. */
-    protected ExternalFeeder _feeder = new ExternalFeeder();
+    protected ExternalFeeder _feeder = new ExternalFeeder(this);
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;

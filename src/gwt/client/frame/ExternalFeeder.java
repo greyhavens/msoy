@@ -3,10 +3,10 @@
 
 package client.frame;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.Frame;
 import client.util.events.FlashEvents;
 import client.util.events.TrophyEvent;
 
@@ -15,8 +15,9 @@ import client.util.events.TrophyEvent;
  */
 public class ExternalFeeder
 {
-    public ExternalFeeder ()
+    public ExternalFeeder (Frame frame)
     {
+        _frame = frame;
         FlashEvents.addListener(new TrophyEvent.Listener() {
             public void trophyEarned (TrophyEvent event) {
                 publishTrophyToFacebook(event);
@@ -26,6 +27,11 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event)
     {
+        // unfortunately, there is no way to track what actually got published, or more importantly
+        // how many views a news feed item actually gets... so just track that the user was
+        // interested enough to try 
+        _frame.reportClientAction(null, "2009-03 trophy publish request",
+                                  "gameId=" + event.getGameId());
         publishTrophy(event.getGameId(), event.getGame(), event.getTrophy(),
                       event.getDescription(), event.getMediaURL(),
                       Pages.makeURL(Pages.GAMES, Args.compose("d", event.getGameId(), "t")));
@@ -43,4 +49,6 @@ public class ExternalFeeder
             "images": [ {"src": mediaURL, "href": trophyURL} ] };
         $wnd.FB_PostTrophy(data, ids);
     }-*/;
+
+    protected Frame _frame;
 }
