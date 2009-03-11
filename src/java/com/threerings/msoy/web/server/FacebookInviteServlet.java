@@ -22,6 +22,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.server.persist.GameDetailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -72,7 +73,12 @@ public class FacebookInviteServlet extends HttpServlet
                 }
     
                 GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
-                String gameName = _gameRepo.loadItem(gdr.listedItemId).name;
+                GameRecord grec = gdr == null ? null : _gameRepo.loadItem(gdr.listedItemId);
+                String gameName = grec == null ? null : grec.name;
+                if (gameName == null) {
+                    rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
                 outputInvitePage(rsp, gameId, gameName, memberId, acceptPath);
 
             } else if (req.getRequestURI().equals("/fbinvite/done")) {
