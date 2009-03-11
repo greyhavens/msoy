@@ -18,6 +18,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
@@ -50,8 +51,13 @@ public class TrophyFeederPanel extends FloatingPanel
             });
         }
 
-        // for testing, grab the trophies from the server if none are given
+        var test :Boolean = DeploymentConfig.devDeployment;
         if (trophies == null || trophies.length == 0) {
+            if (!test) {
+                onClose();
+                return;
+            }
+            // if testing, grab the trophies from the server if none are given
             (gctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
                 gctx.getClient(), gameId, gctx.getMsoyContext().resultListener(
                     function (trophies :TypedArray) :void {

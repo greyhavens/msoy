@@ -244,10 +244,8 @@ public class GameLiaison
         // listen for message events on our player object
         _gctx.getPlayerObject().addListener(this);
 
-        if (DeploymentConfig.devDeployment) {
-            // register some code to run when the users clicks the close button
-            _wctx.getWorldController().addPlaceExitHandler(onPlaceExit);
-        }
+        // register some code to run when the users clicks the close button
+        _wctx.getWorldController().addPlaceExitHandler(onPlaceExit);
     }
 
     // from interface ClientObserver
