@@ -66,6 +66,13 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
         AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK, PROP
     };
 
+    /**
+     * A canonical ordering of item types that can have their 'location' set to a roomId.
+     */
+    public static final byte[] ROOM_TYPES = {
+        FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+    };
+
     /** A 'used' constant value to indicate that the item is unused. */
     public static final byte UNUSED = (byte) 0;
 

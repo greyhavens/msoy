@@ -395,8 +395,8 @@ public class ItemLogic
      */
     public void transferRoomItems (int oldOwnerId, int newOwnerId, int sceneId)
     {
-        for (ItemRepository<ItemRecord> repo : getRepositories()) {
-            repo.transferRoomItems(sceneId, oldOwnerId, newOwnerId);
+        for (byte itemType : Item.ROOM_TYPES) {
+            getRepositoryFor(itemType).transferRoomItems(sceneId, oldOwnerId, newOwnerId);
         }
     }
 

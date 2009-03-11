@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -461,19 +462,18 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void transferRoomItems (int sceneId, int oldOwnerId, int newOwnerId)
     {
+        Preconditions.checkArgument(sceneId != 0);
+        Preconditions.checkArgument(getItemClass() != AvatarRecord.class);
+
         // TODO: non-null cache invalidators?
-        updatePartial(getItemClass(), new Where(new And(
-            new Equals(getItemColumn(ItemRecord.OWNER_ID), oldOwnerId),
-            new Equals(getItemColumn(ItemRecord.LOCATION), sceneId),
-            new In(getItemColumn(ItemRecord.USED),
-                Item.USED_AS_BACKGROUND, Item.USED_AS_FURNITURE, Item.USED_AS_PET))),
+        updatePartial(getItemClass(), new Where(
+            getItemColumn(ItemRecord.OWNER_ID), oldOwnerId,
+            getItemColumn(ItemRecord.LOCATION), sceneId),
             null,
             getItemColumn(ItemRecord.OWNER_ID), newOwnerId);
-        updatePartial(getCloneClass(), new Where(new And(
-            new Equals(getCloneColumn(CloneRecord.OWNER_ID), oldOwnerId),
-            new Equals(getCloneColumn(CloneRecord.LOCATION), sceneId),
-            new In(getCloneColumn(CloneRecord.USED),
-                Item.USED_AS_BACKGROUND, Item.USED_AS_FURNITURE, Item.USED_AS_PET))),
+        updatePartial(getCloneClass(), new Where(
+            getCloneColumn(CloneRecord.OWNER_ID), oldOwnerId,
+            getCloneColumn(CloneRecord.LOCATION), sceneId),
             null,
             getCloneColumn(CloneRecord.OWNER_ID), newOwnerId);
     }
