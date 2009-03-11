@@ -214,7 +214,6 @@ class GameLocationDirector extends LocationDirector
         var elapsed :int = getTimer() - Preloader.preloaderStart;
         if ((_ctx as GameContext).getMsoyContext().getMsoyClient().isEmbedded() &&
             (elapsed < MIN_EMBED_SPLASH_TIME)) {
-            trace("Delaying move for " + (MIN_EMBED_SPLASH_TIME - elapsed) + "ms: " + config);
             // TODO: there must be an easier way to do this
             var timer :Timer = new Timer(MIN_EMBED_SPLASH_TIME - elapsed, 1);
             timer.addEventListener(TimerEvent.TIMER, function () :void {
@@ -222,7 +221,6 @@ class GameLocationDirector extends LocationDirector
             });
             timer.start();
         } else {
-            trace("Moving now: " + config);
             super.didMoveTo(placeId, config);
         }
     }
