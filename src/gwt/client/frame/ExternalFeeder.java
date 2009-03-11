@@ -35,8 +35,8 @@ public class ExternalFeeder
                                   "gameId=" + event.getGameId());
         publishTrophy(event.getGameId(), event.getGame(), event.getTrophy(),
                       event.getDescription(), event.getMediaURL(),
-                      DeploymentConfig.serverURL + "go/" + Pages.makeToken(Pages.GAMES,
-                          Args.compose("vec", "v.fbtrophy", "d", event.getGameId(), "t")));
+                      Pages.makeURL(Pages.GAMES, Args.compose("vec", "v.fbtrophy",
+                                                              "d", event.getGameId(), "t")));
     }
 
     protected native void publishTrophy (int gameId, String game, String trophy,
