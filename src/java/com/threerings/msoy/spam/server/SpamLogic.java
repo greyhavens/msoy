@@ -522,7 +522,7 @@ public class SpamLogic
 
         protected static String link (Pages page, String args)
         {
-            return Pages.makeLink(page, args).substring(1);
+            return Pages.makeLink(page, args);
         }
 
         protected static String imgStyle (Dimensions dim)

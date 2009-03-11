@@ -26,9 +26,9 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event)
     {
-        publishTrophy(event.getGameId(), event.getGame(), event.getTrophy(), event.getDescription(),
-            event.getMediaURL(), DeploymentConfig.serverURL + Pages.makeLink(Pages.GAMES, 
-                Args.compose("d", event.getGameId(), "t")).substring(1));
+        publishTrophy(event.getGameId(), event.getGame(), event.getTrophy(),
+                      event.getDescription(), event.getMediaURL(),
+                      Pages.makeURL(Pages.GAMES, Args.compose("d", event.getGameId(), "t")));
     }
 
     protected native void publishTrophy (int gameId, String game, String trophy, String descrip,

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.gwt;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 /**
  * Enumerates all of our available pages.
  */
@@ -26,6 +28,15 @@ public enum Pages
     GROUPS(Tabs.GROUPS),
     ISSUES(Tabs.GROUPS),
     WORLD(null);
+
+    /**
+     * Creates a link to the specified page and arguments. The link will contain the server URL. If
+     * that is not desired, use {@link #makeLink}.
+     */
+    public static String makeURL (Pages page, String args)
+    {
+        return DeploymentConfig.serverURL + "#" + makeToken(page, args);
+    }
 
     /**
      * Creates a link to the specified page and arguments. The link will start with /# and will not
