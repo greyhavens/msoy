@@ -63,6 +63,16 @@ public enum Pages
     }
 
     /**
+     * Creates a url that is compatible with mail readers and when followed will make the follower
+     * an affiliate of the given member and then redirect to the given page with the given args.
+     * The member id may be zero, in which case the link will only redirect with no affiliation.
+     */
+    public static String makeAffiliateUrl (int memberId, Pages page, String args)
+    {
+        return DeploymentConfig.serverURL + "welcome/" + memberId + "/" + makeToken(page, args);
+    }
+
+    /**
      * Returns the path for this page that is used in URLs.
      */
     public String getPath ()
