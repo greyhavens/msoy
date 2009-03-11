@@ -345,8 +345,7 @@ public class MsoySceneRepository extends DepotRepository
         }
         if (sceneId != 0) {
             try {
-                updatePartial(SceneRecord.class, sceneId,
-                    SceneRecord.VERSION, finalVersion);
+                updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
             } catch (Exception e) {
                 log.warning("Failed to update scene to final version", "id", sceneId,
                         "fvers", finalVersion, e);
