@@ -315,13 +315,13 @@ public class MoneyRepository extends DepotRepository
         return load(CountRecord.class, clauses).count;
     }
 
-    public int deleteOldTransactions (final Currency currency, long maxAge)
+    public int deleteOldTransactions (Currency currency, long maxAge)
     {
-        final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        return deleteAll(MoneyTransactionRecord.class, new Where(new And(
-            new Conditionals.Equals(MoneyTransactionRecord.CURRENCY, currency),
-            new Conditionals.LessThan(
-                MoneyTransactionRecord.TIMESTAMP, new Timestamp(oldestTimestamp)))));
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);
+        Where where = new Where(
+            new And(new Conditionals.Equals(MoneyTransactionRecord.CURRENCY, currency),
+                    new Conditionals.LessThan(MoneyTransactionRecord.TIMESTAMP, cutoff)));
+        return deleteAll(MoneyTransactionRecord.class, where, null /* no cache invalidation */);
     }
 
     /**
