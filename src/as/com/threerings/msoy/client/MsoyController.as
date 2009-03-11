@@ -504,7 +504,7 @@ public class MsoyController extends Controller
             _topPanel.setPlaceView(new DisconnectedPanel(_mctx, _logoffMessage));
             _logoffMessage = null;
         } else {
-            _topPanel.setPlaceView(new BlankPlaceView());
+            _topPanel.setPlaceView(new BlankPlaceView(_mctx));
         }
     }
 

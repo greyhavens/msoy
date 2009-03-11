@@ -12,6 +12,7 @@ import flash.events.IEventDispatcher;
 import flash.external.ExternalInterface;
 import flash.system.Capabilities;
 import flash.system.Security;
+import flash.utils.getTimer;
 
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
@@ -93,7 +94,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         setVersion(DeploymentConfig.version);
 
         LoggingTargets.configureLogging(_ctx);
-        log.info("starting up", "capabilities", Capabilities.serverString);
+        log.info("Starting up", "capabilities", Capabilities.serverString,
+            "preloader", (getTimer() - Preloader.preloaderStart));
 
         // first things first: create our credentials and context
         _creds = createStartupCreds(null);

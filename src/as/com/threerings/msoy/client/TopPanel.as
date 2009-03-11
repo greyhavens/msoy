@@ -97,7 +97,7 @@ public class TopPanel extends Canvas
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
         // display something until someone comes along and sets a real view on us
-        setPlaceView(new BlankPlaceView());
+        setPlaceView(new BlankPlaceView(_ctx));
 
         _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, handleUIStateChange);
         handleUIStateChange(null);
@@ -169,7 +169,7 @@ public class TopPanel extends Canvas
     public function clearPlaceView (view :PlaceView) :void
     {
         if (_placeBox.clearPlaceView(view)) {
-            setPlaceView(new BlankPlaceView());
+            setPlaceView(new BlankPlaceView(_ctx));
         }
     }
 

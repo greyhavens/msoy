@@ -15,6 +15,7 @@ import flash.external.ExternalInterface;
 import flash.net.URLRequest;
 
 import flash.system.Capabilities;
+import flash.utils.getTimer;
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -40,6 +41,25 @@ public class Preloader extends Sprite
     public static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
     //public static const MIN_FLASH_VERSION :Array = [ 10, 0, 12, 36 ];
 
+    /** The timestamp at which the preloader was initialized, for hacky access by MsoyClient. */
+    public static var preloaderStart :int;
+
+    /**
+     * Creates the text field used to display a link to Whirled below the loading spinner. The
+     * field will have its x and y position configured. This is used by BlankPlaceView to recreate
+     * the same display.
+     */
+    public static function makeSplashText (text :String, stageWidth :int, spinnerY :int) :TextField
+    {
+        var field :TextField = new TextField();
+        field.autoSize = TextFieldAutoSize.CENTER;
+        field.defaultTextFormat = LoadingSpinner.makeTextFormat(18);
+        field.htmlText = text;
+        field.x = (stageWidth - field.width) / 2;
+        field.y = spinnerY + BLURB_Y_OFFSET;
+        return field;
+    }
+
     /**
      */
     public function Preloader ()
@@ -47,6 +67,9 @@ public class Preloader extends Sprite
         _spinner = new LoadingSpinner();
         _spinner.setProgress(0, 1);
         addChild(_spinner);
+
+        // note the time at which we started up
+        preloaderStart = getTimer();
     }
 
     // from IPreloaderDisplay and stupidly so
@@ -141,18 +164,11 @@ public class Preloader extends Sprite
         });
 
         if (isEmbed()) {
-            // figure out what upsell message to use (_Whirled_! will be tacked on)
+            // figure out what upsell message to use (this must == what's in general.properties)
             var msg :String = getContentPage().indexOf("game") == -1 ?
                 "Create your own world in " : "Play more multiplayer games on";
-
-            var field :TextField = new TextField();
-            field.autoSize = TextFieldAutoSize.CENTER;
-            field.defaultTextFormat = LoadingSpinner.makeTextFormat(18);
-            field.htmlText = msg +
-                " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
-            field.x = (stage.stageWidth - field.width) / 2;
-            field.y = 3 * (stage.stageHeight - field.height) / 4;
-            addChild(field);
+            msg += " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
+            addChild(makeSplashText(msg, stage.stageWidth, _spinner.y));
         }
     }
 
@@ -355,5 +371,8 @@ public class Preloader extends Sprite
         [ "gameId", "world-game_p_" ],
         [ "game", "world-game_p_" ] // alias used by stubs
     ];
+
+    /** The number of pixels below the center of the loading spinner that we put the blurb. */
+    protected static const BLURB_Y_OFFSET :int = 175;
 }
 }

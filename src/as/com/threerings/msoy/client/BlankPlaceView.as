@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObjectContainer;
-
 import mx.containers.Canvas;
 
 import com.threerings.crowd.client.PlaceView;
@@ -21,17 +19,31 @@ import com.threerings.msoy.ui.LoadingSpinner;
 public class BlankPlaceView extends Canvas
     implements PlaceView
 {
-    public function BlankPlaceView ()
+    public function BlankPlaceView (ctx :MsoyContext)
     {
-        var spinner :LoadingSpinner = new LoadingSpinner();
-        spinner.setStatus(Msgs.GENERAL.get("m.ls_connecting"));
-        var wrapper :FlexWrapper = new FlexWrapper(spinner);
+        // we do some hackery here to obtain our width and height because we want to precisely
+        // match the Preloader math which uses the full stage width and height, but our math is
+        // going to be sullied by the header bar, embed bar and control bar *and* we are created
+        // during TopPanel's constructor, so we can't ask it how big it is
+        var swidth :int = UberClient.getApplication().stage.stageWidth;
+        var sheight :int = UberClient.getApplication().stage.stageHeight -
+            HeaderBar.HEIGHT - ControlBar.HEIGHT;
+        if (ctx.getMsoyClient().isEmbedded()) {
+            sheight -= EmbedHeader.HEIGHT;
+        }
 
-        wrapper.setStyle("verticalCenter", "0");
-        wrapper.setStyle("horizontalCenter", "0");
-        wrapper.width = LoadingSpinner.WIDTH;
-        wrapper.height = LoadingSpinner.HEIGHT;
-        addChild(wrapper);
+        var spinner :LoadingSpinner = new LoadingSpinner();
+        addChild(new FlexWrapper(spinner));
+        spinner.x = (swidth - LoadingSpinner.WIDTH) / 2;
+        spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2;
+        spinner.setStatus(Msgs.GENERAL.get("m.ls_connecting"));
+
+        // if we're embedded, we want to preserve continuity with the preloader splash
+        if (ctx.getMsoyClient().isEmbedded()) {
+            // TODO: could use createSharableLink here except we're not logged on
+            var msg :String = Msgs.GENERAL.get("m.embed_splash", DeploymentConfig.serverURL);
+            addChild(new FlexWrapper(Preloader.makeSplashText(msg, swidth, spinner.y)));
+        }
     }
 
     // from interface PlaceView
