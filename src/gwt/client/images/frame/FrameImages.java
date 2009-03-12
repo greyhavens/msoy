@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface FrameImages extends ImageBundle
 {
-    @Resource("noclient.gif")
+    @Resource("noclient.png")
     AbstractImagePrototype noclient ();
 
     @Resource("noclient_hover.png")
