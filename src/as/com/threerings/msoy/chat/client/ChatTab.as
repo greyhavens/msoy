@@ -42,8 +42,8 @@ public class ChatTab extends HBox
     public static const UNSELECTED :int = 2;
     public static const ATTENTION :int = 3;
 
-    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :MsoyChatChannel,
-        roomName :String = null)
+    public function ChatTab (
+        ctx :MsoyContext, bar :ChatTabBar, channel :MsoyChatChannel, roomName :String = null)
     {
         _ctx = ctx;
         _bar = bar;

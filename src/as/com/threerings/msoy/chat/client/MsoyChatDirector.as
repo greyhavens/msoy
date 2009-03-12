@@ -139,34 +139,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
-     * Requests that a tell message be delivered to the specified jabber user.
-     */
-    public function requestJabber (target :JabberName, msg :String, feedbackLocaltype :String) :void
-    {
-        _jservice.sendMessage(_mctx.getClient(), target, msg, new ResultAdapter(
-            function (result :Object) :void {
-                if (result is String) {
-                    displaySystem(MsoyCodes.CHAT_MSGS, (result as String), SystemMessage.FEEDBACK,
-                                  feedbackLocaltype);
-                }
-                dispatchMessage(new TellFeedbackMessage(target, msg), feedbackLocaltype);
-            },
-            function (cause :String) :void {
-                var msg :String = MessageBundle.compose(
-                    "e.im_tell_failed", MessageBundle.taint(cause));
-                displaySystem(MsoyCodes.CHAT_MSGS, msg, SystemMessage.FEEDBACK, feedbackLocaltype);
-            }));
-    }
-
-    /**
-     * Requests that a message be delivered to the specified channel.
-     */
-    public function requestChannelSpeak (channel :MsoyChatChannel, msg :String) :void
-    {
-        _csservice.speak(_mctx.getClient(), channel, msg, 0); // TODO: mode?
-    }
-
-    /**
      * Returns a list containing the chat participants for the specified local type.
      */
     public function getPlayerList (ltype :String) :PlayerList
@@ -176,29 +148,45 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function requestChat (
-        speakSvc :SpeakService, message :String, record :Boolean) :String
+    override public function requestSpeak (
+        speakSvc :SpeakService, message :String, mode :int) :void
     {
-        if (speakSvc != null) {
-            // this came from someone who knows what they want... pass on the request
-            return super.requestChat(speakSvc, message, record);
+        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
+        if ((speakSvc != null) || // if a specific service is specified, OR
+                (channel == null) || (channel.type == MsoyChatChannel.ROOM_CHANNEL)) {
+                // ...if place chat, then we don't need to do anything special.
+            super.requestSpeak(speakSvc, message, mode);
+            return;
+        }
+        if (channel.type == MsoyChatChannel.MEMBER_CHANNEL) {
+            // route this to requestTell, which will filter
+            requestTell(channel.ident as Name, message, null, channel.toLocalType());
+            return;
         }
 
-        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
-        if (channel == null || channel.type == MsoyChatChannel.ROOM_CHANNEL) {
-            // this is place chat, then we don't need anything special
-            return super.requestChat(speakSvc, message, record);
+        // ABOVE this line is stuff handled in the base class, that filters properly
+        // BELOW this line, we need to filter it ourselves
+        message = filter(message, null, true);
+        if (message == null) {
+            // they filtered it into nothingness!
+            return;
+        }
 
-        } else if (channel.type == MsoyChatChannel.MEMBER_CHANNEL) {
-            requestTell(channel.ident as Name, message, null, channel.toLocalType());
-
-        } else if (channel.type == MsoyChatChannel.JABBER_CHANNEL) {
+        if (channel.type == MsoyChatChannel.JABBER_CHANNEL) {
+            // mode is lost here
             requestJabber(channel.ident as JabberName, message, channel.toLocalType());
 
         } else {
-            requestChannelSpeak(channel, message);
+            requestChannelSpeak(channel, message, mode);
         }
-        return ChatCodes.SUCCESS;
+    }
+
+    override public function displayFeedback (bundle :String, message :String) :void
+    {
+        // alter things so that we deliver feedback on the open tab
+        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
+        displaySystem(bundle, message, SystemMessage.FEEDBACK,
+            (channel == null) ? ChatCodes.PLACE_CHAT_TYPE : channel.toLocalType());
     }
 
     // from ChatDirector
@@ -261,6 +249,35 @@ public class MsoyChatDirector extends ChatDirector
         super.fetchServices(client);
         _csservice = (client.requireService(ChannelSpeakService) as ChannelSpeakService);
         _jservice = (client.requireService(JabberService) as JabberService);
+    }
+
+    /**
+     * Requests that a tell message be delivered to the specified jabber user.
+     */
+    protected function requestJabber (
+        target :JabberName, msg :String, feedbackLocaltype :String) :void
+    {
+        _jservice.sendMessage(_mctx.getClient(), target, msg, new ResultAdapter(
+            function (result :Object) :void {
+                if (result is String) {
+                    displaySystem(MsoyCodes.CHAT_MSGS, (result as String), SystemMessage.FEEDBACK,
+                                  feedbackLocaltype);
+                }
+                dispatchMessage(new TellFeedbackMessage(target, msg), feedbackLocaltype);
+            },
+            function (cause :String) :void {
+                var msg :String = MessageBundle.compose(
+                    "e.im_tell_failed", MessageBundle.taint(cause));
+                displaySystem(MsoyCodes.CHAT_MSGS, msg, SystemMessage.FEEDBACK, feedbackLocaltype);
+            }));
+    }
+
+    /**
+     * Requests that a message be delivered to the specified channel.
+     */
+    protected function requestChannelSpeak (channel :MsoyChatChannel, msg :String, mode :int) :void
+    {
+        _csservice.speak(_mctx.getClient(), channel, msg, mode);
     }
 
     /**
