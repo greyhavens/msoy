@@ -43,7 +43,6 @@ import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.MoneyNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
-import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
 public class NotificationDirector extends BasicDirector
     implements AttributeChangeListener, SetListener, MessageListener
@@ -57,7 +56,6 @@ public class NotificationDirector extends BasicDirector
     LevelUpNotification;
     MoneyNotification;
     PartyInviteNotification;
-    ReleaseNotesNotification;
 
     public function NotificationDirector (ctx :MsoyContext)
     {
