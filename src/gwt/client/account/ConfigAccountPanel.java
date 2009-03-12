@@ -27,6 +27,7 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 /**
  * Displays a streamlined "set your email address and password" UI. This is displayed to players
