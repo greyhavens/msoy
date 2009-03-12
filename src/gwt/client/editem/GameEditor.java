@@ -99,8 +99,6 @@ public class GameEditor extends ItemEditor
                         _maxPlayers.setText(option.getFirstChild().toString());
                     } else if ("unwatchable".equals(name)) {
                         _watchable.setChecked(false);
-                    } else if ("noprogress".equals(name)) {
-                        _noprogress.setChecked(true);
                     }
                 }
                 option = option.getNextSibling();
@@ -119,6 +117,9 @@ public class GameEditor extends ItemEditor
         if (xml.getElementsByTagName("avrg").getLength() > 0) {
             _gameType.setSelectedIndex(GameType.AVRG.ordinal());
         }
+
+        // configure our noprogress checkbox
+        _noprogress.setChecked(xml.getElementsByTagName("noprogress").getLength() > 0);
 
         // disable min, max, watchable, auto 1p for non-seated games
         if (_gameType.getSelectedIndex() != GameType.SEATED.ordinal()) {
