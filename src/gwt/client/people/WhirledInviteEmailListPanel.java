@@ -28,6 +28,12 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
     public WhirledInviteEmailListPanel ()
     {
         super(true);
+
+        if (FindFriendsPanel.contacts.size() > 0) {
+            for (EmailContact ec : FindFriendsPanel.contacts.values()) {
+                addAddress(ec.name, ec.email);
+            }
+        }
     }
 
     @Override // from EmailListPanel

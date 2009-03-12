@@ -4,7 +4,9 @@
 package client.people;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -25,6 +27,11 @@ import client.util.Link;
  */
 public class FindFriendsPanel extends InvitePanel
 {
+    /** A hacky static reference to all loaded email contacts obtained from webmail accounts
+     * (indexed by email address to avoid duplicates). We stuff these here so that
+     * WhirledInvitePanel can grab them during step three of our four step registration process. */
+    public static Map<String, EmailContact> contacts = new HashMap<String, EmailContact>();
+
     public FindFriendsPanel ()
     {
         addStyleName("findFriends");
@@ -39,7 +46,9 @@ public class FindFriendsPanel extends InvitePanel
                 for (EmailContact ec : addresses) {
                     if (ec.mname != null) {
                         members.add(ec);
-                    } // else: TODO, store these for the next panel
+                    } else {
+                        contacts.put(ec.email, ec);
+                    }
                 }
                 handleMembers(members);
             }

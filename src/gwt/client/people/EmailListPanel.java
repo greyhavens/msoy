@@ -42,9 +42,7 @@ public abstract class EmailListPanel extends FlowPanel
                     // don't add existing members to the to be invited list, those will be handled
                     // by virtue of being on the members list
                     if (!filterMembers || ec.mname == null) {
-                        _addressList.addItem(ec.name, ec.email);
-                        _addressList.setVisible(true);
-                        _msgbox.setVisible(true);
+                        addAddress(ec.name, ec.email);
                     } else {
                         members.add(ec);
                     }
@@ -101,6 +99,17 @@ public abstract class EmailListPanel extends FlowPanel
         table.getFlexCellFormatter().setWidth(row, 0, "10px"); // squeezy!
         _from = MsoyUI.createTextBox(CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 25);
         table.setWidget(row, 1, _from);
+    }
+
+    /**
+     * Adds the supplied name and address to our address list, making the list and the message UI
+     * visible if it's not already.
+     */
+    protected void addAddress (String name, String email)
+    {
+        _addressList.addItem(name, email);
+        _addressList.setVisible(true);
+        _msgbox.setVisible(true);
     }
 
     /**
