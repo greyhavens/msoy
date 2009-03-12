@@ -4,8 +4,10 @@
 package client.rooms;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
@@ -20,6 +22,9 @@ import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.comment.CommentsPanel;
 import client.room.SceneUtil;
@@ -76,20 +81,20 @@ public class RoomDetailPanel extends SmartTable
                 _roomsvc.rateRoom(detail.info.sceneId, newRating, callback);
             }
         });
-//        // maybe add the gifting option
-//        if ((detail.owner instanceof MemberName) &&
-//                CShell.getMemberId() == ((MemberName) detail.owner).getMemberId()) {
-//            obits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickListener() {
-//                public void onClick (Widget sender) {
-//                    _roomsvc.canGiftRoom(detail.info.sceneId, new MsoyCallback<Void>() {
-//                        public void onSuccess (Void nada) {
-//                            Link.go(Pages.MAIL, Args.compose("w", "r", detail.info.sceneId));
-//                        }
-//                    });
-//                }
-//            }));
-//            // TODO: verbiage about gifting: all items, bla bla bla?
-//        }
+        // maybe add the gifting option
+        if ((detail.owner instanceof MemberName) &&
+                CShell.getMemberId() == ((MemberName) detail.owner).getMemberId()) {
+            obits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    _roomsvc.canGiftRoom(detail.info.sceneId, new MsoyCallback<Void>() {
+                        public void onSuccess (Void nada) {
+                            Link.go(Pages.MAIL, Args.compose("w", "r", detail.info.sceneId));
+                        }
+                    });
+                }
+            }));
+            // TODO: verbiage about gifting: all items, bla bla bla?
+        }
         setWidget(0, 1, obits);
 
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
