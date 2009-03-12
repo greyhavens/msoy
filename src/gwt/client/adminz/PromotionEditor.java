@@ -7,11 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,6 +35,7 @@ import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 /**
  * Displays all promotions registered with the system, allows adding and deletion.
@@ -98,8 +99,8 @@ public class PromotionEditor extends FlowPanel
         }));
         create.setText(row, 0, _msgs.promoBlurb());
         create.setWidget(row++, 1, _blurb = new LimitedTextArea(255, 60, 5), 2, null);
-        _blurb.getTextArea().addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+        TextBoxUtil.addTypingListener(_blurb.getTextArea(), new Command() {
+            public void execute () {
                 create.setWidget(_previewRow, 1, new PromotionBox(createPromotion()));
             }
         });

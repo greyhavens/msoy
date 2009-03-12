@@ -5,12 +5,12 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -35,6 +35,7 @@ import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
+import client.util.TextBoxUtil;
 import client.util.events.StatusChangeEvent;
 
 public class BlingPanel extends FlowPanel
@@ -176,8 +177,8 @@ public class BlingPanel extends FlowPanel
             setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
             final Label worthLabel = new InlineLabel();
             _cashOutBox = new NumberTextBox(true);
-            _cashOutBox.addKeyboardListener(new KeyboardListenerAdapter() {
-                public void onKeyUp (Widget sender, char keyCode, int modifiers) {
+            TextBoxUtil.addTypingListener(_cashOutBox, new Command() {
+                public void execute () {
                     worthLabel.setText(_msgs.cashOutAmountWorth(
                         formatUSD((int)(_cashOutBox.getValue().floatValue() * worthPerBling))));
                 }

@@ -11,17 +11,16 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.EnterClickAdapter;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -70,27 +69,19 @@ public class AwardMedalsPanel extends FlowPanel
 
     protected void init ()
     {
+        ClickListener onClick = new ClickListener() {
+            public void onClick (Widget sender) {
+                search();
+            }
+        };
+
         HorizontalPanel searchBox = new HorizontalPanel();
         searchBox.setSpacing(10);
         searchBox.setStyleName("SearchBox");
         searchBox.add(new Label(_msgs.awardMedalsMemberSearch()));
         searchBox.add(_search = new TextBox());
-        _search.addKeyboardListener(new KeyboardListenerAdapter() {
-            @Override public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-                if (keyCode == KeyboardListener.KEY_ENTER) {
-                    DeferredCommand.addCommand(new Command() {
-                        public void execute () {
-                            search();
-                        }
-                    });
-                }
-            }
-        });
-        searchBox.add(new Button(_msgs.awardMedalsFind(), new ClickListener() {
-            public void onClick (Widget sender) {
-                search();
-            }
-        }));
+        _search.addKeyboardListener(new EnterClickAdapter(onClick));
+        searchBox.add(new Button(_msgs.awardMedalsFind(), onClick));
         add(searchBox);
     }
 

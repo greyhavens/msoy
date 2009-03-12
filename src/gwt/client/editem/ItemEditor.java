@@ -9,7 +9,6 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -20,7 +19,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
@@ -47,6 +45,7 @@ import client.ui.StyledTabPanel;
 import client.util.MsoyCallback;
 import client.util.StringUtil;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -779,14 +778,10 @@ public abstract class ItemEditor extends FlowPanel
     {
         if (widget instanceof TextBoxBase) {
             final TextBoxBase textbox = (TextBoxBase)widget;
-            textbox.addKeyboardListener(new KeyboardListenerAdapter() {
-                @Override public void onKeyPress (Widget sender, char keyCode, int mods) {
+            TextBoxUtil.addTypingListener(textbox, new Command() {
+                public void execute () {
                     if (_item != null) {
-                        DeferredCommand.addCommand(new Command() {
-                            public void execute () {
-                                binder.textUpdated(textbox.getText());
-                            }
-                        });
+                        binder.textUpdated(textbox.getText());
                     }
                 }
             });

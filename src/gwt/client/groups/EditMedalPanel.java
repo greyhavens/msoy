@@ -6,13 +6,11 @@ package client.groups;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,6 +29,7 @@ import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 public class EditMedalPanel extends FlexTable
 {
@@ -111,13 +110,9 @@ public class EditMedalPanel extends FlexTable
         if (_medal.name != null) {
             _name.setText(_medal.name);
         }
-        _name.addKeyboardListener(new KeyboardListenerAdapter() {
-            @Override public void onKeyPress (Widget sender, char keyCode, int mods) {
-                DeferredCommand.addCommand(new Command() {
-                    public void execute () {
-                        _medal.name = _name.getText();
-                    }
-                });
+        TextBoxUtil.addTypingListener(_name, new Command() {
+            public void execute () {
+                _medal.name = _name.getText();
             }
         });
         _name.setMaxLength(Medal.MAX_NAME_LENGTH);
@@ -130,13 +125,9 @@ public class EditMedalPanel extends FlexTable
         if (_medal.description != null) {
             _description.setText(_medal.description);
         }
-        _description.getTextArea().addKeyboardListener(new KeyboardListenerAdapter() {
-            @Override public void onKeyPress (Widget sender, char keyCode, int mods) {
-                DeferredCommand.addCommand(new Command() {
-                    public void execute () {
-                        _medal.description = _description.getText();
-                    }
-                });
+        TextBoxUtil.addTypingListener(_description.getTextArea(), new Command() {
+            public void execute () {
+                _medal.description = _description.getText();
             }
         });
         addRow(_msgs.editMedalDescription(), _description);

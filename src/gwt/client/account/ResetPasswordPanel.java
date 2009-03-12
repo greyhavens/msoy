@@ -5,13 +5,10 @@ package client.account;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,6 +24,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 /**
  * Handles resetting of a user's password.
@@ -67,7 +65,7 @@ public class ResetPasswordPanel extends FlexTable
                 _confirm.setFocus(true);
             }
         }));
-        _password.addKeyboardListener(_validator);
+        TextBoxUtil.addTypingListener(_password, _validator);
 
         ClickListener submit = new ClickListener() {
             public void onClick (Widget sender) {
@@ -79,7 +77,7 @@ public class ResetPasswordPanel extends FlexTable
         setText(row, 0, _msgs.resetConfirm());
         setWidget(row++, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(new EnterClickAdapter(submit));
-        _confirm.addKeyboardListener(_validator);
+        TextBoxUtil.addTypingListener(_confirm, _validator);
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
         getFlexCellFormatter().setStyleName(row, 0, "Status");
@@ -122,14 +120,9 @@ public class ResetPasswordPanel extends FlexTable
         });
     }
 
-    protected KeyboardListener _validator = new KeyboardListenerAdapter() {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    validateData();
-                }
-            });
+    protected Command _validator = new Command() {
+        public void execute () {
+            validateData();
         }
     };
 

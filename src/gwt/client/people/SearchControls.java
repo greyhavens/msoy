@@ -5,10 +5,8 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,6 +21,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.TextBoxUtil;
 
 /**
  * Displays controls that can be used to search for people in Whirled.
@@ -49,13 +48,9 @@ public class SearchControls extends SmartTable
 
         setWidget(1, 0, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
         _search.setWidth("200px");
-        _search.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char charCode, int modifiers) {
-                DeferredCommand.addCommand(new Command() {
-                    public void execute () {
-                        _go.setEnabled(getQuery().length() != 0);
-                    }
-                });
+        TextBoxUtil.addTypingListener(_search, new Command() {
+            public void execute () {
+                _go.setEnabled(getQuery().length() != 0);
             }
         });
         _search.addKeyboardListener(new EnterClickAdapter(this));

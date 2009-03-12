@@ -7,11 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -36,6 +36,7 @@ import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 /**
  * Displays all contests registered with the system, allows adding, editing and deletion.
@@ -84,33 +85,33 @@ public class ContestsEditor extends FlowPanel
             }
         }));
 
-        KeyboardListenerAdapter updateOnKeyPress = new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+        Command updateOnKeyPress = new Comman() {
+            public void execute () {
                 _previewContainer.setWidget(new ContestBox(createContest()));
             }
         };
 
         create.setText(row, 0, _msgs.contestsName());
         create.setWidget(row++, 1, _name = new LimitedTextArea(255, 60, 2));
-        _name.getTextArea().addKeyboardListener(updateOnKeyPress);
+        TextBoxUtil.addTypingListener(_name.getTextArea(), updateOnKeyPress);
 
         create.setText(row, 0, _msgs.contestsBlurb());
         create.setWidget(row++, 1, _blurb = new LimitedTextArea(Contest.MAX_BLURB_LENGTH, 60, 5));
-        _blurb.getTextArea().addKeyboardListener(updateOnKeyPress);
+        TextBoxUtil.addTypingListener(_blurb.getTextArea(), updateOnKeyPress);
 
         create.setText(row, 0, _msgs.contestsStatus());
         create.setWidget(row++, 1, _status = new LimitedTextArea(255, 60, 2));
-        _status.getTextArea().addKeyboardListener(updateOnKeyPress);
+        TextBoxUtil.addTypingListener(_status.getTextArea(), updateOnKeyPress);
 
         create.setText(row, 0, _msgs.contestsPrizes());
         create.setWidget(row++, 1,
             _prizes = new LimitedTextArea(Contest.MAX_PRIZES_LENGTH, 60, 4));
-        _prizes.getTextArea().addKeyboardListener(updateOnKeyPress);
+        TextBoxUtil.addTypingListener(_prizes.getTextArea(), updateOnKeyPress);
 
         create.setText(row, 0, _msgs.contestsPastBlurb());
         create.setWidget(row++, 1, _pastBlurb = new LimitedTextArea(Contest.MAX_PASTBLURB_LENGTH,
             60, 4));
-        _pastBlurb.getTextArea().addKeyboardListener(updateOnKeyPress);
+        TextBoxUtil.addTypingListener(_pastBlurb.getTextArea(), updateOnKeyPress);
 
         create.setText(row++, 0, _msgs.promoPreview());
         create.setWidget(row++, 0, _previewContainer = new SimplePanel(), 2, null);

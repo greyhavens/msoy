@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -17,7 +16,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -44,6 +42,7 @@ import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.TextBoxUtil;
 
 /**
  * Displays account information, allows twiddling.
@@ -96,7 +95,7 @@ public class EditAccountPanel extends FlowPanel
             _perma.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
             _pname = MsoyUI.createTextBox("", MemberName.MAXIMUM_PERMANAME_LENGTH, -1);
             _perma.setWidget(0, 1, _pname);
-            _pname.addKeyboardListener(new DeferredKeyAdapter() {
+            TextBoxUtil.addTypingListener(_pname, new Command() {
                 public void execute () {
                     validatePermaName();
                 }
@@ -125,7 +124,7 @@ public class EditAccountPanel extends FlowPanel
         table.setText(0, 0, _msgs.editEmail(), 1, "rightLabel");
         table.setWidget(0, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
         _email.setText(CShell.creds.accountName);
-        _email.addKeyboardListener(new DeferredKeyAdapter() {
+        TextBoxUtil.addTypingListener(_email, new Command() {
             public void execute () {
                 validateEmail();
             }
@@ -188,7 +187,7 @@ public class EditAccountPanel extends FlowPanel
         table.setWidget(0, 1,
             _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1));
         _rname.setText(_accountInfo.realName);
-        _rname.addKeyboardListener(new DeferredKeyAdapter() {
+        TextBoxUtil.addTypingListener(_rname, new Command() {
             public void execute () {
                 validateRealName();
             }
@@ -209,7 +208,7 @@ public class EditAccountPanel extends FlowPanel
         SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editPassword(), 1, "rightLabel");
         table.setWidget(0, 1, _password = new PasswordTextBox());
-        _password.addKeyboardListener(new DeferredKeyAdapter() {
+        TextBoxUtil.addTypingListener(_password, new Command() {
             public void execute () {
                 validatePassword();
             }
@@ -494,14 +493,6 @@ public class EditAccountPanel extends FlowPanel
             }
         });
     }
-
-    protected static abstract class DeferredKeyAdapter
-        extends KeyboardListenerAdapter implements Command {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.addCommand(this);
-        }
-    };
 
     protected AccountInfo _accountInfo;
     protected SmartTable _perma;
