@@ -29,6 +29,8 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
     {
         super(true);
 
+        // if we just finished phase two of our registration process then we may have slurped email
+        // addresses sitting around in this static field for us to handily grab and display
         if (FindFriendsPanel.contacts.size() > 0) {
             for (EmailContact ec : FindFriendsPanel.contacts.values()) {
                 addAddress(ec.name, ec.email);
