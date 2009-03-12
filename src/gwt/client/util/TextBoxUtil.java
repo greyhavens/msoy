@@ -4,9 +4,12 @@
 package client.util;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * {@link TextBox} and {@link TextArea} related utility methods.
