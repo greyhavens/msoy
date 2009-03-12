@@ -75,19 +75,7 @@ public class CreateAccountPanel extends FlowPanel
             content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
         }
 
-        // IE doesn't appear to like the float style, so be explicit; use a table with the user's
-        // registration data on the left and the promo on the right
-        SmartTable dataAndPromo = new SmartTable();
-        dataAndPromo.setWidth("100%");
-        FlowPanel data = MsoyUI.createFlowPanel(null);
-        dataAndPromo.setWidget(0, 0, data);
-        content.add(dataAndPromo);
-
-        // A/B (/C/D) test banner floats on the right and promotes some part of whirled
-        dataAndPromo.setWidget(0, 1, _promoPanel = MsoyUI.createSimplePanel(null, "Promo"), 1,
-                               "PromoCell");
-
-        data.add(new LabeledBox(_msgs.createEmail(),
+        content.add(new LabeledBox(_msgs.createEmail(),
                            _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
                            _msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
@@ -97,24 +85,24 @@ public class CreateAccountPanel extends FlowPanel
             _email.setText(invite.inviteeEmail);
         }
 
-        data.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
+        content.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
                            _msgs.createPasswordTip()));
         _password.addKeyboardListener(_onType);
 
-        data.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
+        content.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
                            _msgs.createConfirmTip()));
         _confirm.addKeyboardListener(_onType);
 
-//         data.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
+//         content.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
 //                            _msgs.createRealNameTip()));
 //         _rname.addKeyboardListener(_onType);
 
-        data.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
+        content.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
                            _msgs.createDateOfBirthTip()));
 
 //         _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
 //         _name.addKeyboardListener(_onType);
-//         data.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
+//         content.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
         if (RecaptchaUtil.isEnabled()) {
@@ -209,42 +197,10 @@ public class CreateAccountPanel extends FlowPanel
             }
         };
 
-        // A/B test different header images on this page
-        _membersvc.getABTestGroup(
-            CShell.frame.getVisitorInfo(), "2008 12 AccountCreationHeader", true,
-            new AsyncCallback<Integer>() {
-            public void onSuccess (Integer group) {
-                gotABTestGroup(group);
-            }
-            public void onFailure (Throwable cause) {
-                gotABTestGroup(-1);
-            }
-        });
-
         if (CShell.isPermaguest()) {
             content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
             content.add(new FullLogonPanel());
         }
-    }
-
-    /**
-     * Display a different banner (or none) for each one of the test groups.
-     */
-    protected void gotABTestGroup (int groupId)
-    {
-        String imagePath = null;
-        if (groupId == 2) {
-            imagePath = "/images/account/create_banner_avatars.png";
-        } else if (groupId == 3) {
-            imagePath = "/images/account/create_banner_decorate.png";
-        } else if (groupId == 4) {
-            imagePath = "/images/account/create_banner_games.png";
-        }
-        // Group 1 and No Group don't see a banner.
-        if (imagePath == null) {
-            return;
-        }
-        _promoPanel.setWidget(new Image(imagePath));
     }
 
     @Override // from Widget
