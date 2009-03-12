@@ -13,57 +13,57 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface RichTextToolbarImages extends ImageBundle
 {
-    @Resource("bold.gif")
+    @Resource("bold.png")
     AbstractImagePrototype bold();
 
-    @Resource("createLink.gif")
+    @Resource("createLink.png")
     AbstractImagePrototype createLink();
 
-    @Resource("hr.gif")
+    @Resource("hr.png")
     AbstractImagePrototype hr();
 
-    @Resource("indent.gif")
+    @Resource("indent.png")
     AbstractImagePrototype indent();
 
-    @Resource("insertImage.gif")
+    @Resource("insertImage.png")
     AbstractImagePrototype insertImage();
 
-    @Resource("italic.gif")
+    @Resource("italic.png")
     AbstractImagePrototype italic();
 
-    @Resource("justifyCenter.gif")
+    @Resource("justifyCenter.png")
     AbstractImagePrototype justifyCenter();
 
-    @Resource("justifyLeft.gif")
+    @Resource("justifyLeft.png")
     AbstractImagePrototype justifyLeft();
 
-    @Resource("justifyRight.gif")
+    @Resource("justifyRight.png")
     AbstractImagePrototype justifyRight();
 
-    @Resource("ol.gif")
+    @Resource("ol.png")
     AbstractImagePrototype ol();
 
-    @Resource("outdent.gif")
+    @Resource("outdent.png")
     AbstractImagePrototype outdent();
 
-    @Resource("removeFormat.gif")
+    @Resource("removeFormat.png")
     AbstractImagePrototype removeFormat();
 
-    @Resource("removeLink.gif")
+    @Resource("removeLink.png")
     AbstractImagePrototype removeLink();
 
-    @Resource("strikeThrough.gif")
+    @Resource("strikeThrough.png")
     AbstractImagePrototype strikeThrough();
 
-    @Resource("subscript.gif")
+    @Resource("subscript.png")
     AbstractImagePrototype subscript();
 
-    @Resource("superscript.gif")
+    @Resource("superscript.png")
     AbstractImagePrototype superscript();
 
-    @Resource("ul.gif")
+    @Resource("ul.png")
     AbstractImagePrototype ul();
 
-    @Resource("underline.gif")
+    @Resource("underline.png")
     AbstractImagePrototype underline();
 }
