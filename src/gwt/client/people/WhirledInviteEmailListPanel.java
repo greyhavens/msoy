@@ -85,11 +85,15 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
         contents.setText(row++, 0, _msgs.inviteResultsMembers());
         for (EmailContact ec : addrs) {
             contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-            ClickListener onClick = new FriendInviter(ec.mname, "InvitePanel");
-            contents.setWidget(
-                row, 1, MsoyUI.createActionImage("/images/profile/addfriend.png", onClick));
-            contents.setWidget(
-                row++, 2, MsoyUI.createActionLabel(_msgs.mlAddFriend(), onClick));
+            if (ec.friend) {
+                contents.setText(row++, 2, _msgs.mlAlreadyFriend());
+            } else {
+                ClickListener onClick = new FriendInviter(ec.mname, "InvitePanel");
+                contents.setWidget(
+                    row, 1, MsoyUI.createActionImage("/images/profile/addfriend.png", onClick));
+                contents.setWidget(
+                    row++, 2, MsoyUI.createActionLabel(_msgs.mlAddFriend(), onClick));
+            }
         }
         rp.show();
     }
