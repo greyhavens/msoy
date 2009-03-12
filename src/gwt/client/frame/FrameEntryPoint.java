@@ -255,7 +255,7 @@ public class FrameEntryPoint
         }
 
         if (data.justCreated) {
-            Link.go(Pages.PEOPLE, "ff"); // send them to find friends
+            Link.go(Pages.PEOPLE, "confprof"); // send them to step 2: configure profile
         } else if (_page == Pages.LANDING || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {

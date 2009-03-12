@@ -91,6 +91,9 @@ public class PeoplePage extends Page
                 setContent(_msgs.inviteTitle(), new WhirledInvitePanel(justRegistered));
             }
 
+        } else if (action.equals("confprof")) { // !guest
+            setContent(_msgs.configProfileTitle(), new ConfigProfilePanel());
+
         } else if (action.equals("ff")) { // !guest
             setContent(_msgs.findFriendsTitle(), new FindFriendsPanel());
 

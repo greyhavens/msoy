@@ -8,10 +8,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.EmailContact;
@@ -29,12 +27,8 @@ public class FindFriendsPanel extends InvitePanel
     {
         addStyleName("findFriends");
 
-        // introduction to sharing
-        SmartTable intro = new SmartTable();
-        intro.setWidget(0, 0, new Image("/images/people/share_header.png"));
-        intro.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-        intro.setWidget(0, 2, MsoyUI.createHTML(_msgs.ffIntro(), "Title"));
-        add(intro);
+        // TODO: need proper image (step 3)
+        add(makeHeader("/images/people/share_header.png", _msgs.ffIntro()));
 
         add(new WebMailControls(_msgs.ffCheckWebmail(), _msgs.ffFind()) {
             protected void handleAddresses (List<EmailContact> addresses) {

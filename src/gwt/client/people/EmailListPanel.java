@@ -9,7 +9,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -25,17 +25,15 @@ import client.ui.MsoyUI;
 /**
  * Displays an interface for slurping in addresses from webmail contacts and adding them manually.
  */
-public abstract class EmailListPanel extends SmartTable
+public abstract class EmailListPanel extends FlowPanel
 {
     public EmailListPanel (final boolean filterMembers)
     {
         setStyleName("emailListPanel");
         setWidth("100%");
 
-        _addressList = new InviteList();
-
         // create our two control sets for getting email addresses
-        final ManualControls manual = new ManualControls(_addressList);
+        final ManualControls manual = new ManualControls();
         final WebMailControls webmail = new WebMailControls(
             _msgs.emailImportTitle(), _msgs.emailImport()) {
             protected void handleAddresses (List<EmailContact> addrs) {
@@ -45,6 +43,8 @@ public abstract class EmailListPanel extends SmartTable
                     // by virtue of being on the members list
                     if (!filterMembers || ec.mname == null) {
                         _addressList.addItem(ec.name, ec.email);
+                        _addressList.setVisible(true);
+                        _msgbox.setVisible(true);
                     } else {
                         members.add(ec);
                     }
@@ -54,46 +54,39 @@ public abstract class EmailListPanel extends SmartTable
                 }
             }
         };
-
-        int row = 0;
         // entry method, default to webmail
-        setWidget(row, 0, webmail, 2, null);
-
-        // mark the coordinates of the method widget, just for clarity
-        final int methodRow = row++;
-        final int methodColumn = 0;
+        add(_method = webmail);
 
         // the address list
-        setWidget(row++, 0, _addressList, 2, null);
+        add(_addressList = new InviteList());
+        _addressList.setVisible(false);
 
         // method toggle
-        Label toggle = MsoyUI.createActionLabel(
-            _msgs.emailManualTip(), "Toggle", new ClickListener () {
+        add(MsoyUI.createActionLabel(_msgs.emailManualTip(), "Toggle", new ClickListener () {
             public void onClick (Widget sender) {
-                if (getWidget(methodRow, methodColumn) == webmail) {
-                    setWidget(methodRow, methodColumn, manual, 2, null);
+                remove(_method);
+                if (_method == webmail) {
+                    insert(_method = manual, 0);
                     ((Label)sender).setText(_msgs.emailImportTip());
                 } else {
-                    setWidget(methodRow, methodColumn, webmail, 2, null);
+                    insert(_method = webmail, 0);
                     ((Label)sender).setText(_msgs.emailManualTip());
                 }
             }
-        });
-        setWidget(row++, 0, toggle, 2, "Toggle");
+        }));
 
-        // from
-        row = addFrom(row);
-
-        // message
-        setWidget(row++, 0, _message = MsoyUI.createTextArea("", 80, 4), 2, null);
+        add(_msgbox = new SmartTable());
+        addFrom(_msgbox);
+        _msgbox.addWidget(_message = MsoyUI.createTextArea("", 80, 4), 2, null);
         DefaultTextListener.configure(_message, _msgs.emailMessage());
-
-        setWidget(row, 0, MsoyUI.createButton("shortThin", _msgs.emailSend(), new ClickListener() {
+        int row = _msgbox.addWidget(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailSend(),
+                                                        new ClickListener() {
             public void onClick (Widget sender) {
                 validateAndSend();
             }
         }), 2, null);
-        getFlexCellFormatter().setHorizontalAlignment(row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+        _msgbox.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
+        _msgbox.setVisible(false);
     }
 
     public void setDefaultMessage (String message)
@@ -101,13 +94,12 @@ public abstract class EmailListPanel extends SmartTable
         _message.setText(message);
     }
 
-    protected int addFrom (int row)
+    protected void addFrom (SmartTable table)
     {
-        setText(row, 0, _msgs.emailFrom(), 1, "Bold");
-        getFlexCellFormatter().setWidth(row, 0, "10px"); // squeezy!
+        int row = table.addText(_msgs.emailFrom(), 1, "Bold");
+        table.getFlexCellFormatter().setWidth(row, 0, "10px"); // squeezy!
         _from = MsoyUI.createTextBox(CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 25);
-        setWidget(row, 1, _from);
-        return row+1;
+        table.setWidget(row, 1, _from);
     }
 
     /**
@@ -143,12 +135,10 @@ public abstract class EmailListPanel extends SmartTable
      */
     protected abstract void handleSend (String from, String message, List<EmailContact> contacts);
 
-    protected static class ManualControls extends FlowPanel
+    protected class ManualControls extends FlowPanel
     {
-        public ManualControls (InviteList addressList)
+        public ManualControls ()
         {
-            _list = addressList;
-
             setWidth("100%");
 
             SmartTable row = new SmartTable(0, 5);
@@ -171,18 +161,21 @@ public abstract class EmailListPanel extends SmartTable
             row.setWidget(0, col++, MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailAdd(),
                                                         new ClickListener() {
                 public void onClick (Widget sender) {
-                    InviteUtils.addEmailIfValid(_name, _address, _list);
+                    InviteUtils.addEmailIfValid(_name, _address, _addressList);
+                    _addressList.setVisible(true);
+                    _msgbox.setVisible(true);
                 }
             }));
             add(row);
         }
 
-        protected InviteList _list;
         protected TextBox _name;
         protected TextBox _address;
     }
 
+    protected Widget _method;
     protected InviteList _addressList;
+    protected SmartTable _msgbox;
     protected TextArea _message;
     protected TextBox _from;
 

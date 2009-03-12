@@ -437,7 +437,6 @@
  --------------------------------- */
 
 .invitePanel {
-  border: 10px solid white;
 }
 
 .invitePanel .Intro {
@@ -445,16 +444,15 @@
   font-size: 14px;
 }
 
+.invitePanel .InviteVia {
+  font-size: 18px;
+  font-weight: bold;
+}
+
 .invitePanel .Bold {
   color: #2356bf;
   font-weight: bold;
   font-size: 14px;
-}
-
-.gameInvite .labelparen {
-  color: #303030;
-  font-size: 10px;
-  width: 90%;
 }
 
 .invitePanel .IM {
@@ -464,6 +462,10 @@
 .invitePanel .IM .gwt-TextBox {
   border: 2px solid black;
   width: 100%;
+}
+
+.inviteHeader .Title {
+  font-size: 16px;
 }
 
 .inviteResultsPopup .ScrollPanel {
@@ -476,6 +478,10 @@
   GameInvitePanel
  --------------------------------- */
 
+.gameInvite {
+  border: 10px solid white;
+}
+
 .gameInvite .Whirled {
   font-size: 12px;
 }
@@ -486,15 +492,28 @@
   white-space: nowrap;
 }
 
+.gameInvite .labelparen {
+  color: #303030;
+  font-size: 10px;
+  width: 90%;
+}
+
 /* -------------------------------
   FindFriendsPanel
  --------------------------------- */
 
-.findFriends .Title {
-  font-size: 16px;
-}
-
 .findFriends .Header {
   font-size: 12px;
   text-decoration: underline;
+}
+
+/* -------------------------------
+  ConfigureProfilePanel
+ --------------------------------- */
+
+.configProfile {
+}
+
+.configProfile .Card {
+  border: 1px solid;
 }

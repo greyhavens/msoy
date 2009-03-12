@@ -31,15 +31,14 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
     }
 
     @Override // from EmailListPanel
-    protected int addFrom (int row)
+    protected void addFrom (SmartTable table)
     {
-        row = super.addFrom(row);
+        super.addFrom(table);
 
-        setText(row, 0, _msgs.inviteSubject(), 1, "Bold");
-        getFlexCellFormatter().setWidth(row, 0, "10px"); // squeezy!
+        int row = table.addText(_msgs.inviteSubject(), 1, "Bold");
+        table.getFlexCellFormatter().setWidth(row, 0, "10px"); // squeezy!
         _subject = MsoyUI.createTextBox("", InviteUtils.MAX_SUBJECT_LENGTH, 25);
-        setWidget(row, 1, _subject);
-        return row+1;
+        table.setWidget(row, 1, _subject);
     }
 
     @Override // from EmailListPanel

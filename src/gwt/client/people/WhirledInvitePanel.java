@@ -3,15 +3,14 @@
 
 package client.people;
 
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
-
+import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
+import client.ui.TongueBox;
 import client.util.Link;
 
 /**
@@ -21,28 +20,26 @@ public class WhirledInvitePanel extends InvitePanel
 {
     public WhirledInvitePanel (boolean justRegistered)
     {
-        String introMsg = justRegistered ? _msgs.newbInviteIntro() : _msgs.inviteIntro();
-        SmartTable intro = new SmartTable();
-        intro.setWidget(0, 0, new Image("/images/people/share_header.png"));
-        intro.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-        intro.setWidget(0, 2, MsoyUI.createHTML(introMsg, null));
-        add(intro);
+        String introMsg = justRegistered ?
+            _msgs.newbInviteIntro(""+CoinAwards.INVITED_FRIEND_JOINED) : _msgs.inviteIntro();
 
-        // buttons to invoke the various ways to invite
-        addMethodButton("Email", new InviteMethodCreator() {
-            public Widget create () {
-                return new WhirledInviteEmailListPanel();
-            }
-        });
-        addMethodButton("IM", new InviteMethodCreator() {
-            public Widget create () {
-                return new IMPanel(ShareUtil.getAffiliateLandingUrl(Pages.LANDING));
-            }
-        });
+        // TODO: if (justRegistered) need step 4 image
+        add(new TongueBox(null, makeHeader("/images/people/share_header.png", introMsg)));
+
+        add(new TongueBox(_msgs.inviteEmail(), new WhirledInviteEmailListPanel()));
+
+        add(new TongueBox(_msgs.inviteIM(),
+                          new IMPanel(ShareUtil.getAffiliateLandingUrl(Pages.LANDING))));
+
         if (justRegistered) {
-            _buttons.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, "Done!",
-                                             Link.createListener(Pages.WORLD, "h")));
+            HorizontalPanel done = new HorizontalPanel();
+            done.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+            done.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            done.setWidth("100%");
+            done.add(MsoyUI.createLabel(_msgs.inviteDoneTip(), null));
+            done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteNext(),
+                                         Link.createListener(Pages.WORLD, "h")));
+            add(new TongueBox(_msgs.inviteDone(), done));
         }
-        addMethodButtons();
     }
 }

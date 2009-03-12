@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -21,6 +22,20 @@ import client.ui.MsoyUI;
  */
 public abstract class InvitePanel extends FlowPanel
 {
+    /**
+     * Creates a header with an image. We use this on invite panels as well as on the
+     * ConfigureProfilePanel to provide a consistent UI experience during the four steps to
+     * registration and friend spamming glory.
+     */
+    public static Widget makeHeader (String image, String text)
+    {
+        SmartTable header = new SmartTable("inviteHeader", 0, 0);
+        header.setWidget(0, 0, new Image(image));
+        header.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+        header.setWidget(0, 2, MsoyUI.createHTML(text, "Title"));
+        return header;
+    }
+
     public InvitePanel ()
     {
         setStyleName("invitePanel");
@@ -28,6 +43,7 @@ public abstract class InvitePanel extends FlowPanel
         _buttons = new HorizontalPanel();
         _buttons.setWidth("100%");
         _buttons.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+        _buttons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
     }
 
     protected void addMethodButton (String label, final InviteMethodCreator creator)
