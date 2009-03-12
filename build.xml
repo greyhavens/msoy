@@ -796,7 +796,7 @@
   </target>
 
   <!-- builds our Java clients -->
-  <property name="jclients" value="admin,game,lwjgl-game,swiftly"/>
+  <property name="jclients" value="admin,swiftly"/>
   <target name="jclients" depends="dist"
           description="Rebuilds the Java clients. Use -Djclients=IDENT to just rebuild just one.">
     <for list="${jclients}" param="ident"><sequential>
