@@ -95,7 +95,7 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function getCurrentLocalType () :String
     {
-        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
+        var channel :MsoyChatChannel = getCurrentChannel();
         return (channel == null) ? ChatCodes.PLACE_CHAT_TYPE : channel.toLocalType();
     }
 
