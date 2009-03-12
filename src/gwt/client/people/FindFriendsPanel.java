@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -16,6 +17,7 @@ import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
+import client.ui.TongueBox;
 import client.util.Link;
 
 /**
@@ -28,34 +30,37 @@ public class FindFriendsPanel extends InvitePanel
         addStyleName("findFriends");
 
         // TODO: need proper image (step 3)
-        add(makeHeader("/images/people/share_header.png", _msgs.ffIntro()));
+        add(new TongueBox(null, makeHeader("/images/people/share_header.png", _msgs.ffIntro())));
 
-        add(new WebMailControls(_msgs.ffCheckWebmail(), _msgs.ffFind()) {
+        _webmail = new FlowPanel();
+        _webmail.add(new WebMailControls(_msgs.ffCheckWebmail(), _msgs.ffFind()) {
             protected void handleAddresses (List<EmailContact> addresses) {
                 List<EmailContact> members = new ArrayList<EmailContact>();
                 for (EmailContact ec : addresses) {
                     if (ec.mname != null) {
                         members.add(ec);
-                    }
+                    } // else: TODO, store these for the next panel
                 }
                 handleMembers(members);
             }
         });
 
-        add(_results = new SmartTable(0, 5));
+        _webmail.add(_results = new SmartTable(0, 5));
         _results.setWidth("100%"); // TODO
         _results.setWidget(0, 0, Link.create(_msgs.ffSkip(), Pages.PEOPLE,
                                              Args.compose("invites", "newuser")));
         _results.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
+
+        add(new TongueBox("Find Friends", _webmail));
     }
 
     protected void handleMembers (List<EmailContact> members)
     {
         // clear out our old skip or results display
-        remove(_results);
+        _webmail.remove(_results);
 
         int row = 0;
-        add(_results = new SmartTable(0, 5));
+        _webmail.add(_results = new SmartTable(0, 5));
         _results.setWidth("100%");
         _results.setText(row++, 0, _msgs.ffResultsTitle(), 4, "Bold");
 
@@ -85,6 +90,7 @@ public class FindFriendsPanel extends InvitePanel
                                                Args.compose("invites", "newuser")), 1, null);
     }
 
+    protected FlowPanel _webmail;
     protected SmartTable _results;
 
     protected static final String ADD_IMAGE = "/images/profile/addfriend.png";

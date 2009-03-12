@@ -386,6 +386,7 @@
 
 .emailListPanel .Toggle {
   text-align: right;
+  padding-bottom: 5px;
 }
 
 .emailListPanel .gwt-TextArea, .emailListPanel .gwt-TextBox {
@@ -400,6 +401,7 @@
   width: 100%;
   border: 1px solid #316C94;
   background: #E9F6FB;
+  margin-bottom: 5px;
 }
 
 .emailListPanel .InviteList .Header {
@@ -514,6 +516,23 @@
 .configProfile {
 }
 
+.configProfile .Info {
+  text-align: center;
+  font-size: 12px;
+  padding-bottom: 5px;
+}
+
+.configProfile .Card .Name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
 .configProfile .Card {
   border: 1px solid;
+  margin-bottom: 10px;
+}
+
+.configProfile .Card, .configProfile .Config {
+  margin-left: auto;
+  margin-right: auto;
 }

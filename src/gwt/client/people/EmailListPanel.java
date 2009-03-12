@@ -57,10 +57,6 @@ public abstract class EmailListPanel extends FlowPanel
         // entry method, default to webmail
         add(_method = webmail);
 
-        // the address list
-        add(_addressList = new InviteList());
-        _addressList.setVisible(false);
-
         // method toggle
         add(MsoyUI.createActionLabel(_msgs.emailManualTip(), "Toggle", new ClickListener () {
             public void onClick (Widget sender) {
@@ -75,6 +71,11 @@ public abstract class EmailListPanel extends FlowPanel
             }
         }));
 
+        // the address list
+        add(_addressList = new InviteList());
+        _addressList.setVisible(false);
+
+        // the from/subject/message UI
         add(_msgbox = new SmartTable());
         addFrom(_msgbox);
         _msgbox.addWidget(_message = MsoyUI.createTextArea("", 80, 4), 2, null);

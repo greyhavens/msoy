@@ -29,7 +29,7 @@ public abstract class InvitePanel extends FlowPanel
      */
     public static Widget makeHeader (String image, String text)
     {
-        SmartTable header = new SmartTable("inviteHeader", 0, 0);
+        SmartTable header = new SmartTable("inviteHeader", 0, 10);
         header.setWidget(0, 0, new Image(image));
         header.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         header.setWidget(0, 2, MsoyUI.createHTML(text, "Title"));

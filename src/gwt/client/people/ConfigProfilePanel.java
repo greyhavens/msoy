@@ -10,6 +10,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,14 +20,24 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ImageChooserPopup;
+import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
+import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
+import client.util.events.NameChangeEvent;
 
 /**
  * Displays a streamlined interface for configuring some basic profile information for a new
@@ -43,48 +55,98 @@ public class ConfigProfilePanel extends FlowPanel
                               "/images/people/share_header.png",
                               _msgs.cpIntro(""+CoinAwards.CREATED_PROFILE))));
 
-        FlowPanel bits = new FlowPanel();
-        bits.add(_card = new SmartTable("Card", 0, 10));
-        _card.setWidget(0, 0, MediaUtil.createMediaView(MemberCard.DEFAULT_PHOTO,
-                                                        MediaDesc.THUMBNAIL_SIZE));
-        _card.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        _card.setText(0, 1, "???", 2, "Name");
-        _card.setText(1, 0, _msgs.memberSince());
-        _card.setText(1, 1, MsoyUI.formatDate(new Date()));
+        add(new TongueBox("Who Are You?", _bits = new FlowPanel()));
+        _bits.add(MsoyUI.createLabel("Loading...", null));
 
-        SmartTable config = new SmartTable(0, 5);
-        bits.add(config);
-        config.setText(0, 0, "Upload a Photo:");
-        config.setWidget(0, 1, new Button("Select...", new ClickListener() {
+        // load up whatever profile they have at the moment
+        _profilesvc.loadProfile(
+            CShell.getMemberId(), new MsoyCallback<ProfileService.ProfileResult>() {
+            public void onSuccess (ProfileService.ProfileResult result) {
+                if (result != null) {
+                    gotProfile(result.name, result.profile);
+                } else {
+                    onFailure(new Exception("What? Missing own profile?"));
+                }
+            }
+        });
+    }
+
+    protected void gotProfile (MemberName name, final Profile profile)
+    {
+        _profile = profile;
+        _bits.clear();
+
+        _bits.add(MsoyUI.createLabel("Whirled Membership Card", "Info"));
+        _bits.add(_card = new SmartTable("Card", 0, 10));
+        _card.setWidget(0, 0, MediaUtil.createMediaView(profile.photo, MediaDesc.THUMBNAIL_SIZE));
+        _card.getFlexCellFormatter().setRowSpan(0, 0, 2);
+        _card.setText(0, 1, fiddleName(name.toString()), 2, "Name");
+        _card.setText(1, 0, _msgs.memberSince());
+        _card.setText(1, 1, MsoyUI.formatDate(new Date(profile.memberSince), false));
+
+        SmartTable config = new SmartTable("Config", 0, 5);
+        _bits.add(config);
+        config.setText(0, 0, "Pick a Whirled Name:");
+        _name = MsoyUI.createTextBox(name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 20);
+        TextBoxUtil.addTypingListener(_name, new Command() {
+            public void execute () {
+                _card.setText(0, 1, fiddleName(_name.getText().trim()));
+            }
+        });
+        config.setWidget(0, 1, _name);
+
+        config.setText(1, 0, "Upload a Photo:");
+        config.setWidget(1, 1, new Button("Select...", new ClickListener() {
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
-                            _photo = photo;
-                            _card.setWidget(
-                                0, 0, MediaUtil.createMediaView(_photo, MediaDesc.THUMBNAIL_SIZE));
+                            _profile.photo = photo;
+                            _card.setWidget(0, 0, MediaUtil.createMediaView(
+                                                photo, MediaDesc.THUMBNAIL_SIZE));
                         }
                     }
                 });
             }
         }));
 
-        config.setText(1, 0, "Pick a Whirled Name:");
-        _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, 20);
-        TextBoxUtil.addTypingListener(_name, new Command() {
-            public void execute () {
-                String name = _name.getText().trim();
-                _card.setText(0, 1, (name.length() == 0) ? "???" : name);
+        PushButton done = MsoyUI.createButton(MsoyUI.SHORT_THIN, "Done", null);
+        config.setWidget(2, 0, done, 2, null);
+        config.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+
+        new ClickCallback<Void>(done) {
+            protected boolean callService () {
+                _dname = _name.getText().trim();
+                if (!MemberName.isValidDisplayName(_dname)) {
+                    MsoyUI.infoNear(_cmsgs.displayNameInvalid(
+                                        "" + MemberName.MIN_DISPLAY_NAME_LENGTH,
+                                        "" + MemberName.MAX_DISPLAY_NAME_LENGTH), _name);
+                    return false;
+                }
+                _profilesvc.updateProfile(_dname, false, _profile, this);
+                return true;
             }
-        });
-        config.setWidget(1, 1, _name);
-        
-        add(new TongueBox("Who Are You?", bits));
+            protected boolean gotResult (Void result) {
+                CShell.frame.dispatchEvent(new NameChangeEvent(_dname));
+                Link.go(Pages.PEOPLE, "ff");
+                return false;
+            }
+            protected String _dname;
+        };
     }
 
+    protected static String fiddleName (String name)
+    {
+        return (name.length() == 0) ? "???" : name;
+    }
+
+    protected FlowPanel _bits;
     protected SmartTable _card;
     protected TextBox _name;
-    protected MediaDesc _photo;
+    protected Profile _profile;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
+        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }
