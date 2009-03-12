@@ -15,6 +15,11 @@ import com.threerings.util.Log;
 public class HistoryList
     implements ChatDisplay
 {
+    public function HistoryList (chatDir :MsoyChatDirector)
+    {
+        _chatDir = chatDir;
+    }
+
     /**
      * @return the current size of the history.
      */
@@ -34,10 +39,10 @@ public class HistoryList
     // from interface ChatDisplay
     public function clear () :void
     {
-        _history.length = 0;
-        // TODO: clearing the HL is more complicated that just deleting everything.  This will
-        // need to get the current localtype from the ChatTabBar for filtering, and will need to
-        // be able to ignore logoff clears (See ChatDirector.clientDidLogoff)
+        var selectedType :String = _chatDir.getCurrentLocalType();
+        _history = _history.filter(function (msg :ChatMessage, ... ignored) :Boolean {
+            return (msg.localtype != selectedType);
+        });
     }
 
     // from interface ChatDisplay
@@ -58,7 +63,9 @@ public class HistoryList
     /** The number of history entries we'll prune when we hit the max. */
     protected static const PRUNE_HISTORY :int = 100;
 
+    protected var _chatDir :MsoyChatDirector;
+
     /** The array in which we store historical chat. */
-    protected var _history :Array = new Array();
+    protected var _history :Array = [];
 }
 }

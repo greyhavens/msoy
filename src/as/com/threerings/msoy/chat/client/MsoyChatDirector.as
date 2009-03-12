@@ -66,7 +66,7 @@ public class MsoyChatDirector extends ChatDirector
             registerCommandHandler(msg, "badges", new BadgesHandler());
         }
 
-        addChatDisplay(_chatHistory = new HistoryList());
+        addChatDisplay(_chatHistory = new HistoryList(this));
 
         // create our room occupant list
         _roomOccList = new RoomOccupantList(_mctx);
@@ -80,6 +80,23 @@ public class MsoyChatDirector extends ChatDirector
     {
         _chatTabs = tabs;
         addChatDisplay(_chatTabs);
+    }
+
+    /**
+     * Get the currently-selected chat channel, or null if none.
+     */
+    public function getCurrentChannel () :MsoyChatChannel
+    {
+        return _chatTabs.getCurrentChannel();
+    }
+
+    /**
+     * Get the localType of the currently-selected tab.
+     */
+    public function getCurrentLocalType () :String
+    {
+        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
+        return (channel == null) ? ChatCodes.PLACE_CHAT_TYPE : channel.toLocalType();
     }
 
     /**
@@ -151,7 +168,7 @@ public class MsoyChatDirector extends ChatDirector
     override public function requestSpeak (
         speakSvc :SpeakService, message :String, mode :int) :void
     {
-        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
+        var channel :MsoyChatChannel = getCurrentChannel();
         if ((speakSvc != null) || // if a specific service is specified, OR
                 (channel == null) || (channel.type == MsoyChatChannel.ROOM_CHANNEL)) {
                 // ...if place chat, then we don't need to do anything special.
@@ -184,9 +201,7 @@ public class MsoyChatDirector extends ChatDirector
     override public function displayFeedback (bundle :String, message :String) :void
     {
         // alter things so that we deliver feedback on the open tab
-        var channel :MsoyChatChannel = _chatTabs.getCurrentChannel();
-        displaySystem(bundle, message, SystemMessage.FEEDBACK,
-            (channel == null) ? ChatCodes.PLACE_CHAT_TYPE : channel.toLocalType());
+        displaySystem(bundle, message, SystemMessage.FEEDBACK, getCurrentLocalType());
     }
 
     // from ChatDirector
