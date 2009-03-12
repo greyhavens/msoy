@@ -149,7 +149,7 @@ public class WorldControlBar extends ControlBar
         }
 
         function showFriends () :Boolean {
-            return !isInViewer() && !state.embedded;
+            return !isInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
         }
 
         function showHotZone () :Boolean {
