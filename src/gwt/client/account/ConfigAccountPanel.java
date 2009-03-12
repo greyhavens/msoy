@@ -54,15 +54,15 @@ public class ConfigAccountPanel extends FlowPanel
         table.setText(row, 0, _msgs.editEmail(), 1, "rightLabel");
         _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
         table.setWidget(row++, 1, _email);
-        _email.addKeyboardListener(_validator);
+        TextBoxUtil.addTypingListener(_email, _validator);
 
         table.setText(row, 0, _msgs.configPassword(), 1, "rightLabel");
         table.setWidget(row++, 1, _password = new PasswordTextBox());
-        _password.addKeyboardListener(_validator);
+        TextBoxUtil.addTypingListener(_password, _validator);
 
         table.setText(row, 0, _msgs.editConfirm(), 1, "rightLabel");
         table.setWidget(row++, 1, _confirm = new PasswordTextBox());
-        _confirm.addKeyboardListener(_validator);
+        TextBoxUtil.addTypingListener(_confirm, _validator);
 
         table.setHTML(row++, 0, "&nbsp;", 3, null);
         table.setText(row++, 0, _msgs.configAuthTip(), 3, null);
@@ -115,8 +115,7 @@ public class ConfigAccountPanel extends FlowPanel
         add(box);
     }
 
-    protected EditAccountPanel.DeferredKeyAdapter _validator =
-        new EditAccountPanel.DeferredKeyAdapter() {
+    protected Command _validator = new Command() {
         public void execute () {
             _submit.setEnabled(_email.getText().trim().length() > 0 &&
                                _password.getText().trim().length() > 0 &&
