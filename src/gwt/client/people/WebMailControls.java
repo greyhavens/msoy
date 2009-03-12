@@ -89,7 +89,7 @@ public abstract class WebMailControls extends FlowPanel
                     return false;
                 }
                 _invitesvc.getWebMailAddresses(
-                    _sentAddress = account.getText(), password.getText(), true, this);
+                    _sentAddress = account.getText(), password.getText(), this);
                 return true;
             }
 

@@ -23,7 +23,7 @@ public interface InviteService extends RemoteService
     /**
      * Loads up e-mail addresses from a user's webmail account.
      */
-    List<EmailContact> getWebMailAddresses (String email, String password, boolean skipFriends)
+    List<EmailContact> getWebMailAddresses (String email, String password)
         throws ServiceException;
 
     /**

@@ -19,9 +19,8 @@ public interface InviteServiceAsync
     /**
      * The asynchronous version of {@link InviteService#getWebMailAddresses}.
      */
-    void getWebMailAddresses (
-        String email, String password, boolean skipFriends,
-        AsyncCallback<List<EmailContact>> callback);
+    void getWebMailAddresses (String email, String password,
+                              AsyncCallback<List<EmailContact>> callback);
 
     /**
      * The asynchronous version of {@link InviteService#getInvitationsStatus}.

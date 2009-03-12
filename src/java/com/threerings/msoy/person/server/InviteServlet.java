@@ -58,8 +58,7 @@ public class InviteServlet extends MsoyServiceServlet
     implements InviteService
 {
     // from InviteService
-    public List<EmailContact> getWebMailAddresses (
-        String email, String password, boolean skipFriends)
+    public List<EmailContact> getWebMailAddresses (String email, String password)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -92,10 +91,6 @@ public class InviteServlet extends MsoyServiceServlet
                         continue;
                     }
                     ec.friend = _memberRepo.getFriendStatus(memrec.memberId, member.memberId);
-                    if (skipFriends && ec.friend) {
-                        // skip friends if requested
-                        continue;
-                    }
                     ec.mname = member.getName();
                 }
                 results.add(ec);
