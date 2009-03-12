@@ -17,7 +17,7 @@ import static com.threerings.msoy.Log.log;
 public class HTMLSanitizer
 {
     /** Our sanitizer freaks out if the message is longer than this. */
-    public static final int MAX_PRE_SANITIZE_LENGTH = 5000;
+    public static final int MAX_PRE_SANITIZE_LENGTH = 16384;
 
     /**
      * Removes unsavory bits from the supplied HTML and returns the remainder.
