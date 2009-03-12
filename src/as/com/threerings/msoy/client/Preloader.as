@@ -167,7 +167,8 @@ public class Preloader extends Sprite
             // figure out what upsell message to use (this must == what's in general.properties)
             var msg :String = getContentPage().indexOf("game") == -1 ?
                 "Create your own world in " : "Play more multiplayer games on";
-            msg += " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
+            msg += (" <a href=\"" + getWhirledPage("") + "\" target=\"_blank\">" +
+                "<u>Whirled.com</u></a>");
             addChild(makeSplashText(msg, stage.stageWidth, _spinner.y));
         }
     }
