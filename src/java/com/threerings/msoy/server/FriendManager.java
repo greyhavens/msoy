@@ -52,7 +52,7 @@ public class FriendManager
         try {
             FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
-                if (_peerMan.locateClient(entry.name) != null) {
+                if (_peerMan.getMemberLocation(entry.name.getMemberId()) != null) {
                     memobj.updateFriends(new FriendEntry(
                         new VizMemberName(entry.name, entry.name.getPhoto()),
                         entry.status, true));
