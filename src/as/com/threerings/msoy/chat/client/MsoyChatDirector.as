@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.utils.getTimer; // function
+
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+import com.threerings.util.Throttle;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationAdapter;
@@ -48,6 +51,9 @@ import com.threerings.msoy.chat.client.JabberService;
 public class MsoyChatDirector extends ChatDirector
 {
     public static const log :Log = Log.getLog(MsoyChatDirector);
+
+    /** The maximum size of any utterance. */
+    public static const MAX_CHAT_LENGTH :int = 200;
 
     // statically reference classes we require
     JabberMarshaller;
@@ -247,6 +253,24 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
+    override protected function checkCanChat (
+        speakSvc :SpeakService, message :String, mode :int) :String
+    {
+        var now :int = getTimer();
+        if (_throttle.throttleOpAt(now)) {
+            return "e.chat_throttled";
+        }
+        // if we allow it, we might also count this message as more than one "op"
+        if (message.length > 8) {
+            _throttle.noteOp(now);
+        }
+        if (message.length > (MAX_CHAT_LENGTH / 2)) {
+            _throttle.noteOp(now);
+        }
+        return null;
+    }
+
+    // from ChatDirector
     override protected function getChannelLocalType (channel :ChatChannel) :String
     {
         var mchannel :MsoyChatChannel = (channel as MsoyChatChannel);
@@ -324,5 +348,8 @@ public class MsoyChatDirector extends ChatDirector
 
     protected var _csservice :ChannelSpeakService;
     protected var _jservice :JabberService;
+
+    /** You may utter 8 things per 5 seconds, but large things count as two. */
+    protected var _throttle :Throttle = new Throttle(8, 5000);
 }
 }
