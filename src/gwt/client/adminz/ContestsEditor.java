@@ -85,7 +85,7 @@ public class ContestsEditor extends FlowPanel
             }
         }));
 
-        Command updateOnKeyPress = new Comman() {
+        Command updateOnKeyPress = new Command() {
             public void execute () {
                 _previewContainer.setWidget(new ContestBox(createContest()));
             }
