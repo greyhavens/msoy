@@ -55,12 +55,12 @@ public class FindFriendsPanel extends InvitePanel
         });
 
         _webmail.add(_results = new SmartTable(0, 5));
-        _results.setWidth("100%"); // TODO
+        _results.setWidth("100%");
         _results.setWidget(0, 0, Link.create(_msgs.ffSkip(), Pages.PEOPLE,
                                              Args.compose("invites", "newuser")));
         _results.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
 
-        add(new TongueBox("Find Friends", _webmail));
+        add(new TongueBox(_msgs.ffWebmail(), _webmail));
     }
 
     protected void handleMembers (List<EmailContact> members)
