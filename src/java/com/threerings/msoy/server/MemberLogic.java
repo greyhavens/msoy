@@ -61,7 +61,6 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 
 import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
@@ -480,7 +479,6 @@ public class MemberLogic
             _profileRepo.purgeMembers(purgeIds);
             _sceneRepo.purgeMembers(purgeIds);
             _statRepo.purgePlayers(purgeIds);
-            _swiftlyRepo.purgeMembers(purgeIds);
             _trophyRepo.purgeMembers(purgeIds);
             _uactionRepo.purgeMembers(purgeIds);
             // delete their inventory and associated data
@@ -758,7 +756,6 @@ public class MemberLogic
     @Inject protected MsoyOOOUserRepository _oooAuthRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected StatRepository _statRepo;
-    @Inject protected SwiftlyRepository _swiftlyRepo;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected UserActionRepository _uactionRepo;
 

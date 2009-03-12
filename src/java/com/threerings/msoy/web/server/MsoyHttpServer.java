@@ -72,9 +72,6 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.server.ProfileServlet;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.server.StuffServlet;
-import com.threerings.msoy.swiftly.gwt.SwiftlyService;
-import com.threerings.msoy.swiftly.server.SwiftlyServlet;
-import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
 
 import com.threerings.msoy.room.gwt.WebRoomService;
@@ -333,14 +330,12 @@ public class MsoyHttpServer extends Server
         .put(WebMemberService.ENTRY_POINT, MemberServlet.class)
         .put(ProfileService.ENTRY_POINT, ProfileServlet.class)
         .put(StuffService.ENTRY_POINT, StuffServlet.class)
-        .put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class)
         .put(WebUserService.ENTRY_POINT, WebUserServlet.class)
         .put(WebRoomService.ENTRY_POINT, WebRoomServlet.class)
         .put("/facebook", FacebookServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
         .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)
         .put("/snapshotsvc", SnapshotItemUploadServlet.class)
-        .put("/swiftlyuploadsvc", SwiftlyUploadServlet.class)
         .put("/undersvc", MsoyUnderwireServlet.class)
         .put("/uploadsvc", ItemMediaUploadServlet.class)
         .put("/stubdlsvc", StubDownloadServlet.class)

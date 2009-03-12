@@ -79,7 +79,6 @@ import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.spam.server.SpamLogic;
-import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.tour.server.TourManager;
 
@@ -197,7 +196,6 @@ public class MsoyServer extends MsoyBaseServer
         _friendMan.init();
         _jabberMan.init();
         _itemMan.init();
-        _swiftlyMan.init(_invmgr);
         _wgameReg.init();
         _ggameReg.init(injector);
         _partyReg.init();
@@ -413,9 +411,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Manages our parties. */
     @Inject protected PartyRegistry _partyReg;
-
-    /** Our runtime swiftly editor manager. */
-    @Inject protected SwiftlyManager _swiftlyMan;
 
     /** Our runtime admin manager. */
     @Inject protected MsoyAdminManager _adminMan;

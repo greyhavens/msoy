@@ -26,9 +26,6 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>hostedGames</code> field. */
     public static final String HOSTED_GAMES = "hostedGames";
 
-    /** The field name of the <code>hostedProjects</code> field. */
-    public static final String HOSTED_PROJECTS = "hostedProjects";
-
     /** The field name of the <code>memberLocs</code> field. */
     public static final String MEMBER_LOCS = "memberLocs";
 
@@ -50,9 +47,6 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Contains info on all games hosted by this server. */
     public DSet<HostedGame> hostedGames = new DSet<HostedGame>();
-
-    /** Contains info on all projects hosted by this server. */
-    public DSet<HostedProject> hostedProjects = new DSet<HostedProject>();
 
     /** Contains the current location of all members on this server. */
     public DSet<MemberLocation> memberLocs = new DSet<MemberLocation>();
@@ -201,53 +195,6 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(HOSTED_GAMES, value, this.hostedGames);
         DSet<HostedGame> clone = (value == null) ? null : value.typedClone();
         this.hostedGames = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>hostedProjects</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToHostedProjects (HostedProject elem)
-    {
-        requestEntryAdd(HOSTED_PROJECTS, hostedProjects, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>hostedProjects</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromHostedProjects (Comparable<?> key)
-    {
-        requestEntryRemove(HOSTED_PROJECTS, hostedProjects, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>hostedProjects</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateHostedProjects (HostedProject elem)
-    {
-        requestEntryUpdate(HOSTED_PROJECTS, hostedProjects, elem);
-    }
-
-    /**
-     * Requests that the <code>hostedProjects</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setHostedProjects (DSet<HostedProject> value)
-    {
-        requestAttributeChange(HOSTED_PROJECTS, value, this.hostedProjects);
-        DSet<HostedProject> clone = (value == null) ? null : value.typedClone();
-        this.hostedProjects = clone;
     }
 
     /**

@@ -328,15 +328,6 @@
 
     <!-- copy our HTML sanitizer configuration -->
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
-
-    <!-- create dev usable security.policy and swiftly.policy files -->
-    <!-- real ones are created in package -->
-    <copy file="etc/security.policy.in" tofile="${deploy.dir}/security.policy" overwrite="true">
-      <filterset><filter token="PREFIX" value="${server_root}"/></filterset>
-    </copy>
-    <copy file="etc/swiftly.policy.in" tofile="${deploy.dir}/swiftly.policy" overwrite="true">
-      <filterset><filter token="PREFIX" value="${basedir}"/></filterset>
-    </copy>
   </target>
 
   <!-- creates page.gwt.xml.in from page.gwt.xml, doing user agent fiddling -->
@@ -444,7 +435,8 @@
           description="Rebuilds the GWT client (but only for Mozilla).">
     <property name="pageout.dir" value="${gwtout.dir}/${version}"/>
     <mkdir dir="${pageout.dir}"/>
-    <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}"><sequential>
+    <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}">
+    <sequential>
       <delete dir="${pageout.dir}/@{page}"/>
       <mkdir dir="${pageout.dir}/@{page}"/>
 
@@ -496,7 +488,8 @@
         <srcfile/>
         <fileset dir="${pageout.dir}/@{page}" includes="*.cache.html"/>
         <redirector>
-          <outputmapper type="glob" from="*.cache.html" to="${pageout.dir}/@{page}/*.cache.html.gz"/>
+          <outputmapper type="glob" from="*.cache.html"
+                        to="${pageout.dir}/@{page}/*.cache.html.gz"/>
         </redirector>
       </apply>
 
@@ -831,7 +824,6 @@
         <include name="**/client/*Service.java"/>
         <exclude name="**/admin/**"/>
         <exclude name="**/peer/**"/>
-        <exclude name="**/swiftly/**"/>
         <exclude name="**/GameServerService.java"/>
       </fileset>
     </service>
@@ -839,7 +831,6 @@
       <fileset dir="${src.dir}">
         <include name="**/admin/client/*Service.java"/>
         <include name="**/peer/client/*Service.java"/>
-        <include name="**/swiftly/client/*Service.java"/>
         <include name="**/client/GameServerService.java"/>
       </fileset>
     </service>
@@ -995,25 +986,16 @@
       <include name="*.properties"/>
       <include name="rsrc/**/*.properties"/>
       <include name="rsrc/**/*.tmpl"/>
-      <exclude name="com/threerings/msoy/swiftly/server/build/FlexCompilerDelegate*"/>
     </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
     <!-- and our server-only data in yet another -->
     <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
-    <!-- and our flex compiler delegate all by itself -->
-    <jar file="${deploy.dir}/flex-compiler-delegate.jar" basedir="${classes.dir}"
-         includes="com/threerings/msoy/swiftly/server/build/FlexCompilerDelegate*"/>
-    <!-- copy some build results to where Swiftly wants them -->
-    <copy todir="data/swiftly/whirled_sdk/lib">
-      <fileset dir="${deploy.dir}/lib" includes="*.swc"/>
-    </copy>
   </target>
 
-  <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
-       the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,asgclient"
+  <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,
+          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,asgclient"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
@@ -1056,7 +1038,6 @@
     <delete file="pages/crossdomain.xml"/>
     <delete file="pages/js/facebook.js"/>
     <delete><fileset dir="${gsrc.dir}" includes="**/*Messages.java"/></delete>
-    <delete><fileset dir="data/swiftly/whirled_sdk/lib" includes="*.swc"/></delete>
   </target>
 
   <!-- fully cleans out all build results -->
@@ -1174,7 +1155,6 @@
         <file name="msoyrespawn"/>
         <file name="runmsoy"/>
         <file name="rungame"/>
-        <file name="swiftlycompiler"/>
         <file name="runpolicy"/>
       </filelist>
     </copyfilelist>
@@ -1188,16 +1168,11 @@
       </filelist>
     </copyfilelist>
 
-    <!-- copy in the dictionaries and swiftly build stuff (msoy only) -->
+    <!-- copy in the dictionaries (msoy only) -->
     <mkdir dir="${approot.server}/data"/>
     <copy todir="${approot.server}/data">
       <fileset dir="data">
         <include name="dictionary/**"/>
-        <include name="swiftly/**"/>
-        <exclude name="swiftly/flex_sdk/asdoc/**"/>
-        <exclude name="swiftly/flex_sdk/runtimes/**"/>
-        <exclude name="swiftly/flex_sdk/samples/**"/>
-        <exclude name="swiftly/flex_sdk/templates/**"/>
       </fileset>
     </copy>
 
@@ -1213,11 +1188,6 @@
 
     <!-- create our production security.policy files (msoy only) -->
     <copy file="etc/security.policy.in" tofile="${approot.server}/${deploy.dir}/security.policy">
-      <filterset>
-        <filter token="PREFIX" value="${app.prefix}"/>
-      </filterset>
-    </copy>
-    <copy file="etc/swiftly.policy.in" tofile="${approot.server}/${deploy.dir}/swiftly.policy">
       <filterset>
         <filter token="PREFIX" value="${app.prefix}"/>
       </filterset>
@@ -1318,13 +1288,10 @@
           <permission user="${msoy.user}" group="${msoy.group}" mode="755" recursive="false">
             <path>pages/media/</path>
             <path>pages/buildresults/</path>
-            <path>data/swiftly/projects/</path>
-            <path>data/swiftly/build/</path>
           </permission>
           <permission mode="555" recursive="true">
             <path>bin/</path>
             <path>etc/rc.d/</path>
-            <path>data/swiftly/flex_sdk_bin/bin</path>
           </permission>
           <permission user="${msoy.user}" group="${msoy.group}" mode="550">
             <path>dist/msoy-server.properties</path>

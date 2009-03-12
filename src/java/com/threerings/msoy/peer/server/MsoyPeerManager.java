@@ -55,11 +55,9 @@ import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
-import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.web.gwt.ConnectConfig;
 
 import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.HostedProject;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -139,12 +137,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getGameLock (int gameId)
     {
         return new NodeObject.Lock("GameHost", gameId);
-    }
-
-    /** Returns a lock used to claim resolution of the specified Swiftly project room. */
-    public static NodeObject.Lock getProjectLock (int projectId)
-    {
-        return new NodeObject.Lock("ProjectHost", projectId);
     }
 
     /**
@@ -264,20 +256,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns the ConnectConfig for the Node hosting the Swiftly project room manager for this
-     * project or null if no peer has published that they are hosting the project.
-     */
-    public ConnectConfig getProjectConnectConfig (final int projectId)
-    {
-        return lookupNodeDatum(new Function<NodeObject, ConnectConfig>() {
-            public ConnectConfig apply (NodeObject nodeobj) {
-                HostedProject info = ((MsoyNodeObject) nodeobj).hostedProjects.get(projectId);
-                return (info == null) ? null : info.createConnectConfig();
-            }
-        });
-    }
-
-    /**
      * Called by the RoomManager when it is hosting a scene.
      */
     public void roomDidStartup (
@@ -324,24 +302,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.debug("No longer hosting game", "id", gameId);
         _mnobj.removeFromHostedGames(gameId);
-    }
-
-    /**
-     * Called by the SwiftlyManager when it is hosting a project.
-     */
-    public void projectDidStartup (SwiftlyProject project, ConnectConfig config)
-    {
-        log.debug("Hosting project", "id", project.projectId, "name", project.projectName);
-        _mnobj.addToHostedProjects(new HostedProject(project, config));
-    }
-
-    /**
-     * Called by the SwiftlyManager when it is no longer hosting a project.
-     */
-    public void projectDidShutdown (int projectId)
-    {
-        log.debug("No longer hosting project", "id", projectId);
-        _mnobj.removeFromHostedProjects(projectId);
     }
 
     /**
