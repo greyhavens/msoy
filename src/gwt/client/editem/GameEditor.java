@@ -99,8 +99,8 @@ public class GameEditor extends ItemEditor
                         _maxPlayers.setText(option.getFirstChild().toString());
                     } else if ("unwatchable".equals(name)) {
                         _watchable.setChecked(false);
-                    } else if ("auto1p".equals(name)) {
-                        _autoSingle.setChecked(true);
+                    } else if ("noprogress".equals(name)) {
+                        _noprogress.setChecked(true);
                     }
                 }
                 option = option.getNextSibling();
@@ -125,7 +125,6 @@ public class GameEditor extends ItemEditor
             _minPlayers.setEnabled(false);
             _maxPlayers.setEnabled(false);
             _watchable.setEnabled(false);
-            _autoSingle.setEnabled(false);
         }
 
         NodeList params = xml.getElementsByTagName("params");
@@ -174,13 +173,6 @@ public class GameEditor extends ItemEditor
 
         addTab(_emsgs.gameTabConfig());
 
-        final Binder autoSingleUpdateFn = new Binder() {
-            @Override public void textUpdated (String newText) {
-                boolean singlePlayer = "1".equals(newText);
-                _autoSingle.setEnabled(_minPlayers.isEnabled() && singlePlayer);
-            }
-        };
-
         addRow(_emsgs.gameGameType(), bind(_gameType = new ListBox(), new Binder() {
             @Override public void valueChanged () {
                 boolean isSeated = (_gameType.getSelectedIndex() == GameType.SEATED.ordinal());
@@ -195,39 +187,32 @@ public class GameEditor extends ItemEditor
                     _maxPlayers.setText("99");
                     _oldWatch = _watchable.isChecked();
                     _watchable.setChecked(true);
-                    _oldAutoSingle = _autoSingle.isChecked();
-                    _autoSingle.setChecked(true);
                 } else {
                     _minPlayers.setText(_oldMin);
                     _maxPlayers.setText(_oldMax);
                     _watchable.setChecked(_oldWatch);
-                    _autoSingle.setChecked(_oldAutoSingle);
                 }
                 // TODO: it would be nicer to just hide these
                 _minPlayers.setEnabled(isSeated);
                 _maxPlayers.setEnabled(isSeated);
                 _watchable.setEnabled(isSeated);
-
-                // force a check box refresh
-                autoSingleUpdateFn.textUpdated(_minPlayers.getText());
             }
             protected String _oldMin = "1", _oldMax = "1";
-            protected boolean _oldWatch, _oldAutoSingle;
+            protected boolean _oldWatch;
         }));
 
         for (GameType gtype : GameType.values()) {
             _gameType.addItem(gtype.getText());
         }
 
-        _minPlayers = new NumberTextBox(false, 5);
+        addRow(_emsgs.gameMinPlayers(), _minPlayers = new NumberTextBox(false, 5));
         _minPlayers.setText("1");
-        addRow(_emsgs.gameMinPlayers(), bind(_minPlayers, autoSingleUpdateFn));
         addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new NumberTextBox(false, 5));
         _maxPlayers.setText("1");
         addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
-        addRow(_emsgs.gameAutoSingle(), _autoSingle = new CheckBox());
 
+        addSpacer();
         addRow(_emsgs.gameDefinition(), _extras = new TextArea());
         _extras.setCharacterWidth(55);
         _extras.setVisibleLines(5);
@@ -280,6 +265,7 @@ public class GameEditor extends ItemEditor
         super.addExtras();
 
         // splash screen goes below the standard extras
+        addSpacer();
         ItemMediaUploader splasher = addImageUploader(
             Game.SPLASH_MEDIA, MediaDesc.GAME_SPLASH_SIZE, ItemMediaUploader.MODE_GAME_SPLASH,
             new MediaSetter() {
@@ -300,6 +286,12 @@ public class GameEditor extends ItemEditor
         addSpacer();
         addRow(_emsgs.gameShopTag(), _shopTag = new TextBox());
         addTip(_emsgs.gameShopTagTip());
+
+        // add a toggle for disabling loading progress
+        addSpacer();
+        addRow(_emsgs.gameNoProgress(), _noprogress = new CheckBox());
+        _noprogress.setChecked(false);
+        addTip(_emsgs.gameNoProgressTip());
     }
 
     /** Adds and configures an image uploader widget. */
@@ -379,17 +371,11 @@ public class GameEditor extends ItemEditor
         Element minSeats = xml.createElement("min_seats");
         minSeats.appendChild(xml.createTextNode(_minPlayers.getText()));
         match.appendChild(minSeats);
-
         Element maxSeats = xml.createElement("max_seats");
         maxSeats.appendChild(xml.createTextNode(_maxPlayers.getText()));
         match.appendChild(maxSeats);
-
         if (!_watchable.isChecked()) {
             match.appendChild(xml.createElement("unwatchable"));
-        }
-
-        if (_autoSingle.isChecked()) {
-            match.appendChild(xml.createElement("auto1p"));
         }
 
         Object[] bits = { "serverclass", _serverClass };
@@ -402,9 +388,13 @@ public class GameEditor extends ItemEditor
             }
         }
 
+        // add some boolean bits
         if (gameType == GameType.AVRG) {
-            // This is really what makes an avrg do its special thing
+            // this is really what makes an avrg do its special thing
             xml.getFirstChild().appendChild(xml.createElement("avrg"));
+        }
+        if (_noprogress.isChecked()) {
+            xml.getFirstChild().appendChild(xml.createElement("noprogress"));
         }
 
         // show a notice that a new Whirled will be created
@@ -510,7 +500,7 @@ public class GameEditor extends ItemEditor
     protected NumberTextBox _minPlayers, _maxPlayers;
     protected ListBox _gameType;
     protected CheckBox _watchable;
-    protected CheckBox _autoSingle;
+    protected CheckBox _noprogress;
     protected TextBox _serverClass;
     protected TextArea _extras;
     protected ListBox _whirled;
