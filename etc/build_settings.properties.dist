@@ -16,11 +16,6 @@ log4j_game_config = etc/log4j-game.properties
 log4j_bureau_config = etc/log4j-bureaulauncher.properties
 
 #
-# Used for signing our Java client code
-
-# cert_dir = /export/threerings
-
-#
 # Indicates the number of threads to use when building GWT.
 
 gwt_build_threads = 1
