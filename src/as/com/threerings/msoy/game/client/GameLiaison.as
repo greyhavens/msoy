@@ -284,6 +284,9 @@ public class GameLiaison
         if (player) {
             player.removeListener(this);
         }
+
+        // unregister our place exit code
+        _wctx.getWorldController().removePlaceExitHandler(onPlaceExit);
     }
 
     // from interface ClientObserver
