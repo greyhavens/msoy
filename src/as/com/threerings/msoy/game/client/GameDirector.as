@@ -15,6 +15,7 @@ import com.threerings.crowd.client.PlaceController;
 
 import com.threerings.flex.CommandMenu;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
@@ -141,6 +142,9 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison is AVRGameLiaison) {
             menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
+            if (DeploymentConfig.devDeployment) {
+                menuData.push({label :"Debug Coordinates", command: showCoordinateDebugPanel});
+            }
         }
 
         return true;
@@ -461,6 +465,12 @@ public class GameDirector extends BasicDirector
         }
         _liaison = new LobbyGameLiaison(_wctx, gameId);
         _liaison.start(ghost, gport);
+    }
+
+    protected function showCoordinateDebugPanel () :void
+    {
+        var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
+        ctrl.showCoordinateDebugPanel();
     }
 
     protected static function encodeBase64 (str :String) :String

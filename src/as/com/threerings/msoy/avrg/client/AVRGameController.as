@@ -182,6 +182,11 @@ public class AVRGameController extends PlaceController
         }
     }
 
+    public function showCoordinateDebugPanel () :void
+    {
+        CoordinateDebugPanel.show(_wctx, getPlaceView() as AVRGamePanel);
+    }
+
     // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
     // the creation of the backend, and we cannot know which order they will execute in, so
     // we call this method in both; it will be executed when both have done their job.
