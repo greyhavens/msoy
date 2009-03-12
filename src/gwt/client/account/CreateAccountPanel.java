@@ -97,13 +97,6 @@ public class CreateAccountPanel extends FlowPanel
             _email.setText(invite.inviteeEmail);
         }
 
-        data.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
-                           _msgs.createRealNameTip()));
-        _rname.addKeyboardListener(_onType);
-
-        data.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
-                           _msgs.createDateOfBirthTip()));
-
         data.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
                            _msgs.createPasswordTip()));
         _password.addKeyboardListener(_onType);
@@ -112,9 +105,16 @@ public class CreateAccountPanel extends FlowPanel
                            _msgs.createConfirmTip()));
         _confirm.addKeyboardListener(_onType);
 
-        _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
-        _name.addKeyboardListener(_onType);
-        data.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
+//         data.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
+//                            _msgs.createRealNameTip()));
+//         _rname.addKeyboardListener(_onType);
+
+        data.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
+                           _msgs.createDateOfBirthTip()));
+
+//         _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
+//         _name.addKeyboardListener(_onType);
+//         data.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
         if (RecaptchaUtil.isEnabled()) {
@@ -162,10 +162,12 @@ public class CreateAccountPanel extends FlowPanel
                 RegisterInfo info = new RegisterInfo();
                 info.email = _email.getText().trim();
                 info.password = CShell.frame.md5hex(_password.getText().trim());
-                info.displayName = _name.getText().trim();
+//                 info.displayName = _name.getText().trim();
+                info.displayName = "???";
                 info.birthday = _dateOfBirth.getDate();
                 info.info = new AccountInfo();
-                info.info.realName = _rname.getText().trim();
+//                 info.info.realName = _rname.getText().trim();
+                info.info.realName = "";
                 info.expireDays = 1; // TODO: unmagick?
                 Invitation invite = CShell.frame.getActiveInvitation();
                 info.inviteId = (invite == null) ? null : invite.inviteId;
@@ -254,7 +256,7 @@ public class CreateAccountPanel extends FlowPanel
 
     protected boolean validateData ()
     {
-        String email = _email.getText().trim(), name = _name.getText().trim();
+        String email = _email.getText().trim() /*, name = _name.getText().trim() */;
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         String status;
         FocusWidget toFocus = null;
@@ -274,13 +276,13 @@ public class CreateAccountPanel extends FlowPanel
             status = _msgs.createMissingDoB();
             // this is not a FocusWidget so we have to handle it specially
             _dateOfBirth.setFocus(true);
-        } else if (!MemberName.isValidDisplayName(name)) {
-            status = _cmsgs.displayNameInvalid("" + MemberName.MIN_DISPLAY_NAME_LENGTH,
-                "" + MemberName.MAX_DISPLAY_NAME_LENGTH);
-            toFocus = _name;
-        } else if (!MemberName.isValidNonSupportName(name)) {
-            status = _cmsgs.nonSupportNameInvalid();
-            toFocus = _name;
+//         } else if (!MemberName.isValidDisplayName(name)) {
+//             status = _cmsgs.displayNameInvalid("" + MemberName.MIN_DISPLAY_NAME_LENGTH,
+//                 "" + MemberName.MAX_DISPLAY_NAME_LENGTH);
+//             toFocus = _name;
+//         } else if (!MemberName.isValidNonSupportName(name)) {
+//             status = _cmsgs.nonSupportNameInvalid();
+//             toFocus = _name;
         } else if (!_tosBox.isChecked()) {
             status = _msgs.createMustAgreeTOS();
         } else if (RecaptchaUtil.isEnabled() && (RecaptchaUtil.getResponse() == null ||
@@ -374,7 +376,7 @@ public class CreateAccountPanel extends FlowPanel
         }
     };
 
-    protected TextBox _email, _name, _rname;
+    protected TextBox _email /*, _name, _rname */;
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
     protected CheckBox _tosBox;

@@ -55,8 +55,9 @@ public class ConfigProfilePanel extends FlowPanel
                               "/images/people/share_header.png",
                               _msgs.cpIntro(""+CoinAwards.CREATED_PROFILE))));
 
-        add(new TongueBox("Who Are You?", _bits = new FlowPanel()));
-        _bits.add(MsoyUI.createLabel("Loading...", null));
+        add(new TongueBox(_msgs.cpWhoAreYou(), _bits = new FlowPanel()));
+        _bits.setStyleName("Bits");
+        _bits.add(MsoyUI.createLabel(_msgs.cpLoading(), null));
 
         // load up whatever profile they have at the moment
         _profilesvc.loadProfile(
@@ -76,7 +77,6 @@ public class ConfigProfilePanel extends FlowPanel
         _profile = profile;
         _bits.clear();
 
-        _bits.add(MsoyUI.createLabel("Whirled Membership Card", "Info"));
         _bits.add(_card = new SmartTable("Card", 0, 10));
         _card.setWidget(0, 0, MediaUtil.createMediaView(profile.photo, MediaDesc.THUMBNAIL_SIZE));
         _card.getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -84,19 +84,22 @@ public class ConfigProfilePanel extends FlowPanel
         _card.setText(1, 0, _msgs.memberSince());
         _card.setText(1, 1, MsoyUI.formatDate(new Date(profile.memberSince), false));
 
+        _bits.add(MsoyUI.createLabel(_msgs.cpWhoTip(), "Tip"));
+
         SmartTable config = new SmartTable("Config", 0, 5);
         _bits.add(config);
-        config.setText(0, 0, "Pick a Whirled Name:");
+        int row = 0;
+        config.setText(row, 0, _msgs.cpPickName());
         _name = MsoyUI.createTextBox(name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 20);
         TextBoxUtil.addTypingListener(_name, new Command() {
             public void execute () {
                 _card.setText(0, 1, fiddleName(_name.getText().trim()));
             }
         });
-        config.setWidget(0, 1, _name);
+        config.setWidget(row++, 1, _name);
 
-        config.setText(1, 0, "Upload a Photo:");
-        config.setWidget(1, 1, new Button("Select...", new ClickListener() {
+        config.setText(row, 0, _msgs.cpUploadPhoto());
+        config.setWidget(row++, 1, new Button(_msgs.cpSelect(), new ClickListener() {
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
@@ -110,9 +113,9 @@ public class ConfigProfilePanel extends FlowPanel
             }
         }));
 
-        PushButton done = MsoyUI.createButton(MsoyUI.SHORT_THIN, "Done", null);
-        config.setWidget(2, 0, done, 2, null);
-        config.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
+        PushButton done = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.cpDone(), null);
+        config.setWidget(row, 0, done, 2, null);
+        config.getFlexCellFormatter().setHorizontalAlignment(row++, 0, HasAlignment.ALIGN_RIGHT);
 
         new ClickCallback<Void>(done) {
             protected boolean callService () {
@@ -121,6 +124,9 @@ public class ConfigProfilePanel extends FlowPanel
                     MsoyUI.infoNear(_cmsgs.displayNameInvalid(
                                         "" + MemberName.MIN_DISPLAY_NAME_LENGTH,
                                         "" + MemberName.MAX_DISPLAY_NAME_LENGTH), _name);
+                    return false;
+                } else if (!MemberName.isValidNonSupportName(_dname)) {
+                    MsoyUI.infoNear(_cmsgs.nonSupportNameInvalid(), _name);
                     return false;
                 }
                 _profilesvc.updateProfile(_dname, false, _profile, this);
@@ -137,7 +143,7 @@ public class ConfigProfilePanel extends FlowPanel
 
     protected static String fiddleName (String name)
     {
-        return (name.length() == 0) ? "???" : name;
+        return (name.length() == 0) ? _msgs.cpBlankName() : name;
     }
 
     protected FlowPanel _bits;

@@ -516,10 +516,14 @@
 .configProfile {
 }
 
-.configProfile .Info {
-  text-align: center;
+.configProfile .Bits {
+  margin-left: 50px;
+}
+
+.configProfile .Tip {
   font-size: 12px;
-  padding-bottom: 5px;
+  max-width: 430px;
+  padding-top: 5px;
 }
 
 .configProfile .Card .Name {
@@ -529,10 +533,11 @@
 
 .configProfile .Card {
   border: 1px solid;
+  margin-right: 15px;
   margin-bottom: 10px;
+  float: left;
 }
 
-.configProfile .Card, .configProfile .Config {
-  margin-left: auto;
-  margin-right: auto;
+.configProfile .Config {
+  width: 430px;
 }

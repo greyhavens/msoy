@@ -17,7 +17,7 @@ public class ShareUtil
     /**
      * Returns an affiliated link (for the current member) to the specified page.
      */
-    public static String getAffiliateLandingUrl (Pages page, Object... args)
+    public static String getAffiliateLandingURL (Pages page, Object... args)
     {
         String path = DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
         if (page != Pages.LANDING) {
