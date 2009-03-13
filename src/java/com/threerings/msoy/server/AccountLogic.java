@@ -390,8 +390,7 @@ public class AccountLogic
      */
     protected String generatePermaguestDisplayName (int memberId)
     {
-        String prefix = _serverMsgs.getBundle("server").get("m.permaguest_name");
-        return prefix + " " + memberId;
+        return _serverMsgs.getBundle("server").get("m.permaguest_name", memberId);
     }
 
     protected void validateRegistrationInfo (int[] birthdayYMD, String email, String displayName)
