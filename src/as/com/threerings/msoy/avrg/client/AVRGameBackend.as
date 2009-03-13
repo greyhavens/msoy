@@ -619,7 +619,6 @@ public class AVRGameBackend extends ControlBackend
         if (view != null) {
             p = _wctx.getTopPanel().getPlaceContainer().localToGlobal(p);
             p = view.globalToLocal(p);
-            p.x -= view.getScrollOffset();
             return p;
         }
         return null;
@@ -630,8 +629,7 @@ public class AVRGameBackend extends ControlBackend
     {
         var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
-            return _wctx.getTopPanel().getPlaceContainer().globalToLocal(
-                view.localToGlobal(new Point(p.x + view.getScrollOffset(), p.y)));
+            return _wctx.getTopPanel().getPlaceContainer().globalToLocal(view.localToGlobal(p));
         }
         return null;
     }
