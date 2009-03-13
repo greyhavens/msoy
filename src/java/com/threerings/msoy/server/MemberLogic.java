@@ -451,14 +451,14 @@ public class MemberLogic
     {
         if (info == null || info.id == null || vector == null) {
             log.warning("Got bogus vector data", "info", info, "vector", vector);
-        } else {
+            return;
+        }
+        try {
+            _memberRepo.noteEntryVector(info.id, vector);
             _eventLog.vectorAssociated(info, vector);
-            try {
-                _memberRepo.noteEntryVector(info.id, vector);
-            } catch (DuplicateKeyException dke) {
-                // this is par for the course as the client will keep reporting its association
-                // until the cookie expires or the user registers
-            }
+        } catch (DuplicateKeyException dke) {
+            // this is par for the course as the client will keep reporting its association until
+            // the cookie expires or the user registers
         }
     }
 
