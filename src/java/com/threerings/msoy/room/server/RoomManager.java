@@ -592,24 +592,26 @@ public class RoomManager extends SpotSceneManager
         if (!WindowClientObject.isForGame(caller, gameId)) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
-
-        Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
-        if (_mobs.containsKey(key)) {
-            // this will only ever show up in an AVRG server agent log 
-            listener.requestFailed("e.duplicate_mob_id " + mobId);
-            return;
-        }
-
         if (StringUtil.isBlank(mobName)) {
             throw new IllegalArgumentException(
                 "Mob spawn request without name [gameId=" + gameId + ", mobId=" + mobId + "]");
         }
 
-        final MobObject mobObj = _omgr.registerObject(new MobObject());
+        // these two messages will only ever show up in an AVRG server agent log 
+        if (countMobs(gameId) >= MAX_MOBS_PER_GAME) {
+            throw new InvocationException("e.too_many_mobs");
+        }
+        MobObject mobObj = getMob(gameId, mobId);
+        if (mobObj != null) {
+            throw new InvocationException("e.duplicate_mob_id " + mobId);
+        }
+
+        mobObj = _omgr.registerObject(new MobObject());
         mobObj.setGameId(gameId);
         mobObj.setIdent(mobId);
         mobObj.setUsername(new Name(mobName));
-        _mobs.put(key, mobObj);
+
+        putMob(gameId, mobId, mobObj);
 
         // prepare to set the starting location
         _startingLocs.put(mobObj.getOid(), startLoc);
@@ -628,13 +630,10 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
 
-        Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
-
-        final MobObject mobObj = _mobs.get(key);
+        MobObject mobObj = getMob(gameId, mobId);
         if (mobObj == null) {
             // this will only ever show up in an AVRG server agent log 
-            listener.requestFailed("e.mob_not_found " + mobId);
-            return;
+            throw new InvocationException("e.mob_not_found " + mobId);
         }
 
         changeLocation(mobObj, (MsoyLocation)newLoc);
@@ -643,25 +642,21 @@ public class RoomManager extends SpotSceneManager
     // from RoomProvider
     public void despawnMob (
         ClientObject caller, int gameId, String mobId,
-        final InvocationService.InvocationListener listener)
+        InvocationService.InvocationListener listener)
         throws InvocationException
     {
         if (!WindowClientObject.isForGame(caller, gameId)) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
 
-        Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
-
-        final MobObject mobObj = _mobs.get(key);
-        if (mobObj == null) {
+        MobObject mobObj = removeMob(gameId, mobId);
+        if (mobObj != null) {
+            _locmgr.leaveOccupiedPlace(mobObj);
+            _omgr.destroyObject(mobObj.getOid());
+        } else {
             // this will only ever show up in an AVRG server agent log 
             listener.requestFailed("e.mob_not_found " + mobId);
-            return;
         }
-
-        _locmgr.leaveOccupiedPlace(mobObj);
-        _omgr.destroyObject(mobObj.getOid());
-        _mobs.remove(key);
     }
 
     // from RoomProvider
@@ -1501,6 +1496,53 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    /**
+     * Get the specified mob.
+     */
+    protected MobObject getMob (int gameId, String mobId)
+    {
+        Map<String, MobObject> map = _mobs.get(gameId);
+        return (map == null) ? null : map.get(mobId);
+    }
+
+    /**
+     * Store a mob.
+     */
+    protected void putMob (int gameId, String mobId, MobObject mob)
+    {
+        Map<String, MobObject> map = _mobs.get(gameId);
+        if (map == null) {
+            map = Maps.newHashMap();
+            _mobs.put(gameId, map);
+        }
+        map.put(mobId, mob);
+    }
+
+    /**
+     * Remove a mob.
+     */
+    protected MobObject removeMob (int gameId, String mobId)
+    {
+        Map<String, MobObject> map = _mobs.get(gameId);
+        if (map == null) {
+            return null;
+        }
+        MobObject retval = map.remove(mobId);
+        if (map.isEmpty()) {
+            _mobs.remove(gameId);
+        }
+        return retval;
+    }
+
+    /**
+     * Count the number of mobs in use by the specified game.
+     */
+    protected int countMobs (int gameId)
+    {
+        Map<String, MobObject> map = _mobs.get(gameId);
+        return (map == null) ? 0 : map.size();
+    }
+
 //    protected String whenLeft (int bodyOid)
 //    {
 //        if (!_left.contains(bodyOid)) {
@@ -1622,7 +1664,7 @@ public class RoomManager extends SpotSceneManager
     protected List<Integer> _actors = Lists.newArrayList();
 
     /** Mapping to keep track of spawned mobs. */
-    protected Map<Tuple<Integer, String>, MobObject> _mobs = Maps.newHashMap();
+    protected HashIntMap<Map<String, MobObject>> _mobs = new HashIntMap<Map<String, MobObject>>();
 
     /** Mapping to keep track of starting location of added bodies. */
     protected HashIntMap<Location> _startingLocs = new HashIntMap<Location>();
@@ -1638,6 +1680,9 @@ public class RoomManager extends SpotSceneManager
 
     /** Time to keep left body oids in {@link #_left}. */
     protected static final int LEFT_BODY_PURGE_SECS = 15;
+
+    /** The maximum number of mobs a game may have in this room. */
+    protected static final int MAX_MOBS_PER_GAME = 99;
 
     /**
      * We allow access as in {@link CrowdObjectAccess#PLACE} but also give full subscription
