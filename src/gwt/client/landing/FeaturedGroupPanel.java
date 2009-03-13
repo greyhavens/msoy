@@ -79,18 +79,11 @@ public class FeaturedGroupPanel extends FlowPanel
         final GroupCard group = _whirleds[_selidx = index];
 
         // display the group's home page screenshot
-        FocusPanel focus = new FocusPanel();
-        MsoyUI.addTrackingListener(focus, "landingGroupClicked", group.name.getGroupId() + "");
-        SceneUtil.addSceneView(group.homeSceneId, group.homeSnapshot, focus);
-        _flashPanel.setWidget(focus);
+        _flashPanel.setWidget(SceneUtil.createSceneView(group.homeSceneId, group.homeSnapshot));
 
         // display the group's name and info
         _infoPanel.clear();
         Widget nameLink = Link.groupView(group.name.toString(), group.name.getGroupId());
-        if (nameLink instanceof SourcesClickEvents) {
-            MsoyUI.addTrackingListener((SourcesClickEvents)nameLink, "landingGroupClicked",
-                group.name.getGroupId() + "");
-        }
         nameLink.setStyleName("FeaturedGroupName");
         _infoPanel.add(nameLink);
         if (group.population > 0) {

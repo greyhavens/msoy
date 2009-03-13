@@ -37,10 +37,7 @@ public class AvatarPanel extends FlowPanel
             if (i >= cards.length) {
                 return;
             }
-            AvatarBox box = new AvatarBox(cards[i]);
-            FocusPanel focus = new FocusPanel(box);
-            MsoyUI.addTrackingListener(focus, "landingAvatarClicked", cards[i].catalogId + "");
-            add(focus);
+            add(new AvatarBox(cards[i]));
         }
     }
 
