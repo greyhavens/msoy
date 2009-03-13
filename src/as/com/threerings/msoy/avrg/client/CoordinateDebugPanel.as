@@ -5,6 +5,7 @@ package com.threerings.msoy.avrg.client {
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.display.DisplayObject;
 import flash.geom.Point;
 
 import mx.containers.Grid;
@@ -61,7 +62,7 @@ public class CoordinateDebugPanel extends FloatingPanel
         _avrgPanel = avrgPanel;
         _avrgPanel.addEventListener(Event.REMOVED, onAVRGPanelRemoved);
 
-        _ctx.getTopPanel().addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+        _ctx.getTopPanel().addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
         _ctx.getLocationDirector().addLocationObserver(this);
         locationDidChange(_ctx.getLocationDirector().getPlaceObject());
     }
@@ -71,7 +72,7 @@ public class CoordinateDebugPanel extends FloatingPanel
         super.close();
         locationDidChange(null);
         _ctx.getLocationDirector().removeLocationObserver(this);
-        _ctx.getTopPanel().removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+        _ctx.getTopPanel().removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
     }
 
     // from LocationObserver
@@ -155,9 +156,14 @@ public class CoordinateDebugPanel extends FloatingPanel
             addResultLine(grid, "room");
             addResultLine(grid, "plane");
             addResultLine(grid, "location");
+
         } else if (_mode == "avatar") {
             addResultLine(grid, "avatar");
             addResultLine(grid, "room");
+            //addResultLine(grid, "panel");
+            //addResultLine(grid, "panel.parent");
+            //addResultLine(grid, "view");
+            //addResultLine(grid, "view.parent");
             addResultLine(grid, "paintable");
         }
 
@@ -201,10 +207,15 @@ public class CoordinateDebugPanel extends FloatingPanel
         var p :Point;
         setResultLocation("avatar", mloc);
         setResultPoint("room", p = locationToRoom(mloc.x, mloc.y, mloc.z));
+        setResultText("panel", transSummary(_avrgPanel));
+        setResultText("view", "scroll=" + fixed(_view.getScrollOffset()) + ", " +
+                      transSummary(_view));
+        setResultText("view.parent", transSummary(_view.parent));
+        setResultText("panel.parent", transSummary(_avrgPanel.parent));
         setResultPoint("paintable", p = roomToStage(p));
     }
 
-    protected function onMouseMove (evt: MouseEvent) :void
+    protected function mouseMove (evt: MouseEvent) :void
     {
         if (_mode != "mouse") {
             return;
@@ -232,7 +243,7 @@ public class CoordinateDebugPanel extends FloatingPanel
         if (pt == null) {
             setResultText(name, "null");
         } else {
-            setResultText(name, "" + pt.x + ", " + pt.y);
+            setResultText(name, "" + fixed(pt.x) + ", " + fixed(pt.y));
         }
     }
 
@@ -244,7 +255,7 @@ public class CoordinateDebugPanel extends FloatingPanel
         if (loc == null) {
             setResultText(name, "null");
         } else {
-            setResultText(name, "" + loc.x + ", " + loc.y + ", " + loc.z);
+            setResultText(name, "" + fixed(loc.x) + ", " + fixed(loc.y) + ", " + fixed(loc.z));
         }
     }
 
@@ -265,7 +276,6 @@ public class CoordinateDebugPanel extends FloatingPanel
     {
         p = _ctx.getTopPanel().getPlaceContainer().localToGlobal(p);
         p = _view.globalToLocal(p);
-        p.x -= _view.getScrollOffset();
         return p;
     }
 
@@ -295,7 +305,18 @@ public class CoordinateDebugPanel extends FloatingPanel
     protected function roomToStage (p :Point) :Point
     {
         return _ctx.getTopPanel().getPlaceContainer().globalToLocal(
-            _view.localToGlobal(new Point(p.x + _view.getScrollOffset(), p.y)));
+            _view.localToGlobal(p));
+    }
+
+    protected static function transSummary (dsp :DisplayObject) :String
+    {
+        return "scale=" + fixed(dsp.scaleX) + ", " + fixed(dsp.scaleY) +
+               ", pos=" + fixed(dsp.x) + ", " + fixed(dsp.y);
+    }
+
+    protected static function fixed (n :Number) :String
+    {
+        return n.toFixed(2);
     }
 
     protected var _view :RoomView;
