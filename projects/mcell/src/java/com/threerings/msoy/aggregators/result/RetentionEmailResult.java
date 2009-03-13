@@ -3,83 +3,68 @@
 
 package com.threerings.msoy.aggregators.result;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.common.event.EventName;
-import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
+import com.threerings.panopticon.reporter.aggregator.result.Result;
+import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregatedResult;
 
 /**
  * Counts up all the members who were sent a retention email and outputs a map of the member id
  * to the date the email was sent.
  */
-public class RetentionEmailResult
-    implements AggregatedResult<RetentionEmailResult>
+@Result(inputs="RetentionMailSent")
+public class RetentionEmailResult extends FieldAggregatedResult
 {
-
-    @Override // from AggregatedResult
-    public boolean init (EventData eventData)
+    @Override // from FieldResult
+    protected void doInit (EventData eventData)
     {
-        if (!EVENT_NAME.equals(eventData.getEventName())) {
-            return false;
-        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(eventData.getDate("timestamp"));
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Long key = calendar.getTimeInMillis();
 
-        Date date = eventData.getDate("timestamp");
         Integer memberId = eventData.getInt("recipientId");
-        _sent.put(memberId, date);
-        return true;
+        _sent.put(memberId, key);
+
+        Integer count = _counts.get(key);
+        _counts.put(key, count == null ? 1 : count + 1);
     }
 
     @Override // from AggregatedResult
     public boolean putData (Map<String, Object> result)
     {
         result.put("dates_sent_by_member", _sent);
+        result.put("sent_count_by_date", _counts);
         return false;
     }
 
     @Override // from AggregatedValue
-    public void combine (RetentionEmailResult value)
+    public void combine (FieldAggregatedResult other)
     {
-        // just take the most recent date for each member
-        for (Map.Entry<Integer, Date> entry : value._sent.entrySet()) {
-            Date mine = _sent.get(entry.getKey());
-            if (mine == null || entry.getValue().after(mine)) {
+        RetentionEmailResult value = (RetentionEmailResult)other;
+
+        // take the most recent date for each member
+        for (Map.Entry<Integer, Long> entry : value._sent.entrySet()) {
+            Long mine = _sent.get(entry.getKey());
+            if (mine == null || entry.getValue() > mine) {
                 _sent.put(entry.getKey(), entry.getValue());
             }
         }
-    }
 
-    @Override // from Writable
-    public void readFields (DataInput in)
-        throws IOException
-    {
-        _sent.clear();
-        int size = in.readInt();
-        for (int ii = 0; ii < size; ++ii) {
-            int id = in.readInt();
-            long date = in.readLong();
-            _sent.put(id, new Date(date));
+        // add counts together
+        for (Map.Entry<Long, Integer> entry : value._counts.entrySet()) {
+            Integer mine = _counts.get(entry.getKey());
+            _counts.put(entry.getKey(), entry.getValue() + (mine == null ? 0 : mine));
         }
     }
 
-    @Override // from Writable
-    public void write (DataOutput out)
-        throws IOException
-    {
-        out.writeInt(_sent.size());
-        for (Map.Entry<Integer, Date> e : _sent.entrySet()) {
-            out.writeInt(e.getKey());
-            out.writeLong(e.getValue().getTime());
-        }
-    }
-
-    protected HashMap<Integer, Date> _sent = Maps.newHashMap();
-
-    protected final static EventName EVENT_NAME = new EventName("RetentionMailSent");
+    protected HashMap<Integer, Long> _sent = Maps.newHashMap();
+    protected HashMap<Long, Integer> _counts = Maps.newHashMap();
 }
