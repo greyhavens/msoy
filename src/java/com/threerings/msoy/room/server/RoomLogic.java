@@ -43,7 +43,7 @@ public class RoomLogic
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
         if (mrec.homeSceneId == sceneId) {
-            throw new ServiceException("errCantGiftHome"); // TODO?
+            throw new ServiceException("e.cant_gift_home");
         }
         // make sure they own the room
         SceneRecord screc = _sceneRepo.loadScene(sceneId);
