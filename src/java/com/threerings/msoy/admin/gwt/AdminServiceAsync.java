@@ -44,6 +44,11 @@ public interface AdminServiceAsync
     void setRole (int memberId, WebCreds.Role role, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#setDisplayName}.
+     */
+    void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#getABTests}.
      */
     void getABTests (AsyncCallback<List<ABTest>> callback);

@@ -102,6 +102,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Configures this member's display name.
+     */
+    void setDisplayName (int memberId, String name)
+        throws ServiceException;
+
+    /**
      * Configures a member as support personnel or not. Only callable by admins.
      */
     List<ABTest> getABTests ()

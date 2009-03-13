@@ -11,8 +11,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
@@ -67,6 +69,22 @@ public class MemberInfoPanel extends SmartTable
             "Billing Transactions", "_blank"));
         setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF, Args.compose(Item.AVATAR,
             info.name.getMemberId())));
+
+        row = addText("Display name:", 1, "Label");
+        final TextBox dispName = MsoyUI.createTextBox(
+            info.name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 30);
+        Button saveName = MsoyUI.createCrUpdateButton(false, null);
+        setWidget(row, 1, MsoyUI.createButtonPair(dispName, saveName));
+        new ClickCallback<Void>(saveName) {
+            @Override protected boolean callService () {
+                _adminsvc.setDisplayName(info.name.getMemberId(), dispName.getText(), this);
+                return true;
+            }
+            @Override protected boolean gotResult (Void nothing) {
+                //?? _info.name = new MemberName(info.name.getMemberId(), dispName.getText());
+                return true;
+            }
+        };
 
         row = addText("Account name:", 1, "Label");
         setText(row, 1, info.accountName);

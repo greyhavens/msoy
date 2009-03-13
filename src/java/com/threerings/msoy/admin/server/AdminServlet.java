@@ -30,6 +30,7 @@ import com.samskivert.util.Invoker.Unit;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.CharityRecord;
@@ -42,6 +43,7 @@ import com.threerings.msoy.server.persist.PromotionRepository;
 
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -197,6 +199,22 @@ public class AdminServlet extends MsoyServiceServlet
             tgtrec.setFlag(MemberRecord.Flag.MAINTAINER, role == WebCreds.Role.MAINTAINER);
         }
         _memberRepo.storeFlags(tgtrec);
+    }
+
+    // from interface AdminService
+    public void setDisplayName (int memberId, String name)
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAdminUser();
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        _memberLogic.setDisplayName(tgtrec.memberId, name, tgtrec.isSupport());
+        // log this as a warning so that it shows up in the nightly filtered logs
+        log.warning("Set display name", "setter", memrec.who(), "target", tgtrec.who(),
+                    "name", name);
     }
 
     // from interface AdminService
@@ -732,6 +750,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailRepository _mailRepo;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAdminManager _adminMgr;
     @Inject protected MsoyEventLogger _eventLogger;
