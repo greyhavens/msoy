@@ -171,24 +171,15 @@ public class SpamLogic
      */
     public void init ()
     {
-        Runnable job = new Runnable () {
+        // run nightly at 1am
+        _cronLogic.scheduleAt(1, new Runnable () {
             public void run () {
                 sendFeedEmails();
             }
-
             public String toString () {
                 return "News feed emailer";
             }
-        };
-
-        // TODO: dev is not special, I just want to check this on our old alpha DB snapshot
-        if (DeploymentConfig.devDeployment) {
-            _batchInvoker.postRunnable(job);
-
-        } else {
-            // Run nightly around 1am
-            _cronLogic.scheduleAt(1, job);
-        }
+        });
     }
 
     /**
