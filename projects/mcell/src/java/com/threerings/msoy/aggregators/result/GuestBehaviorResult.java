@@ -52,7 +52,6 @@ public class GuestBehaviorResult
             return false;
         }
 
-        _entry.firstEvent = timestamp;
         _entry.tracker = tracker;
 
         // what we do depends on the event type
@@ -63,6 +62,7 @@ public class GuestBehaviorResult
             if (web != null) {
                 _entry.embed = !web;
             }
+            _entry.created = timestamp;
 
         } else if (VECTOR_ASSOCIATED.equals(name)) {
             _entry.vector = (String)data.get("vector");
@@ -100,10 +100,24 @@ public class GuestBehaviorResult
 
     public boolean putData (Map<String, Object> result)
     {
-        result.put("acct_tracker", _entry.tracker);
+        // There are two ways a tracker get created: either a VisitorInfoCreated is generated,
+        // which will result in _entry.created being non-null, or we went straight to creating
+        // a permaguest, in which case an AccountCreated with isGuest = true will have been sent
+        // over the wire, which in turn will cause _entry.played to be non-null.
+        
+        if (_entry.created != null) {
+            result.put("acct_start", _entry.created);
+            
+        } else if (_entry.played != null) {
+            result.put("acct_start", _entry.played);
+            
+        } else {
+            // otherwise this is a tracker that did stuff within the past 30 days, but which
+            // was created earlier than that: we simply drop it
+            return false;
+        }
 
-        // data from VisitorInfoCreated
-        result.put("acct_start", _entry.firstEvent);
+        result.put("acct_tracker", _entry.tracker);
 
         // data from VectorAssociated
         String vector = _entry.vector;
@@ -140,9 +154,9 @@ public class GuestBehaviorResult
 
         // data from both
         int minutes = 0;
-        if (_entry.firstEvent != null && _entry.converted != null) {
+        if (_entry.created != null && _entry.converted != null) {
             result.put("conv_timestamp", _entry.converted);
-            minutes = (int)(_entry.converted.getTime() - _entry.firstEvent.getTime()) / (1000 * 60);
+            minutes = (int)(_entry.converted.getTime() - _entry.created.getTime()) / (1000 * 60);
         } else {
             result.put("conv_timestamp", new Date(0L));
         }
@@ -161,11 +175,11 @@ public class GuestBehaviorResult
         // retention counts only if they have a valid start date, a valid conversion
         // date, and they had some experiences more than a week after converting.
         Date lastEventDate = _entry.findLastEventDate();
-        boolean cameBack = (_entry.firstEvent != null) && (_entry.converted != null) && (lastEventDate != null);
+        boolean cameBack = (_entry.created != null) && (_entry.converted != null) && (lastEventDate != null);
 
         int days = 0;
         if (cameBack) {
-            long msecs = (lastEventDate.getTime() - _entry.firstEvent.getTime());
+            long msecs = (lastEventDate.getTime() - _entry.created.getTime());
             days = (int)(msecs / (1000 * 60 * 60 * 24));
         }
 
@@ -219,7 +233,7 @@ public class GuestBehaviorResult
     {
         public String vector;
         public String tracker;
-        public Date firstEvent;
+        public Date created;
         
         public Boolean embed;
 
@@ -316,7 +330,7 @@ public class GuestBehaviorResult
 
             return results;
         }
-
+        
         /** Fills in any null fields on this instance from the other, and adds map entries. */
         public void combine (GuestEntry other)
         {
@@ -325,34 +339,22 @@ public class GuestBehaviorResult
                     "Won't combine entries with different keys (" + this.tracker + ", " + other.tracker + ")");
             }
 
-            if (this.firstEvent == null ||
-                    (other.firstEvent != null && other.firstEvent.before(this.firstEvent))) {
-                this.firstEvent = other.firstEvent;
-            }
-
-            if (this.vector == null) {
-                this.vector = other.vector;
-            }
-
-            if (this.embed == null) {
-                this.embed = other.embed;
-            }
-
-            if (this.converted == null) {
-                this.converted = other.converted;
-                this.member = other.member;
-            }
-            
-            if (this.played == null) {
-                this.played = other.played;
-                this.member = other.member;
-            }
+            created = nullMerge(created, other.created);
+            vector = nullMerge(vector, other.vector);
+            embed = nullMerge(embed, other.embed);
+            converted = nullMerge(converted, other.converted);
+            played = nullMerge(played, other.played);
+            member = nullMerge(member, other.member);
 
             for (Map.Entry<String, Collection<Date>> entry : other.events.asMap().entrySet()) {
                 for (Date date : entry.getValue()) {
                     addEvent(entry.getKey(), date);
                 }
             }
+        }
+        
+        protected <T> T nullMerge(T ours, T theirs) {
+            return (ours != null) ? ours : theirs;
         }
         
         public void write (final DataOutput out)
@@ -363,7 +365,7 @@ public class GuestBehaviorResult
             HadoopSerializationUtil.writeObject(out, vector);
             HadoopSerializationUtil.writeObject(out, embed);
             // data from VisitorInfoCreated
-            HadoopSerializationUtil.writeObject(out, firstEvent);
+            HadoopSerializationUtil.writeObject(out, created);
             // data from AccountCreated
             HadoopSerializationUtil.writeObject(out, converted);
             HadoopSerializationUtil.writeObject(out, played);
@@ -381,7 +383,7 @@ public class GuestBehaviorResult
             this.vector = (String)HadoopSerializationUtil.readObject(in);
             this.embed = (Boolean)HadoopSerializationUtil.readObject(in);
             // data from VisitorInfoCreated
-            this.firstEvent = (Date)HadoopSerializationUtil.readObject(in);
+            this.created = (Date)HadoopSerializationUtil.readObject(in);
             // data from AccountCreated
             this.converted = (Date)HadoopSerializationUtil.readObject(in);
             this.played = (Date)HadoopSerializationUtil.readObject(in);
