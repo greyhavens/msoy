@@ -19,6 +19,12 @@ import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregate
 @Result(inputs="RetentionMailSent")
 public class RetentionEmailResult extends FieldAggregatedResult
 {
+    /** The timestamp of the most recently sent email for each member id. */
+    public HashMap<Integer, Long> sent = Maps.newHashMap();
+
+    /** The total number of messages send on a given date. */
+    public HashMap<Long, Integer> counts = Maps.newHashMap();
+
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
@@ -31,18 +37,10 @@ public class RetentionEmailResult extends FieldAggregatedResult
         Long key = calendar.getTimeInMillis();
 
         Integer memberId = eventData.getInt("recipientId");
-        _sent.put(memberId, key);
+        sent.put(memberId, key);
 
-        Integer count = _counts.get(key);
-        _counts.put(key, count == null ? 1 : count + 1);
-    }
-
-    @Override // from AggregatedResult
-    public boolean putData (Map<String, Object> result)
-    {
-        result.put("dates_sent_by_member", _sent);
-        result.put("sent_count_by_date", _counts);
-        return false;
+        Integer count = counts.get(key);
+        counts.put(key, count == null ? 1 : count + 1);
     }
 
     @Override // from AggregatedValue
@@ -51,20 +49,17 @@ public class RetentionEmailResult extends FieldAggregatedResult
         RetentionEmailResult value = (RetentionEmailResult)other;
 
         // take the most recent date for each member
-        for (Map.Entry<Integer, Long> entry : value._sent.entrySet()) {
-            Long mine = _sent.get(entry.getKey());
+        for (Map.Entry<Integer, Long> entry : value.sent.entrySet()) {
+            Long mine = sent.get(entry.getKey());
             if (mine == null || entry.getValue() > mine) {
-                _sent.put(entry.getKey(), entry.getValue());
+                sent.put(entry.getKey(), entry.getValue());
             }
         }
 
         // add counts together
-        for (Map.Entry<Long, Integer> entry : value._counts.entrySet()) {
-            Integer mine = _counts.get(entry.getKey());
-            _counts.put(entry.getKey(), entry.getValue() + (mine == null ? 0 : mine));
+        for (Map.Entry<Long, Integer> entry : value.counts.entrySet()) {
+            Integer mine = counts.get(entry.getKey());
+            counts.put(entry.getKey(), entry.getValue() + (mine == null ? 0 : mine));
         }
     }
-
-    protected HashMap<Integer, Long> _sent = Maps.newHashMap();
-    protected HashMap<Long, Integer> _counts = Maps.newHashMap();
 }
