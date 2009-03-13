@@ -58,7 +58,7 @@ public class MemberNodeActions
      * Provides us with our peer manager reference. TODO: nix this and require callers to inject a
      * MemberNodeActions instance.
      */
-    public static void init (final MsoyPeerManager peerMan)
+    public static void init (MsoyPeerManager peerMan)
     {
         _peerMan = peerMan;
     }
@@ -66,9 +66,10 @@ public class MemberNodeActions
     /**
      * Dispatches a notification that a member's info has changed to whichever server they are
      * logged into.
+     * Any of these may be null to not set them.
      */
     public static void infoChanged (
-        final int memberId, final String displayName, final MediaDesc photo, final String status)
+        int memberId, String displayName, MediaDesc photo, String status)
     {
         _peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status));
     }
@@ -77,7 +78,7 @@ public class MemberNodeActions
      * Dispatches a notification that a member's privileges have changed to whichever server they
      * are logged into.
      */
-    public static void tokensChanged (final int memberId, MsoyTokenRing tokens)
+    public static void tokensChanged (int memberId, MsoyTokenRing tokens)
     {
         _peerMan.invokeNodeAction(new TokensChanged(memberId, tokens));
     }
@@ -112,7 +113,7 @@ public class MemberNodeActions
      * @param newMailCount a positive integer to set the absolute value, a negative integer to
      * adjust the current value down by the specified negative amount.
      */
-    public static void reportUnreadMail (final int memberId, final int newMailCount)
+    public static void reportUnreadMail (int memberId, int newMailCount)
     {
         _peerMan.invokeNodeAction(new ReportUnreadMail(memberId, newMailCount));
     }
@@ -121,7 +122,7 @@ public class MemberNodeActions
      * Dispatches a notification that a member has joined the specified group to whichever server
      * they are logged into.
      */
-    public static void joinedGroup (final int memberId, final GroupMembership gm)
+    public static void joinedGroup (int memberId, GroupMembership gm)
     {
         _peerMan.invokeNodeAction(new JoinedGroup(memberId, gm));
     }
@@ -130,7 +131,7 @@ public class MemberNodeActions
      * Dispatches a notification that a member has left the specified group to whichever server
      * they are logged into.
      */
-    public static void leftGroup (final int memberId, final int groupId)
+    public static void leftGroup (int memberId, int groupId)
     {
         _peerMan.invokeNodeAction(new LeftGroup(memberId, groupId));
     }
@@ -138,7 +139,7 @@ public class MemberNodeActions
     /**
      * Boots a member from any server into which they are logged in.
      */
-    public static void bootMember (final int memberId)
+    public static void bootMember (int memberId)
     {
         _peerMan.invokeNodeAction(new BootMember(memberId));
     }
@@ -146,7 +147,7 @@ public class MemberNodeActions
     /**
      * Update a changed avatar.
      */
-    public static void avatarUpdated (final int memberId, final int avatarId)
+    public static void avatarUpdated (int memberId, int avatarId)
     {
         _peerMan.invokeNodeAction(new AvatarUpdated(memberId, avatarId));
     }
@@ -154,7 +155,7 @@ public class MemberNodeActions
     /**
      * Act upon a deleted avatar.
      */
-    public static void avatarDeleted (final int memberId, final int avatarId)
+    public static void avatarDeleted (int memberId, int avatarId)
     {
         _peerMan.invokeNodeAction(new AvatarDeleted(memberId, avatarId));
     }
@@ -162,7 +163,7 @@ public class MemberNodeActions
     /**
      * Send a notification to a member
      */
-    public static void sendNotification (final int memberId, final Notification notification)
+    public static void sendNotification (int memberId, Notification notification)
     {
         _peerMan.invokeNodeAction(new SendNotification(memberId, notification));
     }
@@ -178,7 +179,7 @@ public class MemberNodeActions
     /**
      * Dispatches a notification that a member has won a badge.
      */
-    public static void badgeAwarded (final EarnedBadgeRecord record)
+    public static void badgeAwarded (EarnedBadgeRecord record)
     {
         _peerMan.invokeNodeAction(new BadgeAwarded(record));
     }
@@ -261,8 +262,8 @@ public class MemberNodeActions
 
     protected static class InfoChanged extends MemberNodeAction
     {
-        public InfoChanged (
-            int memberId, String displayName, MediaDesc photo, String status) {
+        /** Any field may be null to not change it. */
+        public InfoChanged (int memberId, String displayName, MediaDesc photo, String status) {
             super(memberId);
             _displayName = displayName;
             _photo = photo;
@@ -272,18 +273,23 @@ public class MemberNodeActions
         public InfoChanged () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
-            memobj.updateDisplayName(_displayName, _photo);
-            memobj.setHeadline(_status);
-            _bodyMan.updateOccupantInfo(
-                memobj, new OccupantInfo.NameUpdater(memobj.getVisibleName()));
+        @Override protected void execute (MemberObject memobj) {
+            if (_status != null) {
+                memobj.setHeadline(_status);
+            }
+            if (_displayName != null || _photo != null) {
+                String name = (_displayName != null) ? _displayName : memobj.memberName.toString();
+                memobj.updateDisplayName(name, _photo); // can cope with _photo == null.
+                _bodyMan.updateOccupantInfo(
+                    memobj, new OccupantInfo.NameUpdater(memobj.getVisibleName()));
+            }
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
             // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
             // that contain at least one friend of this member, and do all the updating on that
             // server.  Note that we don't even take this potentially expensive step if this
             // member isn't logged in.
-            updateFriendEntries(memobj);
+            updateFriendEntries(memobj); // always do this, we assume at least one thing changed!
         }
 
         protected String _displayName;
@@ -303,7 +309,7 @@ public class MemberNodeActions
         public TokensChanged () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.setTokens(_tokens);
         }
 
@@ -312,7 +318,7 @@ public class MemberNodeActions
 
     protected static class ReportUnreadMail extends MemberNodeAction
     {
-        public ReportUnreadMail (final int memberId, final int newMailCount) {
+        public ReportUnreadMail (int memberId, int newMailCount) {
             super(memberId);
             _newMailCount = newMailCount;
         }
@@ -320,7 +326,7 @@ public class MemberNodeActions
         public ReportUnreadMail () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             if (_newMailCount < 0) {
                 memobj.setNewMailCount(memobj.newMailCount + _newMailCount);
             } else if (memobj.newMailCount != _newMailCount) {
@@ -333,7 +339,7 @@ public class MemberNodeActions
 
     protected static class JoinedGroup extends MemberNodeAction
     {
-        public JoinedGroup (final int memberId, final GroupMembership gm) {
+        public JoinedGroup (int memberId, GroupMembership gm) {
             super(memberId);
             _gm = gm;
         }
@@ -341,7 +347,7 @@ public class MemberNodeActions
         public JoinedGroup () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.addToGroups(_gm);
         }
 
@@ -350,7 +356,7 @@ public class MemberNodeActions
 
     protected static class LeftGroup extends MemberNodeAction
     {
-        public LeftGroup (final int memberId, final int groupId) {
+        public LeftGroup (int memberId, int groupId) {
             super(memberId);
             _groupId = groupId;
         }
@@ -358,7 +364,7 @@ public class MemberNodeActions
         public LeftGroup () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.removeFromGroups(_groupId);
         }
 
@@ -367,14 +373,14 @@ public class MemberNodeActions
 
     protected static class BootMember extends MemberNodeAction
     {
-        public BootMember (final int memberId) {
+        public BootMember (int memberId) {
             super(memberId);
         }
 
         public BootMember () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             _memberMan.bootMember(_memberId);
         }
 
@@ -383,7 +389,7 @@ public class MemberNodeActions
 
     protected static class AvatarDeleted extends MemberNodeAction
     {
-        public AvatarDeleted (final int memberId, final int avatarId) {
+        public AvatarDeleted (int memberId, int avatarId) {
             super(memberId);
             _avatarId = avatarId;
         }
@@ -391,7 +397,7 @@ public class MemberNodeActions
         public AvatarDeleted () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             _itemMan.avatarDeletedOnPeer(memobj, _avatarId);
         }
 
@@ -402,7 +408,7 @@ public class MemberNodeActions
 
     protected static class AvatarUpdated extends MemberNodeAction
     {
-        public AvatarUpdated (final int memberId, final int avatarId) {
+        public AvatarUpdated (int memberId, int avatarId) {
             super(memberId);
             _avatarId = avatarId;
         }
@@ -410,7 +416,7 @@ public class MemberNodeActions
         public AvatarUpdated () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             _itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
         }
 
@@ -421,7 +427,7 @@ public class MemberNodeActions
 
     protected static class SendNotification extends MemberNodeAction
     {
-        public SendNotification (final int memberId, final Notification notification) {
+        public SendNotification (int memberId, Notification notification) {
             super(memberId);
             _notification = notification;
         }
@@ -429,7 +435,7 @@ public class MemberNodeActions
         public SendNotification () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             _notifyMan.notify(memobj, _notification);
         }
 
@@ -448,7 +454,7 @@ public class MemberNodeActions
         public BadgesVersionUpdated () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.getLocal(MemberLocal.class).badgesVersion = _badgesVersion;
         }
 
@@ -457,7 +463,7 @@ public class MemberNodeActions
 
     protected static class BadgeAwarded extends MemberNodeAction
     {
-        public BadgeAwarded (final EarnedBadgeRecord record) {
+        public BadgeAwarded (EarnedBadgeRecord record) {
             super(record.memberId);
             _badge = record.toBadge();
         }
@@ -465,7 +471,7 @@ public class MemberNodeActions
         public BadgeAwarded () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             if (memobj.getLocal(MemberLocal.class).badgeAwarded(_badge)) {
                 _notifyMan.notify(memobj, new BadgeEarnedNotification(_badge));
             }
@@ -495,7 +501,7 @@ public class MemberNodeActions
 
     protected static class StatUpdated<T extends Stat> extends MemberNodeAction
     {
-        public StatUpdated (final int memberId, final StatModifier<T> modifier) {
+        public StatUpdated (int memberId, StatModifier<T> modifier) {
             super(memberId);
             _modifier = modifier;
         }
@@ -503,7 +509,7 @@ public class MemberNodeActions
         public StatUpdated () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.getLocal(MemberLocal.class).stats.syncStat(_modifier);
         }
 
@@ -523,9 +529,9 @@ public class MemberNodeActions
             }
         }
 
-        @Override public boolean isApplicable (final NodeObject nodeobj)
+        @Override public boolean isApplicable (NodeObject nodeobj)
         {
-            final MsoyNodeObject msoyNode = (MsoyNodeObject)nodeobj;
+            MsoyNodeObject msoyNode = (MsoyNodeObject)nodeobj;
             for (int friendId : _friends) {
                 if (msoyNode.clients.containsKey(MsoyAuthName.makeKey(friendId))) {
                     return true;
@@ -652,8 +658,8 @@ public class MemberNodeActions
             _memberMan.addExperience(memObj, new MemberExperience(new Date(), _action, _data));
         }
 
-        protected /* final */ byte _action;
-        protected /* final */ int _data;
+        protected byte _action;
+        protected int _data;
 
         @Inject protected transient MemberManager _memberMan;
     }
