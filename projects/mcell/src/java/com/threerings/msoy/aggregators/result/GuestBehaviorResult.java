@@ -105,11 +105,12 @@ public class GuestBehaviorResult
         // a permaguest, in which case an AccountCreated with isGuest = true will have been sent
         // over the wire, which in turn will cause _entry.played to be non-null.
         
+        Date created;
         if (_entry.created != null) {
-            result.put("acct_start", _entry.created);
+            created = _entry.created;
             
         } else if (_entry.played != null) {
-            result.put("acct_start", _entry.played);
+            created = _entry.played;
             
         } else {
             // otherwise this is a tracker that did stuff within the past 30 days, but which
@@ -117,6 +118,7 @@ public class GuestBehaviorResult
             return false;
         }
 
+        result.put("acct_start", created);
         result.put("acct_tracker", _entry.tracker);
 
         // data from VectorAssociated
@@ -137,8 +139,8 @@ public class GuestBehaviorResult
         result.put("acct_vector", vector);
         result.put("acct_vector_from_ad", vector.startsWith("a."));
 
-        result.put("conv", _entry.converted != null ? 1 : 0); // 1 if someone converted, 0 otherwise
-        result.put("played", _entry.played != null ? 1 : 0); // 1 if someone played, 0 otherwise
+        result.put("conv", _entry.converted != null ? 1 : 0);
+        result.put("played", (_entry.converted != null || _entry.played != null) ? 1 : 0);
 
         // data from Experiences
         final Map<String, Integer> conversionEvents =
@@ -154,9 +156,9 @@ public class GuestBehaviorResult
 
         // data from both
         int minutes = 0;
-        if (_entry.created != null && _entry.converted != null) {
+        if (_entry.converted != null) {
             result.put("conv_timestamp", _entry.converted);
-            minutes = (int)(_entry.converted.getTime() - _entry.created.getTime()) / (1000 * 60);
+            minutes = (int)(_entry.converted.getTime() - created.getTime()) / (1000 * 60);
         } else {
             result.put("conv_timestamp", new Date(0L));
         }
@@ -175,10 +177,8 @@ public class GuestBehaviorResult
         // retention counts only if they have a valid start date, a valid conversion
         // date, and they had some experiences more than a week after converting.
         Date lastEventDate = _entry.findLastEventDate();
-        boolean cameBack = (_entry.created != null) && (_entry.converted != null) && (lastEventDate != null);
-
         int days = 0;
-        if (cameBack) {
+        if (_entry.converted != null && lastEventDate != null) {
             long msecs = (lastEventDate.getTime() - _entry.created.getTime());
             days = (int)(msecs / (1000 * 60 * 60 * 24));
         }
