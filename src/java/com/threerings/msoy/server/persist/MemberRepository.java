@@ -1160,6 +1160,9 @@ public class MemberRepository extends DepotRepository
     public List<Integer> lookupExternalAccounts (ExternalAuther auther, List<String> externalIds)
     {
         List<Integer> memberIds = Lists.newArrayList();
+        if (externalIds.isEmpty()) {
+            return memberIds;
+        }
         Where where = new Where(new And(new Equals(ExternalMapRecord.PARTNER_ID, auther.toByte()),
                                         new In(ExternalMapRecord.EXTERNAL_ID, externalIds)));
         for (ExternalMapRecord record : findAll(ExternalMapRecord.class, where)) {
