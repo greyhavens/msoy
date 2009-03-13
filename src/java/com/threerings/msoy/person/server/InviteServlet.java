@@ -63,16 +63,17 @@ public class InviteServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser();
 
+        // don't let someone attempt more than 5 imports in a 5 minute period
+        long now = System.currentTimeMillis();
+        if (now > _webmailCleared + WEB_ACCESS_CLEAR_INTERVAL) {
+            _webmailAccess.clear();
+            _webmailCleared = now;
+        }
+        if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
+            throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
+        }
+
         try {
-            // don't let someone attempt more than 5 imports in a 5 minute period
-            long now = System.currentTimeMillis();
-            if (now > _webmailCleared + WEB_ACCESS_CLEAR_INTERVAL) {
-                _webmailAccess.clear();
-                _webmailCleared = now;
-            }
-            if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
-                throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
-            }
             List<Contact> contacts = SimpleAddressBookImporter.fetchContacts(email, password);
             List<EmailContact> results = Lists.newArrayList();
 
@@ -95,7 +96,6 @@ public class InviteServlet extends MsoyServiceServlet
                 }
                 results.add(ec);
             }
-
             return results;
 
         } catch (AddressBookAuthenticationException e) {
