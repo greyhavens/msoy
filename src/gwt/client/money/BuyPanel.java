@@ -6,6 +6,7 @@ package client.money;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -14,7 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 
-// import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -52,39 +53,58 @@ public abstract class BuyPanel<T> extends SmartTable
         return box;
     }
 
+    // ABTEST: 2009 03 buypanel
+    public void init (PriceQuote quote, AsyncCallback<T> callback)
+    {
+        init(quote, -1, callback);
+    }
+    // END ABTEST
+
     /**
      * Initialize the buy panel. (Separted from constructor to reduce subclassing pain.)
      *
      * @param quote the price quote
      * @param callback optional, notified only on success.
      */
-    public void init (PriceQuote quote, AsyncCallback<T> callback)
+    public void init (PriceQuote quote, int abTestGroup, AsyncCallback<T> callback)
     {
+        // ABTEST: 2009 03 buypanel
+        _abTestGroup = abTestGroup;
+        // END ABTEST
         _callback = callback;
         setStyleName("Buy");
 
         // Buy with bars, plus a link on how to acquire some
         _barPanel = new FlowPanel();
         _barPanel.add(_buyBars = new BuyButton(Currency.BARS));
-        _barPanel.add(_barLabel = new Label());
+        _barPanel.add(_barLabel = MsoyUI.createLabel("", "BarTip"));
         getFlexCellFormatter().setColSpan(0, 0, 2);
         setWidget(0, 0, _barPanel);
 
-        _getBars = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, _msgs.getBars(), BillingUtil.onBuyBars());
+        ClickListener onBuy = BillingUtil.onBuyBars();
+        // ABTEST: 2009 03 buypanel
+        if (_abTestGroup > 0) {
+            onBuy = MsoyUI.makeTestTrackingListener("2009 03 buypanel", "buy_bars", onBuy);
+        }
+        // END ABTEST
+        _getBars = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.getBars(), onBuy);
         _getBars.addStyleName("buyPanelButton");
         setWidget(1, 0, _getBars);
 
         _buyCoins = new BuyButton(Currency.COINS);
         setWidget(1, 1, _buyCoins);
 
-//         _addenda = new FlowPanel();
-//         setWidget(2, 0, _addenda);
-//         getFlexCellFormatter().setColSpan(2, 0, 2);
+        // ABTEST: 2009 03 buypanel
+        if (_abTestGroup > 1) { // 1 is the control group
+            _addenda = new FlowPanel();
+            setWidget(2, 0, _addenda);
+            getFlexCellFormatter().setColSpan(2, 0, 2);
+        }
 
-//         // displays exchange rate
-//         _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
-//         _wikiLink.setStyleName("exchangeRateLink");
+        // displays exchange rate
+        _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
+        _wikiLink.setStyleName("exchangeRateLink");
+        // END ABTEST
 
         updatePrice(quote);
     }
@@ -154,12 +174,27 @@ public abstract class BuyPanel<T> extends SmartTable
         _barLabel.setText((cents < 100) ? _msgs.centsCost(""+cents) :
                           _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents/100f)));
 
-//         if (quote.getCoinChange() > 0) ...
-//         Label change = new Label(_msgs.coinChange(Currency.COINS.format(quote.getCoinChange())));
+        // ABTEST: 2009 03 buypanel
+        if (quote.getCoinChange() > 0) {
+            String changeMsg = _msgs.coinChange(Currency.COINS.format(quote.getCoinChange()));
+            switch (_abTestGroup) {
+            case 3: // group 3 sees just change when there's change
+                _barLabel.setText(changeMsg);
+                break;
+            case 4: // group 4 sees cents price plus change when there's change
+                _barLabel.setText(_barLabel.getText() + " " + changeMsg);
+                break;
+            default: // other groups don't see change
+                break;
+            }
+        }
 
-//         _wikiLink.setText(_msgs.exchangeRate(
-//                               Currency.COINS.format((int)Math.floor(quote.getExchangeRate()))));
-//         _addenda.add(_wikiLink);
+        if (_abTestGroup == 2) { // group two sees exchange rate link
+            int rate = (int)Math.floor(quote.getExchangeRate());
+            _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(rate)));
+            _addenda.add(_wikiLink);
+        }
+        // END ABTEST
     }
 
     protected class BuyCallback extends ClickCallback<PurchaseResult<T>>
@@ -249,16 +284,22 @@ public abstract class BuyPanel<T> extends SmartTable
         protected Currency _currency;
     }; // end: class BuyButton
 
-    protected AsyncCallback<T> _callback;
+    // ABTEST: 2009 03 buypanel
+    protected int _abTestGroup;
+    // END ABTEST
 
+    protected AsyncCallback<T> _callback;
     protected PriceQuote _quote;
 
     protected BuyButton _buyBars, _buyCoins;
     protected PushButton _getBars;
     protected FlowPanel _barPanel;
-//     protected FlowPanel _addenda;
     protected Label _barLabel;
-//     protected Anchor _wikiLink;
+
+    // ABTEST: 2009 03 buypanel
+    protected FlowPanel _addenda;
+    protected Anchor _wikiLink;
+    // END ABTEST
 
     protected int _timesBought;
 

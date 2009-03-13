@@ -24,7 +24,8 @@ public class BuyRemixDialog extends BorderedDialog
      * @param callback Called with item = null if the user closed the buy dialog, or the
      * item on success.
      */
-    public BuyRemixDialog (CatalogListing listing, AsyncCallback<Item> callback)
+    // ABTEST: 2009 03 buypanel: added abTestGroup
+    public BuyRemixDialog (CatalogListing listing, int abTestGroup, AsyncCallback<Item> callback)
     {
         super(false, false, false);
         setHeaderTitle(_msgs.buyRemixTitle());
@@ -35,7 +36,8 @@ public class BuyRemixDialog extends BorderedDialog
         panel.addStyleName("buyRemixPanel");
         panel.add(MsoyUI.createLabel(_msgs.buyRemixPrompt(), null));
 
-        panel.add(new ItemBuyPanel(listing, new AsyncCallback<Item>() {
+        // ABTEST: 2009 03 buypanel: added abTestGroup
+        panel.add(new ItemBuyPanel(listing, abTestGroup, new AsyncCallback<Item>() {
             public void onFailure (Throwable cause) { /* unused */ }
             public void onSuccess (Item item) {
                 hide();

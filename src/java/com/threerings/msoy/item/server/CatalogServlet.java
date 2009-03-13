@@ -20,7 +20,9 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.VisitorInfo;
 
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
@@ -161,6 +163,13 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
+
+        // ABTEST: 2009 03 buypanel
+        // make a note that the player clicked a button to buy an item
+        String test = "2009 03 buypanel";
+        int group = _memberLogic.getABTestGroup(test, new VisitorInfo(mrec.visitorId, true), false);
+        _eventLog.testAction(mrec.visitorId, "bought_" + currency, test, group);
+        // END ABTEST
 
         // locate the appropriate repository
         final CatalogRecord listing = _itemLogic.requireListing(itemType, catalogId, true);
@@ -455,6 +464,19 @@ public class CatalogServlet extends MsoyServiceServlet
         return clrec;
     }
 
+    // ABTEST: 2009 03 buypanel
+    // from interface CatalogServlet
+    public ListingResult loadTestedListing (VisitorInfo info, String test,
+                                            byte itemType, int catalogId)
+        throws ServiceException
+    {
+        ListingResult result = new ListingResult();
+        result.abTestGroup = _memberLogic.getABTestGroup(test, info, true);
+        result.listing = loadListing(itemType, catalogId);
+        return result;
+    }
+    // ENDABTEST
+
     // from interface CatalogService
     public void updateListing (ItemIdent item)
         throws ServiceException
@@ -702,6 +724,7 @@ public class CatalogServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected MemberLogic _memberLogic; // ABTEST: 2009 03 buypanel
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected StatLogic _statLogic;

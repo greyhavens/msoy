@@ -34,6 +34,7 @@ import client.ui.PopupMenu;
 import client.ui.ShareDialog;
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -41,12 +42,27 @@ import client.util.ServiceUtil;
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
-    public ListingDetailPanel (CatalogModels models, CatalogListing listing)
+    public ListingDetailPanel (CatalogModels models, byte type, int catalogId)
     {
-        super(listing.detail);
         addStyleName("listingDetailPanel");
-
         _models = models;
+
+        // TODO: display loading swirly
+
+        // ABTEST: 2009 03 buypanel: switched to loadTestedListing
+        _catalogsvc.loadTestedListing(
+            CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId,
+            new MsoyCallback<CatalogService.ListingResult>() {
+            public void onSuccess (CatalogService.ListingResult result) {
+                gotListing(result.listing, result.abTestGroup);
+            }
+        });
+    }
+
+    // ABTEST: 2009 03 buypanel: added abTestGroup
+    protected void gotListing (CatalogListing listing, int abTestGroup)
+    {
+        init(listing.detail);
         _listing = listing;
 
         HorizontalPanel extras = new HorizontalPanel();
@@ -120,7 +136,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // this will contain all of the buy-related interface and will be replaced with the
         // "bought" interface when the buying is done
-        _details.add(new ItemBuyPanel(_listing, null));
+        // ABTEST: 2009 03 buypanel: added abTestGroup
+        _details.add(new ItemBuyPanel(_listing, abTestGroup, null));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);

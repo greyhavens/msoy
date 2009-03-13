@@ -49,10 +49,13 @@ import client.util.ServiceUtil;
  */
 public abstract class BaseItemDetailPanel extends SmartTable
 {
-    protected BaseItemDetailPanel (ItemDetail detail)
+    protected BaseItemDetailPanel ()
     {
         super("itemDetailPanel", 0, 10);
+    }
 
+    protected void init (ItemDetail detail)
+    {
         _detail = detail;
         _item = detail.item;
 

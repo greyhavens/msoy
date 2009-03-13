@@ -39,10 +39,11 @@ public class ItemBuyPanel extends BuyPanel<Item>
     /**
      * @param callback optional. Notified only on success.
      */
-    public ItemBuyPanel (CatalogListing listing, AsyncCallback<Item> callback)
+    // ABTEST: 2009 03 buypanel: addition of abTestGroup param
+    public ItemBuyPanel (CatalogListing listing, int abTestGroup, AsyncCallback<Item> callback)
     {
         _listing = listing;
-        init(listing.quote, callback);
+        init(listing.quote, abTestGroup, callback);
     }
 
     @Override

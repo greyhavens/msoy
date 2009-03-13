@@ -46,11 +46,7 @@ public class ShopPage extends Page
         if (action.equals(LOAD_LISTING)) {
             byte type = getItemType(args, 1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
-            _catalogsvc.loadListing(type, catalogId, new MsoyCallback<CatalogListing>() {
-                public void onSuccess (CatalogListing listing) {
-                    setContent(new ListingDetailPanel(_models, listing));
-                }
-            });
+            setContent(new ListingDetailPanel(_models, type, catalogId));
             addTypeNavi(type);
 
         } else if (action.equals(FAVORITES)) {
@@ -110,29 +106,30 @@ public class ShopPage extends Page
     protected RemixerHost createRemixerHost (
         final ItemRemixer remixer, final byte type, final int catalogId)
     {
+        // ABTEST: 2009 03 buypanel: switched to loadTestedListing
         return new RemixerHost() {
             public void buyItem () {
                 // Request the listing, re-reserving a new price for us
-                _catalogsvc.loadListing(type, catalogId, new MsoyCallback<CatalogListing>() {
-                    public void onSuccess (CatalogListing listing) {
+                _catalogsvc.loadTestedListing(
+                    CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId,
+                    new MsoyCallback<CatalogService.ListingResult>() {
+                    public void onSuccess (CatalogService.ListingResult result) {
                         // and display a mini buy dialog.
-                        new BuyRemixDialog(listing, new AsyncCallback<Item>() {
-                                public void onFailure (Throwable cause) { /* not used */ }
-
-                                public void onSuccess (Item item) {
-                                    remixer.itemPurchased(item);
-                                }
-                            });
+                        new BuyRemixDialog(
+                            result.listing, result.abTestGroup, new AsyncCallback<Item>() {
+                            public void onFailure (Throwable cause) { /* not used */ }
+                            public void onSuccess (Item item) {
+                                remixer.itemPurchased(item);
+                            }
+                        });
                     }
                 });
             }
 
             // called only when the remixer exits
-            public void remixComplete (Item item)
-            {
+            public void remixComplete (Item item) {
                 if (item != null) {
                     Link.go(Pages.STUFF, Args.compose("d", item.getType(), item.itemId));
-
                 } else {
                     History.back();
                 }

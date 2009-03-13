@@ -7,10 +7,13 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.data.all.VisitorInfo;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * The asynchronous (client-side) version of {@link CatalogService}.
@@ -44,6 +47,14 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#loadListing}
      */
     void loadListing (byte itemType, int catalogId, AsyncCallback<CatalogListing> callback);
+
+    // ABTEST: 2009 03 buypanel
+    /**
+     * The asynchronous version of {@link CatalogService#loadTestedListing}
+     */
+    void loadTestedListing (VisitorInfo info, String test, byte itemType, int catalogId,
+                            AsyncCallback<CatalogService.ListingResult> callback);
+    // ENDABTEST
 
     /**
      * The asynchronous version of {@link CatalogService#updateListing}

@@ -53,8 +53,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 {
     public ItemDetailPanel (InventoryModels models, ItemDetail detail)
     {
-        super(detail);
         _models = models;
+
+        // create our main interface
+        init(detail);
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);

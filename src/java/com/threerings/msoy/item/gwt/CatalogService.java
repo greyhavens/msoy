@@ -10,12 +10,14 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
  * Provides digital items related services.
@@ -64,6 +66,19 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> listings;
     }
 
+    // ABTEST: 2009 03 buypanel
+    /** Returned by {@link #loadTestedListing}. */
+    public static class ListingResult
+        implements IsSerializable
+    {
+        /** The test group to which the requesting member is assigned. */
+        public int abTestGroup;
+
+        /** The requested catalog listing. */
+        public CatalogListing listing;
+    }
+    // ENDABTEST
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/catalogsvc";
 
@@ -103,6 +118,16 @@ public interface CatalogService extends RemoteService
      */
     CatalogListing loadListing (byte itemType, int catalogId)
         throws ServiceException;
+
+    // ABTEST: 2009 03 buypanel
+    /**
+     * Assigns the requester to an A/B test group (if they're not already) and returns that group
+     * and the specified catalog listing. This allows us to A/B test the listing detail page
+     * without making (and waiting for) an extra round trip to the server.
+     */
+    ListingResult loadTestedListing (VisitorInfo info, String test, byte itemType, int catalogId)
+        throws ServiceException;
+    // ENDABTEST
 
     /**
      * Updates the catalog listing associated with the supplied catalog original.
