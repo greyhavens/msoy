@@ -51,30 +51,15 @@ public class TrophyFeederPanel extends FloatingPanel
             });
         }
 
-        var test :Boolean = DeploymentConfig.devDeployment;
         if (trophies == null || trophies.length == 0) {
-            if (!test) {
-                onClose();
-                return;
-            }
-            // if testing, grab the trophies from the server if none are given
-            (gctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
-                gctx.getClient(), gameId, gctx.getMsoyContext().resultListener(
-                    function (trophies :TypedArray) :void {
-                        if (trophies.length > 0) {
-                            show(gctx, gameId, gameName, trophies, onClose);
-
-                        } else {
-                            onClose();
-                        }
-                    }, MsoyCodes.GAME_MSGS));
-
-        } else {
-            var tfp :TrophyFeederPanel;
-            tfp = new TrophyFeederPanel(gctx.getMsoyContext(), trophies, gameName);
-            tfp.setCloseCallback(onClose);
-            tfp.open();
+            onClose();
+            return;
         }
+
+        var tfp :TrophyFeederPanel;
+        tfp = new TrophyFeederPanel(gctx.getMsoyContext(), trophies, gameName);
+        tfp.setCloseCallback(onClose);
+        tfp.open();
     }
 
     public function TrophyFeederPanel (ctx :MsoyContext, trophies :Array, gameName :String)
