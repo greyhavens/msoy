@@ -112,6 +112,6 @@ public class MsoyChatChannelManager extends ChatChannelManager
     }
 
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected MemberLocator _locator;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MemberLocator _locator;
 }

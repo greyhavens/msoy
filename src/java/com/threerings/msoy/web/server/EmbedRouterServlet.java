@@ -69,6 +69,6 @@ public class EmbedRouterServlet extends HttpServlet
         }
     }
 
-    @Inject protected GameRepository _gameRepo;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GameRepository _gameRepo;
 }

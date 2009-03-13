@@ -99,7 +99,7 @@ public class PartyAuthenticator extends AuxAuthenticator<PartyCredentials>
         }
     }
 
-    @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected PartyRegistry _partyReg;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected PartyRegistry _partyReg;
+    @Inject protected PresentsDObjectMgr _omgr;
 }

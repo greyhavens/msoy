@@ -1711,16 +1711,16 @@ public class RoomManager extends SpotSceneManager
     };
 
 
-    @Inject protected MailSender _mailer;
-    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemManager _itemMan;
+    @Inject protected LocationManager _locmgr;
+    @Inject protected MailSender _mailer;
+    @Inject protected MemberLocator _locator;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PetManager _petMan;
     @Inject protected SceneRegistry _screg;
-    @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected MemoryRepository _memoryRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected MemberLocator _locator;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected LocationManager _locmgr;
-    @Inject protected MemberManager _memberMan;
 }

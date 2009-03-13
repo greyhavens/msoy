@@ -135,7 +135,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
     }
 
     // our dependencies
-    @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

@@ -231,10 +231,10 @@ public class FacebookInviteServlet extends HttpServlet
     }
 
     // dependencies
-    @Inject protected MemberHelper _mhelper;
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected MemberHelper _mhelper;
     @Inject protected MsoyEventLogger _logger;
+    @Inject protected MsoyGameRepository _mgameRepo;
 
     /** The facebook namespace url. */
     protected static final String FBMLNS = "http://www.facebook.com/2008/fbml";

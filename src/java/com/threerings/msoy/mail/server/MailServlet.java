@@ -254,7 +254,7 @@ public class MailServlet extends MsoyServiceServlet
             "", "Conversation: " + reason, Pages.makeLink(Pages.MAIL, Args.compose("c", convoId)));
     }
 
-    @Inject protected MailRepository _mailRepo;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected MailRepository _mailRepo;
     @Inject protected SupportLogic _supportLogic;
 }

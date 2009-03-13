@@ -470,12 +470,12 @@ public class AccountLogic
     }
 
     @Inject protected AuthenticationDomain _defaultDomain;
-    @Inject protected ServerMessages _serverMsgs;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected ProfileRepository _profileRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected ServerMessages _serverMsgs;
 
     /** Prefix of permaguest display names. They have to create an account to get a real one. */
     protected static final String PERMAGUEST_DISPLAY_PREFIX = "Guest";

@@ -345,17 +345,17 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected MemberManager _memberMan;
-    @Inject protected MemberRepository _memberRepo;
+    @Inject protected BadgeLogic _badgeLogic;
+    @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected ContestRepository _contestRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected PromotionRepository _promoRepo;
-    @Inject protected ContestRepository _contestRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected BadgeRepository _badgeRepo;
-    @Inject protected BadgeLogic _badgeLogic;
     @Inject protected RPCProfiler _profiler;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;

@@ -97,7 +97,7 @@ public class SupportLogic
 
     protected UnderwireRepository _underrepo;
 
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected @MainInvoker Invoker _invoker;
 }

@@ -199,7 +199,7 @@ public class WelcomeServlet extends HttpServlet
 
     // our dependencies
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected ServerMessages _serverMsgs;
 }

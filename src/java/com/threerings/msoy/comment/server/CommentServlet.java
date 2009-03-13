@@ -238,11 +238,11 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected CommentRepository _commentRepo;
+    @Inject protected FeedRepository _feedRepo;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;
-    @Inject protected CommentRepository _commentRepo;
-    @Inject protected FeedRepository _feedRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
 }

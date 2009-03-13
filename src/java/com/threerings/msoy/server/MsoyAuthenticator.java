@@ -417,13 +417,13 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     // our dependencies
-    @Inject protected RuntimeConfig _runtime;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected AccountLogic _accountLogic;
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected AccountLogic _accountLogic;
+    @Inject protected RuntimeConfig _runtime;
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;

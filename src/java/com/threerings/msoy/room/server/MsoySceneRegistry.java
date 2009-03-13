@@ -324,10 +324,10 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     }
 
     // our dependencies
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MemberLocator _locator;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected PetManager _petMan;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected MemberLocator _locator;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PetManager _petMan;
 }

@@ -344,10 +344,10 @@ public class PetManager
     /** Maintains a mapping of all pet handlers by item id. */
     protected IntMap<PetHandler> _handlers = IntMaps.newHashIntMap();
 
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected Injector _injector;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected PetRepository _petRepo;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected SceneRegistry _sceneReg;
-    @Inject protected PetRepository _petRepo;
-    @Inject protected MemoryRepository _memoryRepo;
-    @Inject protected @MainInvoker Invoker _invoker;
 }

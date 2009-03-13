@@ -206,8 +206,8 @@ public class CronLogic
         new ConcurrentHashMap<Class<? extends Runnable>, NodeObject.Lock>();
 
     // los dependidos
-    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PresentsDObjectMgr _omgr;
 
     /** The name of the locks we use to coordinate cron jobs between peers. */
     protected static final String CRON_LOCK = "msoy_cron_job";

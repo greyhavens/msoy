@@ -596,11 +596,11 @@ public class MsoySceneRepository extends DepotRepository
     protected RatingRepository _ratingRepo;
 
     // dependencies
-    @Inject protected UpdateAccumulator _accumulator;
     @Inject protected DecorRepository _decorRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected UpdateAccumulator _accumulator;
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =

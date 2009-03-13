@@ -286,17 +286,17 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected Tuple<MemberObject,Streamable[]> _fwddata;
 
     // dependencies
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected ItemManager _itemMan;
-    @Inject protected ItemLogic _itemLogic;
+    @Inject protected BadgeManager _badgeMan;
     @Inject protected BadgeRepository _badgeRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected ItemManager _itemMan;
     @Inject protected MailRepository _mailRepo;
+    @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected StatRepository _statRepo;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MemberLogic _memberLogic;
-    @Inject protected BadgeManager _badgeMan;
-    @Inject protected MemoryRepository _memoryRepo;
 }

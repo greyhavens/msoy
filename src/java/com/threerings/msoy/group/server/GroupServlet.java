@@ -810,18 +810,18 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected MemberManager _memberMan;
-    @Inject protected MemberLogic _memberLogic;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected MedalRepository _medalRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
-    @Inject protected RoomLogic _roomLogic;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected MedalRepository _medalRepo;
+    @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyChatChannelManager _channelMan;
+    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected RoomLogic _roomLogic;
 
     /** The number of matches to return when searching against all display names in the database. */
     protected static int MAX_MEMBER_MATCHES = 100;

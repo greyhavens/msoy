@@ -1257,16 +1257,16 @@ public class MoneyLogic
     protected PriceQuoteCache _priceCache = new PriceQuoteCache();
 
     // dependencies
-    @Inject protected RuntimeConfig _runtime;
-    @Inject protected MoneyExchange _exchange;
-    @Inject protected MoneyTransactionExpirer _expirer;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected UserActionRepository _userActionRepo;
-    @Inject protected MoneyRepository _repo;
-    @Inject protected MoneyMessageListener _msgReceiver;
-    @Inject protected MoneyNodeActions _nodeActions;
     @Inject protected BlingPoolDistributor _blingDistributor;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyExchange _exchange;
+    @Inject protected MoneyMessageListener _msgReceiver;
+    @Inject protected MoneyNodeActions _nodeActions;
+    @Inject protected MoneyRepository _repo;
+    @Inject protected MoneyTransactionExpirer _expirer;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected UserActionRepository _userActionRepo;
 
     /** An arbitrary key for tracking quotes in {@link #listItem}. */
     protected static final Object LIST_ITEM_KEY = new Object();

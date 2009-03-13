@@ -301,12 +301,12 @@ public class PetHandler
     protected MemberObject _follow;
     protected ObjectDeathListener _follist;
 
-    @Inject protected PetManager _petmgr;
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected PlaceRegistry _placeReg;
-    @Inject protected SceneRegistry _sceneReg;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected PetRepository _petRepo;
-    @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MemberLocator _locator;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected PetManager _petmgr;
+    @Inject protected PetRepository _petRepo;
+    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected SceneRegistry _sceneReg;
 }

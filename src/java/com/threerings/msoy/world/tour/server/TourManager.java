@@ -207,9 +207,9 @@ public class TourManager
     /** Updates our set of rooms. */
     protected Interval _roomSetRefresher;
 
-    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected StatLogic _statLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected StatLogic _statLogic;
 }

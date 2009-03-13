@@ -1451,8 +1451,8 @@ public class MemberRepository extends DepotRepository
             }
         };
 
-    @Inject protected UserActionRepository _actionRepo;
     @Inject protected SpamRepository _spamRepo;
+    @Inject protected UserActionRepository _actionRepo;
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";

@@ -294,17 +294,17 @@ public class MsoyAdminManager
     /** A mapping of registered stat collectors. */
     protected Map<StatsModel.Type, StatCollector> _collectors = Maps.newHashMap();
 
-    @Inject protected RuntimeConfig _runtime;
-    @Inject protected PersistenceContext _perCtx;
-    @Inject protected RPCProfiler _rpcProfiler;
-    @Inject protected ShutdownManager _shutmgr;
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MailSender _sender;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberManager _memberMan;
     @Inject protected MoneyExchange _exchange;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PersistenceContext _perCtx;
+    @Inject protected RPCProfiler _rpcProfiler;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected ShutdownManager _shutmgr;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;

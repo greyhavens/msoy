@@ -631,8 +631,8 @@ public class JabberManager
     protected List<String> _gateways = Lists.newArrayList();
 
     // dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected ChatProvider _chatprov;
+    @Inject protected RootDObjectManager _omgr;
 
     /** The time between reconnection attempts. */
     protected static final long RECONNECT_TIMEOUT = 60 * 1000L;

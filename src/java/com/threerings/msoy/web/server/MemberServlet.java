@@ -296,10 +296,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
+    @Inject protected ProfileRepository _profileRepo;
     @Inject protected SpamRepository _spamRepo;
 
     /** Maximum number of members to return for the leader board */

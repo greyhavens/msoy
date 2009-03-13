@@ -491,10 +491,10 @@ public class ItemManager
     }
 
     // our dependencies
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
-    @Inject protected SceneRegistry _sceneReg;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected SceneRegistry _sceneReg;
+    @Inject protected ServerMessages _serverMsgs;
 }

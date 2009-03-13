@@ -250,12 +250,12 @@ public class WebRoomServlet extends MsoyServiceServlet
     protected static final Object ROOM_PURCHASE_KEY = new Object();
 
     // our dependencies
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RoomLogic _roomLogic;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected ServerMessages _serverMsgs;
 }

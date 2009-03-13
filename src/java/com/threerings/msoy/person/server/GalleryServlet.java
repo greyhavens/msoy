@@ -162,7 +162,7 @@ public class GalleryServlet extends MsoyServiceServlet
         return rejects;
     }
 
+    @Inject protected GalleryLogic _galleryLogic;
     @Inject protected GalleryRepository _galleryRepo;
     @Inject protected PhotoRepository _photoRepo;
-    @Inject protected GalleryLogic _galleryLogic;
 }

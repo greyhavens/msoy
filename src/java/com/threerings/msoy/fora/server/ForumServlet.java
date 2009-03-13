@@ -685,15 +685,15 @@ public class ForumServlet extends MsoyServiceServlet
         ")(welcome/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
 
     // dependencies
-    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected FeedRepository _feedRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
-    @Inject protected SupportLogic _supportLogic;
-    @Inject protected MailLogic _mailLogic;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected FeedRepository _feedRepo;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MailLogic _mailLogic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _gameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected SupportLogic _supportLogic;
 }

@@ -188,7 +188,7 @@ public class StatLogic
         }
     }
 
-    @Inject protected StatRepository _statRepo;
-    @Inject protected BadgeRepository _badgeRepo;
     @Inject protected BadgeLogic _badgeLogic;
+    @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected StatRepository _statRepo;
 }

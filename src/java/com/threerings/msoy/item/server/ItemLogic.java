@@ -985,16 +985,16 @@ public class ItemLogic
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
-    @Inject protected ServerMessages _serverMsgs;
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected GameLogic _gameLogic;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected ItemListRepository _listRepo;
-    @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected FavoritesRepository _faveRepo;
+    @Inject protected GameLogic _gameLogic;
+    @Inject protected ItemFlagRepository _itemFlagRepo;
+    @Inject protected ItemListRepository _listRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected ServerMessages _serverMsgs;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;
@@ -1002,15 +1002,15 @@ public class ItemLogic
     @Inject protected DecorRepository _decorRepo;
     @Inject protected DocumentRepository _documentRepo;
     @Inject protected FurnitureRepository _furniRepo;
-    @Inject protected ToyRepository _toyRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected PetRepository _petRepo;
     @Inject protected PhotoRepository _photoRepo;
-    @Inject protected VideoRepository _videoRepo;
-    @Inject protected LevelPackRepository _lpackRepo;
-    @Inject protected ItemPackRepository _ipackRepo;
-    @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected PrizeRepository _prizeRepo;
     @Inject protected PropRepository _propRepo;
-    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ToyRepository _toyRepo;
+    @Inject protected TrophySourceRepository _tsourceRepo;
+    @Inject protected VideoRepository _videoRepo;
 }

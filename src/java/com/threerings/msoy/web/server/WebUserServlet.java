@@ -636,23 +636,23 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ServerMessages _serverMsgs;
-    @Inject protected MsoyAuthenticator _author;
-    @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected ExternalAuthLogic _extLogic;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected FriendManager _friendMan;
-    @Inject protected NotificationManager _notifyMan;
-    @Inject protected MailSender _mailer;
-    @Inject protected MailLogic _mailLogic;
-    @Inject protected GameLogic _gameLogic;
-    @Inject protected MemberLogic _memberLogic;
-    @Inject protected StatLogic _statLogic;
-    @Inject protected MailRepository _mailRepo;
-    @Inject protected ProfileRepository _profileRepo;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected RuntimeConfig _runtime;
     @Inject protected AccountLogic _accountLogic;
+    @Inject protected ExternalAuthLogic _extLogic;
+    @Inject protected FriendManager _friendMan;
+    @Inject protected GameLogic _gameLogic;
+    @Inject protected MailLogic _mailLogic;
+    @Inject protected MailRepository _mailRepo;
+    @Inject protected MailSender _mailer;
+    @Inject protected MemberLogic _memberLogic;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyAuthenticator _author;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected NotificationManager _notifyMan;
+    @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected ServerMessages _serverMsgs;
+    @Inject protected StatLogic _statLogic;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";

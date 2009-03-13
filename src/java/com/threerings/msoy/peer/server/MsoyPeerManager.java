@@ -713,11 +713,11 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
 
     // dependencies
-    @Inject protected InvocationManager _invmgr;
     @Inject protected ClientManager _clmgr;
-    @Inject protected SceneRegistry _screg;
-    @Inject protected MsoyServer _msoyServer;
+    @Inject protected InvocationManager _invmgr;
     @Inject protected MsoyReportManager _reportMan;
+    @Inject protected MsoyServer _msoyServer;
+    @Inject protected SceneRegistry _screg;
 
     /** A counter used to assign party ids on this server. */
     protected static int _partyIdCounter;

@@ -1231,34 +1231,34 @@ public class GameGameRegistry
     protected IntMap<GameContent> _gameContent = new HashIntMap<GameContent>();
 
     // various and sundry dependent services
-    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected BureauRegistry _bureauReg;
+    @Inject protected GameWatcherManager _watchmgr;
+    @Inject protected InvocationManager _invmgr;
+    @Inject protected LocationManager _locmgr;
+    @Inject protected MemberManager _memmgr;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MoneyNodeActions _moneyActions;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected RuntimeConfig _runtime;
+    @Inject protected PlaceRegistry _placeReg;
     @Inject protected PlayerLocator _locator;
     @Inject protected PlayerNodeActions _playerActions;
-    @Inject protected MoneyNodeActions _moneyActions;
     @Inject protected RootDObjectManager _omgr;
-    @Inject protected InvocationManager _invmgr;
-    @Inject protected WorldGameRegistry _wgameReg;
-    @Inject protected GameWatcherManager _watchmgr;
-    @Inject protected LocationManager _locmgr;
-    @Inject protected PlaceRegistry _placeReg;
-    @Inject protected BureauRegistry _bureauReg;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MemberManager _memmgr;
+    @Inject protected WorldGameRegistry _wgameReg;
 
     // various and sundry repositories for loading persistent data
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected AVRGameRepository _avrgRepo;
-    @Inject protected RatingRepository _ratingRepo;
     @Inject protected FeedRepository _feedRepo;
-    @Inject protected TrophyRepository _trophyRepo;
-    @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected ItemPackRepository _ipackRepo;
-    @Inject protected TrophySourceRepository _tsourceRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected PrizeRepository _prizeRepo;
+    @Inject protected RatingRepository _ratingRepo;
+    @Inject protected TrophyRepository _trophyRepo;
+    @Inject protected TrophySourceRepository _tsourceRepo;
 
     /** Period of game log deletion. */
     protected static final long LOG_DELETION_INTERVAL = 6 * 60 * 60 * 1000;

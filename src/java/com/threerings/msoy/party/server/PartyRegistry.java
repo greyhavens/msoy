@@ -426,13 +426,13 @@ public class PartyRegistry
 
     protected static final int PARTIES_PER_BOARD = 16;
 
-    @Inject protected Injector _injector;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected PlaceRegistry _placeReg;
-    @Inject protected InvocationManager _invmgr;
     @Inject protected BodyManager _bodyMan;
-    @Inject protected NotificationManager _notifyMan;
-    @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected Injector _injector;
+    @Inject protected InvocationManager _invmgr;
+    @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected NotificationManager _notifyMan;
+    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected RootDObjectManager _omgr;
 }

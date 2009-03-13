@@ -259,10 +259,10 @@ public class MoneyServlet extends MsoyServiceServlet
         return false;
     }
 
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyAuthenticator _authenticator;
     @Inject protected MailSender _mailer;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyAuthenticator _authenticator;
     @Inject protected RuntimeConfig _runtime;
 
     protected static final String CASHOUT_NOTIFY_EMAIL = "blingcashout@threerings.net";

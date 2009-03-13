@@ -246,8 +246,8 @@ public class MoneyExchange
     protected float _rate;
 
     // our dependencies
-    @Inject protected RuntimeConfig _runtime;
     @Inject protected MoneyRepository _moneyRepo;
+    @Inject protected RuntimeConfig _runtime;
 
     /** How often we re-check the exchange rate, even if no cross-currency purchases have been
      * made during this time. */

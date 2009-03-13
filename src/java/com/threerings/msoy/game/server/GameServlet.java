@@ -655,15 +655,15 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected MemberManager _memberMan;
-    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameRepository _gameRepo;
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected TrophyRepository _trophyRepo;
-    @Inject protected RatingRepository _ratingRepo;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected RatingRepository _ratingRepo;
+    @Inject protected TrophyRepository _trophyRepo;
     @Inject protected TrophySourceRepository _trophySourceRepo;
 
     /** Comparator for sorting {@link GameInfo}, by gameId. */

@@ -227,7 +227,7 @@ public class BadgeManager
         });
     }
 
-    @Inject protected NotificationManager _notifyMan;
-    @Inject protected BadgeLogic _badgeLogic;
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected BadgeLogic _badgeLogic;
+    @Inject protected NotificationManager _notifyMan;
 }

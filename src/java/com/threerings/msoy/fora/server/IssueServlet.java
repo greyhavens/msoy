@@ -230,7 +230,7 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected IssueRepository _issueRepo;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected ForumRepository _forumRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected IssueRepository _issueRepo;
 }

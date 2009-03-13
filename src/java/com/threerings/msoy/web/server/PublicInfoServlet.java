@@ -147,6 +147,6 @@ public class PublicInfoServlet extends HttpServlet
         private final String _paramName;
     }
 
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GroupRepository _whirledRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
 }

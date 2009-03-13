@@ -1085,32 +1085,32 @@ public class MemberManager
     protected int[] _levelForFlow;
 
     // dependencies
-    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
-    @Inject protected MsoyAdminManager _adminMan;
-    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected BadgeManager _badgeMan;
+    @Inject protected BodyManager _bodyMan;
     @Inject protected ClientManager _clmgr;
-    @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected CronLogic _cronLogic;
+    @Inject protected FeedRepository _feedRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected ItemManager _itemMan;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailSender _mailer;
-    @Inject protected MemberLogic _memberLogic;
-    @Inject protected SupportLogic _supportLogic;
-    @Inject protected CronLogic _cronLogic;
-    @Inject protected BodyManager _bodyMan;
-    @Inject protected BadgeManager _badgeMan;
-    @Inject protected NotificationManager _notifyMan;
-    @Inject protected ItemManager _itemMan;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected MemberLocator _locator;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected ProfileRepository _profileRepo;
-    @Inject protected FeedRepository _feedRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MsoyAdminManager _adminMan;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected NotificationManager _notifyMan;
+    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected SupportLogic _supportLogic;
 
     /** The required flow for the first few levels is hard-coded */
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };

@@ -724,21 +724,21 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ServerMessages _serverMsgs;
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected MsoyAdminManager _adminMgr;
+    @Inject @MainInvoker Invoker _invoker;
+    @Inject protected ABTestRepository _testRepo;
     @Inject protected BureauManager _bureauMgr;
+    @Inject protected ContestRepository _contestRepo;
+    @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
-    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MailRepository _mailRepo;
-    @Inject protected ABTestRepository _testRepo;
-    @Inject protected PromotionRepository _promoRepo;
-    @Inject protected ContestRepository _contestRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyAdminManager _adminMgr;
     @Inject protected MsoyEventLogger _eventLogger;
-    @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected MsoyPeerManager _peerMgr;
-    @Inject protected RuntimeConfig _runtimeConfig;
     @Inject protected MsoySceneRegistry _sceneReg;
-    @Inject @MainInvoker Invoker _invoker;
+    @Inject protected PromotionRepository _promoRepo;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected RuntimeConfig _runtimeConfig;
+    @Inject protected ServerMessages _serverMsgs;
 }

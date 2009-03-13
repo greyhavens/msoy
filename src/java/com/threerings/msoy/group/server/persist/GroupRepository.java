@@ -578,6 +578,6 @@ public class GroupRepository extends DepotRepository
     protected TagRepository _tagRepo;
 
     // our dependencies
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

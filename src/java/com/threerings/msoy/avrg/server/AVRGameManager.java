@@ -1022,16 +1022,16 @@ public class AVRGameManager extends PlaceManager
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected InvocationManager _invmgr;
-    @Inject protected GameWatcherManager _watchmgr;
     @Inject protected AVRGameRepository _repo;
     @Inject protected BureauRegistry _breg;
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected PlayerLocator _locator;
-    @Inject protected LocationManager _locmgr;
-    @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected GameWatcherManager _watchmgr;
+    @Inject protected InvocationManager _invmgr;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected LocationManager _locmgr;
+    @Inject protected PlayerLocator _locator;
+    @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected RootDObjectManager _omgr;
     @Inject protected TrophyRepository _trophyRepo;
 
     /** idle time before shutting down the manager. */

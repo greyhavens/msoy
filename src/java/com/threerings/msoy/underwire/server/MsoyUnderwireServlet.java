@@ -222,12 +222,12 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     }
 
     // our dependencies
-    @Inject protected PersistenceContext _perCtx;
+    @Inject protected MemberHelper _memberHelper;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyGameActionHandler _actionHandler;
     @Inject protected MsoyGameInfoProvider _infoprov;
-    @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyOOOUserRepository _authRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyUnderwireRepository _underRepo;
-    @Inject protected MemberHelper _memberHelper;
+    @Inject protected PersistenceContext _perCtx;
 }

@@ -332,10 +332,10 @@ public class WorldGameRegistry
     protected ArrayIntSet _games = new ArrayIntSet();
 
     // dependencies
-    @Inject protected Injector _injector;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
-    @Inject protected PlaceRegistry _placeReg;
-    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected Injector _injector;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PlaceRegistry _placeReg;
 }

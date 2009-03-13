@@ -772,21 +772,21 @@ public class MemberLogic
     }
 
     // general dependencies
-    @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected MemberManager _memberMan;
-    @Inject protected StatLogic _statLogic;
-    @Inject protected BadgeLogic _badgeLogic;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected FeedRepository _feedRepo;
     @Inject protected ABTestRepository _testRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected MsoyGameRepository _msoyGameRepo;
+    @Inject protected BadgeLogic _badgeLogic;
+    @Inject protected FeedRepository _feedRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MemberManager _memberMan;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyGameRepository _msoyGameRepo;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected StatLogic _statLogic;
 
     // member purging dependencies
     @Inject protected AVRGameRepository _avrGameRepo;

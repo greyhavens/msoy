@@ -42,6 +42,6 @@ public class ServletLogic
     }
 
     // our dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected RootDObjectManager _omgr;
 }

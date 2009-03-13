@@ -219,11 +219,11 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     // our dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected RPCProfiler _profiler;
+    @Inject protected RootDObjectManager _omgr;
 
     /** Whether or not RPC profiling is enabled. */
     protected static final boolean PROFILING_ENABLED = true;

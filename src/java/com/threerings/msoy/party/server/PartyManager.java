@@ -409,9 +409,9 @@ public class PartyManager
     protected PartyInfo _lastInfo;
     protected ArrayIntSet _invitedIds = new ArrayIntSet();
 
-    @Inject protected PartyRegistry _partyReg;
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected InvocationManager _invMgr;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected NotificationManager _notifyMgr;
+    @Inject protected PartyRegistry _partyReg;
+    @Inject protected RootDObjectManager _omgr;
 }

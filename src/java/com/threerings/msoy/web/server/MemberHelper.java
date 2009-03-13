@@ -243,7 +243,7 @@ public class MemberHelper
         Collections.synchronizedMap(new HashMap<String,Integer>());
 
     // our dependencies
-    @Inject protected ServletLogic _servletLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected ServletLogic _servletLogic;
 }

@@ -303,11 +303,11 @@ public class GameLogic
         @Inject protected transient GameGameRegistry _gameReg;
     }
 
-    @Inject protected RootDObjectManager _omgr;
-    @Inject protected WorldGameRegistry _gameReg;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected WorldGameRegistry _gameReg;
 }

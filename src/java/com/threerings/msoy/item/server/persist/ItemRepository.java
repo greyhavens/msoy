@@ -1430,10 +1430,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected RatingRepository _ratingRepo;
 
     // our dependencies
-    @Inject protected MemoryRepository _memoryRepo;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected MoneyExchange _exchange;
     @Inject protected ItemFlagRepository _itemFlagRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MoneyExchange _exchange;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;

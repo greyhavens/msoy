@@ -408,10 +408,10 @@ public class InviteServlet extends MsoyServiceServlet
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _webmailCleared = System.currentTimeMillis();
 
-    @Inject protected MailSender _mailer;
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected MailSender _mailer;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected SpamRepository _spamRepo;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;

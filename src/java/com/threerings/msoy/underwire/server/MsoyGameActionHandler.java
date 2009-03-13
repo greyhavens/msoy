@@ -103,7 +103,7 @@ public class MsoyGameActionHandler extends GameActionHandler
     }
 
     // our dependencies
+    @Inject protected MailSender _mailer;
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MailSender _mailer;
 }

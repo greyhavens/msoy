@@ -96,12 +96,12 @@ public class LandingServlet extends MsoyServiceServlet
     protected ExpiringReference<LandingData> _landingData;
 
     // our dependencies
-    @Inject protected MemberManager _memberMan;
-    @Inject protected ItemManager _itemMan;
     @Inject protected GameLogic _gameLogic;
-    @Inject protected ItemLogic _itemLogic;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected MemberManager _memberMan;
     @Inject protected MsoySceneRepository _sceneRepo;
 
     protected static final long LANDING_DATA_EXPIRY = /* 60*60* */ 1000L;

@@ -278,12 +278,12 @@ public class MsoySession extends WhirledSession
     protected volatile boolean _resumingSession;
 
     // dependent services
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected RuntimeConfig _runtime;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLocator _locator;
-    @Inject protected StatRepository _statRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected StatRepository _statRepo;
 }

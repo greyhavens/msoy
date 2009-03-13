@@ -722,17 +722,17 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected RuntimeConfig _runtime;
-    @Inject protected MemberLogic _memberLogic; // ABTEST: 2009 03 buypanel
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected StatLogic _statLogic;
-    @Inject protected GameLogic _gameLogic;
-    @Inject protected UserActionRepository _userActionRepo;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected GameLogic _gameLogic;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MemberLogic _memberLogic; // ABTEST: 2009 03 buypanel
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected StatLogic _statLogic;
+    @Inject protected UserActionRepository _userActionRepo;
 
     /** Used by {@link #loadSuite}. */
     protected static final byte[] SUITE_TAG_TYPES = new byte[] {

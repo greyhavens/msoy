@@ -717,13 +717,13 @@ public class SpamLogic
     protected MessageBundle _pmsgs;
     protected MessageBundle _dmsgs;
 
-    @Inject protected MemberRepository _memberRepo; 
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected CronLogic _cronLogic;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected MailSender _mailSender;
-    @Inject protected SpamRepository _spamRepo;
+    @Inject protected MemberRepository _memberRepo; 
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected CronLogic _cronLogic;
-    @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected SpamRepository _spamRepo;
 
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";

@@ -95,8 +95,8 @@ public class RoomLogic
         });
     }
 
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected SceneRegistry _sceneReg;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected SceneRegistry _sceneReg;
 }

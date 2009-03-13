@@ -915,10 +915,10 @@ public class AwardDelegate extends RatingDelegate
     protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
     // our dependencies
-    @Inject protected RuntimeConfig _runtime;
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected RuntimeConfig _runtime;
 
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {

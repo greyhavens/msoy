@@ -310,12 +310,12 @@ public class MailLogic
             "body", body, "server_url", ServerConfig.getServerURL());
     }
 
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MailRepository _mailRepo;
+    @Inject protected MailSender _mailer;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected RoomLogic _roomLogic;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
-    @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected MailSender _mailer;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected RoomLogic _roomLogic;
-    @Inject protected MailRepository _mailRepo;
-    @Inject protected MemberRepository _memberRepo;
 }

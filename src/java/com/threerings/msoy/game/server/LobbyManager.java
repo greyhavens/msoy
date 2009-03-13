@@ -353,12 +353,12 @@ public class LobbyManager
     protected Interval _shutdownInterval;
 
     // our dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _plreg;
     @Inject protected PlayerNodeActions _playerActions;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected RootDObjectManager _omgr;
 
     /** idle time before shutting down the manager. */
     protected static final long IDLE_UNLOAD_PERIOD = 60 * 1000L; // in ms

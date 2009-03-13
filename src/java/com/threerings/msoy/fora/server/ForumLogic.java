@@ -87,6 +87,6 @@ public class ForumLogic
         return Lists.newArrayList(thrmap.values());
     }
 
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected ForumRepository _forumRepo;
+    @Inject protected MemberRepository _memberRepo;
 }

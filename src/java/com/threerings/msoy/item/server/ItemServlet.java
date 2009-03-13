@@ -348,11 +348,11 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ItemManager _itemMan;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected StatLogic _statLogic;
-    @Inject protected PhotoRepository _photoRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected PhotoRepository _photoRepo;
+    @Inject protected StatLogic _statLogic;
 
     protected static final int MIN_SOLID_RATINGS = 20;
 }

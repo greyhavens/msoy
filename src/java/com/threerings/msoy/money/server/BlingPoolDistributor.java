@@ -295,8 +295,8 @@ public class BlingPoolDistributor
     protected Scheduler _scheduler;
 
     // dependencies
-    @Inject protected RuntimeConfig _runtime;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyRepository _repo;
     @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected MemberRepository _memberRepo;
+    @Inject protected RuntimeConfig _runtime;
 }

@@ -366,9 +366,9 @@ public class QuestDelegate extends PlayManagerDelegate
     protected IntMap<Player> _players = new HashIntMap<Player>();
 
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected RuntimeConfig _runtime;
+    @Inject protected AVRGameRepository _repo;
+    @Inject protected GameGameRegistry _gameReg;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlayerNodeActions _playerActions;
-    @Inject protected GameGameRegistry _gameReg;
-    @Inject protected AVRGameRepository _repo;
+    @Inject protected RuntimeConfig _runtime;
 }

@@ -190,8 +190,8 @@ public class MoneyMessageListener
     protected ConnectedListener _getBarCountListener;
 
     // dependencies
-    @Inject protected MoneyLogic _logic;
-    @Inject protected MemberRepository _memberRepo;
     @Inject @MainInvoker protected Invoker _invoker;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MessageConnection _conn;
+    @Inject protected MoneyLogic _logic;
 }

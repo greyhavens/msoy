@@ -216,9 +216,9 @@ public class GroupLogic
     protected static final Object GROUP_PURCHASE_KEY = new Object();
 
     // our dependencies
-    @Inject protected StatLogic _statLogic;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected StatLogic _statLogic;
 }

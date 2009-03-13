@@ -144,6 +144,6 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
 
     protected Class<T> _credsClass;
 
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected AccountLogic _accountLogic;
+    @Inject protected MemberRepository _memberRepo;
 }

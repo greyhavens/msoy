@@ -384,9 +384,9 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected StatLogic _statLogic;
 }

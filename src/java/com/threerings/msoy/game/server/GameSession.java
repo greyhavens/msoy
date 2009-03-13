@@ -83,6 +83,6 @@ public class GameSession extends CrowdSession
     /** A casted reference to the userobject. */
     protected PlayerObject _plobj;
 
-    @Inject protected PlayerLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected PlayerLocator _locator;
 }

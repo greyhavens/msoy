@@ -242,6 +242,6 @@ public class StatusServlet extends HttpServlet
     }
 
     // our dependencies
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected RootDObjectManager _omgr;
 }
