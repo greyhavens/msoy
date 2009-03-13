@@ -69,9 +69,9 @@ public class ProfilePanel extends FlowPanel
 
     /** The blurbs we'll display on our profile. */
     protected Blurb[] _blurbs = {
-        new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(), new StampsBlurb(),
-        new MedalsBlurb(), new GalleriesBlurb(), new TrophiesBlurb(), new RatingsBlurb(),
-        new GroupsBlurb(), new FavoritesBlurb(), new FeedBlurb(), new CommentsBlurb()
+        new ProfileBlurb(), new InterestsBlurb(), new FeedBlurb(), new GalleriesBlurb(),
+        new FriendsBlurb(), new TrophiesBlurb(), new MedalsBlurb(), new StampsBlurb(),
+        new RatingsBlurb(), new GroupsBlurb(), new FavoritesBlurb(), new CommentsBlurb()
     };
 
     protected final NowLoadingWidget _nowLoading;
