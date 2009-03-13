@@ -508,24 +508,14 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setDisplayName (final ClientObject caller, final String name,
-                                final InvocationService.ConfirmListener listener)
+                                InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        // TODO: verify entered string
         _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
                                              "user", user.who(), "name", name) {
             @Override public void invokePersistent () throws Exception {
-                _memberRepo.configureDisplayName(user.getMemberId(), name);
-            }
-            @Override public void handleSuccess () {
-                user.updateDisplayName(name);
-                // update their name on this world server
-                _bodyMan.updateOccupantInfo(
-                    user, new MemberInfo.NameUpdater(user.getVisibleName()));
-                // if they're playing a game, let it know about the new name as well
-                _playerActions.displayNameUpdated(user.memberName);
-                super.handleSuccess();
+                _memberLogic.setDisplayName(user.getMemberId(), name, user.tokens.isSupport());
             }
         });
     }
@@ -682,7 +672,8 @@ public class MemberManager
                 append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
                 append(umsg.speaker);
             if (umsg.speaker instanceof MemberName) {
-                chatHistory.append('(').append(((MemberName)umsg.speaker).getMemberId()).append(')');
+                int memberId = ((MemberName)umsg.speaker).getMemberId();
+                chatHistory.append('(').append(memberId).append(')');
             }
             chatHistory.append(": ").append(umsg.message).append('\n');
         }

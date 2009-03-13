@@ -21,6 +21,7 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.whirled.game.server.persist.GameCookieRepository;
@@ -28,6 +29,7 @@ import com.whirled.game.server.persist.GameCookieRepository;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.gwt.ABTest;
@@ -39,6 +41,7 @@ import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -71,6 +74,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -182,6 +186,27 @@ public class MemberLogic
 
         // note the sad event in the log
         _eventLog.friendRemoved(removerId, friendId);
+    }
+
+    /**
+     * Set the display name for the specified member.
+     * @throws a ServiceException if the name is invalid, for some reason.
+     */
+    public void setDisplayName (final int memberId, final String name, boolean allowSupportNames)
+        throws ServiceException
+    {
+        validateDisplayName(name, allowSupportNames);
+
+        // save it to the db
+        _memberRepo.configureDisplayName(memberId, name);
+
+        // update runtime representations
+        _omgr.postRunnable(new Runnable() {
+            public void run () {
+               MemberNodeActions.infoChanged(memberId, name, null, null);
+               _playerActions.displayNameUpdated(new MemberName(name, memberId));
+            }
+        });
     }
 
     /**
@@ -622,6 +647,25 @@ public class MemberLogic
     }
 
     /**
+     * Validate that the specified display name is kosher.
+     */
+    protected void validateDisplayName (String name, boolean allowSupportNames)
+        throws ServiceException
+    {
+        if (!MemberName.isValidDisplayName(name) ||
+                (!allowSupportNames && !MemberName.isValidNonSupportName(name))) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // TODO: improve. Load patterns from the database at startup?
+        // validate the name against some simple stop patterns.
+        name = name.toLowerCase();
+        if ((-1 != name.indexOf("nigger")) || (-1 != name.indexOf("faggot"))) {
+            throw new ServiceException("e.bad_displayname");
+        }
+    }
+
+    /**
      * A member experience that has been scored.
      *
      * @author Kyle Sampson <kyle@threerings.net>
@@ -728,6 +772,7 @@ public class MemberLogic
     }
 
     // general dependencies
+    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberManager _memberMan;
@@ -741,6 +786,7 @@ public class MemberLogic
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyGameRepository _msoyGameRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected PlayerNodeActions _playerActions;
 
     // member purging dependencies
     @Inject protected AVRGameRepository _avrGameRepo;

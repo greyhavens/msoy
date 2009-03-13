@@ -18,6 +18,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.ObjectUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -31,6 +32,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.spam.server.SpamLogic;
@@ -48,7 +50,6 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
-import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -183,13 +184,9 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = requireAuthedUser();
 
-        if (displayName != null) {
-            displayName = displayName.trim();
-        }
-        if (!MemberName.isValidDisplayName(displayName) ||
-                (!memrec.isSupport() && !MemberName.isValidNonSupportName(displayName))) {
-            // you'll only see this with a hacked client
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        if (!ObjectUtil.equals(memrec.name, displayName)) {
+            // this will hork with a ServiceException if the name is bogus
+            _memberLogic.setDisplayName(memrec.memberId, displayName, memrec.isSupport());
         }
 
         // don't let the user become a greeter if it is disabled
@@ -224,34 +221,19 @@ public class ProfileServlet extends MsoyServiceServlet
         }
         _eventLog.profileUpdated(memrec.memberId, memrec.visitorId);
 
-        // handle a display name change if necessary
-        final boolean nameChanged = memrec.name == null || !memrec.name.equals(displayName);
         final boolean photoChanged = !orec.getPhoto().equals(nrec.getPhoto());
-        final boolean statusChanged = orec.headline != nrec.headline;
+        final boolean statusChanged = !ObjectUtil.equals(orec.headline, nrec.headline);
         final boolean greeterChanged = memrec.isGreeter() != greeter;
-
-        if (nameChanged) {
-            _memberRepo.configureDisplayName(memrec.memberId, displayName);
-        }
-
         if (greeterChanged) {
             memrec.setFlag(MemberRecord.Flag.GREETER, greeter);
             _memberRepo.storeFlags(memrec);
-        }
-
-        if (statusChanged || nameChanged || photoChanged) {
-            // let the world servers know about the info change
-            MemberNodeActions.infoChanged(
-                memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
-        }
-        if (nameChanged) {
-            // let the game servers know about the name change
-            _playerActions.displayNameUpdated(new MemberName(displayName, memrec.memberId));
-        }
-
-        if (greeterChanged) {
             // let the world servers know about the info change
             MemberNodeActions.tokensChanged(memrec.memberId, memrec.toTokenRing());
+        }
+        if (statusChanged || photoChanged) {
+            // let the world servers know about the info change
+            // (the name is null, it's changed by other code, above.)
+            MemberNodeActions.infoChanged(memrec.memberId, null, nrec.getPhoto(), nrec.headline);
         }
     }
 
@@ -446,22 +428,22 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected PlayerNodeActions _playerActions;
-    @Inject protected FeedLogic _feedLogic;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected GalleryLogic _galleryLogic;
-    @Inject protected FeedRepository _feedRepo;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected MedalRepository _medalRepo;
-    @Inject protected ProfileRepository _profileRepo;
-    @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected RatingRepository _ratingRepo;
-    @Inject protected TrophyRepository _trophyRepo;
-    @Inject protected UserActionRepository _userActionRepo;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FavoritesRepository _faveRepo;
+    @Inject protected FeedLogic _feedLogic;
+    @Inject protected FeedRepository _feedRepo;
+    @Inject protected GalleryLogic _galleryLogic;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MedalRepository _medalRepo;
+    @Inject protected MemberLogic _memberLogic;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected RatingRepository _ratingRepo;
     @Inject protected SpamLogic _spamLogic;
+    @Inject protected TrophyRepository _trophyRepo;
+    @Inject protected UserActionRepository _userActionRepo;
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;

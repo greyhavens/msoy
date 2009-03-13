@@ -78,7 +78,8 @@ public class MemberName extends Name
      */
     public static boolean isValidDisplayName (String name)
     {
-        return (name != null && name.length() >= MIN_DISPLAY_NAME_LENGTH &&
+        return (name != null && name.trim().equals(name) &&
+                name.length() >= MIN_DISPLAY_NAME_LENGTH &&
                 name.length() <= MAX_DISPLAY_NAME_LENGTH);
     }
 
