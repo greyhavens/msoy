@@ -65,14 +65,22 @@
 }
 
 .statusPanel .InviteFriends {
-  width: 89px;
-  height: 21px;
-  background-image: url(/images/header/status_invite_friends.png);
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  background: #4A4A4A;
+  min-width: 90px;
+}
+
+.statusPanel .InviteFriends .html-face {
+  padding: 3px 5px 1px;
 }
 
 .statusPanel .InviteFriends-up-hovering,
 .statusPanel .InviteFriends-down-hovering {
-  background-image: url(/images/header/status_invite_friends_over.png);
+  cursor: pointer;
+  background: #E07612;
 }
 
 .statusPanel .TopBoxLinks {

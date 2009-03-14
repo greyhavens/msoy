@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -125,11 +126,8 @@ public class StatusPanel extends SmartTable
         links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
         links.add(MsoyUI.createLabel("|", "Spacer"));
         if (permaguest) {
-            links.add(MsoyUI.createActionLabel(_cmsgs.statusSaveGuest(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.ACCOUNT, "create");
-                }
-            }));
+            links.add(MsoyUI.createActionLabel(_cmsgs.statusLogon(),
+                                               Link.createListener(Pages.ACCOUNT, "logon")));
         } else {
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
                 public void onClick (Widget sender) {
@@ -141,9 +139,17 @@ public class StatusPanel extends SmartTable
         // white top box aligned to right of window
         HorizontalPanel topBox = new HorizontalPanel();
 
-        // friends = coins blurb on top left
-        topBox.add(MsoyUI.createImageButton("InviteFriends", Link.createListener(Pages.PEOPLE,
-            "invites")));
+        // "sign up" or "invite friends" on top left
+        PushButton action;
+        if (permaguest) {
+            action = new PushButton(
+                _cmsgs.statusSignUp(), Link.createListener(Pages.ACCOUNT, "create"));
+        } else {
+            action = new PushButton(
+                _cmsgs.statusInviteFriends(), Link.createListener(Pages.PEOPLE, "invites"));
+        }
+        action.setStyleName("InviteFriends");
+        topBox.add(action);
         topBox.add(WidgetUtil.makeShim(10, 10));
 
         topBox.add(new Image("/images/header/status_bg_left.png"));
