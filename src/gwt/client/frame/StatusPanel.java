@@ -8,9 +8,9 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -113,7 +113,7 @@ public class StatusPanel extends SmartTable
         boolean permaguest = MemberMailUtil.isPermaguest(_creds.accountName);
 
         // mail, name, help, sign out in a box at top
-        HorizontalPanel links = new HorizontalPanel();
+        FlowPanel links = MsoyUI.createFlowPanel("Links");
         if (!permaguest) {
             links.add(_mail);
             CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL,
@@ -136,31 +136,37 @@ public class StatusPanel extends SmartTable
             }));
         }
 
-        // white top box aligned to right of window
-        HorizontalPanel topBox = new HorizontalPanel();
-
         // "sign up" or "invite friends" on top left
         PushButton action;
         if (permaguest) {
             action = new PushButton(
-                _cmsgs.statusSignUp(), Link.createListener(Pages.ACCOUNT, "create"));
+                _cmsgs.headerSignup(), Link.createListener(Pages.ACCOUNT, "create"));
+            action.setStyleName("SignupButton");
+            action.addStyleName("Button");
         } else {
             action = new PushButton(
                 _cmsgs.statusInviteFriends(), Link.createListener(Pages.PEOPLE, "invites"));
+            action.setStyleName("InviteFriends");
         }
-        action.setStyleName("InviteFriends");
-        topBox.add(action);
-        topBox.add(WidgetUtil.makeShim(10, 10));
+        setWidget(0, 0, action);
+        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+        getFlexCellFormatter().setRowSpan(0, 1, 2);
 
-        topBox.add(new Image("/images/header/status_bg_left.png"));
-        topBox.add(MsoyUI.createSimplePanel(links, "TopBoxLinks"));
-        topBox.add(new Image("/images/header/status_bg_right.png"));
-        setWidget(0, 0, topBox);
-        getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
-        getFlexCellFormatter().setColSpan(0, 0, 3);
+        SmartTable lbox = new SmartTable(0, 0);
+        lbox.setWidget(0, 0, new Image("/images/header/status_bg_left.png"));
+        lbox.setWidget(0, 1, links, 1, "TopBoxLinks");
+        lbox.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        lbox.setWidget(0, 2, new Image("/images/header/status_bg_right.png"));
+        setWidget(0, 2, lbox);
+        getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
+        getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_CENTER);
 
-        // coins, bars, level on bottom left
-        setWidget(1, 0, _levels);
+        // coins, bars, level on bottom
+        setWidget(1, 0, _levels, 0, null);
+        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
+
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
@@ -178,7 +184,7 @@ public class StatusPanel extends SmartTable
         return (oldLevel != 0 && oldLevel < event.getValue());
     }
 
-    protected static class MailDisplay extends HorizontalPanel
+    protected static class MailDisplay extends FlowPanel
     {
         public MailDisplay () {
             addStyleName("Mail");

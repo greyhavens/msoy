@@ -62,6 +62,7 @@
 
 .statusPanel {
   padding-right: 40px;
+  height: 100%;
 }
 
 .statusPanel .InviteFriends {
@@ -84,20 +85,27 @@
 }
 
 .statusPanel .TopBoxLinks {
+  height: 27px;
   background: url(/images/header/status_bg_middle.png) repeat-x top;
   color: #a8cbe8;
-  height: 23px; /* plus padding = 27 */
-  padding: 4px 5px 0 5px;
   font-size: 12px;
-  white-space: nowrap;
-  margin-bottom: 4px;
+  padding: 4px 5px 0px;
 }
+
+.statusPanel .TopBoxLinks .Links {
+  white-space: nowrap;
+}
+.statusPanel .TopBoxLinks .Links div {
+  display: inline;
+}
+
 .statusPanel .TopBoxLinks a {
   color: #a8cbe8;
 }
 
 .statusPanel .TopBoxLinks .Mail img {
   margin-right: 3px;
+  display: inline;
 }
 
 .statusPanel .Name,
@@ -115,7 +123,6 @@
   font-family: Helvetica, sans-serif;
   font-size: 11px;
   font-weight: bold;
-  margin-left: 110px;
 }
 
 .statusPanel .Levels .Coins,
