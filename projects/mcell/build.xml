@@ -67,6 +67,7 @@
         <fileset dir="etc">
           <include name="cell.conf"/>
           <include name="cell.properties"/>
+          <include name="aggregator_classes"/>
         </fileset>
         <fileset dir="${deploy.dir}">
           <include name="msoy-hadoop-mr.jar"/>
