@@ -12,6 +12,16 @@
   width: 100%;
 }
 
+.myWhirled .MustValidate {
+  padding: 10px;
+  border: 2px solid #FF0000;
+  margin-bottom: 10px;
+}
+
+.myWhirled .MustValidate div {
+  display: inline;
+}
+
 .myWhirled .NewsAndFriends {
   width: 665px;
   margin: 0 auto;

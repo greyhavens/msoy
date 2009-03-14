@@ -72,15 +72,22 @@ public class MyWhirled extends FlowPanel
                 horiz.setStyleName("NewsAndFriends");
                 horiz.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
 
-                if (data.promos.size() > 0) {
-                    FlowPanel left = MsoyUI.createFlowPanel("inline");
-                    left.add(new PromotionBox(data.promos));
-                    left.add(WidgetUtil.makeShim(10, 10));
-                    left.add(feedBox);
-                    horiz.add(left);
+                FlowPanel left = new FlowPanel();
+                if (CShell.isValidated()) {
+                    if (data.promos.size() > 0) {
+                        left.add(new PromotionBox(data.promos));
+                        left.add(WidgetUtil.makeShim(10, 10));
+                    }
                 } else {
-                    horiz.add(feedBox);
+                    FlowPanel warn = MsoyUI.createFlowPanel("MustValidate");
+                    warn.add(MsoyUI.createHTML(_msgs.meMustValidate(), null));
+                    warn.add(MsoyUI.createHTML("&nbsp;", null));
+                    warn.add(Link.create(_msgs.meGoValidate(), Pages.ACCOUNT, "edit"));
+                    left.add(warn);
                 }
+
+                left.add(feedBox);
+                horiz.add(left);
 
                 FlowPanel right = MsoyUI.createFlowPanel("RightBits");
                 right.add(rbits);
