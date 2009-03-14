@@ -8,7 +8,7 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.reporter.aggregator.result.Result;
 import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregatedResult;
 
-@Result(inputs="msoy.RetentionEmail,Login")
+@Result(inputs="Login")
 public class RetentionEmailLoginsResult extends FieldAggregatedResult
 {
     /** The most recent login time for each member. */
@@ -21,15 +21,8 @@ public class RetentionEmailLoginsResult extends FieldAggregatedResult
             return false;
         }
 
-        String name = eventData.getEventName().getFullName();
-
-        // TODO: rolling incrementals - we need to analyze and adjust all data in our window, but
-        // leave previous data untouched - just use the last 14 days for now
-        if (name.equals("Login") && !RetentionEmail.isRecentEnough(eventData, 14)) {
-            return false;
-        }
-
-        return true;
+        // we don't care about logins more than 14 days ago
+        return RetentionEmail.isRecentEnough(eventData, 14);
     }
 
     @Override // from AggregatedValue
