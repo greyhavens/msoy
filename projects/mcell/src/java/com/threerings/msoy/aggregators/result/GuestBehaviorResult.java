@@ -179,7 +179,7 @@ public class GuestBehaviorResult
         Date lastEventDate = _entry.findLastEventDate();
         int days = 0;
         if (_entry.converted != null && lastEventDate != null) {
-            long msecs = (lastEventDate.getTime() - _entry.created.getTime());
+            long msecs = (lastEventDate.getTime() - created.getTime());
             days = (int)(msecs / (1000 * 60 * 60 * 24));
         }
 
