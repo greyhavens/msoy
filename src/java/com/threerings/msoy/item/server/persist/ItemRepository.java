@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -591,13 +592,13 @@ public abstract class ItemRepository<T extends ItemRecord>
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies).
      */
-    public List<CatalogRecord> loadCatalog (byte sortBy, boolean mature, String search, int tag,
-                                  int creator, Float minRating, int suiteId, int offset, int rows)
+    public List<CatalogRecord> loadCatalog (
+        byte sortBy, boolean mature, String search, int tag, int creator,
+        Float minRating, int suiteId, int offset, int rows)
     {
-        List<QueryClause> clauses = Lists.newArrayList();
+        LinkedList<QueryClause> clauses = Lists.newLinkedList();
         clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
                              getItemColumn(ItemRecord.ITEM_ID)));
-        clauses.add(new Limit(offset, rows));
 
         // sort out the primary and secondary order by clauses
         List<SQLExpression> obExprs = Lists.newArrayList();
@@ -642,13 +643,94 @@ public abstract class ItemRepository<T extends ItemRecord>
         // see if there's any where bits to turn into an actual where clause
         boolean significantlyConstrained =
             addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
+        
 
+        
         // finally fetch all the catalog records of interest and resolve their item bits
-        return resolveCatalogRecords(findAll(getCatalogClass(),
+        List<CatalogRecord> records = findAllWithOffset(getCatalogClass(),
             (!significantlyConstrained && sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT) ?
-                CacheStrategy.CONTENTS : CacheStrategy.LONG_KEYS, clauses));
+                CacheStrategy.CONTENTS : CacheStrategy.LONG_KEYS, clauses,
+                offset, rows);
+
+        return resolveCatalogRecords(records);
     }
 
+    /**
+     * A request for N records of at offset O of a certain query is mapped to one or possibly
+     * several database queries whose offsets always fall on even {@link FIND_ALL_CHUNK)
+     * integer boundaries, and which generally retrieve fairly large numbers of results.
+     * 
+     * Or, in language that someone might actually understand, illustrated with an example,
+     * where we pretend that FIND_ALL_CHUNK is 20:
+     * 
+     *  - Someone looks at the three first result pages of a search, resulting in identical
+     *    requests for data with offsets 0, 8 and 16, all with limit 8.
+     *  - To satisfy the first two, we request 20 records beginning at offset 0.
+     *  - To satisfy the third, we additionally request 20 records beginning at offset 20.
+     *  
+     *  What's the gain? Caching is vital, obviously; in practice we end up doing two database
+     *  requests instead of three, and the idea is that requesting 20 records costs pretty much
+     *  the same as requesting 8. In practice, FIND_ALL_CHUNK is larger, so the caching gain is
+     *  higher.
+     * 
+     * This algorithm requires a collection-query-friendly cache strategy, and makes sense mostly
+     * for queries whose execution cost is dominated by an expensive OrderBy operation.
+     */
+    protected <V extends PersistentRecord> List<V> findAllWithOffset (
+        Class<V> pClass, CacheStrategy strategy, LinkedList<QueryClause> clauses,
+        int queryIx, int toRead)
+    {
+        if (strategy == CacheStrategy.NONE || strategy == CacheStrategy.RECORDS) {
+            throw new IllegalArgumentException(
+                "This algorithm should only be used for cached collection queries.");
+        }
+        
+        log.info("Query request at (" + queryIx + ", " + toRead + ") for: " + clauses);
+        List<V> results = Lists.newArrayList();
+        Limit limit = null;
+
+        do {
+            // where within a chunk is the data to be found?
+            int queryIxInChunk = queryIx % FIND_ALL_CHUNK;
+            // find the nearest even chunk boundary (truncated)
+            int chunkOffset = queryIx - queryIxInChunk;
+
+            // delete the previous limit, if any; it'll always be at the head of the list
+            if (limit != null) {
+                clauses.remove(0);
+            }
+            // and insert a new one, always fetching FIND_ALL_CHUNK items
+            limit = new Limit(chunkOffset, FIND_ALL_CHUNK);
+            clauses.add(0, limit);
+            
+            // fetch the chunk from the database (or from the cache, hopefully)
+            List<V> chunk = findAll(pClass, strategy, clauses);
+            
+            // figure out how much of the data we read is going to be included in our original
+            // request, taking into account that we did not necessarily get a full chunk back
+            int relevantInChunk = Math.min(Math.max(0, chunk.size() - queryIxInChunk), toRead);
+            
+            log.info("DB returned " + (chunk.size()) + " results for (" +
+                chunkOffset + ", " + FIND_ALL_CHUNK + "); taking " + relevantInChunk);
+
+            if (relevantInChunk > 0) {
+                // if any of it is relevant, append it and update our iteration variables
+                results.addAll(chunk.subList(queryIxInChunk, queryIxInChunk + relevantInChunk));
+                toRead -= relevantInChunk;
+                queryIx += relevantInChunk;
+            }
+            
+            if (chunk.size() < FIND_ALL_CHUNK) {
+                // regardless of the original toRead limit, if we read less than a complete chunk,
+                // the stream is dry, and we're definitely done -- this is also going to be true
+                // anytime relevantInChunk is zero
+                toRead = 0; 
+            }
+        } while (toRead > 0);
+
+        return results;
+    }
+    
     /**
      * Loads up the specified catalog records.
      */
@@ -1440,4 +1522,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** The minimum number of ratings required to qualify a rating as "solid" */
     protected static final int MIN_SOLID_RATINGS = 20;
+
+    /** How many catalog records to actually request from the database when using our fancy
+     * chunking algorithm. Larger values reduce DB load; excessively high ones will over-fill
+     * the cache heap with unrequested result sets. */
+    protected static final int FIND_ALL_CHUNK = 100; 
 }
