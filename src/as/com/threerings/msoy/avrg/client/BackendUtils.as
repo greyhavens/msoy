@@ -212,7 +212,10 @@ public class BackendUtils
             delete loadedPacks[data.mediaURL];
         });
         loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
-            onLoaded(ByteArray(loader.data));
+            // TODO: setting the position=0 should happen at a lower level
+            var ba :ByteArray = ByteArray(loader.data);
+            ba.position = 0;
+            onLoaded(ba);
         });
         loader.load(new URLRequest(data.mediaURL));
     }
