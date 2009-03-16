@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
 
+import com.google.common.collect.Sets;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
@@ -39,7 +40,7 @@ public class LoginCountResult implements AggregatedResult<LoginCountResult>
     {
         result.put("uniquePlayers", uniquePlayers.size());
         result.put("uniqueGuests", uniqueGuests.size());
-        result.put("total", uniquePlayers.size() + uniqueGuests.size());
+        result.put("total", Sets.union(uniqueGuests, uniquePlayers).size());
         return false;
     }
 
