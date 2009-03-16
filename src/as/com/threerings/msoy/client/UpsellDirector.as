@@ -60,6 +60,14 @@ public class UpsellDirector extends BasicDirector
     }
 
     /**
+     * Called when a single-player game ends.
+     */
+    public function noteGameOver () :void
+    {
+        handleTimer(null);
+    }
+
+    /**
      * Handle timer expiration.
      */
     protected function handleTimer (event :TimerEvent) :void
@@ -69,7 +77,7 @@ public class UpsellDirector extends BasicDirector
         var guest :String = MemberObject(_mctx.getClient().getClientObject()).isPermaguest() ?
             "guest" : "mem";
         var place :String = Boolean(placeInfo[0]) ? "game" : "room";
-        var mins :String = String(_timer.currentCount);
+        var mins :String = (event == null) ? "-1" : String(_timer.currentCount);
 
         for (var ii :int = 0; ii < (1 << 4); ii++) {
             var isNotif :Boolean = ((ii >> 3) % 2 == 0);
@@ -109,7 +117,7 @@ public class UpsellDirector extends BasicDirector
                         // only track one at a time, brah
                         shareBtn.removeEventListener(MouseEvent.CLICK, _shareTracker);
                     }
-                    _shareTracker = function (event :MouseEvent) :void {
+                    _shareTracker = function (mevent :MouseEvent) :void {
                         clickedTracker(); // we're just adapting
                     };
                     shareBtn.addEventListener(MouseEvent.CLICK, _shareTracker, false, 1);

@@ -138,8 +138,8 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         // if we're embedded and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.
-        if (GAMESTUB_DEBUG_MODE || (embedded && 
-            mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
+        if (GAMESTUB_DEBUG_MODE ||
+                (embedded && (mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH))) {
             // set up a button to pop/hide the _playerList
             _showPlayers = new CommandButton();
             _showPlayers.toolTip = Msgs.GAME.get("i.scores");
@@ -158,7 +158,10 @@ public class MsoyGamePanel extends WhirledGamePanel
                 panel.addChild(box);
                 return panel;
             }, _showPlayers));
-            bar.addCustomButton(_showPlayers);
+            // March 16, 2009: don't add the players button for single-player games
+            if (multiplayer) {
+                bar.addCustomButton(_showPlayers);
+            }
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(true);
@@ -184,7 +187,9 @@ public class MsoyGamePanel extends WhirledGamePanel
         mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         if (_showPlayers != null) { // indicates we're in "gamestub" mode where chat is an overlay
-            _showPlayers.parent.removeChild(_showPlayers);
+            if (_showPlayers.parent != null) {
+                _showPlayers.parent.removeChild(_showPlayers);
+            }
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(false);
@@ -258,6 +263,15 @@ public class MsoyGamePanel extends WhirledGamePanel
             } else if (_gameOverPanel != null) {
                 _gameOverPanel.close();
                 _gameOverPanel = null;
+            }
+        }
+
+        if (gameOver) {
+            const config :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+            const multiplayer :Boolean =
+                config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
+            if (!multiplayer) {
+                _gctx.getMsoyContext().getUpsellDirector().noteGameOver();
             }
         }
     }
