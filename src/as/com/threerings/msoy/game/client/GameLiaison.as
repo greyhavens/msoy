@@ -429,7 +429,22 @@ public class GameLiaison
             });
     }
 
+    /**
+     * Does our place exiting bit. Prevents exit from proceeding if we've got some trophies to
+     * show.
+     */
     protected function onPlaceExit () :Boolean
+    {
+        // show the trophy feeder; have it close the place view when it closes
+        return maybeShowFeedPanel(_wctx.getWorldController().handleClosePlaceView);
+    }
+
+    /**
+     * Removes all exit handlers and maybe shows the feed panel. If the feed panel is shown, the
+     * given function is called when it is closed and false is returned. Otherwise, true is
+     * returned.
+     */
+    protected function maybeShowFeedPanel (onClose :Function) :Boolean
     {
         // remove the handler, we don't want to show this twice
         _wctx.getWorldController().removePlaceExitHandler(onPlaceExit);
@@ -439,11 +454,7 @@ public class GameLiaison
             return true;
         }
 
-        // show the trophy feeder; have it close the place view when it closes
-        var onClose :Function = _wctx.getWorldController().handleClosePlaceView;
         TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
-
-        // prevent the closure from proceeding
         return false;
     }
 
