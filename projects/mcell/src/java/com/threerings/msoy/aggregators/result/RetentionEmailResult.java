@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.aggregators.result;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.Maps;
-import com.threerings.msoy.aggregators.RetentionEmail;
+import com.google.common.collect.Sets;
+
 import com.threerings.panopticon.common.event.EventData;
+
 import com.threerings.panopticon.reporter.aggregator.result.Result;
+
 import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregatedResult;
 
 /**
@@ -20,25 +20,17 @@ import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregate
 @Result(inputs="RetentionMailSent") // original msoy event
 public class RetentionEmailResult extends FieldAggregatedResult
 {
-    /** The members addressed on a given date. */
-    public Map<Long, List<Integer>> sent = Maps.newHashMap();
+    /** The members addressed. */
+    public Set<Integer> sent = Sets.newHashSet();
 
-    @Override // from FieldResult
-    public boolean shouldInit (EventData eventData)
+    public static boolean checkInputs (EventData eventData)
     {
-        if (!super.shouldInit(eventData)) {
-            return false;
-        }
-
-        // TODO: rolling incrementals - we need to analyze and adjust all data in our window, but
-        // leave previous data untouched - just do 4 weeks for now
-        return RetentionEmail.isRecentEnough(eventData, 28);
+        return checkInputs(RetentionEmailResult.class, eventData);
     }
 
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
-        sent.put(RetentionEmail.dayOfEvent(eventData),
-            Collections.singletonList(eventData.getInt("recipientId")));
+        sent.add(eventData.getInt("recipientId"));
     }
 }
