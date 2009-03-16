@@ -78,8 +78,10 @@ public class RetentionEmail
         }
         // write an event
         writer.write(new EventData("msoy.RetentionEmailResponse",
-            new ImmutableMap.Builder<String, Object>().put("respondents", respondents)
-            .put("mailings", mailings.sent.size()).build(),
+            new ImmutableMap.Builder<String, Object>()
+                .put("respondents", respondents)
+                .put("mailings", mailings.sent.size())
+                .put("date", new Date(key.get())).build(),
             new HashMap<String, Object>()), StorageStrategy.PROCESSED);
     }
 
@@ -88,7 +90,7 @@ public class RetentionEmail
         Date timestamp = eventData.getDate("timestamp");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp.getTime());
-        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
