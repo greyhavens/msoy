@@ -59,7 +59,7 @@ public class ControlBar extends HBox
     public var volBtn :CommandButton;
 
     /** Handles full screening. */
-//    public var fullBtn :CommandButton;
+    public var fullBtn :CommandButton;
 
     /** Handles commenting on the current scene or game. */
     public var commentBtn :CommandButton;
@@ -189,8 +189,8 @@ public class ControlBar extends HBox
         updateVolumeSkin(Prefs.getSoundVolume());
         volBtn.setCallback(handlePopVolume);
 
-//        fullBtn = createButton("controlBarButtonFull", "i.full");
-//        fullBtn.setCallback(handleFullScreen);
+        fullBtn = createButton("controlBarButtonFull", "i.full");
+        fullBtn.setCallback(handleFullScreen);
 
         commentBtn = createButton("controlBarButtonComment", "i.comment");
         commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
@@ -280,10 +280,9 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(volBtn, true, VOLUME_PRIORITY);
-//        if (DeploymentConfig.devDeployment) {
-//            addButton(fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
-//                GLOBAL_PRIORITY);
-//        }
+        if (DeploymentConfig.devDeployment) {
+            addButton(fullBtn, true, GLOBAL_PRIORITY);
+        }
 
         addButton(shareBtn, showShare);
         addButton(commentBtn, showComment);
@@ -379,16 +378,16 @@ public class ControlBar extends HBox
         updateUI();
     }
 
-//    protected function handleFullScreen () :void
-//    {
-//        try {
-//            stage.displayState = (stage.displayState != StageDisplayState.FULL_SCREEN)
-//                ? StageDisplayState.FULL_SCREEN
-//                : StageDisplayState.NORMAL;
-//        } catch (se :SecurityError) {
-//            fullBtn.enabled = false;
-//        }
-//    }
+    protected function handleFullScreen () :void
+    {
+        try {
+            stage.displayState = (stage.displayState != StageDisplayState.FULL_SCREEN)
+                ? StageDisplayState.FULL_SCREEN
+                : StageDisplayState.NORMAL;
+        } catch (se :SecurityError) {
+            fullBtn.enabled = false;
+        }
+    }
 
     protected static const CHAT_SECTION :int = -2;
     protected static const BUTTON_SECTION :int = -1;
