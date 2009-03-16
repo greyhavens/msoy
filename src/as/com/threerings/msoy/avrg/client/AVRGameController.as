@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.client {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
@@ -185,6 +186,42 @@ public class AVRGameController extends PlaceController
     public function showCoordinateDebugPanel () :void
     {
         CoordinateDebugPanel.show(_wctx, getPlaceView() as AVRGamePanel);
+    }
+
+    /**
+     * Adds a function to be invoked whenever the user requests to deactivate the game (via the
+     * deactivateGame API call). The function should take no arguments and return a Boolean. A true
+     * return value means carry on deactivating the game. A false value means ignore the current
+     * request. In the latter case, the handler ought to automatically attempt deactivation again
+     * when it is finished with its business.
+     */
+    public function addDeactivateHandler (fn :Function) :void
+    {
+        _deactivateHandlers.push(fn);
+    }
+
+    /**
+     * Removes a previously added deactivate handler.
+     */
+    public function removeDeactivateHandler (fn :Function) :void
+    {
+        ArrayUtil.removeAll(_deactivateHandlers, fn);
+    }
+
+    /**
+     * Exits the game, if all deactivate handlers agree to do so.
+     */
+    public function deactivateGame () :void
+    {
+        // give the handlers a chance to prevent deactivation
+        for each (var fn :Function in _deactivateHandlers.slice()) {
+            var okay :Boolean = fn();
+            if (!okay) {
+                return;
+            }
+        }
+
+        _wctx.getGameDirector().leaveAVRGame();
     }
 
     // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
@@ -531,5 +568,8 @@ public class AVRGameController extends PlaceController
         new SetAdapter(gameEntryAdded, gameEntryUpdated, gameEntryRemoved);
     protected var _occupantObserver :OccupantObserver =
         new OccupantAdapter(occupantEntered, occupantLeft);
+
+    /** Handlers that can perform actions and/or abort the deactivation of a game. */
+    protected var _deactivateHandlers :Array = [];
 }
 }

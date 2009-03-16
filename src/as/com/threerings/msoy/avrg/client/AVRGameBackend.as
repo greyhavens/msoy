@@ -444,7 +444,8 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying()) {
             return;
         }
-        _wctx.getGameDirector().leaveAVRGame();
+
+        _ctrl.deactivateGame();
     }
 
     // PlayerSubControl
