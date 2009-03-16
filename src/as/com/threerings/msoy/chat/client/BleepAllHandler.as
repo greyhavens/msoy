@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.chat.client {
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.CommandHandler;
@@ -11,7 +10,6 @@ import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MemberObject;
 
 /**
  * Sets global bleep status.
@@ -24,11 +22,6 @@ public class BleepAllHandler extends CommandHandler
     {
         Prefs.setGlobalBleep(!Prefs.isGlobalBleep());
         return ChatCodes.SUCCESS;
-    }
-
-    override public function checkAccess (user :BodyObject) :Boolean
-    {
-        return MemberObject(user).tokens.isSupport();
     }
 }
 }
