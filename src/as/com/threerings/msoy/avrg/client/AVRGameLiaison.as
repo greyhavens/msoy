@@ -89,6 +89,9 @@ public class AVRGameLiaison extends GameLiaison
 
         // now that the controller is created, tell it about the world context as well
         getAVRGameController().initializeWorldContext(_wctx);
+
+        // handle deactivations to offer the user to share earned trophies
+        getAVRGameController().addDeactivateHandler(onUserDeactivate);
     }
 
     override public function shutdown () :void
@@ -98,6 +101,13 @@ public class AVRGameLiaison extends GameLiaison
 
     public function leaveAVRGame () :void
     {
+        // remove our trophy feed display stuff
+        if (getAVRGameController() == null) {
+            log.warning("Controller null on leaveAVRGame?");
+        } else {
+            getAVRGameController().removeDeactivateHandler(onUserDeactivate);
+        }
+
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
         svc.deactivateGame(_gctx.getClient(), _gameId,
             _gctx.getMsoyContext().confirmListener(_gctx.getLocationDirector().leavePlace,
@@ -143,6 +153,23 @@ public class AVRGameLiaison extends GameLiaison
                 displayGuestFlowEarnage(coins, hasCookie);
             }
         }
+    }
+
+    protected function onUserDeactivate () :Boolean
+    {
+        return maybeShowFeedPanel(getAVRGameController().deactivateGame);
+    }
+
+    override protected function maybeShowFeedPanel (onClose :Function) :Boolean
+    {
+        // remove the handler, we don't want to show this twice
+        if (getAVRGameController() == null) {
+            log.warning("Null controller in showFeedPanel?");
+        } else {
+            getAVRGameController().removeDeactivateHandler(onUserDeactivate);
+        }
+
+        return super.maybeShowFeedPanel(onClose);
     }
 }
 }
