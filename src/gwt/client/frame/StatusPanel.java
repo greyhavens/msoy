@@ -131,7 +131,7 @@ public class StatusPanel extends SmartTable
         } else {
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Session.didLogoff();
+                    CShell.frame.logoff();
                 }
             }));
         }

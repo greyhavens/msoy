@@ -390,6 +390,12 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
+    public void logoff ()
+    {
+        Session.didLogoff();
+    }
+
+    // from interface Frame
     public void emailUpdated (String address, boolean validated)
     {
         Session.emailUpdated(address, validated);
@@ -822,7 +828,10 @@ public class FrameEntryPoint
             closeContent();
             return null;
         case DID_LOGON:
-            Session.didLogon(SessionData.unflatten(ArrayUtil.toIterator(args)));
+            dispatchDidLogon(SessionData.unflatten(ArrayUtil.toIterator(args)));
+            return null;
+        case LOGOFF:
+            logoff();
             return null;
         case EMAIL_UPDATED:
             emailUpdated(args[0], Boolean.parseBoolean(args[1]));

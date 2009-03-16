@@ -86,6 +86,9 @@ public abstract class Page
                     List<String> fdata = data.flatten();
                     frameCall(Frame.Calls.DID_LOGON, fdata.toArray(new String[fdata.size()]));
                 }
+                public void logoff () {
+                    frameCall(Frame.Calls.LOGOFF);
+                }
                 public void emailUpdated (String address, boolean validated) {
                     Session.emailUpdated(address, validated);
                     frameCall(Frame.Calls.EMAIL_UPDATED, address, String.valueOf(validated));
@@ -146,6 +149,9 @@ public abstract class Page
                 }
                 public void dispatchDidLogon (SessionData data) {
                     Session.didLogon(data);
+                }
+                public void logoff () {
+                    Session.didLogoff();
                 }
                 public void emailUpdated (String address, boolean validated) {
                     Session.emailUpdated(address, validated);
