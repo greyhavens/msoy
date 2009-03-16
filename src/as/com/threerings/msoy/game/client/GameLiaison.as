@@ -45,9 +45,9 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
-
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
@@ -433,6 +433,11 @@ public class GameLiaison
     {
         // remove the handler, we don't want to show this twice
         _wctx.getWorldController().removePlaceExitHandler(onPlaceExit);
+
+        // if this is a development version of the game, no trophy popup
+        if (Game.isDevelopmentVersion(_gameId)) {
+            return true;
+        }
 
         // show the trophy feeder; have it close the place view when it closes
         var onClose :Function = _wctx.getWorldController().handleClosePlaceView;
