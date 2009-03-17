@@ -5,6 +5,8 @@ package com.threerings.msoy.client {
 
 import flash.display.StageDisplayState;
 
+import flash.events.Event;
+
 import flash.utils.Dictionary;
 
 import mx.core.ScrollPolicy;
@@ -98,7 +100,7 @@ public class ControlBar extends HBox
         createControls();
         checkControls();
 
-        _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, uiStateChanged);
+        _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChanged);
     }
 
     /**
@@ -373,7 +375,7 @@ public class ControlBar extends HBox
         volBtn.setStyle("image", VolumeButton.getImage(level));
     }
 
-    protected function uiStateChanged (event :UIStateChangeEvent) :void
+    protected function handleUIStateChanged (event :Event) :void
     {
         updateUI();
     }

@@ -153,7 +153,7 @@ public class HeaderBar extends HBox
         _closeBox.addChild(closeBtn);
         FlexUtil.setVisible(_closeBox, false); // start out hidden
 
-        _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, handleUIStateChange);
+        _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChange);
         handleUIStateChange(null);
 
         // configure some bits if we're embedded
@@ -235,7 +235,7 @@ public class HeaderBar extends HBox
         }
     }
 
-    protected function handleUIStateChange (event :UIStateChangeEvent) :void
+    protected function handleUIStateChange (event :Event) :void
     {
         var state :UIState = _ctx.getUIState();
         _goBtn.visible = !(state.embedded && state.inGame);

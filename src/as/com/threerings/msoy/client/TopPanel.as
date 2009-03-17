@@ -99,7 +99,7 @@ public class TopPanel extends Canvas
         // display something until someone comes along and sets a real view on us
         setPlaceView(new BlankPlaceView(_ctx));
 
-        _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, handleUIStateChange);
+        _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChange);
         handleUIStateChange(null);
     }
 
@@ -279,7 +279,7 @@ public class TopPanel extends Canvas
         layoutPanels();
     }
 
-    protected function handleUIStateChange (event :UIStateChangeEvent) :void
+    protected function handleUIStateChange (event :Event) :void
     {
         var state :UIState = _ctx.getUIState();
 

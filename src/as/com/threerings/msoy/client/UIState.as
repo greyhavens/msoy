@@ -3,7 +3,14 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.Event;
 import flash.events.EventDispatcher;
+
+/**
+ * Dispatched when the state changes.
+ * @eventType com.threerings.msoy.client.UIState.STATE_CHANGE.
+ */
+[Event(name="msoy.UIStateChange", type="flash.events.Event")]
 
 /**
  * Records the various flags of what state the UI is in. When values change, events are dispatched
@@ -11,6 +18,9 @@ import flash.events.EventDispatcher;
  */
 public class UIState extends EventDispatcher
 {
+    /** @eventType msoy.UIStateChange */
+    public static const STATE_CHANGE :String = "msoy.UIStateChange";
+
     /**
      * Are we in game mode?
      */
@@ -118,7 +128,7 @@ public class UIState extends EventDispatcher
 
     protected function dispatch () :void
     {
-        dispatchEvent(new UIStateChangeEvent());
+        dispatchEvent(new Event(STATE_CHANGE));
     }
 
     protected var _inGame :Boolean;
