@@ -115,6 +115,7 @@ import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
+import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomLocal;
 import com.threerings.msoy.room.data.RoomObject;
@@ -535,21 +536,14 @@ public class RoomManager extends SpotSceneManager
 
     // documentation inherited from RoomProvider
     public void updateMemory (
-        ClientObject caller, final ItemIdent ident, String key, byte[] newValue,
+        ClientObject caller, ItemIdent ident, String key, byte[] newValue,
         RoomService.ResultListener listener)
     {
-        // TODO: Validate that the client is at least in the same room?
-
-// NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
-//        // if this client does not currently control this entity; ignore the request; if no one
-//        // controls it, this will assign this client as controller
-//        MemberObject who = (MemberObject) caller;
-//        if (!checkAssignControl(who, entry.item, "updateMemory")) {
-//            return;
-//        }
-
-        // TODO: verify that the caller is in the scene with this item, other item specific
-        // restrictions
+        // do any first-level validation based on the item and the caller
+        if (!validateMemoryUpdate((MemberObject)caller, ident)) {
+            listener.requestProcessed(Boolean.FALSE);
+            return;
+        }
 
         // verify that the memory does not exceed legal size
         EntityMemories mems = _roomObj.memories.get(ident);
@@ -861,6 +855,60 @@ public class RoomManager extends SpotSceneManager
             return true;
         }
         return (ctrl.controllerOid == who.getOid());
+    }
+
+    /**
+     * Validate that the caller be allowed to update memory for the item.
+     */
+    protected boolean validateMemoryUpdate (MemberObject caller, ItemIdent ident)
+    {
+// NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
+//        // if this client does not currently control this entity; ignore the request; if no one
+//        // controls it, this will assign this client as controller
+//        if (!checkAssignControl(caller, ident, "updateMemory")) {
+//            return;
+//        }
+
+        // now do type-specific checks
+        String reason;
+        if (ident.type == Item.AVATAR) {
+            if (caller.avatar == null || (caller.avatar.itemId != ident.itemId)) {
+                reason = "not wearing avatar";
+            } else if (!_roomObj.occupants.contains(caller.getOid())) {
+                reason = "not in room";
+            } else {
+                return true; // success!
+            }
+
+        } else if (ident.type == Item.PET) {
+            for (OccupantInfo info : _roomObj.occupantInfo) {
+                if ((info instanceof PetInfo) && ident.equals(((PetInfo)info).getItemIdent())) {
+                    return true;
+                }
+            }
+            reason = "pet not in room";
+
+        } else if (ident.type == Item.DECOR) {
+            MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
+            if ((msm.decor != null) && (msm.decor.itemId == ident.itemId)) {
+                return true;
+            }
+            reason = "decor not in room";
+
+        } else {
+            MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
+            for (FurniData furni : msm.furnis) {
+                if ((furni.itemType == ident.type) && (furni.itemId == ident.itemId)) {
+                    return true;
+                }
+            }
+            reason = "furni not in room";
+        }
+
+        // TODO: tone down, non warning...
+        log.warning("Rejecting memory update",
+            "caller", caller.who(), "ident", ident, "reason", reason);
+        return false;
     }
 
     @Override // from PlaceManager
