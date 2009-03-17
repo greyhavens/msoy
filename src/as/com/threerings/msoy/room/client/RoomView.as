@@ -592,12 +592,8 @@ public class RoomView extends Sprite
         // until the event handler actually requests the value using a getter(), but I
         // suspect that will require an increment to the version number in the function we
         // call... I don't want to do that just now.
-        _entities.forEach(function (key :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).signalReceived(name, ObjectMarshaller.decode(data));
-            } else {
-                log.warning("Erk, non-sprite entity", "key", key, "entity", sprite);
-            }
+        _entities.forEach(function (key :Object, sprite :MsoySprite) :void {
+            sprite.signalReceived(name, ObjectMarshaller.decode(data));
         });
     }
 
@@ -619,13 +615,8 @@ public class RoomView extends Sprite
             return;
         }
         var entityId :String = item.toString();
-
-        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).entityEntered(entityId);
-            } else {
-                log.warning("Erk, non-sprite entity", "key", mapKey, "entity", sprite);
-            }
+        _entities.forEach(function (mapKey :Object, sprite :MsoySprite) :void {
+            sprite.entityEntered(entityId);
         });
     }
 
@@ -635,26 +626,16 @@ public class RoomView extends Sprite
             return;
         }
         var entityId :String = item.toString();
-
-        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).entityLeft(entityId);
-            } else {
-                log.warning("Erk, non-sprite entity", "key", mapKey, "entity", sprite);
-            }
+        _entities.forEach(function (mapKey :Object, sprite :MsoySprite) :void {
+            sprite.entityLeft(entityId);
         });
     }
 
     public function dispatchEntityMoved (item :ItemIdent, destination :Array) :void
     {
         var entityId :String = item.toString();
-
-        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).entityMoved(entityId, destination);
-            } else {
-                log.warning("Erk, non-sprite entity", "key", mapKey, "entity", sprite);
-            }
+        _entities.forEach(function (mapKey :Object, sprite :MsoySprite) :void {
+            sprite.entityMoved(entityId, destination);
         });
     }
 

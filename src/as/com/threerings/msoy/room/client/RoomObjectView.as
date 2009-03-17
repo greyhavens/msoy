@@ -157,8 +157,8 @@ public class RoomObjectView extends RoomView
 
         // update all sprites
         _furni.forEach(function (key :*, sprite :MsoySprite) :void {
-                sprite.setEditing(_editing);
-            });
+            sprite.setEditing(_editing);
+        });
         if (_bg != null) {
             _bg.setEditing(_editing);
         }
