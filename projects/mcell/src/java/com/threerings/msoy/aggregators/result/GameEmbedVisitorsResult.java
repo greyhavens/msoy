@@ -63,6 +63,11 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
             }
 
         } else if (CONVERSION_TABLE.equals(name)) {
+            Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
+            if (isGuest != null && isGuest.booleanValue() == true) {
+                // ignore permaguest creation
+                return false;
+            }
             converted = true;
 
         } else if (VISITOR_INFO_TABLE.equals(name)) {
