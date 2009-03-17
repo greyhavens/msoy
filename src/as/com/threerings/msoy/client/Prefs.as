@@ -296,11 +296,19 @@ public class Prefs
         _config.setValue(PARTY_GROUP, groupId);
     }
 
+    /**
+     * Returns whether the dialog of the given name should be shown automatically. The name is an
+     * arbitrary string chosen by the caller to represent the dialog.
+     */
     public static function getAutoshow (dialogName :String) :Boolean
     {
         return Boolean(_config.getValue(AUTOSHOW_PREFIX + dialogName, true));
     }
 
+    /**
+     * Sets whether the dialog of the given name should be shown automatically. The name is an
+     * arbitrary string chosen by the caller to represent the dialog.
+     */
     public static function setAutoshow (dialogName :String, show :Boolean) :void
     {
         _config.setValue(AUTOSHOW_PREFIX + dialogName, show);
