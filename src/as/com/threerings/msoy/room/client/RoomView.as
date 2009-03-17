@@ -609,9 +609,8 @@ public class RoomView extends Sprite
         var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
         if (sprite != null) {
             sprite.memoryChanged(key, ObjectMarshaller.decode(data));
-        } else {
-            log.info("Received memory update for unknown sprite", "item", ident, "key", key);
         }
+        // it's ok and normal for the sprite to not be here yet when the memory arrives
     }
 
     public function dispatchEntityEntered (item :ItemIdent) :void
