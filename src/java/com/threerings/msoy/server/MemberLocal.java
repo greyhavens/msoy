@@ -174,7 +174,7 @@ public class MemberLocal extends BodyLocal
             if (memories != null) {
                 // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
                 log.info("AVAMEM: Putting memories into room", "avatar", memobj.avatar, 
-                    "memories", memories, "roomId", roomObj.getOid(), "source", "willEnter");
+                    "memories", memories, "roomOid", roomObj.getOid(), "source", "willEnter");
             }
             putAvatarMemoriesIntoRoom(roomObj);
 
@@ -200,7 +200,7 @@ public class MemberLocal extends BodyLocal
             if (memories != null) {
                 // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
                 log.info("AVAMEM: Took memories from room", "avatar", memobj.avatar,
-                    "memories", memories, "room", roomObj.getOid(), "source", "willLeave");
+                    "memories", memories, "roomOid", roomObj.getOid(), "source", "willLeave");
             }
 
 //            // if we're in a party and the last member to leave this room, clean up our bits

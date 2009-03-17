@@ -992,22 +992,25 @@ public class MemberManager
             user.getLocal(MemberLocal.class).memories = memories;
 
             // check if this player is already in a room (should be the case)
-            PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
-            if (pmgr != null) {
-                PlaceObject plobj = pmgr.getPlaceObject();
-                if (plobj instanceof RoomObject) {
-                    // if so, make absolutely sure the avatar memories are in place in the
-                    // room before we update the occupant info (which triggers the avatar
-                    // media change on the client).
+            if (memories != null) {
+                PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
+                if (pmgr != null) {
+                    PlaceObject plobj = pmgr.getPlaceObject();
+                    if (plobj instanceof RoomObject) {
+                        // if so, make absolutely sure the avatar memories are in place in the
+                        // room before we update the occupant info (which triggers the avatar
+                        // media change on the client).
 
-                    // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
-                    log.info("AVAMEM: Putting memories into room", "avatar", avatar,
-                        "memories", memories, "roomId", plobj.getOid(), "source", "setAvatar");
+                        // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
+                        log.info("AVAMEM: Putting memories into room", "avatar", avatar,
+                            "memories", memories, "roomOid", plobj.getOid(), "source", "setAvatar");
 
-                    user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom((RoomObject)plobj);
+                        user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
+                            (RoomObject)plobj);
+                    }
+                    // if the player wasn't in a room, the avatar memories will just sit in
+                    // MemberLocal storage until they do enter a room, which is proper
                 }
-                // if the player wasn't in a room, the avatar memories will just sit in
-                // MemberLocal storage until they do enter a room, which is proper
             }
             _bodyMan.updateOccupantInfo(user, new MemberInfo.AvatarUpdater(user));
 

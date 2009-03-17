@@ -180,8 +180,10 @@ public class MsoySession extends WhirledSession
             final StatSet stats = local.stats;
             
             // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
-            log.info("AVAMEM: Possibly persisting memories...", 
-                "memories", local.memories, "source", "sessionDidEnd");
+            if (local.memories != null) {
+                log.info("AVAMEM: Possibly persisting memories...", 
+                    "memories", local.memories, "source", "sessionDidEnd");
+            }
 
             //final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
             final MemoriesRecord memrec = (local.memories == null || !local.memories.modified)
