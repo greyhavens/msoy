@@ -12,35 +12,45 @@ import java.util.TreeSet;
 
 import com.google.common.collect.Sets;
 import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.common.event.EventName;
 import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
 
 public class LoginCountResult implements AggregatedResult<LoginCountResult>
 {
-    public void combine (final LoginCountResult result)
+    public boolean init (EventData eventData)
     {
-        final LoginCountResult myResult = result;
-        uniqueGuests.addAll(myResult.uniqueGuests);
-        uniquePlayers.addAll(myResult.uniquePlayers);
-    }
+        EventName name = eventData.getEventName();
 
-    public boolean init (final EventData eventData)
-    {
-        final Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
-        final int memberId = ((Number)eventData.getData().get("memberId")).intValue();
-        if (memberId < 0 || (isGuest != null && isGuest.booleanValue())) {
-            uniqueGuests.add(memberId);
-        } else {
-            uniquePlayers.add(memberId);
+        // register trackers both from LOGIN and VISITOR_INFO_CREATED events 
+        _uniqueVisitors.add((String)eventData.get("tracker"));
+
+        // the real juice is in the LOGIN event though
+        if (LOGIN.equals(name)) {
+            Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
+            int memberId = ((Number)eventData.getData().get("memberId")).intValue();
+            if (memberId < 0 || (isGuest != null && isGuest.booleanValue())) {
+                _uniqueGuests.add(memberId);
+            } else {
+                _uniquePlayers.add(memberId);
+            }
         }
         return true;
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public void combine (LoginCountResult result)
     {
-        result.put("uniquePlayers", uniquePlayers.size());
-        result.put("uniqueGuests", uniqueGuests.size());
-        result.put("total", Sets.union(uniqueGuests, uniquePlayers).size());
+        _uniqueVisitors.addAll(result._uniqueVisitors);
+        _uniqueGuests.addAll(result._uniqueGuests);
+        _uniquePlayers.addAll(result._uniquePlayers);
+    }
+
+    public boolean putData (Map<String, Object> result)
+    {
+        result.put("uniquePlayers", _uniquePlayers.size());
+        result.put("uniqueGuests", _uniqueGuests.size());
+        result.put("total", Sets.union(_uniqueGuests, _uniquePlayers).size());
+        result.put("uniqueVisitors", _uniqueVisitors.size());
         return false;
     }
 
@@ -48,17 +58,23 @@ public class LoginCountResult implements AggregatedResult<LoginCountResult>
     public void readFields (final DataInput in)
         throws IOException
     {
-        uniquePlayers = (TreeSet<Integer>)HadoopSerializationUtil.readObject(in);
-        uniqueGuests = (TreeSet<Integer>)HadoopSerializationUtil.readObject(in);
+        _uniquePlayers = (TreeSet<Integer>)HadoopSerializationUtil.readObject(in);
+        _uniqueGuests = (TreeSet<Integer>)HadoopSerializationUtil.readObject(in);
+        _uniqueVisitors = (TreeSet<String>)HadoopSerializationUtil.readObject(in);
     }
 
     public void write (final DataOutput out)
         throws IOException
     {
-        HadoopSerializationUtil.writeObject(out, uniquePlayers);
-        HadoopSerializationUtil.writeObject(out, uniqueGuests);
+        HadoopSerializationUtil.writeObject(out, _uniquePlayers);
+        HadoopSerializationUtil.writeObject(out, _uniqueGuests);
+        HadoopSerializationUtil.writeObject(out, _uniqueVisitors);
     }
 
-    private TreeSet<Integer> uniquePlayers = new TreeSet<Integer>();
-    private TreeSet<Integer> uniqueGuests = new TreeSet<Integer>();
+    protected TreeSet<Integer> _uniquePlayers = new TreeSet<Integer>();
+    protected TreeSet<Integer> _uniqueGuests = new TreeSet<Integer>();
+    protected TreeSet<String> _uniqueVisitors = new TreeSet<String>();
+
+    protected final static EventName VISITOR_INFO_CREATED = new EventName("VisitorInfoCreated");
+    protected final static EventName LOGIN = new EventName("Login");
 }
