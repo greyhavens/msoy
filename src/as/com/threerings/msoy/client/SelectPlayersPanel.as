@@ -8,6 +8,7 @@ import flash.text.TextFieldAutoSize;
 
 import mx.containers.Grid;
 import mx.containers.GridRow;
+import mx.controls.CheckBox;
 import mx.controls.Label;
 import mx.core.ScrollPolicy;
 
@@ -25,13 +26,24 @@ public class SelectPlayersPanel extends FloatingPanel
 {
     public static function show (ctx :MsoyContext, playerNames :Array /* of VizMemberName */) :void
     {
-        new SelectPlayersPanel(ctx, playerNames).open();
+        new SelectPlayersPanel(ctx, playerNames).maybeOpen();
     }
 
     public function SelectPlayersPanel (ctx :MsoyContext, playerNames :Array /* of VizMemberName */)
     {
         super(ctx, getTitle());
         _playerNames = playerNames;
+    }
+
+    /**
+     * Opens the dialog if the user has not previously asked "not to show again".
+     */
+    public function maybeOpen () :void
+    {
+        if (getPrefsName() != null && !Prefs.getAutoshow(getPrefsName())) {
+            return;
+        }
+        open();
     }
 
     override protected function createChildren () :void
@@ -43,6 +55,11 @@ public class SelectPlayersPanel extends FloatingPanel
         title.styleName = "selectPlayersPanelTitle";
         title.percentWidth = 100;
         addChild(title);
+
+        _status = new Label();
+        _status.styleName = "selectPlayersPanelStatus";
+        _status.percentWidth = 100;
+        addChild(_status);
 
         var grid :Grid = new Grid();
         grid.maxHeight = 400;
@@ -58,7 +75,7 @@ public class SelectPlayersPanel extends FloatingPanel
                 grid.addChild(row);
             }
 
-            var playerBox :PlayerBox = new PlayerBox(playerName);
+            var playerBox :PlayerBox = new PlayerBox(playerName, updateStatus);
             _playerBoxes.push(playerBox);
             GridUtil.addToRow(row, playerBox);
             if (++cell % 2 == 0) {
@@ -66,7 +83,38 @@ public class SelectPlayersPanel extends FloatingPanel
             }
         }
 
+        if (allowFutureSuppression()) {
+            _dontShowAgain = new CheckBox();
+            _dontShowAgain.styleName = "selectPlayersPanelDontShowAgain";
+            _dontShowAgain.label = "Don't show this dialog again";
+            _dontShowAgain.percentWidth = 100;
+            addChild(_dontShowAgain);
+        }
+
         addButtons(CANCEL_BUTTON, OK_BUTTON);
+
+        updateStatus();
+    }
+
+    override protected function buttonClicked (buttonId :int) :void
+    {
+        super.buttonClicked(buttonId);
+
+        if (_dontShowAgain != null && _dontShowAgain.selected && getPrefsName() != null) {
+            Prefs.setAutoshow(getPrefsName(), false);
+        }
+    }
+
+    protected function updateStatus () :void
+    {
+        var count :int = 0;
+        for each (var box :PlayerBox in _playerBoxes) {
+            if (box.isSelected()) {
+                count++;
+            }
+        }
+        _status.text = Msgs.GENERAL.get("m.selected_players", count);
+        getButton(OK_BUTTON).enabled = count > 0;
     }
 
     protected function getTitle () :String
@@ -89,6 +137,16 @@ public class SelectPlayersPanel extends FloatingPanel
         return "Skip";
     }
 
+    protected function allowFutureSuppression () :Boolean
+    {
+        return true;
+    }
+
+    protected function getPrefsName () :String
+    {
+        return null;
+    }
+
     override protected function getButtonLabel (buttonId :int) :String
     {
         if (buttonId == CANCEL_BUTTON) {
@@ -102,6 +160,8 @@ public class SelectPlayersPanel extends FloatingPanel
 
     protected var _playerNames :Array /*of VizMemberName*/;
     protected var _playerBoxes :Array /*of PlayerBox */ = [];
+    protected var _dontShowAgain :CheckBox;
+    protected var _status :Label;
 }
 }
 
@@ -118,9 +178,10 @@ import com.threerings.msoy.data.all.VizMemberName;
 
 class PlayerBox extends HBox
 {
-    public function PlayerBox (name :VizMemberName)
+    public function PlayerBox (name :VizMemberName, onSelChange :Function)
     {
         _name = name;
+        _onSelChange = onSelChange;
         styleName = "selectPlayersPanelPlayerBox";
         width = 200;
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -153,8 +214,10 @@ class PlayerBox extends HBox
         } else {
             graphics.clear();
         }
+        _onSelChange();
     }
 
     protected var _name :VizMemberName;
+    protected var _onSelChange :Function;
     protected var _selected :Boolean;
 }
