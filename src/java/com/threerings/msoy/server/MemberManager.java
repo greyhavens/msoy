@@ -819,7 +819,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void loadAllBadges(ClientObject caller, InvocationService.ResultListener listener)
+    public void loadAllBadges (ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
         long now = System.currentTimeMillis();
