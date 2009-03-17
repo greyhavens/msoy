@@ -402,11 +402,10 @@ public class MsoyPeerManager extends CrowdPeerManager
         _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj, locals));
 
         // TEMP
-        if (memobj.username.equals(_lastRequestName)) {
+        long dt = System.currentTimeMillis() - _lastRequestTime;
+        if (dt < 60000 && memobj.username.equals(_lastRequestName)) {
             log.warning("Oh my lanta! We seem to be a little late for this stashing!",
-                "user", memobj.username,
-                "miss milliseconds", (_lastRequestTime - System.currentTimeMillis()),
-                new Exception());
+                "user", memobj.username, "miss milliseconds", dt, new Exception());
         }
     }
 
