@@ -473,6 +473,10 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
+        if (avatarItemId == ((user.avatar == null) ? 0 : user.avatar.itemId)) {
+            listener.requestProcessed();
+            return;
+        }
         if (avatarItemId == 0) {
             // a request to return to the default avatar
             finishSetAvatar(user, null, null, listener);
