@@ -10,7 +10,10 @@ import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.controls.CheckBox;
 import mx.controls.Label;
+import mx.controls.Text;
 import mx.core.ScrollPolicy;
+
+import com.threerings.util.Log;
 
 import com.threerings.flex.GridUtil;
 
@@ -31,7 +34,7 @@ public class SelectPlayersPanel extends FloatingPanel
 
     public function SelectPlayersPanel (ctx :MsoyContext, playerNames :Array /* of VizMemberName */)
     {
-        super(ctx, getTitle());
+        super(ctx, getPanelTitle());
         _playerNames = playerNames;
     }
 
@@ -41,6 +44,7 @@ public class SelectPlayersPanel extends FloatingPanel
     public function maybeOpen () :void
     {
         if (getPrefsName() != null && !Prefs.getAutoshow(getPrefsName())) {
+            Log.getLog(this).info("Suppressing player selection dialog", "name", getPrefsName());
             return;
         }
         open();
@@ -51,10 +55,16 @@ public class SelectPlayersPanel extends FloatingPanel
         super.createChildren();
 
         var title :Label = new Label();
-        title.text = getTip();
+        title.text = getTitle();
         title.styleName = "selectPlayersPanelTitle";
         title.percentWidth = 100;
         addChild(title);
+
+        var tip :Text = new Text();
+        tip.text = getTip();
+        tip.styleName = "selectPlayersPanelTip";
+        tip.percentWidth = 100;
+        addChild(tip);
 
         _status = new Label();
         _status.styleName = "selectPlayersPanelStatus";
@@ -117,14 +127,19 @@ public class SelectPlayersPanel extends FloatingPanel
         getButton(OK_BUTTON).enabled = count > 0;
     }
 
-    protected function getTitle () :String
+    protected function getPanelTitle () :String
     {
         return "Title";
     }
 
-    protected function getTip () :String
+    protected function getTitle () :String
     {
         return "Select some players...";
+    }
+
+    protected function getTip () :String
+    {
+        return Msgs.GENERAL.get("p.select_players");
     }
 
     protected function getOkLabel () :String
