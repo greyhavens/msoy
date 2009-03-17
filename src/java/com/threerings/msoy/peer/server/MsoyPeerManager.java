@@ -337,6 +337,11 @@ public class MsoyPeerManager extends CrowdPeerManager
         try {
             // locate our forwarded member object if any
             MemObjCacheEntry entry = _mobjCache.remove(username);
+            if ((entry == null) && (username instanceof MemberName) &&
+                    (null != getMemberLocation(((MemberName) username).getMemberId()))) {
+                log.warning("Asked for forwarded member object, on another node",
+                    "name", username);
+            }
             return (entry != null && now < entry.expireTime) ?
                 Tuple.newTuple(entry.memobj, entry.locals) : null;
 
