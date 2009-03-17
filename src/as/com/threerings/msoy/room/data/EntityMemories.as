@@ -42,13 +42,13 @@ public class EntityMemories
     {
         ident = ItemIdent(ins.readObject());
         memories = StreamableHashMap(ins.readObject());
+        /* modified = */ ins.readBoolean(); // modified not needed on client, but can't be transient
     }
 
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeObject(ident);
-        out.writeObject(memories);
+        throw new Error();
     }
 
     /**

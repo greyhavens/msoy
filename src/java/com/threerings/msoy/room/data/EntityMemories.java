@@ -23,7 +23,7 @@ public class EntityMemories
     public StreamableHashMap<String, byte[]> memories;
 
     /** Were these memories modified since being loaded from the database? */
-    public transient boolean modified;
+    public boolean modified;
 
     /** Suitable for unserialization. */
     public EntityMemories ()
