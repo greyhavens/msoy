@@ -184,16 +184,6 @@ public class MsoyHttpServer extends Server
         }
     } // end: MsoyDefaultServlet
 
-    /** A servlet for redirecting whirled.com/go/foo-arg_arg to whirled.com#foo-arg_arg so that we
-     * can send out links to Whirled to sites that strip everything after the # off. */
-    protected static class GoServlet extends DefaultServlet
-    {
-        @Override protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
-            throws ServletException, IOException {
-            rsp.sendRedirect(req.getRequestURI().replace("go/", "#"));
-        }
-    }
-
     /**
      * Used only for testing, this fakey slows-down the transmission of data to clients.
      * It can be configured with -Dthrottle=true or -DthrottleMedia=true.
@@ -339,7 +329,6 @@ public class MsoyHttpServer extends Server
         .put("/undersvc", MsoyUnderwireServlet.class)
         .put("/uploadsvc", ItemMediaUploadServlet.class)
         .put("/stubdlsvc", StubDownloadServlet.class)
-        .put("/welcome/*", WelcomeServlet.class)
         .put("/swizzle/*", SwizzleServlet.class)
         .put("/embed/*", EmbedRouterServlet.class)
         .put("/status/*", StatusServlet.class)
@@ -348,6 +337,7 @@ public class MsoyHttpServer extends Server
         .put("/info/*", PublicInfoServlet.class)
         .put("/rss/*", RSSServlet.class)
         .put("/go/*", GoServlet.class)
+        .put("/welcome/*", GoServlet.class)
         .put("/fbinvite/*", FacebookInviteServlet.class)
         .put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class)
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection

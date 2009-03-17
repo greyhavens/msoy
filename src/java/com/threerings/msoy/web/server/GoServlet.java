@@ -37,37 +37,39 @@ import com.threerings.msoy.room.server.persist.SceneRecord;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Handles requests to assign an affiliate cookie to a user:
+ * Handles a simple request to redirect:
+ * /go/[page_tokens_and_args]
+ * Or a request to redirect with an optional assignment of affiliate:
  * /welcome/[affiliate]/[page_tokens_and_args]
  */
-public class WelcomeServlet extends HttpServlet
+public class GoServlet extends HttpServlet
 {
     @Override
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
         String path = StringUtil.deNull(req.getPathInfo());
-        int affiliateId = 0;
-
-        // the path will now either be "", "/<affiliate>", or "/<affiliate>/<token>". <affiliate>
-        // may be 0 to indicate "no affiliate" (we just want the redirect through this servlet).
         if (path.startsWith("/")) {
-            int nextSlash = path.indexOf("/", 1);
+            path = path.substring(1);
+        }
+
+        int affiliateId = 0;
+        if (req.getRequestURI().startsWith("/welcome/")) {
+            // the path will now either be "", "<affiliate>", or "<affiliate>/<token>".
+            // <affiliate> may be 0 to indicate "no affiliate" (we just want the redirect).
+            int nextSlash = path.indexOf("/");
             if (nextSlash == -1) {
-                affiliateId = parseAffiliate(path.substring(1));
+                affiliateId = parseAffiliate(path);
                 path = "";
             } else {
-                affiliateId = parseAffiliate(path.substring(1, nextSlash));
+                affiliateId = parseAffiliate(path.substring(0, nextSlash));
                 path = path.substring(nextSlash + 1);
             }
         }
 
-        // possibly hand out special content to certain requesters
-        String agent = StringUtil.deNull(req.getHeader("User-Agent"));
-        if (agent.startsWith("facebookexternalhit")) {
-            if (serveFacebook(req, rsp, path)) {
-                return;
-            }
+        // after sorting out the actual page, see if we want to serve up something tricky
+        if (serveCloakedPage(req, rsp, path, StringUtil.deNull(req.getHeader("User-Agent")))) {
+            return;
         }
 
         // set their affiliate cookie if appropriate
@@ -86,6 +88,58 @@ public class WelcomeServlet extends HttpServlet
             log.info("Ignoring bogus affiliate", "aff", affiliate);
             return 0;
         }
+    }
+
+    /**
+     * Check to see if we should serve up a cloaked page.
+     */
+    protected boolean serveCloakedPage (
+        HttpServletRequest req, HttpServletResponse rsp, String path, String agent)
+        throws IOException
+    {
+        if (agent.startsWith("Googlebot")) {
+            if (serveGoogle(req, rsp, path)) {
+                return true;
+            }
+
+        } else if (agent.startsWith("facebookexternalhit")) {
+            if (serveFacebook(req, rsp, path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Yeah.
+     */
+    protected boolean serveGoogle (HttpServletRequest req, HttpServletResponse rsp, String path)
+        throws IOException
+    {
+        if (ALL_GAMES_PREFIX.equals(path)) {
+            // TODO:
+            // create a little top games page.
+            outputGoogle(rsp, "All games", "Whirled hosts many games", "",
+                GAME_DETAIL_PREFIX + "1", "browse games");
+            return true;
+
+        } else if (path.startsWith(GAME_DETAIL_PREFIX)) {
+            int gameId = Integer.parseInt(path.substring(GAME_DETAIL_PREFIX.length()));
+            GameRecord game = _mgameRepo.loadGameRecord(gameId);
+            if (game == null) {
+                outputGoogle(rsp, "No such game", "No such game", ALL_GAMES_PREFIX,
+                    GAME_DETAIL_PREFIX + (gameId - 1), "previous game",
+                    GAME_DETAIL_PREFIX + (gameId + 1), "next game");
+            } else {
+                outputGoogle(rsp, game.name, game.description, ALL_GAMES_PREFIX,
+                    getImage(game),
+                    GAME_DETAIL_PREFIX + (gameId - 1), "previous game",
+                    GAME_DETAIL_PREFIX + (gameId + 1), "next game");
+            }
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -123,14 +177,7 @@ public class WelcomeServlet extends HttpServlet
                     log.warning("Facebook requested share of nonexistant game?", "path", path);
                     return false;
                 }
-                if (game.shotMediaHash != null) {
-                    image = new MediaDesc(game.shotMediaHash, game.shotMimeType);
-                } else if (game.thumbMediaHash != null) {
-                    image = new MediaDesc(
-                        game.thumbMediaHash, game.thumbMimeType, game.thumbConstraint);
-                } else {
-                    image = Item.getDefaultThumbnailMediaFor(Item.GAME);
-                }
+                image = getImage(game);
                 title = msgs.get("m.game_share_title", game.name);
                 desc = game.description;
 
@@ -165,6 +212,46 @@ public class WelcomeServlet extends HttpServlet
     }
 
     /**
+     * Output a generated page for google.
+     *
+     * @param args :
+     *         MediaDesc - an image. Output directly.
+     *         String - a /go/-based url, always followed by another String: link text
+     */
+    protected void outputGoogle (
+        HttpServletResponse rsp, String title, String desc, String upLink, Object... args)
+        throws IOException
+    {
+        // TODO: some sort of html templating? Ah, Pfile, you rocked, little guy!
+        PrintStream out = new PrintStream(rsp.getOutputStream());
+        try {
+            out.println("<html><head>");
+            out.println("<title>" + title + "</title>");
+            out.println("<body>");
+            out.println("<h1>" + title + "</h1>");
+            out.println(desc);
+            out.println("<a href=\"/go/" + upLink + "\">Go back</a>");
+
+            for (int ii = 0; ii < args.length; ii++) {
+                if (args[ii] instanceof MediaDesc) {
+                    out.println("<img src=\"" + ((MediaDesc) args[ii]).getMediaPath() + "\">");
+
+                } else if (args[ii] instanceof String) {
+                    String link = (String) args[ii];
+                    String text = (String) args[++ii];
+                    out.println("<a href=\"/go/" + link + "\">" + text + "</a>");
+
+                } else {
+                    log.warning("Don't undertand arg: " + args[ii]);
+                }
+            }
+            out.println("</body></html>");
+        } finally {
+            StreamUtil.close(out);
+        }
+    }
+
+    /**
      * Output a generated page for facebook.
      */
     protected void outputFacebook (
@@ -187,14 +274,29 @@ public class WelcomeServlet extends HttpServlet
     /**
      * Replace quotes with ticks (" -> ')
      */
-    protected String deQuote (String input)
+    protected static String deQuote (String input)
     {
         return input.replace('\"', '\'');
     }
 
+    /**
+     * Get the best image we've got for the game: snapshot, then thumbnail.
+     */
+    protected static MediaDesc getImage (GameRecord game)
+    {
+        if (game.shotMediaHash != null) {
+            return new MediaDesc(game.shotMediaHash, game.shotMimeType);
+        } else {
+            return game.getThumbMediaDesc();
+        }
+    }
+
+    protected static final String ALL_GAMES_PREFIX = Pages.GAMES.getPath();
+    protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.getPath() + "-d_";
+
     protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.getPath() + "-s";
     //protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_l_";
-    protected static final String SHARE_GAME_PREFIX = Pages.GAMES.getPath() + "-d_";
+    protected static final String SHARE_GAME_PREFIX = GAME_DETAIL_PREFIX;
     protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
 
     // our dependencies
