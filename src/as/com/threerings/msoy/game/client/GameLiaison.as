@@ -454,6 +454,10 @@ public class GameLiaison
             return true;
         }
 
+        if (_trophies.length == 0) {
+            return true;
+        }
+
         TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
         return false;
     }
