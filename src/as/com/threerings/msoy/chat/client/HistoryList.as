@@ -36,6 +36,11 @@ public class HistoryList
         return (_history[index] as ChatMessage);
     }
 
+    public function clearAll () :void
+    {
+        _history.length = 0;
+    }
+
     // from interface ChatDisplay
     public function clear () :void
     {

@@ -261,7 +261,7 @@ public class WorldController extends MsoyController
         var menuData :Array = [];
         menuData.push({ label: Msgs.GENERAL.get("b.chatPrefs"), command: CHAT_PREFS });
         menuData.push({ label: Msgs.GENERAL.get("b.clearChat"),
-            callback: _wctx.getChatDirector().clearDisplays });
+            callback: _wctx.getMsoyChatDirector().clearAllDisplays });
         CommandMenu.addSeparator(menuData);
 
         const place :PlaceView = _wctx.getPlaceView();

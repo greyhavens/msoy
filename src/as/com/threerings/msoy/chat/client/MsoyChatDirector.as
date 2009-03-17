@@ -106,6 +106,15 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
+     * Our parent's clearDisplays() method will only clear the current channel.
+     */
+    public function clearAllDisplays () :void
+    {
+        _chatHistory.clearAll();
+        clearDisplays();
+    }
+
+    /**
      * Retrieve the global chat history that contains every message received on this client,
      * within a history list size limit.
      */
