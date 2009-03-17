@@ -54,6 +54,7 @@ public class Prefs
     public static const GRID_AUTOSHOW :String = "gridAutoshow";
     public static const PARTY_GROUP :String = "partyGroup";
     public static const PERMAGUEST_USERNAME :String = "permaguestUsername";
+    public static const AUTOSHOW_PREFIX :String = "autoShow_";
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -293,6 +294,16 @@ public class Prefs
     public static function setPartyGroup (groupId :int) :void
     {
         _config.setValue(PARTY_GROUP, groupId);
+    }
+
+    public static function getAutoshow (dialogName :String) :Boolean
+    {
+        return Boolean(_config.getValue(AUTOSHOW_PREFIX + dialogName, true));
+    }
+
+    public static function setAutoshow (dialogName :String, show :Boolean) :void
+    {
+        _config.setValue(AUTOSHOW_PREFIX + dialogName, show);
     }
 
     protected static function checkLoadBleepedMedia () :void
