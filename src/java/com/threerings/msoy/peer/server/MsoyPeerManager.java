@@ -332,6 +332,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     public Tuple<MemberObject,Streamable[]> getForwardedMemberObject (Name username)
     {
         long now = System.currentTimeMillis();
+        _lastRequestName = username;
+        _lastRequestTime = now;
         try {
             // locate our forwarded member object if any
             MemObjCacheEntry entry = _mobjCache.remove(username);
@@ -398,7 +400,19 @@ public class MsoyPeerManager extends CrowdPeerManager
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data
         _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj, locals));
+
+        // TEMP
+        if (memobj.username.equals(_lastRequestName)) {
+            log.warning("Oh my lanta! We seem to be a little late for this stashing!",
+                "user", memobj.username,
+                "miss milliseconds", (_lastRequestTime - System.currentTimeMillis()),
+                new Exception());
+        }
     }
+
+    // TEMP
+    protected Name _lastRequestName;
+    protected long _lastRequestTime;
 
     /**
      * Requests that we forward the reclaimItem request to the appropriate server.
