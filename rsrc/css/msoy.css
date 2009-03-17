@@ -1397,3 +1397,22 @@ Stars {
 .trophyPanelHidden {
   fontStyle: italic;
 }
+
+.selectPlayersPanelTitle {
+  fontSize: 14;
+  fontWeight: bold;
+}
+
+.selectPlayersPanelPlayerBox {
+  paddingTop: 6;
+  paddingBottom: 6;
+  paddingLeft: 4;
+  paddingRight: 4;
+  borderThickness: 0;
+  borderStyle :none;
+}
+
+.selectPlayersPanelPlayerName {
+  fontSize: 12;
+}
+
