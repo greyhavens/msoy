@@ -871,22 +871,13 @@ public class RoomManager extends SpotSceneManager
 
         // now do type-specific checks
         String reason;
-        if (ident.type == Item.AVATAR) {
-            if (caller.avatar == null || (caller.avatar.itemId != ident.itemId)) {
-                reason = "not wearing avatar";
-            } else if (!_roomObj.occupants.contains(caller.getOid())) {
-                reason = "not in room";
-            } else {
-                return true; // success!
-            }
-
-        } else if (ident.type == Item.PET) {
+        if (ident.type == Item.AVATAR || ident.type == Item.PET) {
             for (OccupantInfo info : _roomObj.occupantInfo) {
-                if ((info instanceof PetInfo) && ident.equals(((PetInfo)info).getItemIdent())) {
+                if ((info instanceof ActorInfo) && ident.equals(((ActorInfo)info).getItemIdent())) {
                     return true;
                 }
             }
-            reason = "pet not in room";
+            reason = "not in room";
 
         } else if (ident.type == Item.DECOR) {
             MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
