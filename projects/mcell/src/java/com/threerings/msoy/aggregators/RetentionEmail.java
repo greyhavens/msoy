@@ -87,15 +87,10 @@ public class RetentionEmail
 
     protected static Calendar getDayOfEvent (EventData eventData)
     {
-        Object field = eventData.get("timestamp");
-        Date timestamp;
-        if (field instanceof Long) {
-            timestamp = new Date((Long)field);
-        } else {
-            timestamp = (Date)field;
-        }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp.getTime());
+        Object timestamp = eventData.get("timestamp");
+        calendar.setTimeInMillis(timestamp instanceof Date ?
+            ((Date)timestamp).getTime() : (Long)timestamp);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
