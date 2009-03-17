@@ -84,6 +84,20 @@ public class NotificationDirector extends BasicDirector
             Notification.BUTTSCRATCHING);
     }
 
+    /**
+     * Turn a game system message into a notification.
+     */
+    public function addGameSystemMessage (bundle :String, msg :String) :void
+    {
+        if (bundle == null) {
+            msg = MessageBundle.taint(msg);
+        } else {
+            msg = MessageBundle.qualify(bundle, msg);
+        }
+        // TODO: a "GAME" notification level?
+        addGenericNotification(msg, Notification.PERSONAL);
+    }
+
     public function addGenericNotification (
         announcement :String, category :int, sender :MemberName = null,
         clickTracker :Function = null) :void

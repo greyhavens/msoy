@@ -76,6 +76,12 @@ public class MsoyGameBackend extends WhirledGameBackend
         return p;
     }
 
+    override protected function systemMessage (bundle :String, msg :String) :void
+    {
+        (_ctx as GameContext).getMsoyContext().getNotificationDirector().addGameSystemMessage(
+            bundle, msg);
+    }
+
     // from BaseGameBackend
     override protected function reportServiceFailure (service :String, cause :String) :void
     {
