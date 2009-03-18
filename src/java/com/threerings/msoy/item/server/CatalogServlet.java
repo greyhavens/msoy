@@ -133,9 +133,11 @@ public class CatalogServlet extends MsoyServiceServlet
 
         int tagId = (query.tag != null) ? repo.getTagRepository().getTagId(query.tag) : 0;
 
+        ItemRepository<ItemRecord>.WordSearch context = repo.buildWordSearch(query.search);
+        
         // fetch catalog records and loop over them
         list.addAll(Lists.transform(
-                        repo.loadCatalog(query.sortBy, showMature(mrec), query.search, tagId,
+                        repo.loadCatalog(query.sortBy, showMature(mrec), context, tagId,
                                          query.creatorId, null, query.suiteId, offset, rows),
                         CatalogRecord.TO_CARD));
 
@@ -145,7 +147,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // if they want the total number of matches, compute that as well
         if (includeCount) {
             result.listingCount = repo.countListings(
-                showMature(mrec), query.search, tagId, query.creatorId, null, query.suiteId);
+                showMature(mrec), context, tagId, query.creatorId, null, query.suiteId);
         }
         result.listings = list;
 

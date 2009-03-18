@@ -100,6 +100,74 @@ public abstract class ItemRepository<T extends ItemRecord>
         public int ownerId;
     }
 
+    /**
+     * Encapsulates information regarding a word search, for catalog items or stuff: we look up
+     * each word as a tag, we look up each word as one or more creators, and we create a full-
+     * text query for it. The resulting Depot expressions are used both to filter and to rank 
+     * search results.
+     */
+    public class WordSearch
+    {
+        public SQLOperator fullTextMatch ()
+        {
+            return _fts.match();
+        }
+        
+        public SQLOperator fullTextRank ()
+        {
+            return _fts.rank();
+        }
+        
+        public SQLOperator tagExistsExpression (ColumnExp itemColumn)
+        {
+            if (_tagIds.size() == 0) {
+                return null;
+            }
+            Where where = new Where(
+                new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
+                        new In(getTagColumn(TagRecord.TAG_ID), _tagIds)));
+            return new Exists<TagRecord>(new SelectClause<TagRecord>(
+                getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID.name }, where));
+        }
+        
+        public SQLOperator madeByExpression ()
+        {
+            if (_memberIds.size() == 0) {
+                return null;
+            }
+            return new In(getItemColumn(ItemRecord.CREATOR_ID), _memberIds);
+        }
+    
+        protected WordSearch (String search)
+        {
+            // first split our search up into words
+            String[] searchTerms = search.toLowerCase().split("\\W+");
+            if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
+                searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
+            }
+    
+            // look up each word as a tag
+            _tagIds = new ArrayIntSet();
+            if (searchTerms.length > 0) {
+                for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
+                    _tagIds.add(tRec.tagId);
+                }
+            }
+
+            _memberIds = new ArrayIntSet();
+            // look up the first 100 members whose name matches each search term exactly
+            for (String term : searchTerms) {
+                _memberIds.addAll(_memberRepo.findMembersByDisplayName(term, true, 100));
+            }
+            
+            _fts = new FullText(getItemClass(), ItemRecord.FTS_ND, search);
+        }
+        
+        protected IntSet _tagIds;
+        protected IntSet _memberIds;
+        protected FullText _fts;
+    }
+
     public ItemRepository (PersistenceContext ctx)
     {
         super(ctx);
@@ -298,10 +366,12 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findItems (int ownerId, String query)
     {
-        // original items only match on the text and creator (they cannot be tagged)
+        WordSearch queryContext = new WordSearch(query);
         List<SQLOperator> matches = Lists.newArrayList();
-        addTextMatchClause(matches, query);
-        addCreatorMatchClause(matches, query);
+
+        // original items only match on the text and creator (they cannot be tagged)
+        addTextMatchClause(matches, queryContext);
+        addCreatorMatchClause(matches, queryContext);
 
         // locate all matching original items
         List<T> results = findAll(getItemClass(), new Where(
@@ -309,7 +379,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                     makeSearchClause(matches))));
 
         // now add the tag match as cloned items can match tags
-        addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), query);
+        addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), queryContext);
 
         // add all matching cloned items
         results.addAll(loadClonedItems(new Where(
@@ -567,8 +637,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Counts all items in the catalog that match the supplied query terms.
      */
-    public int countListings (boolean mature, String search, int tag, int creator, Float minRating,
-                              int suiteId)
+    public int countListings (
+        boolean mature, WordSearch search, int tag, int creator, Float minRating, int suiteId)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(getCatalogClass()));
@@ -593,7 +663,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      *       the Item vs Catalog class hierarchies).
      */
     public List<CatalogRecord> loadCatalog (
-        byte sortBy, boolean mature, String search, int tag, int creator,
+        byte sortBy, boolean mature, WordSearch context, int tag, int creator,
         Float minRating, int suiteId, int offset, int rows)
     {
         LinkedList<QueryClause> clauses = Lists.newLinkedList();
@@ -627,24 +697,29 @@ public abstract class ItemRepository<T extends ItemRecord>
             addOrderByRating(obExprs, obOrders);
             break;
         case CatalogQuery.SORT_BY_NEW_AND_HOT:
-            addOrderByNewAndHot(obExprs, obOrders, whereBits);
+            addOrderByNewAndHot(obExprs, obOrders);
             break;
         case CatalogQuery.SORT_BY_FAVORITES:
             addOrderByFavorites(obExprs, obOrders);
             addOrderByRating(obExprs, obOrders);
             break;
+        case CatalogQuery.SORT_BY_RELEVANCE:
+            if (context != null) {
+                addOrderByRelevance(obExprs, obOrders, context);
+            } // else a hacked URL, give'm unordered results
+            break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
-        clauses.add(new OrderBy(obExprs.toArray(new SQLExpression[obExprs.size()]),
-                                obOrders.toArray(new OrderBy.Order[obOrders.size()])));
+        if (obExprs.size() > 0) {
+            clauses.add(new OrderBy(obExprs.toArray(new SQLExpression[obExprs.size()]),
+                                    obOrders.toArray(new OrderBy.Order[obOrders.size()])));
+        }
 
         // see if there's any where bits to turn into an actual where clause
-        boolean significantlyConstrained =
-            addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
-        
-
+        boolean significantlyConstrained = addSearchClause(
+            clauses, whereBits, mature, context, tag, creator, minRating, suiteId);
         
         // finally fetch all the catalog records of interest and resolve their item bits
         List<CatalogRecord> records = findAllWithOffset(getCatalogClass(),
@@ -1179,51 +1254,42 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Adds a full-text match on item name and description to the supplied list.
      */
-    protected void addTextMatchClause (List<SQLOperator> matches, String search)
+    protected void addTextMatchClause (List<SQLOperator> matches, WordSearch search)
     {
         // search item name and description
-        matches.add(new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search));
+        matches.add(search._fts.match());
     }
 
     /**
      * Adds a match on the name of the creator to the supplied list.
      */
-    protected void addCreatorMatchClause (List<SQLOperator> matches, String search)
+    protected void addCreatorMatchClause (List<SQLOperator> matches, WordSearch search)
     {
-        // look up the first 100 members whose name matches the search term exactly
-        List<Integer> memberIds = _memberRepo.findMembersByDisplayName(search, true, 100);
-        if (memberIds.size() > 0) {
-            matches.add(new In(getItemColumn(ItemRecord.CREATOR_ID), memberIds));
+        SQLOperator op = search.madeByExpression();
+        if (op != null) {
+            matches.add(op);
         }
     }
-
+    
+    public WordSearch buildWordSearch (String query)
+    {
+        if (query != null && query.trim().length() > 0) {
+            return new WordSearch(query);
+        }
+        return null;
+    }
+    
     /**
      * Searches for any tags that match the search string and matches all catalog master items that
      * are tagged with those tags.
      */
-    protected void addTagMatchClause (List<SQLOperator> matches, ColumnExp itemColumn, String search)
+    protected void addTagMatchClause (
+        List<SQLOperator> matches, ColumnExp itemColumn, WordSearch search)
     {
-        // to match tags we first have to split our search up into words
-        String[] searchTerms = search.toLowerCase().split("\\W+");
-        if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
-            searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
-        }
-
-        // look up each word as a tag
-        IntSet tagIds = new ArrayIntSet();
-        if (searchTerms.length > 0) {
-            for (TagNameRecord tRec : getTagRepository().getTags(searchTerms)) {
-                tagIds.add(tRec.tagId);
-            }
-        }
-
         // build a query to check tags if one or more tags exists
-        if (tagIds.size() > 0) {
-            Where where = new Where(
-                new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
-                        new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
-            matches.add(new Exists<TagRecord>(new SelectClause<TagRecord>(
-                getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID.name }, where)));
+        SQLOperator op = search.tagExistsExpression(itemColumn);
+        if (op != null) {
+            matches.add(op);
         }
     }
 
@@ -1240,12 +1306,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Builds a search clause that matches item text, creator name and tags (against listed catalog
      * items).
      */
-    protected SQLOperator buildSearchClause (String search)
+    protected SQLOperator buildSearchClause (WordSearch queryContext)
     {
         List<SQLOperator> matches = Lists.newArrayList();
-        addTextMatchClause(matches, search);
-        addCreatorMatchClause(matches, search);
-        addTagMatchClause(matches, getCatalogColumn(CatalogRecord.LISTED_ITEM_ID), search);
+
+        addTextMatchClause(matches, queryContext);
+        addCreatorMatchClause(matches, queryContext);
+        addTagMatchClause(matches, getCatalogColumn(CatalogRecord.LISTED_ITEM_ID), queryContext);
+
         return makeSearchClause(matches);
     }
 
@@ -1255,14 +1323,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      * match enormous numbers of rows.
      */
     protected boolean addSearchClause (
-        List<QueryClause> clauses, List<SQLOperator> whereBits, boolean mature, String search,
-        int tag, int creator, Float minRating, int suiteId)
+        List<QueryClause> clauses, List<SQLOperator> whereBits, boolean mature,
+        WordSearch queryContext, int tag, int creator, Float minRating, int suiteId)
     {
         boolean significantlyConstrained = false;
-
+        
         // add our search clauses if we have a search string
-        if (search != null && search.length() > 0) {
-            whereBits.add(buildSearchClause(search));
+        if (queryContext != null) {
+            whereBits.add(buildSearchClause(queryContext));
             significantlyConstrained = true;
         }
 
@@ -1337,8 +1405,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByNewAndHot (
-        List<SQLExpression> exprs, List<OrderBy.Order> orders, List<SQLOperator> whereBits)
+    protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(new Arithmetic.Add(
             getRatingExpression(),
@@ -1348,6 +1415,28 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
+    protected void addOrderByRelevance (
+        List<SQLExpression> exprs, List<OrderBy.Order> orders, WordSearch context)
+    {
+        SQLOperator[] ops = new SQLOperator[] { context._fts.rank() };
+
+        SQLOperator tagExistsExp = 
+            context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
+        if (tagExistsExp != null) {
+            ops = ArrayUtil.append(ops,
+                new Case(tagExistsExp, new ValueExp(1), new ValueExp(0)));
+        }
+
+        SQLOperator madeByExp = context.madeByExpression();
+        if (madeByExp != null) {
+            ops = ArrayUtil.append(ops,
+                new Case(madeByExp, new ValueExp(1), new ValueExp(0)));
+        }
+
+        exprs.add(new Arithmetic.Add(ops));
+        orders.add(OrderBy.Order.DESC);
+    }
+    
     protected void addOrderByFavorites (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getCatalogColumn(CatalogRecord.FAVORITE_COUNT));

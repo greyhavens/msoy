@@ -125,7 +125,7 @@ public class GameRepository extends ItemRepository<GameRecord>
             whereBits.add(new Conditionals.Equals(GameRecord.GENRE, genre));
         }
         if (search != null && search.length() > 0) {
-            whereBits.add(buildSearchClause(search));
+            whereBits.add(buildSearchClause(new WordSearch(search)));
         }
         // filter out games that have 0 plays (ie. aren't integrated with Whirled)
         whereBits.add(new Conditionals.GreaterThan(GameDetailRecord.GAMES_PLAYED, 0));

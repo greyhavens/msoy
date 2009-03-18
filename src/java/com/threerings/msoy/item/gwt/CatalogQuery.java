@@ -29,6 +29,8 @@ public class CatalogQuery
     public static final byte SORT_BY_NEW_AND_HOT = 7;
     /** Indicates the order in which catalog search results should be returned. */
     public static final byte SORT_BY_FAVORITES = 8;
+    /** Indicates the order in which catalog search results should be returned. */
+    public static final byte SORT_BY_RELEVANCE = 9;
 
     /** The type of item being browsed. */
     public byte itemType = Item.NOT_A_TYPE;
