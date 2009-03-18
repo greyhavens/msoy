@@ -60,6 +60,9 @@ public class CatalogPanel extends SmartTable
         ClickListener clickListener = new ClickListener() {
             public void onClick (Widget sender) {
                 String query = _searchBox.getText().trim();
+                if (query.split("\\W+").length > 1) {
+                    _query.sortBy = CatalogQuery.SORT_BY_RELEVANCE;
+                }
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, null, query, 0));
             }
         };
@@ -215,6 +218,7 @@ public class CatalogPanel extends SmartTable
         _msgs.sortByPriceDesc(),
         _msgs.sortByPurchases(),
         _msgs.sortByFavorites(),
+        _msgs.sortByRelevance(),
     };
     protected static final byte[] SORT_VALUES = new byte[] {
         CatalogQuery.SORT_BY_NEW_AND_HOT,
@@ -224,5 +228,6 @@ public class CatalogPanel extends SmartTable
         CatalogQuery.SORT_BY_PRICE_DESC,
         CatalogQuery.SORT_BY_PURCHASES,
         CatalogQuery.SORT_BY_FAVORITES,
+        CatalogQuery.SORT_BY_RELEVANCE,
     };
 }
