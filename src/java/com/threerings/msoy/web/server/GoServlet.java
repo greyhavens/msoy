@@ -6,10 +6,13 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
@@ -27,6 +30,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
@@ -117,10 +121,14 @@ public class GoServlet extends HttpServlet
         throws IOException
     {
         if (ALL_GAMES_PREFIX.equals(path)) {
-            // TODO:
-            // create a little top games page.
-            outputGoogle(rsp, "All games", "Whirled hosts many games", "",
-                GAME_DETAIL_PREFIX + "1", "browse games");
+            List<Object> args = Lists.newArrayList();
+            // load the top 100 games
+            for (GameRecord game : _gameRepo.loadGenre((byte)-1, 100)) {
+                args.add(getImage(game));
+                args.add(GAME_DETAIL_PREFIX + game.gameId);
+                args.add(game.name);
+            }
+            outputGoogle(rsp, "All games", "Whirled hosts many games", "", args);
             return true;
 
         } else if (path.startsWith(GAME_DETAIL_PREFIX)) {
@@ -209,6 +217,15 @@ public class GoServlet extends HttpServlet
 
         outputFacebook(rsp, title, desc, image);
         return true;
+    }
+
+    protected void outputGoogle (
+        HttpServletResponse rsp, String title, String desc, String upLink, List<Object> args)
+        throws IOException
+    {
+        Object[] argArray = new Object[args.size()];
+        args.toArray(argArray);
+        outputGoogle(rsp, title, desc, upLink, argArray);
     }
 
     /**
@@ -300,6 +317,7 @@ public class GoServlet extends HttpServlet
     protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
 
     // our dependencies
+    @Inject protected GameRepository _gameRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
