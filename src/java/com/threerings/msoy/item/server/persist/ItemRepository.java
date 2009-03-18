@@ -1435,6 +1435,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         exprs.add(new Arithmetic.Add(ops));
         orders.add(OrderBy.Order.DESC);
+
+        exprs.add(getRatingExpression());
+        orders.add(OrderBy.Order.DESC);
     }
     
     protected void addOrderByFavorites (List<SQLExpression> exprs, List<OrderBy.Order> orders)
