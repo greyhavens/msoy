@@ -13,6 +13,7 @@ import flash.events.TimerEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.display.StageDisplayState;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.system.Capabilities;
@@ -65,8 +66,9 @@ public class MsoyController extends Controller
     /** Command to move back to the previous location. */
     public static const MOVE_BACK :String = "MoveBack";
 
-    /** Command to view the app in full-screen mode. */
-    public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
+    /** Command to view change the full screen mode. Args: null or none to toggle, else
+     * the StageDisplayState constant. */
+    public static const SET_DISPLAY_STATE :String = "SetDisplayState";
 
     /** Command to issue to toggle the chat display. */
     public static const TOGGLE_CHAT_HIDE :String = "ToggleChatHide";
@@ -386,14 +388,25 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles the TOGGLE_FULLSCREEN command.
+     * Handles the SET_DISPLAY_STATE command.
      */
-    public function handleToggleFullscreen () :void
+    public function handleSetDisplayState (state :String = null) :void
     {
-        // TODO: once things are more up to date, we can use the real
-        // class and StageDisplayState for the constants
-        var o :Object = _mctx.getStage();
-        o.displayState = (o.displayState == "normal") ? "fullScreen" : "normal";
+        const stage :Stage = _mctx.getStage();
+        const curState :String = stage.displayState;
+        if (state == curState) {
+            return;
+        }
+        if (state == null) {
+            state = (curState == StageDisplayState.NORMAL) ? StageDisplayState.FULL_SCREEN
+                                                           : StageDisplayState.NORMAL;
+        }
+        try {
+            stage.displayState = state;
+        } catch (se :SecurityError) {
+            // it didn't work! Disable the full-screen button
+            _mctx.getControlBar().fullBtn.enabled = false;
+        }
     }
 
     /**

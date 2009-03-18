@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.Stage;
+import flash.display.StageDisplayState;
 import flash.ui.ContextMenu;
 
 import flash.events.ContextMenuEvent;
@@ -366,6 +367,9 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function externalSetMinimized (minimized :Boolean) :void
     {
         dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
+        if (minimized) {
+            _ctx.getMsoyController().handleSetDisplayState(StageDisplayState.NORMAL);
+        }
     }
 
     /**
@@ -400,10 +404,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         var menu :ContextMenu = (event.target as ContextMenu);
         var custom :Array = menu.customItems;
         custom.length = 0;
-
-//        custom.push(MenuUtil.createControllerMenuItem(
-//                        Msgs.GENERAL.get("b.toggle_fullscreen"),
-//                        MsoyController.TOGGLE_FULLSCREEN, null, false));
 
         populateContextMenu(custom);
 

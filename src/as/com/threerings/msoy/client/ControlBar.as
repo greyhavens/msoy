@@ -192,7 +192,7 @@ public class ControlBar extends HBox
         volBtn.setCallback(handlePopVolume);
 
         fullBtn = createButton("controlBarButtonFull", "i.full");
-        fullBtn.setCallback(handleFullScreen);
+        fullBtn.setCommand(MsoyController.SET_DISPLAY_STATE);
 
         commentBtn = createButton("controlBarButtonComment", "i.comment");
         commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
@@ -378,17 +378,6 @@ public class ControlBar extends HBox
     protected function handleUIStateChanged (event :Event) :void
     {
         updateUI();
-    }
-
-    protected function handleFullScreen () :void
-    {
-        try {
-            stage.displayState = (stage.displayState != StageDisplayState.FULL_SCREEN)
-                ? StageDisplayState.FULL_SCREEN
-                : StageDisplayState.NORMAL;
-        } catch (se :SecurityError) {
-            fullBtn.enabled = false;
-        }
     }
 
     protected static const CHAT_SECTION :int = -2;
