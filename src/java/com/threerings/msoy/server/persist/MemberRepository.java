@@ -330,7 +330,6 @@ public class MemberRepository extends DepotRepository
      */
     public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
     {
-        search = search.toLowerCase();
         SQLOperator op = exact ?
             new Equals(new FunctionExp("LOWER", MemberRecord.NAME),
                        new FunctionExp("LOWER", new ValueExp(search))) :
