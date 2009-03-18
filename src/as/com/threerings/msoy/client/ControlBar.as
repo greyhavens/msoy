@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.display.StageDisplayState;
 
 import flash.events.Event;
+import flash.events.FullScreenEvent;
 
 import flash.utils.Dictionary;
 
@@ -101,6 +102,7 @@ public class ControlBar extends HBox
         checkControls();
 
         _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChanged);
+        _ctx.getStage().addEventListener(FullScreenEvent.FULL_SCREEN, handleFullScreenChanged);
     }
 
     /**
@@ -378,6 +380,12 @@ public class ControlBar extends HBox
     protected function handleUIStateChanged (event :Event) :void
     {
         updateUI();
+    }
+
+    protected function handleFullScreenChanged (event :FullScreenEvent) :void
+    {
+        // TODO: different icon for going up or down?
+        fullBtn.selected = event.fullScreen;
     }
 
     protected static const CHAT_SECTION :int = -2;
