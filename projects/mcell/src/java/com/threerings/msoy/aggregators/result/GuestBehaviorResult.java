@@ -11,11 +11,13 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import com.google.common.base.Function;
 import com.google.common.base.Join;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -84,11 +86,20 @@ public class GuestBehaviorResult
                 return false;
             }
             _entry.addEvent(action, timestamp);
+            
+            // we use their first experience as a possible indication of creation in
+            // addition to VISITOR_INFO_CREATED
+            _entry.created = timestamp;
+            
+            // fake ACCOUNT_CREATED/guest entries by looking at experiences
+            if (PLAY_EXPERIENCES.contains(action)) {
+                _entry.played = timestamp;
+            }
         }
 
         return true;
     }
-
+    
     public void combine (final GuestBehaviorResult other)
     {
         if (_entry == null) {
@@ -339,11 +350,12 @@ public class GuestBehaviorResult
                     "Won't combine entries with different keys (" + this.tracker + ", " + other.tracker + ")");
             }
 
-            created = nullMerge(created, other.created);
+            created = mostRecent(created, other.created);
+            played = mostRecent(played, other.played);
+            converted = nullMerge(converted, other.converted);
+
             vector = nullMerge(vector, other.vector);
             embed = nullMerge(embed, other.embed);
-            converted = nullMerge(converted, other.converted);
-            played = nullMerge(played, other.played);
             member = nullMerge(member, other.member);
 
             for (Map.Entry<String, Collection<Date>> entry : other.events.asMap().entrySet()) {
@@ -353,8 +365,13 @@ public class GuestBehaviorResult
             }
         }
         
+        protected Date mostRecent (Date ours, Date theirs)
+        {
+            return (theirs == null || (ours != null && theirs.after(ours))) ? ours : theirs;
+        }
+        
         protected <T> T nullMerge(T ours, T theirs) {
-            return (ours != null) ? ours : theirs;
+            return (theirs == null) ? ours : theirs;
         }
         
         public void write (final DataOutput out)
@@ -428,4 +445,8 @@ public class GuestBehaviorResult
     protected final static EventName EXPERIENCE = new EventName("Experience");
 
     protected final static int MAX_VECTOR_LENGTH = 40;
+    
+    // TODO: used to fake entry.played for a while
+    protected static final Set<String> PLAY_EXPERIENCES = ImmutableSet.of(
+        "GS", "GM", "GA", "VW", "VR", "AL");
 }
