@@ -5,7 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-
+import flash.utils.setTimeout; // function
 import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.controls.CheckBox;
@@ -27,11 +27,6 @@ import com.threerings.msoy.data.all.VizMemberName;
  */
 public class SelectPlayersPanel extends FloatingPanel
 {
-    public static function show (ctx :MsoyContext, playerNames :Array /* of VizMemberName */) :void
-    {
-        new SelectPlayersPanel(ctx, playerNames).maybeOpen();
-    }
-
     public function SelectPlayersPanel (ctx :MsoyContext, playerNames :Array /* of VizMemberName */)
     {
         super(ctx, getPanelTitle());
@@ -44,6 +39,9 @@ public class SelectPlayersPanel extends FloatingPanel
     public function maybeOpen () :void
     {
         if (getPrefsName() != null && !Prefs.getAutoshow(getPrefsName())) {
+            return;
+        }
+        if (_playerNames.length < 1) {
             return;
         }
         open();
@@ -65,13 +63,15 @@ public class SelectPlayersPanel extends FloatingPanel
         tip.percentWidth = 100;
         addChild(tip);
 
-        _status = new Label();
-        _status.styleName = "selectPlayersPanelStatus";
-        _status.percentWidth = 100;
-        addChild(_status);
+        if (_playerNames.length > 1) {
+            _status = new Label();
+            _status.styleName = "selectPlayersPanelStatus";
+            _status.percentWidth = 100;
+            addChild(_status);
+        }
 
         var grid :Grid = new Grid();
-        grid.maxHeight = 400;
+        grid.maxHeight = 300;
         grid.horizontalScrollPolicy = ScrollPolicy.OFF;
         grid.verticalScrollPolicy = ScrollPolicy.AUTO;
         addChild(grid);
@@ -84,8 +84,7 @@ public class SelectPlayersPanel extends FloatingPanel
                 grid.addChild(row);
             }
 
-            var playerBox :PlayerBox = new PlayerBox(
-                playerName, _playerNames.length == 1, updateStatus);
+            var playerBox :PlayerBox = new PlayerBox(playerName, updateStatus);
             _playerBoxes.push(playerBox);
             GridUtil.addToRow(row, playerBox);
             if (++cell % 2 == 0) {
@@ -104,6 +103,12 @@ public class SelectPlayersPanel extends FloatingPanel
         addButtons(CANCEL_BUTTON, OK_BUTTON);
 
         updateStatus();
+
+        if (_playerNames.length == 1) {
+            // this calls update status
+            setTimeout(_playerBoxes[0].setSelected, 10, true)
+            _playerBoxes[0].disable();
+        }
     }
 
     override protected function buttonClicked (buttonId :int) :void
@@ -123,16 +128,15 @@ public class SelectPlayersPanel extends FloatingPanel
                 count++;
             }
         }
-        _status.text = Msgs.GENERAL.get("m.selected_players", count);
+        if (_status != null) {
+            _status.text = Msgs.GENERAL.get("m.selected_players", count);
+        }
         getButton(OK_BUTTON).enabled = count > 0;
     }
 
     protected function getSelectedMemberIds () :TypedArray
     {
         var ids :TypedArray = TypedArray.create(int);
-        if (_playerNames.length == 1) {
-            ids.push(_playerNames[0].getMemberId());
-        }
         for each (var box :PlayerBox in _playerBoxes) {
             if (box.isSelected()) {
                 ids.push(box.getName().getMemberId());
@@ -207,7 +211,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 
 class PlayerBox extends HBox
 {
-    public function PlayerBox (name :VizMemberName, staySelected :Boolean, onSelChange :Function)
+    public function PlayerBox (name :VizMemberName, onSelChange :Function)
     {
         _name = name;
         _onSelChange = onSelChange;
@@ -215,17 +219,30 @@ class PlayerBox extends HBox
         width = 200;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-        if (staySelected) {
-            _onSelChange = null;
-            handleClick(null);
-        } else {
-            addEventListener(MouseEvent.CLICK, handleClick);
-        }
+        addEventListener(MouseEvent.CLICK, handleClick);
     }
 
     public function isSelected () :Boolean
     {
         return _selected;
+    }
+
+    public function setSelected (value :Boolean) :void
+    {
+        _selected = value;
+        if (_selected) {
+            graphics.beginFill(0x3fa3cc);
+            graphics.drawRoundRect(0, 0, width, height, 12);
+            graphics.endFill();
+        } else {
+            graphics.clear();
+        }
+        _onSelChange();
+    }
+
+    public function disable () :void
+    {
+        _disabled = true;
     }
 
     public function getName () :VizMemberName
@@ -245,20 +262,14 @@ class PlayerBox extends HBox
 
     protected function handleClick (evt :MouseEvent) :void
     {
-        _selected = !_selected;
-        if (_selected) {
-            graphics.beginFill(0x3fa3cc);
-            graphics.drawRoundRect(0, 0, width, height, 12);
-            graphics.endFill();
-        } else {
-            graphics.clear();
+        if (_disabled) {
+            return;
         }
-        if (_onSelChange != null) {
-            _onSelChange();
-        }
+        setSelected(!isSelected());
     }
 
     protected var _name :VizMemberName;
     protected var _onSelChange :Function;
     protected var _selected :Boolean;
+    protected var _disabled :Boolean;
 }
