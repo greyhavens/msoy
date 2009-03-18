@@ -62,7 +62,7 @@ public class RetentionEmail
             return keys;
         }
 
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -97,7 +97,4 @@ public class RetentionEmail
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
     }
-
-    @SuppressWarnings("unchecked")
-    protected static List<Keys.LongKey> EMPTY_LIST = Collections.EMPTY_LIST;
 }
