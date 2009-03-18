@@ -73,6 +73,18 @@ public class ControlBar extends HBox
     /** Indicates game media loading and handles game menu. */
     public var gameBtn :CommandButton;
 
+    // TEMP
+    public function isFullOn () :Boolean
+    {
+        return _fullOn;
+    }
+    protected var _fullOn :Boolean;
+    public function setFullOn () :void
+    {
+        _fullOn = true;
+        updateUI();
+    }
+
     /**
      * Construct.
      */
@@ -193,7 +205,7 @@ public class ControlBar extends HBox
         updateVolumeSkin(Prefs.getSoundVolume());
         volBtn.setCallback(handlePopVolume);
 
-        fullBtn = createButton("controlBarButtonFull", "i.full");
+        fullBtn = createButton("controlBarButtonFull", "Toggle full-screen mode");
         fullBtn.setCommand(MsoyController.SET_DISPLAY_STATE);
 
         commentBtn = createButton("controlBarButtonComment", "i.comment");
@@ -284,9 +296,7 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(volBtn, true, VOLUME_PRIORITY);
-        if (DeploymentConfig.devDeployment) {
-            addButton(fullBtn, true, GLOBAL_PRIORITY);
-        }
+        addButton(fullBtn, isFullOn, GLOBAL_PRIORITY);
 
         addButton(shareBtn, showShare);
         addButton(commentBtn, showComment);
@@ -386,6 +396,9 @@ public class ControlBar extends HBox
     {
         // TODO: different icon for going up or down?
         fullBtn.selected = event.fullScreen;
+
+        // seems to be necessary when we leave fullscreen
+        callLater(updateUI);
     }
 
     protected static const CHAT_SECTION :int = -2;

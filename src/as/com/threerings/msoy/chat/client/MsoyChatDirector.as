@@ -72,6 +72,16 @@ public class MsoyChatDirector extends ChatDirector
             registerCommandHandler(msg, "badges", new BadgesHandler());
         }
 
+        // Ye Olde Easter Eggs
+        registerCommandHandler(msg, "~egg", new HackHandler(function (args :String) :void {
+            _handlers.remove("~egg");
+            _mctx.getControlBar().setFullOn();
+            displayFeedback(null, MessageBundle.taint("Easter eggs enabled:\n" +
+                " * Full-screen button.\n\n" +
+                "These experimental features may be removed in the future. Let us know if you " +
+                "find them incredibly useful."));
+        }));
+
         addChatDisplay(_chatHistory = new HistoryList(this));
 
         // create our room occupant list
