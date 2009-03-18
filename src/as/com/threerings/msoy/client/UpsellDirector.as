@@ -8,10 +8,10 @@ import flash.events.TimerEvent;
 import flash.display.DisplayObject;
 import flash.utils.Timer;
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.RandomUtil;
+import com.threerings.util.Util;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
@@ -91,7 +91,7 @@ public class UpsellDirector extends BasicDirector
                 continue; // skip it, we've already shown this key during this session
             }
             var actualKey :String = RandomUtil.pickRandom(
-                ArrayUtil.keys(Msgs.GENERAL.getAllMapped(key))) as String;
+                Util.keys(Msgs.GENERAL.getAllMapped(key))) as String;
             if (actualKey != null) {
                 // we're doing it, we're actually showing something!
                 var msg :String = Msgs.GENERAL.get(actualKey,
