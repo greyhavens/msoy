@@ -326,13 +326,14 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns ids for all members who's display name matches the supplied search string.
+     * Returns ids for all members whose display name matches the supplied search string.
      */
     public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
     {
         search = search.toLowerCase();
         SQLOperator op = exact ?
-            new Equals(new FunctionExp("LOWER", MemberRecord.NAME), search) :
+            new Equals(new FunctionExp("LOWER", MemberRecord.NAME),
+                       new FunctionExp("LOWER", new ValueExp(search))) :
             new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
         return Lists.transform(
             findAllKeys(MemberRecord.class, false, new Where(op), new Limit(0, limit)),
