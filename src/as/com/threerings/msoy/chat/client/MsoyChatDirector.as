@@ -76,8 +76,11 @@ public class MsoyChatDirector extends ChatDirector
         registerCommandHandler(msg, "~egg", new HackHandler(function (args :String) :void {
             _handlers.remove("~egg");
             _mctx.getControlBar().setFullOn();
+            SubtitleGlyph.thumbsEnabled = true;
             displayFeedback(null, MessageBundle.taint("Easter eggs enabled:\n" +
-                " * Full-screen button.\n\n" +
+                " * Full-screen button.\n" +
+                " * Chat link hover pics.\n" +
+                "\n" +
                 "These experimental features may be removed in the future. Let us know if you " +
                 "find them incredibly useful."));
         }));

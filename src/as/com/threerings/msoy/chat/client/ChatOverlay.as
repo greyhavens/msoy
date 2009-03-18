@@ -58,6 +58,7 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
@@ -723,7 +724,11 @@ public class ChatOverlay
         if (expires) {
             lifetime = getChatExpire(msg.timestamp, msg.message) - msg.timestamp;
         }
-        return new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
+        var sg :SubtitleGlyph = new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
+        if ((msg is UserMessage) && (UserMessage(msg).speaker is VizMemberName)) {
+            sg.thumbnail = VizMemberName(UserMessage(msg).speaker).getPhoto();
+        }
+        return sg;
     }
 
     /**
