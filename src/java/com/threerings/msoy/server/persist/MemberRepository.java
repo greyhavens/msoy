@@ -52,7 +52,7 @@ import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 
 import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.FullTextMatch;
+import com.samskivert.depot.operator.Conditionals.FullText;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
@@ -333,7 +333,7 @@ public class MemberRepository extends DepotRepository
         SQLOperator op = exact ?
             new Equals(new FunctionExp("LOWER", MemberRecord.NAME),
                        new FunctionExp("LOWER", new ValueExp(search))) :
-            new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
+            new FullText(MemberRecord.class, MemberRecord.FTS_NAME, search).match();
         return Lists.transform(
             findAllKeys(MemberRecord.class, false, new Where(op), new Limit(0, limit)),
             RecordFunctions.<MemberRecord>getIntKey());

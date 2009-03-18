@@ -128,7 +128,7 @@ public class ProfileRepository extends DepotRepository
     public List<Integer> findMembersByRealName (String search, int limit)
     {
         Where where = new Where(
-            new FullTextMatch(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search));
+            new FullText(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search).match());
         return Lists.transform(findAllKeys(ProfileRecord.class, false, where, new Limit(0, limit)),
                                RecordFunctions.<ProfileRecord>getIntKey());
     }
@@ -139,7 +139,7 @@ public class ProfileRepository extends DepotRepository
     public List<Integer> findMembersByInterest (String search, int limit)
     {
         Where where = new Where(
-            new FullTextMatch(InterestRecord.class, InterestRecord.FTS_INTERESTS, search));
+            new FullText(InterestRecord.class, InterestRecord.FTS_INTERESTS, search).match());
         Set<Integer> ids = Sets.newHashSet();
 
         for (InterestRecord irec : findAll(InterestRecord.class, where, new Limit(0, limit))) {
