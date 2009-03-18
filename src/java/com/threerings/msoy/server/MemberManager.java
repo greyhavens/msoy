@@ -60,7 +60,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.BatchInvoker;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -285,22 +284,43 @@ public class MemberManager
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
             boolean autoFriended;
             @Override public void invokePersistent () throws Exception {
-                MemberRecord frec = _memberRepo.loadMember(friendId);
-                if (frec == null) {
-                    log.warning("Requested to friend non-existent member", "who", user.who(),
-                                "friendId", friendId);
-                } else if (frec.isGreeter()) {
-                    _memberLogic.establishFriendship(user.getMemberId(), friendId);
-                    autoFriended = true;
-                } else {
-                    _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
-                }
+                autoFriended = _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
             }
             @Override public void handleSuccess () {
                 reportRequestProcessed(autoFriended);
                 if (autoFriended) {
                     trackClientAction(caller, "autoFriendedFlashClient", null);
                 }
+            }
+        });
+    }
+
+    // from interface MemberProvider
+    public void inviteAllToBeFriends (final ClientObject caller, final int memberIds[],
+                                      final InvocationService.ConfirmListener listener)
+    {
+        final MemberObject user = (MemberObject) caller;
+        if (memberIds.length == 0) {
+            log.warning("Called inviteAllToBeFriends with no member ids", "caller", caller.who());
+            listener.requestProcessed();
+        }
+        _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+            @Override public void invokePersistent () throws Exception {
+                List<Exception> failures = Lists.newArrayList();
+                for (int friendId : memberIds) {
+                    try {
+                        _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
+                    } catch (Exception ex) {
+                        failures.add(ex);
+                    }
+                }
+                // only report failure if no friend requests were sent
+                if (failures.size() == memberIds.length) {
+                    throw failures.get(0);
+                }
+            }
+            @Override public void handleSuccess () {
+                reportRequestProcessed();
             }
         });
     }

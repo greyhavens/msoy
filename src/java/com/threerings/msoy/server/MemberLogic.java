@@ -54,6 +54,7 @@ import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
@@ -463,6 +464,28 @@ public class MemberLogic
     }
 
     /**
+     * Sends a vanilla friend invitation.
+     * @param memberId id of the user requesting friendship
+     * @param friendId id of the user who will be sent an invitation
+     * @return true if the invitee is a greeter and the friendship was automatically established
+     */
+    public boolean inviteToBeFriend (int memberId, int friendId)
+        throws ServiceException
+    {
+        MemberRecord frec = _memberRepo.loadMember(friendId);
+        if (frec == null) {
+            log.warning("Requested to friend non-existent member", "who", memberId,
+                        "friendId", friendId);
+        } else if (frec.isGreeter()) {
+            establishFriendship(memberId, friendId);
+            return true;
+        } else {
+            _mailLogic.sendFriendInvite(memberId, friendId);
+        }
+        return false;
+    }
+
+    /**
      * Delete all traces of the specified members, with some exceptions. If a member is a
      * permaguest, then all traces are indeed deleted. If they are registered member, then some
      * traces of the member are retained to allow certain parts of their participation in Whirled
@@ -787,6 +810,7 @@ public class MemberLogic
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected StatLogic _statLogic;
+    @Inject protected MailLogic _mailLogic; 
 
     // member purging dependencies
     @Inject protected AVRGameRepository _avrGameRepo;

@@ -161,4 +161,10 @@ public interface MemberService extends InvocationService
      * items are a separate request from the very cachable 6 "what I've done recently" items.
      */
     void getHomePageGridItems (Client client, ResultListener listener);
+
+    /**
+     * Requests to invite a set of users to be our friend.
+     * TODO: a custom listener with more details might be a good idea
+     */
+    void inviteAllToBeFriends (Client client, int[] memberIds, ConfirmListener listener);
 }

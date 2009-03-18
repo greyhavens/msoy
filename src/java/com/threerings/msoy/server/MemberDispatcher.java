@@ -119,6 +119,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.INVITE_ALL_TO_BE_FRIENDS:
+            ((MemberProvider)provider).inviteAllToBeFriends(
+                source, (int[])args[0], (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.INVITE_TO_BE_FRIEND:
             ((MemberProvider)provider).inviteToBeFriend(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
