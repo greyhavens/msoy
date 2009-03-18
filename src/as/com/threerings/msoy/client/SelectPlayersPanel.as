@@ -13,7 +13,7 @@ import mx.controls.Label;
 import mx.controls.Text;
 import mx.core.ScrollPolicy;
 
-import com.threerings.util.Log;
+import com.threerings.io.TypedArray;
 
 import com.threerings.flex.GridUtil;
 
@@ -44,7 +44,6 @@ public class SelectPlayersPanel extends FloatingPanel
     public function maybeOpen () :void
     {
         if (getPrefsName() != null && !Prefs.getAutoshow(getPrefsName())) {
-            Log.getLog(this).info("Suppressing player selection dialog", "name", getPrefsName());
             return;
         }
         open();
@@ -85,7 +84,8 @@ public class SelectPlayersPanel extends FloatingPanel
                 grid.addChild(row);
             }
 
-            var playerBox :PlayerBox = new PlayerBox(playerName, updateStatus);
+            var playerBox :PlayerBox = new PlayerBox(
+                playerName, _playerNames.length == 1, updateStatus);
             _playerBoxes.push(playerBox);
             GridUtil.addToRow(row, playerBox);
             if (++cell % 2 == 0) {
@@ -127,6 +127,20 @@ public class SelectPlayersPanel extends FloatingPanel
         getButton(OK_BUTTON).enabled = count > 0;
     }
 
+    protected function getSelectedMemberIds () :TypedArray
+    {
+        var ids :TypedArray = TypedArray.create(int);
+        if (_playerNames.length == 1) {
+            ids.push(_playerNames[0].getMemberId());
+        }
+        for each (var box :PlayerBox in _playerBoxes) {
+            if (box.isSelected()) {
+                ids.push(box.getName().getMemberId());
+            }
+        }
+        return ids;
+    }
+
     protected function getPanelTitle () :String
     {
         return "Title";
@@ -139,7 +153,7 @@ public class SelectPlayersPanel extends FloatingPanel
 
     protected function getTip () :String
     {
-        return Msgs.GENERAL.get("p.select_players");
+        return Msgs.GENERAL.get("p.select_players", _playerNames.length);
     }
 
     protected function getOkLabel () :String
@@ -193,7 +207,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 
 class PlayerBox extends HBox
 {
-    public function PlayerBox (name :VizMemberName, onSelChange :Function)
+    public function PlayerBox (name :VizMemberName, staySelected :Boolean, onSelChange :Function)
     {
         _name = name;
         _onSelChange = onSelChange;
@@ -201,12 +215,22 @@ class PlayerBox extends HBox
         width = 200;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-        addEventListener(MouseEvent.CLICK, handleClick);
+        if (staySelected) {
+            _onSelChange = null;
+            handleClick(null);
+        } else {
+            addEventListener(MouseEvent.CLICK, handleClick);
+        }
     }
 
     public function isSelected () :Boolean
     {
         return _selected;
+    }
+
+    public function getName () :VizMemberName
+    {
+        return _name;
     }
 
     override protected function createChildren () :void
@@ -229,7 +253,9 @@ class PlayerBox extends HBox
         } else {
             graphics.clear();
         }
-        _onSelChange();
+        if (_onSelChange != null) {
+            _onSelChange();
+        }
     }
 
     protected var _name :VizMemberName;
