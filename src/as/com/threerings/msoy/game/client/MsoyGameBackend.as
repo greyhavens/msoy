@@ -76,6 +76,12 @@ public class MsoyGameBackend extends WhirledGameBackend
         return p;
     }
 
+    // from WhirledGameBackend
+    override protected function isEmbedded_v1 () :Boolean
+    {
+        return (_ctx as GameContext).getMsoyContext().getMsoyClient().isEmbedded();
+    }
+
     override protected function systemMessage (bundle :String, msg :String) :void
     {
         (_ctx as GameContext).getMsoyContext().getNotificationDirector().addGameSystemMessage(
@@ -137,6 +143,12 @@ public class MsoyGameBackend extends WhirledGameBackend
                 return;
         }
         (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
+    }
+
+    // from WhirledGameBackend
+    override protected function showAllGames_v1 () :void
+    {
+        (_ctx as GameContext).getMsoyContext().getMsoyController().handleViewGames();
     }
 
     // from WhirledGameBackend
