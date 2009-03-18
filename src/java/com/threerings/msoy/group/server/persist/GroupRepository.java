@@ -36,7 +36,7 @@ import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.FullTextMatch;
+import com.samskivert.depot.operator.Conditionals.FullText;
 import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Logic.Not;
@@ -533,8 +533,8 @@ public class GroupRepository extends DepotRepository
     {
         SQLOperator publicOnly = new Not(new Equals(GroupRecord.POLICY, Group.POLICY_EXCLUSIVE));
         if (query.search != null) {
-            return new Where(new And(publicOnly, new FullTextMatch(GroupRecord.class,
-                GroupRecord.FTS_NBC, query.search)));
+            return new Where(new And(publicOnly, new FullText(GroupRecord.class,
+                GroupRecord.FTS_NBC, query.search).match()));
         } else if (query.tag != null) {
             TagNameRecord tnr = _tagRepo.getTag(query.tag);
             if (tnr == null) {

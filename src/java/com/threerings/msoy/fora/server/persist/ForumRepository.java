@@ -135,10 +135,10 @@ public class ForumRepository extends DepotRepository
     public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
     {
         And where = new And(new Equals(ForumThreadRecord.GROUP_ID, groupId),
-                            new Or(new FullTextMatch(ForumThreadRecord.class,
-                                                     ForumThreadRecord.FTS_SUBJECT, search),
-                                   new FullTextMatch(ForumMessageRecord.class,
-                                                     ForumMessageRecord.FTS_MESSAGE, search)));
+                            new Or(new FullText(ForumThreadRecord.class,
+                                                ForumThreadRecord.FTS_SUBJECT, search).match(),
+                                   new FullText(ForumMessageRecord.class,
+                                               ForumMessageRecord.FTS_MESSAGE, search).match()));
         return findAll(ForumThreadRecord.class,
                        new Join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID),
                        new Where(where), new Limit(0, limit));
@@ -157,10 +157,10 @@ public class ForumRepository extends DepotRepository
         );
         SQLExpression where = new And(
             new In(ForumThreadRecord.GROUP_ID, groupIds),
-            new Or(new FullTextMatch(ForumThreadRecord.class,
-                    ForumThreadRecord.FTS_SUBJECT, search),
-                new FullTextMatch(ForumMessageRecord.class,
-                    ForumMessageRecord.FTS_MESSAGE, search)),
+            new Or(new FullText(ForumThreadRecord.class,
+                                ForumThreadRecord.FTS_SUBJECT, search).match(),
+                new FullText(ForumMessageRecord.class,
+                             ForumMessageRecord.FTS_MESSAGE, search).match()),
             new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
                    new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
                            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
@@ -192,8 +192,8 @@ public class ForumRepository extends DepotRepository
     public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
     {
         And where = new And(new Equals(ForumMessageRecord.THREAD_ID, threadId),
-                            new FullTextMatch(ForumMessageRecord.class,
-                                              ForumMessageRecord.FTS_MESSAGE, search));
+                            new FullText(ForumMessageRecord.class,
+                                         ForumMessageRecord.FTS_MESSAGE, search).match());
         return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
     }
 
