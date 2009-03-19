@@ -11,21 +11,24 @@ import com.threerings.msoy.notify.data.Notification;
 
 public class BatchFriendInvitePanel extends SelectPlayersPanel
 {
-    public static function showPostGame (ctx :MsoyContext, playerIds :Array) :void
+    public static function showPostGame (
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */) :void
     {
-        var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerIds, "game");
+        var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "game");
         panel.maybeOpen();
     }
 
-    public static function showRoom (ctx :MsoyContext, playerIds :Array) :void
+    public static function showRoom (
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */) :void
     {
-        var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerIds, "room");
+        var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "room");
         panel.maybeOpen();
     }
 
-    public function BatchFriendInvitePanel (ctx :MsoyContext, playerIds :Array, mode :String)
+    public function BatchFriendInvitePanel (
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, mode :String)
     {
-        super(ctx, playerIds);
+        super(ctx, playerNames);
         _mode = mode;
     }
 
