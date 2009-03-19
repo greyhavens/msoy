@@ -138,14 +138,6 @@ public /*abstract*/ class MsoyContext
         return (name == null) ? 0 : name.getMemberId();
     }
 
-//    /**
-//     * Return our MemberObject, or null if that's not applicable for this context.
-//     */
-//    public function getMyMember () :MemberObject
-//    {
-//        return (_client.getClientObject() as MemberObject);
-//    }
-
     /**
      * Returns true if we're logged on to a registered (non-viewer, non-permaguest) account.
      */
