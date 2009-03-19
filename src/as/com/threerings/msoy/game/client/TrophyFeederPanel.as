@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.events.Event;
-
 import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.containers.HBox;
@@ -18,6 +16,7 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.util.Command;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.DeploymentConfig;
@@ -67,9 +66,7 @@ public class TrophyFeederPanel extends FloatingPanel
 
         var tfp :TrophyFeederPanel;
         tfp = new TrophyFeederPanel(gctx.getMsoyContext(), trophies, gameName);
-        tfp.addEventListener(Event.CLOSE, function (evt :Event) :void {
-            onClose();
-        });
+        tfp.addCloseCallback(onClose);
         tfp.open();
         return true;
     }

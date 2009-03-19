@@ -23,6 +23,7 @@ import mx.events.CloseEvent;
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandButton;
@@ -33,13 +34,20 @@ import com.threerings.msoy.client.Msgs;
 
 /**
  * Dispatched when the dialog closes due to a CloseEvent or a call to <code>close()</code>.
+ * (We avoid Event.CLOSE because it has the same constant as CloseEvent! Grandmafucking Adobe!)
  *
- * @eventType flash.events.Event.CLOSE
+ * @eventType com.threerings.msoy.ui.FloatingPanel.DID_CLOSE
  */
-[Event(name="close", type="flash.events.Event")]
+[Event(name="didClose", type="flash.events.Event")]
 
 public class FloatingPanel extends TitleWindow
 {
+    /**
+     * An event dispatched when this dialog closes.
+     * @eventType didClose
+     */
+    public static const DID_CLOSE :String = "didClose"
+
     /** Button constants. You may define your own in a subclass,
      * start your ids at 100 to be safe (in case more are added here).
      *
@@ -89,7 +97,7 @@ public class FloatingPanel extends TitleWindow
             // otherwise, pop it up or down
             if (thePanel == null) {
                 thePanel = createFn();
-                thePanel.addEventListener(Event.CLOSE, function (...args) :void {
+                thePanel.addCloseCallback(function () :void {
                     thePanel = null;
                     if (srcButton != null) {
                         // deselect the button. Should only be needed for toggle buttons, but
@@ -119,6 +127,15 @@ public class FloatingPanel extends TitleWindow
         // Add a listener for the CLOSE event. It's only possible to be dispatched if
         // showCloseButton=true, which we allow subclasses to do with convenience.
         addEventListener(CloseEvent.CLOSE, handleClose);
+    }
+
+    /**
+     * Add a callback that will be called when we close.
+     * This is a convenience function for setting up a listener on DID_CLOSE.
+     */
+    public function addCloseCallback (closeCallback :Function) :void
+    {
+        Command.bind(this, DID_CLOSE, closeCallback);
     }
 
     /**
@@ -163,7 +180,7 @@ public class FloatingPanel extends TitleWindow
         PopUpManager.removePopUp(this);
 
         // let our listeners know we've closed
-        dispatchEvent(new Event(Event.CLOSE));
+        dispatchEvent(new Event(DID_CLOSE));
     }
 
     /**

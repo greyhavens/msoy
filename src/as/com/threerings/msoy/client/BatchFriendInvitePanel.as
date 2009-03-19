@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.Event;
-
 import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.ConfirmAdapter;
@@ -48,9 +46,7 @@ public class BatchFriendInvitePanel extends SelectPlayersPanel
         if (!isOpen()) {
             finished();
         } else {
-            addEventListener(Event.CLOSE, function (evt :Event) :void {
-                finished();
-            });
+            addCloseCallback(finished);
         }        
     }
 

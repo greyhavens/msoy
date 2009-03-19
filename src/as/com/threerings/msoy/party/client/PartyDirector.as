@@ -395,7 +395,7 @@ public class PartyDirector extends BasicDirector
         // pop open the new one
         panel = new PartyDetailPanel(_wctx, detail);
         _detailPanels[detail.info.id] = panel;
-        panel.addEventListener(Event.CLOSE, function (evt :Event) :void {
+        panel.addCloseCallback(function () :void {
             delete _detailPanels[detail.info.id];
         });
         panel.open();
