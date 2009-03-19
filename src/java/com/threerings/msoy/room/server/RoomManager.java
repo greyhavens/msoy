@@ -584,7 +584,8 @@ public class RoomManager extends SpotSceneManager
                 _roomObj.addToPlaylist(item);
             }
             // start it playing now if there's not already something playing
-            if (!_roomObj.playlist.containsKey(new ItemIdent(Item.AUDIO, _roomObj.currentSongId))) {
+            if (_roomObj.playCount == -1 || !_roomObj.playlist.containsKey(
+                    new ItemIdent(Item.AUDIO, _roomObj.currentSongId))) {
                 playNextSong();
             }
         } finally {
@@ -617,6 +618,8 @@ public class RoomManager extends SpotSceneManager
         } finally {
             _roomObj.commitTransaction();
         }
+        // TODO: ensure we clear the usage on these items? In case they were added by a manager
+        // who is no longer a manager
     }
 
     /**
@@ -995,7 +998,7 @@ public class RoomManager extends SpotSceneManager
             MemberObject member = (MemberObject)body;
             member.getLocal(MemberLocal.class).willLeave(member, _roomObj);
 
-            if (!canManage(member)) {
+            if (!isStrictlyManager(member)) {
                 removeAllMemberSongs(member);
             }
         }
