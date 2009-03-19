@@ -302,7 +302,7 @@ public class RoomObjectView extends RoomView
 
         } else if (RoomObject.PLAYLIST == name) {
             var audio :Audio = event.getEntry() as Audio;
-            if (audio.ownerId == _ctx.getMyName().getMemberId()) {
+            if (audio.ownerId == _ctx.getMyId()) {
                 _ctx.getMsoyClient().itemUsageChangedToGWT(
                     Item.AUDIO, audio.itemId, audio.used, audio.location);
             }
@@ -339,7 +339,7 @@ public class RoomObjectView extends RoomView
 
         } else if (RoomObject.PLAYLIST == name) {
             var audio :Audio = event.getOldEntry() as Audio;
-            if (audio.ownerId == _ctx.getMyName().getMemberId()) {
+            if (audio.ownerId == _ctx.getMyId()) {
                 // always assume that if we're present to see a remove, it's unused
                 _ctx.getMsoyClient().itemUsageChangedToGWT(
                     Item.AUDIO, audio.itemId, Item.UNUSED, 0);

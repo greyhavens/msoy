@@ -108,7 +108,7 @@ public class PartyDirector extends BasicDirector
 
     public function isPartyLeader () :Boolean
     {
-        return (_partyObj != null) && (_partyObj.leaderId == _wctx.getMyName().getMemberId());
+        return (_partyObj != null) && (_partyObj.leaderId == _wctx.getMyId());
     }
 
     /**
@@ -131,7 +131,7 @@ public class PartyDirector extends BasicDirector
 
         if (_partyObj != null && partyId == _partyObj.id) {
             const peepId :int = peep.name.getMemberId();
-            const ourId :int = _wctx.getMyName().getMemberId();
+            const ourId :int = _wctx.getMyId();
             if (_partyObj.leaderId == ourId && peepId != ourId) {
                 CommandMenu.addSeparator(menuItems);
                 menuItems.push({ label: Msgs.PARTY.get("b.boot"),
@@ -427,7 +427,7 @@ public class PartyDirector extends BasicDirector
     protected function locationDidChange (place :PlaceObject) :void
     {
         // if we're the leader of the party, change the party's location when we move
-        if (_partyObj != null && _partyObj.leaderId == _wctx.getMyName().getMemberId()) {
+        if (_partyObj != null && _partyObj.leaderId == _wctx.getMyId()) {
             var sceneId :int = _wctx.getSceneDirector().getScene().getId();
             if (sceneId != _partyObj.sceneId) {
                 _partyObj.partyService.moveParty(

@@ -223,7 +223,7 @@ public class MsoySceneDirector extends SceneDirector
         }
 
         // we have nowhere to go back. let's just go home.
-        var memberId :int = _worldctx.getMemberObject().getMemberId();
+        var memberId :int = _worldctx.getMyId();
         if (!MemberName.isViewer(memberId)) {
             log.info("Scene locked, returning home [memberId=" + memberId + "].");
             ctrl.handleGoMemberHome(memberId);

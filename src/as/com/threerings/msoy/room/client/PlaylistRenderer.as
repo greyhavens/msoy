@@ -38,7 +38,7 @@ public class PlaylistRenderer extends HBox
         _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
 
         var canRemove :Boolean = wctx.getMsoyController().canManagePlace() ||
-            (wctx.getMyName().getMemberId() == audio.ownerId);
+            (wctx.getMyId() == audio.ownerId);
         FlexUtil.setVisible(_removeBtn, canRemove);
     }
 

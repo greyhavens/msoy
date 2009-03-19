@@ -209,8 +209,7 @@ public class MsoyController extends Controller
      */
     public function createSharableLink (page :String) :String
     {
-        return DeploymentConfig.serverURL + "welcome/" +
-            _mctx.getMyName().getMemberId() + "/" + page;
+        return DeploymentConfig.serverURL + "welcome/" + _mctx.getMyId() + "/" + page;
     }
 
     /**

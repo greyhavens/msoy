@@ -99,7 +99,7 @@ public class ShareDialog extends FloatingPanel
     {
         var flashVars :String = VisitorInfo.makeFlashVars(_placeId, _inGame);
         // include the "aff=<memberId>" flashvar to affiliate users to us
-        flashVars += "&aff=" + _ctx.getMyName().getMemberId();
+        flashVars += "&aff=" + _ctx.getMyId();
         if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
         }
@@ -195,7 +195,7 @@ public class ShareDialog extends FloatingPanel
     {
         const roomOrGame :String = (_inGame ? "game" : "room");
         var stubArgs :String = roomOrGame + "=" + _placeId;
-        stubArgs += "&aff=" + _ctx.getMyName().getMemberId();
+        stubArgs += "&aff=" + _ctx.getMyId();
 
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");

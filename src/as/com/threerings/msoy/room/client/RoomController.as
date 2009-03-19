@@ -129,7 +129,7 @@ public class RoomController extends SceneController
     public function getEntityInstanceId () :int
     {
         // we use the memberId, which is valid (but negative) even if you're a guest
-        return _wdctx.getMyName().getMemberId();
+        return _wdctx.getMyId();
     }
 
     /**

@@ -451,8 +451,7 @@ class AvatarUpdateNotifier implements AttributeChangeListener
             var value :Object = event.getValue();
             if (value is Avatar) {
                 _wctx.getMsoyClient().itemUsageChangedToGWT(
-                    Item.AVATAR, (value as Avatar).itemId, Item.USED_AS_AVATAR,
-                    _wctx.getMyName().getMemberId());
+                    Item.AVATAR, (value as Avatar).itemId, Item.USED_AS_AVATAR, _wctx.getMyId());
             }
             value = event.getOldValue();
             if (value is Avatar) {

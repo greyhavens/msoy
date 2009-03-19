@@ -152,8 +152,7 @@ public class DoorTargetEditController
         panel.addChild(FlexUtil.createText(Msgs.EDITING.get("m.edit_door"), 400));
 
         var showRooms :CommandButton = new CommandButton(Msgs.EDITING.get("b.show_rooms"),
-            _ctx.getWorldController().displayPage,
-            [ "people", "rooms_" + _ctx.getMyName().getMemberId() ]);
+            _ctx.getWorldController().displayPage, [ "people", "rooms_" + _ctx.getMyId() ]);
         showRooms.styleName = "orangeButton";
         panel.addChild(showRooms);
 

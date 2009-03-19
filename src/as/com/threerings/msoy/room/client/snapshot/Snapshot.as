@@ -264,7 +264,6 @@ public class Snapshot extends EventDispatcher
     /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (data :ByteArray, createItem :Boolean) :ByteArray
     {
-        var memberId :int = _ctx.getMemberObject().memberName.getMemberId();
         var scene :Scene = _ctx.getSceneDirector().getScene();
         var itemName :String = StringUtil.truncate(
             Msgs.WORLD.get("m.sceneItemName", scene.getName()), MsoyCodes.MAX_NAME_LENGTH, "...");
@@ -278,7 +277,7 @@ public class Snapshot extends EventDispatcher
 //            "Content-Disposition: form-data; name=\"auth\"\r\n" +
 //            "\r\n" + sessionToken + "\r\n" + b +
             "Content-Disposition: form-data; name=\"member\"\r\n" +
-            "\r\n" + String(memberId) + "\r\n" + b +
+            "\r\n" + String(_ctx.getMyId()) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"scene\"\r\n" +
             "\r\n" + String(scene.getId()) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"name\"\r\n" +

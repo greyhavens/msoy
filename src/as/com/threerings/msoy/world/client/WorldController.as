@@ -991,7 +991,7 @@ public class WorldController extends MsoyController
             } else if (_wctx.getSceneDirector().getScene() != null) {
                 displayPageGWT("world", "s" + _wctx.getSceneDirector().getScene().getId());
             } else {
-                displayPageGWT("world", "m" + _wctx.getMemberObject().getMemberId());
+                displayPageGWT("world", "m" + _wctx.getMyId());
             }
 
         } else if (null != params["sceneId"]) {
@@ -1085,7 +1085,7 @@ public class WorldController extends MsoyController
         const gameCfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
         if (gameCfg != null) {
             // in games, we can "manage" if we're the owner
-            return gameCfg.game.creatorId == _wctx.getMyName().getMemberId();
+            return gameCfg.game.creatorId == _wctx.getMyId();
         }
         return false;
     }

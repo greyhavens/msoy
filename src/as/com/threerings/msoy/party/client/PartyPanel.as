@@ -59,7 +59,7 @@ public class PartyPanel extends FloatingPanel
     {
         super.createChildren();
 
-        var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyName().getMemberId());
+        var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyId());
 
         _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer.createFactory(_wctx, _partyObj),
             PartyPeep.createSortByOrder(_partyObj));
@@ -115,7 +115,7 @@ public class PartyPanel extends FloatingPanel
                 break;
 
             case PartyObject.LEADER_ID:
-                var isLeader :Boolean = (event.getValue() == _ctx.getMyName().getMemberId());
+                var isLeader :Boolean = (event.getValue() == _ctx.getMyId());
                 _status.enabled = isLeader;
                 _recruit.enabled = isLeader;
                 // re-sort the list

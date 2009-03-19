@@ -434,7 +434,7 @@ public class AVRGameBackend extends ControlBackend
     protected function getPlayerId_v1 (targetId :int /* ignored */) :int
     {
         validatePlayerTargetId(targetId);
-        return _wctx.getMemberObject().getMemberId();
+        return _wctx.getMyId();
     }
 
     // PlayerSubControl
@@ -512,7 +512,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.sendMessage(action, null, true);
         } else {
             BackendUtils.playAvatarAction(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), action);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), action);
         }
     }
 
@@ -525,7 +525,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.setState(state);
         } else {
             BackendUtils.setAvatarState(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), state);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), state);
         }
     }
 
@@ -543,7 +543,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.setMoveSpeedFromUser(pixelsPerSecond);
         } else {
             BackendUtils.setAvatarMoveSpeed(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), pixelsPerSecond);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), pixelsPerSecond);
         }
     }
 
@@ -557,7 +557,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.setLocationFromUser(x, y, z, orient);
         } else {
             BackendUtils.setAvatarLocation(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), x, y, z, orient);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), x, y, z, orient);
         }
     }
 
@@ -575,7 +575,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.setOrientationFromUser(orient);
         } else {
             BackendUtils.setAvatarOrientation(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), orient);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMyId(), orient);
         }
     }
 
@@ -869,11 +869,6 @@ public class AVRGameBackend extends ControlBackend
     protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
     {
         return _playerObj.ownsGameContent(_ctrl.getGameId(), type, ident)
-    }
-
-    protected function getMemberId () :int
-    {
-        return _wctx.getMemberObject().getMemberId();
     }
 
     protected function getPartyInfo_temp () :Object
