@@ -5,7 +5,6 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 

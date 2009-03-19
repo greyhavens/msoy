@@ -732,7 +732,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * A request for N records of at offset O of a certain query is mapped to one or possibly
-     * several database queries whose offsets always fall on even {@link FIND_ALL_CHUNK)
+     * several database queries whose offsets always fall on even {@link #FIND_ALL_CHUNK}
      * integer boundaries, and which generally retrieve fairly large numbers of results.
      * 
      * Or, in language that someone might actually understand, illustrated with an example,

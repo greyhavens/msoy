@@ -28,7 +28,6 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -120,7 +119,6 @@ import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
-import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomLocal;
 import com.threerings.msoy.room.data.RoomObject;

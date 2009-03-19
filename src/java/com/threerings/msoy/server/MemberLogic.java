@@ -191,7 +191,7 @@ public class MemberLogic
 
     /**
      * Set the display name for the specified member.
-     * @throws a ServiceException if the name is invalid, for some reason.
+     * @throws ServiceException if the name is invalid, for some reason.
      */
     public void setDisplayName (final int memberId, final String name, boolean allowSupportNames)
         throws ServiceException

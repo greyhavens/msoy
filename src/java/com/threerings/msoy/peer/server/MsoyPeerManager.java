@@ -55,7 +55,6 @@ import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
-import com.threerings.msoy.web.gwt.ConnectConfig;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;

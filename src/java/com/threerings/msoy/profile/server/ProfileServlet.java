@@ -29,7 +29,6 @@ import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MemberLogic;

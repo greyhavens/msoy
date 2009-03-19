@@ -30,7 +30,7 @@ public class TextBoxUtil
     {
         box.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char charCode, int modifiers) {
-                DeferredCommand.add(onUpdate);
+                DeferredCommand.addCommand(onUpdate);
             }
         });
     }
