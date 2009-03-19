@@ -319,6 +319,14 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Is the specified user a manager, and NOT support staff?
+     */
+    public boolean isStrictlyManager (MemberObject user)
+    {
+        return ((MsoyScene) _scene).canManage(user, false, null);
+    }
+
+    /**
      * Checks whether or not the calling user can manage, if so returns the user cast
      * to a MemberObject, throws an {@link InvocationException} if not.
      */
@@ -483,7 +491,6 @@ public class RoomManager extends SpotSceneManager
             if (current.ownerId != who.getMemberId() && !canManage(who)) {
                 throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
             }
-            // TODO: un-use the item, if applicable
             _roomObj.startTransaction();
             try {
                 _roomObj.removeFromPlaylist(key);
@@ -493,7 +500,17 @@ public class RoomManager extends SpotSceneManager
             } finally {
                 _roomObj.commitTransaction();
             }
-            listener.requestProcessed();
+            if (current.used == Item.UNUSED) {
+                listener.requestProcessed(); // if the item's not in use, we're done
+                return;
+            }
+            if (current.location != _scene.getId()) {
+                log.warning("Whoa? Room contains song in-use elsewhere",
+                    "song", current);
+                // but, clear it anyway...
+            }
+            _itemMan.updateItemUsage(Item.AUDIO, Item.USED_AS_BACKGROUND, who.getMemberId(),
+                _scene.getId(), audioItemId, 0, new IgnoreConfirmAdapter<Object>(listener));
             return;
         }
 
@@ -523,18 +540,47 @@ public class RoomManager extends SpotSceneManager
      * Part two of modifyPlaylist.
      */
     protected void addToPlaylist2 (
-        MemberObject who, Audio item, InvocationService.ConfirmListener listener)
+        final MemberObject who, final Audio item, final InvocationService.ConfirmListener listener)
     {
         // make sure they own it
         if (item.ownerId != who.getMemberId()) {
-            // TODO: log?
-            listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            // TODO: log this?
+            listener.requestFailed(InvocationCodes.E_ACCESS_DENIED);
             return;
         }
 
-        // TODO: item usage considerations
+        final boolean realManager = isStrictlyManager(who);
+        if (!realManager && (item.used == Item.UNUSED)) {
+            // we need to make no changes to usage: so just do it!
+            addToPlaylist3(who, item, listener);
 
-        // at this point they own it and we're happy with them, so add it!
+        } else {
+            int oldItemId = realManager ? 0 : item.itemId;
+            int newItemId = realManager ? item.itemId : 0;
+            // we need to update the item usage
+            _itemMan.updateItemUsage(Item.AUDIO, Item.USED_AS_BACKGROUND, who.getMemberId(),
+                _scene.getId(), oldItemId, newItemId,
+                new IgnoreConfirmAdapter<Object>(listener) {
+                    @Override public void requestCompleted (Object result) {
+                        if (realManager) {
+                            item.used = Item.USED_AS_BACKGROUND;
+                            item.location = _scene.getId();
+                        } else {
+                            item.used = Item.UNUSED;
+                            item.location = 0;
+                        }
+                        addToPlaylist3(who, item, listener);
+                    }
+                });
+        }
+    }
+
+    /**
+     * Finish adding music to the playlist.
+     */
+    protected void addToPlaylist3 (
+        MemberObject who, Audio item, InvocationService.ConfirmListener listener)
+    {
         _roomObj.startTransaction();
         try {
             // add the song if it's not already there
