@@ -6,6 +6,7 @@ package com.threerings.msoy.client {
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.utils.setTimeout; // function
+
 import mx.containers.Grid;
 import mx.containers.GridRow;
 import mx.controls.CheckBox;
