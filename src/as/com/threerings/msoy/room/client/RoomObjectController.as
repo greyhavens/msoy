@@ -593,17 +593,19 @@ public class RoomObjectController extends RoomController
             svc.callPet(_wdctx.getClient(), itemId, _wdctx.confirmListener("m.pet_called"));
             return;
         }
-        if (itemType == Item.AUDIO) {
-            // TODO: check room restriction
-            // TODO: no-op if already present, double-clicking idiots
-            _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), itemId, true,
-                _wdctx.confirmListener("m.music_added", MsoyCodes.WORLD_MSGS));
-            return;
-        }
 
-        if (!canManageRoom()) {
-            _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
-            return;
+        if (itemType == Item.AUDIO) {
+            // no-op if it's already here
+            if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
+                return;
+            }
+            // TODO: check room restrictions
+
+        } else {
+            if (!canManageRoom()) {
+                _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
+                return;
+            }
         }
 
         if (itemType != Item.DECOR && itemType != Item.AUDIO) {
@@ -614,23 +616,18 @@ public class RoomObjectController extends RoomController
         var ident :ItemIdent = new ItemIdent(itemType, itemId);
 
         var gotItem :Function = function (item :Item) :void {
-
             // a function we'll invoke when we're ready to use the item
             var useNewItem :Function = function () :void {
-                var newScene :MsoyScene;
-
                 if (item.getType() == Item.DECOR) {
-                    newScene = _scene.clone() as MsoyScene;
+                    var newScene :MsoyScene = _scene.clone() as MsoyScene;
                     var newSceneModel :MsoySceneModel = MsoySceneModel(newScene.getSceneModel());
                     newSceneModel.decor = item as Decor;
                     applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
                 } else if (item.getType() == Item.AUDIO) {
-                    var audio :Audio = item as Audio;
-                    newScene = _scene.clone() as MsoyScene;
-                    (newScene.getSceneModel() as MsoySceneModel).audioData =
-                        new AudioData(audio.itemId, audio.audioMedia);
-                    applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
+                    // audio is different
+                    _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), item.itemId, true,
+                        _wdctx.confirmListener("m.music_added", MsoyCodes.WORLD_MSGS));
 
                 } else {
                     // create a generic furniture descriptor
@@ -691,8 +688,11 @@ public class RoomObjectController extends RoomController
             }
 
         } else if (itemType == Item.AUDIO) {
-            _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), itemId, false,
-                _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
+            // only send a request if it's even here
+            if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
+                _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), itemId, false,
+                    _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
+            }
 
         } else if (itemType == Item.DECOR || itemType == Item.AUDIO) {
             var newScene :MsoyScene = _scene.clone() as MsoyScene;
