@@ -454,12 +454,7 @@ public class GameLiaison
             return true;
         }
 
-        if (_trophies.length == 0) {
-            return true;
-        }
-
-        TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
-        return false;
+        return TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
     }
 
     /** Provides access to main client services. */

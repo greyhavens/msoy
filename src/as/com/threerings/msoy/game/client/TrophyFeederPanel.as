@@ -44,8 +44,15 @@ public class TrophyFeederPanel extends FloatingPanel
 {
     public var log :Log = Log.getLog(this);
 
+    /**
+     * Shows a popup that asks if the user wants to post any of their earned trophies to their
+     * Facebook feed.
+     *
+     * @return true if the popup was shown, false if it was not shown because no valid trophies
+     * were supplied.
+     */
     public static function show (gctx :GameContext, gameId :int, gameName :String,
-                                 trophies :Array /* of Trophy */, onClose :Function) :void
+                                 trophies :Array /* of Trophy */, onClose :Function) :Boolean
     {
         if (trophies != null) {
             trophies = trophies.filter(function (trophy :Trophy, index :int, arr :Array) :Boolean {
@@ -55,7 +62,7 @@ public class TrophyFeederPanel extends FloatingPanel
 
         if (trophies == null || trophies.length == 0) {
             onClose();
-            return;
+            return false;
         }
 
         var tfp :TrophyFeederPanel;
@@ -64,6 +71,7 @@ public class TrophyFeederPanel extends FloatingPanel
             onClose();
         });
         tfp.open();
+        return true;
     }
 
     public function TrophyFeederPanel (ctx :MsoyContext, trophies :Array, gameName :String)
