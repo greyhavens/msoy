@@ -49,6 +49,9 @@ public class MsoySceneModel extends SceneModel
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public byte accessControl;
 
+    /** Uses the accessControl constants to control who can add to the playlist. */
+    public byte playlistControl;
+
     /** The type of owner that owns this scene. */
     public byte ownerType;
 
@@ -69,9 +72,6 @@ public class MsoySceneModel extends SceneModel
 
     /** Decor item reference. */
     public Decor decor;
-
-    /** Audio data representation. */
-    public AudioData audioData;
 
     /** Constructor. */
     public MsoySceneModel ()
@@ -230,7 +230,7 @@ public class MsoySceneModel extends SceneModel
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
         model.entrance = (MsoyLocation) entrance.clone();
-        // decor, audioData and ownerName are ok to just copy by reference
+        // decor and ownerName are ok to just copy by reference
         model.invalidatePortalInfo();
         return model;
     }

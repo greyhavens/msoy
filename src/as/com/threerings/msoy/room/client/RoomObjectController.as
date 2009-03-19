@@ -62,7 +62,6 @@ import com.threerings.msoy.room.client.updates.UpdateAction;
 import com.threerings.msoy.room.client.updates.UpdateStack;
 
 import com.threerings.msoy.room.data.ActorInfo;
-import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;
@@ -599,11 +598,15 @@ public class RoomObjectController extends RoomController
             if (_roomObj.playlist.containsKey(new ItemIdent(itemType, itemId))) {
                 return;
             }
-            // TODO: check room restrictions
+            if ((_scene.getPlaylistControl() != MsoySceneModel.ACCESS_EVERYONE) &&
+                    !canManageRoom()) {
+                _wdctx.displayFeedback(MsoyCodes.WORLD_MSGS, "e.no_playlist_perm");
+                return;
+            }
 
         } else {
             if (!canManageRoom()) {
-                _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.no_permission");
+                _wdctx.displayFeedback(MsoyCodes.EDITING_MSGS, "e.no_permission");
                 return;
             }
         }
@@ -694,17 +697,11 @@ public class RoomObjectController extends RoomController
                     _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
             }
 
-        } else if (itemType == Item.DECOR || itemType == Item.AUDIO) {
+        } else if (itemType == Item.DECOR) {
             var newScene :MsoyScene = _scene.clone() as MsoyScene;
-            if (itemType == Item.DECOR) {
-                var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
-                newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-                applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
-
-            } else if (itemType == Item.AUDIO) {
-                (newScene.getSceneModel() as MsoySceneModel).audioData = null;
-                applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
-            }
+            var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
+            newSceneModel.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+            applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
         } else {
             for each (var furni :FurniData in _scene.getFurni()) {
@@ -998,18 +995,6 @@ public class RoomObjectController extends RoomController
                 if (oldId != 0) {
                     _wdctx.getWorldClient().itemUsageChangedToGWT(
                         Item.DECOR, oldId, Item.UNUSED, 0);
-                }
-            }
-            newId = (attrsUpdate.audioData == null) ? 0 : attrsUpdate.audioData.itemId;
-            oldId = (_scene.getAudioData() == null) ? 0 : _scene.getAudioData().itemId;
-            if (newId != oldId) {
-                if (newId != 0) {
-                    _wdctx.getWorldClient().itemUsageChangedToGWT(
-                        Item.AUDIO, newId, Item.USED_AS_BACKGROUND, _scene.getId());
-                }
-                if (oldId != 0) {
-                    _wdctx.getWorldClient().itemUsageChangedToGWT(
-                        Item.AUDIO, oldId, Item.UNUSED, 0);
                 }
             }
 

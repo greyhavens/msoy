@@ -24,7 +24,6 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
-import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomDetail;
@@ -79,14 +78,11 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp VERSION = colexp(_R, "version");
     public static final ColumnExp NAME = colexp(_R, "name");
     public static final ColumnExp DECOR_ID = colexp(_R, "decorId");
-    public static final ColumnExp AUDIO_ID = colexp(_R, "audioId");
-    public static final ColumnExp AUDIO_MEDIA_HASH = colexp(_R, "audioMediaHash");
-    public static final ColumnExp AUDIO_MEDIA_TYPE = colexp(_R, "audioMediaType");
+    public static final ColumnExp PLAYLIST_CONTROL = colexp(_R, "playlistControl");
     public static final ColumnExp CANONICAL_IMAGE_HASH = colexp(_R, "canonicalImageHash");
     public static final ColumnExp CANONICAL_IMAGE_TYPE = colexp(_R, "canonicalImageType");
     public static final ColumnExp THUMBNAIL_HASH = colexp(_R, "thumbnailHash");
     public static final ColumnExp THUMBNAIL_TYPE = colexp(_R, "thumbnailType");
-    public static final ColumnExp AUDIO_VOLUME = colexp(_R, "audioVolume");
     public static final ColumnExp ENTRANCE_X = colexp(_R, "entranceX");
     public static final ColumnExp ENTRANCE_Y = colexp(_R, "entranceY");
     public static final ColumnExp ENTRANCE_Z = colexp(_R, "entranceZ");
@@ -98,7 +94,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 11;
+    public static final int SCHEMA_VERSION = 12;
 
     /** Define the sort order for the new & hot queries. */
     public static Tuple<SQLExpression, Order> ixNewAndHot_v3 ()
@@ -129,15 +125,8 @@ public class SceneRecord extends PersistentRecord
     /** The item id of the decord item used for this scene. */
     public int decorId;
 
-    /** The item id of this scene's background music. */
-    public int audioId;
-
-    /** The hash of this scene's background music. */
-    @Column(nullable=true)
-    public byte[] audioMediaHash;
-
-    /** The mime type of this scene's background music. */
-    public byte audioMediaType;
+    /** Who can add to the playlist? */
+    public byte playlistControl;
 
     /** The hash of this scene's canonical image. */
     @Column(nullable=true)
@@ -152,9 +141,6 @@ public class SceneRecord extends PersistentRecord
 
     /** The mime type of this scene's thumbnail image. */
     public byte thumbnailType;
-
-    /** The volume configure for this scene's background music. */
-    public float audioVolume;
 
     /** The default entry point for this scene. X coordinate. */
     public float entranceX;
@@ -197,14 +183,7 @@ public class SceneRecord extends PersistentRecord
         version = model.version;
         name = model.name;
         decorId = model.decor.itemId;
-
-        if (model.audioData != null) {
-            audioId = model.audioData.itemId;
-            audioMediaHash = SceneUtil.flattenMediaDesc(model.audioData.media);
-            audioMediaType = model.audioData.media.mimeType;
-        }
-        audioVolume = 1f; // TODO: this is not used anywhere yet
-
+        playlistControl = model.playlistControl;
         entranceX = model.entrance.x;
         entranceY = model.entrance.y;
         entranceZ = model.entrance.z;
@@ -227,11 +206,7 @@ public class SceneRecord extends PersistentRecord
         model.decor = new Decor();
         model.decor.itemId = decorId;
 
-        if (audioId != 0) {
-            model.audioData = new AudioData(audioId, 
-                SceneUtil.createMediaDesc(audioMediaHash, audioMediaType));
-        }
-
+        model.playlistControl = playlistControl;
         model.entrance = new MsoyLocation(entranceX, entranceY, entranceZ, 180);
 
         return model;

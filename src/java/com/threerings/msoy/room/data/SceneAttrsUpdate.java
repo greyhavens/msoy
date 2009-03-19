@@ -20,11 +20,11 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** New access control info. */
     public byte accessControl;
 
+    /** New playlist control info. */
+    public byte playlistControl;
+
     /** Full description of the new decor. */
     public Decor decor;
-
-    /** Background audio parameters. */
-    public AudioData audioData;
 
     /** The new entrance location. */
     public MsoyLocation entrance;
@@ -37,8 +37,8 @@ public class SceneAttrsUpdate extends SceneUpdate
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
         mmodel.accessControl = accessControl;
+        mmodel.playlistControl = playlistControl;
         mmodel.decor = decor;
-        mmodel.audioData = audioData;
         mmodel.entrance = entrance;
     }
 
@@ -48,5 +48,4 @@ public class SceneAttrsUpdate extends SceneUpdate
     {
         super.validate(model);
     }
-
 }

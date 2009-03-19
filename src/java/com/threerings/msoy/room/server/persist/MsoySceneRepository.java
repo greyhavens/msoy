@@ -20,6 +20,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -100,6 +101,11 @@ public class MsoySceneRepository extends DepotRepository
                 return coerceRating(SceneRatingRecord.class);
             }
         };
+
+        ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioId"));
+        ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioMediaHash"));
+        ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioMediaType"));
+        ctx.registerMigration(SceneRecord.class, new SchemaMigration.Drop(12, "audioVolume"));
     }
 
     /**
@@ -376,16 +382,12 @@ public class MsoySceneRepository extends DepotRepository
 
         } else if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate scup = (SceneAttrsUpdate)update;
-            boolean hasAudio = (scup.audioData != null);
             updatePartial(
                 SceneRecord.class, update.getSceneId(),
                 SceneRecord.NAME, scup.name,
                 SceneRecord.ACCESS_CONTROL, scup.accessControl,
+                SceneRecord.PLAYLIST_CONTROL, scup.playlistControl,
                 SceneRecord.DECOR_ID, scup.decor.itemId,
-                SceneRecord.AUDIO_ID, hasAudio ? scup.audioData.itemId : 0,
-                SceneRecord.AUDIO_MEDIA_HASH,
-                    hasAudio ? SceneUtil.flattenMediaDesc(scup.audioData.media) : null,
-                SceneRecord.AUDIO_MEDIA_TYPE, hasAudio ? scup.audioData.media.mimeType : 0,
                 SceneRecord.ENTRANCE_X, scup.entrance.x,
                 SceneRecord.ENTRANCE_Y, scup.entrance.y,
                 SceneRecord.ENTRANCE_Z, scup.entrance.z);

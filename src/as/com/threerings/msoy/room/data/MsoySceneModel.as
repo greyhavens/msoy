@@ -48,6 +48,9 @@ public class MsoySceneModel extends SceneModel
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public var accessControl :int;
 
+    /** Uses the accessControl constants to control who can add to the playlist. */
+    public var playlistControl :int;
+
     /** The type of owner that owns this scene. */
     public var ownerType :int;
 
@@ -68,9 +71,6 @@ public class MsoySceneModel extends SceneModel
 
     /** Decor item reference. */
     public var decor :Decor;
-
-    /** Audio data representation. */
-    public var audioData :AudioData;
 
     /** Constructor. */
     public function MsoySceneModel ()
@@ -203,6 +203,7 @@ public class MsoySceneModel extends SceneModel
     {
         var model :MsoySceneModel = (super.clone() as MsoySceneModel);
         model.accessControl = accessControl;
+        model.playlistControl = playlistControl;
         model.ownerType = ownerType;
         model.ownerId = ownerId;
         model.ownerName = ownerName;
@@ -210,7 +211,6 @@ public class MsoySceneModel extends SceneModel
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decor = decor;
-        model.audioData = audioData;
         return model;
     }
 
@@ -220,6 +220,7 @@ public class MsoySceneModel extends SceneModel
         super.writeObject(out);
 
         out.writeByte(accessControl);
+        out.writeByte(playlistControl);
         out.writeByte(ownerType);
         out.writeInt(ownerId);
         out.writeObject(ownerName);
@@ -227,7 +228,6 @@ public class MsoySceneModel extends SceneModel
         out.writeObject(furnis);
         out.writeObject(entrance);
         out.writeObject(decor);
-        out.writeObject(audioData);
     }
 
     // documentation inherited
@@ -236,6 +236,7 @@ public class MsoySceneModel extends SceneModel
         super.readObject(ins);
 
         accessControl = ins.readByte();
+        playlistControl = ins.readByte();
         ownerType = ins.readByte();
         ownerId = ins.readInt();
         ownerName = Name(ins.readObject());
@@ -243,14 +244,13 @@ public class MsoySceneModel extends SceneModel
         furnis = TypedArray(ins.readObject());
         entrance = MsoyLocation(ins.readObject());
         decor = Decor(ins.readObject());
-        audioData = AudioData(ins.readObject());
     }
 
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
             ", version=" + version + ", sceneType=" + decor.type +
-            ", decorId=" + decor.itemId + ", audio=" + audioData.itemId + "]";
+            ", decorId=" + decor.itemId + "]";
     }
 
     /**

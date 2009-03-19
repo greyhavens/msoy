@@ -63,7 +63,6 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 
-import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;

@@ -36,6 +36,7 @@ import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.data.FurniData;
+import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**
  * A separate room editing panel, which lets the player edit furniture inside the room.
@@ -141,10 +142,9 @@ public class RoomEditorPanel extends FlyingPanel
         _decorLabel.text = Msgs.EDITING.get("m.decor", decor.name || Msgs.EDITING.get("m.none"));
     }
 
-    public function updateMusicName (hasMusic :Boolean, name :String) :void
+    public function updatePlaylistControl (playlistControl :int) :void
     {
-        _musicLabel.text = Msgs.EDITING.get("m.music",
-            name || (hasMusic ? "..." : Msgs.EDITING.get("m.none")));
+        _playlistControl.selected = (playlistControl == MsoySceneModel.ACCESS_EVERYONE);
     }
 
     public function setHomeButtonEnabled (enabled :Boolean) :void
@@ -295,11 +295,15 @@ public class RoomEditorPanel extends FlyingPanel
         addChild(namebar);
 
         // container for item stuffs
-
         var contents :Grid = new Grid();
         contents.styleName = "roomEditContents";
         contents.percentWidth = 100;
         addChild(contents);
+
+        // playlist control
+        _playlistControl = new CommandCheckBox(Msgs.EDITING.get("l.playlist"),
+            _controller.setPlaylistControl);
+        GridUtil.addRow(contents, _playlistControl, [ 3, 1 ]);
 
         // decor name
         var decorBox :Box = new HBox();
@@ -310,17 +314,7 @@ public class RoomEditorPanel extends FlyingPanel
             Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.DECOR));
         GridUtil.addRow(contents, decorBox, [3, 1]);
 
-        // music name
-        var musicBox :Box = new HBox();
-        musicBox.percentWidth = 100;
-        musicBox.addChild(_musicLabel = FlexUtil.createLabel(""));
-        _musicLabel.width = 200;
-        musicBox.addChild(new CommandButton(
-            Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.AUDIO));
-//        GridUtil.addRow(contents, musicBox, [3, 1]);
-
         // item name combo box
-
         var box :Box = new HBox();
         box.styleName = "roomEditButtonBar";
         box.percentWidth = 100;
@@ -531,8 +525,9 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _removeLinkButton :UIComponent;
     protected var _customConfigButton :UIComponent;
 
+    protected var _playlistControl :CommandCheckBox;
+
     protected var _decorLabel :Label;
-    protected var _musicLabel :Label;
 
     protected var _curTarget :FurniSprite;
 

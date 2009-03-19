@@ -105,6 +105,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Returns the playlist control for the scene.
+     */
+    public byte getPlaylistControl ()
+    {
+        return _model.playlistControl;
+    }
+
+    /**
      * Returns the type of the scene.
      */
     public byte getSceneType ()
@@ -151,14 +159,6 @@ public class MsoyScene extends SceneImpl
     public Decor getDecor ()
     {
         return _model.decor;
-    }
-
-    /**
-     * Retrieve the scene background audio.
-     */
-    public AudioData getAudioData ()
-    {
-        return _model.audioData;
     }
 
     /**

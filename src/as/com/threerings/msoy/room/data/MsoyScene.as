@@ -57,6 +57,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Returns the playlist control for the scene.
+     */
+    public function getPlaylistControl () :int
+    {
+        return _msoyModel.playlistControl;
+    }
+
+    /**
      * Returns the scene type.
      */
     public function getSceneType () :int
@@ -108,14 +116,6 @@ public class MsoyScene extends SceneImpl
     public function getDecor () :Decor
     {
         return _msoyModel.decor;
-    }
-
-    /**
-     * Retrieve the scene background audio.
-     */
-    public function getAudioData () :AudioData
-    {
-        return _msoyModel.audioData;
     }
 
     /**

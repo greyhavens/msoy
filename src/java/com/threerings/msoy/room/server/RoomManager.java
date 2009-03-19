@@ -107,7 +107,6 @@ import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.room.client.RoomService;
 import com.threerings.msoy.room.data.ActorInfo;
-import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.Controllable;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
@@ -365,20 +364,14 @@ public class RoomManager extends SpotSceneManager
             SceneAttrsUpdate update = new SceneAttrsUpdate();
             update.init(scene.getId(), scene.getVersion());
             update.name = scene.getName();
+            update.accessControl = scene.getAccessControl();
+            update.playlistControl = scene.getPlaylistControl();
             update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-            update.audioData = scene.getAudioData();
             update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
             doRoomUpdate(update, memberId, null);
 
         } else if (item.type == Item.AUDIO) {
-            // clear out the audio
-            SceneAttrsUpdate update = new SceneAttrsUpdate();
-            update.init(scene.getId(), scene.getVersion());
-            update.name = scene.getName();
-            update.decor = scene.getDecor();
-            update.audioData = null;
-            update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-            doRoomUpdate(update, memberId, null);
+            // TODO: remove from playlist? This is not ever called presently
 
         } else {
             // find the right furni and pull it out
@@ -515,9 +508,11 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        // TODO: check non-owner adding permissions
-
         // now handle additions
+        if ((((MsoyScene)getScene()).getPlaylistControl() != MsoySceneModel.ACCESS_EVERYONE) &&
+                !canManage(who)) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
         _itemMan.getItem(key, new IgnoreConfirmAdapter<Item>(listener) {
             @Override public void requestCompleted (Item result) {
                 addToPlaylist2(who, (Audio)result, listener);
@@ -1526,17 +1521,6 @@ public class RoomManager extends SpotSceneManager
                         log, "Unable to update decor usage"));
             }
 
-            // same with background audio - mark new one as used, unmark old one
-            AudioData audioData = msoyScene.getAudioData();
-            int curAudioId = (audioData == null) ? 0 : audioData.itemId;
-            int newAudioId = (up.audioData == null) ? 0 : up.audioData.itemId;
-            if (curAudioId != newAudioId) {
-                _itemMan.updateItemUsage(
-                    Item.AUDIO, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
-                    curAudioId, newAudioId,
-                    new ComplainingListener<Void>(log, "Unable to update audio usage"));
-            }
-
             // if the name or access controls were modified, we need to update our HostedPlace
             boolean nameChange = !msoyScene.getName().equals(up.name);
             if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
@@ -1544,6 +1528,8 @@ public class RoomManager extends SpotSceneManager
                     msoyScene.getOwnerId(), msoyScene.getOwnerType(),
                     up.accessControl);
             }
+
+            // TODO: if playlistControl changed, remove all inappropriate songs?
 
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate) update;

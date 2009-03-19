@@ -65,11 +65,10 @@ public class SceneUpdateAction
 
     /** Names of scene attributes that will be updated during an update. */
     protected static const ATTRS_TO_COPY :Array =
-        [ "name", "accessControl", "decor", "audioData", "entrance" ];
+        [ "name", "accessControl", "playlistControl", "decor", "entrance" ];
 
     protected var _oldSceneData :Object;
     protected var _newSceneData :Object;
     protected var _ctx :WorldContext;
-
 }
 }

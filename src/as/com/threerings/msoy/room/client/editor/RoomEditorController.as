@@ -32,7 +32,6 @@ import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;
 
-import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate_Add;
 import com.threerings.msoy.room.data.FurniUpdate_Change;
@@ -103,7 +102,7 @@ public class RoomEditorController
 
         // clear out the names cache, and ping the server
         _names = new HashMap();
-        queryServerForNames(this.scene.getFurni(), this.scene.getAudioData());
+        queryServerForNames(this.scene.getFurni());
 
         // make the fake entrance
         _entranceSprite = new EntranceSprite(_ctx, scene.getEntrance());
@@ -113,6 +112,7 @@ public class RoomEditorController
         _names.put(id, { label: Msgs.EDITING.get("l.entrance"), data: id });
 
         _panel.setDecor(scene.getDecor());
+        _panel.updatePlaylistControl(scene.getPlaylistControl());
 
         // hide advanced ui
         actionAdvancedEditing(false);
@@ -132,6 +132,15 @@ public class RoomEditorController
         // actionEditorClosed()
     }
 
+    public function setPlaylistControl (openAccess :Boolean) :void
+    {
+        var newscene :MsoyScene = scene.clone() as MsoyScene;
+        var newmodel :MsoySceneModel = newscene.getSceneModel() as MsoySceneModel;
+        newmodel.playlistControl =
+            openAccess ? MsoySceneModel.ACCESS_EVERYONE : MsoySceneModel.ACCESS_OWNER_ONLY;
+        updateScene(scene, newscene);
+    }
+
     /**
      * Receives a scene update from the controller, and refreshes the edited target appropriately.
      */
@@ -147,14 +156,14 @@ public class RoomEditorController
             // update sprite data
             _entranceSprite.getFurniData().loc.set(up.entrance);
             _entranceSprite.update(_entranceSprite.getFurniData());
+            _panel.updatePlaylistControl(up.playlistControl);
             _panel.setDecor(up.decor);
-            queryServerForNames(null, up.audioData);
             updateNameDisplay();
 
             refreshTarget();
 
         } else if (update is FurniUpdate_Add) {
-            queryServerForNames([ (update as FurniUpdate_Add).data ], null);
+            queryServerForNames([ (update as FurniUpdate_Add).data ]);
             updateNameDisplay();
 
         } else if (update is FurniUpdate_Change) {
@@ -464,8 +473,7 @@ public class RoomEditorController
      * Helper function, returns an array of ItemIdents of pieces of furniture from the specified
      * /furnis/ array, whose names are not stored in the cache.
      */
-    protected function findNamelessFurnis (
-        furnis :Array, music :AudioData) :TypedArray /* of ItemIdent */
+    protected function findNamelessFurnis (furnis :Array) :TypedArray /* of ItemIdent */
     {
         var idents :TypedArray = TypedArray.create(ItemIdent);
         var ident :ItemIdent;
@@ -477,27 +485,20 @@ public class RoomEditorController
                 }
             }
         }
-        if (music != null) {
-            ident = new ItemIdent(Item.AUDIO, music.itemId);
-            if (!_names.containsKey(ident)) {
-                idents.push(ident);
-            }
-        }
         return idents;
     }
 
     /**
      * Given a list of furnis, retrieves names of furnis we don't yet know about.
      */
-    protected function queryServerForNames (
-        furnis :Array /* of FurniData */, music :AudioData) :void
+    protected function queryServerForNames (furnis :Array /* of FurniData */) :void
     {
-        if (furnis == null && music == null) {
+        if (furnis == null) {
             return; // nothing to do
         }
 
         // find which furni names we're missing
-        var idents :TypedArray = findNamelessFurnis(furnis, music);
+        var idents :TypedArray = findNamelessFurnis(furnis);
 
         if (idents.length == 0) {
             return; // no names are missing - we're done!
@@ -563,11 +564,6 @@ public class RoomEditorController
         defs.sortOn("label", Array.CASEINSENSITIVE);
 
         _panel.updateNameList(defs);
-        var music :AudioData = this.scene.getAudioData();
-        var entry :Object = (music == null) ? null :
-            _names.get(new ItemIdent(Item.AUDIO, music.itemId));
-        _panel.updateMusicName((music != null), (entry == null) ? null : String(entry.label));
-
         selectTargetName();
     }
 

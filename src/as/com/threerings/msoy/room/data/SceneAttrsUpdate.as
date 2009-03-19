@@ -25,11 +25,11 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** New access control info. */
     public var accessControl :int;
 
+    /** New playlist control info. */
+    public var playlistControl :int;
+
     /** Full description of the new decor. */
     public var decor :Decor;
-
-    /** Background audio parameters. */
-    public var audioData :AudioData;
 
     /** The new entrance location. */
     public var entrance :MsoyLocation;
@@ -41,8 +41,8 @@ public class SceneAttrsUpdate extends SceneUpdate
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.name = name;
         mmodel.accessControl = accessControl;
+        mmodel.playlistControl = playlistControl;
         mmodel.decor = decor;
-        mmodel.audioData = audioData;
         mmodel.entrance = entrance;
     }
 
@@ -52,8 +52,8 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         out.writeField(name);
         out.writeByte(accessControl);
+        out.writeByte(playlistControl);
         out.writeObject(decor);
-        out.writeObject(audioData);
         out.writeObject(entrance);
     }
 
@@ -63,8 +63,8 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         name = (ins.readField(String) as String);
         accessControl = ins.readByte();
+        playlistControl = ins.readByte();
         decor = Decor(ins.readObject());
-        audioData = AudioData(ins.readObject());
         entrance = MsoyLocation(ins.readObject());
     }
 }
