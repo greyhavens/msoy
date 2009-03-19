@@ -315,6 +315,14 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
+     * Get the social director.
+     */
+    public function getSocialDirector () :SocialDirector
+    {
+        return _socialDir;
+    }
+
+    /**
      * Get the message manager.
      */
     public function getMessageManager () :MessageManager

@@ -50,6 +50,9 @@ public class LobbyGameLiaison extends GameLiaison
         // listen for changes in world location so that we can shutdown if we move
         _worldLocObs = new LocationAdapter(null, worldLocationDidChange, null);
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
+
+        // track the people we play with for potential friending
+        _wctx.getSocialDirector().trackLobbiedGame(_gctx);
     }
 
     /**

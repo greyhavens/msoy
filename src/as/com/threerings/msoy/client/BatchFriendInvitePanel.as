@@ -13,13 +13,18 @@ public class BatchFriendInvitePanel extends SelectPlayersPanel
 {
     /**
      * Shows the friender popup with the given players and with game-specific text. The callback
-     * will be invoked if the dialog is not shown for any reason, or after the user closes it.
+     * will be invoked only if the dialog is shown and then closed. Returns true if the dialog is
+     * open.
      */
     public static function showPostGame (
-        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, finished :Function) :void
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, onClose :Function) :Boolean
     {
         var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "game");
-        panel.maybeOpenWithCallback(finished);
+        panel.maybeOpen();
+        if (panel.isOpen()) {
+            panel.addCloseCallback(onClose);
+        }
+        return panel.isOpen();
     }
 
     /**
