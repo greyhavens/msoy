@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import client.item.ImageChooserPopup;
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Displays a small preview image and allows the selection of an image from the user's inventory.
@@ -34,7 +34,7 @@ public class PhotoChoiceBox extends FlexTable
 
         setWidget(0, 1, MsoyUI.createTinyButton("Choose...", new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(thumbnail, new MsoyCallback<MediaDesc>() {
+                ImageChooserPopup.displayImageChooser(thumbnail, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc media) {
                         if (media != null) {
                             setMedia(media);

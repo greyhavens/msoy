@@ -7,7 +7,7 @@ import client.shell.CShell;
 import client.ui.ClickBox;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -36,7 +36,7 @@ public class GalleryPanel extends FlowPanel
     {
         addStyleName("galleryPanel");
 
-        _gallerysvc.loadGalleries(memberId, new MsoyCallback<GalleryListData>() {
+        _gallerysvc.loadGalleries(memberId, new InfoCallback<GalleryListData>() {
             public void onSuccess (GalleryListData result) {
                 displayGalleries(result);
             }

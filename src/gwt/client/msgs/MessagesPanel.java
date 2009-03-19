@@ -35,7 +35,7 @@ import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -175,7 +175,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             public void execute () {
                 // TODO: if forum admin, make them send a mail to the poster explaining why their
                 // post was deleted?
-                _forumsvc.deleteMessage(message.messageId, new MsoyCallback<Void>() {
+                _forumsvc.deleteMessage(message.messageId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         removeItem(message);
                         MsoyUI.info(_mmsgs.msgPostDeleted());
@@ -273,7 +273,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                 toolBar.add(makeInfoImage(_images.edit_post(), _mmsgs.inlineEdit(),
                                           new ClickListener() {
                     public void onClick (Widget sender) {
-                        _parent.editPost(_message, new MsoyCallback<ForumMessage>() {
+                        _parent.editPost(_message, new InfoCallback<ForumMessage>() {
                             public void onSuccess (ForumMessage message) {
                                 setMessage(message);
                             }

@@ -14,7 +14,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 
 import client.shell.DynamicLookup;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NaviUtil;
 
 /**
@@ -47,7 +47,7 @@ public class SubItemPanel extends PagedGrid<Item>
             return;
         }
         _models.loadSubModel(_memberId, _type, _parent.getSuiteId(),
-            new MsoyCallback<DataModel<Item>>() {
+            new InfoCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> model) {
                 setModel(model, 0);
             }

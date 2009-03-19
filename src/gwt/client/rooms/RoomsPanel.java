@@ -25,7 +25,7 @@ import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.FlashClients;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class RoomsPanel extends FlowPanel
@@ -54,7 +54,7 @@ public class RoomsPanel extends FlowPanel
 
         add(header);
 
-        _worldsvc.loadOverview(new MsoyCallback<WebRoomService.OverviewResult>() {
+        _worldsvc.loadOverview(new InfoCallback<WebRoomService.OverviewResult>() {
             public void onSuccess (WebRoomService.OverviewResult overview) {
                 init(overview);
             }

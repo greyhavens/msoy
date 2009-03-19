@@ -30,7 +30,7 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
@@ -68,7 +68,7 @@ public class EditIssuePanel extends SmartTable
         fillEditPanel();
 
         if (messageId != 0) {
-            _issuesvc.loadMessage(messageId, new MsoyCallback<ForumMessage>() {
+            _issuesvc.loadMessage(messageId, new InfoCallback<ForumMessage>() {
                 public void onSuccess (ForumMessage msg) {
                     if (msg != null) {
                         _messageId = messageId;
@@ -86,7 +86,7 @@ public class EditIssuePanel extends SmartTable
             setIssue(issue, 0, 0);
 
         } else {
-            _issuesvc.loadIssue(issueId, new MsoyCallback<Issue>() {
+            _issuesvc.loadIssue(issueId, new InfoCallback<Issue>() {
                 public void onSuccess (Issue issue) {
                     if (issue == null) {
                         MsoyUI.error(_msgs.errINotFound());
@@ -108,7 +108,7 @@ public class EditIssuePanel extends SmartTable
         } else {
             fillViewPanel();
         }
-        _issuesvc.loadMessages(_issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
+        _issuesvc.loadMessages(_issue.issueId, messageId, new InfoCallback<List<ForumMessage>>() {
             public void onSuccess (List<ForumMessage> messages) {
                 if (messages != null) {
                     setMessages(messages);
@@ -187,7 +187,7 @@ public class EditIssuePanel extends SmartTable
         setText(row, 0, _msgs.iOwner(), 1, "Label");
         setWidget(row++, 1, _ownerBox = new ListBox());
         _ownerBox.addItem(_msgs.iNoOwner());
-        _issuesvc.loadOwners(new MsoyCallback<List<MemberName>>() {
+        _issuesvc.loadOwners(new InfoCallback<List<MemberName>>() {
             public void onSuccess (List<MemberName> owners) {
                 if (owners != null) {
                     setOwners(owners);

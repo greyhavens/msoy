@@ -42,7 +42,7 @@ import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
@@ -63,7 +63,7 @@ public class EditAccountPanel extends FlowPanel
             return;
         }
 
-        _usersvc.getAccountInfo(new MsoyCallback<AccountInfo>() {
+        _usersvc.getAccountInfo(new InfoCallback<AccountInfo>() {
             public void onSuccess (AccountInfo info) {
                 init(info);
             }
@@ -344,7 +344,7 @@ public class EditAccountPanel extends FlowPanel
         table.setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: display a little circular "pending" icon; turn off clickability
-                _fbconnect.requireSession(new MsoyCallback<String>() {
+                _fbconnect.requireSession(new InfoCallback<String>() {
                     public void onSuccess (String uid) {
                         connectToFacebook(FBConnect.readCreds(), false);
                     }
@@ -411,7 +411,7 @@ public class EditAccountPanel extends FlowPanel
     protected void updateCharity (final int newCharityId)
     {
         _upcharity.setEnabled(false);
-        _usersvc.updateCharity(newCharityId, new MsoyCallback<Void>() {
+        _usersvc.updateCharity(newCharityId, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.echarityUpdated());
             }
@@ -516,7 +516,7 @@ public class EditAccountPanel extends FlowPanel
 
     protected void connectToFacebook (final FacebookCreds creds, boolean override)
     {
-        _usersvc.linkExternalAccount(creds, override, new MsoyCallback<Boolean>() {
+        _usersvc.linkExternalAccount(creds, override, new InfoCallback<Boolean>() {
             public void onSuccess (Boolean succeeded) {
                 if (succeeded) {
                     MsoyUI.info(_msgs.fbconnectSuccess());

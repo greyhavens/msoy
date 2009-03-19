@@ -25,7 +25,7 @@ import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -156,7 +156,7 @@ public class ABTestEditorDialog extends BorderedDialog
         }
 
         if (_isNewTest) {
-            _adminsvc.createTest(_test, new MsoyCallback<Void>() {
+            _adminsvc.createTest(_test, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(_msgs.abTestCreated());
                     ABTestEditorDialog.this.hide();
@@ -171,7 +171,7 @@ public class ABTestEditorDialog extends BorderedDialog
         }
 
         else {
-            _adminsvc.updateTest(_test, new MsoyCallback<Void>() {
+            _adminsvc.updateTest(_test, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(_msgs.abTestUpdated());
                     ABTestEditorDialog.this.hide();

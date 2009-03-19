@@ -18,7 +18,7 @@ import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -52,7 +52,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
         protected void refreshUI ()
         {
             _groupsvc.getGroupInfo(
-                _invitePayload.groupId, new MsoyCallback<GroupService.GroupInfo>() {
+                _invitePayload.groupId, new InfoCallback<GroupService.GroupInfo>() {
                 public void onSuccess (GroupService.GroupInfo result) {
                     _info = result;
                     buildUI();
@@ -80,7 +80,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
                 }
                 @Override protected boolean gotResult (Void result) {
                     _invitePayload.responded = true;
-                    updateState(_invitePayload, new MsoyCallback.NOOP<Void>());
+                    updateState(_invitePayload, new InfoCallback.NOOP<Void>());
                     refreshUI();
                     return true;
                 }

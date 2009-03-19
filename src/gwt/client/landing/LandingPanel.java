@@ -24,7 +24,7 @@ import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -113,7 +113,7 @@ public class LandingPanel extends SimplePanel
         content.add(new LandingCopyright(), 48, 1012);
 
         // collect the data for this page
-        _landingsvc.getLandingData(new MsoyCallback<LandingData>() {
+        _landingsvc.getLandingData(new InfoCallback<LandingData>() {
             public void onSuccess (LandingData data) {
                 topGamesPanel.setGames(data.topGames);
                 _featuredGroup.setWhirleds(data.featuredWhirleds);

@@ -24,7 +24,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -54,7 +54,7 @@ public class ABTestListPanel extends FlowPanel
 
         add(_contents = new SmartTable("Tests", 10, 0));
 
-        _adminsvc.getABTests(new MsoyCallback<List<ABTest>>() {
+        _adminsvc.getABTests(new InfoCallback<List<ABTest>>() {
             public void onSuccess (List<ABTest> tests) {
                 displayTests(tests);
             }
@@ -100,7 +100,7 @@ public class ABTestListPanel extends FlowPanel
             ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(), test.name, true,
-                                              new MsoyCallback<Integer>() {
+                                              new InfoCallback<Integer>() {
                             public void onSuccess (Integer group) {
                                 MsoyUI.info("You are in group #" + group);
                             }

@@ -34,7 +34,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.util.ClickCallback;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import client.ui.MsoyUI;
@@ -62,7 +62,7 @@ public class GameInvitePanel extends InvitePanel
         loading.center();
 
         // load the game detail, then initialize
-        _gamesvc.loadGameDetail(gameId, new MsoyCallback<GameDetail>() {
+        _gamesvc.loadGameDetail(gameId, new InfoCallback<GameDetail>() {
             public void onSuccess (GameDetail result) {
                 init(loading, args, result);
             }
@@ -116,7 +116,7 @@ public class GameInvitePanel extends InvitePanel
                     protected void handleSend (
                         String from, String msg, final List<EmailContact> addrs) {
                         _invitesvc.sendGameInvites(addrs, detail.gameId, from, url, msg,
-                                                   new MsoyCallback<InvitationResults>() {
+                                                   new InfoCallback<InvitationResults>() {
                             public void onSuccess (InvitationResults ir) {
                                 _addressList.clear();
                                 // show the results (once we implement sending invites to
@@ -241,7 +241,7 @@ public class GameInvitePanel extends InvitePanel
                 row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 
             // get friend list from the server; fill in our grid
-            _invitesvc.getFriends(ROWS * COLS, new MsoyCallback<List<MemberCard>>() {
+            _invitesvc.getFriends(ROWS * COLS, new InfoCallback<List<MemberCard>>() {
                 public void onSuccess (List<MemberCard> result) {
                     _grid.clear();
                     for (int ii = 0; ii < result.size(); ++ii) {

@@ -26,7 +26,7 @@ import client.ui.NowLoadingWidget;
 import client.ui.PromotionBox;
 import client.ui.RoundBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class MyWhirled extends FlowPanel
@@ -36,7 +36,7 @@ public class MyWhirled extends FlowPanel
         setStyleName("myWhirled");
         _nowLoading = new NowLoadingWidget();
         _nowLoading.center();
-        _mesvc.getMyWhirled(new MsoyCallback<MyWhirledData>() {
+        _mesvc.getMyWhirled(new InfoCallback<MyWhirledData>() {
             public void onSuccess (MyWhirledData data) {
                 init(data);
             }

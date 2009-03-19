@@ -34,7 +34,7 @@ import client.ui.PopupMenu;
 import client.ui.ShareDialog;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -52,7 +52,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // ABTEST: 2009 03 buypanel: switched to loadTestedListing
         _catalogsvc.loadTestedListing(
             CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId,
-            new MsoyCallback<CatalogService.ListingResult>() {
+            new InfoCallback<CatalogService.ListingResult>() {
             public void onSuccess (CatalogService.ListingResult result) {
                 gotListing(result.listing, result.abTestGroup);
             }

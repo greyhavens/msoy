@@ -27,7 +27,7 @@ import com.threerings.msoy.admin.gwt.StatsModel;
 
 import client.shell.Frame;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -63,7 +63,7 @@ public class StatsPanel extends FlowPanel
     {
         String tstr = _types.getItemText(_types.getSelectedIndex());
         final StatsModel.Type type = Enum.valueOf(StatsModel.Type.class, tstr);
-        _adminsvc.getStatsModel(type, new MsoyCallback<StatsModel>() {
+        _adminsvc.getStatsModel(type, new InfoCallback<StatsModel>() {
             public void onSuccess (StatsModel model) {
                 displayReport(type, model);
             }

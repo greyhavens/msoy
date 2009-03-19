@@ -33,7 +33,7 @@ import client.ui.MsoyUI;
 import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -45,7 +45,7 @@ public class RoomDetailPanel extends SmartTable
     {
         super("roomDetailPanel", 0, 10);
 
-        _roomsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
+        _roomsvc.loadRoomDetail(sceneId, new InfoCallback<RoomDetail>() {
             public void onSuccess (RoomDetail detail) {
                 init(detail);
             }
@@ -77,7 +77,7 @@ public class RoomDetailPanel extends SmartTable
         obits.add(WidgetUtil.makeShim(10, 15));
         obits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
             @Override
-            protected void handleRate (byte newRating , MsoyCallback<RatingResult> callback) {
+            protected void handleRate (byte newRating , InfoCallback<RatingResult> callback) {
                 _roomsvc.rateRoom(detail.info.sceneId, newRating, callback);
             }
         });
@@ -86,7 +86,7 @@ public class RoomDetailPanel extends SmartTable
                 CShell.getMemberId() == ((MemberName) detail.owner).getMemberId()) {
             obits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    _roomsvc.canGiftRoom(detail.info.sceneId, new MsoyCallback<Void>() {
+                    _roomsvc.canGiftRoom(detail.info.sceneId, new InfoCallback<Void>() {
                         public void onSuccess (Void nada) {
                             Link.go(Pages.MAIL, Args.compose("w", "r", detail.info.sceneId));
                         }

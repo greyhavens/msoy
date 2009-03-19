@@ -17,7 +17,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -44,7 +44,7 @@ public class FullLogonPanel extends LogonPanel
 
     protected void initiateFacebookLogon ()
     {
-        _fbconnect.requireSession(new MsoyCallback<String>() {
+        _fbconnect.requireSession(new InfoCallback<String>() {
             public void onSuccess (String uid) {
                 CShell.log("Got Facebook Connect uid '" + uid + "'.");
                 FacebookCreds creds = FBConnect.readCreds();
@@ -55,7 +55,7 @@ public class FullLogonPanel extends LogonPanel
                 // TODO: send permaguest member id here
                 _usersvc.externalLogon(
                     DeploymentConfig.version, creds, CShell.frame.getVisitorInfo(),
-                    WebUserService.SESSION_DAYS, new MsoyCallback<SessionData>() {
+                    WebUserService.SESSION_DAYS, new InfoCallback<SessionData>() {
                     public void onSuccess (SessionData data) {
                         CShell.frame.dispatchDidLogon(data);
                     }

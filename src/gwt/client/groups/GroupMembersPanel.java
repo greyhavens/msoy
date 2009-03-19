@@ -31,7 +31,7 @@ import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
@@ -101,7 +101,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         return new Command() {
             public void execute () {
                 _groupsvc.updateMemberRank(_detail.group.groupId, card.name.getMemberId(), rank,
-                    new MsoyCallback<Void>() {
+                    new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             card.rank = rank;
                             card.rankAssigned = System.currentTimeMillis();
@@ -118,7 +118,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         return new Command() {
             public void execute () {
                 _groupsvc.leaveGroup(
-                    _detail.group.groupId, card.name.getMemberId(), new MsoyCallback<Void>() {
+                    _detail.group.groupId, card.name.getMemberId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeItem(card);
                         }

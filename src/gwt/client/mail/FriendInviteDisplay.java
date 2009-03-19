@@ -16,7 +16,7 @@ import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.util.ClickCallback;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -41,7 +41,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void refreshUI (final boolean roundtrip)
         {
             int friendId = _message.author.name.getMemberId();
-            _membersvc.getFriendStatus(friendId, new MsoyCallback<Boolean>() {
+            _membersvc.getFriendStatus(friendId, new InfoCallback<Boolean>() {
                 public void onSuccess (Boolean result) {
                     buildUI(result, roundtrip);
                 }
@@ -77,7 +77,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void mailResponse ()
         {
             _mailsvc.continueConversation(
-                _convoId, _msgs.friendReplyBody(), null, new MsoyCallback.NOOP<ConvMessage>());
+                _convoId, _msgs.friendReplyBody(), null, new InfoCallback.NOOP<ConvMessage>());
         }
 
         protected boolean _thirdPerson;

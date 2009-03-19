@@ -27,7 +27,7 @@ import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -72,7 +72,7 @@ public class MemberList extends PagedGrid<MemberCard>
     {
         return new Command() {
             public void execute () {
-                _membersvc.removeFriend(card.name.getMemberId(), new MsoyCallback<Void>() {
+                _membersvc.removeFriend(card.name.getMemberId(), new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(_msgs.mlRemoved(card.name.toString()));
                         removeItem(card);

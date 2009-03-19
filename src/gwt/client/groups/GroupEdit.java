@@ -44,7 +44,7 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -257,7 +257,7 @@ public class GroupEdit extends FlexTable
     protected void updateGroup ()
     {
         if (commitEdits()) {
-            _groupsvc.updateGroup(_group, _extras, new MsoyCallback<Void>(_submit) {
+            _groupsvc.updateGroup(_group, _extras, new InfoCallback<Void>(_submit) {
                 public void onSuccess (Void result) {
                     Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(_group.groupId), "r"));
                 }
@@ -269,7 +269,7 @@ public class GroupEdit extends FlexTable
     {
         public GroupBuyPanel ()
         {
-            _groupsvc.quoteCreateGroup(new MsoyCallback<PriceQuote>(_cancel) {
+            _groupsvc.quoteCreateGroup(new InfoCallback<PriceQuote>(_cancel) {
                 public void onSuccess (PriceQuote quote) {
                     init(quote, new AsyncCallback<Group>() {
                         public void onSuccess (Group group) {

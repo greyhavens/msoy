@@ -24,7 +24,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.util.LazyDataModel;
 import client.util.ServiceUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Maintains information on catalog listings.
@@ -48,7 +48,7 @@ public class CatalogModels
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
             _catalogsvc.loadCatalog(_query, start, count, _listingCount == -1,
-                new MsoyCallback<CatalogService.CatalogResult>() {
+                new InfoCallback<CatalogService.CatalogResult>() {
                     public void onSuccess (CatalogService.CatalogResult data) {
                         if (_listingCount == -1) {
                             _listingCount = data.listingCount;
@@ -121,7 +121,7 @@ public class CatalogModels
             callback.onSuccess(result);
         } else {
             _catalogsvc.loadSuite(
-                itemType, catalogId, new MsoyCallback<CatalogService.SuiteResult>() {
+                itemType, catalogId, new InfoCallback<CatalogService.SuiteResult>() {
                 public void onSuccess (CatalogService.SuiteResult result) {
                     _suites.put(key, result);
                     callback.onSuccess(result);

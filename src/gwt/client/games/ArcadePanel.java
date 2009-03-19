@@ -24,7 +24,7 @@ import client.ui.MsoyUI;
 import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -40,7 +40,7 @@ public class ArcadePanel extends FlowPanel
 
         add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
 
-        _gamesvc.loadArcadeData(new MsoyCallback<ArcadeData>() {
+        _gamesvc.loadArcadeData(new InfoCallback<ArcadeData>() {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }

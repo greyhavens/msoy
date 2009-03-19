@@ -32,7 +32,7 @@ import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
 import client.util.TextBoxUtil;
@@ -119,7 +119,7 @@ public class BlingPanel extends FlowPanel
             row.add(new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget sender) {
                     _moneysvc.cancelCashOut(_model.memberId, "m.user_cancelled",
-                                            new MsoyCallback<Void>(sender) {
+                                            new InfoCallback<Void>(sender) {
                         public void onSuccess (Void v) {
                             MsoyUI.info(_msgs.cancelCashOutSuccess());
                             // Show the cash out form

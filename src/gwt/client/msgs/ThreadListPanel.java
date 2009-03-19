@@ -30,7 +30,7 @@ import client.ui.RowPanel;
 import client.ui.SearchBox;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -65,7 +65,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     public void search (String search)
     {
         if (_groupId == 0) {
-            _forumsvc.findUnreadThreads(search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+            _forumsvc.findUnreadThreads(search, MAX_RESULTS, new InfoCallback<List<ForumThread>>() {
                 public void onSuccess (List<ForumThread> threads) {
                     setModel(new SimpleDataModel<ForumThread>(threads), 0);
                 }
@@ -73,7 +73,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         }
         else {
             _forumsvc.findThreads(_groupId, search, MAX_RESULTS,
-                new MsoyCallback<List<ForumThread>>() {
+                new InfoCallback<List<ForumThread>>() {
                 public void onSuccess (List<ForumThread> threads) {
                     setModel(new SimpleDataModel<ForumThread>(threads), 0);
                 }

@@ -23,7 +23,7 @@ import client.item.ImageChooserPopup;
 import client.item.ItemUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class ItemRemixer extends FlexTable
@@ -102,7 +102,7 @@ public class ItemRemixer extends FlexTable
      */
     protected void pickPhoto ()
     {
-        ImageChooserPopup.displayImageChooser(false, new MsoyCallback<MediaDesc>() {
+        ImageChooserPopup.displayImageChooser(false, new InfoCallback<MediaDesc>() {
             public void onFailure (Throwable caught) {
                 super.onFailure(caught);
                 // we need to re-configure the bridges
@@ -134,7 +134,7 @@ public class ItemRemixer extends FlexTable
 
         _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
-        _stuffsvc.remixItem(_item, new MsoyCallback<Item>() {
+        _stuffsvc.remixItem(_item, new InfoCallback<Item>() {
             public void onSuccess (Item item) {
                 MsoyUI.info(_emsgs.msgItemUpdated());
                 _parent.remixComplete(item);

@@ -27,7 +27,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -93,7 +93,7 @@ public class DashboardPanel extends SmartTable
     protected void displayDashboard ()
     {
         // load up the information needed to display the dashboard applet
-        _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+        _usersvc.getConnectConfig(new InfoCallback<ConnectConfig>() {
             public void onSuccess (ConnectConfig config) {
                 finishDisplayDashboard(config);
             }

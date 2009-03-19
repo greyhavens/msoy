@@ -22,7 +22,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.shell.CShell;
 
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
@@ -109,7 +109,7 @@ public class ResetPasswordPanel extends FlexTable
     protected void sendResetRequest ()
     {
         String password = CShell.frame.md5hex(_password.getText().trim());
-        _usersvc.resetPassword(_memberId, _code, password, new MsoyCallback<Boolean>() {
+        _usersvc.resetPassword(_memberId, _code, password, new InfoCallback<Boolean>() {
             public void onSuccess (Boolean result) {
                 if (result) {
                     MsoyUI.info(_msgs.resetReset());

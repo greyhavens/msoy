@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -51,7 +51,7 @@ public class PanopticonStatusPanel extends SmartTable
                         nodes.add(_nodeList.getValue(i));
                     }
                 }
-                _adminsvc.restartPanopticon(nodes, new MsoyCallback<Void>() {
+                _adminsvc.restartPanopticon(nodes, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         // Give the logger about 3 seconds to restart before refreshing.
                         new Timer() {
@@ -69,7 +69,7 @@ public class PanopticonStatusPanel extends SmartTable
     
     public void refresh ()
     {
-        _adminsvc.getPeerNodeNames(new MsoyCallback<Set<String>>() {
+        _adminsvc.getPeerNodeNames(new InfoCallback<Set<String>>() {
             public void onSuccess (Set<String> result) {
                 _nodeList.clear();
                 for (String node : result) {

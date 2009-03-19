@@ -8,7 +8,7 @@ import java.util.List;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MoneyUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -65,7 +65,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
     
     protected void reload ()
     {
-        _moneysvc.getCharityBlingInfo(new MsoyCallback<List<CharityBlingInfo>>() {
+        _moneysvc.getCharityBlingInfo(new InfoCallback<List<CharityBlingInfo>>() {
             public void onSuccess (List<CharityBlingInfo> result) {
                 setModel(new SimpleDataModel<CharityBlingInfo>(result), 0);
             }
@@ -148,7 +148,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
             {
                 int blingAmount = Currency.BLING.parse(_amountBox.getText());
                 _moneysvc.charityCashOutBling(entry.memberId, blingAmount,
-                    new MsoyCallback<Void>() {
+                    new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.coEntryCashOutSuccess());

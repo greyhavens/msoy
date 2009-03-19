@@ -21,7 +21,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class OptOutPanel extends SmartTable
@@ -83,7 +83,7 @@ public class OptOutPanel extends SmartTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(_msgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
-                _membersvc.optOut(game, invite.inviteId, new MsoyCallback<Void>() {
+                _membersvc.optOut(game, invite.inviteId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         clear();
                         setText(1, 0, _msgs.optOutSuccessful(invite.inviteeEmail));

@@ -34,7 +34,7 @@ import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -117,7 +117,7 @@ public class ThreadPanel extends TitledListPanel
         _theader.setWidget(0, 3, new MiniNowLoadingWidget(), 1, "Search");
 
         _forumsvc.findMessages(_threadId, query, MAX_RESULTS,
-                               new MsoyCallback<List<ForumMessage>>() {
+                               new InfoCallback<List<ForumMessage>>() {
             public void onSuccess (List<ForumMessage> messages) {
                 _theader.setWidget(0, 3, _search, 1, "Search");
                 _mpanel.setModel(new SimpleDataModel<ForumMessage>(messages), 0);

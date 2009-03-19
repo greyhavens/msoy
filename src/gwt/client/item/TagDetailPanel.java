@@ -41,7 +41,7 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.PromptPopup;
 import client.ui.RowPanel;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.shell.ShellMessages;
 
@@ -224,7 +224,7 @@ public class TagDetailPanel extends VerticalPanel
             if (_canEdit) {
                 final Command remove = new Command() {
                     public void execute () {
-                        _service.untag(tag, new MsoyCallback<TagHistory>() {
+                        _service.untag(tag, new InfoCallback<TagHistory>() {
                             public void onSuccess (TagHistory result) {
                                 _tlist.remove(tag);
                                 gotTags(_tlist);
@@ -252,7 +252,7 @@ public class TagDetailPanel extends VerticalPanel
         }
 
 //         if (!CShell.isGuest()) {
-//             _service.getRecentTags(new MsoyCallback<List<TagHistory>>() {
+//             _service.getRecentTags(new InfoCallback<List<TagHistory>>() {
 //                 public void onSuccess (List<TagHistory> result) {
 //                     _quickTags.clear();
 //                     _quickTags.addItem(_cmsgs.tagSelectOne());
@@ -302,7 +302,7 @@ public class TagDetailPanel extends VerticalPanel
                 MsoyUI.error(_cmsgs.errTagInvalidCharacters());
                 return;
             }
-            _service.tag(tagName, new MsoyCallback<TagHistory>() {
+            _service.tag(tagName, new InfoCallback<TagHistory>() {
                 public void onSuccess (TagHistory result) {
                     _tlist.add(tagName);
                     gotTags(_tlist);

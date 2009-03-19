@@ -42,7 +42,7 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.StyledTabPanel;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.StringUtil;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
@@ -736,14 +736,14 @@ public abstract class ItemEditor extends FlowPanel
         }
 
         if (_item.itemId == 0) {
-            _stuffsvc.createItem(_item, _parentItem, new MsoyCallback<Item>() {
+            _stuffsvc.createItem(_item, _parentItem, new InfoCallback<Item>() {
                 public void onSuccess (Item item) {
                     editComplete(item, true);
                 }
             });
 
         } else {
-            _stuffsvc.updateItem(_item, new MsoyCallback<Void>() {
+            _stuffsvc.updateItem(_item, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     editComplete(_item, false);
                 }

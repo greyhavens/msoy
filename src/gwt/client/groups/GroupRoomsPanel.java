@@ -26,7 +26,7 @@ import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.room.RoomWidget;
 import client.ui.TongueBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -39,7 +39,7 @@ public class GroupRoomsPanel extends VerticalPanel
         _detail = detail;
 
         _roomsvc.loadGroupRooms(
-            _detail.group.groupId, new MsoyCallback<WebRoomService.RoomsResult>() {
+            _detail.group.groupId, new InfoCallback<WebRoomService.RoomsResult>() {
             public void onSuccess (WebRoomService.RoomsResult result) {
                 init(result);
             }
@@ -83,7 +83,7 @@ public class GroupRoomsPanel extends VerticalPanel
             return;
         }
         RoomInfo room = _myRooms.get(index);
-        _groupsvc.transferRoom(_detail.group.groupId, room.sceneId, new MsoyCallback<Void>() {
+        _groupsvc.transferRoom(_detail.group.groupId, room.sceneId, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 moveSceneToGrid(index);
             }

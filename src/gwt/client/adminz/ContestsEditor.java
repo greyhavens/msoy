@@ -34,7 +34,7 @@ import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
@@ -48,7 +48,7 @@ public class ContestsEditor extends FlowPanel
         setStyleName("contestsEditor");
         add(MsoyUI.createLabel(_msgs.contestsLoading(), null));
 
-        _adminsvc.loadContests(new MsoyCallback<List<Contest>>() {
+        _adminsvc.loadContests(new InfoCallback<List<Contest>>() {
             public void onSuccess (List<Contest> contests) {
                 init(contests);
             }
@@ -74,7 +74,7 @@ public class ContestsEditor extends FlowPanel
         create.setText(row, 0, _msgs.contestsIcon());
         create.setWidget(row++, 1, new Button(_msgs.contestsChange(), new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
+                ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
                             _contestIcon = photo;
@@ -277,7 +277,7 @@ public class ContestsEditor extends FlowPanel
         // creating a new contest
         if (_editingRow == -1) {
             System.out.println("creating contest: " + contest.contestId);
-            _adminsvc.addContest(contest, new MsoyCallback<Void>() {
+            _adminsvc.addContest(contest, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     setContestRow(_contestTable, contest, _contestTable.getRowCount());
                     setFormDefaults();
@@ -286,7 +286,7 @@ public class ContestsEditor extends FlowPanel
         // updating an existing contest
         } else {
             System.out.println("updating contest: " + contest.contestId);
-            _adminsvc.updateContest(contest, new MsoyCallback<Void>() {
+            _adminsvc.updateContest(contest, new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     setContestRow(_contestTable, contest, _editingRow);
                     setFormDefaults();

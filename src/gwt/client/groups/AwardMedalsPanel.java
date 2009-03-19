@@ -32,7 +32,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class AwardMedalsPanel extends FlowPanel
@@ -51,7 +51,7 @@ public class AwardMedalsPanel extends FlowPanel
         _medalMap.clear();
         clearSearchResults();
 
-        _groupsvc.getMedals(_groupId, new MsoyCallback<List<Medal>>() {
+        _groupsvc.getMedals(_groupId, new InfoCallback<List<Medal>>() {
             public void onSuccess (List<Medal> medals) {
                 _medals = medals;
                 Collections.sort(_medals);
@@ -135,7 +135,7 @@ public class AwardMedalsPanel extends FlowPanel
     protected void search ()
     {
         _groupsvc.searchGroupMembers(_groupId, _search.getText(),
-            new MsoyCallback<List<VizMemberName>>() {
+            new InfoCallback<List<VizMemberName>>() {
                 public void onSuccess (List<VizMemberName> members) {
                     displaySearchResults(members);
                 }
@@ -150,7 +150,7 @@ public class AwardMedalsPanel extends FlowPanel
             MsoyUI.error(_msgs.awardMedalsNoMedalChosen());
         }
 
-        _groupsvc.awardMedal(member.getMemberId(), medal.medalId, new MsoyCallback<Void>() {
+        _groupsvc.awardMedal(member.getMemberId(), medal.medalId, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.awardMedalsMedalGranted(member.toString(), medal.name));
             }

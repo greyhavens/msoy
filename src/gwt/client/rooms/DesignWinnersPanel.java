@@ -23,7 +23,7 @@ import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import client.room.SceneUtil;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -41,7 +41,7 @@ public class DesignWinnersPanel extends FlowPanel
 
         add(MsoyUI.createHTML(_msgs.designwinnersBlurb(), "Blurb"));
 
-        _worldsvc.loadDesignWinners(new MsoyCallback<List<RoomInfo>>() {
+        _worldsvc.loadDesignWinners(new InfoCallback<List<RoomInfo>>() {
             public void onSuccess (List<RoomInfo> winners) {
                 init(winners);
             }

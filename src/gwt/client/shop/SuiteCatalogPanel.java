@@ -19,7 +19,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import client.item.ListingBox;
 import client.item.SideBar;
 import client.ui.Marquee;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Displays catalog items belonging to a suite.
@@ -29,7 +29,7 @@ public class SuiteCatalogPanel extends SmartTable
     public SuiteCatalogPanel (CatalogModels models, byte itemType, int catalogId)
     {
         this(itemType);
-        models.getSuite(itemType, catalogId, new MsoyCallback<CatalogService.SuiteResult>() {
+        models.getSuite(itemType, catalogId, new InfoCallback<CatalogService.SuiteResult>() {
             public void onSuccess (CatalogService.SuiteResult result) {
                 init(result);
             }
@@ -39,7 +39,7 @@ public class SuiteCatalogPanel extends SmartTable
     public SuiteCatalogPanel (CatalogModels models, int gameId)
     {
         this(Item.GAME);
-        models.getSuite(gameId, new MsoyCallback<CatalogService.SuiteResult>() {
+        models.getSuite(gameId, new InfoCallback<CatalogService.SuiteResult>() {
             public void onSuccess (CatalogService.SuiteResult result) {
                 init(result);
             }

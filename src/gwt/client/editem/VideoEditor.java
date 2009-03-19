@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.ui.MsoyUI;
 import client.util.FlashClients;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * A class for creating and editing {@link Video} digital items.
@@ -119,7 +119,7 @@ public class VideoEditor extends BulkMediaEditor
         // once the full length has been reached, upload the file.
         String data = "id=" + URL.encodeComponent(youtubeId);
         _stuffsvc.publishExternalMedia(data, MediaDesc.EXTERNAL_YOUTUBE,
-            new MsoyCallback<MediaDesc>() {
+            new InfoCallback<MediaDesc>() {
             public void onSuccess (MediaDesc desc) {
                 _video.videoMedia = desc;
                 _youtubeIdBox.setEnabled(true);

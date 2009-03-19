@@ -16,7 +16,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.ui.HeaderBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class SearchPanel extends FlowPanel
@@ -48,7 +48,7 @@ public class SearchPanel extends FlowPanel
         clearResults();
 
         if (query.length() > 0) {
-            _profilesvc.findProfiles(query, new MsoyCallback<List<MemberCard>>() {
+            _profilesvc.findProfiles(query, new InfoCallback<List<MemberCard>>() {
                 public void onSuccess (List<MemberCard> members) {
                     setResults(members, page, query);
                 }

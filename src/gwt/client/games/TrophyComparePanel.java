@@ -23,7 +23,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -38,7 +38,7 @@ public class TrophyComparePanel extends SmartTable
         setText(0, 0, _msgs.compareLoading());
 
         int[] memberIds = new int[] { targetId, CShell.getMemberId() };
-        _gamesvc.compareTrophies(gameId, memberIds, new MsoyCallback<GameService.CompareResult>() {
+        _gamesvc.compareTrophies(gameId, memberIds, new InfoCallback<GameService.CompareResult>() {
             public void onSuccess (GameService.CompareResult result) {
                 init(gameId, result);
             }

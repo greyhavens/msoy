@@ -16,7 +16,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.util.FlashClients;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
 
@@ -40,7 +40,7 @@ public class WorldClient extends Widget
         // if we have not yet determined our default server, find that out now
         if (_defaultHost == null) {
             final String savedArgs = flashArgs;
-            _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+            _usersvc.getConnectConfig(new InfoCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
                     _defaultHost = config.server;
                     _defaultPort = config.port;

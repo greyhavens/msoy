@@ -16,7 +16,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 public abstract class Rating extends FlexTable
     implements Stars.StarMouseListener
@@ -91,7 +91,7 @@ public abstract class Rating extends FlexTable
     // from interface Stars.StarMouseListener
     public void starClicked (final byte newRating)
     {
-        handleRate(newRating, new MsoyCallback<RatingResult>() {
+        handleRate(newRating, new InfoCallback<RatingResult>() {
             public void onSuccess (RatingResult result) {
                 _playerStars.setRating(_memberRating = newRating);
                 _averageStars.setRating(result.getRating());
@@ -101,7 +101,7 @@ public abstract class Rating extends FlexTable
     }
 
     /** Used to notify when the target has been rated by the player. */
-    abstract protected void handleRate (byte newRating, MsoyCallback<RatingResult> callback);
+    abstract protected void handleRate (byte newRating, InfoCallback<RatingResult> callback);
 
     // from interface Stars.StarMouseListener
     public void starMouseOn (byte rating)

@@ -34,7 +34,7 @@ import client.ui.MsoyUI;
 import client.util.BillingUtil;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 import client.util.ServiceUtil;
 
@@ -47,7 +47,7 @@ public class MemberInfoPanel extends SmartTable
     {
         super("memberInfo", 0, 5);
 
-        _adminsvc.getMemberInfo(memberId, new MsoyCallback<MemberAdminInfo>() {
+        _adminsvc.getMemberInfo(memberId, new InfoCallback<MemberAdminInfo>() {
             public void onSuccess (MemberAdminInfo info) {
                 init(info);
             }
@@ -200,7 +200,7 @@ public class MemberInfoPanel extends SmartTable
                 final boolean isCharity = charity.isChecked();
                 final boolean isCoreCharity = coreCharity.isChecked();
                 final String description = charityDescription.getText();
-                AsyncCallback<Void> callback = new MsoyCallback<Void>() {
+                AsyncCallback<Void> callback = new InfoCallback<Void>() {
                     public void onFailure (Throwable caught) {
                         super.onFailure(caught);
                         charity.setChecked(info.charity);

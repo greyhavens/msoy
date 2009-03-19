@@ -34,7 +34,7 @@ import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Displays a single conversation.
@@ -54,7 +54,7 @@ public class ConvoPanel extends FlowPanel
     protected void refresh ()
     {
         clear();
-        _mailsvc.loadConversation(_convoId, new MsoyCallback<MailService.ConvoResult>() {
+        _mailsvc.loadConversation(_convoId, new InfoCallback<MailService.ConvoResult>() {
             public void onSuccess (MailService.ConvoResult result) {
                 init(result);
             }

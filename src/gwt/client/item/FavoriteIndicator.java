@@ -16,7 +16,7 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 
 import client.images.misc.MiscImages;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class FavoriteIndicator extends FlowPanel
@@ -37,7 +37,7 @@ public class FavoriteIndicator extends FlowPanel
             public void onClick (Widget sender) {
                 final boolean favorite = ((ToggleButton) sender).isDown();
                 _itemsvc.setFavorite(_item.getType(), _item.catalogId, favorite,
-                    new MsoyCallback<Void>() {
+                    new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         _memberItemInfo.favorite = favorite;
                     }

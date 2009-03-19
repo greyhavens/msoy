@@ -32,7 +32,7 @@ import client.ui.MsoyUI;
 import client.ui.Stars;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -81,7 +81,7 @@ public class GameGenrePanel extends FlowPanel
         }
         add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
 
-        _gamesvc.loadGameGenre(genre, sortMethod, query, new MsoyCallback<List<GameInfo>>() {
+        _gamesvc.loadGameGenre(genre, sortMethod, query, new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
                 init(genre, games);
             }

@@ -23,7 +23,7 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -71,7 +71,7 @@ public class ShopPage extends Page
             final int itemId = args.get(2, 0);
             final int catalogId = args.get(3, 0);
             final ItemRemixer remixer = new ItemRemixer();
-            _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+            _stuffsvc.loadItem(new ItemIdent(type, itemId), new InfoCallback<Item>() {
                 public void onSuccess (Item result) {
                     remixer.init(createRemixerHost(remixer, type, catalogId), result, catalogId);
                 }
@@ -111,7 +111,7 @@ public class ShopPage extends Page
                 // Request the listing, re-reserving a new price for us
                 _catalogsvc.loadTestedListing(
                     CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId,
-                    new MsoyCallback<CatalogService.ListingResult>() {
+                    new InfoCallback<CatalogService.ListingResult>() {
                     public void onSuccess (CatalogService.ListingResult result) {
                         // and display a mini buy dialog.
                         new BuyRemixDialog(

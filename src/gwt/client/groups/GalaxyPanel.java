@@ -34,7 +34,7 @@ import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -134,7 +134,7 @@ public class GalaxyPanel extends FlowPanel
         _groupGrid.addStyleName("GroupsList");
         content.add(_groupGrid);
 
-        _groupsvc.getGalaxyData(new MsoyCallback<GalaxyData>() {
+        _groupsvc.getGalaxyData(new InfoCallback<GalaxyData>() {
             public void onSuccess (GalaxyData galaxy) {
                 init(galaxy);
             }

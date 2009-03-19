@@ -32,7 +32,7 @@ import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.ui.StretchButton;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NaviUtil;
 
 /**
@@ -220,7 +220,7 @@ public class StuffPanel extends FlowPanel
         }
 
         // otherwise we have to load
-        _models.loadModel(_memberId, _type, query, new MsoyCallback<DataModel<Item>>() {
+        _models.loadModel(_memberId, _type, query, new InfoCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> result) {
                 SimpleDataModel<Item> model = (SimpleDataModel<Item>)result;
                 _contents.setModel(model.filter(pred), page);

@@ -15,7 +15,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import client.shell.CShell;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -37,7 +37,7 @@ public class FriendsPanel extends FlowPanel
 
         _memberId = memberId;
         _membersvc.loadFriends(_memberId, true,
-            new MsoyCallback<WebMemberService.FriendsResult>() {
+            new InfoCallback<WebMemberService.FriendsResult>() {
                 public void onSuccess (WebMemberService.FriendsResult result) {
                     gotFriends(result);
                 }

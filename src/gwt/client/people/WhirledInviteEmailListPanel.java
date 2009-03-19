@@ -17,7 +17,7 @@ import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -68,7 +68,7 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
         // sendEvent("invited", new NoopAsyncCallback());
 
         _invitesvc.sendInvites(
-            addrs, from, subject, msg, false, new MsoyCallback<InvitationResults>() {
+            addrs, from, subject, msg, false, new InfoCallback<InvitationResults>() {
                 public void onSuccess (InvitationResults ir) {
                     _addressList.clear();
                     InviteUtils.showInviteResults(addrs, ir);

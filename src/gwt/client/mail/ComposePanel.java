@@ -47,7 +47,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -149,7 +149,7 @@ public class ComposePanel extends FlowPanel
 
     public void setRecipientId (int recipientId)
     {
-        _membersvc.getMemberCard(recipientId, new MsoyCallback<MemberCard>() {
+        _membersvc.getMemberCard(recipientId, new InfoCallback<MemberCard>() {
             public void onSuccess (MemberCard result) {
                 if (result != null) {
                     setRecipient(result, true);
@@ -160,7 +160,7 @@ public class ComposePanel extends FlowPanel
 
     public void setGiftItem (byte type, int itemId)
     {
-        _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+        _stuffsvc.loadItem(new ItemIdent(type, itemId), new InfoCallback<Item>() {
             public void onSuccess (Item result) {
                 PresentPayload payload = new PresentPayload(
                     result.getIdent(), result.name, result.getThumbnailMedia());
@@ -176,7 +176,7 @@ public class ComposePanel extends FlowPanel
     public void setGiftRoom (int sceneId)
     {
         // TODO: don't load detail, but create a new service for getting one RoomInfo ?
-        _roomsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
+        _roomsvc.loadRoomDetail(sceneId, new InfoCallback<RoomDetail>() {
             public void onSuccess (RoomDetail detail) {
                 RoomGiftPayload payload = new RoomGiftPayload(
                     detail.info.sceneId, detail.info.name, detail.info.thumbnail);
@@ -195,7 +195,7 @@ public class ComposePanel extends FlowPanel
 
     public void setGroupInviteId (int groupId)
     {
-        _groupsvc.getGroupInfo(groupId, new MsoyCallback<GroupService.GroupInfo>() {
+        _groupsvc.getGroupInfo(groupId, new InfoCallback<GroupService.GroupInfo>() {
             public void onSuccess (GroupService.GroupInfo result) {
                 _contents.setText(3, 0, _msgs.composeGroupInvite(), 1, "Label");
                 _contents.setText(3, 1, _msgs.composeGroupDeets("" + result.name));
@@ -211,7 +211,7 @@ public class ComposePanel extends FlowPanel
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
             _membersvc.loadFriends(CShell.getMemberId(), false,
-                new MsoyCallback<WebMemberService.FriendsResult>() {
+                new InfoCallback<WebMemberService.FriendsResult>() {
                     public void onSuccess (WebMemberService.FriendsResult result) {
                         _friends = result.friendsAndGreeters;
                         _friendBox.addItem("Select...");

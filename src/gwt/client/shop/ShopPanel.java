@@ -40,7 +40,7 @@ import client.ui.Stars;
 import client.ui.ThumbBox;
 
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 
@@ -100,7 +100,7 @@ public class ShopPanel extends FlowPanel
         add(WidgetUtil.makeShim(15, 15));
 
         // now load up our shop data
-        _catalogsvc.loadShopData(new MsoyCallback<ShopData>() {
+        _catalogsvc.loadShopData(new InfoCallback<ShopData>() {
             public void onSuccess (ShopData data) {
                 init(data);
             }

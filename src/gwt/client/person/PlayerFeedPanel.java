@@ -23,7 +23,7 @@ import client.person.FeedMessagePanel.BasicWidget;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Display a News Feed of activities a specific player has been up to, for their profile.
@@ -59,7 +59,7 @@ public class PlayerFeedPanel extends FlowPanel
     protected void loadFeed (final boolean fullPage)
     {
         int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
-        _feedLoader.loadFeed(feedDays, new MsoyCallback<List<FeedMessage>>() {
+        _feedLoader.loadFeed(feedDays, new InfoCallback<List<FeedMessage>>() {
             public void onSuccess (List<FeedMessage> messages) {
                 setFeed(messages, fullPage);
             }

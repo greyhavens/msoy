@@ -20,7 +20,7 @@ import client.item.RichTextToolbar;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -133,7 +133,7 @@ public class InstructionsPanel extends VerticalPanel
             MsoyUI.error(_msgs.ipInstructionsTooLong(""+excess));
             return;
         }
-        _gamesvc.updateGameInstructions(_detail.gameId, instructions, new MsoyCallback<Void>() {
+        _gamesvc.updateGameInstructions(_detail.gameId, instructions, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 _detail.instructions = instructions;
                 showInstructions();

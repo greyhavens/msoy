@@ -35,7 +35,7 @@ import client.ui.NumberTextBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Displays the various services available to support and admin personnel.
@@ -118,7 +118,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             _playerLists = new ArrayList<PlayerList>();
         }
 
-        _adminsvc.getPlayerList(memberIdToFetch, new MsoyCallback<MemberInviteResult>() {
+        _adminsvc.getPlayerList(memberIdToFetch, new InfoCallback<MemberInviteResult>() {
             public void onSuccess (MemberInviteResult res) {
                 PlayerList newList = new PlayerList(res);
                 if (res.memberId != memberId) {

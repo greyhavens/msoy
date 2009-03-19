@@ -25,7 +25,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
@@ -94,10 +94,10 @@ public class ConfigAccountPanel extends FlowPanel
         final String email = _email.getText().trim();
 
         // we could make a special service just for this, but this is fine for this rare page
-        _usersvc.updateEmail(email, new MsoyCallback<Void>() {
+        _usersvc.updateEmail(email, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 CShell.frame.emailUpdated(email, false);
-                _usersvc.updatePassword(CShell.frame.md5hex(password), new MsoyCallback<Void>() {
+                _usersvc.updatePassword(CShell.frame.md5hex(password), new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         displayThanks();
                     }

@@ -31,7 +31,7 @@ import client.ui.BorderedDialog;
 import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -160,7 +160,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected void postComment (String text)
     {
-        _commentsvc.postComment(_etype, _entityId, text, new MsoyCallback<Comment>() {
+        _commentsvc.postComment(_etype, _entityId, text, new InfoCallback<Comment>() {
             public void onSuccess (Comment result) {
                 postedComment(result);
             }
@@ -179,7 +179,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     }
 
     protected void rateComment (
-        final Comment comment, final boolean rating, MsoyCallback<Integer> callback)
+        final Comment comment, final boolean rating, InfoCallback<Integer> callback)
     {
         _commentsvc.rateComment(_etype, _entityId, comment.posted, rating, callback);
     }
@@ -189,7 +189,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         return new Command() {
             public void execute () {
                 _commentsvc.deleteComment(
-                    _etype, _entityId, comment.posted, new MsoyCallback<Boolean>() {
+                    _etype, _entityId, comment.posted, new InfoCallback<Boolean>() {
                     public void onSuccess (Boolean deleted) {
                         if (deleted) {
                             MsoyUI.info(_cmsgs.commentDeleted());

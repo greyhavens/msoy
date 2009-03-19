@@ -40,7 +40,7 @@ import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
 import client.util.FlashClients;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
@@ -168,7 +168,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         Rating rating = new Rating(
             _item.getRating(), _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
             @Override protected void handleRate (
-                byte newRating , MsoyCallback<RatingResult> callback) {
+                byte newRating , InfoCallback<RatingResult> callback) {
                 _itemsvc.rateItem(_item.getIdent(), newRating, callback);
             }
         };
@@ -234,7 +234,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         // persist our new scale to the server
         if (_scaleUpdated && _item.ownerId == CShell.getMemberId()) {
             _itemsvc.scaleAvatar(
-                _item.itemId, ((Avatar) _item).scale, new MsoyCallback.NOOP<Void>());
+                _item.itemId, ((Avatar) _item).scale, new InfoCallback.NOOP<Void>());
         }
 
         // tell the client we're not playing music anymore

@@ -26,7 +26,7 @@ import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -80,7 +80,7 @@ public class StuffPage extends Page
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
-                _stuffsvc.loadItemDetail(ident, new MsoyCallback<StuffService.DetailOrIdent>() {
+                _stuffsvc.loadItemDetail(ident, new InfoCallback<StuffService.DetailOrIdent>() {
                     public void onSuccess (StuffService.DetailOrIdent result) {
                         if (result.detail != null) {
                             _detail = result.detail;
@@ -106,7 +106,7 @@ public class StuffPage extends Page
             final ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
-                getItem(type, itemId, new MsoyCallback<Item>() {
+                getItem(type, itemId, new InfoCallback<Item>() {
                     public void onSuccess (Item result) {
                         editor.setItem(result);
                     }
@@ -125,7 +125,7 @@ public class StuffPage extends Page
             type = (byte) args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
             final ItemRemixer remixer = new ItemRemixer();
-            getItem(type, itemId, new MsoyCallback<Item>() {
+            getItem(type, itemId, new InfoCallback<Item>() {
                 public void onSuccess (Item result) {
                     remixer.init(createRemixHost(), result, 0);
                 }
@@ -186,7 +186,7 @@ public class StuffPage extends Page
         return Pages.STUFF;
     }
 
-    protected void getItem (byte type, int itemId, MsoyCallback<Item> callback)
+    protected void getItem (byte type, int itemId, InfoCallback<Item> callback)
     {
         Item item = _models.findItem(type, itemId);
         if (item != null) {

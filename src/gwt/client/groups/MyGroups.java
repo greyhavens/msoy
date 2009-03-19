@@ -32,7 +32,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -58,7 +58,7 @@ public class MyGroups extends AbsolutePanel
             }
         });
 
-        _groupsvc.getMyGroups(sortMethod, new MsoyCallback<List<MyGroupCard>>() {
+        _groupsvc.getMyGroups(sortMethod, new InfoCallback<List<MyGroupCard>>() {
             public void onSuccess (List<MyGroupCard> groups) {
                 gotData(groups);
             }

@@ -15,7 +15,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.trophy.TrophyGrid;
 import client.ui.TongueBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -33,7 +33,7 @@ public class TrophyCasePanel extends VerticalPanel
         }
 
         setHeader(_msgs.caseLoading());
-        _gamesvc.loadTrophyCase(memberId, new MsoyCallback<TrophyCase>() {
+        _gamesvc.loadTrophyCase(memberId, new InfoCallback<TrophyCase>() {
             public void onSuccess (TrophyCase tc) {
                 setTrophyCase(tc);
             }

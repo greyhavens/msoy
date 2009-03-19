@@ -8,7 +8,7 @@ import java.util.List;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.NumberTextBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -52,7 +52,7 @@ public class GameEditor extends ItemEditor
         setUploaderMedia(Game.SERVER_CODE_MEDIA, _game.serverMedia);
 
         // fetch the list of whirleds this player is a manager of which don't have a game
-        _groupsvc.getGameGroups(_game.gameId, new MsoyCallback<List<GroupMembership>>() {
+        _groupsvc.getGameGroups(_game.gameId, new InfoCallback<List<GroupMembership>>() {
             public void onSuccess (List<GroupMembership> whirleds)
             {
                 setWhirleds(whirleds);

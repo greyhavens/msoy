@@ -12,10 +12,10 @@ import client.ui.MsoyUI;
 /**
  * Reports a callback error via {@link MsoyUI}.
  */
-public abstract class MsoyCallback<T> implements AsyncCallback<T>
+public abstract class InfoCallback<T> implements AsyncCallback<T>
 {
     /** Used for those times when you just don't care enough to look at the response. */
-    public static class NOOP<N> extends MsoyCallback<N> {
+    public static class NOOP<N> extends InfoCallback<N> {
         public void onSuccess (N value) {
             // noop!
         }
@@ -24,14 +24,14 @@ public abstract class MsoyCallback<T> implements AsyncCallback<T>
     /**
      * Creates a callback that will display its error in the middle of the page.
      */
-    public MsoyCallback ()
+    public InfoCallback ()
     {
     }
 
     /**
      * Creates a callback that will display its error near the supplied widget.
      */
-    public MsoyCallback (Widget errorNear)
+    public InfoCallback (Widget errorNear)
     {
         _errorNear = errorNear;
     }

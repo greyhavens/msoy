@@ -15,7 +15,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -72,7 +72,7 @@ public class AccountPage extends Page
         } else if (action.equals("v")) {
             final int memberId = args.get(1, 0);
             final String code = args.get(2, "");
-            _usersvc.validateEmail(memberId, code, new MsoyCallback<Boolean>() {
+            _usersvc.validateEmail(memberId, code, new InfoCallback<Boolean>() {
                 public void onSuccess (Boolean valid) {
                     String msg; 
                     if (valid) {

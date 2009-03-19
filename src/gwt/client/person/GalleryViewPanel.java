@@ -8,7 +8,7 @@ import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -55,7 +55,7 @@ public class GalleryViewPanel extends FlowPanel
         if (isProfileGallery) {
             // fetch the profile gallery info
             _profileMemberId = args.get(1, 0);
-            _gallerysvc.loadMeGallery(_profileMemberId, new MsoyCallback<GalleryData>() {
+            _gallerysvc.loadMeGallery(_profileMemberId, new InfoCallback<GalleryData>() {
                 public void onSuccess (GalleryData galleryData) {
                     displayGallery(galleryData);
                 }
@@ -73,7 +73,7 @@ public class GalleryViewPanel extends FlowPanel
         }
 
         // fetch the gallery data
-        _gallerysvc.loadGallery(galleryId, new MsoyCallback<GalleryData>() {
+        _gallerysvc.loadGallery(galleryId, new InfoCallback<GalleryData>() {
             public void onSuccess (GalleryData galleryData) {
                 displayGallery(galleryData);
                 setPhoto(photoId);

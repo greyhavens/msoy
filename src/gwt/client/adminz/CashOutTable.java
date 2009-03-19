@@ -8,7 +8,7 @@ import java.util.List;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MoneyUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -66,7 +66,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
 
     protected void reload ()
     {
-        _moneysvc.getBlingCashOutRequests(new MsoyCallback<List<CashOutEntry>>() {
+        _moneysvc.getBlingCashOutRequests(new InfoCallback<List<CashOutEntry>>() {
             public void onSuccess (List<CashOutEntry> result) {
                 setModel(new SimpleDataModel<CashOutEntry>(result), 0);
             }
@@ -163,7 +163,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             protected void doCancel ()
             {
                 _moneysvc.cancelCashOut(entry.memberId, _reasonBox.getText(),
-                    new MsoyCallback<Void>() {
+                    new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.coEntryCancelSuccess());
@@ -207,7 +207,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             protected void doCashOut()
             {
                 int blingAmount = Currency.BLING.parse(_amountBox.getText());
-                _moneysvc.cashOutBling(entry.memberId, blingAmount, new MsoyCallback<Void>() {
+                _moneysvc.cashOutBling(entry.memberId, blingAmount, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.coEntryCashOutSuccess());

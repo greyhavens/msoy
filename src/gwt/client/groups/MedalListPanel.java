@@ -37,7 +37,7 @@ import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class MedalListPanel extends FlowPanel
@@ -46,7 +46,7 @@ public class MedalListPanel extends FlowPanel
     {
         setStyleName("medalListPanel");
         _groupId = groupId;
-        _groupsvc.getAwardedMedals(groupId, new MsoyCallback<MedalsResult>() {
+        _groupsvc.getAwardedMedals(groupId, new InfoCallback<MedalsResult>() {
             public void onSuccess (MedalsResult result) {
                 _groupName = result.groupName;
                 _rank = result.rank;

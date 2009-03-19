@@ -27,7 +27,7 @@ import client.ui.MessagePanel;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 
 /**
  * Displays a single comment.
@@ -144,7 +144,7 @@ public class CommentPanel extends MessagePanel
     {
         _upRate.setEnabled(false);
         _downRate.setEnabled(false);
-        _parent.rateComment(_comment, rating, new MsoyCallback<Integer>() {
+        _parent.rateComment(_comment, rating, new InfoCallback<Integer>() {
             public void onSuccess (Integer adjustment) {
                 _comment.currentRating += adjustment;
                 // if this was not a re-rating, the sum will have gone up or down by 1

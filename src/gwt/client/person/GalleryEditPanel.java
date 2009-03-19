@@ -15,7 +15,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
@@ -80,7 +80,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
      */
     public GalleryEditPanel (int galleryId)
     {
-        _gallerysvc.loadGallery(galleryId, new MsoyCallback<GalleryData>() {
+        _gallerysvc.loadGallery(galleryId, new InfoCallback<GalleryData>() {
             public void onSuccess (GalleryData result) {
                 display(result);
             }
@@ -168,7 +168,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // show all photos that the member owns
         final SimplePanel photoContainer = new SimplePanel();
         add(photoContainer, 0, 370);
-        _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
+        _itemsvc.loadPhotos(new InfoCallback<List<Photo>>() {
             public void onSuccess (List<Photo> result) {
                 final PhotoList myPhotos = new PhotoList(new SimpleDataModel<Photo>(result), 12);
                 photoContainer.setWidget(myPhotos);
@@ -229,7 +229,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
         if (_newGallery) {
             _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
-                new MsoyCallback<Gallery>() {
+                new InfoCallback<Gallery>() {
                     public void onSuccess (Gallery result) {
                         _newGallery = false;
                         _galleryData.gallery = result;
@@ -239,7 +239,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             );
         } else {
             _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
-                new MsoyCallback<Void>() {
+                new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         saveComplete(backToView, saveButton);
                     }
@@ -312,7 +312,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
         protected void display () {
             clear();
-            _model.doFetchRows(_page * _count, _count, new MsoyCallback<List<Photo>>() {
+            _model.doFetchRows(_page * _count, _count, new InfoCallback<List<Photo>>() {
                 public void onSuccess (List<Photo> result) {
                     add(_prevNext);
                     for (Photo photo : result) {

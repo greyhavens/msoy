@@ -33,7 +33,7 @@ import client.ui.PromotionBox;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
@@ -47,7 +47,7 @@ public class PromotionEditor extends FlowPanel
         setStyleName("promoEditor");
         add(MsoyUI.createLabel(_msgs.promoLoading(), null));
 
-        _adminsvc.loadPromotions(new MsoyCallback<List<Promotion>>() {
+        _adminsvc.loadPromotions(new InfoCallback<List<Promotion>>() {
             public void onSuccess (List<Promotion> promos) {
                 init(promos);
             }
@@ -87,7 +87,7 @@ public class PromotionEditor extends FlowPanel
         create.setText(row, 0, _msgs.promoIcon());
         create.setWidget(row++, 1, new Button(_msgs.promoChange(), new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
+                ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
                             _promoIcon = photo;
@@ -163,7 +163,7 @@ public class PromotionEditor extends FlowPanel
             return;
         }
 
-        _adminsvc.addPromotion(promo, new MsoyCallback<Void>() {
+        _adminsvc.addPromotion(promo, new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 _promoId.setText("");
                 _blurb.setText("");

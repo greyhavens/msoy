@@ -45,7 +45,7 @@ import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.events.NameChangeEvent;
 
@@ -195,7 +195,7 @@ public class ProfileBlurb extends Blurb
         if (CShell.isAdmin()) {
             buttons.add(new Button ("Admin: Send feed", new ClickListener() {
                 public void onClick (Widget sender) {
-                    _profilesvc.sendTestFeedEmail(_name.getMemberId(), new MsoyCallback<Void>() {
+                    _profilesvc.sendTestFeedEmail(_name.getMemberId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             MsoyUI.info("Sent");
                         }
@@ -271,7 +271,7 @@ public class ProfileBlurb extends Blurb
 
         panel.add(new Button("Select New...", new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
+                ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
                             _profile.photo = photo;
@@ -387,7 +387,7 @@ public class ProfileBlurb extends Blurb
         }
 
         _profilesvc.updateProfile(name, _greeter == GreeterStatus.GREETER, _profile,
-            new MsoyCallback<Void>() {
+            new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     displayProfile();
                     if (!name.equals(CShell.creds.name.toString())) {

@@ -40,7 +40,7 @@ import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 public class PassportPanel extends FlowPanel
@@ -58,7 +58,7 @@ public class PassportPanel extends FlowPanel
 
     protected void loadAndDisplay (final Content content)
     {
-        _mesvc.loadBadges(_memberId, new MsoyCallback<PassportData> () {
+        _mesvc.loadBadges(_memberId, new InfoCallback<PassportData> () {
             public void onSuccess (PassportData data) {
                 if (data == null) {
                     MsoyUI.error(_msgs.passportPlayerNotFound());
@@ -236,7 +236,7 @@ public class PassportPanel extends FlowPanel
             hide();
 
             if (sender == _yesButton) {
-                _mesvc.selectProfileAward(_awardType, _awardId, new MsoyCallback<Void>() {
+                _mesvc.selectProfileAward(_awardType, _awardId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(_msgs.passportSelectSuccessful());
                     }
@@ -270,7 +270,7 @@ public class PassportPanel extends FlowPanel
             hide();
 
             if (sender == _yesButton) {
-                _mesvc.deleteEarnedMedal(_memberId, _medalId, new MsoyCallback<Void>() {
+                _mesvc.deleteEarnedMedal(_memberId, _medalId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(_msgs.passportDeleteSuccessful());
                     }

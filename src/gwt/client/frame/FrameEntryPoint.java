@@ -53,7 +53,7 @@ import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
@@ -170,7 +170,7 @@ public class FrameEntryPoint
             // load up the invitation information and save it
             String inviteId = args.get(1, "");
             if (_activeInvite == null || !_activeInvite.inviteId.equals(inviteId)) {
-                _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
+                _membersvc.getInvitation(inviteId, true, new InfoCallback<Invitation>() {
                     public void onSuccess (Invitation invite) {
                         _activeInvite = invite;
                     }
@@ -707,7 +707,7 @@ public class FrameEntryPoint
                                 final String token, final int otherId2)
     {
         // load up the information needed to launch the game
-        _usersvc.loadLaunchConfig(gameId, new MsoyCallback<LaunchConfig>() {
+        _usersvc.loadLaunchConfig(gameId, new InfoCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
                 launchGame(result, action, otherId1, token, otherId2);
             }

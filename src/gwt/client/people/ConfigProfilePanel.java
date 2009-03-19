@@ -33,7 +33,7 @@ import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 import client.util.events.NameChangeEvent;
@@ -60,7 +60,7 @@ public class ConfigProfilePanel extends FlowPanel
 
         // load up whatever profile they have at the moment
         _profilesvc.loadProfile(
-            CShell.getMemberId(), new MsoyCallback<ProfileService.ProfileResult>() {
+            CShell.getMemberId(), new InfoCallback<ProfileService.ProfileResult>() {
             public void onSuccess (ProfileService.ProfileResult result) {
                 if (result != null) {
                     gotProfile(result.name, result.profile);
@@ -100,7 +100,7 @@ public class ConfigProfilePanel extends FlowPanel
         config.setText(row, 0, _msgs.cpUploadPhoto());
         config.setWidget(row++, 1, new Button(_msgs.cpSelect(), new ClickListener() {
             public void onClick (Widget source) {
-                ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
+                ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
                             _profile.photo = photo;

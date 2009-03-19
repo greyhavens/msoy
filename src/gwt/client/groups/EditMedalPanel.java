@@ -27,7 +27,7 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
@@ -39,7 +39,7 @@ public class EditMedalPanel extends FlexTable
         if (medalId == 0) {
             init(new Medal(groupId));
         } else {
-            _groupsvc.getMedal(medalId, new MsoyCallback<Medal>() {
+            _groupsvc.getMedal(medalId, new InfoCallback<Medal>() {
                 public void onSuccess (Medal medal) {
                     if (medal == null) {
                         MsoyUI.error(_msgs.editMedalNotFound());
@@ -87,7 +87,7 @@ public class EditMedalPanel extends FlexTable
             return;
         }
 
-        _groupsvc.updateMedal(_medal, new MsoyCallback<Void>() {
+        _groupsvc.updateMedal(_medal, new InfoCallback<Void>() {
             public void onSuccess(Void result) {
                 Link.go(Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_medal.groupId));
             }
@@ -144,7 +144,7 @@ public class EditMedalPanel extends FlexTable
         pickImage.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 ImageChooserPopup.displayRestrictedImageChooser(
-                    Medal.MEDAL_WIDTH, Medal.MEDAL_HEIGHT, new MsoyCallback<MediaDesc>() {
+                    Medal.MEDAL_WIDTH, Medal.MEDAL_HEIGHT, new InfoCallback<MediaDesc>() {
                         public void onSuccess(MediaDesc media) {
                             if (media != null) {
                                 setIconImage(_medal.icon = media);

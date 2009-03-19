@@ -41,7 +41,7 @@ import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
@@ -61,7 +61,7 @@ public class GameDetailPanel extends SmartTable
         if (_gameId == gameId) {
             selectTab(tab);
         } else {
-            _gamesvc.loadGameDetail(gameId, new MsoyCallback<GameDetail>() {
+            _gamesvc.loadGameDetail(gameId, new InfoCallback<GameDetail>() {
                 public void onSuccess (GameDetail detail) {
                     if (detail == null) {
                         MsoyUI.error(_msgs.gdpNoSuchGame());
@@ -91,7 +91,7 @@ public class GameDetailPanel extends SmartTable
             Rating rating = new Rating(
                 game.getRating(), game.ratingCount, detail.memberItemInfo.memberRating, false) {
                 @Override protected void handleRate (
-                    byte newRating , MsoyCallback<RatingResult> callback) {
+                    byte newRating , InfoCallback<RatingResult> callback) {
                     _itemsvc.rateItem(game.getIdent(), newRating, callback);
                 }
             };

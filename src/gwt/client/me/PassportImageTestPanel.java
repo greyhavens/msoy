@@ -19,7 +19,7 @@ import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -32,7 +32,7 @@ public class PassportImageTestPanel extends PagedGrid<Badge>
     public PassportImageTestPanel ()
     {
         super(GRID_ROWS, GRID_COLUMNS);
-        _mesvc.loadAllBadges(new MsoyCallback<List<Badge>>() {
+        _mesvc.loadAllBadges(new InfoCallback<List<Badge>>() {
             public void onSuccess(List<Badge> badges) {
                 setModel(new SimpleDataModel<Badge>(badges), 0);
             }

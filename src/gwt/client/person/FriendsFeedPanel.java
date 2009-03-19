@@ -20,7 +20,7 @@ import client.person.FeedMessagePanel.BasicWidget;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -58,7 +58,7 @@ public class FriendsFeedPanel extends FlowPanel
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 _mesvc.loadFeedCategory(
-                    category.category, !fullSize, new MsoyCallback<FeedCategory>() {
+                    category.category, !fullSize, new InfoCallback<FeedCategory>() {
                     public void onSuccess (FeedCategory data) {
                         fillCategory(categoryPanel, data, !fullSize);
                     }

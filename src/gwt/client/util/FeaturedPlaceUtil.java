@@ -34,7 +34,7 @@ public class FeaturedPlaceUtil
 
         // otherwise we may have to look up our default server
         if (_defaultServer == null) {
-            _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
+            _usersvc.getConnectConfig(new InfoCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
                     _defaultServer = config;
                     displayFeaturedPlace(sceneId, container);

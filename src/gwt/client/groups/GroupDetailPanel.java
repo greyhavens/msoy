@@ -41,7 +41,7 @@ import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -80,7 +80,7 @@ public class GroupDetailPanel extends FlowPanel
      * Fetches the details of the group from the backend and trigger a UI rebuild.
      */
     protected void loadGroup (int groupId) {
-        _groupsvc.getGroupDetail(groupId, new MsoyCallback<GroupDetail>() {
+        _groupsvc.getGroupDetail(groupId, new InfoCallback<GroupDetail>() {
             public void onSuccess (GroupDetail detail) {
                 setGroupDetail(detail);
             }
@@ -289,8 +289,8 @@ public class GroupDetailPanel extends FlowPanel
         };
     }
 
-    protected MsoyCallback<Void> refresh () {
-        return new MsoyCallback<Void>() {
+    protected InfoCallback<Void> refresh () {
+        return new InfoCallback<Void>() {
             public void onSuccess (Void result) {
                 loadGroup(_group.groupId);
             }

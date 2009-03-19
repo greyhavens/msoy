@@ -19,7 +19,7 @@ import com.threerings.msoy.web.gwt.Contest;
 import client.ui.ContestBox;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -30,7 +30,7 @@ public class ContestsPanel extends FlowPanel
     public ContestsPanel ()
     {
         setStyleName("contestsPanel");
-        _mesvc.loadContests(new MsoyCallback<List<Contest>>() {
+        _mesvc.loadContests(new InfoCallback<List<Contest>>() {
             public void onSuccess (List<Contest> contests) {
                 init(contests);
             }

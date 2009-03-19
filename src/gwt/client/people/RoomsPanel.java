@@ -18,7 +18,7 @@ import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 import client.room.RoomWidget;
 import client.shell.CShell;
 import client.ui.TongueBox;
-import client.util.MsoyCallback;
+import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -29,7 +29,7 @@ public class RoomsPanel extends FlowPanel
     public RoomsPanel (int memberId)
     {
         setStyleName("roomsPanel");
-        _roomsvc.loadMemberRooms(memberId, new MsoyCallback<MemberRoomsResult>() {
+        _roomsvc.loadMemberRooms(memberId, new InfoCallback<MemberRoomsResult>() {
             public void onSuccess (MemberRoomsResult result)
             {
                 init(result);
