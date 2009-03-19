@@ -170,15 +170,12 @@ public class WorldClient extends MsoyClient
         }
 
         // if we're logged into the world server or game server already with this id, ignore
-        var co :MemberObject = _wctx.getMemberObject();
-        if (co != null && co.getMemberId() == memberId) {
+        if (memberId == _wctx.getMyId()) {
             return;
         }
-        if (_wctx.getGameDirector().getGameContext() != null) {
-            var po :PlayerObject = _wctx.getGameDirector().getGameContext().getPlayerObject();
-            if (po != null && po.getMemberId() == memberId) {
-                return;
-            }
+        if ((_wctx.getGameDirector().getGameContext() != null) &&
+                (_wctx.getGameDirector().getGameContext().getMyId() == memberId)) {
+            return;
         }
 
         log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");

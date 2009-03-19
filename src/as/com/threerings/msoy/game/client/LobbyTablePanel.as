@@ -100,7 +100,7 @@ public class LobbyTablePanel extends VBox
         var ititle :Label = FlexUtil.createLabel(Msgs.GAME.get("t.invite_link"), "lobbyTitle");
         var isubtitle :Label = FlexUtil.createLabel(Msgs.GAME.get("l.invite_link"));
         var ilink :TextInput = new TextInput();
-        const memId :int = _gctx.getPlayerObject().memberName.getMemberId(); // ok if guest
+        const memId :int = _gctx.getMyId(); // ok if guest
         ilink.text = _gctx.getMsoyContext().getMsoyController().createSharableLink(
             "world-game_i_" + _lobj.game.gameId + "_" + memId);
         addChild(makeVBox(ititle, isubtitle, new CopyableText(ilink)));
@@ -125,8 +125,8 @@ public class LobbyTablePanel extends VBox
 
         // if we are the creator, add a button for starting the game now
         if (_table.players.length > 0 &&
-            _gctx.getPlayerObject().getVisibleName().equals(_table.players[0]) &&
-            (_table.tconfig.desiredPlayerCount > _table.tconfig.minimumPlayerCount)) {
+                _gctx.getMyName().equals(_table.players[0]) &&
+                (_table.tconfig.desiredPlayerCount > _table.tconfig.minimumPlayerCount)) {
             _startBtn = new CommandButton(
                 Msgs.GAME.get("b.start_now"), LobbyController.START_TABLE, _table.tableId);
             bbox.addChild(_startBtn);
@@ -238,8 +238,7 @@ class SeatPanel extends VBox
             _headShot.setMediaDesc(player.getPhoto());
             _headShot.alpha = 1;
             _name.text = player.toString();
-            const ourName :VizMemberName = ctx.getPlayerObject().memberName;
-            FlexUtil.setVisible(_bootBtn, ourName.equals(table.players[0]));
+            FlexUtil.setVisible(_bootBtn, ctx.getMyName().equals(table.players[0]));
             _bootBtn.setCommand(LobbyController.BOOT_PLAYER, [ table.tableId, player ]);
         }
     }

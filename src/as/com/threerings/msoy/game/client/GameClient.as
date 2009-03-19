@@ -116,6 +116,13 @@ class GameContextImpl extends MsoyContext
         return this;
     }
 
+    // from both GameContext and MsoyContext
+    override public function getMyName () :MemberName
+    {
+        var po :PlayerObject = getPlayerObject();
+        return (po == null) ? null : po.memberName;
+    }
+
     // from GameContext
     public function getPlayerObject () :PlayerObject
     {

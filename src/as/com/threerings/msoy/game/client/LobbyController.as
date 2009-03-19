@@ -129,7 +129,7 @@ public class LobbyController extends Controller
         }
 
         // otherwise look at the data
-        var ourName :MemberName = _gctx.getPlayerObject().memberName;
+        var ourName :MemberName = _gctx.getMyName();
         for each (var table :Table in _lobj.tables.toArray()) {
             if (table.players != null && -1 != table.players.indexOf(ourName)) {
                 return true;

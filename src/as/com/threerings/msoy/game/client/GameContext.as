@@ -7,6 +7,8 @@ import com.threerings.parlor.util.ParlorContext;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.game.data.PlayerObject;
 
 /**
@@ -18,6 +20,16 @@ public interface GameContext extends ParlorContext
      * Returns the context we use to obtain basic client services.
      */
     function getMsoyContext () :MsoyContext;
+
+    /**
+     * Return this client's member name.
+     */
+    function getMyName () :MemberName;
+
+    /**
+     * Return this client's member id, or 0 if we're logged off or the viewer.
+     */
+    function getMyId () :int;
 
     /**
      * Returns our client object casted as a PlayerObject.

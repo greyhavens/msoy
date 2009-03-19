@@ -20,6 +20,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.WorldCredentials;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -117,6 +118,20 @@ public class LiaisonGameContext
     public function getMsoyContext () :MsoyContext
     {
         return _wctx;
+    }
+
+    // from GameContext
+    public function getMyName () :MemberName
+    {
+        var po :PlayerObject = getPlayerObject();
+        return (po == null) ? null : po.memberName;
+    }
+
+    // from GameContext
+    public function getMyId () :int
+    {
+        var name :MemberName = getMyName();
+        return (name == null) ? 0 : name.getMemberId();
     }
 
     // from GameContext
