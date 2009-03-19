@@ -29,6 +29,9 @@ public interface RoomService extends InvocationService
     function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
+    function modifyPlaylist (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface RoomService
     function moveMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :Location, arg5 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
@@ -51,6 +54,9 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void;
+
+    // from Java interface RoomService
+    function songEnded (arg1 :Client, arg2 :int) :void;
 
     // from Java interface RoomService
     function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :Location, arg6 :InvocationService_InvocationListener) :void;

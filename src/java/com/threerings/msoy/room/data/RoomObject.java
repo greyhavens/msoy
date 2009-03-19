@@ -7,6 +7,7 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartySummary;
 
@@ -32,6 +33,15 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>parties</code> field. */
     public static final String PARTIES = "parties";
+
+    /** The field name of the <code>playlist</code> field. */
+    public static final String PLAYLIST = "playlist";
+
+    /** The field name of the <code>currentSongId</code> field. */
+    public static final String CURRENT_SONG_ID = "currentSongId";
+
+    /** The field name of the <code>playCount</code> field. */
+    public static final String PLAY_COUNT = "playCount";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
@@ -48,6 +58,16 @@ public class RoomObject extends SpotSceneObject
 
     /** Information on the parties presently in this room. */
     public DSet<PartySummary> parties = DSet.newDSet();
+
+    /** The set of songs in the playlist. */
+    public DSet<Audio> playlist = DSet.newDSet();
+
+    /** The item id of the current song. */
+    public int currentSongId;
+
+    /** A monotonically increasing integer used to indicate which song we're playing since
+      * the room was first resolved. */
+    public int playCount;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -252,6 +272,85 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(PARTIES, value, this.parties);
         DSet<PartySummary> clone = (value == null) ? null : value.typedClone();
         this.parties = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>playlist</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToPlaylist (Audio elem)
+    {
+        requestEntryAdd(PLAYLIST, playlist, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>playlist</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromPlaylist (Comparable<?> key)
+    {
+        requestEntryRemove(PLAYLIST, playlist, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>playlist</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updatePlaylist (Audio elem)
+    {
+        requestEntryUpdate(PLAYLIST, playlist, elem);
+    }
+
+    /**
+     * Requests that the <code>playlist</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setPlaylist (DSet<Audio> value)
+    {
+        requestAttributeChange(PLAYLIST, value, this.playlist);
+        DSet<Audio> clone = (value == null) ? null : value.typedClone();
+        this.playlist = clone;
+    }
+
+    /**
+     * Requests that the <code>currentSongId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setCurrentSongId (int value)
+    {
+        int ovalue = this.currentSongId;
+        requestAttributeChange(
+            CURRENT_SONG_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.currentSongId = value;
+    }
+
+    /**
+     * Requests that the <code>playCount</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPlayCount (int value)
+    {
+        int ovalue = this.playCount;
+        requestAttributeChange(
+            PLAY_COUNT, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.playCount = value;
     }
     // AUTO-GENERATED: METHODS END
 

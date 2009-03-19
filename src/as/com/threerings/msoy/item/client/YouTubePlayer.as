@@ -101,6 +101,7 @@ public class YouTubePlayer extends EventDispatcher
         case 5: return MediaPlayerCodes.STATE_READY;
         case 1: return MediaPlayerCodes.STATE_PLAYING;
         case 2: return MediaPlayerCodes.STATE_PAUSED;
+                // TODO: we presently don't handle STATE_STOPPED
         }
     }
 

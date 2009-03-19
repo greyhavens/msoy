@@ -9,6 +9,8 @@ import com.threerings.util.Iterator;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.item.data.all.Audio;
+
 import com.threerings.msoy.party.data.PartySummary;
 
 import com.threerings.msoy.room.data.EntityMemories;
@@ -35,6 +37,15 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>parties</code> field. */
     public static const PARTIES :String = "parties";
+
+    /** The field name of the <code>playlist</code> field. */
+    public static const PLAYLIST :String = "playlist";
+
+    /** The field name of the <code>currentSongId</code> field. */
+    public static const CURRENT_SONG_ID :String = "currentSongId";
+
+    /** The field name of the <code>playCount</code> field. */
+    public static const PLAY_COUNT :String = "playCount";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
@@ -54,6 +65,16 @@ public class RoomObject extends SpotSceneObject
 
     /** Information of the parties presently in this room. */
     public var parties :DSet; /* of */ PartySummary;
+
+    /** The set of songs in the playlist. */
+    public var playlist :DSet; /* of */ Audio;
+
+    /** The item id of the current song. */
+    public var currentSongId :int;
+
+    /** A monotonically increasing integer used to indicate which song we're playing since
+     * the room was first resolved. */
+    public var playCount :int;
 
     /**
      * Finds the info of an occupant who is also a member and has a given member id. Performs the
@@ -81,6 +102,9 @@ public class RoomObject extends SpotSceneObject
         controllers = DSet(ins.readObject());
         propertySpaces = DSet(ins.readObject());
         parties = DSet(ins.readObject());
+        playlist = DSet(ins.readObject());
+        currentSongId = ins.readInt();
+        playCount = ins.readInt();
     }
 }
 }

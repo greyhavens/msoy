@@ -14,6 +14,8 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Name;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -31,6 +33,8 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.flash.MenuUtil;
 
+import com.threerings.flash.media.MediaPlayerCodes;
+
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -38,6 +42,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -77,7 +82,8 @@ import com.threerings.msoy.room.data.SceneOwnershipUpdate;
  * Extends the base roomview with the ability to view a RoomObject, view chat, and edit.
  */
 public class RoomObjectView extends RoomView
-    implements SetListener, MessageListener, ChatSnooper, ChatDisplay, ChatInfoProvider,
+    implements AttributeChangeListener, SetListener, MessageListener,
+               ChatSnooper, ChatDisplay, ChatInfoProvider,
                MemoryChangedListener
 {
     /**
@@ -201,7 +207,6 @@ public class RoomObjectView extends RoomView
         } else if (update is SceneAttrsUpdate) {
             rereadScene(); // re-read our scene
             updateBackground();
-            updateBackgroundAudio();
         } else if (update is SceneOwnershipUpdate) {
             rereadScene();
         }
@@ -253,6 +258,16 @@ public class RoomObjectView extends RoomView
         return _occupants.values().filter(function (o :*, ... ignored) :Boolean {
             return (o is PetSprite);
         });
+    }
+
+    // from interface AttributeChangedListener
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        var name :String = event.getName();
+        if (RoomObject.PLAY_COUNT == name) {
+            // when the play count changes, it's time for us to re-check the audio
+            updateBackgroundAudio();
+        }
     }
 
     // from interface SetListener
@@ -457,7 +472,10 @@ public class RoomObjectView extends RoomView
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         removeAllOccupants();
-        _ctx.getWorldController().handlePlayMusic(null, null);
+
+        _ctx.getWorldController().getMusicPlayer().removeEventListener(
+            MediaPlayerCodes.STATE, handleMusicStateChanged);
+        _ctx.getWorldController().handlePlayMusic(null);
 
         super.didLeavePlace(plobj);
 
@@ -610,13 +628,14 @@ public class RoomObjectView extends RoomView
      */
     protected function updateBackgroundAudio () :void
     {
-        var audiodata :AudioData = _scene.getAudioData();
-        if (audiodata != null) {
-            _ctx.getWorldController().handlePlayMusic(audiodata.media,
-                new ItemIdent(Item.AUDIO, audiodata.itemId));
-        } else {
-            _ctx.getWorldController().handlePlayMusic(null, null);
-        }
+        var audio :Audio =
+            _roomObj.playlist.get(new ItemIdent(Item.AUDIO, _roomObj.currentSongId)) as Audio;
+
+        // add a listener for when the music has stopped
+        _ctx.getWorldController().getMusicPlayer().addEventListener(
+            MediaPlayerCodes.STATE, handleMusicStateChanged);
+        _ctx.getWorldController().handlePlayMusic(audio);
+        _musicPlayCount = _roomObj.playCount;
     }
 
     protected function addBody (occInfo :OccupantInfo) :void
@@ -747,6 +766,16 @@ public class RoomObjectView extends RoomView
         }
     }
 
+    /**
+     * Called after we've told the music player about our music and the state changes.
+     */
+    protected function handleMusicStateChanged (event :ValueEvent) :void
+    {
+        if (event.value == MediaPlayerCodes.STATE_STOPPED) {
+            _roomObj.roomService.songEnded(_ctx.getClient(), _musicPlayCount);
+        }
+    }
+
     /** _ctrl, casted as a RoomObjectController. */
     protected var _octrl :RoomObjectController;
 
@@ -755,5 +784,8 @@ public class RoomObjectView extends RoomView
 
     /** Monitors and displays loading progress for furni/decor. */
     protected var _loadingWatcher :PlaceLoadingDisplay;
+
+    /** The id of the current music being played from the room's playlist. */
+    protected var _musicPlayCount :int;
 }
 }

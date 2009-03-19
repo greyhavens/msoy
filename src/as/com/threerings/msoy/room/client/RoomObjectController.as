@@ -588,10 +588,16 @@ public class RoomObjectController extends RoomController
             _wdctx.getWorldDirector().setAvatar(itemId);
             return;
         }
-
         if (itemType == Item.PET) {
             var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
             svc.callPet(_wdctx.getClient(), itemId, _wdctx.confirmListener("m.pet_called"));
+            return;
+        }
+        if (itemType == Item.AUDIO) {
+            // TODO: check room restriction
+            // TODO: no-op if already present, double-clicking idiots
+            _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), itemId, true,
+                _wdctx.confirmListener("m.music_added", MsoyCodes.WORLD_MSGS));
             return;
         }
 
@@ -683,6 +689,10 @@ public class RoomObjectController extends RoomController
                     break;
                 }
             }
+
+        } else if (itemType == Item.AUDIO) {
+            _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), itemId, false,
+                _wdctx.confirmListener("m.music_removed", MsoyCodes.WORLD_MSGS));
 
         } else if (itemType == Item.DECOR || itemType == Item.AUDIO) {
             var newScene :MsoyScene = _scene.clone() as MsoyScene;

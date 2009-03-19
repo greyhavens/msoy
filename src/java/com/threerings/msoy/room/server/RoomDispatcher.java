@@ -56,6 +56,12 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
+        case RoomMarshaller.MODIFY_PLAYLIST:
+            ((RoomProvider)provider).modifyPlaylist(
+                source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
         case RoomMarshaller.MOVE_MOB:
             ((RoomProvider)provider).moveMob(
                 source, ((Integer)args[0]).intValue(), (String)args[1], (Location)args[2], (InvocationService.InvocationListener)args[3]
@@ -101,6 +107,12 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
         case RoomMarshaller.SET_ACTOR_STATE:
             ((RoomProvider)provider).setActorState(
                 source, (ItemIdent)args[0], ((Integer)args[1]).intValue(), (String)args[2]
+            );
+            return;
+
+        case RoomMarshaller.SONG_ENDED:
+            ((RoomProvider)provider).songEnded(
+                source, ((Integer)args[0]).intValue()
             );
             return;
 

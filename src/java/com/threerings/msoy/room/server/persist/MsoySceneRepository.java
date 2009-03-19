@@ -55,11 +55,15 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.RecordFunctions;
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.persist.AudioRecord;
+import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -263,6 +267,8 @@ public class MsoySceneRepository extends DepotRepository
         if (memoryIds.size() > 0) {
             extras.memories = _memoryRepo.loadMemories(memoryIds);
         }
+        extras.playlist = Lists.transform(_audioRepo.loadItemsByLocation(sceneId),
+            new ItemRecord.ToItem<Audio>());
         return extras;
     }
 
@@ -596,6 +602,7 @@ public class MsoySceneRepository extends DepotRepository
     protected RatingRepository _ratingRepo;
 
     // dependencies
+    @Inject protected AudioRepository _audioRepo;
     @Inject protected DecorRepository _decorRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;

@@ -15,6 +15,7 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
+import com.threerings.util.Util;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.net.Credentials;
@@ -37,6 +38,7 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.client.FlagItemDialog;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.ItemMarshaller;
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -168,7 +170,7 @@ public class WorldController extends MsoyController
     /** Command to display the game menu. */
     public static const POP_GAME_MENU :String = "PopGameMenu";
 
-    /** Command to play music. Arg: null to stop, or [ MediaDesc,  ItemIdent ] */
+    /** Command to play music. Arg: null to stop, or [ Audio, playCounter (int) ] */
     public static const PLAY_MUSIC :String = "PlayMusic";
 
     /** Get info about the currently-playing music. */
@@ -781,11 +783,12 @@ public class WorldController extends MsoyController
     /**
      * Handles PLAY_MUSIC.
      */
-    public function handlePlayMusic (music :MediaDesc, ident :ItemIdent) :void
+    public function handlePlayMusic (music :Audio) :void
     {
-        _musicDesc = music;
-        _musicIdent = ident;
-        _musicInfoShown = false;
+        if (!Util.equals(music, _music)) {
+            _musicInfoShown = false;
+        }
+        _music = music;
 
         // TODO: fade out music if no new, unless the current music is bleeped
         _musicPlayer.unload();
@@ -793,7 +796,7 @@ public class WorldController extends MsoyController
         const play :Boolean = UberClient.isRegularClient() && (music != null) &&
             (Prefs.getSoundVolume() > 0) && !isMusicBleeped();
         if (play) {
-            _musicPlayer.load(music.getMediaPath());
+            _musicPlayer.load(music.audioMedia.getMediaPath());
         }
         WorldControlBar(_wctx.getControlBar()).setMusicPlaying(music != null);
     }
@@ -803,7 +806,7 @@ public class WorldController extends MsoyController
      */
     public function handleMusicInfo () :void
     {
-        handleViewItem(_musicIdent);
+        handleViewItem(_music.getIdent());
     }
 
     /**
@@ -1456,28 +1459,28 @@ public class WorldController extends MsoyController
 
     protected function handleBleepChange (event :ValueEvent) :void
     {
-        if (_musicDesc == null) {
+        if (_music == null) {
             return; // couldn't possibly concern us..
         }
         if (isMusicBleeped() == musicIsPlayingOrPaused()) {
             // just call play again with the same music, it'll handle it
-            handlePlayMusic(_musicDesc, _musicIdent);
+            handlePlayMusic(_music);
         }
     }
 
     protected function handleConfigValueSet (event :ConfigValueSetEvent) :void
     {
         // if the volume got turned up and we were not playing music, play it now.
-        if ((event.name == Prefs.VOLUME) && (event.value > 0) && (_musicDesc != null) &&
+        if ((event.name == Prefs.VOLUME) && (event.value > 0) && (_music != null) &&
                !musicIsPlayingOrPaused()) {
-            handlePlayMusic(_musicDesc, _musicIdent);
+            handlePlayMusic(_music);
         }
     }
 
     protected function isMusicBleeped () :Boolean
     {
         return Prefs.isGlobalBleep() ||
-            (_musicDesc != null && Prefs.isMediaBleeped(_musicDesc.getMediaId()));
+            (_music != null && Prefs.isMediaBleeped(_music.audioMedia.getMediaId()));
     }
 
     protected function musicIsPlayingOrPaused () :Boolean
@@ -1485,6 +1488,7 @@ public class WorldController extends MsoyController
         switch (_musicPlayer.getState()) {
         default: return false;
         case MediaPlayerCodes.STATE_PLAYING: // fall through
+        case MediaPlayerCodes.STATE_STOPPED: // fall through
         case MediaPlayerCodes.STATE_PAUSED: return true;
         }
     }
@@ -1524,13 +1528,10 @@ public class WorldController extends MsoyController
     protected var _wctx :WorldContext;
 
     /** The player of music. */
-    protected var _musicPlayer :Mp3AudioPlayer = new Mp3AudioPlayer(true /*loop*/);
+    protected var _musicPlayer :Mp3AudioPlayer = new Mp3AudioPlayer();
 
     /** The currently playing music. */
-    protected var _musicDesc :MediaDesc;
-
-    /** ItemIdent of the currently playing music. */
-    protected var _musicIdent :ItemIdent;
+    protected var _music :Audio;
 
     /** Have we displayed music info in a notification? */
     protected var _musicInfoShown :Boolean;

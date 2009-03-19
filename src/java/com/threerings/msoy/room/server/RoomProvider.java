@@ -35,6 +35,12 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link RoomService#modifyPlaylist} request.
+     */
+    void modifyPlaylist (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#moveMob} request.
      */
     void moveMob (ClientObject caller, int arg1, String arg2, Location arg3, InvocationService.InvocationListener arg4)
@@ -77,6 +83,11 @@ public interface RoomProvider extends InvocationProvider
      * Handles a {@link RoomService#setActorState} request.
      */
     void setActorState (ClientObject caller, ItemIdent arg1, int arg2, String arg3);
+
+    /**
+     * Handles a {@link RoomService#songEnded} request.
+     */
+    void songEnded (ClientObject caller, int arg1);
 
     /**
      * Handles a {@link RoomService#spawnMob} request.

@@ -5,6 +5,7 @@ package com.threerings.msoy.room.server;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
+import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -39,6 +41,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -47,6 +50,7 @@ import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.IgnoreConfirmAdapter;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.BodyObject;
@@ -94,6 +98,7 @@ import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -454,6 +459,89 @@ public class RoomManager extends SpotSceneManager
 
         // dispatch this as a simple MessageEvent
         _roomObj.postMessage(RoomCodes.SPRITE_SIGNAL, name, arg);
+    }
+
+    // documentation inherited from RoomProvider
+    public void modifyPlaylist (
+        ClientObject caller, int audioItemId, final boolean add,
+        final InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        final MemberObject who = (MemberObject) caller;
+        ItemIdent key = new ItemIdent(Item.AUDIO, audioItemId);
+        Audio current = _roomObj.playlist.get(key);
+
+        // see if it's already done!
+        if (add == (current != null)) {
+            listener.requestProcessed();
+            return;
+        }
+
+        // removals are really straightforward
+        if (!add) {
+            // they just want to remove it, no problem as long as they own it or the room
+            if (current.ownerId != who.getMemberId() && !canManage(who)) {
+                throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+            }
+            // TODO: un-use the item, if applicable
+            _roomObj.removeFromPlaylist(key);
+            listener.requestProcessed();
+            return;
+        }
+
+        // TODO: check non-owner adding permissions
+
+        // now handle additions
+        _itemMan.getItem(key, new IgnoreConfirmAdapter<Item>(listener) {
+            @Override public void requestCompleted (Item result) {
+                addToPlaylist2(who, (Audio)result, listener);
+            }
+        });
+    }
+
+    // documentation inherited from RoomProvider
+    public void songEnded (ClientObject caller, int playCount)
+    {
+        // validation? We just trust the clients completely for now. Not sure what we'd do anyhow
+
+        if (playCount != _roomObj.playCount) {
+            return; // not applicable, another client has already set us straight
+        }
+
+        playNextSong();
+    }
+
+    /**
+     * Part two of modifyPlaylist.
+     */
+    protected void addToPlaylist2 (
+        MemberObject who, Audio item, InvocationService.ConfirmListener listener)
+    {
+        // make sure they own it
+        if (item.ownerId != who.getMemberId()) {
+            // TODO: log?
+            listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            return;
+        }
+
+        // TODO: item usage considerations
+
+        // at this point they own it and we're happy with them, so add it!
+        _roomObj.startTransaction();
+        try {
+            // add the song if it's not already there
+            if (!_roomObj.playlist.contains(item)) {
+                _roomObj.addToPlaylist(item);
+            }
+            // start it playing now if there's not already something playing
+            if (!_roomObj.playlist.containsKey(new ItemIdent(Item.AUDIO, _roomObj.currentSongId))) {
+                _roomObj.setCurrentSongId(item.itemId);
+                _roomObj.setPlayCount(_roomObj.playCount + 1);
+            }
+        } finally {
+            _roomObj.commitTransaction();
+        }
+        listener.requestProcessed();
     }
 
     // documentation inherited from RoomProvider
@@ -943,9 +1031,16 @@ public class RoomManager extends SpotSceneManager
         _peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(),
                                           mscene.getOwnerType(), mscene.getAccessControl());
 
-        // if we have memories for the items in our room, add'em to the room object
-        if (_extras.memories != null) {
-            addMemoriesToRoom(_extras.memories);
+        _roomObj.startTransaction();
+        try {
+            // if we have memories for the items in our room, add'em to the room object
+            if (_extras.memories != null) {
+                addMemoriesToRoom(_extras.memories);
+            }
+            _roomObj.setPlaylist(DSet.newDSet(_extras.playlist));
+            playNextSong();
+        } finally {
+            _roomObj.commitTransaction();
         }
 
         // load up any pets that are "let out" in this room scene
@@ -1532,6 +1627,51 @@ public class RoomManager extends SpotSceneManager
                 "sender_email", memmail, "sender_id", sender.getMemberId(), "subject", subject,
                 "caption", caption, "snap_url", snapURL, "title", getScene().getName(),
                 "scene_id", getScene().getId(), "server_url", DeploymentConfig.serverURL);
+        }
+    }
+
+    /**
+     * Play the next song in the playlist.
+     */
+    protected void playNextSong ()
+    {
+        int size = _roomObj.playlist.size();
+        if (size == 0) {
+            return; // nothing to play
+        }
+
+        // else, make a list of all the songs, sort them according to "playlist order" and try
+        // to move to the next song
+        Audio[] songs = _roomObj.playlist.toArray(new Audio[size]);
+        QuickSort.sort(songs, new Comparator<Audio>() {
+            public int compare (Audio a1, Audio a2) {
+                // TODO: playlist ordering?
+                return Comparators.compare(a1.itemId, a2.itemId);
+            }
+        });
+
+        // find the index of the currently playing song
+        int curDex = -1;
+        for (int ii = 0; ii < size; ii++) {
+            if (songs[ii].itemId == _roomObj.currentSongId) {
+                curDex = ii;
+                break;
+            }
+        }
+
+        if (curDex == -1) {
+            curDex = size - 1; // play the last song in the list..
+
+        } else {
+            curDex = (curDex + 1) % size; // play the next song
+        }
+
+        _roomObj.startTransaction();
+        try {
+            _roomObj.setCurrentSongId(songs[curDex].itemId);
+            _roomObj.setPlayCount(_roomObj.playCount + 1);
+        } finally {
+            _roomObj.commitTransaction();
         }
     }
 

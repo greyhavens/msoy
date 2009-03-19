@@ -53,6 +53,17 @@ public interface RoomService extends InvocationService
     void setActorState (Client client, ItemIdent item, int actorOid, String state);
 
     /**
+     * Requests to add or remove a song from the playlist.
+     */
+    void modifyPlaylist (Client client, int audioId, boolean add, ConfirmListener listener);
+
+    /**
+     * A callback from a client to indicate that a song has ended and the playlist
+     * should move to the next song.
+     */
+    void songEnded (Client client, int playCount);
+
+    /**
      * Requests to edit the client's current room.
      *
      * @param listener will be informed with an array of items in the room.

@@ -18,9 +18,11 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.client.UIState;
 
+import com.threerings.msoy.room.client.PlaylistMusicDialog;
 import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
+import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * Configures the control bar with World-specific stuff.
@@ -87,7 +89,8 @@ public class WorldControlBar extends ControlBar
         musicBtn.toggle = true;
         FlexUtil.setVisible(musicBtn, false);
         musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
-            return new MusicDialog(_wctx, musicBtn.localToGlobal(new Point()));
+            var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
+            return new PlaylistMusicDialog(_wctx, room, musicBtn.localToGlobal(new Point()));
         }, musicBtn));
 
         roomEditBtn = createButton("controlBarButtonEdit", "i.editScene");
