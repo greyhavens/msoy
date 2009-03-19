@@ -163,13 +163,12 @@ public class ItemManager
 
     /**
      * Helper function: updates usage of avatar items.  This method assumes that the specified
-     * items are both valid and owned by the user in question. The supplied listener will be
-     * notified of success with null.
+     * items are both valid and owned by the user in question.
      *
      * @see #updateItemUsage(byte, byte, int, int, int, int, ResultListener)
      */
     public void updateItemUsage (int memberId, Avatar oldAvatar, Avatar newAvatar,
-                                 ResultListener<Object> lner)
+                                 ResultListener<Void> lner)
     {
         updateItemUsage(Item.AVATAR, Item.USED_AS_AVATAR, memberId, memberId,
                         (oldAvatar != null) ? oldAvatar.itemId : 0,
@@ -181,11 +180,11 @@ public class ItemManager
      * marked with the itemUseType id.
      *
      * This method assumes that the specified items are both valid and owned by the user in
-     * question. The supplied listener will be notified of success with null.
+     * question.
      */
     public void updateItemUsage (
         final byte itemType, final byte itemUseType, final int memberId, final int locationId,
-        final int oldItemId, final int newItemId, ResultListener<Object> lner)
+        final int oldItemId, final int newItemId, ResultListener<Void> lner)
     {
         if (oldItemId == newItemId) {
             lner.requestCompleted(null); // mr. no-op
@@ -197,8 +196,8 @@ public class ItemManager
             return; // getRepository already informed the listener about this problem
         }
 
-        _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemUsage", lner) {
-            public Object invokePersistResult () throws Exception {
+        _invoker.postUnit(new RepositoryListenerUnit<Void>("updateItemUsage", lner) {
+            public Void invokePersistResult () throws Exception {
                 if (oldItemId != 0) {
                     repo.markItemUsage(Collections.singleton(oldItemId), Item.UNUSED, 0);
                 }

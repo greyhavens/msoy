@@ -1045,7 +1045,7 @@ public class MemberManager
 
         // this just fires off an invoker unit, we don't need the result, log it
         _itemMan.updateItemUsage(
-            user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
+            user.getMemberId(), prev, avatar, new ResultListener.NOOP<Void>() {
             @Override public void requestFailed (final Exception cause) {
                 log.warning("Unable to update usage from an avatar change.");
             }

@@ -50,6 +50,7 @@ import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.IgnoreConfirmAdapter;
 import com.threerings.presents.util.PersistingUnit;
 
@@ -510,7 +511,7 @@ public class RoomManager extends SpotSceneManager
                 // but, clear it anyway...
             }
             _itemMan.updateItemUsage(Item.AUDIO, Item.USED_AS_BACKGROUND, who.getMemberId(),
-                _scene.getId(), audioItemId, 0, new IgnoreConfirmAdapter<Object>(listener));
+                _scene.getId(), audioItemId, 0, new ConfirmAdapter(listener));
             return;
         }
 
@@ -560,8 +561,8 @@ public class RoomManager extends SpotSceneManager
             // we need to update the item usage
             _itemMan.updateItemUsage(Item.AUDIO, Item.USED_AS_BACKGROUND, who.getMemberId(),
                 _scene.getId(), oldItemId, newItemId,
-                new IgnoreConfirmAdapter<Object>(listener) {
-                    @Override public void requestCompleted (Object result) {
+                new ConfirmAdapter(listener) {
+                    @Override public void requestCompleted (Void nothing) {
                         if (realManager) {
                             item.used = Item.USED_AS_BACKGROUND;
                             item.location = _scene.getId();
@@ -1521,7 +1522,7 @@ public class RoomManager extends SpotSceneManager
             if (decor != null && decor.itemId != up.decor.itemId) { // modified?
                 _itemMan.updateItemUsage(
                     Item.DECOR, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
-                    decor.itemId, up.decor.itemId, new ComplainingListener<Object>(
+                    decor.itemId, up.decor.itemId, new ComplainingListener<Void>(
                         log, "Unable to update decor usage"));
             }
 
@@ -1533,7 +1534,7 @@ public class RoomManager extends SpotSceneManager
                 _itemMan.updateItemUsage(
                     Item.AUDIO, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
                     curAudioId, newAudioId,
-                    new ComplainingListener<Object>(log, "Unable to update audio usage"));
+                    new ComplainingListener<Void>(log, "Unable to update audio usage"));
             }
 
             // if the name or access controls were modified, we need to update our HostedPlace
@@ -1558,7 +1559,7 @@ public class RoomManager extends SpotSceneManager
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
                 data.itemType, Item.UNUSED, memberId, _scene.getId(),
-                data.itemId, 0, new ComplainingListener<Object>(
+                data.itemId, 0, new ComplainingListener<Void>(
                     log, "Unable to clear furni item usage"));
 
             // clear out any memories that were loaded for this item
@@ -1571,7 +1572,7 @@ public class RoomManager extends SpotSceneManager
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
                 data.itemType, Item.USED_AS_FURNITURE, memberId, _scene.getId(),
-                0, data.itemId, new ComplainingListener<Object>(
+                0, data.itemId, new ComplainingListener<Void>(
                     log, "Unable to set furni item usage"));
 
             // and resolve any memories it may have, calling the scene updater when it's done
