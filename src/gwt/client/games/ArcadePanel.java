@@ -21,10 +21,9 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.InfoCallback;
+import client.util.PageCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -35,56 +34,44 @@ public class ArcadePanel extends FlowPanel
     public ArcadePanel ()
     {
         setStyleName("arcade");
-        _nowLoading = new NowLoadingWidget();
-        _nowLoading.center();
-
-        add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
-
-        _gamesvc.loadArcadeData(new InfoCallback<ArcadeData>() {
+        add(MsoyUI.createNowLoading());
+        _gamesvc.loadArcadeData(new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }
         });
-
     }
 
     protected void init (final ArcadeData data)
     {
-        _nowLoading.finishing(new Timer() {
-            public void run ()
-            {
-                _header.init(data.allGames);
+        clear();
+        add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
+        _header.init(data.allGames);
 
-                // show the top N games
-                FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
-                topGames.add(MsoyUI.createImage("/images/game/top_games_title.png",
-                    "TopGamesTitle"));
-                add(topGames);
-                for (int i = 0; i < data.topGames.size(); i++) {
-                    topGames.add(new TopGameWidget(i + 1, data.topGames.get(i)));
-                }
+        // show the top N games
+        FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
+        topGames.add(MsoyUI.createImage("/images/game/top_games_title.png", "TopGamesTitle"));
+        add(topGames);
+        for (int i = 0; i < data.topGames.size(); i++) {
+            topGames.add(new TopGameWidget(i + 1, data.topGames.get(i)));
+        }
 
-                add(new FeaturedGamePanel(data.featuredGames));
+        add(new FeaturedGamePanel(data.featuredGames));
 
-                add(MsoyUI.createLabel("Browse by Category", "BrowseGenresTitle"));
+        add(MsoyUI.createLabel("Browse by Category", "BrowseGenresTitle"));
 
-                // display genre links and browse games in each genre
-                FlowPanel browseGenres = MsoyUI.createFlowPanel("BrowseGenres");
-                add(browseGenres);
-                for (int ii = 0; ii < data.genres.size(); ii++) {
-                    ArcadeData.Genre genre = data.genres.get(ii);
-
-                    // display top games in the genre if there are any
-                    if (genre.games.length == 0) {
-                        continue;
-                    }
-                    browseGenres.add(new GenreBox(genre));
-                }
-                browseGenres.add(MsoyUI.createActionLabel("View all games", "ViewAllGames",
-                    Link.createListener(Pages.GAMES, "g")));
-                _nowLoading.hide();
+        // display genre links and browse games in each genre
+        FlowPanel browseGenres = MsoyUI.createFlowPanel("BrowseGenres");
+        add(browseGenres);
+        for (int ii = 0; ii < data.genres.size(); ii++) {
+            ArcadeData.Genre genre = data.genres.get(ii);
+            if (genre.games.length == 0) {
+                continue;
             }
-        });
+            browseGenres.add(new GenreBox(genre));
+        }
+        browseGenres.add(MsoyUI.createActionLabel("View all games", "ViewAllGames",
+                                                  Link.createListener(Pages.GAMES, "g")));
     }
 
     /**
@@ -156,9 +143,6 @@ public class ArcadePanel extends FlowPanel
             }
         }
     }
-
-    /** Loading animation while fetching data */
-    protected final NowLoadingWidget _nowLoading;
 
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;
