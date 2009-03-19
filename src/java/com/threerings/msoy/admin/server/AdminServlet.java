@@ -205,7 +205,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void setDisplayName (int memberId, String name)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAdminUser();
+        final MemberRecord memrec = requireSupportUser();
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
         if (tgtrec == null) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
