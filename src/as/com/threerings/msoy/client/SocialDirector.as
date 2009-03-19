@@ -22,7 +22,6 @@ import com.threerings.msoy.data.all.VizMemberName;
  * will only be shown once in the batch dialog (until the client reloads). The batch dialog will
  * continue to be shown periodically if new people are seen.</p>
  *
- * TODO: wait until the batch dialog goes away before restarting the timer
  * TODO: change behavior based on whether the user skipped, invited or opted out
  * TODO: lobbied game and avrg tracking
  */
@@ -77,8 +76,7 @@ public class SocialDirector extends BasicDirector
      */
     public function isFriend (name :VizMemberName) :Boolean
     {
-        var member :MemberObject = MemberObject(
-            _mctx.getMsoyClient().getClientObject() as MemberObject);
+        var member :MemberObject = MemberObject(_mctx.getMsoyClient().getClientObject());
         return name.getMemberId() == member.getMemberId() ||
             member.friends.containsKey(name.getKey());
     }
@@ -100,15 +98,20 @@ public class SocialDirector extends BasicDirector
         if (seen.length > 0) {
             log.debug("Showing invite panel", "count", seen.length);
 
+            _roomTimer.stop();
+
             // TODO: change our behavior if the user skips the invite?
-            BatchFriendInvitePanel.showRoom(_mctx, seen);
+            BatchFriendInvitePanel.showRoom(_mctx, seen, function () :void {
+                _roomTimer.reset();
+                _roomTimer.start();
+            });
 
             for each (var name :VizMemberName in seen) {
                 _shown[name.getMemberId()] = true;
             }
 
         } else {
-            log.info("Not showing invite panel, noone new seen");
+            log.debug("Not showing invite panel, noone new seen");
         }
     }
 

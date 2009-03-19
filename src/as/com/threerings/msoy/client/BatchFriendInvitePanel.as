@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.Event;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.ConfirmAdapter;
@@ -11,18 +13,26 @@ import com.threerings.msoy.notify.data.Notification;
 
 public class BatchFriendInvitePanel extends SelectPlayersPanel
 {
+    /**
+     * Shows the friender popup with the given players and with game-specific text. The callback
+     * will be invoked if the dialog is not shown for any reason, or after the user closes it.
+     */
     public static function showPostGame (
-        ctx :MsoyContext, playerNames :Array /* of VizMemberName */) :void
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, finished :Function) :void
     {
         var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "game");
-        panel.maybeOpen();
+        panel.maybeOpenWithCallback(finished);
     }
 
+    /**
+     * Shows the friender popup with the given players and with room-specific text. The callback
+     * will be invoked if the dialog is not shown for any reason, or after the user closes it.
+     */
     public static function showRoom (
-        ctx :MsoyContext, playerNames :Array /* of VizMemberName */) :void
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, finished :Function) :void
     {
         var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "room");
-        panel.maybeOpen();
+        panel.maybeOpenWithCallback(finished);
     }
 
     public function BatchFriendInvitePanel (
@@ -30,6 +40,18 @@ public class BatchFriendInvitePanel extends SelectPlayersPanel
     {
         super(ctx, playerNames);
         _mode = mode;
+    }
+
+    protected function maybeOpenWithCallback (finished :Function) :void
+    {
+        maybeOpen();
+        if (!isOpen()) {
+            finished();
+        } else {
+            addEventListener(Event.CLOSE, function (evt :Event) :void {
+                finished();
+            });
+        }        
     }
 
     override protected function okButtonClicked () :void
