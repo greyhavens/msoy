@@ -484,7 +484,15 @@ public class RoomManager extends SpotSceneManager
                 throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
             }
             // TODO: un-use the item, if applicable
-            _roomObj.removeFromPlaylist(key);
+            _roomObj.startTransaction();
+            try {
+                _roomObj.removeFromPlaylist(key);
+                if (_roomObj.currentSongId == audioItemId) {
+                    playNextSong();
+                }
+            } finally {
+                _roomObj.commitTransaction();
+            }
             listener.requestProcessed();
             return;
         }
@@ -535,13 +543,84 @@ public class RoomManager extends SpotSceneManager
             }
             // start it playing now if there's not already something playing
             if (!_roomObj.playlist.containsKey(new ItemIdent(Item.AUDIO, _roomObj.currentSongId))) {
-                _roomObj.setCurrentSongId(item.itemId);
-                _roomObj.setPlayCount(_roomObj.playCount + 1);
+                playNextSong();
             }
         } finally {
             _roomObj.commitTransaction();
         }
         listener.requestProcessed();
+    }
+
+    /**
+     * Remove all the songs from the specified member from the playlist.
+     */
+    protected void removeAllMemberSongs (MemberObject member)
+    {
+        Audio[] songs = _roomObj.playlist.toArray(new Audio[_roomObj.playlist.size()]);
+        int memberId = member.getMemberId();
+        _roomObj.startTransaction();
+        try {
+            boolean removedPlaying = false;
+            for (Audio song : songs) {
+                if (song.ownerId == memberId) {
+                    _roomObj.removeFromPlaylist(song.getKey());
+                    if (song.itemId == _roomObj.currentSongId) {
+                        removedPlaying = true;
+                    }
+                }
+            }
+            if (removedPlaying) {
+                playNextSong();
+            }
+        } finally {
+            _roomObj.commitTransaction();
+        }
+    }
+
+    /**
+     * Play the next song in the playlist.
+     */
+    protected void playNextSong ()
+    {
+        int size = _roomObj.playlist.size();
+        if (size == 0) {
+            _roomObj.setPlayCount(-1);
+            return; // nothing to play
+        }
+
+        // else, make a list of all the songs, sort them according to "playlist order" and try
+        // to move to the next song
+        Audio[] songs = _roomObj.playlist.toArray(new Audio[size]);
+        QuickSort.sort(songs, new Comparator<Audio>() {
+            public int compare (Audio a1, Audio a2) {
+                // TODO: playlist ordering?
+                return Comparators.compare(a1.itemId, a2.itemId);
+            }
+        });
+
+        // find the index of the currently playing song
+        int curDex = -1;
+        for (int ii = 0; ii < size; ii++) {
+            if (songs[ii].itemId == _roomObj.currentSongId) {
+                curDex = ii;
+                break;
+            }
+        }
+
+        if (curDex == -1) {
+            curDex = size - 1; // play the last song in the list..
+
+        } else {
+            curDex = (curDex + 1) % size; // play the next song
+        }
+
+        _roomObj.startTransaction();
+        try {
+            _roomObj.setCurrentSongId(songs[curDex].itemId);
+            _roomObj.setPlayCount(_roomObj.playCount + 1);
+        } finally {
+            _roomObj.commitTransaction();
+        }
     }
 
     // documentation inherited from RoomProvider
@@ -871,7 +950,12 @@ public class RoomManager extends SpotSceneManager
     public void bodyWillLeave (BodyObject body)
     {
         if (body instanceof MemberObject) {
-            body.getLocal(MemberLocal.class).willLeave((MemberObject)body, _roomObj);
+            MemberObject member = (MemberObject)body;
+            member.getLocal(MemberLocal.class).willLeave(member, _roomObj);
+
+            if (!canManage(member)) {
+                removeAllMemberSongs(member);
+            }
         }
 
         super.bodyWillLeave(body);
@@ -1627,51 +1711,6 @@ public class RoomManager extends SpotSceneManager
                 "sender_email", memmail, "sender_id", sender.getMemberId(), "subject", subject,
                 "caption", caption, "snap_url", snapURL, "title", getScene().getName(),
                 "scene_id", getScene().getId(), "server_url", DeploymentConfig.serverURL);
-        }
-    }
-
-    /**
-     * Play the next song in the playlist.
-     */
-    protected void playNextSong ()
-    {
-        int size = _roomObj.playlist.size();
-        if (size == 0) {
-            return; // nothing to play
-        }
-
-        // else, make a list of all the songs, sort them according to "playlist order" and try
-        // to move to the next song
-        Audio[] songs = _roomObj.playlist.toArray(new Audio[size]);
-        QuickSort.sort(songs, new Comparator<Audio>() {
-            public int compare (Audio a1, Audio a2) {
-                // TODO: playlist ordering?
-                return Comparators.compare(a1.itemId, a2.itemId);
-            }
-        });
-
-        // find the index of the currently playing song
-        int curDex = -1;
-        for (int ii = 0; ii < size; ii++) {
-            if (songs[ii].itemId == _roomObj.currentSongId) {
-                curDex = ii;
-                break;
-            }
-        }
-
-        if (curDex == -1) {
-            curDex = size - 1; // play the last song in the list..
-
-        } else {
-            curDex = (curDex + 1) % size; // play the next song
-        }
-
-        _roomObj.startTransaction();
-        try {
-            _roomObj.setCurrentSongId(songs[curDex].itemId);
-            _roomObj.setPlayCount(_roomObj.playCount + 1);
-        } finally {
-            _roomObj.commitTransaction();
         }
     }
 
