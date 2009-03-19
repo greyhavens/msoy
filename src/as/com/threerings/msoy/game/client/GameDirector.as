@@ -403,7 +403,7 @@ public class GameDirector extends BasicDirector
 
     /**
      * Lets the world controller know that our game is now ready to enter, possibly resulting
-     * in a browser url change. Also takes care of encoding the token for outside consumption.
+     * in a browser url change.
      */
     public function dispatchGameReady (gameId :int, gameOid :int) :void
     {
