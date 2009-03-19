@@ -300,6 +300,13 @@ public class RoomObjectView extends RoomView
                         "controlled", ctrl.controlled, "controllerOid", ctrl.controllerOid);
                 }
             }
+
+        } else if (RoomObject.PLAYLIST == name) {
+            var audio :Audio = event.getEntry() as Audio;
+            if (audio.ownerId == _ctx.getMyName().getMemberId()) {
+                _ctx.getMsoyClient().itemUsageChangedToGWT(
+                    Item.AUDIO, audio.itemId, audio.used, audio.location);
+            }
         }
     }
 
@@ -330,6 +337,14 @@ public class RoomObjectView extends RoomView
 
         if (PlaceObject.OCCUPANT_INFO == name) {
             removeBody((event.getOldEntry() as OccupantInfo).getBodyOid());
+
+        } else if (RoomObject.PLAYLIST == name) {
+            var audio :Audio = event.getOldEntry() as Audio;
+            if (audio.ownerId == _ctx.getMyName().getMemberId()) {
+                // always assume that if we're present to see a remove, it's unused
+                _ctx.getMsoyClient().itemUsageChangedToGWT(
+                    Item.AUDIO, audio.itemId, Item.UNUSED, 0);
+            }
         }
     }
 
