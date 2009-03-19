@@ -320,16 +320,21 @@ public class MediaControls extends Sprite
         var on :DisplayObject;
         var off :DisplayObject;
 
-        if (state == MediaPlayerCodes.STATE_READY || state == MediaPlayerCodes.STATE_PAUSED) {
-            on = _playBtn;
-            off = _pauseBtn;
-
-        } else if (state == MediaPlayerCodes.STATE_PLAYING) {
+        switch (state) {
+        case MediaPlayerCodes.STATE_PLAYING:
             on = _pauseBtn;
             off = _playBtn;
+            break;
 
-        } else {
-            return;
+        case MediaPlayerCodes.STATE_READY:
+        case MediaPlayerCodes.STATE_PAUSED:
+        case MediaPlayerCodes.STATE_STOPPED:
+            on = _playBtn;
+            off = _pauseBtn;
+            break;
+
+        default:
+            return; // don't adjust
         }
 
         if (off.parent == this) {
