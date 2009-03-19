@@ -558,13 +558,10 @@ public class MemberManager
         throws InvocationException
     {
         _invoker.postUnit(new PersistingUnit("getDisplayName", listener, "mid", memberId) {
-            @Override public void invokePersistent ()
-                throws Exception
-            {
+            @Override public void invokePersistent () throws Exception {
                 _displayName = String.valueOf(_memberRepo.loadMemberName(memberId));
             }
-            @Override public void handleSuccess ()
-            {
+            @Override public void handleSuccess () {
                 reportRequestProcessed(_displayName);
             }
             protected String _displayName;
@@ -576,14 +573,11 @@ public class MemberManager
                               final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit("getGroupName", listener, "gid", groupId) {
-            @Override public void invokePersistent ()
-                throws Exception
-            {
+            @Override public void invokePersistent () throws Exception {
                 final GroupRecord rec = _groupRepo.loadGroup(groupId);
                 _groupName = (rec == null) ? "" : rec.name;
             }
-            @Override public void handleSuccess ()
-            {
+            @Override public void handleSuccess () {
                 reportRequestProcessed(_groupName);
             }
             protected String _groupName;
@@ -595,9 +589,7 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         _invoker.postUnit(new WriteOnlyUnit("acknowledgeWarning(" + user.getMemberId() + ")") {
-            @Override public void invokePersist ()
-                throws Exception
-            {
+            @Override public void invokePersist () throws Exception {
                 _memberRepo.clearMemberWarning(user.getMemberId());
             }
         });
@@ -610,8 +602,7 @@ public class MemberManager
     {
         final MemberObject member = (MemberObject) caller;
         _invoker.postUnit(new PersistingUnit("setHomeSceneId", listener, "who", member.who()) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent () throws Exception {
                 final int memberId = member.getMemberId();
                 final SceneRecord scene = _sceneRepo.loadScene(sceneId);
                 if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
@@ -632,8 +623,7 @@ public class MemberManager
                     throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                 }
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 if (ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     member.setHomeSceneId(sceneId);
                 }
@@ -648,13 +638,10 @@ public class MemberManager
         throws InvocationException
     {
         _invoker.postUnit(new PersistingUnit("getHomeSceneId", listener, "gid", groupId) {
-            @Override public void invokePersistent ()
-                throws Exception
-            {
+            @Override public void invokePersistent () throws Exception {
                 _homeSceneId = _groupRepo.getHomeSceneId(groupId);
             }
-            @Override public void handleSuccess ()
-            {
+            @Override public void handleSuccess () {
                 reportRequestProcessed(_homeSceneId);
             }
             protected int _homeSceneId;
