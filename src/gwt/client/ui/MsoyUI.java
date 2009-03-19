@@ -788,6 +788,17 @@ public class MsoyUI
         }
     }
 
+    /**
+     * Returns a widget that says "Loading..." and displays a large (168x116) swirly image.
+     */
+    public static Widget createNowLoading ()
+    {
+        FlowPanel panel = createFlowPanel("nowLoadingWidget");
+        panel.add(new Image("/images/ui/loading_globe_notext.gif"));
+        panel.add(new Label(_cmsgs.nowLoading()));
+        return panel;
+    }
+
     protected static class TextBoxSelector
         implements FocusListener, ClickListener
     {

@@ -1268,6 +1268,8 @@ img, embed, applet, object {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 18pt;
   font-weight: bold;
+  text-align: center;
+  padding: 50px 0px;
 }
 
 .miniNowLoadingWidget {

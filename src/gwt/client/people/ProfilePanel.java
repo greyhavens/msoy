@@ -13,7 +13,6 @@ import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.ui.NowLoadingWidget;
 import client.util.ServiceUtil;
 
 /**
@@ -24,8 +23,7 @@ public class ProfilePanel extends FlowPanel
     public ProfilePanel (int memberId)
     {
         setStyleName("profile");
-        _nowLoading = new NowLoadingWidget();
-        _nowLoading.center();
+        add(MsoyUI.createNowLoading());
 
         _memberId = memberId;
         // issue a request for this member's profile page data
@@ -35,6 +33,7 @@ public class ProfilePanel extends FlowPanel
             }
             public void onFailure (Throwable cause) {
                 CShell.log("Failed to load profile data [for=" + _memberId + "].", cause);
+                clear();
                 add(MsoyUI.createLabel(CShell.serverError(cause), "Error"));
             }
         });
@@ -42,26 +41,21 @@ public class ProfilePanel extends FlowPanel
 
     protected void init (final ProfileService.ProfileResult pdata)
     {
-        _nowLoading.finishing(new Timer() {
-            public void run ()
-            {
-                if (pdata == null) {
-                    add(MsoyUI.createLabel(_msgs.profileNoSuchMember(), "Error"));
-                    return;
-                }
+        clear();
+        if (pdata == null) {
+            add(MsoyUI.createLabel(_msgs.profileNoSuchMember(), "Error"));
+            return;
+        }
 
-                CShell.frame.setTitle((_memberId == CShell.getMemberId())
-                    ? _msgs.profileSelfTitle() : _msgs.profileOtherTitle(pdata.name.toString()));
+        CShell.frame.setTitle((_memberId == CShell.getMemberId()) ? _msgs.profileSelfTitle() :
+                              _msgs.profileOtherTitle(pdata.name.toString()));
 
-                for (Blurb _blurb : _blurbs) {
-                    if (_blurb.shouldDisplay(pdata)) {
-                        _blurb.init(pdata);
-                        add(_blurb);
-                    }
-                }
-                _nowLoading.hide();
+        for (Blurb _blurb : _blurbs) {
+            if (_blurb.shouldDisplay(pdata)) {
+                _blurb.init(pdata);
+                add(_blurb);
             }
-        });
+        }
     }
 
     /** The id of the member who's profile we're displaying. */
@@ -73,8 +67,6 @@ public class ProfilePanel extends FlowPanel
         new FriendsBlurb(), new TrophiesBlurb(), new MedalsBlurb(), new StampsBlurb(),
         new RatingsBlurb(), new GroupsBlurb(), new FavoritesBlurb(), new CommentsBlurb()
     };
-
-    protected final NowLoadingWidget _nowLoading;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
