@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.tour.client {
 
+import flash.events.Event;
+
 import mx.core.UIComponent;
 
 import com.threerings.util.Log;
@@ -90,7 +92,7 @@ public class TourDirector extends BasicDirector
         if (isOnTour()) {
             if (_tourDialog == null) {
                 _tourDialog = new TourDialog(_wctx);
-                _tourDialog.setCloseCallback(dialogWasClosed);
+                _tourDialog.addEventListener(Event.CLOSE, dialogWasClosed);
                 _tourDialog.open();
             }
         } else {
@@ -114,7 +116,7 @@ public class TourDirector extends BasicDirector
         }
     }
 
-    protected function dialogWasClosed () :void
+    protected function dialogWasClosed (evt :Event) :void
     {
         _tourDialog = null;
         endTour();

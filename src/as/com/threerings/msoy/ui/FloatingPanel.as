@@ -31,6 +31,13 @@ import com.threerings.flex.PopUpUtil;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
 
+/**
+ * Dispatched when the dialog closes due to a CloseEvent or a call to <code>close()</code>.
+ *
+ * @eventType flash.events.Event.CLOSE
+ */
+[Event(name="close", type="flash.events.Event")]
+
 public class FloatingPanel extends TitleWindow
 {
     /** Button constants. You may define your own in a subclass,
@@ -82,9 +89,7 @@ public class FloatingPanel extends TitleWindow
             // otherwise, pop it up or down
             if (thePanel == null) {
                 thePanel = createFn();
-                // TODO: change closeCallback to an event dispatch, so that more than one may
-                // be set and our callback can't be clobbered.
-                thePanel.setCloseCallback(function () :void {
+                thePanel.addEventListener(Event.CLOSE, function (...args) :void {
                     thePanel = null;
                     if (srcButton != null) {
                         // deselect the button. Should only be needed for toggle buttons, but
@@ -114,16 +119,6 @@ public class FloatingPanel extends TitleWindow
         // Add a listener for the CLOSE event. It's only possible to be dispatched if
         // showCloseButton=true, which we allow subclasses to do with convenience.
         addEventListener(CloseEvent.CLOSE, handleClose);
-    }
-
-    /**
-     * Set the callback that will be called when this dialog closes.
-     */
-    public function setCloseCallback (closeCallback :Function) :void
-    {
-        // TODO?: to be even more correct, we should perhaps call this callback when the
-        // dialog is removed from its parent, even if done via some other mechanism
-        _closeCallback = closeCallback;
     }
 
     /**
@@ -166,9 +161,9 @@ public class FloatingPanel extends TitleWindow
     {
         _parent = null;
         PopUpManager.removePopUp(this);
-        if (_closeCallback != null) {
-            _closeCallback();
-        }
+
+        // let our listeners know we've closed
+        dispatchEvent(new Event(Event.CLOSE));
     }
 
     /**
@@ -371,9 +366,6 @@ public class FloatingPanel extends TitleWindow
 
     /** Provides client services. */
     protected var _ctx :MsoyContext;
-
-    /** Called when we're closed. */
-    protected var _closeCallback :Function;
 
     /** The button bar. */
     protected var _buttonBar :ButtonBar;
