@@ -16,7 +16,6 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.util.Command;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.DeploymentConfig;
