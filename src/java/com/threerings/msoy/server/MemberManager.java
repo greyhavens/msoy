@@ -63,6 +63,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.server.util.ServiceUnit;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -537,17 +538,10 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
-                                             "user", user.who(), "name", name) {
+        _invoker.postUnit(new ServiceUnit("setDisplayName", listener,
+                                          "user", user.who(), "name", name) {
             @Override public void invokePersistent () throws Exception {
                 _memberLogic.setDisplayName(user.getMemberId(), name, user.tokens.isSupport());
-            }
-            @Override public void handleFailure (Exception error) {
-                if (error instanceof ServiceException) {
-                    _listener.requestFailed(error.getMessage());
-                } else {
-                    super.handleFailure(error);
-                }
             }
         });
     }
