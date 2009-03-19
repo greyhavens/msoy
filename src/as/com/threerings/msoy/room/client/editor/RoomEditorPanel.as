@@ -317,7 +317,7 @@ public class RoomEditorPanel extends FlyingPanel
         _musicLabel.width = 200;
         musicBox.addChild(new CommandButton(
             Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.AUDIO));
-        GridUtil.addRow(contents, musicBox, [3, 1]);
+//        GridUtil.addRow(contents, musicBox, [3, 1]);
 
         // item name combo box
 
