@@ -130,6 +130,23 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
+     * Return this client's member id, or 0 if we're logged off or the viewer.
+     */
+    public function getMyId () :int
+    {
+        var name :MemberName = getMyName();
+        return (name == null) ? 0 : name.getMemberId();
+    }
+
+//    /**
+//     * Return our MemberObject, or null if that's not applicable for this context.
+//     */
+//    public function getMyMember () :MemberObject
+//    {
+//        return (_client.getClientObject() as MemberObject);
+//    }
+
+    /**
      * Returns true if we're logged on to a registered (non-viewer, non-permaguest) account.
      */
     public function isRegistered () :Boolean
