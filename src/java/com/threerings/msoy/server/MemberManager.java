@@ -55,6 +55,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -539,7 +540,11 @@ public class MemberManager
         _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
                                              "user", user.who(), "name", name) {
             @Override public void invokePersistent () throws Exception {
-                _memberLogic.setDisplayName(user.getMemberId(), name, user.tokens.isSupport());
+                try {
+                    _memberLogic.setDisplayName(user.getMemberId(), name, user.tokens.isSupport());
+                } catch (ServiceException se) {
+                    throw new InvocationException(se.getMessage());
+                }
             }
         });
     }
