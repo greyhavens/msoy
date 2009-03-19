@@ -46,7 +46,7 @@ public class FloatingPanel extends TitleWindow
      * An event dispatched when this dialog closes.
      * @eventType didClose
      */
-    public static const DID_CLOSE :String = "didClose"
+    public static const DID_CLOSE :String = "didClose";
 
     /** Button constants. You may define your own in a subclass,
      * start your ids at 100 to be safe (in case more are added here).
