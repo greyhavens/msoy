@@ -30,6 +30,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
@@ -39,6 +40,7 @@ import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -78,6 +80,7 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
+        add(new TongueBox(_msgs.deleteHeader(), makeDeleteSection()));
         add(new TongueBox(_msgs.charitiesHeader(), makeCharitySection()));
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
     }
@@ -95,6 +98,7 @@ public class EditAccountPanel extends FlowPanel
             _perma.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
             _pname = MsoyUI.createTextBox("", MemberName.MAXIMUM_PERMANAME_LENGTH, -1);
             _perma.setWidget(0, 1, _pname);
+            _perma.getFlexCellFormatter().setWidth(0, 1, "10px");
             TextBoxUtil.addTypingListener(_pname, new Command() {
                 public void execute () {
                     validatePermaName();
@@ -107,7 +111,7 @@ public class EditAccountPanel extends FlowPanel
             });
             _uppname.setEnabled(false);
             _perma.setWidget(0, 2, _uppname);
-            _perma.setHTML(1, 0, _msgs.editPermaNameTip(), 3, "Tip");
+            _perma.setHTML(1, 1, _msgs.editPermaNameTip(), 2, "Tip");
 
         } else {
             _perma.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
@@ -123,6 +127,7 @@ public class EditAccountPanel extends FlowPanel
         // the first row allows changing of their address
         table.setText(0, 0, _msgs.editEmail(), 1, "rightLabel");
         table.setWidget(0, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
+        table.getFlexCellFormatter().setWidth(0, 1, "10px");
         _email.setText(CShell.creds.accountName);
         TextBoxUtil.addTypingListener(_email, new Command() {
             public void execute () {
@@ -184,8 +189,9 @@ public class EditAccountPanel extends FlowPanel
     {
         SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editRealName(), 1, "rightLabel");
-        table.setWidget(0, 1,
-            _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1));
+        _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1);
+        table.setWidget(0, 1, _rname);
+        table.getFlexCellFormatter().setWidth(0, 1, "10px");
         _rname.setText(_accountInfo.realName);
         TextBoxUtil.addTypingListener(_rname, new Command() {
             public void execute () {
@@ -199,7 +205,7 @@ public class EditAccountPanel extends FlowPanel
         });
         _uprname.setEnabled(false);
         table.setWidget(0, 2, _uprname);
-        table.setHTML(1, 0, _msgs.editRealNameTip(), 3, "Tip");
+        table.setHTML(1, 1, _msgs.editRealNameTip(), 2, "Tip");
         return table;
     }
 
@@ -210,7 +216,7 @@ public class EditAccountPanel extends FlowPanel
         table.setWidget(0, 1, _password = new PasswordTextBox());
         TextBoxUtil.addTypingListener(_password, new Command() {
             public void execute () {
-                validatePassword();
+                _uppass.setEnabled(_password.getText().trim().length() > 0);
             }
         });
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
@@ -228,6 +234,43 @@ public class EditAccountPanel extends FlowPanel
         });
         _uppass.setEnabled(false);
         table.setWidget(1, 2, _uppass);
+        return table;
+    }
+
+    protected Widget makeDeleteSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
+        table.setText(0, 0, _msgs.deleteTip(), 3, "Info");
+
+        table.setWidget(1, 0, _delconf = new CheckBox(), 1, "rightLabel");
+        table.setText(1, 1, _msgs.deleteConfirm(), 2, null);
+
+        table.setText(2, 0, _msgs.deletePassword(), 1, "rightLabel");
+        table.setWidget(2, 1, _delpass = new PasswordTextBox());
+        table.getFlexCellFormatter().setWidth(2, 1, "10px");
+        final Button delgo = new Button(_msgs.deleteDelete());
+        table.setWidget(2, 2, delgo);
+        TextBoxUtil.addTypingListener(_delpass, new Command() {
+            public void execute () {
+                delgo.setEnabled(_delpass.getText().trim().length() > 0);
+            }
+        });
+        new ClickCallback<Void>(delgo) {
+            protected boolean callService () {
+                if (!_delconf.isChecked()) {
+                    MsoyUI.errorNear(_msgs.deleteMustCheck(), delgo);
+                    return false;
+                }
+                _usersvc.deleteAccount(CShell.frame.md5hex(_delpass.getText().trim()), this);
+                return true;
+            }
+            protected boolean gotResult (Void result) {
+                Link.go(Pages.ACCOUNT, "deleted");
+                return false;
+            }
+        };
+        delgo.setEnabled(false);
+
         return table;
     }
 
@@ -457,12 +500,6 @@ public class EditAccountPanel extends FlowPanel
                               email.equals(CShell.creds.accountName)));
     }
 
-    protected void validatePassword ()
-    {
-        String password = _password.getText().trim();
-        _uppass.setEnabled(password.length() > 0);
-    }
-
     protected void validatePermaName ()
     {
         // extract the permaname, but also show the user exactly what we're using, since we
@@ -498,8 +535,8 @@ public class EditAccountPanel extends FlowPanel
     protected SmartTable _perma;
 
     protected TextBox _email, _pname, _rname;
-    protected CheckBox _whirledEmail, _announceEmail;
-    protected PasswordTextBox _password, _confirm;
+    protected CheckBox _whirledEmail, _announceEmail, _delconf;
+    protected PasswordTextBox _password, _confirm, _delpass;
     protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname, _upcharity, _revalidate;
 
     protected FBConnect _fbconnect = new FBConnect();

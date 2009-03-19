@@ -548,7 +548,7 @@ public class MemberLogic
 
         // and disable all registered member records
         if (!disableIds.isEmpty()) {
-            _memberRepo.disableMembers(killIds);
+            _memberRepo.disableMembers(disableIds);
         }
     }
 

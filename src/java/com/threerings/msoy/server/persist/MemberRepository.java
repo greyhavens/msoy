@@ -619,7 +619,7 @@ public class MemberRepository extends DepotRepository
         // we have to do this one at a time
         for (int memberId : memberIds) {
             updatePartial(MemberRecord.class, memberId,
-                          MemberRecord.ACCOUNT_NAME, memberId + ":disabled");
+                          MemberRecord.ACCOUNT_NAME, memberId + MemberRecord.DELETED_SUFFIX);
         }
         // NOTE: currently, the OOOUserRecord will have been deleted for all of these member
         // records, if we some day ditch our OOOUser crap and move passwords into MemberRecord,

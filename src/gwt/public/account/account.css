@@ -120,9 +120,7 @@
 }
 
 .editAccount .Tip {
-  width: 400px;
   font-size: 12px;
-  text-align: center;
 }
 
 .editAccount .Info {
@@ -254,6 +252,10 @@
 .welcome .Next .NextArrow { 
   padding-right: 10px;
 }
+
+/* ------------------------------------
+   OptOutPanel
+-------------------------------------*/
 
 .optout .Header {
   font-weight: bold;

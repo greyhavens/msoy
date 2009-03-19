@@ -106,7 +106,7 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = getAuthedUser();
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
-        if (tgtrec == null) {
+        if (tgtrec == null || tgtrec.isDeleted()) {
             return null;
         }
 

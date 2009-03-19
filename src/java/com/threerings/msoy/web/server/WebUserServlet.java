@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -513,6 +514,21 @@ public class WebUserServlet extends MsoyServiceServlet
         mrec.setFlag(MemberRecord.Flag.VALIDATED, true);
         _memberRepo.storeFlags(mrec);
         return true;
+    }
+
+    // from interface WebUserService
+    public void deleteAccount (String password)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        // this will throw an exception if the password is invalid (it should not be possible for
+        // the account not to exist)
+        _accountLogic.getDomain(mrec.accountName).authenticateAccount(mrec.accountName, password);
+
+        // if they supplied the right password, then do the deed; bye bye bonzo
+        log.info("Deleting account (bye bye)", "who", mrec.accountName);
+        _memberLogic.deleteMembers(Collections.singletonList(mrec.memberId));
     }
 
     protected void checkClientVersion (String clientVersion, String who)

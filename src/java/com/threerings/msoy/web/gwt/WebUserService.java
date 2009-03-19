@@ -148,4 +148,11 @@ public interface WebUserService extends RemoteService
      */
     boolean validateEmail (int memberId, String code)
         throws ServiceException;
+
+    /**
+     * Requests to delete the calling user's account. The supplied MD5-encoded password must match
+     * the one on file for the account.
+    */
+    void deleteAccount (String password)
+        throws ServiceException;
 }

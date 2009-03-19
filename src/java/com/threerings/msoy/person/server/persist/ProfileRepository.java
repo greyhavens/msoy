@@ -170,7 +170,9 @@ public class ProfileRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(ProfileRecord.class, new Where(new In(ProfileRecord.MEMBER_ID, memberIds)));
+        // we don't delete their ProfileRecord because we need their member card to work for the
+        // rest of time because they may have forum posts or other shit
+        // deleteAll(ProfileRecord.class, new Where(new In(ProfileRecord.MEMBER_ID, memberIds)));
         deleteAll(InterestRecord.class, new Where(new In(InterestRecord.MEMBER_ID, memberIds)));
     }
 

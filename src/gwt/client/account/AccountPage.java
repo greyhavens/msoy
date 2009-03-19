@@ -4,6 +4,7 @@
 package client.account;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -26,7 +27,21 @@ public class AccountPage extends Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
-        if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
+        if (action.equals("deleted")) {
+            setContent(null, MsoyUI.createLabel(_msgs.deleteDone(), "infoLabel"));
+            CShell.frame.closeClient();
+            if (!CShell.isGuest()) {
+                CShell.frame.logoff();
+            }
+            // redirect away from this page after 2 seconds because if we leave them here and they
+            // try to log in to a different account, it will result in confusion
+            new Timer() {
+                public void run () {
+                    Link.go(Pages.LANDING, "");
+                }
+            }.schedule(2000);
+
+        } else if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
             setContent(_msgs.createTitle(), new CreateAccountPanel());
 
         } else if (action.equals("edit")) {

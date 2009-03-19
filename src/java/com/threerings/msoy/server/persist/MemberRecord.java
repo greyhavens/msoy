@@ -316,6 +316,14 @@ public class MemberRecord extends PersistentRecord
     }
 
     /**
+     * Returns true if this member record represents a deleted account.
+     */
+    public boolean isDeleted ()
+    {
+        return accountName.equals(memberId + DELETED_SUFFIX);
+    }
+
+    /**
      * Tests whether a given flag is set on this member.
      */
     public boolean isSet (final Flag flag)
@@ -427,4 +435,6 @@ public class MemberRecord extends PersistentRecord
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END
+
+    protected static final String DELETED_SUFFIX = ":deleted";
 }
