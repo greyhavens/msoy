@@ -540,10 +540,13 @@ public class MemberManager
         _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
                                              "user", user.who(), "name", name) {
             @Override public void invokePersistent () throws Exception {
-                try {
-                    _memberLogic.setDisplayName(user.getMemberId(), name, user.tokens.isSupport());
-                } catch (ServiceException se) {
-                    throw new InvocationException(se.getMessage());
+                _memberLogic.setDisplayName(user.getMemberId(), name, user.tokens.isSupport());
+            }
+            @Override public void handleFailure (Exception error) {
+                if (error instanceof ServiceException) {
+                    _listener.requestFailed(error.getMessage());
+                } else {
+                    super.handleFailure(error);
                 }
             }
         });
