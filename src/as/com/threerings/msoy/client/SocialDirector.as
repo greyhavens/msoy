@@ -28,15 +28,27 @@ import com.threerings.msoy.world.client.WorldController;
  *   <li>When playing a lobbied game, tracks all co-players in the session in games of at least a
  *     certain duration.</li>
  *   <li>When the user closes the game, shows a batch friend request dialog.</li>
+ *   <li>When playing an AVR game, the same tracking as for lobbied games is done, but room sharing
+ *     is an additional criteria for co-player-ness.</li>
+ *   <li>Supports hooking into the AVRG deactivation process, which may invoke a popup prior to
+ *     officially deactivating the game.</li>
  * </ul>
  * <p>The tracking of occupants and the room timer are reset when the user changes rooms. A person
  * will only be shown once in the batch dialog (until the client reloads). The batch dialog will
  * continue to be shown periodically if new people are seen.</p>
  *
  * TODO: change behavior based on whether the user skipped, invited or opted out
+ *
  * TODO: track the duration of other players so that someone who pops into the room or game and
  * pops back out again is not presented for friending
- * TODO: avrg tracking
+ *
+ * TODO: vary the required visit interval for rooms during an AVRG session - currently AVRGs with
+ * a fast room change dynamic will result in a low or no friend suggestions
+ *
+ * TODO: the use of _gobs._seen as a means of filtering co-players for AVRGs is not really ideal,
+ * too many false positives in a large player base. Searching the current occupant info set might
+ * work, except then there could be a lot of false negatives. Some kind of _recentlySeen, with
+ * timestamps and purging would probably work best.
  */
 public class SocialDirector extends BasicDirector
 {
@@ -121,6 +133,17 @@ public class SocialDirector extends BasicDirector
     }
 
     /**
+     * If we have any friend suggestions, show our popup, return false and invoke the deactivator
+     * callback (no arguments) when the popup closes. If not, or if the popup is opted out, return
+     * true.
+     */
+    public function mayDeactivateAVRGame (deactivator :Function) :Boolean
+    {
+        log.debug("Checking for AVRG deactivation");
+        return !maybeShowGamePopup(deactivator);
+    }
+
+    /**
      * Enables some world-specific features. Should be called close to client init time.
      */
     public function setWorldController (ctrl :WorldController) :void
@@ -144,7 +167,7 @@ public class SocialDirector extends BasicDirector
                 resetter();
             }
 
-        } else if (obs == _gobs) {
+        } else if (obs == _gobs && !_avrg) {
             // if the timer has expired, "bank" those seen. wait until the session ends to popup
             if (_gameTimer.currentCount > 0) {
                 addNames(seen, _seenInGame);
@@ -157,9 +180,17 @@ public class SocialDirector extends BasicDirector
 
     protected function maybeShowRoomPopup (seen :Array, onClose :Function) :Boolean
     {
-        // popup a friender if the user hasn't gone into a game and was in the current location
-        // for at least ROOM_VISIT_TIME
-        if (_roomTimer.currentCount == 0 || _gobs != null || seen.length == 0) {
+        // bail if the user has not been in the room very long of there are no new occupants
+        if (_roomTimer.currentCount == 0 || seen.length == 0) {
+            return false;
+        }
+
+        // the user is in an avrg, bank the users that are also in the game
+        if (_gobs != null && _avrg) {
+            var filtered :Array = _gobs.filterUnseen(seen);
+            addNames(filtered, _seenInGame);
+            log.debug("Saved seen avrg co-players", "count", filtered.length,
+                "roomCount", seen.length);
             return false;
         }
 
@@ -180,6 +211,7 @@ public class SocialDirector extends BasicDirector
     protected function trackGame (ctx :CrowdContext, avrg :Boolean) :void
     {
         var This :SocialDirector = this;
+        log.debug("Tracking game", "avrg", avrg);
 
         // when the client logs on...
         ctx.getClient().addEventListener(ClientEvent.CLIENT_DID_LOGON,
@@ -218,23 +250,35 @@ public class SocialDirector extends BasicDirector
         // get rid of our handler to stop this from getting called again
         _wctrl.removePlaceExitHandler(onExitGame);
 
-        // cheat and call this directly, we just want to bank any current occupants
+        return !maybeShowGamePopup(_wctrl.handleClosePlaceView);
+    }
+
+    protected function maybeShowGamePopup (onClose :Function) :Boolean
+    {
+        // cheat and call these directly, we just want to bank any current occupants
+        if (_avrg) {
+            willUpdateLocation(_wobs); // this one has to be first
+        }
         willUpdateLocation(_gobs);
 
         // grab the co-players and reset
         var seen :Array = Util.values(_seenInGame);
         _seenInGame = new Dictionary();
 
+        if (seen.length == 0) {
+            log.debug("No one seen, not showing game popup");
+            return false;
+        }
+
         // offer to befriend them
-        var shown :Boolean = BatchFriendInvitePanel.showPostGame(
-            _mctx, seen, _wctrl.handleClosePlaceView);
+        var shown :Boolean = BatchFriendInvitePanel.showPostGame(_mctx, seen, onClose);
 
         // suppress future popups with the same people
         addNames(seen, _shown);
 
-        log.debug("Lobbied game exit", "shown", shown, "count", seen.length);
+        log.debug("Game popup shown", "shown", shown, "count", seen.length, "avrg", _avrg);
 
-        return !shown;
+        return shown;
     }
 
     protected function onExitRoom () :Boolean
@@ -320,6 +364,17 @@ class Observer
         var names :Array = Util.values(_seen);
         _seen = new Dictionary();
         return names;
+    }
+
+    /**
+     * Returns a new array created by filtering all unseen names out of the given array.
+     */
+    public function filterUnseen (names :Array) :Array
+    {
+        return names.filter(function (name :VizMemberName, ...unused) :Boolean {
+            log.info("Filtering name", "memberId", name.getMemberId(), "seen", _seen[name.getMemberId()]);
+            return _seen[name.getMemberId()] != null;
+        });
     }
 
     protected function locationDidChange (plobj :PlaceObject) :void
