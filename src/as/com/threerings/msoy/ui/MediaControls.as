@@ -74,6 +74,14 @@ public class MediaControls extends Sprite
         return HEIGHT;
     }
 
+    public function setSeekAllowed (seek :Boolean) :void
+    {
+        _knob.mouseEnabled = seek;
+        _knob.mouseChildren = seek;
+        _track.mouseEnabled = seek;
+        _track.mouseChildren = seek;
+    }
+
     public function isDraggingSeek () :Boolean
     {
         return _dragging;

@@ -49,6 +49,11 @@ public class MsoyAudioDisplay extends Sprite
         return HEIGHT;
     }
 
+    public function getControls () :MediaControls
+    {
+        return _controls;
+    }
+
     public function unhook () :void
     {
         _player.removeEventListener(MediaPlayerCodes.METADATA, handleMetadata);

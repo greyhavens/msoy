@@ -69,6 +69,9 @@ public class PlaylistMusicDialog extends MusicDialog
             return; // nothing else to do: act like parent class
         }
 
+        // TODO: for now we disable seeking to avoid fucking around.
+        _display.getControls().setSeekAllowed(false);
+
         var rule :HRule = new HRule();
         rule.percentWidth = 100;
         addChild(rule);
