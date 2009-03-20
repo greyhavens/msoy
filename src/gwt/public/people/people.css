@@ -79,13 +79,12 @@
 }
 
 .profile .Profile .Buttons img {
-  display: inline;
   padding-right: 3px;
+  vertical-align: baseline;
 }
 
 .profile .Profile .Buttons .Link {
   margin-right: 15px;
-  display: inline;
 }
 
 .profile .Profile .Name {
@@ -105,7 +104,6 @@
   font-size: 14px;
   white-space: nowrap;
 }
-
 
 .profile .Interests {
   font-size: 12px;
