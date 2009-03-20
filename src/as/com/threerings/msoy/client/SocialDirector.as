@@ -94,21 +94,15 @@ public class SocialDirector extends BasicDirector
     }
 
     /**
-     * Detects if a given name is a friend.
+     * Determines whether the supplied member should be added to the 'seen' list.
      */
-    public function isFriend (name :VizMemberName) :Boolean
+    public function shouldAdd (name :VizMemberName) :Boolean
     {
+        // if we're not logged on to the world server yet or this member is us or already our
+        // friend or we've already added them to the seen list, skip 'em
         var member :MemberObject = MemberObject(_mctx.getMsoyClient().getClientObject());
-        return name.getMemberId() == member.getMemberId() ||
-            member.friends.containsKey(name.getKey());
-    }
-
-    /**
-     * Detects whether the given name has been offered to the user already.
-     */
-    public function hasShown (name :VizMemberName) :Boolean
-    {
-        return _shown[name.getMemberId()] != null;
+        return !(member == null || name.getMemberId() == member.getMemberId() ||
+            member.friends.containsKey(name.getKey()) || _shown[name.getMemberId()] != null);
     }
 
     /**
@@ -200,14 +194,14 @@ public class SocialDirector extends BasicDirector
      */
     protected function trackGame (ctx :CrowdContext, avrg :Boolean) :void
     {
-        var This :SocialDirector = this;
+        var socdir :SocialDirector = this;
         log.debug("Tracking game", "avrg", avrg);
 
         // when the client logs on...
         ctx.getClient().addEventListener(ClientEvent.CLIENT_DID_LOGON,
             function (evt :ClientEvent) :void {
                 // observe the occupants
-                _gobs = new Observer(This, ctx.getLocationDirector(), willUpdateLocation);
+                _gobs = new Observer(socdir, ctx.getLocationDirector(), willUpdateLocation);
                 _avrg = avrg;
 
                 // show our popup when the user hits the close button
@@ -434,13 +428,7 @@ class Observer
     {
         if (name is VizMemberName) {
             var vname :VizMemberName = VizMemberName(name);
-            if (_sdir.isFriend(vname)) {
-                log.debug("Not adding friend occupant", "name", name);
-
-            } else if (_sdir.hasShown(vname)) {
-                log.debug("Not adding previously shown occupant", "name", name);
-
-            } else {
+            if (_sdir.shouldAdd(vname)) {
                 _seen[vname.getMemberId()] = name;
                 log.debug("Adding seen occupant", "name", name);
             }
