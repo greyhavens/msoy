@@ -432,10 +432,8 @@ class Observer
                 _seen[vname.getMemberId()] = name;
                 log.debug("Adding seen occupant", "name", name);
             }
-
-        } else {
-            log.warning("Name not a VizMemberName?", "name", name);
         }
+        // else: PetName, or something else
     }
 
     protected var _lobs :LocationAdapter = new LocationAdapter(null, locationDidChange);
