@@ -135,11 +135,11 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
         super.displayResults(start, count, list);
 
-        if (_scrollToPanel != null) {
+        if (_scrollTarget != null) {
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    _scrollToPanel.getElement().scrollIntoView();
-                    _scrollToPanel = null;
+                    scrollPage(_scrollTarget.getElement().getAbsoluteTop());
+                    _scrollTarget = null;
                 }
             });
         }
@@ -152,9 +152,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             _tmodel.getThread(), message, _tmodel.isManager());
         if (message.messageId == _scrollToId) {
             _scrollToId = 0;
-            _scrollToPanel = panel;
-        } else if (_scrollToPanel == null) {
-            _scrollToPanel = panel;
+            _scrollTarget = panel;
+        } else if (_scrollTarget == null) {
+            _scrollTarget = panel;
         }
         return panel;
     }
@@ -349,6 +349,10 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         return new MiniNowLoadingWidget();
     }
 
+    protected static native void scrollPage (int position) /*-{
+        $doc.documentElement.scrollTop = position;
+    }-*/;
+
     /** The thread panel in which we're hosted. */
     protected ThreadPanel _parent;
 
@@ -360,7 +364,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     protected int _scrollToId;
 
     /** The panel to which we want to scroll once our page is laid out. */
-    protected ThreadMessagePanel _scrollToPanel;
+    protected Widget _scrollTarget;
 
     /** A button for posting a reply message. */
     protected Button _postReply;
