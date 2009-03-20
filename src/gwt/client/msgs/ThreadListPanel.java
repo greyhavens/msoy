@@ -9,13 +9,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -26,7 +27,6 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
-import client.ui.RowPanel;
 import client.ui.SearchBox;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -167,13 +167,11 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         return new MiniNowLoadingWidget();
     }
 
-    protected class ThreadSummaryPanel extends FlexTable
+    protected class ThreadSummaryPanel extends SmartTable
     {
         public ThreadSummaryPanel (final ForumThread thread)
         {
-            setStyleName("threadSummaryPanel");
-            setCellPadding(0);
-            setCellSpacing(0);
+            super("threadSummaryPanel", 0, 0);
 
             int col = 0;
             Image statusImage = new Image();
@@ -184,13 +182,13 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 statusImage.setUrl("/images/msgs/read.png");
                 statusImage.setTitle(_mmsgs.tlpStatusReadTip());
             }
-            setWidget(0, col, statusImage);
-            getFlexCellFormatter().setStyleName(0, col++, "Status");
+            setWidget(0, col++, statusImage, 1, "Status");
 
-            RowPanel bits = new RowPanel();
+            FlowPanel bits = MsoyUI.createFlowPanel("Subject");
             for (int ii = 0; ii < FLAG_IMAGES.length; ii++) {
                 if ((thread.flags & (1 << ii)) != 0) {
-                    Image image = new Image("/images/msgs/" + FLAG_IMAGES[ii] + ".png");
+                    Image image = MsoyUI.createImage(
+                        "/images/msgs/" + FLAG_IMAGES[ii] + ".png", "inline");
                     image.setTitle(FLAG_TIPS[ii]);
                     bits.add(image);
                 }
@@ -221,25 +219,22 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             if (_groupId == 0) {
                 Widget groupLink = Link.create(_mmsgs.tlpFromGroup(thread.group.toString()),
                     "GroupName", Pages.GROUPS, Args.compose("f", thread.group.getGroupId()));
-                bits.add(groupLink, HasAlignment.ALIGN_BOTTOM);
+                bits.add(groupLink);
             }
 
-            setWidget(0, col, bits);
             getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_LEFT);
-            getFlexCellFormatter().setStyleName(0, col++, "Subject");
+            setWidget(0, col++, bits);
 
-            setText(0, col, "" + thread.posts);
-            getFlexCellFormatter().setStyleName(0, col++, "Posts");
+            setText(0, col++, String.valueOf(thread.posts), 1, "Posts");
 
-            VerticalPanel mrp = new VerticalPanel();
+            FlowPanel mrp = MsoyUI.createFlowPanel("LastPost");
             mrp.add(new Label(MsoyUI.formatDateTime(thread.mostRecentPostTime)));
             Widget latest = Link.create(
                 _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Pages.GROUPS, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
             latest.setTitle(_mmsgs.tlpLastTip());
             mrp.add(latest);
-            setWidget(0, col, mrp);
-            getFlexCellFormatter().setStyleName(0, col++, "LastPost");
+            setWidget(0, col++, mrp, 1, "LPCell");
 
             // add an ignore button when displaying unread threads from many groups
             if (_groupId == 0) {
@@ -256,9 +251,8 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                         return false;
                     }
                 };
-                setWidget(0, col, ignoreThread);
                 getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
-                getFlexCellFormatter().setStyleName(0, col++, "IgnoreThread");
+                setWidget(0, col++, ignoreThread, 1, "IgnoreThread");
             }
         }
     }
