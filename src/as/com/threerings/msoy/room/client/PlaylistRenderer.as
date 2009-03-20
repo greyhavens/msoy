@@ -5,16 +5,21 @@ package com.threerings.msoy.room.client {
 
 import mx.containers.HBox;
 import mx.controls.Label;
+import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.ui.MediaControls;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Audio;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
 
 public class PlaylistRenderer extends HBox
@@ -37,7 +42,13 @@ public class PlaylistRenderer extends HBox
         FlexUtil.setVisible(_playBtn, isManager);
         _playBtn.enabled = !isPlayingNow;
         _name.text = audio.name;
-        _name.toolTip = audio.description;
+        if (audio.used != Item.UNUSED) {
+            _name.toolTip = Msgs.WORLD.get("i.manager_music");
+        } else {
+            var info :MemberInfo = roomObj.getMemberInfo(audio.ownerId);
+            _name.toolTip = Msgs.WORLD.get("i.visitor_music",
+                (info != null) ? info.username : Msgs.WORLD.get("m.none"));
+        }
         _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
         FlexUtil.setVisible(_removeBtn, canRemove);
         _removeBtn.enabled = canRemove;
@@ -47,13 +58,11 @@ public class PlaylistRenderer extends HBox
     {
         super.createChildren();
 
-        setStyle("paddingRight", 10);
-
         _playBtn = new CommandButton("\u25B6", doPlay);
         addChild(_playBtn);
 
         _name = FlexUtil.createLabel(null);
-        _name.percentWidth = 100;
+        _name.width = MediaControls.WIDTH - ScrollBar.THICKNESS - 70; // 70 pix for buttons/spacing
         addChild(_name);
 
         _removeBtn = new CommandButton(null, doRemove);
