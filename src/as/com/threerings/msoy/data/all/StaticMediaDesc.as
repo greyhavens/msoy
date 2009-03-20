@@ -30,6 +30,12 @@ public class StaticMediaDesc extends MediaDesc
             mimeTypeToSuffix(mimeType);
     }
 
+    // from MediaDesc
+    override public function isBleepable () :Boolean
+    {
+        return false;
+    }
+
     /**
      * Returns the type of item for which we're providing static media.
      */

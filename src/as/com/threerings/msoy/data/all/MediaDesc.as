@@ -473,6 +473,23 @@ public class MediaDesc
         }
     }
 
+    /**
+     * Is this media bleepable?
+     */
+    public function isBleepable () :Boolean
+    {
+        return (hash != null);
+    }
+
+    /**
+     * Get some identifier that can be used to refer to this media across
+     * sessions (used as a key in prefs).
+     */
+    public function getMediaId () :String
+    {
+        return hashToString(hash);
+    }
+
     // documentation inherited from Hashable
     public function hashCode () :int
     {
@@ -514,15 +531,6 @@ public class MediaDesc
         out.writeField(hash);
         out.writeByte(mimeType);
         out.writeByte(constraint);
-    }
-
-    /**
-     * Get some identifier that can be used to refer to this media across
-     * sessions (used as a key in prefs).
-     */
-    public function getMediaId () :String
-    {
-        return hashToString(hash);
     }
 }
 }

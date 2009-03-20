@@ -75,7 +75,7 @@ public class MsoyMediaContainer extends MediaContainer
      */
     public function isBleepable () :Boolean
     {
-        return (_desc != null) && !(_desc is StaticMediaDesc) && (_desc.getMediaPath() != null);
+        return (_desc != null) && _desc.isBleepable();
     }
 
     /**
