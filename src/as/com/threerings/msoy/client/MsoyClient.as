@@ -18,6 +18,7 @@ import flash.utils.getTimer;
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
+import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
@@ -293,12 +294,12 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     protected function clientWillLogon (event :ClientEvent) :void
     {
-        if (!_policyLoaded) {
+        if (!_loadedPolicies[getHostname()]) {
             var url :String = "xmlsocket://" + getHostname() + ":" +
                 DeploymentConfig.socketPolicyPort;
             log.info("Loading security policy", "url", url);
             Security.loadPolicyFile(url);
-            _policyLoaded = true;
+            _loadedPolicies[getHostname()] = true;
         }
     }
 
@@ -466,7 +467,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _minimized :Boolean;
     protected var _embedded :Boolean = true; // default to true until proven false
     protected var _featuredPlaceView :Boolean;
-    protected var _policyLoaded :Boolean;
+    protected var _loadedPolicies :Object = new Object();
 
     // configure log levels
     MsoyLogConfig.init();
