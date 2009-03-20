@@ -41,6 +41,9 @@ public class AVRGameLiaison extends GameLiaison
     public function AVRGameLiaison (ctx :WorldContext, gameId :int)
     {
         super(ctx, gameId);
+
+        // let the social director spy on us and make suggestions
+        _wctx.getSocialDirector().trackAVRGame(_gctx);
     }
 
     override public function clientWillLogon (event :ClientEvent) :void
@@ -157,7 +160,11 @@ public class AVRGameLiaison extends GameLiaison
 
     protected function onUserDeactivate () :Boolean
     {
-        return maybeShowFeedPanel(getAVRGameController().deactivateGame);
+        var tryAgain :Function = getAVRGameController().deactivateGame;
+        if (!_wctx.getSocialDirector().mayDeactivateAVRGame(tryAgain)) {
+            return false;
+        }
+        return maybeShowFeedPanel(tryAgain);
     }
 
     override protected function maybeShowFeedPanel (onClose :Function) :Boolean
