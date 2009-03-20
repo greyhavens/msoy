@@ -1504,7 +1504,7 @@ public class WorldController extends MsoyController
                 artist = "unknown";
             }
             if (StringUtil.isBlank(songName)) {
-                songNAme = "unknown";
+                songName = "unknown";
             }
             _wctx.getNotificationDirector().notifyMusic(songName, artist);
             _musicInfoShown = true;
