@@ -35,6 +35,12 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link RoomService#jumpToSong} request.
+     */
+    void jumpToSong (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#modifyPlaylist} request.
      */
     void modifyPlaylist (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)

@@ -56,6 +56,12 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
+        case RoomMarshaller.JUMP_TO_SONG:
+            ((RoomProvider)provider).jumpToSong(
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         case RoomMarshaller.MODIFY_PLAYLIST:
             ((RoomProvider)provider).modifyPlaylist(
                 source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]

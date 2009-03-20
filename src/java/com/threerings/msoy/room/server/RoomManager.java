@@ -519,6 +519,20 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
+    public void jumpToSong (
+        ClientObject caller, int songId, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        requireManager(caller);
+
+        if ((_roomObj.currentSongId != songId) &&
+                _roomObj.playlist.containsKey(new ItemIdent(Item.AUDIO, songId))) {
+            playSong(songId);
+        }
+        // pointless to junk-up with errors
+    }
+
+    // documentation inherited from RoomProvider
     public void songEnded (ClientObject caller, int playCount)
     {
         // validation? We just trust the clients completely for now. Not sure what we'd do anyhow
@@ -656,10 +670,17 @@ public class RoomManager extends SpotSceneManager
         } else {
             curDex = (curDex + 1) % size; // play the next song
         }
+        playSong(songs[curDex].itemId);
+    }
 
+    /**
+     * Play this song. The id must be valid.
+     */
+    protected void playSong (int songId)
+    {
         _roomObj.startTransaction();
         try {
-            _roomObj.setCurrentSongId(songs[curDex].itemId);
+            _roomObj.setCurrentSongId(songId);
             _roomObj.setPlayCount(_roomObj.playCount + 1);
         } finally {
             _roomObj.commitTransaction();
