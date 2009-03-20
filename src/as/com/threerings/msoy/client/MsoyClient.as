@@ -114,7 +114,10 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         // allow connecting the media server if it differs from the game server
         if ((Security.sandboxType != Security.LOCAL_WITH_FILE) &&
                 (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1)) {
-            Security.loadPolicyFile(DeploymentConfig.mediaURL + "crossdomain.xml");
+            var root :String = DeploymentConfig.mediaURL.replace(
+                new RegExp("(http://[^/]+/).*"), "$1");
+            log.info("Loading media policy: " + root + "crossdomain.xml");
+            Security.loadPolicyFile(root + "crossdomain.xml");
         }
 
         // prior to logging on to a server, set up our security policy for that server
@@ -290,9 +293,13 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     protected function clientWillLogon (event :ClientEvent) :void
     {
-        var url :String = "xmlsocket://" + getHostname() + ":" + DeploymentConfig.socketPolicyPort;
-        log.info("Loading security policy", "url", url);
-        Security.loadPolicyFile(url);
+        if (!_policyLoaded) {
+            var url :String = "xmlsocket://" + getHostname() + ":" +
+                DeploymentConfig.socketPolicyPort;
+            log.info("Loading security policy", "url", url);
+            Security.loadPolicyFile(url);
+            _policyLoaded = true;
+        }
     }
 
     /**
@@ -459,6 +466,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _minimized :Boolean;
     protected var _embedded :Boolean = true; // default to true until proven false
     protected var _featuredPlaceView :Boolean;
+    protected var _policyLoaded :Boolean;
 
     // configure log levels
     MsoyLogConfig.init();
