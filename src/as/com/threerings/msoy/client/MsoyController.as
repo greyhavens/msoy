@@ -14,6 +14,7 @@ import flash.events.TimerEvent;
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.display.StageDisplayState;
+import flash.external.ExternalInterface;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.system.Capabilities;
@@ -489,6 +490,18 @@ public class MsoyController extends Controller
     public function addFriendMenuItems (member :MemberName, menuItems :Array) :void
     {
         // nothing by default
+    }
+
+    /**
+     * Attempts to reconnect to the server and return to our starting location.
+     */
+    public function reconnectClient () :void
+    {
+        if (ExternalInterface.available) {
+            ExternalInterface.call("rebootFlashClient");
+        } else {
+            _mctx.getClient().logon();
+        }
     }
 
     // from ClientObserver

@@ -1264,6 +1264,13 @@ public class WorldController extends MsoyController
         super.handleLogon(creds);
     }
 
+    // from MsoyController
+    override public function reconnectClient () :void
+    {
+        _didFirstLogonGo = false;
+        super.reconnectClient();
+    }
+
     // from ClientObserver
     override public function clientDidLogon (event :ClientEvent) :void
     {

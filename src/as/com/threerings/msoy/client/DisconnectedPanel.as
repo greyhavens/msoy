@@ -4,7 +4,6 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
-import flash.external.ExternalInterface;
 
 import mx.containers.VBox;
 
@@ -42,9 +41,8 @@ public class DisconnectedPanel extends VBox
         _message.styleName = "topLevelLabel";
         addChild(_message);
 
-        if (ExternalInterface.available) {
-            addChild(new CommandButton("Reconnect", ExternalInterface.call, "rebootFlashClient"));
-        }
+        addChild(new CommandButton(Msgs.GENERAL.get("b.reconnect"),
+                                   _ctx.getMsoyController().reconnectClient));
 
         if (msg != null) {
             setMessage(msg);
