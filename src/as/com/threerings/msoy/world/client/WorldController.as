@@ -1497,9 +1497,15 @@ public class WorldController extends MsoyController
             return;
         }
         var id3 :Object = event.value;
-        var artist :String = String(id3.artist);
-        var songName :String = String(id3.songName);
-        if (!StringUtil.isBlank(artist) && !StringUtil.isBlank(songName)) {
+        var artist :String = id3.artist as String;
+        var songName :String = id3.songName as String;
+        if (!StringUtil.isBlank(artist) || !StringUtil.isBlank(songName)) {
+            if (StringUtil.isBlank(artist)) {
+                artist = "unknown";
+            }
+            if (StringUtil.isBlank(songName)) {
+                songNAme = "unknown";
+            }
             _wctx.getNotificationDirector().notifyMusic(songName, artist);
             _musicInfoShown = true;
         }
