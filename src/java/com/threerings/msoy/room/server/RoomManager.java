@@ -512,6 +512,9 @@ public class RoomManager extends SpotSceneManager
                 !canManage(who)) {
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
+        if (_roomObj.playlist.size() >= MAX_PLAYLIST_SIZE) {
+            throw new InvocationException("e.playlist_full");
+        }
         _itemMan.getItem(key, new IgnoreConfirmAdapter<Item>(listener) {
             @Override public void requestCompleted (Item result) {
                 addToPlaylist2(who, (Audio)result, listener);
@@ -1963,6 +1966,9 @@ public class RoomManager extends SpotSceneManager
 
     /** The maximum number of mobs a game may have in this room. */
     protected static final int MAX_MOBS_PER_GAME = 99;
+
+    /** The maximum number of songs in the playlist. */
+    protected static final int MAX_PLAYLIST_SIZE = 99;
 
     /**
      * We allow access as in {@link CrowdObjectAccess#PLACE} but also give full subscription
