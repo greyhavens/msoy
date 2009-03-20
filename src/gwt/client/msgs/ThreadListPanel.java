@@ -198,13 +198,21 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 
             Widget toThread;
             if (thread.hasUnreadMessages()) {
-                String args = threadArgs(
-                    thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
+                // this is slightly hacky but, we track the index of the last read post, but we
+                // really want to send you to the first unread post, but we don't know what the id
+                // of that post is, so we send you to the page that contains the post after your
+                // last read post but we tell the page to scroll to your last read post; so if your
+                // first unread post is on the same page as your last read post, you see the one
+                // you last read and the first unread below it, if your first unread post is the
+                // first post on a page, you just go to that page without scrolling to any message
+                // (but since your first unread post is first, that's basically what you want)
+                int pidx = thread.lastReadPostIndex+1;
+                String args = threadArgs(thread.threadId, pidx, thread.lastReadPostId);
                 toThread = Link.create(thread.subject, Pages.GROUPS, args);
                 toThread.setTitle(_mmsgs.tlpFirstUnreadTip());
             } else {
-                toThread = Link.create(
-                    thread.subject, Pages.GROUPS, threadArgs(thread.threadId, 0, 0));
+                String args = threadArgs(thread.threadId, 0, 0);
+                toThread = Link.create(thread.subject, Pages.GROUPS, args);
             }
             bits.add(toThread);
 
@@ -227,8 +235,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             mrp.add(new Label(MsoyUI.formatDateTime(thread.mostRecentPostTime)));
             Widget latest = Link.create(
                 _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
-                Pages.GROUPS, threadArgs(thread.threadId, thread.posts-1,
-                thread.mostRecentPostId));
+                Pages.GROUPS, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
             latest.setTitle(_mmsgs.tlpLastTip());
             mrp.add(latest);
             setWidget(0, col, mrp);
