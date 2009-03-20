@@ -62,6 +62,10 @@ public class SocialDirector extends BasicDirector
     {
         // world client has connected, start observing (this calls willUpdateLocation)
         _wobs = new Observer(this, _mctx.getLocationDirector(), willUpdateLocation);
+
+        if (_wctrl != null) {
+            _wctrl.addPlaceExitHandler(onExitRoom);
+        }
     }
 
     // from BasicDirector
@@ -74,6 +78,10 @@ public class SocialDirector extends BasicDirector
             _wobs = null;
         }
         _roomTimer.stop();
+
+        if (_wctrl != null) {
+            _wctrl.removePlaceExitHandler(onExitRoom);
+        }
     }
 
     /**
@@ -127,21 +135,13 @@ public class SocialDirector extends BasicDirector
     {
         var seen :Array = obs.resetSeen();
         if (obs == _wobs) {
-            // popup a friender if the user hasn't gone into a game and was in the current location
-            // for at least ROOM_VISIT_TIME
-            if (_roomTimer.currentCount > 0 && _gobs == null && seen.length > 0) {
-                log.debug("Showing invite panel", "count", seen.length);
-                _roomTimer.stop();
-                BatchFriendInvitePanel.showRoom(_mctx, seen, function () :void {
-                    _roomTimer.reset();
-                    _roomTimer.start();
-                });
-
-                addNames(seen, _shown);
-
-            } else {
+            var resetter :Function = function () :void {
                 _roomTimer.reset();
                 _roomTimer.start();
+            };
+
+            if (!maybeShowRoomPopup(seen, resetter)) {
+                resetter();
             }
 
         } else if (obs == _gobs) {
@@ -153,6 +153,24 @@ public class SocialDirector extends BasicDirector
             _gameTimer.reset();
             _gameTimer.start();
         }
+    }
+
+    protected function maybeShowRoomPopup (seen :Array, onClose :Function) :Boolean
+    {
+        // popup a friender if the user hasn't gone into a game and was in the current location
+        // for at least ROOM_VISIT_TIME
+        if (_roomTimer.currentCount == 0 || _gobs != null || seen.length == 0) {
+            return false;
+        }
+
+        log.debug("Showing invite panel", "count", seen.length);
+        _roomTimer.stop();
+        if (!BatchFriendInvitePanel.showRoom(_mctx, seen, onClose)) {
+            return false;
+        }
+
+        addNames(seen, _shown);
+        return true;
     }
 
     /**
@@ -217,6 +235,15 @@ public class SocialDirector extends BasicDirector
         log.debug("Lobbied game exit", "shown", shown, "count", seen.length);
 
         return !shown;
+    }
+
+    protected function onExitRoom () :Boolean
+    {
+        // get rid of our handler to stop this from getting called again
+        _wctrl.removePlaceExitHandler(onExitRoom);
+
+        // show the popup if conditions are right, carry on closing if we did not show
+        return !maybeShowRoomPopup(_wobs.resetSeen(), _wctrl.handleClosePlaceView);
     }
 
     protected static function addNames (names :Array, dict :Dictionary) :void

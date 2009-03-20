@@ -18,22 +18,19 @@ public class BatchFriendInvitePanel extends SelectPlayersPanel
         ctx :MsoyContext, playerNames :Array /* of VizMemberName */, onClose :Function) :Boolean
     {
         var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "game");
-        panel.maybeOpen();
-        if (panel.isOpen()) {
-            panel.addCloseCallback(onClose);
-        }
-        return panel.isOpen();
+        return panel.maybeOpenWithCallback(onClose);
     }
 
     /**
      * Shows the friender popup with the given players and with room-specific text. The callback
-     * will be invoked if the dialog is not shown for any reason, or after the user closes it.
+     * will be invoked only if the dialog is shown and then closed. Returns true if the dialog is
+     * open.
      */
     public static function showRoom (
-        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, finished :Function) :void
+        ctx :MsoyContext, playerNames :Array /* of VizMemberName */, onClose :Function) :Boolean
     {
         var panel :BatchFriendInvitePanel = new BatchFriendInvitePanel(ctx, playerNames, "room");
-        panel.maybeOpenWithCallback(finished);
+        return panel.maybeOpenWithCallback(onClose);
     }
 
     public function BatchFriendInvitePanel (
@@ -43,14 +40,14 @@ public class BatchFriendInvitePanel extends SelectPlayersPanel
         _mode = mode;
     }
 
-    protected function maybeOpenWithCallback (finished :Function) :void
+    protected function maybeOpenWithCallback (finished :Function) :Boolean
     {
         maybeOpen();
         if (!isOpen()) {
-            finished();
-        } else {
-            addCloseCallback(finished);
-        }        
+            return false;
+        }
+        addCloseCallback(finished);
+        return true;
     }
 
     override protected function okButtonClicked () :void
