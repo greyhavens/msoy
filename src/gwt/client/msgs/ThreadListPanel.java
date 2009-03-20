@@ -256,7 +256,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         }
     }
 
-    protected String threadArgs (int threadId, int msgIndex, int msgId)
+    protected static String threadArgs (int threadId, int msgIndex, int msgId)
     {
         Object[] args = new Object[msgIndex > 0 ? 4 : 2];
         args[0] = "t";

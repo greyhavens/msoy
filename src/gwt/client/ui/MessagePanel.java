@@ -9,9 +9,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -59,9 +59,8 @@ public class MessagePanel extends FlexTable
 
         FlowPanel info = new FlowPanel();
         info.setStyleName("MsgInfo");
-        String iconPath = getIconPath();
-        if (iconPath != null) {
-            Image icon = new Image(iconPath);
+        Widget icon = createIcon();
+        if (icon != null) {
             icon.addStyleName("Icon");
             info.add(icon);
         }
@@ -147,10 +146,9 @@ public class MessagePanel extends FlexTable
     }
 
     /**
-     * If a message wants to display an icon to the left of the poster's name it can return the
-     * path to said image here and the icon will automatically be inserted.
+     * Creates the icon that will go to the left of the author name.
      */
-    protected String getIconPath ()
+    protected Widget createIcon ()
     {
         return null;
     }

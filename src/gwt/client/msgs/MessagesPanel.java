@@ -315,10 +315,13 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         }
 
         @Override // from MessagePanel
-        protected String getIconPath ()
+        protected Widget createIcon ()
         {
-            return "/images/msgs/" +
+            String path = "/images/msgs/" +
                 ((_message.messageId > _thread.lastReadPostId) ? "unread" : "read") + ".png";
+            String args = ThreadListPanel.threadArgs(
+                _thread.threadId, _thread.posts, _message.messageId);
+            return Link.createImage(path, _mmsgs.permaLink(), Pages.GROUPS, args);
         }
 
         protected ForumThread _thread;
