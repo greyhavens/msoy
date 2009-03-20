@@ -28,7 +28,6 @@ img, embed, applet, object {
   padding: 5px;
 }
 
-/* MenuBar styles */
 .gwt-MenuBar {
   background-color: white;
   border: 1px solid black;
@@ -55,7 +54,11 @@ img, embed, applet, object {
   margin-right: auto;
 }
 
-/** Form element styles. */
+.gwt-Hyperlink img {
+  display: inline;
+  vertical-align: middle;
+}
+
 .gwt-Button {
   background-image: url(/images/ui/button_middle.png);
   background-repeat: repeat-x;
@@ -70,6 +73,7 @@ img, embed, applet, object {
   white-space: nowrap;
 }
 
+/** Various global bits. */
 .tinyButton {
   font-size: 8px;
   min-height: 12px;
