@@ -99,7 +99,8 @@ public class ForumThreadRecord extends PersistentRecord
      * @param members a mapping from memberId to {@link MemberName} that should contain a mapping
      * for {@link #mostRecentPosterId}.
      */
-    public ForumThread toForumThread (Map<Integer,MemberName> members, Map<Integer,GroupName> groups)
+    public ForumThread toForumThread (Map<Integer,MemberName> members,
+                                      Map<Integer,GroupName> groups)
     {
         ForumThread record = new ForumThread();
         record.threadId = threadId;
