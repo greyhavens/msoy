@@ -201,6 +201,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.FriendshipAction(memberId, friendId, false));
     }
 
+    public void batchFriendRequestSent (int memberId, int count, int failures)
+    {
+        post(new MsoyEvents.BatchFriendRequestSent(memberId, count, failures));
+    }
+
     public void groupJoined (int memberId, int groupId)
     {
         post(new MsoyEvents.GroupMembershipAction(memberId, groupId, true));

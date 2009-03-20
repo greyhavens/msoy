@@ -306,8 +306,8 @@ public class MemberManager
             listener.requestProcessed();
         }
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+            List<Exception> failures = Lists.newArrayList();
             @Override public void invokePersistent () throws Exception {
-                List<Exception> failures = Lists.newArrayList();
                 for (int friendId : memberIds) {
                     try {
                         _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
@@ -322,6 +322,8 @@ public class MemberManager
             }
             @Override public void handleSuccess () {
                 reportRequestProcessed();
+                _eventLog.batchFriendRequestSent(
+                    user.getMemberId(), memberIds.length, failures.size());
             }
         });
     }

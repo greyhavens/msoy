@@ -234,6 +234,23 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="BatchFriendRequestSent")
+    public static class BatchFriendRequestSent implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int count;
+        @Field final public int failures;
+
+        public BatchFriendRequestSent (int memberId, int count, int failures)
+        {
+            this.timestamp = new Date();
+            this.memberId = memberId;
+            this.count = count;
+            this.failures = failures;
+        }
+    }
+    
     @Event(name="GroupMembershipAction") // note: do not change this event name
     public static class GroupMembershipAction implements MsoyEvent
     {
