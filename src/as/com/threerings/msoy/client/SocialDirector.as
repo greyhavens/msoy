@@ -52,7 +52,6 @@ public class SocialDirector extends BasicDirector
     {
         super(ctx);
         _mctx = ctx;
-        _roomTimer.addEventListener(TimerEvent.TIMER, handleRoomTimer);
     }
 
     // from BasicDirector
@@ -79,19 +78,29 @@ public class SocialDirector extends BasicDirector
      */
     public function willUpdateLocation (obs :Observer) :void
     {
-        // if this is the world observer, reset the seen list and restart the timer
+        var seen :Array = obs.resetSeen();
         if (obs == _wobs) {
-            _wobs.resetSeen();
-            _roomTimer.reset();
-            _roomTimer.start();
+            // popup a friender if the user hasn't gone into a game and was in the current location
+            // for at least ROOM_VISIT_TIME
+            if (_roomTimer.currentCount > 0 && _gobs == null && seen.length > 0) {
+                log.debug("Showing invite panel", "count", seen.length);
+                _roomTimer.stop();
+                BatchFriendInvitePanel.showRoom(_mctx, seen, function () :void {
+                    _roomTimer.reset();
+                    _roomTimer.start();
+                });
+
+                addNames(seen, _shown);
+
+            } else {
+                _roomTimer.reset();
+                _roomTimer.start();
+            }
 
         } else if (obs == _gobs) {
-            // if the timer has expired, "bank" those seen
-            var seen :Array = _gobs.resetSeen();
+            // if the timer has expired, "bank" those seen. wait until the game ends to popup
             if (_gameTimer.currentCount > 0) {
-                for each (var name :VizMemberName in seen) {
-                    _seenInGame[name.getMemberId()] = name;
-                }
+                addNames(seen, _seenInGame);
                 log.debug("Saved seen co-players", "count", seen.length);
             }
             _gameTimer.reset();
@@ -161,37 +170,6 @@ public class SocialDirector extends BasicDirector
     }
 
     /**
-     * Notifies us that the user has been in a room for a while.
-     */
-    protected function handleRoomTimer (event :TimerEvent) :void
-    {
-        var seen :Array = _wobs.resetSeen();
-        if (_gobs != null) {
-            log.debug("In game, stopping room timer");
-
-            // we're in a game, just stop this timer
-            _roomTimer.stop();
-
-        } else if (seen.length > 0) {
-            log.debug("Showing invite panel", "count", seen.length);
-
-            _roomTimer.stop();
-
-            BatchFriendInvitePanel.showRoom(_mctx, seen, function () :void {
-                _roomTimer.reset();
-                _roomTimer.start();
-            });
-
-            for each (var name :VizMemberName in seen) {
-                _shown[name.getMemberId()] = true;
-            }
-
-        } else {
-            log.debug("Not showing invite panel, noone new seen");
-        }
-    }
-
-    /**
      * This is a place exit handler that will maybe invite the people seen during the game being
      * closed.
      */
@@ -212,13 +190,18 @@ public class SocialDirector extends BasicDirector
             _mctx, seen, _wctrl.handleClosePlaceView);
 
         // suppress future popups with the same people
-        for each (var name :VizMemberName in seen) {
-            _shown[name.getMemberId()] = true;
-        }
+        addNames(seen, _shown);
 
         log.debug("Lobbied game exit", "shown", shown, "count", seen.length);
 
         return !shown;
+    }
+
+    protected static function addNames (names :Array, dict :Dictionary) :void
+    {
+        for each (var name :VizMemberName in names) {
+            dict[name.getMemberId()] = name;
+        }
     }
 
     protected var _mctx :MsoyContext;
