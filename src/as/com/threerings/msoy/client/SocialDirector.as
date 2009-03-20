@@ -75,9 +75,7 @@ public class SocialDirector extends BasicDirector
         // world client has connected, start observing (this calls willUpdateLocation)
         _wobs = new Observer(this, _mctx.getLocationDirector(), willUpdateLocation);
 
-        if (_wctrl != null) {
-            _wctrl.addPlaceExitHandler(onExitRoom);
-        }
+        addExitHandler();
     }
 
     // from BasicDirector
@@ -91,9 +89,7 @@ public class SocialDirector extends BasicDirector
         }
         _roomTimer.stop();
 
-        if (_wctrl != null) {
-            _wctrl.removePlaceExitHandler(onExitRoom);
-        }
+        removeExitHandler();
     }
 
     /**
@@ -141,14 +137,6 @@ public class SocialDirector extends BasicDirector
     {
         log.debug("Checking for AVRG deactivation");
         return !maybeShowGamePopup(deactivator);
-    }
-
-    /**
-     * Enables some world-specific features. Should be called close to client init time.
-     */
-    public function setWorldController (ctrl :WorldController) :void
-    {
-        _wctrl = ctrl;
     }
 
     /**
@@ -221,9 +209,7 @@ public class SocialDirector extends BasicDirector
                 _avrg = avrg;
 
                 // show our popup when the user hits the close button
-                if (_wctrl != null) {
-                    _wctrl.addPlaceExitHandler(onExitGame);
-                }
+                addExitHandler();
             });
 
         // cleanup when the client logs off
@@ -235,9 +221,7 @@ public class SocialDirector extends BasicDirector
                     _gobs = null;
                 }
                 _gameTimer.stop();
-                if (_wctrl != null) {
-                    _wctrl.removePlaceExitHandler(onExitGame);
-                }
+                removeExitHandler();
             });
     }
 
@@ -248,9 +232,9 @@ public class SocialDirector extends BasicDirector
     protected function onExitGame () :Boolean
     {
         // get rid of our handler to stop this from getting called again
-        _wctrl.removePlaceExitHandler(onExitGame);
+        removeExitHandler();
 
-        return !maybeShowGamePopup(_wctrl.handleClosePlaceView);
+        return !maybeShowGamePopup(WorldController(_mctx.getMsoyController()).handleClosePlaceView);
     }
 
     protected function maybeShowGamePopup (onClose :Function) :Boolean
@@ -284,10 +268,21 @@ public class SocialDirector extends BasicDirector
     protected function onExitRoom () :Boolean
     {
         // get rid of our handler to stop this from getting called again
-        _wctrl.removePlaceExitHandler(onExitRoom);
+        removeExitHandler();
 
         // show the popup if conditions are right, carry on closing if we did not show
-        return !maybeShowRoomPopup(_wobs.resetSeen(), _wctrl.handleClosePlaceView);
+        return !maybeShowRoomPopup(_wobs.resetSeen(),
+            WorldController(_mctx.getMsoyController()).handleClosePlaceView);
+    }
+
+    protected function addExitHandler () :void
+    {
+        WorldController(_mctx.getMsoyController()).addPlaceExitHandler(onExitRoom);
+    }
+
+    protected function removeExitHandler () :void
+    {
+        WorldController(_mctx.getMsoyController()).removePlaceExitHandler(onExitRoom);
     }
 
     protected static function addNames (names :Array, dict :Dictionary) :void
@@ -301,7 +296,6 @@ public class SocialDirector extends BasicDirector
     protected var _wobs :Observer;
     protected var _gobs :Observer;
     protected var _avrg :Boolean;
-    protected var _wctrl :WorldController;
     protected var _shown :Dictionary = new Dictionary();
     protected var _roomTimer :Timer = new Timer(ROOM_VISIT_TIME);
     protected var _gameTimer :Timer = new Timer(GAME_PLAY_TIME);

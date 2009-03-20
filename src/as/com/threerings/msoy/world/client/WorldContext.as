@@ -41,9 +41,6 @@ public class WorldContext extends MsoyContext
         // some directors we create here (unsuppressed)
         _mediaDir = new MediaDirector(this);
         _controller = new WorldController(this, _topPanel);
-
-        // let the msoy social director access the world controller
-        getSocialDirector().setWorldController(_controller);
     }
 
     // from WhirledContext
