@@ -45,6 +45,8 @@ public class PlaylistRenderer extends HBox
     {
         super.createChildren();
 
+        setStyle("paddingRight", 10);
+
         _name = FlexUtil.createLabel(null);
         _name.percentWidth = 100;
         addChild(_name);

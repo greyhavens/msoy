@@ -23,6 +23,7 @@ import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.MsoyScene;
 
 /**
  * Configures the control bar with World-specific stuff.
@@ -90,7 +91,8 @@ public class WorldControlBar extends ControlBar
         FlexUtil.setVisible(musicBtn, false);
         musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
             var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
-            return new PlaylistMusicDialog(_wctx, room, musicBtn.localToGlobal(new Point()));
+            var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
+            return new PlaylistMusicDialog(_wctx, musicBtn.localToGlobal(new Point()), room, scene);
         }, musicBtn));
 
         roomEditBtn = createButton("controlBarButtonEdit", "i.editScene");

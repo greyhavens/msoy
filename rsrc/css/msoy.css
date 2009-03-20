@@ -1133,7 +1133,7 @@ ChatInput {
   alternatingItemColors: #233C50, #000000; /* second color is not used; see TableList code */
 }
 
-.tableSummaryTitle, .createTip {
+.tableSummaryTitle, .createTip, .playlistTitle {
   fontWeight: "bold";
   fontSize: 11px;
 }
