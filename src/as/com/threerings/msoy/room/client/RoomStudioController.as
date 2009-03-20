@@ -85,7 +85,8 @@ public class RoomStudioController extends RoomController
     }
 
     // documentation inherited
-    override public function canManageRoom (memberId :int = 0) :Boolean
+    override public function canManageRoom (
+        memberId :int = 0, allowSupport :Boolean = true) :Boolean
     {
         // Pretend we have rights to this room
         return true;

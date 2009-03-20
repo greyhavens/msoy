@@ -31,7 +31,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Does the specified member have management rights in this room?
      */
-    public function canManage (member :MemberObject, where :String = null) :Boolean
+    public function canManage (member :MemberObject, allowSupport :Boolean = true) :Boolean
     {
         var hasRights :Boolean;
         switch (_msoyModel.ownerType) {
@@ -48,7 +48,7 @@ public class MsoyScene extends SceneImpl
             break;
         }
 
-        if (!hasRights && member.tokens.isSupport()) {
+        if (!hasRights && allowSupport && member.tokens.isSupport()) {
             // no need to log anything here on the client, just grant the access
             return true;
         }

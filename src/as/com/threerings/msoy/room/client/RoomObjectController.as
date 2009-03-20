@@ -525,11 +525,12 @@ public class RoomObjectController extends RoomController
                                : ObjectMarshaller.decode(entry.memories.get(key) as ByteArray);
     }
 
-    override public function canManageRoom (memberId :int = 0) :Boolean
+    override public function canManageRoom (
+        memberId :int = 0, allowSupport :Boolean = true) :Boolean
     {
         var me :MemberObject = _wdctx.getMemberObject();
         if (memberId == 0 || (memberId == me.getMemberId())) { // self
-            return (_scene != null && _scene.canManage(me));
+            return (_scene != null && _scene.canManage(me, allowSupport));
 
         } else { // others
             var info :MemberInfo = findOccupantById(memberId);
@@ -628,8 +629,9 @@ public class RoomObjectController extends RoomController
 
                 } else if (item.getType() == Item.AUDIO) {
                     // audio is different
+                    var rsp :String = "m.music_added" + (canManageRoom(0, false) ? "" : "_temp");
                     _roomObj.roomService.modifyPlaylist(_wdctx.getClient(), item.itemId, true,
-                        _wdctx.confirmListener("m.music_added", MsoyCodes.WORLD_MSGS));
+                        _wdctx.confirmListener(rsp, MsoyCodes.WORLD_MSGS));
 
                 } else {
                     // create a generic furniture descriptor
