@@ -50,7 +50,6 @@ public class Prefs
     public static const OCCUPANT_LIST :String = "occupantList";
     public static const LOG_TO_CHAT :String = "logToChat";
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
-    public static const GRID_AUTOSHOW :String = "gridAutoshow";
     public static const PARTY_GROUP :String = "partyGroup";
     public static const PERMAGUEST_USERNAME :String = "permaguestUsername";
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
@@ -74,6 +73,14 @@ public class Prefs
         var lastBuild :String = (_config.getValue("lastBuild", null) as String);
         if (lastBuild != buildTime) {
             _config.setValue("lastBuild", buildTime);
+
+            // TEMP code: please to remove someday TODO
+            var oldVal :Object = _config.getValue("gridAutoshow", null);
+            if (oldVal != null) {
+                _config.remove("gridAutoshow");
+                setAutoshow("grid", Boolean(oldVal));
+            }
+            // END: TEMP TODO
             return true;
         }
         return false;
@@ -121,16 +128,6 @@ public class Prefs
     public static function setMachineIdent (ident :String) :void
     {
         _config.setValue(MACHINE_IDENT, ident);
-    }
-
-    public static function getGridAutoshow () :Boolean
-    {
-        return Boolean(_config.getValue(GRID_AUTOSHOW, true));
-    }
-
-    public static function setGridAutoshow (show :Boolean) :void
-    {
-        _config.setValue(GRID_AUTOSHOW, show);
     }
 
     public static function setMediaBleeped (id :String, bleeped :Boolean) :void

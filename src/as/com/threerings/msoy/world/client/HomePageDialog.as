@@ -60,8 +60,10 @@ public class HomePageDialog extends FloatingPanel
         addChild(_grid);
 
         var autoshow :CommandCheckBox = new CommandCheckBox(
-            Msgs.HOME_PAGE_GRID.get("b.autoshow"), Prefs.setGridAutoshow);
-        autoshow.selected = Prefs.getGridAutoshow();
+            Msgs.HOME_PAGE_GRID.get("b.autoshow"), function (show :Boolean) :void {
+                Prefs.setAutoshow("grid", show);
+            });
+        autoshow.selected = Prefs.getAutoshow("grid");
         addChild(autoshow);
 
         // Fill it with empty components just to force the layout
