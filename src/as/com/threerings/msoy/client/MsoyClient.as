@@ -18,7 +18,6 @@ import flash.utils.getTimer;
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
-import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
