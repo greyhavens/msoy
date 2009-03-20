@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.utils.Dictionary;
@@ -58,7 +61,7 @@ public class SocialDirector extends BasicDirector
     override public function clientDidLogon (event :ClientEvent) :void
     {
         // world client has connected, start observing (this calls willUpdateLocation)
-        _wobs = new Observer(this, _mctx.getLocationDirector());
+        _wobs = new Observer(this, _mctx.getLocationDirector(), willUpdateLocation);
     }
 
     // from BasicDirector
@@ -71,41 +74,6 @@ public class SocialDirector extends BasicDirector
             _wobs = null;
         }
         _roomTimer.stop();
-    }
-
-    /**
-     * Notifies us that the given observer is about to update its location.
-     */
-    public function willUpdateLocation (obs :Observer) :void
-    {
-        var seen :Array = obs.resetSeen();
-        if (obs == _wobs) {
-            // popup a friender if the user hasn't gone into a game and was in the current location
-            // for at least ROOM_VISIT_TIME
-            if (_roomTimer.currentCount > 0 && _gobs == null && seen.length > 0) {
-                log.debug("Showing invite panel", "count", seen.length);
-                _roomTimer.stop();
-                BatchFriendInvitePanel.showRoom(_mctx, seen, function () :void {
-                    _roomTimer.reset();
-                    _roomTimer.start();
-                });
-
-                addNames(seen, _shown);
-
-            } else {
-                _roomTimer.reset();
-                _roomTimer.start();
-            }
-
-        } else if (obs == _gobs) {
-            // if the timer has expired, "bank" those seen. wait until the game ends to popup
-            if (_gameTimer.currentCount > 0) {
-                addNames(seen, _seenInGame);
-                log.debug("Saved seen co-players", "count", seen.length);
-            }
-            _gameTimer.reset();
-            _gameTimer.start();
-        }
     }
 
     /**
@@ -132,17 +100,79 @@ public class SocialDirector extends BasicDirector
      */
     public function trackLobbiedGame (ctx :CrowdContext) :void
     {
+        trackGame(ctx, false);
+    }
+
+    /**
+     * Starts monitoring the occupants of an avr game, later potentially giving the user the chance
+     * to befriend co-players.
+     */
+    public function trackAVRGame (ctx :CrowdContext) :void
+    {
+        trackGame(ctx, true);
+    }
+
+    /**
+     * Enables some world-specific features. Should be called close to client init time.
+     */
+    public function setWorldController (ctrl :WorldController) :void
+    {
+        _wctrl = ctrl;
+    }
+
+    /**
+     * Notifies us that the given observer is about to update its location.
+     */
+    protected function willUpdateLocation (obs :Observer) :void
+    {
+        var seen :Array = obs.resetSeen();
+        if (obs == _wobs) {
+            // popup a friender if the user hasn't gone into a game and was in the current location
+            // for at least ROOM_VISIT_TIME
+            if (_roomTimer.currentCount > 0 && _gobs == null && seen.length > 0) {
+                log.debug("Showing invite panel", "count", seen.length);
+                _roomTimer.stop();
+                BatchFriendInvitePanel.showRoom(_mctx, seen, function () :void {
+                    _roomTimer.reset();
+                    _roomTimer.start();
+                });
+
+                addNames(seen, _shown);
+
+            } else {
+                _roomTimer.reset();
+                _roomTimer.start();
+            }
+
+        } else if (obs == _gobs) {
+            // if the timer has expired, "bank" those seen. wait until the session ends to popup
+            if (_gameTimer.currentCount > 0) {
+                addNames(seen, _seenInGame);
+                log.debug("Saved seen co-players", "count", seen.length);
+            }
+            _gameTimer.reset();
+            _gameTimer.start();
+        }
+    }
+
+    /**
+     * Starts monitoring the occupants of a game, later potentially giving the user the chance to
+     * befriend co-players.
+     */
+    protected function trackGame (ctx :CrowdContext, avrg :Boolean) :void
+    {
         var This :SocialDirector = this;
 
         // when the client logs on...
         ctx.getClient().addEventListener(ClientEvent.CLIENT_DID_LOGON,
             function (evt :ClientEvent) :void {
                 // observe the occupants
-                _gobs = new Observer(This, ctx.getLocationDirector());
+                _gobs = new Observer(This, ctx.getLocationDirector(), willUpdateLocation);
+                _avrg = avrg;
 
                 // show our popup when the user hits the close button
                 if (_wctrl != null) {
-                    _wctrl.addPlaceExitHandler(onExitLobbiedGame);
+                    _wctrl.addPlaceExitHandler(onExitGame);
                 }
             });
 
@@ -156,27 +186,19 @@ public class SocialDirector extends BasicDirector
                 }
                 _gameTimer.stop();
                 if (_wctrl != null) {
-                    _wctrl.removePlaceExitHandler(onExitLobbiedGame);
+                    _wctrl.removePlaceExitHandler(onExitGame);
                 }
             });
-    }
-
-    /**
-     * Enables some world-specific features. Should be called close to client init time.
-     */
-    public function setWorldController (ctrl :WorldController) :void
-    {
-        _wctrl = ctrl;
     }
 
     /**
      * This is a place exit handler that will maybe invite the people seen during the game being
      * closed.
      */
-    protected function onExitLobbiedGame () :Boolean
+    protected function onExitGame () :Boolean
     {
         // get rid of our handler to stop this from getting called again
-        _wctrl.removePlaceExitHandler(onExitLobbiedGame);
+        _wctrl.removePlaceExitHandler(onExitGame);
 
         // cheat and call this directly, we just want to bank any current occupants
         willUpdateLocation(_gobs);
@@ -207,6 +229,7 @@ public class SocialDirector extends BasicDirector
     protected var _mctx :MsoyContext;
     protected var _wobs :Observer;
     protected var _gobs :Observer;
+    protected var _avrg :Boolean;
     protected var _wctrl :WorldController;
     protected var _shown :Dictionary = new Dictionary();
     protected var _roomTimer :Timer = new Timer(ROOM_VISIT_TIME);
@@ -244,10 +267,11 @@ class Observer
     /**
      * Creates a new observer.
      */
-    public function Observer (sdir :SocialDirector, ldir :LocationDirector)
+    public function Observer (sdir :SocialDirector, ldir :LocationDirector, lupdater :Function)
     {
         _sdir = sdir;
         _ldir = ldir;
+        _lupdater = lupdater;
         _ldir.addLocationObserver(_lobs);
         locationDidChange(_ldir.getPlaceObject());
     }
@@ -274,7 +298,7 @@ class Observer
     protected function locationDidChange (plobj :PlaceObject) :void
     {
         // let the director know the location is about to update
-        _sdir.willUpdateLocation(this);
+        _lupdater(this);
 
         if (_plobj != null) {
             _plobj.removeListener(_slnr);
@@ -343,6 +367,7 @@ class Observer
 
     protected var _sdir :SocialDirector;
     protected var _ldir :LocationDirector;
+    protected var _lupdater :Function;
     protected var _seen :Dictionary = new Dictionary();
     protected var _plobj :PlaceObject;
 }
