@@ -109,8 +109,10 @@ public class AVRGameController extends PlaceController
 
         _wctx.getLocationDirector().removeLocationObserver(_roomObserver);
 
-        _roomPropsSubs.unsubscribeAll();
-        _roomPropsSubs = null;
+        if (_roomPropsSubs != null) {
+            _roomPropsSubs.unsubscribeAll();
+            _roomPropsSubs = null;
+        }
 
         super.didLeavePlace(plobj);
     }
