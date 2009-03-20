@@ -16,6 +16,7 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.world.client.WorldController;
@@ -168,6 +169,7 @@ public class SocialDirector extends BasicDirector
 
     protected function maybeShowRoomPopup (seen :Array, onClose :Function) :Boolean
     {
+        seen = seen.filter(isNotMuted);
         // bail if the user has not been in the room very long of there are no new occupants
         if (_roomTimer.currentCount == 0 || seen.length == 0) {
             return false;
@@ -249,6 +251,7 @@ public class SocialDirector extends BasicDirector
         var seen :Array = Util.values(_seenInGame);
         _seenInGame = new Dictionary();
 
+        seen = seen.filter(isNotMuted);
         if (seen.length == 0) {
             log.debug("No one seen, not showing game popup");
             return false;
@@ -283,6 +286,14 @@ public class SocialDirector extends BasicDirector
     protected function removeExitHandler (fn :Function) :void
     {
         WorldController(_mctx.getMsoyController()).removePlaceExitHandler(fn);
+    }
+
+    /**
+     * A function suitable for use with Array.filter()
+     */
+    protected function isNotMuted (name :MemberName, ... ignored) :Boolean
+    {
+        return !_mctx.getMuteDirector().isMuted(name);
     }
 
     protected static function addNames (names :Array, dict :Dictionary) :void
@@ -366,7 +377,8 @@ class Observer
     public function filterUnseen (names :Array) :Array
     {
         return names.filter(function (name :VizMemberName, ...unused) :Boolean {
-            log.info("Filtering name", "memberId", name.getMemberId(), "seen", _seen[name.getMemberId()]);
+            log.info("Filtering name",
+                "memberId", name.getMemberId(), "seen", _seen[name.getMemberId()]);
             return _seen[name.getMemberId()] != null;
         });
     }
