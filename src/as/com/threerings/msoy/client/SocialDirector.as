@@ -75,7 +75,7 @@ public class SocialDirector extends BasicDirector
         // world client has connected, start observing (this calls willUpdateLocation)
         _wobs = new Observer(this, _mctx.getLocationDirector(), willUpdateLocation);
 
-        addExitHandler();
+        addExitHandler(onExitRoom);
     }
 
     // from BasicDirector
@@ -89,7 +89,7 @@ public class SocialDirector extends BasicDirector
         }
         _roomTimer.stop();
 
-        removeExitHandler();
+        removeExitHandler(onExitRoom);
     }
 
     /**
@@ -209,7 +209,7 @@ public class SocialDirector extends BasicDirector
                 _avrg = avrg;
 
                 // show our popup when the user hits the close button
-                addExitHandler();
+                addExitHandler(onExitGame);
             });
 
         // cleanup when the client logs off
@@ -221,7 +221,7 @@ public class SocialDirector extends BasicDirector
                     _gobs = null;
                 }
                 _gameTimer.stop();
-                removeExitHandler();
+                removeExitHandler(onExitGame);
             });
     }
 
@@ -232,7 +232,7 @@ public class SocialDirector extends BasicDirector
     protected function onExitGame () :Boolean
     {
         // get rid of our handler to stop this from getting called again
-        removeExitHandler();
+        removeExitHandler(onExitGame);
 
         return !maybeShowGamePopup(WorldController(_mctx.getMsoyController()).handleClosePlaceView);
     }
@@ -268,21 +268,21 @@ public class SocialDirector extends BasicDirector
     protected function onExitRoom () :Boolean
     {
         // get rid of our handler to stop this from getting called again
-        removeExitHandler();
+        removeExitHandler(onExitRoom);
 
         // show the popup if conditions are right, carry on closing if we did not show
         return !maybeShowRoomPopup(_wobs.resetSeen(),
             WorldController(_mctx.getMsoyController()).handleClosePlaceView);
     }
 
-    protected function addExitHandler () :void
+    protected function addExitHandler (fn :Function) :void
     {
-        WorldController(_mctx.getMsoyController()).addPlaceExitHandler(onExitRoom);
+        WorldController(_mctx.getMsoyController()).addPlaceExitHandler(fn);
     }
 
-    protected function removeExitHandler () :void
+    protected function removeExitHandler (fn :Function) :void
     {
-        WorldController(_mctx.getMsoyController()).removePlaceExitHandler(onExitRoom);
+        WorldController(_mctx.getMsoyController()).removePlaceExitHandler(fn);
     }
 
     protected static function addNames (names :Array, dict :Dictionary) :void
