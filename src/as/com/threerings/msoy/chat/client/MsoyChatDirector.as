@@ -19,7 +19,6 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChannelSpeakService;
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChannelSpeakMarshaller;
 import com.threerings.crowd.chat.data.ChatChannel;

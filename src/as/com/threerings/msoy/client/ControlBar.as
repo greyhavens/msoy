@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.StageDisplayState;
-
 import flash.events.Event;
 import flash.events.FullScreenEvent;
 
@@ -30,7 +28,6 @@ import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;

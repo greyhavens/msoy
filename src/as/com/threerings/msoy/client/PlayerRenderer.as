@@ -6,8 +6,6 @@ package com.threerings.msoy.client {
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-
-
 import mx.core.ScrollPolicy;
 
 

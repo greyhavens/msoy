@@ -377,7 +377,6 @@ package {
             doOnEnterFrame(chk);
         }
 
-
         public static function showClickAwayAd(options:Object):void {
             /*
                 This function will load a MochiAd in the upper left position on the clip.

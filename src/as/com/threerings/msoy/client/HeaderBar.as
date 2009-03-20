@@ -21,8 +21,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.util.ValueEvent;
-
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;

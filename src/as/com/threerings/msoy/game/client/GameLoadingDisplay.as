@@ -5,7 +5,6 @@ package com.threerings.msoy.game.client {
 
 import caurina.transitions.Tweener;
 
-
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 

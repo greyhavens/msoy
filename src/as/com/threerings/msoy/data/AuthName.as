@@ -7,8 +7,6 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.util.Name;
 
-import com.threerings.msoy.data.all.MemberName;
-
 /**
  * Represents the authentication username for our various sessions (world, game, party).
  */

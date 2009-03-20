@@ -11,7 +11,6 @@ import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
 import flash.text.AntiAliasType;
 import flash.text.TextField;

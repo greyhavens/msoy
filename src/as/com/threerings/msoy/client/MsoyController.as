@@ -830,7 +830,6 @@ public class MsoyController extends Controller
     /** Handlers that can perform actions and/or abort the exiting of a place. */
     protected var _placeExitHandlers :Array = [];
 
-
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";
 

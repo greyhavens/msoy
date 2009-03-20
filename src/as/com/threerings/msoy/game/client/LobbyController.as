@@ -37,7 +37,6 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.Game;
 
-import com.whirled.game.data.MatchConfig;
 import com.threerings.presents.client.ClientEvent;
 
 public class LobbyController extends Controller

@@ -11,7 +11,6 @@ import flash.events.SecurityErrorEvent;
 import flash.net.FileReference;
 import flash.net.URLRequest;
 
-
 import mx.core.BitmapAsset;
 import mx.controls.Image;
 import mx.controls.ProgressBar;

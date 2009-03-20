@@ -9,7 +9,6 @@ import mx.controls.Label;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.item.data.all.Audio;

@@ -9,7 +9,6 @@ import flash.display.Graphics;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 
-import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.geom.Point;
@@ -51,12 +50,10 @@ import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 

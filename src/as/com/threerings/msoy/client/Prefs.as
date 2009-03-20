@@ -12,7 +12,6 @@ import flash.utils.Dictionary;
 
 import com.threerings.util.Config;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 /**

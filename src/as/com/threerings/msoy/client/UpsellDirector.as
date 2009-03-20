@@ -14,7 +14,6 @@ import com.threerings.util.RandomUtil;
 import com.threerings.util.Util;
 
 import com.threerings.presents.client.BasicDirector;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.data.MemberObject;

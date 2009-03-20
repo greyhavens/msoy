@@ -68,7 +68,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.WorldCredentials;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -78,7 +77,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetName;
 
 /**

@@ -4,7 +4,6 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-import flash.display.Loader;
 import flash.display.LoaderInfo;
 
 import flash.events.Event;

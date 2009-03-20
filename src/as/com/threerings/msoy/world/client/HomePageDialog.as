@@ -11,7 +11,6 @@ import mx.core.UIComponent;
 import mx.containers.Tile;
 import mx.containers.Canvas;
 import mx.controls.Text;
-import mx.events.CloseEvent;
 
 import com.threerings.flash.GraphicsUtil;
 import com.threerings.flex.CommandCheckBox;

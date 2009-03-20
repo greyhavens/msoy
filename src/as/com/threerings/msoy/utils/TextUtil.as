@@ -8,8 +8,6 @@ import flash.text.TextField;
 
 import com.threerings.util.StringUtil;
 
-import com.threerings.msoy.client.Prefs;
-
 import com.threerings.msoy.chat.client.ChatOverlay;
 
 /**

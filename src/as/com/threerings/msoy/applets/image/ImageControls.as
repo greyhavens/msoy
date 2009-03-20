@@ -16,8 +16,6 @@ import mx.core.Application;
 
 import mx.containers.ViewStack;
 
-
-
 import com.threerings.util.Log;
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.ValueEvent;

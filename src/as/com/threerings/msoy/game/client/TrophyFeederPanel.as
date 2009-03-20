@@ -14,20 +14,14 @@ import mx.controls.Text;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.util.Log;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyMediaContainer;
-import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.data.all.Trophy;
 

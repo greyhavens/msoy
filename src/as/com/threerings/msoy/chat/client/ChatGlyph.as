@@ -8,17 +8,13 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 
-import flash.geom.Point;
-
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
 
 import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
-import com.threerings.util.StringUtil;
 
 import com.threerings.flash.TextFieldUtil;
 

@@ -22,7 +22,6 @@ import com.threerings.util.Log;
 import com.threerings.util.Name;
 
 import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.BootstrapData;

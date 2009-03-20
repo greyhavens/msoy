@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.notify.client {
 
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
 import mx.containers.VBox;
 
 import mx.controls.scrollClasses.ScrollBar;

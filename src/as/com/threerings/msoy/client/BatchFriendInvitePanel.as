@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.msoy.notify.data.Notification;
