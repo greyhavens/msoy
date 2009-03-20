@@ -94,6 +94,7 @@ public class LobbyTablePanel extends VBox
         // display our table name and configuration
         _title = FlexUtil.createLabel("", "lobbyTitle");
         _info = new Text();
+        _info.percentWidth = 100;
         addChild(makeVBox(_title, _info));
 
         // display our invite verbiage
