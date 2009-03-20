@@ -28,6 +28,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Throttle;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -520,16 +521,19 @@ public class RoomManager extends SpotSceneManager
 
     // documentation inherited from RoomProvider
     public void jumpToSong (
-        ClientObject caller, int songId, InvocationService.InvocationListener listener)
+        ClientObject caller, int songId, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         requireManager(caller);
 
         if ((_roomObj.currentSongId != songId) &&
                 _roomObj.playlist.containsKey(new ItemIdent(Item.AUDIO, songId))) {
+            if (_songJumpThrottle.throttleOp()) {
+                throw new InvocationException("e.rapid_music_jump");
+            }
             playSong(songId);
-        }
-        // pointless to junk-up with errors
+        } // else: no need to give an error
+        listener.requestProcessed();
     }
 
     // documentation inherited from RoomProvider
@@ -1945,6 +1949,9 @@ public class RoomManager extends SpotSceneManager
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent, Integer> _avatarIdents = Maps.newHashMap();
 
+    /** The throttle imposed on jumping to a new song. */
+    protected Throttle _songJumpThrottle = new Throttle(1, 4000);
+
 //    /** Map of body oids that have left the room to the time they left (in seconds). */
 //    protected IntIntMap _left = new IntIntMap();
 
@@ -1982,7 +1989,6 @@ public class RoomManager extends SpotSceneManager
             return CrowdObjectAccess.PLACE.allowDispatch(object, event);
         }
     };
-
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemManager _itemMan;

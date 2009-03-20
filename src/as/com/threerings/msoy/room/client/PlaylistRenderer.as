@@ -40,6 +40,7 @@ public class PlaylistRenderer extends HBox
         _name.toolTip = audio.description;
         _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
         FlexUtil.setVisible(_removeBtn, canRemove);
+        _removeBtn.enabled = canRemove;
     }
 
     override protected function createChildren () :void
@@ -62,13 +63,15 @@ public class PlaylistRenderer extends HBox
 
     protected function doPlay () :void
     {
-        roomObj.roomService.jumpToSong(wctx.getClient(), Audio(data).itemId, wctx.listener());
+        roomObj.roomService.jumpToSong(wctx.getClient(), Audio(data).itemId,
+            wctx.confirmListener(null, MsoyCodes.WORLD_MSGS, null, _playBtn));
     }
 
     protected function doRemove () :void
     {
         roomObj.roomService.modifyPlaylist(wctx.getClient(), Audio(data).itemId, false,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS));
+        _removeBtn.enabled = false;
     }
 
     protected var _playBtn :CommandButton;

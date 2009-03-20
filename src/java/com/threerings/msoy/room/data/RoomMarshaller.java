@@ -62,9 +62,9 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int JUMP_TO_SONG = 4;
 
     // from interface RoomService
-    public void jumpToSong (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    public void jumpToSong (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, JUMP_TO_SONG, new Object[] {
             Integer.valueOf(arg2), listener3

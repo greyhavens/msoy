@@ -60,7 +60,7 @@ public interface RoomService extends InvocationService
     /**
      * For managers, request to jump to a particular song.
      */
-    void jumpToSong (Client client, int audioId, InvocationListener listener);
+    void jumpToSong (Client client, int audioId, ConfirmListener listener);
 
     /**
      * A callback from a client to indicate that a song has ended and the playlist

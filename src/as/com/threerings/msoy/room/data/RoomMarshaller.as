@@ -72,9 +72,9 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const JUMP_TO_SONG :int = 4;
 
     // from interface RoomService
-    public function jumpToSong (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function jumpToSong (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, JUMP_TO_SONG, [
             Integer.valueOf(arg2), listener3
