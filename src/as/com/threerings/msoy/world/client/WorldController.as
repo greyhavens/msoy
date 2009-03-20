@@ -1277,7 +1277,6 @@ public class WorldController extends MsoyController
                 Prefs.setUsername(name.toString());
             }
         }
-        _wctx.getTopPanel().getHeaderBar().getChatTabs().memberObjectUpdated(memberObj);
 
         if (!_didFirstLogonGo) {
             _didFirstLogonGo = true;

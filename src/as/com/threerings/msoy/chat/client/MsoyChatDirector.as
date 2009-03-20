@@ -12,6 +12,7 @@ import com.threerings.util.Name;
 import com.threerings.util.Throttle;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
@@ -32,6 +33,7 @@ import com.whirled.ui.PlayerList;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
@@ -189,6 +191,12 @@ public class MsoyChatDirector extends ChatDirector
     {
         return (ltype == ChatCodes.PLACE_CHAT_TYPE && _roomOccList.havePlace()) ?
             _roomOccList : null;
+    }
+
+    override public function clientDidLogon (event :ClientEvent) :void
+    {
+        super.clientDidLogon(event);
+        _chatTabs.memberObjectUpdated(event.getClient().getClientObject() as MemberObject);
     }
 
     // from ChatDirector

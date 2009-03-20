@@ -1028,8 +1028,11 @@ public class RoomObjectController extends RoomController
     {
         _wdctx.getMsoyClient().setWindowTitle(_scene.getName());
         var headerBar :HeaderBar = _wdctx.getTopPanel().getHeaderBar();
-        headerBar.setLocationName(_scene.getName());
+        if (headerBar == null) {
+            return;
+        }
 
+        headerBar.setLocationName(_scene.getName());
         var model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
         if (model.ownerName != null) {
             headerBar.setOwnerLink(model.ownerName.toString(),
