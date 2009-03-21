@@ -3,14 +3,19 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.events.MouseEvent;
+
 import mx.containers.HBox;
 import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
+
+import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.MediaControls;
 
@@ -63,6 +68,7 @@ public class PlaylistRenderer extends HBox
 
         _name = FlexUtil.createLabel(null);
         _name.width = MediaControls.WIDTH - ScrollBar.THICKNESS - 70; // 70 pix for buttons/spacing
+        _name.addEventListener(MouseEvent.CLICK, handleInfoClicked);
         addChild(_name);
 
         _removeBtn = new CommandButton(null, doRemove);
@@ -81,6 +87,11 @@ public class PlaylistRenderer extends HBox
         roomObj.roomService.modifyPlaylist(wctx.getClient(), Audio(data).itemId, false,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS));
         _removeBtn.enabled = false;
+    }
+
+    protected function handleInfoClicked (event :MouseEvent) :void
+    {
+        CommandEvent.dispatch(this, MsoyController.AUDIO_CLICKED, Audio(data).audioMedia);
     }
 
     protected var _playBtn :CommandButton;

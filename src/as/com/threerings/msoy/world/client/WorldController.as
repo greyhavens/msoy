@@ -788,13 +788,12 @@ public class WorldController extends MsoyController
         }
         _music = music;
 
-        // TODO: fade out music if no new, unless the current music is bleeped
         _musicPlayer.unload();
 
         const play :Boolean = UberClient.isRegularClient() && (music != null) &&
             (Prefs.getSoundVolume() > 0) && !isMusicBleeped();
         if (play) {
-            _musicPlayer.load(music.audioMedia.getMediaPath());
+            _musicPlayer.load(music.audioMedia.getMediaPath(), music.audioMedia);
         }
         WorldControlBar(_wctx.getControlBar()).setMusicPlaying(music != null);
     }

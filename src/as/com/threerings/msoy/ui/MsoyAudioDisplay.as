@@ -7,16 +7,22 @@ import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
 
+import flash.events.MouseEvent;
+
 import flash.text.TextField;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.media.AudioPlayer;
+import com.threerings.flash.media.Mp3AudioPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
 
+
+import com.threerings.msoy.client.MsoyController;
 /**
  * The msoy-skinned audio display.
  */
@@ -33,6 +39,7 @@ public class MsoyAudioDisplay extends Sprite
     {
         _player = player;
         _player.addEventListener(MediaPlayerCodes.METADATA, handleMetadata);
+        _player.addEventListener(MediaPlayerCodes.STATE, handleState);
 
         _controls = new MediaControls(player, commentCallback);
 
@@ -90,10 +97,21 @@ public class MsoyAudioDisplay extends Sprite
         _song.y += FIELD_HEIGHT + PAD;
         addChild(_song);
 
+        _artist.addEventListener(MouseEvent.CLICK, handleInfoClicked);
+        _song.addEventListener(MouseEvent.CLICK, handleInfoClicked);
+
         _controls.y = (FIELD_HEIGHT + PAD) * 2; //HEIGHT - MediaControls.HEIGHT;
         addChild(_controls);
 
         checkId3(_player.getMetadata());
+    }
+
+    protected function handleState (event :ValueEvent) :void
+    {
+        if (event.value == MediaPlayerCodes.STATE_UNREADY) {
+            _song.text = "";
+            _artist.text = "";
+        }
     }
 
     protected function handleMetadata (event :ValueEvent) :void
@@ -114,6 +132,12 @@ public class MsoyAudioDisplay extends Sprite
         const blankInfo :Boolean = StringUtil.isBlank(info);
         TextFieldUtil.updateText(field, blankInfo ? ("unknown " + unkName) : info);
         TextFieldUtil.updateFormat(field, { italic: blankInfo });
+    }
+
+    protected function handleInfoClicked (event :MouseEvent) :void
+    {
+        // TODO: If I use MsoyController.AUDIO_CLICKED, all that links in for audioplayer
+        CommandEvent.dispatch(this, "AudioClicked", Mp3AudioPlayer(_player).getClientData());
     }
 
     protected static const FIELD_HEIGHT :int = 15;

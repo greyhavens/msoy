@@ -53,6 +53,7 @@ import com.threerings.presents.client.ClientObserver;
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 public class MsoyController extends Controller
@@ -131,6 +132,9 @@ public class MsoyController extends Controller
 
     /** Command to ensure that the share dialog is up. */
     public static const POP_SHARE_DIALOG :String = "PopShareDialog";
+
+    /** Command to indicate an audio item was clicked, arg is [ mediaDesc ] */
+    public static const AUDIO_CLICKED :String = "AudioClicked";
 
     // NOTE:
     // Any commands defined in this class should be handled in this class.
@@ -453,6 +457,17 @@ public class MsoyController extends Controller
     public function handleChatPrefs () :void
     {
         new ChatPrefsDialog(_mctx);
+    }
+
+    public function handleAudioClicked (desc :MediaDesc) :void
+    {
+        if (desc == null || !desc.isBleepable()) {
+            return;
+        }
+
+//        var mediaId :String = desc.getMediaId();
+//        var isBleeped :Boolean = Prefs.isMediaBleeped(mediaId);
+//        Prefs.setMediaBleeped(desc.getMediaId(), !isBleeped);
     }
 
     /**

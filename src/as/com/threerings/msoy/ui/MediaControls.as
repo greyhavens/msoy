@@ -341,6 +341,10 @@ public class MediaControls extends Sprite
             off = _pauseBtn;
             break;
 
+        case MediaPlayerCodes.STATE_UNREADY:
+            off = (_playBtn.parent != null) ? _playBtn : _pauseBtn;
+            break;
+
         default:
             return; // don't adjust
         }
@@ -348,7 +352,7 @@ public class MediaControls extends Sprite
         if (off.parent == this) {
             removeChild(off);
         }
-        if (on.parent != this) {
+        if (on != null && on.parent != this) {
             addChild(on);
         }
     }
