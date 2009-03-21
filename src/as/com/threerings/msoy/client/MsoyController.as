@@ -56,6 +56,8 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.item.data.all.Item;
+
 public class MsoyController extends Controller
     implements ClientObserver
 {
@@ -465,9 +467,13 @@ public class MsoyController extends Controller
             return;
         }
 
-//        var mediaId :String = desc.getMediaId();
-//        var isBleeped :Boolean = Prefs.isMediaBleeped(mediaId);
-//        Prefs.setMediaBleeped(desc.getMediaId(), !isBleeped);
+        var mediaId :String = desc.getMediaId();
+        var isBleeped :Boolean = Prefs.isMediaBleeped(mediaId);
+        var key :String = isBleeped ? "b.unbleep_item" : "b.bleep_item";
+        var menuItems :Array = [ {
+            label: Msgs.GENERAL.get(key, Msgs.GENERAL.get(Item.getTypeKey(Item.AUDIO))),
+            callback: Prefs.setMediaBleeped, arg: [ mediaId, !isBleeped ] } ];
+        CommandMenu.createMenu(menuItems, _topPanel).popUpAtMouse();
     }
 
     /**

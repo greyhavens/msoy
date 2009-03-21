@@ -10,12 +10,14 @@ import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.MediaControls;
 
@@ -32,6 +34,11 @@ public class PlaylistRenderer extends HBox
     public var wctx :WorldContext;
     public var roomObj :RoomObject;
 
+    public function PlaylistRenderer ()
+    {
+        Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
+    }
+
     override public function set data (value :Object) :void
     {
         super.data = value;
@@ -46,7 +53,7 @@ public class PlaylistRenderer extends HBox
 
         FlexUtil.setVisible(_playBtn, isManager);
         _playBtn.enabled = !isPlayingNow;
-        _name.text = audio.name;
+        updateName();
         if (audio.used != Item.UNUSED) {
             _name.toolTip = Msgs.WORLD.get("i.manager_music");
         } else {
@@ -57,6 +64,20 @@ public class PlaylistRenderer extends HBox
         _name.setStyle("fontWeight", isPlayingNow ? "bold" : "normal");
         FlexUtil.setVisible(_removeBtn, canRemove);
         _removeBtn.enabled = canRemove;
+    }
+
+    protected function updateName () :void
+    {
+        var audio :Audio = Audio(data);
+        var isBleeped :Boolean = audio.audioMedia.isBleepable() &&
+            (Prefs.isGlobalBleep() || Prefs.isMediaBleeped(audio.audioMedia.getMediaId()));
+        if (isBleeped) {
+            _name.text = Msgs.GENERAL.get("m.bleeped");
+            _name.setStyle("color", "red");
+        } else {
+            _name.text = audio.name;
+            _name.setStyle("color", "white");
+        }
     }
 
     override protected function createChildren () :void
@@ -87,6 +108,17 @@ public class PlaylistRenderer extends HBox
         roomObj.roomService.modifyPlaylist(wctx.getClient(), Audio(data).itemId, false,
             wctx.confirmListener(null, MsoyCodes.WORLD_MSGS));
         _removeBtn.enabled = false;
+    }
+
+    protected function handleBleepChange (event :ValueEvent) :void
+    {
+        var audio :Audio = Audio(data);
+        if (audio != null && audio.audioMedia.isBleepable()) {
+            const id :String = String(event.value[0]);
+            if (id == Prefs.GLOBAL_BLEEP || id == audio.audioMedia.getMediaId()) {
+                updateName();
+            }
+        }
     }
 
     protected function handleInfoClicked (event :MouseEvent) :void
