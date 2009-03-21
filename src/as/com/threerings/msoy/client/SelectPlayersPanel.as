@@ -17,6 +17,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 /**
@@ -77,7 +78,7 @@ public class SelectPlayersPanel extends FloatingPanel
 
         var row :GridRow = null;
         var cell :int = 0;
-        for each (var playerName :VizMemberName in _playerNames) {
+        for each (var playerName :VizMemberName in _playerNames.sort(MemberName.BY_DISPLAY_NAME)) {
             if (row == null) {
                 row = new GridRow();
                 grid.addChild(row);
