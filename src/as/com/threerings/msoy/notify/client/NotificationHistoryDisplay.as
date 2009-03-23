@@ -23,6 +23,15 @@ public class NotificationHistoryDisplay extends VBox
         verticalScrollPolicy = ScrollPolicy.ON;
     }
 
+    public function addNotification (notifDisplay :UIComponent) :void
+    {
+        var atBottom :Boolean = (verticalScrollPosition == maxVerticalScrollPosition);
+        addChild(notifDisplay);
+        if (atBottom) {
+            deferScrollToEnd();
+        }
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -37,7 +46,11 @@ public class NotificationHistoryDisplay extends VBox
             // now add the notification
             addChild(notification);
         }
+        deferScrollToEnd();
+    }
 
+    protected function deferScrollToEnd () :void
+    {
         callLater(function () :void {
             verticalScrollPosition = maxVerticalScrollPosition;
         });

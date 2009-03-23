@@ -85,12 +85,7 @@ public class NotificationDisplay extends HBox
         checkPendingNotifications();
 
         if (_nHistory != null) {
-            if (_nHistory.verticalScrollPosition == _nHistory.maxVerticalScrollPosition) {
-                callLater(function () :void {
-                    _nHistory.verticalScrollPosition = _nHistory.maxVerticalScrollPosition;
-                });
-            }
-            _nHistory.addChild(createDisplay(notification, true));
+            _nHistory.addNotification(createDisplay(notification, true));
         }
     }
 
