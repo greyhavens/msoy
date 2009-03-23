@@ -1,8 +1,9 @@
 package com.threerings.msoy.aggregators.result;
 
 import java.util.Map;
+
+import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregatedResult;
 
 public class RetentionByEntryResult extends FieldAggregatedResult
 {

@@ -7,11 +7,11 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import com.threerings.panopticon.aggregator.result.Result;
+import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-import com.threerings.panopticon.reporter.aggregator.result.Result;
 
-import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregatedResult;
 
 /**
  * Counts up all the members who were sent a retention email and outputs a map of the member id

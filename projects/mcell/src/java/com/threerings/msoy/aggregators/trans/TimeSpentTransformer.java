@@ -4,8 +4,8 @@
 
 package com.threerings.msoy.aggregators.trans;
 
+import com.threerings.panopticon.aggregator.ResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.ResultTransformer;
 
 public class TimeSpentTransformer implements ResultTransformer
 {

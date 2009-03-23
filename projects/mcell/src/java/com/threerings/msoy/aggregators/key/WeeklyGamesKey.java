@@ -9,9 +9,10 @@ import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+
+import com.threerings.panopticon.aggregator.key.PropertiesAggregatorKey;
+import com.threerings.panopticon.aggregator.writable.MultiKeys;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.key.PropertiesAggregatorKey;
-import com.threerings.panopticon.reporter.aggregator.writable.MultiKeys;
 import com.threerings.panopticon.shared.util.PartialDateType;
 import com.threerings.panopticon.shared.util.TimeRange;
 

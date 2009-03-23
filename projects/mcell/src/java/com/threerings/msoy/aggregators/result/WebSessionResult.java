@@ -17,9 +17,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
+import com.threerings.panopticon.aggregator.result.PropertiesAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.reporter.aggregator.result.PropertiesAggregatedResult;
 
 /**
  * Counts the number of trackers involved in web sessions each day, split into three

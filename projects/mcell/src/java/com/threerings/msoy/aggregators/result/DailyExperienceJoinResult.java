@@ -6,9 +6,9 @@ package com.threerings.msoy.aggregators.result;
 
 import java.util.Map;
 
+import com.threerings.panopticon.aggregator.result.JoinResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
-import com.threerings.panopticon.reporter.aggregator.result.JoinResult;
 
 /**
  * Joins two tables: one that counts up all unique trackers by day, and another that

@@ -9,8 +9,8 @@ import java.text.DecimalFormat;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
+import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.PropertiesResultTransformer;
 
 /**
  * <p>Adds a fractional or percentage value, based on a fraction of two data columns.</p>

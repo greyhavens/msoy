@@ -13,9 +13,9 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import com.google.common.base.Preconditions;
 
+import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.util.ThreadHelper.SafeSimpleDateFormatProvider;
-import com.threerings.panopticon.reporter.aggregator.PropertiesResultTransformer;
 
 /**
  * Skips results that fall within specific date ranges.

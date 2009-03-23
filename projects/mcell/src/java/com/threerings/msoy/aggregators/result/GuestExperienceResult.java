@@ -17,9 +17,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
+import com.threerings.panopticon.aggregator.result.PropertiesAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.reporter.aggregator.result.PropertiesAggregatedResult;
 
 /**
  * Extracts a table of guest experiences before conversion, per entry vector / conversion status.

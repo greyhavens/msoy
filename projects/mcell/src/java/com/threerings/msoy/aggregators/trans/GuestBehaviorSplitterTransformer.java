@@ -10,8 +10,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import com.google.common.base.Preconditions;
 
 import com.threerings.msoy.aggregators.result.GuestBehaviorResult;
+import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.PropertiesResultTransformer;
 
 /**
  * Converts the long "events" string produced by {@link GuestBehaviorResult}

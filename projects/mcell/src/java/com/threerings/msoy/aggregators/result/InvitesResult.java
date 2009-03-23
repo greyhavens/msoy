@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
 
+import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
+import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
 
 public class InvitesResult implements AggregatedResult<InvitesResult>
 {

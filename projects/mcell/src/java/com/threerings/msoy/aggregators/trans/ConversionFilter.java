@@ -7,8 +7,8 @@ package com.threerings.msoy.aggregators.trans;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
+import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.PropertiesResultTransformer;
 
 /**
  * Used to filter out conversion noise from AB test and conversion tables.

@@ -13,14 +13,14 @@ import java.util.List;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import com.threerings.panopticon.aggregator.hadoop.Aggregator;
+import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
+import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
+import com.threerings.panopticon.aggregator.hadoop.KeyInitData;
+import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 import com.threerings.panopticon.efs.storev2.StorageStrategy;
-import com.threerings.panopticon.reporter.aggregator.hadoop.Aggregator;
-import com.threerings.panopticon.reporter.aggregator.hadoop.JavaAggregator;
-import com.threerings.panopticon.reporter.aggregator.hadoop.KeyFactory;
-import com.threerings.panopticon.reporter.aggregator.hadoop.KeyInitData;
-import com.threerings.panopticon.reporter.aggregator.writable.Keys;
 
 import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
 import com.threerings.msoy.aggregators.result.RetentionEmailResult;
@@ -32,12 +32,6 @@ public class RetentionEmail
     // Our results
     public RetentionEmailResult mailings;
     public RetentionEmailLoginsResult logins;
-
-    @Override
-    public Class<Keys.LongKey> getKeyClass ()
-    {
-        return Keys.LongKey.class;
-    }
 
     @Override
     public List<Keys.LongKey> createKeys (KeyInitData keyInitData)

@@ -12,8 +12,8 @@ import java.util.Date;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 
+import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.shared.util.PartialDateType;
 import com.threerings.panopticon.shared.util.TimeRange;
 

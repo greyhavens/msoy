@@ -8,9 +8,10 @@ import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+
+import com.threerings.panopticon.aggregator.key.PropertiesAggregatorKey;
+import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.key.PropertiesAggregatorKey;
-import com.threerings.panopticon.reporter.aggregator.writable.Keys;
 
 public class CostInHundredsKey
     implements PropertiesAggregatorKey<Keys.IntegerKey>

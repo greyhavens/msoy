@@ -23,10 +23,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import com.threerings.msoy.aggregators.trans.GuestBehaviorSplitterTransformer;
+import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
+import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
-import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
 
 /**
  * Extracts a guest behavior table, including the time they first show up, the time they register

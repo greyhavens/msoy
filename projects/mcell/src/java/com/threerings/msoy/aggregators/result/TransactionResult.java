@@ -15,10 +15,10 @@ import org.apache.commons.configuration.Configuration;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
+import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
+import com.threerings.panopticon.aggregator.result.PropertiesAggregatedResult;
+import com.threerings.panopticon.aggregator.util.Util.AdditiveIntMap;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.reporter.aggregator.result.PropertiesAggregatedResult;
-import com.threerings.panopticon.reporter.aggregator.util.Util.AdditiveIntMap;
 
 /**
  * Adds up transactions across all currencies.

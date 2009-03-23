@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
 
 /**
  * Joins together one ReferralCreated event, zero or more ClientAction events, and zero or one

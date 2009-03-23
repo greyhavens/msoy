@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
 
 public class GameAffinityResult implements AggregatedResult<GameAffinityResult>
 {

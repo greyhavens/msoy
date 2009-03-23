@@ -18,9 +18,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
+import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
+import com.threerings.panopticon.aggregator.result.field.FieldKey;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.result.field.FieldAggregatedResult;
-import com.threerings.panopticon.reporter.aggregator.result.field.FieldKey;
 
 public class MultiServerAverageResult extends FieldAggregatedResult
 {

@@ -17,9 +17,9 @@ import org.apache.commons.configuration.Configuration;
 
 import com.google.common.base.Preconditions;
 
+import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
+import com.threerings.panopticon.aggregator.result.PropertiesAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.reporter.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.reporter.aggregator.result.PropertiesAggregatedResult;
 
 /**
  * Counts up A/B test actions for all players participating in some chosen set of tests.
