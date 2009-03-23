@@ -8,6 +8,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.PetInfo;
+import com.threerings.msoy.room.data.PetName;
 
 /**
  * Extends {@link ActorSprite} with pet-specific stuff.
@@ -17,6 +18,20 @@ public class PetSprite extends ActorSprite
     public function PetSprite (ctx :WorldContext, occInfo :PetInfo, extraInfo :Object)
     {
         super(ctx, occInfo, extraInfo);
+    }
+
+    /**
+     * Get the ownerId of this pet.
+     */
+    public function getOwnerId () :int
+    {
+        return PetName(_occInfo.username).getOwnerId();
+    }
+
+    public function isOwnerMuted () :Boolean
+    {
+        return (_occInfo != null) && _ctx.getMuteDirector() != null &&
+            _ctx.getMuteDirector().isOwnerMuted(PetName(_occInfo.username));
     }
 
     /**
@@ -61,11 +76,17 @@ public class PetSprite extends ActorSprite
         CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
     }
 
+    override protected function getBlockType () :String
+    {
+        // TODO: we can make a special icon for owner-muting a pet, but right now we re-use "mute".
+        return isOwnerMuted() ? "mute" : super.getBlockType();
+    }
+
     override protected function getSpecialProperty (name :String) :Object
     {
         switch (name) {
         case "member_id":
-            return (_occInfo as PetInfo).getOwnerId();
+            return getOwnerId();
 
         default:
             return super.getSpecialProperty(name);

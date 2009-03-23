@@ -30,7 +30,6 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.chat.client.MuteDirector;
 
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCodes;
@@ -42,6 +41,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.CurseFilter;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
+import com.threerings.msoy.chat.client.MsoyMuteDirector;
 
 import com.threerings.msoy.notify.client.NotificationDirector;
 
@@ -296,7 +296,7 @@ public /*abstract*/ class MsoyContext
     /**
      * Get the mute director.
      */
-    public function getMuteDirector () :MuteDirector
+    public function getMuteDirector () :MsoyMuteDirector
     {
         return _muteDir;
     }
@@ -428,7 +428,7 @@ public /*abstract*/ class MsoyContext
     protected function createAdditionalDirectors () :void
     {
         _notifyDir = new NotificationDirector(this);
-        _muteDir = new MuteDirector(this);
+        _muteDir = new MsoyMuteDirector(this);
         _muteDir.setChatDirector(_chatDir);
         _upsellDir = new UpsellDirector(this);
         _socialDir = new SocialDirector(this);
@@ -458,7 +458,7 @@ public /*abstract*/ class MsoyContext
     protected var _locDir :LocationDirector;
     protected var _occDir :OccupantDirector;
     protected var _chatDir :MsoyChatDirector;
-    protected var _muteDir :MuteDirector;
+    protected var _muteDir :MsoyMuteDirector;
     protected var _notifyDir :NotificationDirector;
     protected var _upsellDir :UpsellDirector;
     protected var _socialDir :SocialDirector;

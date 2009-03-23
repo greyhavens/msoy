@@ -20,7 +20,6 @@ public class PetInfo extends ActorInfo
     public PetInfo (PetObject petobj)
     {
         super(petobj);
-        _ownerId = petobj.pet.ownerId;
     }
 
     /** Constructor used for unserialization. */
@@ -28,20 +27,13 @@ public class PetInfo extends ActorInfo
     {
     }
 
-    /**
-     * Returns the member id of this pet's owner.
-     */
-    public int getOwnerId ()
-    {
-        return _ownerId;
-    }
-
-    @Override // from SimpleStreamableObject
-    protected void toString (StringBuilder buf)
-    {
-        super.toString(buf);
-        buf.append(", ownerId=").append(_ownerId);
-    }
+//    /**
+//     * Returns the member id of this pet's owner.
+//     */
+//    public int getOwnerId ()
+//    {
+//        return ((PetName) username).getOwnerId();
+//    }
 
     @Override // from ActorInfo
     protected void useStaticMedia ()
@@ -57,6 +49,4 @@ public class PetInfo extends ActorInfo
         _media = petobj.pet.getFurniMedia();
         _ident = petobj.pet.getIdent();
     }
-
-    protected int _ownerId;
 }

@@ -767,8 +767,9 @@ public class ChatOverlay
                 cmd = MsoyController.POP_MEMBER_MENU + "/" + name.toString() + "/" + 
                     String(MemberName(name).getMemberId());
             } else if (name is PetName) {
-                cmd = MsoyController.POP_PET_MENU + "/" + name.toString() + "/" + 
-                    String(PetName(name).getPetId());
+                var pname :PetName = PetName(name);
+                cmd = MsoyController.POP_PET_MENU + "/" + name.toString() + "/" + pname.getPetId() +
+                    "/" + pname.getOwnerId();
             }
             var texts2 :Array = TextUtil.parseLinks(
                 Msgs.CHAT.get(format, name, cmd) + " ", _defaultFmt, true, true);

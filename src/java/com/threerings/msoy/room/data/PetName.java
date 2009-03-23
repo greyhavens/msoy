@@ -17,10 +17,19 @@ public class PetName extends Name
     {
     }
 
-    public PetName (String displayName, int petId)
+    public PetName (String displayName, int petId, int ownerId)
     {
         super(displayName);
         _petId = petId;
+        _ownerId = ownerId;
+    }
+
+    /**
+     * Get the memberId of the owner of this pet.
+     */
+    public int getOwnerId ()
+    {
+        return _ownerId;
     }
 
     @Override
@@ -48,4 +57,5 @@ public class PetName extends Name
     }
 
     protected int _petId;
+    protected int _ownerId;
 }

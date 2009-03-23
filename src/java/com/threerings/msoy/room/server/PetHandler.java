@@ -48,7 +48,7 @@ public class PetHandler
     {
         _petobj = _omgr.registerObject(new PetObject());
         _petobj.memories = memories;
-        _petobj.setUsername(new PetName(pet.name, pet.itemId));
+        _petobj.setUsername(new PetName(pet.name, pet.itemId, pet.ownerId));
         _petobj.pet = pet;
         _petmgr.mapHandler(pet.itemId, this);
     }

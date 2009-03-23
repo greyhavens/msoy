@@ -14,15 +14,21 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class PetName extends Name
 {
-    public function PetName (displayName :String = "", petId :int = 0)
+    public function PetName (displayName :String = "", petId :int = 0, ownerId :int = 0)
     {
         super(displayName);
         _petId = petId;
+        _ownerId = ownerId;
     }
 
     public function getPetId () :int
     {
         return _petId;
+    }
+
+    public function getOwnerId () :int
+    {
+        return _ownerId;
     }
 
     override public function hashCode () :int
@@ -45,6 +51,7 @@ public class PetName extends Name
     {
         super.readObject(ins);
         _petId = ins.readInt();
+        _ownerId = ins.readInt();
     }
 
     // from interface Streamable
@@ -52,6 +59,7 @@ public class PetName extends Name
     {
         super.writeObject(out);
         out.writeInt(_petId);
+        out.writeInt(_ownerId);
     }
 
     override protected function normalize (name :String) :String
@@ -60,5 +68,6 @@ public class PetName extends Name
     }
 
     protected var _petId :int;
+    protected var _ownerId :int;
 }
 }

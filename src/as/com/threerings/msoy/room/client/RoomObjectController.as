@@ -72,6 +72,7 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetInfo;
+import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
@@ -126,6 +127,15 @@ public class RoomObjectController extends RoomController
         var occ :OccupantSprite = _roomObjectView.getOccupantByName(name);
         if (occ != null) {
             occ.checkBlocked();
+        }
+        if (name is MemberName) {
+            var memberId :int = MemberName(name).getMemberId();
+            for each (var pet :PetSprite in _roomObjectView.getPets()) {
+                if (pet.getOwnerId() == memberId) {
+                    pet.checkBlocked();
+                    // keep going: there could be more than one matching pet
+                }
+            }
         }
     }
 
@@ -462,13 +472,12 @@ public class RoomObjectController extends RoomController
         }
 
         const memObj :MemberObject = _wdctx.getMemberObject();
-        const isPetOwner :Boolean = (occInfo.getOwnerId() == memObj.getMemberId());
+        const isPetOwner :Boolean = (PetSprite(pet).getOwnerId() == memObj.getMemberId());
         const petId :int = occInfo.getItemIdent().itemId;
-        const isMuted :Boolean = _wdctx.getMuteDirector().isMuted(occInfo.username);
 
         var menuItems :Array = [];
 
-        _wdctx.getWorldController().addPetMenuItems(occInfo.username, menuItems);
+        _wdctx.getWorldController().addPetMenuItems(PetName(occInfo.username), menuItems);
         if (pet.isBleepable()) {
             var key :String = pet.isBleeped() ? "b.unbleep_pet" : "b.bleep_pet";
             menuItems.push({ label: Msgs.GENERAL.get(key),

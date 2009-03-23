@@ -13,29 +13,20 @@ public class PetInfo extends ActorInfo
     // statically reference classes we require
     PetName;
 
-    /**
-     * Returns the member id of this pet's owner.
-     */
-    public function getOwnerId () :int
-    {
-        return _ownerId;
-    }
+//    /**
+//     * Returns the member id of this pet's owner.
+//     */
+//    public function getOwnerId () :int
+//    {
+//        return PetName(username).getOwnerId();
+//    }
 
     // from ActorInfo
     override public function clone () :Object
     {
         var that :PetInfo = super.clone() as PetInfo;
-        that._ownerId = this._ownerId;
+        // presently: nothing else to copy
         return that;
     }
-
-    // from ActorInfo
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        _ownerId = ins.readInt();
-    }
-
-    protected var _ownerId :int;
 }
 }

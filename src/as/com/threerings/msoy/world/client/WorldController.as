@@ -842,10 +842,10 @@ public class WorldController extends MsoyController
     /**
      * Handles the POP_PET_MENU command.
      */
-    public function handlePopPetMenu (name :String, petId :int) :void
+    public function handlePopPetMenu (name :String, petId :int, ownerId :int) :void
     {
         var menuItems :Array = [];
-        addPetMenuItems(new PetName(name, petId), menuItems);
+        addPetMenuItems(new PetName(name, petId, ownerId), menuItems);
         CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
@@ -1191,11 +1191,18 @@ public class WorldController extends MsoyController
     /**
      * Add pet menu items.
      */
-    public function addPetMenuItems (petName :Name, menuItems :Array) :void
+    public function addPetMenuItems (petName :PetName, menuItems :Array) :void
     {
-        const isMuted :Boolean = _wctx.getMuteDirector().isMuted(petName);
-        menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
-            callback: _wctx.getMuteDirector().setMuted, arg: [ petName, !isMuted ] });
+        const ownerMuted :Boolean = _wctx.getMuteDirector().isOwnerMuted(petName);
+        if (ownerMuted) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.unmute_owner"),
+                callback: _mctx.getMuteDirector().setMuted,
+                arg: [ new MemberName("", petName.getOwnerId()), false ] });
+        } else {
+            const isMuted :Boolean = _wctx.getMuteDirector().isMuted(petName);
+            menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
+                callback: _wctx.getMuteDirector().setMuted, arg: [ petName, !isMuted ] });
+        }
     }
 
     // from MsoyController
