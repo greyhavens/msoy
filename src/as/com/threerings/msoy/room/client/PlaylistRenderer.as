@@ -19,7 +19,9 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaControls;
+import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Audio;
@@ -53,6 +55,7 @@ public class PlaylistRenderer extends HBox
 
         FlexUtil.setVisible(_playBtn, isManager);
         _playBtn.enabled = !isPlayingNow;
+        _thumbnail.setMediaDesc(audio.getThumbnailMedia());
         updateName();
         if (audio.used != Item.UNUSED) {
             _name.toolTip = Msgs.WORLD.get("i.manager_music");
@@ -87,8 +90,13 @@ public class PlaylistRenderer extends HBox
         _playBtn = new CommandButton("\u25B6", doPlay);
         addChild(_playBtn);
 
+        _thumbnail = MediaWrapper.createView(null, MediaDesc.QUARTER_THUMBNAIL_SIZE);
+        addChild(_thumbnail);
+
         _name = FlexUtil.createLabel(null);
-        _name.width = MediaControls.WIDTH - ScrollBar.THICKNESS - 70; // 70 pix for buttons/spacing
+        // 70 pix for buttons/spacing
+        // 30 pix: quarter thumbnail (20 pix) plus 10 pix of spacing.
+        _name.width = MediaControls.WIDTH - ScrollBar.THICKNESS - 70 - 30;
         _name.addEventListener(MouseEvent.CLICK, handleInfoClicked);
         addChild(_name);
 
@@ -127,6 +135,7 @@ public class PlaylistRenderer extends HBox
     }
 
     protected var _playBtn :CommandButton;
+    protected var _thumbnail :MediaWrapper;
     protected var _name :Label;
     protected var _removeBtn :CommandButton;
 }
