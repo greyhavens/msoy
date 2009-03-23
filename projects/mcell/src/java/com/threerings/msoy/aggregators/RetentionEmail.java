@@ -25,7 +25,7 @@ import com.threerings.panopticon.efs.storev2.StorageStrategy;
 import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
 import com.threerings.msoy.aggregators.result.RetentionEmailResult;
 
-@Aggregator(outputs="msoy.RetentionEmail", schedule="DAILY")
+@Aggregator(outputs="msoy.RetentionEmailResponse", schedule="DAILY")
 public class RetentionEmail
     implements JavaAggregator<Keys.LongKey>, KeyFactory<Keys.LongKey>
 {
