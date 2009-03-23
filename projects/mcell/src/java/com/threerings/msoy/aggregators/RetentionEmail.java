@@ -25,10 +25,12 @@ import com.threerings.panopticon.efs.storev2.StorageStrategy;
 import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
 import com.threerings.msoy.aggregators.result.RetentionEmailResult;
 
-@Aggregator(outputs="msoy.RetentionEmailResponse", schedule="DAILY")
+@Aggregator(outputs=RetentionEmail.EVENT_NAME, schedule="DAILY")
 public class RetentionEmail
     implements JavaAggregator<Keys.LongKey>, KeyFactory<Keys.LongKey>
 {
+    public static final String EVENT_NAME = "msoy.RetentionEmailResponse";
+    
     // Our results
     public RetentionEmailResult mailings;
     public RetentionEmailLoginsResult logins;
@@ -71,7 +73,7 @@ public class RetentionEmail
             }
         }
         // write an event
-        writer.write(new EventData("msoy.RetentionEmailResponse",
+        writer.write(new EventData(EVENT_NAME,
             new ImmutableMap.Builder<String, Object>()
                 .put("respondents", respondents)
                 .put("mailings", mailings.sent.size())
