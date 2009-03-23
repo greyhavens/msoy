@@ -488,7 +488,7 @@ public class RoomManager extends SpotSceneManager
             try {
                 _roomObj.removeFromPlaylist(key);
                 if (_roomObj.currentSongId == audioItemId) {
-                    playNextSong();
+                    playNextSong(false);
                 }
             } finally {
                 _roomObj.commitTransaction();
@@ -548,7 +548,7 @@ public class RoomManager extends SpotSceneManager
             return; // not applicable, another client has already set us straight
         }
 
-        playNextSong();
+        playNextSong(false);
     }
 
     /**
@@ -596,6 +596,15 @@ public class RoomManager extends SpotSceneManager
     protected void addToPlaylist3 (
         MemberObject who, Audio item, InvocationService.ConfirmListener listener)
     {
+        // update the lastTouched time, here in the runtime.
+        // - If we just updated the item usage (the song is either a manager's addition,
+        //   or it's a visitor's who pulled it from another room) then this time will
+        //   closely match the time stored in the database.
+        // - If the usage was not updated (because a visitor added an already-unused song)
+        //   then this is just a made-up lastTouched time, but fine for tracking addition
+        //   time, which is used for playlist ordering.
+        item.lastTouched = System.currentTimeMillis();
+
         _roomObj.startTransaction();
         try {
             // add the song if it's not already there
@@ -605,7 +614,7 @@ public class RoomManager extends SpotSceneManager
             // start it playing now if there's not already something playing
             if (_roomObj.playCount == -1 || !_roomObj.playlist.containsKey(
                     new ItemIdent(Item.AUDIO, _roomObj.currentSongId))) {
-                playNextSong();
+                playNextSong(true);
             }
         } finally {
             _roomObj.commitTransaction();
@@ -632,7 +641,7 @@ public class RoomManager extends SpotSceneManager
                 }
             }
             if (removedPlaying) {
-                playNextSong();
+                playNextSong(false);
             }
         } finally {
             _roomObj.commitTransaction();
@@ -643,8 +652,11 @@ public class RoomManager extends SpotSceneManager
 
     /**
      * Play the next song in the playlist.
+     *
+     * @param firstOnRestart if the previously-playing song is not found,
+     *        play the first song, otherwise the last.
      */
-    protected void playNextSong ()
+    protected void playNextSong (boolean firstOnRestart)
     {
         int size = _roomObj.playlist.size();
         if (size == 0) {
@@ -652,15 +664,10 @@ public class RoomManager extends SpotSceneManager
             return; // nothing to play
         }
 
-        // else, make a list of all the songs, sort them according to "playlist order" and try
-        // to move to the next song
+        // else, make a list of all the songs, sort them according to "playlist order"
+        // (by lastTouched ordering, oldest first) and try to move to the next song
         Audio[] songs = _roomObj.playlist.toArray(new Audio[size]);
-        QuickSort.sort(songs, new Comparator<Audio>() {
-            public int compare (Audio a1, Audio a2) {
-                // TODO: playlist ordering?
-                return Comparators.compare(a1.itemId, a2.itemId);
-            }
-        });
+        QuickSort.rsort(songs);
 
         // find the index of the currently playing song
         int curDex = -1;
@@ -671,11 +678,11 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        if (curDex == -1) {
-            curDex = size - 1; // play the last song in the list..
+        if (firstOnRestart || (curDex != -1)) {
+            curDex = (curDex + 1) % size; // play the first/next song
 
         } else {
-            curDex = (curDex + 1) % size; // play the next song
+            curDex = size - 1; // play the last song in the list..
         }
         playSong(songs[curDex].itemId);
     }
@@ -1193,7 +1200,7 @@ public class RoomManager extends SpotSceneManager
                 addMemoriesToRoom(_extras.memories);
             }
             _roomObj.setPlaylist(DSet.newDSet(_extras.playlist));
-            playNextSong();
+            playNextSong(true);
         } finally {
             _roomObj.commitTransaction();
         }

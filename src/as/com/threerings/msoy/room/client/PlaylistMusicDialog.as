@@ -12,6 +12,7 @@ import mx.containers.HBox;
 import mx.controls.HRule;
 import mx.controls.List;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Integer;
 
 import com.threerings.flex.CommandButton;
@@ -104,12 +105,10 @@ public class PlaylistMusicDialog extends MusicDialog
 
     protected function updatePlaylist () :void
     {
-        // get all the songs
+        // Sort the songs by lastTouched, oldest first
         var songs :Array = _roomObj.playlist.toArray();
-        songs.sort(function (song1 :Audio, song2 :Audio) :int {
-            // TODO: playlist ordering
-            return Integer.compare(song1.itemId, song2.itemId);
-        });
+        ArrayUtil.sort(songs);
+        songs.reverse();
         _playList.dataProvider = songs;
     }
 
