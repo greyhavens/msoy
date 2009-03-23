@@ -81,7 +81,7 @@ public class GuestBehaviorResult
             _entry.member = (Integer)data.get("newMemberId");
 
         } else if (EXPERIENCE.equals(name)) {
-            final String action = (String)data.get("action");
+            String action = (String)data.get("action");
             if (action == null) {
                 return false;
             }
@@ -150,8 +150,11 @@ public class GuestBehaviorResult
         result.put("acct_vector", vector);
         result.put("acct_vector_from_ad", vector.startsWith("a."));
 
-        result.put("conv", _entry.converted != null ? 1 : 0);
-        result.put("played", (_entry.converted != null || _entry.played != null) ? 1 : 0);
+        boolean converted = (_entry.converted != null);
+        result.put("conv", converted ? 1 : 0);
+        
+        boolean played = (_entry.converted != null || _entry.played != null);
+        result.put("played", played ? 1 : 0);
 
         // data from Experiences
         final Map<String, Integer> conversionEvents =
@@ -167,7 +170,7 @@ public class GuestBehaviorResult
 
         // data from both
         int minutes = 0;
-        if (_entry.converted != null) {
+        if (converted) {
             result.put("conv_timestamp", _entry.converted);
             minutes = (int)(_entry.converted.getTime() - created.getTime()) / (1000 * 60);
         } else {
@@ -184,24 +187,35 @@ public class GuestBehaviorResult
         result.put("conv_hours", minutes / 60);
         result.put("conv_days", minutes / (60 * 24));
 
+        Date lastEventDate = _entry.findLastEventDate();
+
         // pull out retention stats, as days and weeks from joining.
         // retention counts only if they have a valid start date, a valid conversion
         // date, and they had some experiences more than a week after converting.
-        Date lastEventDate = _entry.findLastEventDate();
-        int days = 0;
-        if (_entry.converted != null && lastEventDate != null) {
+        int retainDays = 0;
+        if (converted && lastEventDate != null) {
             long msecs = (lastEventDate.getTime() - created.getTime());
-            days = (int)(msecs / (1000 * 60 * 60 * 24));
+            retainDays = (int)(msecs / (1000 * 60 * 60 * 24));
         }
 
-        boolean retained = (days / 7) > 0;
-        result.put("ret_days", days);
-        result.put("ret_weeks", days / 7);
+        boolean retained = (retainDays / 7) > 0;
+        result.put("ret_days", retainDays);
+        result.put("ret_weeks", retainDays / 7);
         result.put("ret", retained ? 1 : 0); // 1 if someone was retained for a week+
 
+        // returning is defined as any experience > 24 hours after creation
+        int returnDays = 0;
+        if (lastEventDate != null) {
+            long msecs = (lastEventDate.getTime() - created.getTime());
+            returnDays = (int)(msecs / (1000 * 60 * 60 * 24));
+        }
+
+        boolean returned = (returnDays > 0);
+        result.put("returned", returned ? 1 : 0); // 1 if someone returned after 24 hours
+        
         // pull out conversion / retention status
         String status = "1. did not convert";
-        if (_entry.converted != null) {
+        if (converted) {
             status = !retained ? "2. converted" : "3. retained";
         }
         result.put("conv_status", status);
@@ -350,8 +364,8 @@ public class GuestBehaviorResult
                     "Won't combine entries with different keys (" + this.tracker + ", " + other.tracker + ")");
             }
 
-            created = mostRecent(created, other.created);
-            played = mostRecent(played, other.played);
+            created = oldest(created, other.created);
+            played = oldest(played, other.played);
             converted = nullMerge(converted, other.converted);
 
             vector = nullMerge(vector, other.vector);
@@ -363,15 +377,6 @@ public class GuestBehaviorResult
                     addEvent(entry.getKey(), date);
                 }
             }
-        }
-        
-        protected Date mostRecent (Date ours, Date theirs)
-        {
-            return (theirs == null || (ours != null && theirs.after(ours))) ? ours : theirs;
-        }
-        
-        protected <T> T nullMerge(T ours, T theirs) {
-            return (theirs == null) ? ours : theirs;
         }
         
         public void write (final DataOutput out)
@@ -437,6 +442,15 @@ public class GuestBehaviorResult
                 }
             });
         return Join.join(" ", results);
+    }
+
+    protected static Date oldest (Date ours, Date theirs)
+    {
+        return (theirs == null || (ours != null && theirs.after(ours))) ? ours : theirs;
+    }
+
+    protected static <T> T nullMerge(T ours, T theirs) {
+        return (theirs == null) ? ours : theirs;
     }
 
     protected final static EventName VISITOR_INFO_CREATED = new EventName("VisitorInfoCreated");
