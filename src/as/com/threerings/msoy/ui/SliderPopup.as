@@ -54,6 +54,7 @@ public class SliderPopup extends Canvas
 
         _trigger = trigger;
         owner = DisplayObjectContainer(Application.application.systemManager);
+        owner.addEventListener(MouseEvent.CLICK, handleOutsideClick);
 
         // Initialize the window
         var r : Rectangle = _trigger.getBounds(trigger.stage);
@@ -79,6 +80,7 @@ public class SliderPopup extends Canvas
 
         addChild(_slider);
 
+        _cursorOffCanvas = true;
         addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
         addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
         _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
@@ -115,6 +117,7 @@ public class SliderPopup extends Canvas
      *  if there are no external references holding it. */
     public function destroy () :void
     {
+        owner.removeEventListener(MouseEvent.CLICK, handleOutsideClick);
         owner.removeChild(this);
         if (this == _currentInstance) {
             _currentInstance = null;
@@ -127,6 +130,13 @@ public class SliderPopup extends Canvas
     }
 
     // EVENT HANDLERS
+
+    protected function handleOutsideClick (event :MouseEvent) :void
+    {
+        if (visible && _cursorOffCanvas) {
+            destroy();
+        }
+    }
 
     /** Watch for the mouse leaving the area. */
     protected function mouseOutHandler (event : MouseEvent) : void
@@ -173,5 +183,4 @@ public class SliderPopup extends Canvas
         previous instance before displaying a new one. */
     protected static var _currentInstance : SliderPopup;
 }
-
 }
