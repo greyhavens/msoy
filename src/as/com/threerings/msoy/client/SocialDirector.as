@@ -19,13 +19,12 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
-import com.threerings.msoy.world.client.WorldController;
-
 /**
  * Helps the user to make friends. Currently does the following:
  * <ul>
  *   <li>Captures all room occupants that are not already friends.</li>
- *   <li>After some time in the room, shows a batch friend request dialog.</li>
+ *   <li>After some time in the room, shows a batch friend request dialog when the player leaves.
+ *     </li>
  *   <li>When playing a lobbied game, tracks all co-players in the session in games of at least a
  *     certain duration.</li>
  *   <li>When the user closes the game, shows a batch friend request dialog.</li>
@@ -230,7 +229,7 @@ public class SocialDirector extends BasicDirector
         // get rid of our handler to stop this from getting called again
         removeExitHandler(onExitGame);
 
-        return !maybeShowGamePopup(WorldController(_mctx.getMsoyController()).handleClosePlaceView);
+        return !maybeShowGamePopup(_mctx.getMsoyController().handleClosePlaceView);
     }
 
     protected function maybeShowGamePopup (onClose :Function) :Boolean
@@ -269,17 +268,17 @@ public class SocialDirector extends BasicDirector
 
         // show the popup if conditions are right, carry on closing if we did not show
         return !maybeShowRoomPopup(_wobs.resetSeen(),
-            WorldController(_mctx.getMsoyController()).handleClosePlaceView);
+            _mctx.getMsoyController().handleClosePlaceView);
     }
 
     protected function addExitHandler (fn :Function) :void
     {
-        WorldController(_mctx.getMsoyController()).addPlaceExitHandler(fn);
+        _mctx.getMsoyController().addPlaceExitHandler(fn);
     }
 
     protected function removeExitHandler (fn :Function) :void
     {
-        WorldController(_mctx.getMsoyController()).removePlaceExitHandler(fn);
+        _mctx.getMsoyController().removePlaceExitHandler(fn);
     }
 
     /**
