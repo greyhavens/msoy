@@ -582,7 +582,7 @@ public class AdminServlet extends MsoyServiceServlet
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
         final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
-        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
+        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true, true);
     }
 
     public void restartPanopticon (Set<String> nodeNames)

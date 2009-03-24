@@ -80,9 +80,13 @@ public class MailLogic
                                        String body, MailPayload payload)
         throws ServiceException
     {
+        // For a bulk conversation we don't check mutelists, we just deliver.
+
         // now start the conversation (and deliver the message)
+        ConvMessageRecord cmr = serializePayload(payload);
+
         _mailRepo.startConversation(
-            recip.memberId, sender.memberId, subject, body, payload, false);
+            recip.memberId, sender.memberId, subject, body, cmr, false, true);
 
         // potentially send a real email to the recipient
         sendMailEmail(sender, recip, subject, body);
@@ -99,19 +103,26 @@ public class MailLogic
                                    String subject, String body, MailPayload attachment)
         throws ServiceException
     {
-        // if the payload is an item attachment, transfer it to the recipient
-        processPayload(sender.memberId, recip.memberId, attachment);
+        boolean isMuted = checkMuting(sender, recip);
 
         // now start the conversation (and deliver the message)
+        ConvMessageRecord cmr = serializePayload(attachment);
+
+        if (!isMuted) {
+            processPayload(sender.memberId, recip.memberId, attachment);
+        }
+
         _mailRepo.startConversation(
-            recip.memberId, sender.memberId, subject, body, attachment, true);
+            recip.memberId, sender.memberId, subject, body, cmr, true, !isMuted);
 
-        // potentially send a real email to the recipient
-        sendMailEmail(sender, recip, subject, body);
+        if (!isMuted) {
+            // potentially send a real email to the recipient
+            sendMailEmail(sender, recip, subject, body);
 
-        // let recipient know they've got mail
-        MemberNodeActions.reportUnreadMail(
-            recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+            // let recipient know they've got mail
+            MemberNodeActions.reportUnreadMail(
+                recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+        }
     }
 
     /**
@@ -136,44 +147,36 @@ public class MailLogic
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        // find out some things about the other participant
+        int otherId = conrec.getOtherId(poster.memberId);
+        MemberRecord recip = _memberRepo.loadMember(otherId);
+        boolean isMuted = (recip != null) && checkMuting(poster, recip);
+
+        ConvMessageRecord cmr = serializePayload(attachment);
+
         // TODO: make sure body.length() is not too long
 
-        // encode the attachment if we have one
-        int payloadType = 0;
-        byte[] payloadState = null;
-        if (attachment != null) {
-            payloadType = attachment.getType();
-            try {
-                payloadState = JSONMarshaller.getMarshaller(
-                    attachment.getClass()).getStateBytes(attachment);
-            } catch (Exception e) {
-                log.warning("Failed to encode message attachment [for=" + poster.who() +
-                            ", attachment=" + attachment + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
+        if (!isMuted) {
+            processPayload(poster.memberId, conrec.getOtherId(poster.memberId), attachment);
         }
 
-        // if the payload is an item attachment, transfer it to the recipient
-        processPayload(poster.memberId, conrec.getOtherId(poster.memberId), attachment);
-
         // store the message in the repository
-        ConvMessageRecord cmr =
-            _mailRepo.addMessage(conrec, poster.memberId, body, payloadType, payloadState);
+        _mailRepo.addMessage(conrec, poster.memberId, body, cmr, !isMuted);
 
         // update our last read for this conversation to reflect that we've read our message
         _mailRepo.updateLastRead(convoId, poster.memberId, cmr.sent.getTime());
 
-        // let other conversation participant know they've got mail
-        int otherId = conrec.getOtherId(poster.memberId);
-        MemberNodeActions.reportUnreadMail(otherId, _mailRepo.loadUnreadConvoCount(otherId));
+        if (!isMuted) {
+            // let other conversation participant know they've got mail
+            MemberNodeActions.reportUnreadMail(otherId, _mailRepo.loadUnreadConvoCount(otherId));
 
-        // potentially send a real email to the recipient
-        MemberRecord recip = _memberRepo.loadMember(otherId);
-        if (recip != null) {
-            String subject = _serverMsgs.getBundle("server").get("m.reply_subject", conrec.subject);
-            sendMailEmail(poster, recip, subject, body);
+            // potentially send a real email to the recipient
+            if (recip != null) {
+                String subject = _serverMsgs.getBundle("server").get(
+                    "m.reply_subject", conrec.subject);
+                sendMailEmail(poster, recip, subject, body);
+            }
         }
-
         return cmr;
     }
 
@@ -235,6 +238,38 @@ public class MailLogic
         // ship all this off to the mail sender
         _mailer.sendSpam(MailSender.By.HUMAN, emails, ServerConfig.getFromAddress(),
                          SpamUtil.makeSpamHeaders(subject), subject, body);
+    }
+
+    /**
+     * Serialize the specified payload into a newly-initialized ConvMessageRecord.
+     */
+    protected ConvMessageRecord serializePayload (MailPayload payload)
+    {
+        ConvMessageRecord record = new ConvMessageRecord();
+        if (payload != null) {
+            record.payloadType = payload.getType();
+            try {
+                record.payloadState =
+                    JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
+            } catch (Exception e) {
+                log.warning("Failed to encode message attachment.", e);
+                throw new RuntimeException(e);
+            }
+        }
+        return record;
+    }
+
+    /**
+     * Return whether the recipient has muted the sender, but throw
+     * a ServiceException if the sender has muted the recipient.
+     */
+    protected boolean checkMuting (MemberRecord sender, MemberRecord recip)
+        throws ServiceException
+    {
+        if (_memberRepo.isMuted(sender.memberId, recip.memberId)) {
+            throw new ServiceException("e.cant_mail_muted");
+        }
+        return _memberRepo.isMuted(recip.memberId, sender.memberId);
     }
 
     /**

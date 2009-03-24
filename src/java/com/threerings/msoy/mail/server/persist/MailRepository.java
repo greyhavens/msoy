@@ -129,22 +129,10 @@ public class MailRepository extends DepotRepository
     /**
      * Starts a conversation with the specified subject.
      */
-    public ConversationRecord startConversation (int recipientId, int authorId, String subject,
-                                                 String body, MailPayload payload,
-                                                 boolean authorParticipation)
+    public ConversationRecord startConversation (
+        int recipientId, int authorId, String subject, String body, ConvMessageRecord cmrec,
+        boolean authorParticipation, boolean recipParticipation)
     {
-        // first serialize the payload so that we can fail early if that fails
-        ConvMessageRecord cmrec = new ConvMessageRecord();
-        if (payload != null) {
-            cmrec.payloadType = payload.getType();
-            try {
-                cmrec.payloadState =
-                    JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         // TODO: do this in a transaction
         ConversationRecord conrec = new ConversationRecord();
         conrec.subject = subject;
@@ -169,11 +157,13 @@ public class MailRepository extends DepotRepository
             insert(aprec);
         }
 
-        ParticipantRecord rprec = new ParticipantRecord();
-        rprec.conversationId = conrec.conversationId;
-        rprec.participantId = recipientId;
-        rprec.lastRead = new Timestamp(0);
-        insert(rprec);
+        if (recipParticipation) {
+            ParticipantRecord rprec = new ParticipantRecord();
+            rprec.conversationId = conrec.conversationId;
+            rprec.participantId = recipientId;
+            rprec.lastRead = new Timestamp(0);
+            insert(rprec);
+        }
 
         return conrec;
     }
@@ -181,16 +171,13 @@ public class MailRepository extends DepotRepository
     /**
      * Adds a message to a conversation.
      */
-    public ConvMessageRecord addMessage (ConversationRecord conrec, int authorId, String body,
-                                         int payloadType, byte[] payloadState)
+    public void addMessage (ConversationRecord conrec, int authorId, String body,
+                            ConvMessageRecord record, boolean notifyRecip)
     {
-        ConvMessageRecord record = new ConvMessageRecord();
         record.conversationId = conrec.conversationId;
         record.sent = new Timestamp(System.currentTimeMillis());
         record.authorId = authorId;
         record.body = body;
-        record.payloadType = payloadType;
-        record.payloadState = payloadState;
         insert(record);
 
         // update the conversation record
@@ -200,21 +187,21 @@ public class MailRepository extends DepotRepository
                       ConversationRecord.LAST_SNIPPET,
                       StringUtil.truncate(body, Conversation.SNIPPET_LENGTH));
 
-        // ressurect the other conversation participant if they have deleted this convo
-        int otherId = conrec.getOtherId(authorId);
-        if (loadLastRead(conrec.conversationId, otherId) == null) {
-            ParticipantRecord parrec = new ParticipantRecord();
-            parrec.conversationId = conrec.conversationId;
-            parrec.participantId = otherId;
-            // set their last read time to a couple of seconds before this message's sent time
-            parrec.lastRead = new Timestamp(record.sent.getTime()-2000);
-            insert(parrec);
+        if (notifyRecip) {
+            // ressurect the other conversation participant if they have deleted this convo
+            int otherId = conrec.getOtherId(authorId);
+            if (loadLastRead(conrec.conversationId, otherId) == null) {
+                ParticipantRecord parrec = new ParticipantRecord();
+                parrec.conversationId = conrec.conversationId;
+                parrec.participantId = otherId;
+                // set their last read time to a couple of seconds before this message's sent time
+                parrec.lastRead = new Timestamp(record.sent.getTime()-2000);
+                insert(parrec);
+            }
         }
 
         // note that we added a message to a conversation
-        _eventLog.mailSent(conrec.conversationId, authorId, payloadType);
-
-        return record;
+        _eventLog.mailSent(conrec.conversationId, authorId, record.payloadType);
     }
 
     /**
