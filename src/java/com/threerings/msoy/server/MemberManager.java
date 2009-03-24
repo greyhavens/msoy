@@ -282,7 +282,7 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+        _invoker.postUnit(new ServiceUnit("inviteToBeFriend", listener) {
             boolean autoFriended;
             @Override public void invokePersistent () throws Exception {
                 autoFriended = _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
@@ -305,7 +305,7 @@ public class MemberManager
             log.warning("Called inviteAllToBeFriends with no member ids", "caller", caller.who());
             listener.requestProcessed();
         }
-        _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+        _invoker.postUnit(new ServiceUnit("inviteAllToBeFriends", listener) {
             List<Exception> failures = Lists.newArrayList();
             @Override public void invokePersistent () throws Exception {
                 for (int friendId : memberIds) {
