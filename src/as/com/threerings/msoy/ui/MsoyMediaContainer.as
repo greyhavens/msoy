@@ -85,12 +85,6 @@ public class MsoyMediaContainer extends MediaContainer
         var nowBleeped :Boolean = !isBleeped();
         // and change the setting. We'll get an event about the change, and react to that.
         Prefs.setMediaBleeped(_desc.getMediaId(), nowBleeped);
-
-        // TEMP
-        if (!_hasBleeped && ctx != null) {
-            ctx.displayInfo(Msgs.GENERAL.getPath(), "m.bleeping_todo");
-            _hasBleeped = true;
-        }
     }
 
     /**
@@ -257,8 +251,5 @@ public class MsoyMediaContainer extends MediaContainer
     protected var _desc :MediaDesc;
 
     protected var _bridge :IEventDispatcher;
-
-    // TEMP: have we bleeped something (and issued the bleep disclaimer?)
-    protected static var _hasBleeped :Boolean
 }
 }

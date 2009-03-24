@@ -8,8 +8,6 @@ import flash.events.EventDispatcher;
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
-import flash.utils.Dictionary;
-
 import com.threerings.util.Config;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.ValueEvent;
@@ -139,10 +137,7 @@ public class Prefs
         } else {
             delete _bleepedMedia[id];
         }
-
-        // TODO: right now we don't persist this.
-        //_config.setValue(BLEEPED_MEDIA, _bleepedMedia, false);
-
+        _config.setValue(BLEEPED_MEDIA, _bleepedMedia, false); // don't flush
         events.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, bleeped ]));
     }
 
@@ -313,9 +308,9 @@ public class Prefs
     protected static function checkLoadBleepedMedia () :void
     {
         if (_bleepedMedia == null) {
-            _bleepedMedia = _config.getValue(BLEEPED_MEDIA, null) as Dictionary;
+            _bleepedMedia = _config.getValue(BLEEPED_MEDIA, null) as Object;
             if (_bleepedMedia == null) {
-                _bleepedMedia = new Dictionary();
+                _bleepedMedia = new Object();
             }
         }
     }
@@ -324,7 +319,7 @@ public class Prefs
     protected static const CONFIG_PATH :String = "rsrc/config/msoy";
 
     /** A set of media ids that are bleeped (the keys of the dictionary). */
-    protected static var _bleepedMedia :Dictionary;
+    protected static var _bleepedMedia :Object;
     protected static var _globalBleep :Boolean;
 
     /** Our config object. */
