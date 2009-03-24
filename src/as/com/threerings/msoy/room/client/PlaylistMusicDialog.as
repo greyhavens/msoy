@@ -19,6 +19,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Audio;
 
 import com.threerings.msoy.world.client.MusicDialog;
@@ -53,7 +54,13 @@ public class PlaylistMusicDialog extends MusicDialog
         super.didOpen();
         if (_roomObj != null) {
             _playList.init(_roomObj, RoomObject.PLAYLIST, RoomObject.PLAY_COUNT);
+            callLater(scrollToCurrent);
         }
+    }
+
+    protected function scrollToCurrent () :void
+    {
+        _playList.scrollToKey(new ItemIdent(Item.AUDIO, _roomObj.currentSongId));
     }
 
     override protected function createChildren () :void
