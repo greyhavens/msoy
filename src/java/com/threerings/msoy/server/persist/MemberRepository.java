@@ -1008,14 +1008,15 @@ public class MemberRepository extends DepotRepository
     /**
      * Load the memberIds that have been permanently muted by the specified member.
      */
-    public IntSet loadMutelist (int memberId)
+    public int[] loadMutelist (int memberId)
     {
-        IntSet memIds = new ArrayIntSet();
-        for (MuteRecord record :
-                findAll(MuteRecord.class, new Where(new Equals(MuteRecord.MUTER_ID, memberId)))) {
-            memIds.add(record.muteeId);
+        List<MuteRecord> list = 
+            findAll(MuteRecord.class, new Where(new Equals(MuteRecord.MUTER_ID, memberId)));
+        int[] ids = new int[list.size()];
+        for (int ii = 0; ii < ids.length; ii++) {
+            ids[ii] = list.get(ii).muteeId;
         }
-        return memIds;
+        return ids;
     }
 
     /**

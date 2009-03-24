@@ -11,7 +11,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.util.IntSet;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 import com.threerings.io.Streamable;
@@ -192,9 +191,9 @@ public class MsoyClientResolver extends CrowdClientResolver
         local.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
 
         // and their mutelist
-        IntSet muted = _memberRepo.loadMutelist(member.memberId);
-        if (!muted.isEmpty()) {
-            local.mutedMemberIds = muted.toIntArray();
+        int[] muted = _memberRepo.loadMutelist(member.memberId);
+        if (muted.length > 0) {
+            local.mutedMemberIds = muted;
         }
 
         // and their badges
