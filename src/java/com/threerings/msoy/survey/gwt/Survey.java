@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.survey.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
