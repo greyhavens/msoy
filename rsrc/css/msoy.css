@@ -1412,7 +1412,7 @@ Stars {
   borderStyle :none;
 }
 
-.selectPlayersPanelPlayerName, .selectPlayersPanelStatus, .selectPlayersPanelTip {
+.selectPlayersPanelPlayerName, .selectPlayersPanelStatus, .selectPlayersPanelTip, .selectPlayersPanelSelectAll {
   fontSize: 12;
 }
 
