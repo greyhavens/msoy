@@ -793,7 +793,8 @@ public class WorldController extends MsoyController
         const play :Boolean = UberClient.isRegularClient() && (music != null) &&
             (Prefs.getSoundVolume() > 0) && !isMusicBleeped();
         if (play) {
-            _musicPlayer.load(music.audioMedia.getMediaPath(), music.audioMedia);
+            _musicPlayer.load(music.audioMedia.getMediaPath(),
+                [ music.audioMedia, music.getIdent() ]);
         }
         WorldControlBar(_wctx.getControlBar()).setMusicPlaying(music != null);
     }

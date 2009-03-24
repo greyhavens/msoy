@@ -131,7 +131,9 @@ public class PlaylistRenderer extends HBox
 
     protected function handleInfoClicked (event :MouseEvent) :void
     {
-        CommandEvent.dispatch(this, MsoyController.AUDIO_CLICKED, Audio(data).audioMedia);
+        var audio :Audio = Audio(data);
+        CommandEvent.dispatch(this, MsoyController.AUDIO_CLICKED,
+            [ audio.audioMedia, audio.getIdent() ]);
     }
 
     protected var _playBtn :CommandButton;

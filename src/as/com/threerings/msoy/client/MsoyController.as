@@ -57,6 +57,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 public class MsoyController extends Controller
     implements ClientObserver
@@ -461,18 +462,25 @@ public class MsoyController extends Controller
         new ChatPrefsDialog(_mctx);
     }
 
-    public function handleAudioClicked (desc :MediaDesc) :void
+    public function handleAudioClicked (desc :MediaDesc, ident :ItemIdent) :void
     {
         if (desc == null || !desc.isBleepable()) {
             return;
         }
 
         var mediaId :String = desc.getMediaId();
-        var isBleeped :Boolean = Prefs.isMediaBleeped(mediaId);
-        var key :String = isBleeped ? "b.unbleep_item" : "b.bleep_item";
-        var menuItems :Array = [ {
-            label: Msgs.GENERAL.get(key, Msgs.GENERAL.get(Item.getTypeKey(Item.AUDIO))),
-            callback: Prefs.setMediaBleeped, arg: [ mediaId, !isBleeped ] } ];
+        var kind :String = Msgs.GENERAL.get(Item.getTypeKey(Item.AUDIO));
+        var menuItems :Array = [];
+        menuItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+            command: MsoyController.VIEW_ITEM, arg: ident });
+        // TODO: flagging item
+        if (desc.isBleepable()) {
+            var isBleeped :Boolean = Prefs.isMediaBleeped(mediaId);
+            var key :String = isBleeped ? "b.unbleep_item" : "b.bleep_item";
+            menuItems.push({ label: Msgs.GENERAL.get(key, kind),
+                callback: Prefs.setMediaBleeped, arg: [ mediaId, !isBleeped ] });
+        }
+
         CommandMenu.createMenu(menuItems, _topPanel).popUpAtMouse();
     }
 
