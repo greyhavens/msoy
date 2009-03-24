@@ -84,7 +84,7 @@ public class AdminPage extends Page
         } else if (action.equals("panopticonStatus")) {
             setContent("Panopticon Status", new PanopticonStatusPanel());
 
-        } else if (action.equals("surveys")) {
+        } else if (action.equals(EditSurveyPanel.ACTION)) {
             if (_surveyPanel == null) {
                 _surveyPanel = new EditSurveyPanel();
             }

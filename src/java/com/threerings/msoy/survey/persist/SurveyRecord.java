@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.survey.persist;
 
 import java.sql.Date;
@@ -6,6 +9,8 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.GeneratedValue;
+import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.survey.gwt.Survey;
@@ -28,7 +33,8 @@ public class SurveyRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Unique integer key of this survey. */
-    @Id public int surveyId;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    public int surveyId;
 
     /** Name for this survey. */
     public String name;

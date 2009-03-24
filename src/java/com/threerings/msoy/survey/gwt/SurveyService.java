@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.survey.gwt;
 
 import java.util.List;
@@ -12,18 +15,28 @@ public interface SurveyService
     public static final String ENTRY_POINT = "/survey";
 
     /** Loads all surveys (meta data only). */
-    public List<Survey> getAllSurveys ()
+    List<Survey> getAllSurveys ()
         throws ServiceException;
 
     /** Loads the list of questions for a survey. */
-    public List<SurveyQuestion> getQuestions (int surveyId)
+    List<SurveyQuestion> getQuestions (int surveyId)
         throws ServiceException;
 
-    /** Updates an existing survey or inserts a new survey. */
-    public void updateSurvey (Survey survey)
+    /** Updates an existing survey or inserts a new survey. Returns the newly updated or inserted
+     * survey. */
+    Survey updateSurvey (Survey survey)
         throws ServiceException;
 
-    /** Updates an existing survey question or inserts a new question. */
-    public void updateQuestion (int surveyId, SurveyQuestion question)
+    /** Updates an existing survey question or inserts a new question. Returns the newly update or
+     * inserted question. */
+    SurveyQuestion updateQuestion (int surveyId, int index, SurveyQuestion question)
+        throws ServiceException;
+
+    /** Moves a question to a new position in the survey. */
+    void moveQuestion (int surveyId, int index, int newIndex)
+        throws ServiceException;
+
+    /** Removes a question from the survey. */
+    void deleteQuestion (int surveyId, int index)
         throws ServiceException;
 }

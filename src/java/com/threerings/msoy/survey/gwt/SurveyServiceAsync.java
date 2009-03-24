@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.survey.gwt;
 
 import java.util.List;
@@ -14,8 +17,15 @@ public interface SurveyServiceAsync
     void getQuestions (int surveyId, AsyncCallback<List<SurveyQuestion>> callback);
 
     /** The asynchronous version of {@link SurveyService#updateQuestion}. */
-    void updateQuestion (int surveyId, SurveyQuestion question, AsyncCallback<Void> callback);
+    void updateQuestion (int surveyId, int index, SurveyQuestion question,
+        AsyncCallback<SurveyQuestion> callback);
 
     /** The asynchronous version of {@link SurveyService#updateSurvey}. */
-    void updateSurvey (Survey survey, AsyncCallback<Void> callback);
+    void updateSurvey (Survey survey, AsyncCallback<Survey> callback);
+
+    /** The asynchronous version of {@link SurveyService#moveQuestion}. */
+    void moveQuestion (int surveyId, int index, int newIndex, AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link SurveyService#deleteQuestion}. */
+    void deleteQuestion (int surveyId, int index, AsyncCallback<Void> callback);
 }

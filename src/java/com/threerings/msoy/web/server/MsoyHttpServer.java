@@ -72,6 +72,8 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.server.ProfileServlet;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.server.StuffServlet;
+import com.threerings.msoy.survey.gwt.SurveyService;
+import com.threerings.msoy.survey.server.SurveyServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
 
 import com.threerings.msoy.room.gwt.WebRoomService;
@@ -322,6 +324,7 @@ public class MsoyHttpServer extends Server
         .put(StuffService.ENTRY_POINT, StuffServlet.class)
         .put(WebUserService.ENTRY_POINT, WebUserServlet.class)
         .put(WebRoomService.ENTRY_POINT, WebRoomServlet.class)
+        .put(SurveyService.ENTRY_POINT, SurveyServlet.class)
         .put("/facebook", FacebookServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
         .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)

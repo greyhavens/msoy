@@ -1,7 +1,11 @@
+//
+// $Id$
+
 package com.threerings.msoy.survey.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
@@ -15,7 +19,7 @@ public class SurveyQuestionRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<SurveyQuestionRecord> _R = SurveyQuestionRecord.class;
     public static final ColumnExp SURVEY_ID = colexp(_R, "surveyId");
-    public static final ColumnExp QUESTION_ORDER = colexp(_R, "questionOrder");
+    public static final ColumnExp QUESTION_INDEX = colexp(_R, "questionIndex");
     public static final ColumnExp QUESTION_TYPE = colexp(_R, "questionType");
     public static final ColumnExp TEXT = colexp(_R, "text");
     public static final ColumnExp DESCRIPTOR = colexp(_R, "descriptor");
@@ -25,7 +29,7 @@ public class SurveyQuestionRecord extends PersistentRecord
     @Id public int surveyId;
 
     /** The order of this question in the containing survey. */
-    @Id public int questionOrder;
+    @Id public int questionIndex;
 
     /** The type of question. */
     public SurveyQuestion.Type questionType;
@@ -34,7 +38,7 @@ public class SurveyQuestionRecord extends PersistentRecord
     public String text;
 
     /** The format of the expected reply, if applicable. */
-    public String descriptor;
+    @Column(nullable=true) public String descriptor;
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
@@ -76,6 +80,9 @@ public class SurveyQuestionRecord extends PersistentRecord
         case RATING:
             descriptor = String.valueOf(question.maxValue);
             break;
+        default:
+            descriptor = null;
+            break;
         }
     }
 
@@ -84,12 +91,12 @@ public class SurveyQuestionRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link SurveyQuestionRecord}
      * with the supplied key values.
      */
-    public static Key<SurveyQuestionRecord> getKey (int surveyId, int questionOrder)
+    public static Key<SurveyQuestionRecord> getKey (int surveyId, int questionIndex)
     {
         return new Key<SurveyQuestionRecord>(
                 SurveyQuestionRecord.class,
-                new ColumnExp[] { SURVEY_ID, QUESTION_ORDER },
-                new Comparable[] { surveyId, questionOrder });
+                new ColumnExp[] { SURVEY_ID, QUESTION_INDEX },
+                new Comparable[] { surveyId, questionIndex });
     }
     // AUTO-GENERATED: METHODS END
 }
