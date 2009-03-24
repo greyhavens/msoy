@@ -23,9 +23,13 @@ public class MsoyMuteDirector extends MuteDirector
         super(ctx);
     }
 
+    /**
+     * Configure the intial set of muted memberIds, arriving from the server.
+     */
     public function setMutedMemberIds (memberIds :Array /* of int */) :void
     {
         for each (var id :int in memberIds) {
+            // call super to avoid sending off service requests!
             super.setMuted(new MemberName("", id), true);
         }
     }
