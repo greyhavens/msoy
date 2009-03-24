@@ -454,7 +454,7 @@ public class GameLiaison
             return true;
         }
 
-        return TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
+        return !TrophyFeederPanel.show(_gctx, _gameId, gameName, _trophies, onClose);
     }
 
     /** Provides access to main client services. */
