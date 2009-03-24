@@ -132,13 +132,6 @@ public class MemberRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 29;
 
-    /** Defnies the index on {@link #name} converted to lower case. */
-    public static Tuple<SQLExpression, Order> ixLowerName ()
-    {
-        return new Tuple<SQLExpression, Order>(
-            new FunctionExp("LOWER", MemberRecord.NAME), Order.ASC);
-    }
-
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;
@@ -206,6 +199,68 @@ public class MemberRecord extends PersistentRecord
     /** The ID of the charity member that this member has selected to receive donations. */
     @Column(defaultValue="0")
     public int charityMemberId = 0;
+
+    /** Defnies the index on {@link #name} converted to lower case. */
+    public static Tuple<SQLExpression, Order> ixLowerName ()
+    {
+        return new Tuple<SQLExpression, Order>(
+            new FunctionExp("LOWER", MemberRecord.NAME), Order.ASC);
+    }
+
+    /**
+     * Deduces the role given a memberId, flags and account name.
+     */
+    public static WebCreds.Role toRole (int memberId, int flags, String accountName)
+    {
+        if (isMaintainer(memberId, flags)) {
+            return WebCreds.Role.MAINTAINER;
+        } else if (isSet(flags, Flag.ADMIN)) {
+            return WebCreds.Role.ADMIN;
+        } else if (isSet(flags, Flag.SUPPORT)) {
+            return WebCreds.Role.SUPPORT;
+        } else if (isSet(flags, Flag.VALIDATED)) {
+            return WebCreds.Role.VALIDATED;
+        } else if (!MemberMailUtil.isPermaguest(accountName)) {
+            return WebCreds.Role.REGISTERED;
+        } else {
+            return WebCreds.Role.PERMAGUEST;
+        }
+    }
+
+    /**
+     * Returns true if the supplied member id and account name combination represents a deleted
+     * member.
+     */
+    public static boolean isDeleted (int memberId, String accountName)
+    {
+        return accountName.equals(memberId + DELETED_SUFFIX);
+    }
+
+    /**
+     * Returns true if a member with the given id and flags has maintainer privileges.
+     */
+    public static boolean isMaintainer (int memberId, int flags)
+    {
+        return isSet(flags, Flag.MAINTAINER) || isRoot(memberId);
+    }
+
+    /**
+     * Returns true if a given member id has "root" privileges. The first member in the database
+     * has these privileges and this status is used to allow all other privileges to be assigned
+     * without resorting to database hackery.
+     */
+    public static boolean isRoot (int memberId)
+    {
+        return memberId == 1;
+    }
+
+    /**
+     * Tests whether a given integer has a given flag set.
+     */
+    public static boolean isSet (int flags, final Flag flag)
+    {
+        return (flags & flag.getBit()) != 0;
+    }
 
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()
@@ -320,7 +375,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isDeleted ()
     {
-        return accountName.equals(memberId + DELETED_SUFFIX);
+        return isDeleted(memberId, accountName);
     }
 
     /**
@@ -374,52 +429,6 @@ public class MemberRecord extends PersistentRecord
     public String toString ()
     {
         return StringUtil.fieldsToString(this);
-    }
-
-    /**
-     * Deduces the role given a memberId, flags and account name.
-     */
-    public static WebCreds.Role toRole (int memberId, int flags, String accountName)
-    {
-        if (isMaintainer(memberId, flags)) {
-            return WebCreds.Role.MAINTAINER;
-        } else if (isSet(flags, Flag.ADMIN)) {
-            return WebCreds.Role.ADMIN;
-        } else if (isSet(flags, Flag.SUPPORT)) {
-            return WebCreds.Role.SUPPORT;
-        } else if (isSet(flags, Flag.VALIDATED)) {
-            return WebCreds.Role.VALIDATED;
-        } else if (!MemberMailUtil.isPermaguest(accountName)) {
-            return WebCreds.Role.REGISTERED;
-        } else {
-            return WebCreds.Role.PERMAGUEST;
-        }
-    }
-
-    /**
-     * Returns true if a member with the given id and flags has maintainer privileges.
-     */
-    public static boolean isMaintainer (int memberId, int flags)
-    {
-        return isSet(flags, Flag.MAINTAINER) || isRoot(memberId);
-    }
-
-    /**
-     * Returns true if a given member id has "root" privileges. The first member in the database
-     * has these privileges and this status is used to allow all other privileges to be assigned
-     * without resorting to database hackery.
-     */
-    public static boolean isRoot (int memberId)
-    {
-        return memberId == 1;
-    }
-
-    /**
-     * Tests whether a given integer has a given flag set.
-     */
-    public static boolean isSet (int flags, final Flag flag)
-    {
-        return (flags & flag.getBit()) != 0;
     }
 
     // AUTO-GENERATED: METHODS START
