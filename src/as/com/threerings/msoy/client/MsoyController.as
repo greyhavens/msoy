@@ -473,7 +473,10 @@ public class MsoyController extends Controller
         var menuItems :Array = [];
         menuItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
             command: MsoyController.VIEW_ITEM, arg: ident });
-        // TODO: flagging item
+        if (_mctx.isRegistered()) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
+                command: MsoyController.FLAG_ITEM, arg: ident });
+        }
         if (desc.isBleepable()) {
             var isBleeped :Boolean = Prefs.isMediaBleeped(mediaId);
             var key :String = isBleeped ? "b.unbleep_item" : "b.bleep_item";
