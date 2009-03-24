@@ -6,16 +6,14 @@ package com.threerings.msoy.room.client {
 import flash.geom.Point;
 
 import mx.core.ClassFactory;
-import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
 import mx.controls.HRule;
-import mx.controls.List;
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Integer;
+import com.threerings.util.Comparators;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.DSetList;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
@@ -42,24 +40,19 @@ public class PlaylistMusicDialog extends MusicDialog
         super(ctx, near);
         _roomObj = roomObj;
         _scene = scene;
-
-        _listener = new NamedListener(
-            [ RoomObject.PLAYLIST, RoomObject.PLAY_COUNT ], updatePlaylist);
     }
 
     override public function close () :void
     {
         super.close();
-        if (_roomObj != null) {
-            _roomObj.removeListener(_listener);
-        }
+        _playList.shutdown();
     }
 
     override protected function didOpen () :void
     {
         super.didOpen();
         if (_roomObj != null) {
-            _roomObj.addListener(_listener);
+            _playList.init(_roomObj, RoomObject.PLAYLIST, RoomObject.PLAY_COUNT);
         }
     }
 
@@ -92,59 +85,15 @@ public class PlaylistMusicDialog extends MusicDialog
 
         var cf :ClassFactory = new ClassFactory(PlaylistRenderer);
         cf.properties = { wctx: _ctx, roomObj: _roomObj };
-
-        _playList = new List();
+        _playList = new DSetList(cf, Comparators.createReverse(Comparators.COMPARABLE));
         _playList.percentWidth = 100;
         _playList.height = 100;
-        _playList.verticalScrollPolicy = ScrollPolicy.ON;
-        _playList.selectable = false;
-        _playList.itemRenderer = cf;
         addChild(_playList);
-        updatePlaylist();
-    }
-
-    protected function updatePlaylist () :void
-    {
-        // Sort the songs by lastTouched, oldest first
-        var songs :Array = _roomObj.playlist.toArray();
-        ArrayUtil.sort(songs);
-        songs.reverse();
-        _playList.dataProvider = songs;
     }
 
     protected var _roomObj :RoomObject;
     protected var _scene :MsoyScene;
 
-    protected var _playList :List;
-
-    protected var _listener :NamedListener;
+    protected var _playList :DSetList;
 }
-}
-
-import com.threerings.presents.dobj.DEvent;
-import com.threerings.presents.dobj.EventListener;
-import com.threerings.presents.dobj.NamedEvent;
-
-/**
- * Listens on a set of names for NamedEvents, calls the callback.
- */
-class NamedListener
-    implements EventListener
-{
-    public function NamedListener (names :Array, callback :Function)
-    {
-        _names = names;
-        _callback = callback;
-    }
-
-    public function eventReceived (event :DEvent) :void
-    {
-        if ((event is NamedEvent) && (-1 != _names.indexOf(NamedEvent(event).getName()))) {
-            _callback();
-        }
-    }
-
-    protected var _names :Array;
-
-    protected var _callback :Function;
 }
