@@ -36,7 +36,7 @@ public class SurveyQuestion
             return values()[value];
         }
 
-        @Override
+        // from ByteEnum
         public byte toByte ()
         {
             return (byte)ordinal();
