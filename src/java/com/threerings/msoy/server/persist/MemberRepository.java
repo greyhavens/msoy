@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -303,6 +304,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads up collection of members' names and profile photos by id, optionally paged and sorted
      * by last time online.
+     *
      * @param memberIds the ids of the members whose cards to load
      * @param offset the index of the first item to return in the sorted list
      * @param limit the number of cards to load, or 0 to load all
@@ -314,6 +316,8 @@ public class MemberRepository extends DepotRepository
         if (memberIds.size() == 0) {
             return Collections.emptyList();
         }
+
+        // set up our query and load the records
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MemberRecord.class));
         clauses.add(new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID));
@@ -324,7 +328,16 @@ public class MemberRepository extends DepotRepository
         if (limit != 0) {
             clauses.add(new Limit(offset, limit));
         }
-        return findAll(MemberCardRecord.class, clauses);
+        List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
+
+        // filter out records for deleted accounts
+        for (Iterator<MemberCardRecord> iter = records.iterator(); iter.hasNext(); ) {
+            MemberCardRecord mcr = iter.next();
+            if (MemberRecord.isDeleted(mcr.memberId, mcr.accountName)) {
+                iter.remove();
+            }
+        }
+        return records;
     }
 
     /**
