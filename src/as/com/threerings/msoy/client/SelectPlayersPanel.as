@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.Event;
 import flash.utils.setTimeout; // function
 
 import mx.containers.Grid;
@@ -68,6 +69,13 @@ public class SelectPlayersPanel extends FloatingPanel
             _status.styleName = "selectPlayersPanelStatus";
             _status.percentWidth = 100;
             addChild(_status);
+
+            _selectAll = new CheckBox();
+            _selectAll.label = Msgs.GENERAL.get("b.select_all");
+            _selectAll.styleName = "selectPlayersPanelSelectAll";
+            _selectAll.percentWidth = 100;
+            _selectAll.addEventListener(Event.CHANGE, handleSelectAllChange);
+            addChild(_selectAll);
         }
 
         var grid :Grid = new Grid();
@@ -120,6 +128,16 @@ public class SelectPlayersPanel extends FloatingPanel
         }
     }
 
+    protected function handleSelectAllChange (evt :Event) :void
+    {
+        var select :Boolean = _selectAll.selected;
+        for each (var box :PlayerBox in _playerBoxes) {
+            if (box.isSelected() != select) {
+                box.setSelected(select);
+            }
+        }
+    }
+
     protected function updateStatus () :void
     {
         var count :int = 0;
@@ -130,6 +148,9 @@ public class SelectPlayersPanel extends FloatingPanel
         }
         if (_status != null) {
             _status.text = Msgs.GENERAL.get("m.selected_players", count);
+        }
+        if (_selectAll != null) {
+            _selectAll.selected = count == _playerBoxes.length;
         }
         getButton(OK_BUTTON).enabled = count > 0;
     }
@@ -195,6 +216,7 @@ public class SelectPlayersPanel extends FloatingPanel
     protected var _playerBoxes :Array /*of PlayerBox */ = [];
     protected var _dontShowAgain :CheckBox;
     protected var _status :Label;
+    protected var _selectAll :CheckBox;
 }
 }
 
