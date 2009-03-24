@@ -1,0 +1,10 @@
+<module>
+  <inherits name="page"/>
+
+  <source path="com/threerings/msoy/survey/gwt"/>
+
+  <source path="client/survey"/>
+
+  <public path="public/survey"/>
+  <stylesheet src="survey.css"/>
+</module>

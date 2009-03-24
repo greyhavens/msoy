@@ -11,6 +11,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.Page;
+import client.survey.EditSurveyPanel;
 import client.ui.MsoyUI;
 
 /**
@@ -82,7 +83,14 @@ public class AdminPage extends Page
             
         } else if (action.equals("panopticonStatus")) {
             setContent("Panopticon Status", new PanopticonStatusPanel());
-            
+
+        } else if (action.equals("surveys")) {
+            if (_surveyPanel == null) {
+                _surveyPanel = new EditSurveyPanel();
+            }
+            _surveyPanel.setArgs(args);
+            setContent("Surveys", _surveyPanel);
+
         } else {
             setContent(_msgs.title(), new DashboardPanel());
         }
@@ -96,6 +104,7 @@ public class AdminPage extends Page
 
     protected PlayerBrowserPanel _playerBrowser;
     protected ReviewPanel _reviewPanel;
+    protected EditSurveyPanel _surveyPanel;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
 }

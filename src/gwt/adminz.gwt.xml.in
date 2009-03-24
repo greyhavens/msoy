@@ -1,5 +1,6 @@
 <module>
   <inherits name="item"/>
+  <inherits name="survey"/>
 
   <!-- for the date picker -->
   <inherits name='org.gwt.advanced.Grid'/>
