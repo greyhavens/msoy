@@ -173,6 +173,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.SET_MUTED:
+            ((MemberProvider)provider).setMuted(
+                source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.InvocationListener)args[2]
+            );
+            return;
+
         case MemberMarshaller.TRACK_CLIENT_ACTION:
             ((MemberProvider)provider).trackClientAction(
                 source, (String)args[0], (String)args[1]

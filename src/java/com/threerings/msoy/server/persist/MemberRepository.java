@@ -1006,6 +1006,42 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Load the memberIds that have been permanently muted by the specified member.
+     */
+    public IntSet loadMutelist (int memberId)
+    {
+        IntSet memIds = new ArrayIntSet();
+        for (MuteRecord record :
+                findAll(MuteRecord.class, new Where(new Equals(MuteRecord.MUTER_ID, memberId)))) {
+            memIds.add(record.muteeId);
+        }
+        return memIds;
+    }
+
+    /**
+     * Tests to see whether the muter has muted the mutee.
+     */
+    public boolean isMuted (int muterId, int muteeId)
+    {
+        return (null != load(MuteRecord.class, MuteRecord.getKey(muterId, muteeId)));
+    }
+
+    /**
+     * Update the specified mute relationship.
+     */
+    public void setMuted (int muterId, int muteeId, boolean muted)
+    {
+        MuteRecord record = new MuteRecord();
+        record.muterId = muterId;
+        record.muteeId = muteeId;
+        if (muted) {
+            store(record);
+        } else {
+            delete(record);
+        }
+    }
+
+    /**
      * Determine what the friendship status is between one member and another.
      */
     public boolean getFriendStatus (int firstId, int secondId)
@@ -1384,6 +1420,7 @@ public class MemberRepository extends DepotRepository
         classes.add(CharityRecord.class);
         classes.add(EntryVectorRecord.class);
         classes.add(GameInvitationRecord.class);
+        classes.add(MuteRecord.class);
     }
 
     /**

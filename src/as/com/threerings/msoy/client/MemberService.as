@@ -85,6 +85,9 @@ public interface MemberService extends InvocationService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
+    function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void;
+
+    // from Java interface MemberService
     function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void;
 
     // from Java interface MemberService

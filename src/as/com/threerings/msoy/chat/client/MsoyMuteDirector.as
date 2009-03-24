@@ -7,6 +7,7 @@ import com.threerings.crowd.chat.client.MuteDirector;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.room.data.PetName;
@@ -20,6 +21,13 @@ public class MsoyMuteDirector extends MuteDirector
     public function MsoyMuteDirector (ctx :MsoyContext)
     {
         super(ctx);
+    }
+
+    public function setMutedMemberIds (memberIds :Array /* of int */) :void
+    {
+        for each (var id :int in memberIds) {
+            super.setMuted(new MemberName("", id), true);
+        }
     }
 
     /**
@@ -36,6 +44,19 @@ public class MsoyMuteDirector extends MuteDirector
     {
         return super.isMuted(name) ||
             ((name is PetName) && isOwnerMuted(PetName(name)));
+    }
+
+    // from MuteDirector
+    override public function setMuted (name :Name, mute :Boolean) :void
+    {
+        super.setMuted(name, mute);
+
+        // take care of persisting to the server
+        if (name is MemberName) {
+            (_ctx.getClient().requireService(MemberService) as MemberService).setMuted(
+                _ctx.getClient(), MemberName(name).getMemberId(), mute,
+                MsoyContext(_ctx).listener());
+        }
     }
 }
 }

@@ -144,6 +144,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         if (rdata.warning != null) {
             new WarningDialog(_ctx, rdata.warning);
         }
+
+        var mbData :MsoyBootstrapData = MsoyBootstrapData(data);
+        if (mbData.mutedMemberIds != null) {
+            _ctx.getMuteDirector().setMutedMemberIds(mbData.mutedMemberIds);
+        }
     }
 
     /**

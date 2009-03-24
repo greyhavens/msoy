@@ -75,6 +75,18 @@ public class MsoySession extends WhirledSession
     }
 
     @Override // from PresentsSession
+    protected void populateBootstrapData (BootstrapData data)
+    {
+        super.populateBootstrapData(data);
+
+        MemberLocal local = _memobj.getLocal(MemberLocal.class);
+        if (local.mutedMemberIds != null) {
+            ((MsoyBootstrapData) data).mutedMemberIds = local.mutedMemberIds;
+            local.mutedMemberIds = null;
+        }
+    }
+
+    @Override // from PresentsSession
     protected void sessionWillStart ()
     {
         super.sessionWillStart();

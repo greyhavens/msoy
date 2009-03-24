@@ -10,5 +10,6 @@ import com.threerings.presents.net.BootstrapData;
  */
 public class MsoyBootstrapData extends BootstrapData
 {
-    // nada, at the moment
+    /** An array of memberIds that we've muted in previous sessions. */
+    public int[] mutedMemberIds;
 }

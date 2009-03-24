@@ -305,8 +305,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setMuted} requests. */
+    public static final int SET_MUTED = 24;
+
+    // from interface MemberService
+    public void setMuted (Client arg1, int arg2, boolean arg3, InvocationService.InvocationListener arg4)
+    {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_MUTED, new Object[] {
+            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #trackClientAction} requests. */
-    public static final int TRACK_CLIENT_ACTION = 24;
+    public static final int TRACK_CLIENT_ACTION = 25;
 
     // from interface MemberService
     public void trackClientAction (Client arg1, String arg2, String arg3)
@@ -317,7 +330,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackTestAction} requests. */
-    public static final int TRACK_TEST_ACTION = 25;
+    public static final int TRACK_TEST_ACTION = 26;
 
     // from interface MemberService
     public void trackTestAction (Client arg1, String arg2, String arg3)
@@ -328,7 +341,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackVectorAssociation} requests. */
-    public static final int TRACK_VECTOR_ASSOCIATION = 26;
+    public static final int TRACK_VECTOR_ASSOCIATION = 27;
 
     // from interface MemberService
     public void trackVectorAssociation (Client arg1, String arg2)
@@ -339,7 +352,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 27;
+    public static final int UPDATE_AVAILABILITY = 28;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)
@@ -350,7 +363,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 28;
+    public static final int UPDATE_STATUS = 29;
 
     // from interface MemberService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)

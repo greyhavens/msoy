@@ -11,6 +11,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.IntSet;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 import com.threerings.io.Streamable;
@@ -189,6 +190,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         enforceConnected();
         final List<Stat> stats = _statRepo.loadStats(member.memberId);
         local.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
+
+        // and their mutelist
+        IntSet muted = _memberRepo.loadMutelist(member.memberId);
+        if (!muted.isEmpty()) {
+            local.mutedMemberIds = muted.toIntArray();
+        }
 
         // and their badges
         local.badgesVersion = member.badgesVersion;

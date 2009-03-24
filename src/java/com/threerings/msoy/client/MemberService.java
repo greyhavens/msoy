@@ -48,6 +48,11 @@ public interface MemberService extends InvocationService
     void setAway (Client client, boolean away, String message);
 
     /**
+     * Set the specified member as muted.
+     */
+    void setMuted (Client client, int muteeId, boolean muted, InvocationListener listener);
+
+    /**
      * Invites the specified member to follow the caller. Passing 0 for the memberId will clear all
      * of the caller's followers.
      */

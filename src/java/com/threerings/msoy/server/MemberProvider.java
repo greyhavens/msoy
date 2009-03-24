@@ -149,6 +149,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#setMuted} request.
+     */
+    void setMuted (ClientObject caller, int arg1, boolean arg2, InvocationService.InvocationListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#trackClientAction} request.
      */
     void trackClientAction (ClientObject caller, String arg1, String arg2);

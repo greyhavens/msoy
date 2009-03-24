@@ -65,6 +65,11 @@ public class MemberLocal extends BodyLocal
     /** Info on the party this member is currently rocking (or null if they're dull). */
     public PartySummary party;
 
+    /** The member ids that this user has muted in previous sessions. May be null.
+     * Note: Only valid between client resolution and sending the bootstrap,
+     * and is always null otherwise and never transmitted between nodes. */
+    public transient int[] mutedMemberIds;
+
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
      * level has increased) and dispatches an event indicating that a new badge was awarded.

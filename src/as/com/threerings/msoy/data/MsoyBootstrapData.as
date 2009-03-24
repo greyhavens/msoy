@@ -7,13 +7,15 @@ import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.TypedArray;
 
 /**
  * Msoy bootstrap data.
  */
 public class MsoyBootstrapData extends BootstrapData
 {
-    // nada, at the moment
+    /** An array of memberIds that we've muted in previous sessions. */
+    public var mutedMemberIds :TypedArray /* of int */;
 
     public function MsoyBootstrapData ()
     {
@@ -23,12 +25,7 @@ public class MsoyBootstrapData extends BootstrapData
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-    }
-
-    // from interface Streamable
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
+        mutedMemberIds = TypedArray(ins.readField(TypedArray.getJavaType(int)));
     }
 }
 }

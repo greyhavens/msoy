@@ -482,12 +482,30 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAway (final ClientObject caller, final boolean away, final String message)
+    public void setAway (ClientObject caller, boolean away, String message)
         //throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
+        MemberObject user = (MemberObject) caller;
         user.setAwayMessage(away ? message : null);
         _bodyMan.updateOccupantStatus(user, away ? MsoyBodyObject.AWAY : MemberInfo.ACTIVE);
+    }
+
+    // from interface MemberProvider
+    public void setMuted (
+        ClientObject caller, final int muteeId, final boolean muted,
+        InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+        final int muterId = user.getMemberId();
+        if (muterId == muteeId || muteeId == 0) {
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+        _invoker.postUnit(new PersistingUnit("setMuted()", listener) {
+            @Override public void invokePersistent () throws Exception {
+                _memberRepo.setMuted(muterId, muteeId, muted);
+            }
+        });
     }
 
     // from interface MemberProvider

@@ -318,8 +318,21 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>setMuted</code> requests. */
+    public static const SET_MUTED :int = 24;
+
+    // from interface MemberService
+    public function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void
+    {
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_MUTED, [
+            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
+        ]);
+    }
+
     /** The method id used to dispatch <code>trackClientAction</code> requests. */
-    public static const TRACK_CLIENT_ACTION :int = 24;
+    public static const TRACK_CLIENT_ACTION :int = 25;
 
     // from interface MemberService
     public function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void
@@ -330,7 +343,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>trackTestAction</code> requests. */
-    public static const TRACK_TEST_ACTION :int = 25;
+    public static const TRACK_TEST_ACTION :int = 26;
 
     // from interface MemberService
     public function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void
@@ -341,7 +354,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>trackVectorAssociation</code> requests. */
-    public static const TRACK_VECTOR_ASSOCIATION :int = 26;
+    public static const TRACK_VECTOR_ASSOCIATION :int = 27;
 
     // from interface MemberService
     public function trackVectorAssociation (arg1 :Client, arg2 :String) :void
@@ -352,7 +365,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateAvailability</code> requests. */
-    public static const UPDATE_AVAILABILITY :int = 27;
+    public static const UPDATE_AVAILABILITY :int = 28;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void
@@ -363,7 +376,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateStatus</code> requests. */
-    public static const UPDATE_STATUS :int = 28;
+    public static const UPDATE_STATUS :int = 29;
 
     // from interface MemberService
     public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
