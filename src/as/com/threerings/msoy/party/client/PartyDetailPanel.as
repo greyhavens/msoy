@@ -10,9 +10,9 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.PlayerList;
 
 import com.threerings.msoy.group.data.all.Group;
 
@@ -50,11 +50,11 @@ public class PartyDetailPanel extends FloatingPanel
         topBox.addChild(infoBox);
         addChild(topBox);
 
-        var roster :Roster = new Roster(_ctx, "",
+        var roster :PlayerList = new PlayerList(
             PeepRenderer.createFactory(WorldContext(_ctx), _detail.info),
             PartyPeep.createSortByOrder(_detail.info));
         addChild(roster);
-        roster.init(_detail.peeps);
+        roster.setData(_detail.peeps);
     }
 
     protected var _detail :PartyDetail;

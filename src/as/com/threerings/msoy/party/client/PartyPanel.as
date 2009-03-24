@@ -16,9 +16,9 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandComboBox;
 
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.PlayerList;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.Roster;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -40,7 +40,7 @@ public class PartyPanel extends FloatingPanel
 
     override public function close () :void
     {
-        _partyObj.removeListener(_roster);
+        _roster.shutdown();
         _partyObj.removeListener(this);
 
         super.close();
@@ -50,8 +50,7 @@ public class PartyPanel extends FloatingPanel
     {
         super.didOpen();
 
-        _roster.init(_partyObj.peeps.toArray());
-        _partyObj.addListener(_roster);
+        _roster.init(_partyObj, PartyObject.PEEPS, PartyObject.LEADER_ID);
         _partyObj.addListener(this);
     }
 
@@ -61,8 +60,8 @@ public class PartyPanel extends FloatingPanel
 
         var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyId());
 
-        _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer.createFactory(_wctx, _partyObj),
-            PartyPeep.createSortByOrder(_partyObj));
+        _roster = new PlayerList(
+            PeepRenderer.createFactory(_wctx, _partyObj), PartyPeep.createSortByOrder(_partyObj));
         addChild(_roster);
 
         var sep :VBox = new VBox();
@@ -118,8 +117,6 @@ public class PartyPanel extends FloatingPanel
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyId());
                 _status.enabled = isLeader;
                 _recruit.enabled = isLeader;
-                // re-sort the list
-                _roster.dataProvider.refresh();
                 break;
 
             case PartyObject.RECRUITMENT:
@@ -138,7 +135,7 @@ public class PartyPanel extends FloatingPanel
 
     protected var _partyObj :PartyObject;
 
-    protected var _roster :Roster;
+    protected var _roster :PlayerList;
     protected var _status :TextInput;
     protected var _recruit :CommandComboBox;
 }

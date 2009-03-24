@@ -27,14 +27,15 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.DSetList;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FlyingPanel;
+import com.threerings.msoy.ui.PlayerList;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.PlayerEntry;
@@ -63,7 +64,7 @@ public class FriendsListPanel extends FlyingPanel
         var memObj :MemberObject = _wctx.getMemberObject();
         if (memObj != null) {
             memObj.removeListener(this);
-            memObj.removeListener(_friendsList);
+            _friendsList.shutdown();
         }
         _wctx.getClient().removeClientObserver(_cliObs);
 
@@ -107,9 +108,8 @@ public class FriendsListPanel extends FlyingPanel
             return;
         }
 
-        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer.createFactory(_wctx),
-            PlayerEntry.sortByName, FriendEntry.isOnline);
-
+        _friendsList = new PlayerList(
+            FriendRenderer.createFactory(_wctx), PlayerEntry.sortByName, FriendEntry.isOnline);
         addChild(_friendsList);
 
         // add a little separator
@@ -155,9 +155,7 @@ public class FriendsListPanel extends FlyingPanel
     protected function init (memObj :MemberObject) :void
     {
         memObj.addListener(this);
-        memObj.addListener(_friendsList);
-
-        _friendsList.init(memObj.friends.toArray());
+        _friendsList.init(memObj, MemberObject.FRIENDS);
     }
 
     protected function editMouseOver (...ignored) :void
@@ -234,7 +232,7 @@ public class FriendsListPanel extends FlyingPanel
     protected var _wctx :WorldContext;
 
     protected var _cliObs :ClientAdapter;
-    protected var _friendsList :Roster;
+    protected var _friendsList :PlayerList;
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
 }
