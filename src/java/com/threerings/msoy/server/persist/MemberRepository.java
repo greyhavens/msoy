@@ -285,7 +285,9 @@ public class MemberRepository extends DepotRepository
         MemberCardRecord mcr = load(
             MemberCardRecord.class, new FromOverride(MemberRecord.class),
             new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID),
-            new Where(MemberRecord.MEMBER_ID, memberId));
+            new Where(new And(new Equals(MemberRecord.MEMBER_ID, memberId),
+                              new NotEquals(MemberRecord.ACCOUNT_NAME,
+                                            memberId + MemberRecord.DELETED_SUFFIX))));
         return (mcr == null) ? null : mcr.toMemberCard();
     }
 
