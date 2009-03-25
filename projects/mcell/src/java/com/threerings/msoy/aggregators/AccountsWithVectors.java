@@ -74,10 +74,13 @@ public class AccountsWithVectors
             String tracker = eventData.getString("tracker");
             Integer memberId = eventData.getInt("newMemberId");
             Date date = eventData.getDate("timestamp");
-            String affiliateId = eventData.getString("affiliateId");
+            Integer affiliateIdValue = eventData.getInt("affiliateId");
             Boolean isGuestValue = eventData.getBoolean("isGuest");
-            if (tracker != null && memberId != null && date != null &&
-                (isGuestValue == null || !isGuestValue.booleanValue())) {
+            
+            boolean isGuest = (isGuestValue != null && isGuestValue.booleanValue());
+            int affiliateId = (affiliateIdValue != null ? affiliateIdValue.intValue() : 0);
+
+            if (tracker != null && memberId != null && date != null && !isGuest) {
                 trackerToAccount.put(tracker, new Account(memberId, date, affiliateId));
             }
         }
@@ -94,14 +97,14 @@ public class AccountsWithVectors
     {
         public int memberId;
         public Date date;
-        public String affiliateId;
+        public int affiliateId;
 
         public Account ()
         {
             // empty constructor for instantiation
         }
         
-        public Account (int memberId, Date date, String affiliateId)
+        public Account (int memberId, Date date, int affiliateId)
         {
             this.memberId = memberId;
             this.date = date;
