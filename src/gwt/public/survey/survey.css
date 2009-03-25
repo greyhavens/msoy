@@ -1,7 +1,20 @@
 .takeSurvey {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .takeSurvey .name {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.takeSurvey tr.question {
+  background: #dbeffc;
+}
+
+.takeSurvey td.text {
+  width: 100%;
+}
+
+.takeSurvey tr.response td.ui {
+  padding-bottom: 20px;
 }
