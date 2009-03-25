@@ -13,7 +13,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.survey.gwt.Survey;
+import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.persist.SurveyQuestionRecord;
@@ -27,11 +27,11 @@ public class SurveyServlet extends MsoyServiceServlet
     implements SurveyService
 {
     // from SurveyService
-    public List<Survey> getAllSurveys ()
+    public List<SurveyMetaData> getAllSurveys ()
         throws ServiceException
     {
         requireAdminUser();
-        List<Survey> surveys = Lists.newArrayList();
+        List<SurveyMetaData> surveys = Lists.newArrayList();
         for (SurveyRecord surveyRec : _surveyRepo.loadAllSurveys()) {
             surveys.add(surveyRec.toSurvey());
         }
@@ -72,7 +72,7 @@ public class SurveyServlet extends MsoyServiceServlet
     }
 
     // from SurveyService
-    public Survey updateSurvey (Survey survey)
+    public SurveyMetaData updateSurvey (SurveyMetaData survey)
         throws ServiceException
     {
         requireAdminUser();

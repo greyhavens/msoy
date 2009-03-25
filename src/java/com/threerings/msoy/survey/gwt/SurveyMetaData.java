@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * Meta-data for a survey.
  */
-public class Survey
+public class SurveyMetaData
     implements IsSerializable
 {
     /** The id for unique identifying this survey. */

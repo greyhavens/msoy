@@ -13,7 +13,7 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-import com.threerings.msoy.survey.gwt.Survey;
+import com.threerings.msoy.survey.gwt.SurveyMetaData;
 
 /**
  * Top-level metadata for a survey entered into the survey system.
@@ -57,9 +57,9 @@ public class SurveyRecord extends PersistentRecord
     /**
      * Converts to a runtime record.
      */
-    public Survey toSurvey ()
+    public SurveyMetaData toSurvey ()
     {
-        Survey s = new Survey();
+        SurveyMetaData s = new SurveyMetaData();
         s.surveyId = surveyId;
         s.name = name;
         return s;
@@ -68,7 +68,7 @@ public class SurveyRecord extends PersistentRecord
     /**
      * Converts from a runtime record.
      */
-    public void fromSurvey (Survey survey)
+    public void fromSurvey (SurveyMetaData survey)
     {
         name = survey.name;
         surveyId = survey.surveyId;

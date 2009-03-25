@@ -15,7 +15,7 @@ public interface SurveyService
     public static final String ENTRY_POINT = "/survey";
 
     /** Loads all surveys (meta data only). */
-    List<Survey> getAllSurveys ()
+    List<SurveyMetaData> getAllSurveys ()
         throws ServiceException;
 
     /** Loads the list of questions for a survey. */
@@ -24,7 +24,7 @@ public interface SurveyService
 
     /** Updates an existing survey or inserts a new survey. Returns the newly updated or inserted
      * survey. */
-    Survey updateSurvey (Survey survey)
+    SurveyMetaData updateSurvey (SurveyMetaData survey)
         throws ServiceException;
 
     /** Updates an existing survey question or inserts a new question. Returns the newly update or

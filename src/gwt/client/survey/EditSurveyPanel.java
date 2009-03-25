@@ -30,7 +30,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import com.threerings.msoy.survey.gwt.Survey;
+import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
@@ -105,23 +105,23 @@ public class EditSurveyPanel extends VerticalPanel
         {
             // show a loading message and load em up
             add(MsoyUI.createLabel(_msgs.loadingSurveys(), null));
-            _cache.getSurveys(new AsyncCallback<List<Survey>>() {
+            _cache.getSurveys(new AsyncCallback<List<SurveyMetaData>>() {
                 public void onFailure (Throwable caught) {
                     clear();
                     add(MsoyUI.createLabel(_msgs.errSurveysNotLoaded(caught.getMessage()), null));
                 }
     
-                public void onSuccess (List<Survey> result) {
+                public void onSuccess (List<SurveyMetaData> result) {
                     clear();
                     init(result);
                 }
             });
         }
 
-        protected void init (List<Survey> surveys)
+        protected void init (List<SurveyMetaData> surveys)
         {
             add(MsoyUI.createLabel(_msgs.surveysTitle(), null));
-            PagedTable<Survey> table = new PagedTable<Survey>(10) {
+            PagedTable<SurveyMetaData> table = new PagedTable<SurveyMetaData>(10) {
                 @Override protected List<Widget> createHeader () {
                     List<Widget> header = new ArrayList<Widget>();
                     header.add(MsoyUI.createLabel(_msgs.surveyNameHeader(), null));
@@ -129,7 +129,7 @@ public class EditSurveyPanel extends VerticalPanel
                     return header;
                 }
 
-                @Override protected List<Widget> createRow (Survey item) {
+                @Override protected List<Widget> createRow (SurveyMetaData item) {
                     List<Widget> row = new ArrayList<Widget>();
                     row.add(MsoyUI.createLabel(item.name, null));
                     row.add(Link.create(_msgs.edit(), Pages.ADMINZ,
@@ -142,7 +142,7 @@ public class EditSurveyPanel extends VerticalPanel
                     return _msgs.noSurveys();
                 }
             };
-            table.setModel(new SimpleDataModel<Survey>(surveys), 0);
+            table.setModel(new SimpleDataModel<SurveyMetaData>(surveys), 0);
             add(table);
 
             // link to add a new survey (id 0)
@@ -160,7 +160,7 @@ public class EditSurveyPanel extends VerticalPanel
          */
         public SurveyPanel ()
         {
-            init(new SurveyWithQuestions(new Survey(), new ArrayList<SurveyQuestion>()));
+            init(new SurveyWithQuestions(new SurveyMetaData(), new ArrayList<SurveyQuestion>()));
         }
 
         /**
@@ -193,7 +193,7 @@ public class EditSurveyPanel extends VerticalPanel
             table.setText(0, 0, _msgs.nameLabel());
             table.setWidget(0, 1, name);
             Button save = new Button(_msgs.save());
-            new ClickCallback<Survey>(save) {
+            new ClickCallback<SurveyMetaData>(save) {
                 @Override // from ClickCallback
                 protected boolean callService () {
                     _result.survey.name = name.getText();
@@ -201,7 +201,7 @@ public class EditSurveyPanel extends VerticalPanel
                     return true;
                 }
                 @Override  // from ClickCallback
-                protected boolean gotResult (Survey result) {
+                protected boolean gotResult (SurveyMetaData result) {
                     MsoyUI.info(_msgs.surveySaveComplete());
                     // let the cache know something changed
                     _cache.surveyUpdated(result);
@@ -360,7 +360,7 @@ public class EditSurveyPanel extends VerticalPanel
             });
         }
 
-        protected void init (final Survey survey, SurveyQuestion question)
+        protected void init (final SurveyMetaData survey, SurveyQuestion question)
         {
             _survey = survey;
             _question = question;
@@ -484,7 +484,7 @@ public class EditSurveyPanel extends VerticalPanel
             _editGrid.setWidget(2, 1, choices);
         }
 
-        protected Survey _survey;
+        protected SurveyMetaData _survey;
         protected SurveyQuestion _question;
         protected int _questionIndex;
         protected SmartTable _editGrid;
@@ -497,13 +497,13 @@ public class EditSurveyPanel extends VerticalPanel
     protected static class SurveyWithQuestions
     {
         /** The survey. */
-        public Survey survey;
+        public SurveyMetaData survey;
 
         /** The questions. */
         public List<SurveyQuestion> questions;
 
         /** Creates a new wrapper of a survey and its questions. */
-        public SurveyWithQuestions (Survey survey, List<SurveyQuestion> questions)
+        public SurveyWithQuestions (SurveyMetaData survey, List<SurveyQuestion> questions)
         {
             this.survey = survey;
             this.questions = questions;
@@ -539,15 +539,15 @@ public class EditSurveyPanel extends VerticalPanel
         /**
          * Gets the list of surveys.
          */
-        public void getSurveys (final AsyncCallback<List<Survey>> callback)
+        public void getSurveys (final AsyncCallback<List<SurveyMetaData>> callback)
         {
             if (_surveys != null) {
                 callback.onSuccess(_surveys);
                 return;
             }
 
-            _surveySvc.getAllSurveys(new AsyncCallback<List<Survey>>() {
-                public void onSuccess (List<Survey> result) {
+            _surveySvc.getAllSurveys(new AsyncCallback<List<SurveyMetaData>>() {
+                public void onSuccess (List<SurveyMetaData> result) {
                     _surveys = result;
                     callback.onSuccess(_surveys);
                 }
@@ -560,11 +560,11 @@ public class EditSurveyPanel extends VerticalPanel
         /**
          * Gets a single survey metadata.
          */
-        public void getSurvey (final int surveyId, final AsyncCallback<Survey> callback)
+        public void getSurvey (final int surveyId, final AsyncCallback<SurveyMetaData> callback)
         {
-            getSurveys(new AsyncCallback<List<Survey>>() {
-                public void onSuccess (List<Survey> result) {
-                    for (Survey survey : _surveys) {
+            getSurveys(new AsyncCallback<List<SurveyMetaData>>() {
+                public void onSuccess (List<SurveyMetaData> result) {
+                    for (SurveyMetaData survey : _surveys) {
                         if (survey.surveyId == surveyId) {
                             callback.onSuccess(survey);
                             return;
@@ -584,9 +584,9 @@ public class EditSurveyPanel extends VerticalPanel
         public void getQuestions (
             final int surveyId, final AsyncCallback<SurveyWithQuestions> callback)
         {
-            getSurvey(surveyId, new AsyncCallback<Survey>() {
-                Survey survey;
-                public void onSuccess (Survey result) {
+            getSurvey(surveyId, new AsyncCallback<SurveyMetaData>() {
+                SurveyMetaData survey;
+                public void onSuccess (SurveyMetaData result) {
                     survey = result;
                     if (_surveyId != null && _surveyId == surveyId) {
                         callback.onSuccess(new SurveyWithQuestions(survey, _questions));
@@ -613,7 +613,7 @@ public class EditSurveyPanel extends VerticalPanel
         /**
          * Updates cached data relevant to the newly updated or inserted survey.
          */
-        public void surveyUpdated (Survey survey)
+        public void surveyUpdated (SurveyMetaData survey)
         {
             if (_surveys == null) {
                 return;
@@ -632,7 +632,7 @@ public class EditSurveyPanel extends VerticalPanel
         /**
          * Updates cached data relevant to the newly updated or inserted question.
          */
-        public void questionUpdated (Survey survey, int index, SurveyQuestion question)
+        public void questionUpdated (SurveyMetaData survey, int index, SurveyQuestion question)
         {
             if (_surveyId == null || _surveyId != survey.surveyId) {
                 return;
@@ -645,7 +645,7 @@ public class EditSurveyPanel extends VerticalPanel
             }
         }
 
-        protected List<Survey> _surveys;
+        protected List<SurveyMetaData> _surveys;
         protected Integer _surveyId;
         protected List<SurveyQuestion> _questions;
     }
