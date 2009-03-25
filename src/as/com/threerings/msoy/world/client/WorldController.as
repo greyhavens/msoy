@@ -1124,17 +1124,15 @@ public class WorldController extends MsoyController
             }
             CommandMenu.addSeparator(menuItems);
 
-            if (!muted) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
-                                 command: OPEN_CHANNEL, arg: member });
-            }
+            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
+                             command: OPEN_CHANNEL, arg: member, enabled: !muted });
             menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                              command: VIEW_MEMBER, arg: memId });
             menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
                              command: GO_MEMBER_HOME, arg: memId });
             if (!us.friends.containsKey(memId)) {
                 menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
-                                 command: INVITE_FRIEND, arg: memId });
+                                 command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
                              command: COMPLAIN_MEMBER, arg: [memId, member] });
@@ -1149,7 +1147,7 @@ public class WorldController extends MsoyController
             if (_wctx.getPartyDirector().canInviteToParty()) {
                 menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
                     command: INVITE_TO_PARTY, arg: memId,
-                    enabled: !_wctx.getPartyDirector().partyContainsPlayer(memId) });
+                    enabled: !muted && !_wctx.getPartyDirector().partyContainsPlayer(memId) });
             }
         }
 

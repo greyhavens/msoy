@@ -189,8 +189,11 @@ public class RoomObjectController extends RoomController
             }
 
         } else { // shown when clicking on someone else
+            var isMuted :Boolean = _wdctx.getMuteDirector().isMuted(occInfo.username);
+
             menuItems.push({ label: Msgs.GENERAL.get("b.follow_other"),
-                             callback: followOther, arg: occInfo.username });
+                             callback: followOther, arg: occInfo.username,
+                             enabled: !isMuted  });
 
             // if they are following us...
             if (us.followers.containsKey(occInfo.getMemberId())) {
@@ -198,7 +201,8 @@ public class RoomObjectController extends RoomController
                                  callback: ditchFollower, arg: occInfo.username });
             } else {
                 menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
-                                 callback: inviteFollow, arg: occInfo.username });
+                                 callback: inviteFollow, arg: occInfo.username,
+                                 enabled: !isMuted });
             }
 
             if (avatar != null) {
