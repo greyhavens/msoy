@@ -18,11 +18,11 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 import com.threerings.panopticon.efs.storev2.StorageStrategy;
 
-@Aggregator(outputs=AccountsWithVectors.EVENT_NAME, schedule = Schedule.DAILY)
+@Aggregator(outputs=AccountsWithVectors.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY)
 public class AccountsWithVectors
     implements JavaAggregator<AccountsWithVectors.TrackerKey>
 {
-    public static final String EVENT_NAME = "AccountsWithVectors";
+    public static final String OUTPUT_EVENT_NAME = "AccountsWithVectors";
 
     public static class TrackerKey extends FieldKey
     {
@@ -73,11 +73,12 @@ public class AccountsWithVectors
         {
             String tracker = eventData.getString("tracker");
             Integer memberId = eventData.getInt("newMemberId");
-            Date timestamp = eventData.getDate("timestamp");
+            Date date = eventData.getDate("timestamp");
+            String affiliateId = eventData.getString("affiliateId");
             Boolean isGuestValue = eventData.getBoolean("isGuest");
-            if (tracker != null && memberId != null && timestamp != null &&
+            if (tracker != null && memberId != null && date != null &&
                 (isGuestValue == null || !isGuestValue.booleanValue())) {
-                trackerToAccount.put(tracker, new Account(memberId, timestamp));
+                trackerToAccount.put(tracker, new Account(memberId, date, affiliateId));
             }
         }
         
@@ -92,24 +93,26 @@ public class AccountsWithVectors
     protected static class Account extends FieldWritable
     {
         public int memberId;
-        public Date timestamp;
+        public Date date;
+        public String affiliateId;
 
         public Account ()
         {
             // empty constructor for instantiation
         }
         
-        public Account (int memberId, Date timestamp)
+        public Account (int memberId, Date date, String affiliateId)
         {
             this.memberId = memberId;
-            this.timestamp = timestamp;
+            this.date = date;
+            this.affiliateId = affiliateId;
         }
     }
     
     /** Builds a mapping of tracker -> vector */
     public VectorMap vectors;
     
-    /** Builds a mapping of tracker -> (memberId, timestamp) */
+    /** Builds a mapping of tracker -> (memberId, date, affiliateId) */
     public AccountMap accounts;
     
     public void write (EventWriter writer, TrackerKey key)
@@ -117,13 +120,14 @@ public class AccountsWithVectors
     {
         Account account = accounts.trackerToAccount.get(key.tracker);
         String vector = vectors.trackerToVector.get(key.tracker);
-        if (account == null || vector == null) {
+        if (account == null) {
             return;
         }
-        EventData event = new EventData(EVENT_NAME, new ImmutableMap.Builder<String, Object>()
+        EventData event = new EventData(OUTPUT_EVENT_NAME, new ImmutableMap.Builder<String, Object>()
             .put("tracker", key.tracker)
             .put("memberId", account.memberId)
-            .put("date", account.timestamp)
+            .put("date", account.date)
+            .put("affiliateId", account.affiliateId)
             .put("vector", vector).build(), new HashMap<String, Object>());
         writer.write(event, StorageStrategy.PROCESSED);
     }
