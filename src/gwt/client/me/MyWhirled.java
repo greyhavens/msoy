@@ -56,6 +56,7 @@ public class MyWhirled extends FlowPanel
                 rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
                 rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE,
                                         Args.compose("invites", "links")));
+                rbits.add(makeQuickLink("My Blocklist", Pages.PEOPLE, "blocks"));
                 rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
                 String empty = data.friendCount > 0 ?
