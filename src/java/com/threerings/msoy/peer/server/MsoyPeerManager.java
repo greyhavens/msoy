@@ -331,11 +331,15 @@ public class MsoyPeerManager extends CrowdPeerManager
     public Tuple<MemberObject,Streamable[]> getForwardedMemberObject (Name username)
     {
         long now = System.currentTimeMillis();
-        _lastRequestName = username;
-        _lastRequestTime = now;
         try {
             // locate our forwarded member object if any
             MemObjCacheEntry entry = _mobjCache.remove(username);
+            if (entry == null) {
+                _lastRequestName = username;
+                _lastRequestTime = now;
+            } else {
+                _lastRequestName = null;
+            }
             if ((entry == null) && (username instanceof MemberName) &&
                     (null != getMemberLocation(((MemberName) username).getMemberId()))) {
                 log.warning("Asked for forwarded member object, on another node",
