@@ -570,6 +570,16 @@ public class MoneyRepository extends DepotRepository
                   new Where(new Conditionals.In(MoneyTransactionRecord.MEMBER_ID, memberIds)));
     }
 
+    public int countBroadcastsSince (long time)
+    {
+        // round down to the nearest minute for better cachability
+        time -= time % (60 * 1000);
+        Timestamp limit = new Timestamp(time);
+        return load(CountRecord.class,
+            new Where(new Conditionals.GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
+            new FromOverride(BroadcastHistoryRecord.class)).count;
+    }
+
     /**
      * Create the singleton BarPoolRecord in the database.
      */
@@ -630,6 +640,7 @@ public class MoneyRepository extends DepotRepository
         classes.add(BlingCashOutRecord.class);
         classes.add(BarPoolRecord.class);
         classes.add(ExchangeRecord.class);
+        classes.add(BroadcastHistoryRecord.class);
     }
 
     /** Cache invalidator that invalidates a member's current cash out record. */

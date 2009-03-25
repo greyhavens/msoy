@@ -1050,6 +1050,26 @@ public class MoneyLogic
     }
 
     /**
+     * Calculates the cost of a broadcast. This is based on the number of broadcasts in a recent
+     * time period. The cost is always in bars.
+     */
+    public int getBroadcastCost ()
+    {
+        long then = System.currentTimeMillis() - 60 * 60 * 1000;
+        return getBroadcastCost(_repo.countBroadcastsSince(then));
+    }
+
+    /**
+     * Calculates the cost of a broadcast if the given number have occurred in the last hour. The
+     * cost is always in bars.
+     */
+    public static int getBroadcastCost (int countInLastHour)
+    {
+        // TODO: proper formula
+        return countInLastHour + 1;
+    }
+
+    /**
      * Is this CatalogIdent valid?
      */
     protected static boolean isValid (CatalogIdent ident)
