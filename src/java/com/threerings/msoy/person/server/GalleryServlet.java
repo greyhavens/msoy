@@ -3,13 +3,14 @@
 
 package com.threerings.msoy.person.server;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.PrimitiveArrays;
 import com.google.inject.Inject;
 
 import com.samskivert.util.IntIntMap;
+import com.samskivert.util.IntListUtil;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.item.data.all.Photo;
@@ -59,7 +60,7 @@ public class GalleryServlet extends MsoyServiceServlet
         photoItemIds.removeAll(validateOwnership(memrec.memberId, photoItemIds));
 
         return _galleryRepo.insertGallery(
-            memrec.memberId, gallery, PrimitiveArrays.toIntArray(photoItemIds)).toGallery();
+            memrec.memberId, gallery, IntListUtil.unbox(photoItemIds)).toGallery();
     }
 
     // from GalleryService
@@ -82,11 +83,11 @@ public class GalleryServlet extends MsoyServiceServlet
 
         // photos already added to the gallery are known to be valid
         List<Integer> newPhotoIds = Lists.newArrayList(photoItemIds);
-        newPhotoIds.removeAll(PrimitiveArrays.asList(existingGallery.photoItemIds));
+        newPhotoIds.removeAll(IntListUtil.asList(existingGallery.photoItemIds));
         // remove any rejects
         photoItemIds.removeAll(validateOwnership(member.memberId, newPhotoIds));
 
-        _galleryRepo.updateGallery(gallery, PrimitiveArrays.toIntArray(photoItemIds));
+        _galleryRepo.updateGallery(gallery, IntListUtil.unbox(photoItemIds));
     }
 
     // from GalleryService
@@ -136,7 +137,7 @@ public class GalleryServlet extends MsoyServiceServlet
         data.gallery = galleryRecord.toGallery();
         // the photos list must be an ArrayList otherwise it gets cranky when serialized
         data.photos = Lists.newArrayList(Lists.transform(
-            _photoRepo.loadItemsInOrder(PrimitiveArrays.asList(galleryRecord.photoItemIds)),
+            _photoRepo.loadItemsInOrder(IntListUtil.asList(galleryRecord.photoItemIds)),
             new ItemRecord.ToItem<Photo>()));
         data.owner = _memberRepo.loadMemberName(galleryRecord.ownerId);
         return data;

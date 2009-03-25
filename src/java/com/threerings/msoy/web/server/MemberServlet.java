@@ -9,11 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.PrimitiveArrays;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
+import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.gwt.util.PagedResult;
@@ -124,7 +124,7 @@ public class MemberServlet extends MsoyServiceServlet
         int[] muteList = _memberRepo.loadMutelist(memberId);
         result.total = muteList.length;
         result.page = Lists.newArrayList(Lists.transform(
-            _memberRepo.loadMemberCards(PrimitiveArrays.asList(muteList), from, count, true),
+            _memberRepo.loadMemberCards(IntListUtil.asList(muteList), from, count, true),
             MemberCardRecord.TO_MEMBER_CARD));
         return result;
     }
