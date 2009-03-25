@@ -248,6 +248,9 @@ public class OccupantSprite extends MsoySprite
                 view.dispatchEntityLeft(oldIdent);
                 // Dispatch it on the next frame, after we've been fully updated
                 MethodQueue.callLater(view.dispatchEntityEntered, [ _ident ]);
+
+                // Since we re-use the same sprite, pop any the popup
+                view.getRoomController().clearEntityPopup(this);
             }
         }
 
