@@ -30,7 +30,7 @@ public class MsoyMuteDirector extends MuteDirector
     {
         for each (var id :int in memberIds) {
             // call super to avoid sending off service requests!
-            super.setMuted(new MemberName("", id), true);
+            super.setMuted(new MemberName("", id), true, false);
         }
     }
 
@@ -51,9 +51,9 @@ public class MsoyMuteDirector extends MuteDirector
     }
 
     // from MuteDirector
-    override public function setMuted (name :Name, mute :Boolean) :void
+    override public function setMuted (name :Name, mute :Boolean, feedback :Boolean = true) :void
     {
-        super.setMuted(name, mute);
+        super.setMuted(name, mute, feedback);
 
         // take care of persisting to the server
         if (name is MemberName) {
