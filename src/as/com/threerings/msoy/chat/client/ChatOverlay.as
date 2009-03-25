@@ -58,6 +58,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatCodes;
 
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetName;
@@ -675,7 +676,7 @@ public class ChatOverlay
         }
 
         // If we're on the room tab, display any System message that do not have a custom localtype
-        if (type == BROADCAST ||
+        if (type == BROADCAST || type == PAID_BROADCAST ||
             (msg is SystemMessage && msg.localtype == ChatCodes.PLACE_CHAT_TYPE)) {
             // in WorldContext we pull out the scene and check the id against the current localtype
             if (_ctx is WorldContext) {
@@ -822,7 +823,16 @@ public class ChatOverlay
      */
     protected function alwaysUseSpeaker (type :int) :Boolean
     {
-        return (modeOf(type) == EMOTE) || (placeOf(type) == BROADCAST);
+        if (modeOf(type) == EMOTE) {
+            return true;
+        }
+        switch (placeOf(type)) {
+        case BROADCAST:
+        case PAID_BROADCAST:
+            return true;
+        default:
+            return false;
+        }
     }
 
     /**
@@ -833,6 +843,7 @@ public class ChatOverlay
         // mask out the bits we don't need for determining outline color
         switch (placeOf(type)) {
         case BROADCAST: return BROADCAST_COLOR;
+        case PAID_BROADCAST: return PAID_BROADCAST_COLOR;
         case TELL: return TELL_COLOR;
         case TELLFEEDBACK: return TELLFEEDBACK_COLOR;
         case INFO: return INFO_COLOR;
@@ -869,6 +880,7 @@ public class ChatOverlay
             return drawFeedbackSubtitle;
 
         case BROADCAST:
+        case PAID_BROADCAST:
         case CONTINUATION:
         case INFO:
         case GAME:
@@ -966,6 +978,8 @@ public class ChatOverlay
                 return type | SHOUT;
             case ChatCodes.BROADCAST_MODE:
                 return BROADCAST; // broadcast always looks like broadcast
+            case MsoyChatCodes.PAID_BROADCAST_MODE:
+                return PAID_BROADCAST;
             }
 
         } else if (msg is SystemMessage) {
@@ -1195,16 +1209,19 @@ public class ChatOverlay
     /** Type place code for broadcast chat type. */
     protected static const BROADCAST :int = 7 << 4;
 
+    /** Internal code for a paid user broadcast messages. */
+    protected static const PAID_BROADCAST :int = 8 << 4;
+
     /** Type code for a chat type that was used in some special context,
      * like in a negotiation. */
-    protected static const SPECIALIZED :int = 8 << 4;
+    protected static const SPECIALIZED :int = 9 << 4;
 
     /** Our internal code for any type of chat that is continued in a
      * subtitle. */
-    protected static const CONTINUATION :int = 9 << 4;
+    protected static const CONTINUATION :int = 10 << 4;
 
     /** Type code for game chat. */
-    protected static const GAME :int = 10 << 4;
+    protected static const GAME :int = 11 << 4;
 
     /** Our internal code for channel chat. This is currently unused, as all channel chat is
      * associated with a place.  If we have private, non-place channels in the future, this will
@@ -1216,6 +1233,7 @@ public class ChatOverlay
 
     // used to color chat bubbles
     protected static const BROADCAST_COLOR :uint = 0x990000;
+    protected static const PAID_BROADCAST_COLOR :uint = 0x996600;
     protected static const FEEDBACK_COLOR :uint = 0x00AA00;
     protected static const TELL_COLOR :uint = 0x0000AA;
     protected static const TELLFEEDBACK_COLOR :uint = 0x00AAAA;
