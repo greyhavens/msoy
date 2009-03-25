@@ -126,6 +126,7 @@ public class EditSurveyPanel extends VerticalPanel
                     List<Widget> header = new ArrayList<Widget>();
                     header.add(MsoyUI.createLabel(_msgs.surveyNameHeader(), null));
                     header.add(MsoyUI.createLabel("", null));
+                    header.add(MsoyUI.createLabel("", null));
                     return header;
                 }
 
@@ -134,6 +135,8 @@ public class EditSurveyPanel extends VerticalPanel
                     row.add(MsoyUI.createLabel(item.name, null));
                     row.add(Link.create(_msgs.edit(), Pages.ADMINZ,
                         Args.compose(ACTION, item.surveyId)));
+                    row.add(Link.create(_msgs.view(), Pages.ME,
+                        Args.compose("survey", item.surveyId)));
                     // TODO: action link to delete a survey
                     return row;
                 }
