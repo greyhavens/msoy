@@ -22,10 +22,6 @@ public interface SurveyService
     List<SurveyQuestion> getQuestions (int surveyId)
         throws ServiceException;
 
-    /** Gets an end-user survey for filling in. */
-    Survey getSurvey (int surveyId)
-        throws ServiceException;
-
     /** Updates an existing survey or inserts a new survey. Returns the newly updated or inserted
      * survey. */
     SurveyMetaData updateSurvey (SurveyMetaData survey)
@@ -42,5 +38,12 @@ public interface SurveyService
 
     /** Removes a question from the survey. */
     void deleteQuestion (int surveyId, int index)
+        throws ServiceException;
+
+    /** Gets an end-user survey for filling in. */
+    Survey getSurvey (int surveyId)
+        throws ServiceException;
+
+    void submitResponse (int surveyId, List<SurveyResponse> responses)
         throws ServiceException;
 }

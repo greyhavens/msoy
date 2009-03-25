@@ -75,7 +75,7 @@ public class SurveyQuestionRecord extends PersistentRecord
         switch (questionType) {
         case EXCLUSIVE_CHOICE:
         case SUBSET_CHOICE:
-            descriptor = StringUtil.join(question.choices);
+            descriptor = StringUtil.join(question.choices, ",");
             break;
         case RATING:
             descriptor = String.valueOf(question.maxValue);

@@ -167,6 +167,16 @@ public class SurveyRepository extends DepotRepository
         return load(CountRecord.class, clauses).count;
     }
 
+    public void insertSubmission (SurveySubmissionRecord submitRec)
+    {
+        insert(submitRec);
+    }
+
+    public void insertQuestionResponse(SurveyResponseRecord responseRec)
+    {
+        insert(responseRec);
+    }
+
     /**
      * Utility method to update only the index column of a question.
      */
@@ -181,5 +191,7 @@ public class SurveyRepository extends DepotRepository
     {
         classes.add(SurveyRecord.class);
         classes.add(SurveyQuestionRecord.class);
+        classes.add(SurveySubmissionRecord.class);
+        classes.add(SurveyResponseRecord.class);
     }
 }

@@ -34,6 +34,10 @@ public class SurveySubmissionRecord extends PersistentRecord
     /** Number of questions completed. */
     public int numQuestions;
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link SurveySubmissionRecord}

@@ -3,23 +3,29 @@
 
 package com.threerings.msoy.survey.server;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.depot.DuplicateKeyException;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.survey.gwt.Survey;
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
+import com.threerings.msoy.survey.gwt.SurveyResponse;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.persist.SurveyQuestionRecord;
 import com.threerings.msoy.survey.persist.SurveyRecord;
 import com.threerings.msoy.survey.persist.SurveyRepository;
+import com.threerings.msoy.survey.persist.SurveyResponseRecord;
+import com.threerings.msoy.survey.persist.SurveySubmissionRecord;
 
 /**
  * Provides survey services.
@@ -119,6 +125,35 @@ public class SurveyServlet extends MsoyServiceServlet
     {
         requireAdminUser();
         _surveyRepo.moveQuestion(surveyId, index, newIndex);
+    }
+
+    public void submitResponse (int surveyId, List<SurveyResponse> responses)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        SurveyRecord survey = _surveyRepo.loadSurvey(surveyId);
+        if (survey == null) {
+            throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+        }
+        SurveySubmissionRecord subRec = new SurveySubmissionRecord();
+        subRec.completed = new Date(System.currentTimeMillis());
+        subRec.memberId = mrec.memberId;
+        subRec.numQuestions = responses.size();
+        subRec.surveyId = surveyId;
+        try {
+            _surveyRepo.insertSubmission(subRec);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException("e.survey_already_completed");
+        }
+
+        for (SurveyResponse resp : responses) {
+            SurveyResponseRecord responseRec = new SurveyResponseRecord();
+            responseRec.suveryId = surveyId;
+            responseRec.memberId = mrec.memberId;
+            responseRec.questionIndex = resp.questionIndex;
+            responseRec.response = resp.response;
+            _surveyRepo.insertQuestionResponse(responseRec);
+        }
     }
 
     @Inject SurveyRepository _surveyRepo;
