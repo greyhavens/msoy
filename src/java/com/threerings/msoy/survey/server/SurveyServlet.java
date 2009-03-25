@@ -13,6 +13,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.survey.gwt.Survey;
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyService;
@@ -47,6 +48,24 @@ public class SurveyServlet extends MsoyServiceServlet
             questions.add(questionRec.toSurveyQuestion());
         }
         return questions;
+    }
+
+    // from SurveyService
+    public Survey getSurvey (int surveyId)
+        throws ServiceException
+    {
+        SurveyRecord surveyRec = _surveyRepo.loadSurvey(surveyId);
+        if (surveyRec == null) {
+            throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+        }
+        List<SurveyQuestionRecord> questions = _surveyRepo.loadQuestions(surveyId);
+        Survey survey = new Survey();
+        survey.name = surveyRec.name;
+        survey.questions = new SurveyQuestion[questions.size()];
+        for (int ii = 0; ii < questions.size(); ++ii) {
+            survey.questions[ii] = questions.get(ii).toSurveyQuestion();
+        }
+        return survey;
     }
 
     // from SurveyService

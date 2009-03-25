@@ -11,6 +11,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.Page;
+import client.survey.TakeSurveyPanel;
 import client.util.Link;
 
 public class MePage extends Page
@@ -48,6 +49,9 @@ public class MePage extends Page
 
         } else if (action.equals(DEVIANT_CONTEST)) {
             Link.go(Pages.LANDING, "dawinners");
+
+        } else if (action.equals("survey")) {
+            setContent(_msgs.titleSurvey(), new TakeSurveyPanel(args.get(1, 0)));
 
         } else if (CShell.isGuest() || CShell.isPermaguest()) {
             Link.go(Pages.ACCOUNT, "create"); // guests/permaguest must register
