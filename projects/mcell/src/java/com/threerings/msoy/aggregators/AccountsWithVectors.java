@@ -18,7 +18,8 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 import com.threerings.panopticon.efs.storev2.StorageStrategy;
 
-@Aggregator(outputs=AccountsWithVectors.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY)
+@Aggregator(outputs=AccountsWithVectors.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY,
+    nexts=DailyAccountsCreated.class)
 public class AccountsWithVectors
     implements JavaAggregator<AccountsWithVectors.TrackerKey>
 {
