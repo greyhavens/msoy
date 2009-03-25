@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.data;
 
-import com.google.common.collect.Comparators;
-
+import com.samskivert.util.Comparators;
 import com.threerings.util.Name;
 
 /**

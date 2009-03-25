@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.avrg.data;
 
-import com.google.common.collect.Comparators;
+import com.samskivert.util.Comparators;
 
 import com.threerings.io.SimpleStreamableObject;
 
