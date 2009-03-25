@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.samskivert.util.StringUtil;
 import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
@@ -118,19 +120,16 @@ public class AccountsWithVectors
         throws IOException
     {
         Account account = accounts.trackerToAccount.get(key.tracker);
-        String vector = vectors.trackerToVector.get(key.tracker);
+        String vector = StringUtil.deNull(vectors.trackerToVector.get(key.tracker));
         if (account == null) {
             return;
         }
-        
-        Map<String, Object> data = Maps.newHashMap();
-        data.put("tracker", key.tracker);
-        data.put("memberId", account.memberId);
-        data.put("date", account.date);
-        data.put("affiliateId", account.affiliateId);
-        data.put("vector", vector);
-        
-        writer.write(new EventData(OUTPUT_EVENT_NAME, data, new HashMap<String, Object>()),
-            StorageStrategy.PROCESSED);
+        EventData event = new EventData(OUTPUT_EVENT_NAME, new ImmutableMap.Builder<String, Object>()
+            .put("tracker", key.tracker)
+            .put("memberId", account.memberId)
+            .put("date", account.date)
+            .put("affiliateId", account.affiliateId)
+            .put("vector", vector).build(), new HashMap<String, Object>());
+        writer.write(event, StorageStrategy.PROCESSED);
     }
 }
