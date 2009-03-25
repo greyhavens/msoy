@@ -29,6 +29,8 @@ public class BroadcastHistoryRecord extends PersistentRecord
     public static final ColumnExp MESSAGE = colexp(_R, "message");
     // AUTO-GENERATED: FIELDS END
 
+    public static final int SCHEMA_VERSION = 1;
+
     /** Time the message was posted. */
     @Id public Timestamp timeSent;
 
