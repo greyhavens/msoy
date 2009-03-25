@@ -5,6 +5,8 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
@@ -77,6 +79,14 @@ public class MemberCardRecord extends PersistentRecord
     /** The currently reported level of this user. */
     @Computed(shadowOf=MemberRecord.class)
     public int level;
+
+    /** Converts persistent records to runtime records. */
+    public static final Function<MemberCardRecord, MemberCard> TO_MEMBER_CARD =
+        new Function<MemberCardRecord, MemberCard>() {
+            public MemberCard apply (MemberCardRecord record) {
+                return record.toMemberCard();
+            }
+        };
 
     /**
      * Creates a runtime record from this persistent record.

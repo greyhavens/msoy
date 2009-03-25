@@ -81,6 +81,9 @@ public class PeoplePage extends Page
         } else if (action.equals("me")) { // !guest
             setContent(new ProfilePanel(CShell.getMemberId()));
 
+        } else if (action.equals("blocks")) { // !guest
+            setContent(new MutelistPanel(args.get(1, CShell.getMemberId())));
+
         } else if (action.equals("invites")) { // !guest
             if (args.get(1, "").equals("game")) {
                 setContent(_msgs.gameInviteTitle(), new GameInvitePanel(args));

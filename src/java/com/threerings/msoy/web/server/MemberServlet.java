@@ -9,11 +9,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.PrimitiveArrays;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
+
+import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -102,6 +105,41 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         return result;
+    }
+
+    // from interface WebMemberService
+    public PagedResult<MemberCard> loadMutelist (int memberId, int from, int count)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if ((memrec.memberId != memberId) && !memrec.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        PagedResult<MemberCard> result = new PagedResult<MemberCard>();
+
+        // TODO: possible re-implementation
+        // (here, we load all memberIds, then display a page of MemberCards based on last online)
+        // However, this will choke once the mutelist is greater than Short.MAX_VALUE.
+        int[] muteList = _memberRepo.loadMutelist(memberId);
+        result.total = muteList.length;
+        result.page = Lists.newArrayList(Lists.transform(
+            _memberRepo.loadMemberCards(PrimitiveArrays.asList(muteList), from, count, true),
+            MemberCardRecord.TO_MEMBER_CARD));
+        return result;
+    }
+
+    // from interface WebMemberService
+    public void setMuted (int memberId, int muteeId, boolean muted)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if ((memrec.memberId != memberId) && !memrec.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        _memberRepo.setMuted(memberId, muteeId, muted);
+        // TODO: runtime notification? We really should. PITA!
     }
 
     // from interface WebMemberService

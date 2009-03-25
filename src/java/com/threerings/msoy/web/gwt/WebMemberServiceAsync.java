@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.data.all.VisitorInfo;
 
 
@@ -51,6 +53,17 @@ public interface WebMemberServiceAsync
      * The asynchronous version of {@link WebMemberService#isAutomaticFriender}.
      */
     void isAutomaticFriender (int friendId, AsyncCallback<Boolean> callback);
+
+    /**
+     * The asynchronous version of {@link WebMemberService#loadMutelist}.
+     */
+    void loadMutelist (int memberId, int offset, int limit,
+        AsyncCallback<PagedResult<MemberCard>> callback);
+
+    /**
+     * The asynchronous version of {@link WebMemberService#isAutomaticFriender}.
+     */
+    void setMuted (int memberId, int muteeId, boolean muted, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#getInvitation}.

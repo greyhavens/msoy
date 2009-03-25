@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -77,6 +79,18 @@ public interface WebMemberService extends RemoteService
      * Tests if a given member has agreed to automatically accept new friends.
      */
     boolean isAutomaticFriender (int friendId)
+        throws ServiceException;
+
+    /**
+     * Loads a page of the specified member's mutelist.
+     */
+    PagedResult<MemberCard> loadMutelist (int memberId, int offset, int limit)
+        throws ServiceException;
+
+    /**
+     * Update the specified member's mutelist.
+     */
+    void setMuted (int memberId, int muteeId, boolean muted)
         throws ServiceException;
 
     /**

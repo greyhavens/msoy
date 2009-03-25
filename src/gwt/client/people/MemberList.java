@@ -22,11 +22,9 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 
-import client.ui.MemberStatusLabel;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.Link;
-import client.util.MediaUtil;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
@@ -54,7 +52,7 @@ public class MemberList extends PagedGrid<MemberCard>
     @Override // from PagedGrid
     protected Widget createWidget (MemberCard member)
     {
-        return new MemberWidget(member);
+        return new StandardMemberWidget(member);
     }
 
     @Override // from PagedGrid
@@ -83,34 +81,20 @@ public class MemberList extends PagedGrid<MemberCard>
         };
     }
 
-    protected class MemberWidget extends SmartTable
+    protected class StandardMemberWidget extends MemberWidget
     {
-        public MemberWidget (MemberCard card)
+        public StandardMemberWidget (MemberCard card)
         {
-            super("memberWidget", 0, 5);
+            super(card);
+        }
 
-            setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE,
-                                                      Link.createListener(
-                                                      Pages.PEOPLE, "" + card.name.getMemberId())),
-                      1, "Photo");
-            getFlexCellFormatter().setRowSpan(0, 0, 3);
-
-            setWidget(0, 1, Link.create(card.name.toString(), Pages.PEOPLE,
-                                                   ""+card.name.getMemberId()), 1, "Name");
-
-            // we'll overwrite these below if we have anything to display
-            getFlexCellFormatter().setStyleName(1, 0, "Status");
-            setHTML(1, 0, "&nbsp;");
-            setHTML(2, 0, "&nbsp;");
-            if (card.headline != null && card.headline.length() > 0) {
-                setText(1, 0, card.headline);
-            }
-            setWidget(2, 0, new MemberStatusLabel(card));
-
+        @Override
+        protected void addExtras (SmartTable extras, MemberCard card)
+        {
+            int row = extras.getRowCount();
             boolean isNotMe = CShell.getMemberId() != card.name.getMemberId();
-            SmartTable extras = new SmartTable("Extras", 0, 5);
+
             ClickListener onClick;
-            int row = 0;
 
             // potentially show the add friend button
             if (isNotMe && !card.isFriend) {
@@ -131,12 +115,8 @@ public class MemberList extends PagedGrid<MemberCard>
                     MsoyUI.createActionLabel(_msgs.mlSendMail(), onClick));
             }
 
-            // always show the visit home button
-            onClick = Link.createListener(Pages.WORLD, "m" + card.name.getMemberId());
-            extras.setWidget(row, 0,
-                MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
-            extras.setWidget(row++, 1,
-                MsoyUI.createActionLabel(_msgs.mlVisitHome(), onClick));
+            super.addExtras(extras, card);
+            row = extras.getRowCount();
 
             // if they are our friend, show the remove friend button
             if (isNotMe && card.isFriend) {
@@ -147,11 +127,6 @@ public class MemberList extends PagedGrid<MemberCard>
                 extras.setWidget(row++, 1,
                     MsoyUI.createActionLabel(_msgs.mlRemoveFriend(), onClick));
             }
-
-            setWidget(0, 2, extras);
-            getFlexCellFormatter().setRowSpan(0, 2, getRowCount());
-            getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         }
     }
 
