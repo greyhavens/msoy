@@ -71,17 +71,13 @@ public class AccountsWithVectors
         @Override
         public void doInit (EventData eventData)
         {
-            String tracker = eventData.getString("tracker");
-            Integer memberId = eventData.getInt("newMemberId");
-            Date date = eventData.getDate("timestamp");
-            Integer affiliateIdValue = eventData.getInt("affiliateId");
-            Boolean isGuestValue = eventData.getBoolean("isGuest");
-            
-            boolean isGuest = (isGuestValue != null && isGuestValue.booleanValue());
-            int affiliateId = (affiliateIdValue != null ? affiliateIdValue.intValue() : 0);
+            Boolean isGuestValue = (Boolean)eventData.getData().get("isGuest");
 
-            if (tracker != null && memberId != null && date != null && !isGuest) {
-                trackerToAccount.put(tracker, new Account(memberId, date, affiliateId));
+            if (isGuestValue == null || !isGuestValue.booleanValue()) {
+                trackerToAccount.put(eventData.getString("tracker"), new Account(
+                    eventData.getInt("newMemberId"),
+                    eventData.getDate("timestamp"),
+                    eventData.getInt("affiliateId")));
             }
         }
         
