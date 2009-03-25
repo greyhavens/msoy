@@ -45,6 +45,7 @@ public class MemberList extends PagedGrid<MemberCard>
     public MemberList (String emptyMessage, String id)
     {
         super(PEOPLE_PER_PAGE, 1, MemberList.NAV_ON_BOTTOM);
+        _id = id;
         setWidth("100%");
         addStyleName("dottedGrid");
         _emptyMessage = emptyMessage;
