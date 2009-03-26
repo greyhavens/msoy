@@ -17,7 +17,6 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.ui.HeaderBox;
-import client.ui.MsoyUI;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 

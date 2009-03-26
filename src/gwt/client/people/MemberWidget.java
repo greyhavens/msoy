@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -17,11 +16,8 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MemberStatusLabel;
 import client.ui.MsoyUI;
-import client.ui.PromptPopup;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays a list of members.
