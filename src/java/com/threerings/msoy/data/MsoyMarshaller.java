@@ -57,9 +57,9 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static final int PURCHASE_AND_SEND_BROADCAST = 4;
 
     // from interface MsoyService
-    public void purchaseAndSendBroadcast (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
+    public void purchaseAndSendBroadcast (Client arg1, int arg2, String arg3, InvocationService.ResultListener arg4)
     {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, PURCHASE_AND_SEND_BROADCAST, new Object[] {
             Integer.valueOf(arg2), arg3, listener4

@@ -6,14 +6,16 @@ package com.threerings.msoy.chat.client {
 import mx.controls.Label;
 
 import com.threerings.util.Integer;
+import com.threerings.util.Log;
 import com.threerings.presents.client.ResultAdapter;
-import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
+
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
@@ -23,6 +25,8 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
  */
 public class BroadcastPanel extends FloatingPanel
 {
+    public static var log :Log = Log.getLog(BroadcastPanel);
+
     /**
      * Shows the panel and if everything is confirmed broadcasts the given message for a fee.
      */
@@ -60,44 +64,56 @@ public class BroadcastPanel extends FloatingPanel
         msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotQuote, getQuoteFailed));
     }
 
-    protected function gotQuote (result :int) :void
+    protected function gotQuote (result :PriceQuote) :void
     {
-        _quote = result;
+        log.info("Got quote", "result", result);
+        _quote = result.getBars();
         if (!isOpen()) {
             // if we weren't shown before, let createChildren take care of setting the bar value
             open();
 
         } else {
             // otherwise, update it
-            _barCost.text = "" + result;
+            _barCost.text = "" + _quote;
         }
     }
 
     protected function getQuoteFailed (cause :String) :void
     {
+        log.info("Get quote failed", "cause", cause);
         _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
     }
 
-    protected function broadcastSent () :void
+    protected function broadcastSent (result :PriceQuote) :void
     {
-        // nothing to do here (probably)
+        log.info("Broadcast sent", "result", result);
+        if (result != null) {
+            // oops, the price went up, inform the user and keep the dialog open
+            // TODO: do something more exciting here
+            gotQuote(result);
+
+        } else {
+            // otherwise, close. The user should see the broadcast as feedback
+            close();
+        }
     }
 
     protected function broadcastFailed (cause :String) :void
     {
+        log.info("Broadcast failed", "cause", cause);
         _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-
-        // TODO: this is just a stop-gap until a custom listener is added
-        requestQuote();
     }
 
-    override protected function okButtonClicked () :void
+    override protected function buttonClicked (buttonId :int) :void
     {
-        // TODO: use a custom listener here so the new quote can be returned if the price changes
-        var client :MsoyClient = _ctx.getMsoyClient();
-        var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.purchaseAndSendBroadcast(client, _quote, _msg,
-            new ConfirmAdapter(broadcastSent, broadcastFailed));
+        if (buttonId == OK_BUTTON) {
+            var client :MsoyClient = _ctx.getMsoyClient();
+            var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
+            msoySvc.purchaseAndSendBroadcast(client, _quote, _msg,
+                new ResultAdapter(broadcastSent, broadcastFailed));
+        } else {
+            super.buttonClicked(buttonId);
+        }
     }
 
     protected var _msg :String;

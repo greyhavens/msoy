@@ -34,7 +34,7 @@ public interface MsoyProvider extends InvocationProvider
     /**
      * Handles a {@link MsoyService#purchaseAndSendBroadcast} request.
      */
-    void purchaseAndSendBroadcast (ClientObject caller, int arg1, String arg2, InvocationService.ConfirmListener arg3)
+    void purchaseAndSendBroadcast (ClientObject caller, int arg1, String arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**

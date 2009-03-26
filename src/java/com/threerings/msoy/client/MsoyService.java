@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.client;
 
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.client.InvocationService.ResultListener;
 
 /**
  * Provides global non-member-related services.
@@ -53,7 +52,7 @@ public interface MsoyService extends InvocationService
 
     /**
      * Requests a quote for sending a global broadcast. On success, the listener will receive an
-     * an Integer indicating the secured price, in bars, of sending a broadcast.
+     * a {@link PriceQuote} indicating the secured price of sending a broadcast.
      * @see com.threerings.msoy.chat.MsoyChatCodes#PAID_BROADCAST_MODE
      * @see com.threerings.msoy.money.server.MoneyLogic#getBroadcastCost
      */
@@ -64,5 +63,5 @@ public interface MsoyService extends InvocationService
      * user does not have sufficient funds or if the price has changed.
      */
     void purchaseAndSendBroadcast (Client client, int authedCost, String message,
-        ConfirmListener listener);
+        ResultListener listener);
 }

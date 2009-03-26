@@ -65,9 +65,9 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const PURCHASE_AND_SEND_BROADCAST :int = 4;
 
     // from interface MsoyService
-    public function purchaseAndSendBroadcast (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
+    public function purchaseAndSendBroadcast (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ResultListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, PURCHASE_AND_SEND_BROADCAST, [
             Integer.valueOf(arg2), arg3, listener4

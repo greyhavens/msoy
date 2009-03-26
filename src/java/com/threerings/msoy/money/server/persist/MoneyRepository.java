@@ -570,14 +570,28 @@ public class MoneyRepository extends DepotRepository
                   new Where(new Conditionals.In(MoneyTransactionRecord.MEMBER_ID, memberIds)));
     }
 
+    /**
+     * Counts the number of broadcasts sent since a given time.
+     */
     public int countBroadcastsSince (long time)
     {
-        // round down to the nearest minute for better cachability
-        time -= time % (60 * 1000);
         Timestamp limit = new Timestamp(time);
-        return load(CountRecord.class,
+        return load(CountRecord.class, CacheStrategy.NONE,
             new Where(new Conditionals.GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
             new FromOverride(BroadcastHistoryRecord.class)).count;
+    }
+
+    /**
+     * Inserts a new broadcast history record with the given parameters.
+     */
+    public void noteBroadcastPurchase (int memberId, int barsPaid, String message)
+    {
+        BroadcastHistoryRecord record = new BroadcastHistoryRecord();
+        record.timeSent = new Timestamp(System.currentTimeMillis());
+        record.barsPaid = barsPaid;
+        record.memberId = memberId;
+        record.message = message;
+        insert(record);
     }
 
     /**

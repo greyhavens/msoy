@@ -13,14 +13,19 @@ import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.util.Name;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.PersistingUnit;
+
+import com.threerings.crowd.chat.server.ChatProvider;
+
+import com.threerings.msoy.chat.data.MsoyChatCodes;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -30,16 +35,22 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.server.util.ServiceUnit;
+
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
+import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyServiceException;
 import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import static com.threerings.msoy.Log.log;
@@ -189,7 +200,7 @@ public class MsoyManager
         _notifyMan.dispatchDeferredNotifications((MemberObject)caller);
     }
 
-    // from MemberProvider
+    // from MsoyProvider
     public void secureBroadcastQuote (
         ClientObject caller, final InvocationService.ResultListener listener)
         throws InvocationException
@@ -197,43 +208,78 @@ public class MsoyManager
         final int memberId = ((MemberObject)caller).getMemberId();
         _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
             @Override public void invokePersistent () {
-                _quote = _moneyLogic.securePrice(memberId, BROADCAST_PURCHASE_KEY,
-                    Currency.BARS, _moneyLogic.getBroadcastCost()).getBars();
+                _quote = secureBroadcastQuote(memberId);
             }
             @Override public void handleSuccess () {
                 reportRequestProcessed(_quote);
             }
-            protected int _quote;
+            protected PriceQuote _quote;
         });
     }
 
-    // from MemberProvider
+    // from MsoyProvider
     public void purchaseAndSendBroadcast (
-        ClientObject caller, final int authedCost, String message, ConfirmListener listener)
+        ClientObject caller, final int authedCost, final String message,
+        InvocationService.ResultListener listener)
         throws InvocationException
     {
         final int memberId = ((MemberObject)caller).getMemberId();
-        _invoker.postUnit(new PersistingUnit("purchaseBroadcast", listener) {
-            public void invokePersistent () 
-                throws Exception {
+        final Name from = ((MemberObject)caller).getVisibleName();
+        _invoker.postUnit(new ServiceUnit("purchaseBroadcast", listener) {
+            public void invokePersistent ()
+                throws ServiceException {
+                // check for a price change
                 int costNow = _moneyLogic.getBroadcastCost();
                 if (costNow != authedCost) {
-                    // TODO: add this string to MsoyCodes; the client will need to know about
-                    // this particular failure
-                    throw new InvocationException("e.broadcast_inflation");
+                    // if the price has changed, give the user a new quote
+                    _newQuote = secureBroadcastQuote(memberId);
+                    return;
                 }
-                // TODO: create the broadcast history record with this
-                BuyOperation<Void> buyOp = null;
-                // TODO: translate exceptions
-                MemberRecord mrec = _memberRepo.loadMember(memberId);
-                _moneyLogic.buyFromOOO(mrec, BROADCAST_PURCHASE_KEY, Currency.BARS, authedCost,
-                    Currency.BARS, _moneyLogic.getBroadcastCost(), buyOp, UserAction.Type.BOUGHT_BROADCAST,
-                    "m.broadcast_bought", TransactionType.BROADCAST_PURCHASE, null);
+                // our buy operation saves the history record but has no ware
+                BuyOperation<Void> buyOp = new BuyOperation<Void>() {
+                    public boolean create (boolean magicFree, Currency currency, int amountPaid)
+                        throws MoneyServiceException {
+                        _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
+                        return false;
+                    }
+                    public Void getWare () {
+                        return null;
+                    }
+                };
+                // buy it! with exception translation
+                try {
+                    _moneyLogic.buyFromOOO(_memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
+                        Currency.BARS, authedCost, Currency.BARS, _moneyLogic.getBroadcastCost(),
+                        buyOp, UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
+                        TransactionType.BROADCAST_PURCHASE, null);
+
+                } catch (MoneyException mex) {
+                    throw mex.toServiceException();
+                }
             }
             public void handleSuccess () {
-                // TODO: send the message if everything went well
+                // inform the client, null = success, non-null = price changed
+                reportRequestProcessed(_newQuote);
+
+                if (_newQuote == null) {
+                    // send the message, wheee. log something beforehand in case broadcast throws
+                    log.info("Sending broadcast message", "from", from);
+                    _chatprov.broadcast(
+                        from, MsoyChatCodes.PAID_BROADCAST_MODE, null, message, true);
+                }
             }
+
+            protected PriceQuote _newQuote;
         });
+    }
+
+    /**
+     * Blocks and obtains a price quote.
+     */
+    protected PriceQuote secureBroadcastQuote (int memberId)
+    {
+        return _moneyLogic.securePrice(memberId, BROADCAST_PURCHASE_KEY, Currency.BARS,
+            _moneyLogic.getBroadcastCost());
     }
 
     // dependencies
@@ -244,6 +290,8 @@ public class MsoyManager
     @Inject protected NotificationManager _notifyMan;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyRepository _moneyRepo;
+    @Inject protected ChatProvider _chatprov;
 
     /** An arbitrary key for tracking quotes for broadcast messages. */
     protected static final Object BROADCAST_PURCHASE_KEY = new Object();

@@ -55,7 +55,7 @@ public class MsoyDispatcher extends InvocationDispatcher<MsoyMarshaller>
 
         case MsoyMarshaller.PURCHASE_AND_SEND_BROADCAST:
             ((MsoyProvider)provider).purchaseAndSendBroadcast(
-                source, ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
+                source, ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ResultListener)args[2]
             );
             return;
 
