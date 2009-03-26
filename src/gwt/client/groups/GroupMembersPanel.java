@@ -50,7 +50,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         _invite.addClickListener(Link.createListener(Pages.MAIL, args));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
-        setModel(new PagedServiceDataModel<GroupMemberCard>(){
+        setModel(new PagedServiceDataModel<GroupMemberCard, PagedResult<GroupMemberCard>>(){
             @Override protected void callFetchService (
                 int start, int count, boolean needCount,
                 AsyncCallback<PagedResult<GroupMemberCard>> callback) {
