@@ -141,7 +141,6 @@ public class TableSummaryPanel extends HBox
         _infoTipper.addEventListener(MouseEvent.ROLL_OUT, handleTipperRoll);
         _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_SHOW, handleTipShow);
         _infoTipper.styleName = "orangeButton";
-        _infoTipper.scaleX = .8;
         _infoTipper.scaleY = .8;
         infoBox.addChild(_infoTipper);
         infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
