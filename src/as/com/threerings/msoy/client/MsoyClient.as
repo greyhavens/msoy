@@ -39,6 +39,7 @@ import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.MsoyMarshaller;
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -69,6 +70,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     MsoyBootstrapData;
     MsoyAuthResponseData;
     MsoyService;
+    MsoyMarshaller;
     LurkerName;
 
     public function MsoyClient (stage :Stage)
