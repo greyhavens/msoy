@@ -66,7 +66,10 @@ import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
+import com.threerings.msoy.money.gwt.BroadcastHistory;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.persist.BroadcastHistoryRecord;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
@@ -578,13 +581,6 @@ public class AdminServlet extends MsoyServiceServlet
         });
     }
 
-    protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
-    {
-        final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
-        final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
-        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true, true);
-    }
-
     public void restartPanopticon (Set<String> nodeNames)
         throws ServiceException
     {
@@ -593,6 +589,42 @@ public class AdminServlet extends MsoyServiceServlet
         for (String node : nodeNames) {
             _peerMgr.invokeNodeAction(node, new RestartPanopticonAction());
         }
+    }
+
+    // from AdminService
+    public BroadcastHistoryResult getBroadcastHistory (int offset, int count, boolean needCount)
+    {
+        BroadcastHistoryResult result = new BroadcastHistoryResult();
+
+        // load count if needed
+        if (needCount) {
+            result.total = _moneyRepo.countBroadcastHistoryRecords();
+        }
+
+        // transform and add results
+        result.page = Lists.newArrayList();
+        result.page.addAll(Lists.transform(_moneyRepo.getBroadcastHistoryRecords(offset, count),
+            new Function<BroadcastHistoryRecord, BroadcastHistory>() {
+                public BroadcastHistory apply (BroadcastHistoryRecord rec) {
+                    return rec.toBroadcastHistory();
+                }
+            }));
+
+        // resolve and store names for display
+        Set<Integer> memberIds = Sets.newHashSet();
+        for (BroadcastHistory bh : result.page) {
+            memberIds.add(bh.memberId);
+        }
+        result.memberNames = Maps.newHashMap();
+        result.memberNames.putAll(_memberRepo.loadMemberNames(memberIds));
+        return result;
+    }
+
+    protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
+    {
+        final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
+        final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
+        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true, true);
     }
 
     protected static class RestartPanopticonAction extends NodeAction
@@ -752,6 +784,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyAdminManager _adminMgr;
     @Inject protected MsoyEventLogger _eventLogger;
     @Inject protected MsoyPeerManager _peerMgr;

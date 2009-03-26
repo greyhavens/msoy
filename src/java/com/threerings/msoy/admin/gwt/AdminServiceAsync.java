@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.admin.gwt.AdminService.BroadcastHistoryResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
@@ -149,4 +150,10 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#scheduleReboot}.
      */
     void scheduleReboot (int minutes, String message, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#getBroadcastHistory}.
+     */
+    void getBroadcastHistory (int offset, int count, boolean needCount,
+        AsyncCallback<BroadcastHistoryResult> callback);
 }

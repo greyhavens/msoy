@@ -595,6 +595,23 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
+     * Counts the total number of paid broadcasts made.
+     */
+    public int countBroadcastHistoryRecords()
+    {
+        return load(CountRecord.class, new FromOverride(BroadcastHistoryRecord.class)).count;
+    }
+
+    /**
+     * Gets a page of historical paid broadcasts.
+     */
+    public List<BroadcastHistoryRecord> getBroadcastHistoryRecords(int offset, int count)
+    {
+        return findAll(BroadcastHistoryRecord.class, OrderBy.descending(
+            BroadcastHistoryRecord.TIME_SENT), new Limit(offset, count));
+    }
+
+    /**
      * Create the singleton BarPoolRecord in the database.
      */
     protected BarPoolRecord createBarPoolRecord (int defaultBarPoolSize)

@@ -325,3 +325,32 @@
 .panopticonStatus .statusText {
   white-space: pre !important;
 }
+
+/* ------------------------------------
+   BroadcastHistoryPanel
+-------------------------------------*/
+.BroadcastHistory {
+  font-size: 10px;
+}
+
+.BroadcastHistory .table .row1 {
+  background: #dbeffc;
+}
+
+.BroadcastHistory .table .header {
+  background: #ff992b;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.BroadcastHistory .table .col2 {
+  text-align: center;
+}
+
+.BroadcastHistory .table .col3 {
+  width: 55%;
+  font-size: 9px;
+  vertical-align: center;
+}

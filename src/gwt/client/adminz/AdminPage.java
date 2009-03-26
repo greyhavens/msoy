@@ -91,6 +91,9 @@ public class AdminPage extends Page
             _surveyPanel.setArgs(args);
             setContent("Surveys", _surveyPanel);
 
+        } else if (action.equals("broadcasts")) {
+            setContent("Broadcasts", new BroadcastHistoryPanel());
+
         } else {
             setContent(_msgs.title(), new DashboardPanel());
         }

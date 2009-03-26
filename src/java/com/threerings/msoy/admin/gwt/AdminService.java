@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 
 import com.threerings.msoy.money.data.all.MoneyTransaction;
+import com.threerings.msoy.money.gwt.BroadcastHistory;
 
 /**
  * Defines remote services available to admins.
@@ -74,6 +75,15 @@ public interface AdminService extends RemoteService
         public Map<ItemIdent, ItemDetail> items;
 
         /** Member names of flagging members. */
+        public Map<Integer, MemberName> memberNames;
+    }
+
+    /**
+     * Return value when querying the history of broadcast messages.
+     */
+    public static class BroadcastHistoryResult extends PagedResult<BroadcastHistory>
+    {
+        /** Member names of broadcasting members. */
         public Map<Integer, MemberName> memberNames;
     }
 
@@ -233,4 +243,9 @@ public interface AdminService extends RemoteService
 
     Set<String> getPeerNodeNames ()
         throws ServiceException;
+
+    /**
+     * Gets a page of user paid broadcast message history.
+     */
+    BroadcastHistoryResult getBroadcastHistory (int offset, int count, boolean needCount);
 }
