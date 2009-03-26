@@ -5,7 +5,6 @@ package com.threerings.msoy.admin.server;
 
 import static com.threerings.msoy.Log.log;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
