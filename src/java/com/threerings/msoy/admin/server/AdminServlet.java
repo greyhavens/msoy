@@ -5,6 +5,7 @@ package com.threerings.msoy.admin.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -693,7 +694,7 @@ public class AdminServlet extends MsoyServiceServlet
             log.info("Starting reclamation for item deletion", "original", _original,
                 "locations", _items.size());
 
-            for (final Tuple<Integer, ItemIdent> item : _items) {
+            for (final Tuple<Integer, ItemIdent> item : Lists.newArrayList(_items)) {
                 ResultListener<Void> lner = new ResultListener<Void>() {
                     public void requestCompleted (Void result) {
                         finishedOne(item, true);
