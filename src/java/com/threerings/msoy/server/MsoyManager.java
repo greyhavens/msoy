@@ -240,7 +240,7 @@ public class MsoyManager
                     public boolean create (boolean magicFree, Currency currency, int amountPaid)
                         throws MoneyServiceException {
                         _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
-                        return false;
+                        return true;
                     }
                     public Void getWare () {
                         return null;
@@ -249,8 +249,8 @@ public class MsoyManager
                 // buy it! with exception translation
                 try {
                     _moneyLogic.buyFromOOO(_memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
-                        Currency.BARS, authedCost, Currency.BARS, _moneyLogic.getBroadcastCost(),
-                        buyOp, UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
+                        Currency.BARS, authedCost, Currency.BARS, costNow, buyOp,
+                        UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
                         TransactionType.BROADCAST_PURCHASE, null);
 
                 } catch (MoneyException mex) {
