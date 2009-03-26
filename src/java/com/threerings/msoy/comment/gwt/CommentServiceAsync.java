@@ -5,6 +5,8 @@ package com.threerings.msoy.comment.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.PagedResult;
+
 /**
  * The asynchronous (client-side) version of {@link CommentService}.
  */
@@ -14,7 +16,7 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#loadComments}.
      */
     void loadComments (int entityType, int entityId, int offset, int count, boolean needCount,
-                       AsyncCallback<CommentService.CommentResult> callback);
+                       AsyncCallback<PagedResult<Comment>> callback);
 
     /**
      * The asynchronous version of {@link CommentService#postComment}.

@@ -14,7 +14,7 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -23,7 +23,7 @@ import client.util.ServiceUtil;
 public class IssueModels
 {
     /** A data model that provides issues. */
-    public static class Issues extends ServiceBackedDataModel<Issue, IssueService.IssueResult>
+    public static class Issues extends PagedServiceDataModel<Issue, IssueService.IssueResult>
     {
         public Issues (boolean open)
         {
@@ -55,7 +55,7 @@ public class IssueModels
             IssueService.IssueResult result, AsyncCallback<List<Issue>> callback)
         {
             _isManager = result.isManager;
-            for (Issue issue : result.issues) {
+            for (Issue issue : result.page) {
                 mapIssue(issue);
             }
             super.onSuccess(result, callback);
@@ -66,16 +66,6 @@ public class IssueModels
             AsyncCallback<IssueService.IssueResult> callback)
         {
             _issuesvc.loadIssues(_open, start, count, needCount, callback);
-        }
-
-        @Override // from ServiceBackedDataModel
-        protected int getCount (IssueService.IssueResult result) {
-            return result.issueCount;
-        }
-
-        @Override // from ServiceBackedDataModel
-        protected List<Issue> getRows (IssueService.IssueResult result) {
-            return result.issues;
         }
 
         protected void mapIssue (Issue issue) {

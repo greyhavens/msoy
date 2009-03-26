@@ -120,16 +120,17 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from GroupService
-    public GroupsResult getGroups (int offset, int count, GroupQuery query, boolean needCount)
+    public PagedResult<GroupCard> getGroups (
+        int offset, int count, GroupQuery query, boolean needCount)
         throws ServiceException
     {
         List<GroupRecord> records = _groupRepo.getGroups(offset, count, query);
-        GroupsResult result = new GroupsResult();
-        result.groups = populateGroupCard(Lists.newArrayList(Iterables.transform(records,
+        PagedResult<GroupCard> result = new PagedResult<GroupCard>();
+        result.page = populateGroupCard(Lists.newArrayList(Iterables.transform(records,
             GroupRecord.TO_CARD)));
 
         if (needCount) {
-            result.totalCount = _groupRepo.getGroupCount(query);
+            result.total = _groupRepo.getGroupCount(query);
         }
 
         return result;

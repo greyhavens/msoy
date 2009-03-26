@@ -67,16 +67,6 @@ public interface GroupService extends RemoteService
         }
     }
 
-    /** Delivers the response to {@link #getGroups}. */
-    public static class GroupsResult implements IsSerializable
-    {
-        /** The total number of groups available, will be 0 if the count was not requested. */
-        public int totalCount;
-
-        /** The requested slice of the total groups list. */
-        public List<GroupCard> groups;
-    }
-
     /** Delivers the response to {@link #getMedals}. */
     public static class MedalsResult implements IsSerializable
     {
@@ -118,7 +108,7 @@ public interface GroupService extends RemoteService
     /**
      * Gets a subset of the list of all groups.
      */
-    GroupsResult getGroups (int offset, int count, GroupQuery query, boolean needCount)
+    PagedResult<GroupCard> getGroups (int offset, int count, GroupQuery query, boolean needCount)
         throws ServiceException;
 
     /**

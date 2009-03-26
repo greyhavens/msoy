@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
@@ -32,7 +33,7 @@ import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
 import client.util.InfoCallback;
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -216,20 +217,12 @@ public class CommentsPanel extends PagedGrid<Comment>
     }
 
     protected class CommentModel
-        extends ServiceBackedDataModel<Comment, CommentService.CommentResult>
+        extends PagedServiceDataModel<Comment, PagedResult<Comment>>
     {
         @Override
         protected void callFetchService (int start, int count, boolean needCount,
-                                         AsyncCallback<CommentService.CommentResult> callback) {
+                                         AsyncCallback<PagedResult<Comment>> callback) {
             _commentsvc.loadComments(_etype, _entityId, start, count, needCount, callback);
-        }
-        @Override
-        protected int getCount (CommentService.CommentResult result) {
-            return result.commentCount;
-        }
-        @Override
-        protected List<Comment> getRows (CommentService.CommentResult result) {
-            return result.comments;
         }
     }
 

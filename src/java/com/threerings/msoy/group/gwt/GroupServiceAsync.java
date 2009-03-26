@@ -32,7 +32,7 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService#getGroups}
      */
     void getGroups (int offset, int count, GroupService.GroupQuery query, boolean needCount,
-        AsyncCallback<GroupService.GroupsResult> callback);
+        AsyncCallback<PagedResult<GroupCard>> callback);
 
     /**
      * The asynchronous version of {@link GroupService#getGroupInfo}

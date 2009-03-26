@@ -29,7 +29,7 @@ import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -139,23 +139,12 @@ public class ReviewPanel extends FlowPanel
     }
 
     protected class ItemFlagsModel
-        extends ServiceBackedDataModel<ItemFlag, ItemFlagsResult>
+        extends PagedServiceDataModel<ItemFlag, ItemFlagsResult>
     {
         @Override protected void callFetchService (
             int start, int count, boolean needCount, AsyncCallback<ItemFlagsResult> callback)
         {
             _adminsvc.getItemFlags(start, count, needCount, callback);
-        }
-
-        @Override protected int getCount (ItemFlagsResult result)
-        {
-            return result.total;
-        }
-
-        @Override protected List<ItemFlag> getRows (ItemFlagsResult result)
-        {
-            _result = result;
-            return result.page;
         }
     }
 

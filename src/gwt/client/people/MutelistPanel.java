@@ -17,7 +17,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.ui.HeaderBox;
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -38,7 +38,7 @@ public class MutelistPanel extends FlowPanel
     }
 
     protected static class MutelistDataModel
-        extends ServiceBackedDataModel<MemberCard, PagedResult<MemberCard>>
+        extends PagedServiceDataModel<MemberCard, PagedResult<MemberCard>>
     {
         public MutelistDataModel (int memberId)
         {
@@ -51,18 +51,6 @@ public class MutelistPanel extends FlowPanel
             AsyncCallback<PagedResult<MemberCard>> callback)
         {
             _membersvc.loadMutelist(_memberId, start, count, callback);
-        }
-
-        @Override
-        protected int getCount (PagedResult<MemberCard> result)
-        {
-            return result.total;
-        }
-
-        @Override
-        protected List<MemberCard> getRows (PagedResult<MemberCard> result)
-        {
-            return result.page;
         }
 
         protected int _memberId;

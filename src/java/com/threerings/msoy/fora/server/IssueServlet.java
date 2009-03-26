@@ -200,11 +200,11 @@ public class IssueServlet extends MsoyServiceServlet
                 issues.add(issue);
             }
         }
-        result.issues = issues;
+        result.page = issues;
 
         if (needTotalCount) {
-            result.issueCount = (result.issues.size() < count && offset == 0) ?
-                result.issues.size() : _issueRepo.loadIssueCount(states);
+            result.total = (result.page.size() < count && offset == 0) ?
+                result.page.size() : _issueRepo.loadIssueCount(states);
         }
         return result;
     }

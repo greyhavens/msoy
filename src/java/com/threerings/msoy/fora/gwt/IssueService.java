@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -18,16 +20,10 @@ import com.threerings.msoy.data.all.MemberName;
 public interface IssueService extends RemoteService
 {
     /** Provides results for {@link #loadIssues}. */
-    public static class IssueResult implements IsSerializable
+    public static class IssueResult extends PagedResult<Issue>
     {
-        /** The total count of issues. */
-        public int issueCount;
-
         /** Returns true if we're able to manage issues. */
         public boolean isManager;
-
-        /** The range of issues that were requested. */
-        public List<Issue> issues;
     }
 
     /** The entry point for this service. */

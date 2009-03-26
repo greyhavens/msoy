@@ -15,6 +15,8 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
@@ -55,7 +57,8 @@ public class CommentServlet extends MsoyServiceServlet
     implements CommentService
 {
     // from interface CommentService
-    public CommentResult loadComments (int etype, int eid, int offset, int count, boolean needCount)
+    public PagedResult<Comment> loadComments (
+        int etype, int eid, int offset, int count, boolean needCount)
         throws ServiceException
     {
         // no authentication required to view comments
@@ -82,10 +85,10 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // prepare and deliver the final result
-        CommentResult result = new CommentResult();
-        result.comments = comments;
+        PagedResult<Comment> result = new PagedResult<Comment>();
+        result.page = comments;
         if (needCount) {
-            result.commentCount = (records.size() < count && offset == 0) ?
+            result.total = (records.size() < count && offset == 0) ?
                 records.size() : _commentRepo.loadCommentCount(etype, eid);
         }
 

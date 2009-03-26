@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -16,24 +18,14 @@ import com.threerings.msoy.web.gwt.ServiceException;
  */
 public interface CommentService extends RemoteService
 {
-    /** Provides results for {@link #loadComments}. */
-    public static class CommentResult implements IsSerializable
-    {
-        /** The total count of comments. */
-        public int commentCount;
-
-        /** The range of comments that were requested. */
-        public List<Comment> comments;
-    }
-
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/commentsvc";
 
     /**
      * Loads recent comments made about the specified entity.
      */
-    CommentResult loadComments (int entityType, int entityId, int offset, int count,
-                                boolean needCount)
+    PagedResult<Comment> loadComments (
+        int entityType, int entityId, int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**

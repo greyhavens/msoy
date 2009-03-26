@@ -20,6 +20,8 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -35,7 +37,7 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -283,17 +285,11 @@ public class GalaxyPanel extends FlowPanel
      * data whenever a subset is requested. Page limiting must be done at the repo level.
      */
     protected class GroupDataModel
-        extends ServiceBackedDataModel<GroupCard, GroupService.GroupsResult>
+        extends PagedServiceDataModel<GroupCard, PagedResult<GroupCard>>
     {
         protected void callFetchService (int start, int count, boolean needCount,
-            AsyncCallback<GroupService.GroupsResult> callback) {
+            AsyncCallback<PagedResult<GroupCard>> callback) {
             _groupsvc.getGroups(start, count, _query, needCount, callback);
-        }
-        protected int getCount (GroupService.GroupsResult result) {
-            return result.totalCount;
-        }
-        protected List<GroupCard> getRows (GroupService.GroupsResult result) {
-            return result.groups;
         }
     };
 

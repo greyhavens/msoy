@@ -9,7 +9,7 @@ import java.util.List;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -22,7 +22,6 @@ import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -103,11 +102,11 @@ public class ItemTransactionsPanel extends VerticalPanel
     }
 
     protected class Model
-        extends ServiceBackedDataModel<MoneyTransaction, AdminService.ItemTransactionResult>
+        extends PagedServiceDataModel<MoneyTransaction, AdminService.ItemTransactionResult>
     {
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount,
-            AsyncCallback<ItemTransactionResult> callback)
+            AsyncCallback<AdminService.ItemTransactionResult> callback)
         {
             _adminsvc.getItemTransactions(new ItemIdent(
                 _detail.item.getType(), _detail.item.itemId), start, count, needCount, callback);
@@ -115,27 +114,16 @@ public class ItemTransactionsPanel extends VerticalPanel
 
         @Override // from ServiceBackedDataModel
         protected void onSuccess (
-            ItemTransactionResult result, AsyncCallback<List<MoneyTransaction>> callback)
+            AdminService.ItemTransactionResult result,
+            AsyncCallback<List<MoneyTransaction>> callback)
         {
             _result = result;
             super.onSuccess(result, callback);
         }
-
-        @Override // from ServiceBackedDataModel
-        protected int getCount (ItemTransactionResult result)
-        {
-            return result.total;
-        }
-
-        @Override // from ServiceBackedDataModel
-        protected List<MoneyTransaction> getRows (ItemTransactionResult result)
-        {
-            return result.page;
-        }
     }
 
     protected ItemDetail _detail;
-    protected ItemTransactionResult _result;
+    protected AdminService.ItemTransactionResult _result;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)

@@ -22,7 +22,7 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
 import client.ui.MsoyUI;
 
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 public class ExchangePanel extends SmartTable
@@ -42,25 +42,13 @@ public class ExchangePanel extends SmartTable
     }
 
     protected class ExchangeDataDataModel
-        extends ServiceBackedDataModel<ExchangeData, ExchangeStatusData>
+        extends PagedServiceDataModel<ExchangeData, ExchangeStatusData>
     {
         @Override
         protected void callFetchService (
             int start, int count, boolean needCount, AsyncCallback<ExchangeStatusData> callback)
         {
             _moneysvc.getExchangeStatus(start, count, callback);
-        }
-
-        @Override
-        protected int getCount (ExchangeStatusData result)
-        {
-            return result.total;
-        }
-
-        @Override
-        protected List<ExchangeData> getRows (ExchangeStatusData result)
-        {
-            return result.page;
         }
 
         @Override
