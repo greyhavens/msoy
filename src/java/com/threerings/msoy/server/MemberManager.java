@@ -537,6 +537,10 @@ public class MemberManager
             }
 
             @Override public void handleSuccess () {
+                if (_avatar.equals(user.avatar)) {
+                    log.warning("AVAMEM: suppressing setting of same avatar");
+                    return;
+                }
                 finishSetAvatar(user, _avatar, _memories,
                                 (InvocationService.ConfirmListener)_listener);
             }
