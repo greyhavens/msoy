@@ -24,3 +24,7 @@ fi
 #
 # Path for launching a thane interpreter
 THANE_INTERPRETER=dist/lib/avmthane
+
+# True if we're running PostgreSQL 8.3, false for anything else
+# TODO: Temporary
+DEPOT_PG83=false

@@ -2,7 +2,7 @@
 #
 # $Id$
 #
-# A script to invoke the MetaSOY! server and email the generated logs when it
+# A script to invoke the MetaSOY! world server and email the generated logs when it
 # eventually exits.
 
 NAME=msoy
@@ -24,6 +24,8 @@ LOGFILE=$MSOY_HOME/log/stdout-$PROCID.log
 LOG_EMAIL=nightly-logs@threerings.net
 SERVER_MEMORY=384M
 
+DEPOT_PG83=false
+
 # Override settings with those from MSOY_HOME/dist/msoy-server.conf
 if [ -f $MSOY_HOME/dist/msoy-server.conf ]; then
     . $MSOY_HOME/dist/msoy-server.conf
@@ -43,6 +45,7 @@ CLASS=com.threerings.msoy.server.MsoyServer
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dhostname=$HOSTNAME \
     -Dis_node=true \
+    -Dcom.samskivert.depot.pg83=$DEPOT_PG83
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp \
     -Djava.rmi.server.hostname=$HOSTNAME \

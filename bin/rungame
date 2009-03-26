@@ -2,7 +2,8 @@
 #
 # $Id$
 #
-# Runs a game hosting server.
+# A script to invoke the MetaSOY! game server and email the generated logs when it
+# eventually exits.
 
 NAME=msoy
 DESC="MetaSOY game server"
@@ -21,6 +22,8 @@ CONNECT_PORT=$2
 LOGFILE=$MSOY_HOME/log/stdout-p$LISTEN_PORT.log
 LOG_EMAIL=nightly-logs@threerings.net
 
+DEPOT_PG83=false
+
 # Override settings with those from MSOY_HOME/dist/msoy-server.conf
 if [ -f $MSOY_HOME/dist/msoy-server.conf ]; then
     . $MSOY_HOME/dist/msoy-server.conf
@@ -33,6 +36,7 @@ CLASS=com.threerings.msoy.game.server.GameServer
 JAVA_ARGS="-server \
     -Djava.awt.headless=true \
     -Dhostname=$HOSTNAME \
+    -Dcom.samskivert.depot.pg83=$DEPOT_PG83
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp \
     -Djava.security.manager -Djava.security.policy=$MSOY_HOME/dist/security.policy \
