@@ -6,8 +6,6 @@ package com.threerings.msoy.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
-import com.threerings.msoy.data.HomePageItem;
-
 /**
  * Services for members.
  */
@@ -19,6 +17,12 @@ public interface MemberService extends InvocationService
      * sent via email.
      */
     void inviteToBeFriend (Client client, int friendId, ResultListener listener);
+
+    /**
+     * Requests to invite a set of users to be our friend.
+     * TODO: a custom listener with more details might be a good idea
+     */
+    void inviteAllToBeFriends (Client client, int[] memberIds, ConfirmListener listener);
 
     /**
      * Boot the specified user from the current place.
@@ -86,25 +90,10 @@ public interface MemberService extends InvocationService
     void getDisplayName (Client client, int memberId, ResultListener listener);
 
     /**
-     * Get the name of the indicated group.
-     */
-    void getGroupName (Client client, int groupId, ResultListener listener);
-
-    /**
      * Set the given scene as the owner's home scene
      */
-    void setHomeSceneId (
-        Client client, int ownerType, int ownerId, int sceneId, ConfirmListener listener);
-
-    /**
-     * Get the given group's home scene id.
-     */
-    void getGroupHomeSceneId (Client client, int groupId, ResultListener listener);
-
-    /**
-     * Indicate whether we want to hear the group chat of the specified group.
-     */
-    void setHearingGroupChat (Client client, int groupId, boolean hear, ConfirmListener listener);
+    void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
+                         ConfirmListener listener);
 
     /**
      * Acknowledges that the user has read their warning message.
@@ -117,59 +106,7 @@ public interface MemberService extends InvocationService
     void complainMember (Client client, int memberId, String complaint);
 
     /**
-     * Updates the status/headline for this member.
+     * Updates the status/headline for the calling member.
      */
     void updateStatus (Client client, String status, InvocationListener listener);
-
-    /**
-     * Shares a scene by emailing offsite friends.
-     */
-    void emailShare (Client client, boolean isGame, String placeName, int placeId,
-                     String[] emails, String message, ConfirmListener listener);
-
-    /**
-     * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
-     */
-    void getABTestGroup (
-        Client client, String testName, boolean logEvent, ResultListener listener);
-
-    /**
-     * Generic method for tracking a client-side action such as clicking a button.
-     */
-    void trackClientAction (Client client, String actionName, String details);
-
-    /**
-     * Tracking a client-side action such as clicking a button during an a/b test.  If testName
-     * is supplied, the visitor's a/b test group will also be tracked.
-     */
-    void trackTestAction (Client client, String actionName, String testName);
-
-    /**
-     * Requests that the server enumerate and send to the client all EarnedBadges possible, for
-     * testing.  This is only used on dev deployments.
-     */
-    void loadAllBadges (Client client, ResultListener listener);
-
-    /**
-     * Requests that any notifications that were deferred on the MemberObject be dispatched now
-     */
-    void dispatchDeferredNotifications (Client client);
-
-    /**
-     * Requests that any notifications that were deferred on the MemberObject be dispatched now
-     */
-    void trackVectorAssociation (Client client, String vector);
-
-    /**
-     * Requests the items to populate the home page grid. The expected response is an arry of
-     * {@link HomePageItem}. This should eventually take a parameter so that the top 3 "whirled"
-     * items are a separate request from the very cachable 6 "what I've done recently" items.
-     */
-    void getHomePageGridItems (Client client, ResultListener listener);
-
-    /**
-     * Requests to invite a set of users to be our friend.
-     * TODO: a custom listener with more details might be a good idea
-     */
-    void inviteAllToBeFriends (Client client, int[] memberIds, ConfirmListener listener);
 }

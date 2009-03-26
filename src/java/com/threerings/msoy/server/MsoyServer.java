@@ -418,6 +418,9 @@ public class MsoyServer extends MsoyBaseServer
     /** Handles HTTP servlet requests. */
     @Inject protected MsoyHttpServer _httpServer;
 
+    /** Our runtime msoy manager. */
+    @Inject protected MsoyManager _msoyMan;
+
     /** Our runtime member manager. */
     @Inject protected MemberManager _memberMan;
 

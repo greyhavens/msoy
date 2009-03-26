@@ -10,8 +10,8 @@ import com.threerings.presents.data.InvocationCodes;
  */
 public class MsoyCodes extends InvocationCodes
 {
-    /** Defines our member invocation services group. */
-    public static const MEMBER_GROUP :String = "msoy.member";
+    /** Defines our global invocation services group. */
+    public static const MSOY_GROUP :String = "msoy";
 
     /** Defines our world invocation services group. */
     public static const WORLD_GROUP :String = "msoy.world";

@@ -36,6 +36,7 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyService;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
@@ -191,7 +192,7 @@ public class ChatTabBar extends HBox
             // when the user opens a group channel explicitly, we want to make sure
             // we always tell the server that they want to hear it, just in case.
             if (channel.type == MsoyChatChannel.GROUP_CHANNEL) {
-                (_ctx.getClient().getService(MemberService) as MemberService).setHearingGroupChat(
+                (_ctx.getClient().getService(MsoyService) as MsoyService).setHearingGroupChat(
                     _ctx.getClient(), (channel.ident as GroupName).getGroupId(), true,
                     _ctx.confirmListener());
             }
@@ -460,7 +461,7 @@ public class ChatTabBar extends HBox
         // the server that it will deliver no more
         if (tab.channel.type == MsoyChatChannel.GROUP_CHANNEL) {
             tab.displayCloseBox(false);
-            (_ctx.getClient().getService(MemberService) as MemberService).setHearingGroupChat(
+            (_ctx.getClient().getService(MsoyService) as MsoyService).setHearingGroupChat(
                 _ctx.getClient(), (tab.channel.ident as GroupName).getGroupId(), false,
                 _ctx.confirmListener(function () :void {
                     removeTab(tab);

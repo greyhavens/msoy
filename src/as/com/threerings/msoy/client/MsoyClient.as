@@ -35,8 +35,6 @@ import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.crowd.client.CrowdClient;
 
-import com.threerings.msoy.client.MsoyLogConfig;
-
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -70,6 +68,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     // statically reference classes we require
     MsoyBootstrapData;
     MsoyAuthResponseData;
+    MsoyService;
     LurkerName;
 
     public function MsoyClient (stage :Stage)
@@ -233,7 +232,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function getABTestGroup (
         testName :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
     {
-        var msvc :MemberService = requireService(MemberService) as MemberService;
+        var msvc :MsoyService = requireService(MsoyService) as MsoyService;
         msvc.getABTestGroup(this, testName, logEvent, listener);
     }
 
@@ -270,7 +269,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     public function trackClientAction (actionName :String, details :String) :void
     {
-        var msvc :MemberService = getService(MemberService) as MemberService;
+        var msvc :MsoyService = getService(MsoyService) as MsoyService;
         if (msvc != null) {
             msvc.trackClientAction(this, actionName, details);
         } else {
@@ -285,7 +284,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     public function trackTestAction (actionName :String, testName :String) :void
     {
-        var msvc :MemberService = getService(MemberService) as MemberService;
+        var msvc :MsoyService = getService(MsoyService) as MsoyService;
         if (msvc != null) {
             msvc.trackTestAction(this, actionName, testName);
         } else {
@@ -326,7 +325,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 var params :Object = MsoyParameters.get();
                 var vector :String = params[VisitorInfo.VECTOR_ID];
                 if (vector != null && vector.length > 0) {
-                    var msvc :MemberService = requireService(MemberService) as MemberService;
+                    var msvc :MsoyService = requireService(MsoyService) as MsoyService;
                     msvc.trackVectorAssociation(this, vector);
                 }
 

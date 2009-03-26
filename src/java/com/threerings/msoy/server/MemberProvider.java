@@ -31,32 +31,15 @@ public interface MemberProvider extends InvocationProvider
     void complainMember (ClientObject caller, int arg1, String arg2);
 
     /**
-     * Handles a {@link MemberService#dispatchDeferredNotifications} request.
-     */
-    void dispatchDeferredNotifications (ClientObject caller);
-
-    /**
      * Handles a {@link MemberService#ditchFollower} request.
      */
     void ditchFollower (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#emailShare} request.
-     */
-    void emailShare (ClientObject caller, boolean arg1, String arg2, int arg3, String[] arg4, String arg5, InvocationService.ConfirmListener arg6)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#followMember} request.
      */
     void followMember (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#getABTestGroup} request.
-     */
-    void getABTestGroup (ClientObject caller, String arg1, boolean arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**
@@ -72,27 +55,9 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#getGroupHomeSceneId} request.
-     */
-    void getGroupHomeSceneId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#getGroupName} request.
-     */
-    void getGroupName (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#getHomeId} request.
      */
     void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#getHomePageGridItems} request.
-     */
-    void getHomePageGridItems (ClientObject caller, InvocationService.ResultListener arg1)
         throws InvocationException;
 
     /**
@@ -114,12 +79,6 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#loadAllBadges} request.
-     */
-    void loadAllBadges (ClientObject caller, InvocationService.ResultListener arg1)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#setAvatar} request.
      */
     void setAvatar (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
@@ -137,12 +96,6 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#setHearingGroupChat} request.
-     */
-    void setHearingGroupChat (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
-        throws InvocationException;
-
-    /**
      * Handles a {@link MemberService#setHomeSceneId} request.
      */
     void setHomeSceneId (ClientObject caller, int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
@@ -153,21 +106,6 @@ public interface MemberProvider extends InvocationProvider
      */
     void setMuted (ClientObject caller, int arg1, boolean arg2, InvocationService.InvocationListener arg3)
         throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#trackClientAction} request.
-     */
-    void trackClientAction (ClientObject caller, String arg1, String arg2);
-
-    /**
-     * Handles a {@link MemberService#trackTestAction} request.
-     */
-    void trackTestAction (ClientObject caller, String arg1, String arg2);
-
-    /**
-     * Handles a {@link MemberService#trackVectorAssociation} request.
-     */
-    void trackVectorAssociation (ClientObject caller, String arg1);
 
     /**
      * Handles a {@link MemberService#updateAvailability} request.

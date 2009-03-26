@@ -357,7 +357,7 @@ public class ShareDialog extends FloatingPanel
         }
 
         // send the emails and messages off to the server for delivery
-        (_ctx.getClient().requireService(MemberService) as MemberService).emailShare(
+        (_ctx.getClient().requireService(MsoyService) as MsoyService).emailShare(
             _ctx.getClient(), _inGame, _placeName, _placeId, emails, message,
             _ctx.confirmListener("m.share_email_sent"));
 

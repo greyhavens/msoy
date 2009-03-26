@@ -57,7 +57,7 @@ public class MemberDirector extends BasicDirector
     // from BasicDirector
     override protected function registerServices (client :Client) :void
     {
-        client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
+        client.addServiceGroup(MsoyCodes.MSOY_GROUP);
     }
 
     // from BasicDirector

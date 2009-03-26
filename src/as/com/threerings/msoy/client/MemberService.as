@@ -25,19 +25,10 @@ public interface MemberService extends InvocationService
     function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void;
 
     // from Java interface MemberService
-    function dispatchDeferredNotifications (arg1 :Client) :void;
-
-    // from Java interface MemberService
     function ditchFollower (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function emailShare (arg1 :Client, arg2 :Boolean, arg3 :String, arg4 :int, arg5 :TypedArray /* of class java.lang.String */, arg6 :String, arg7 :InvocationService_ConfirmListener) :void;
-
-    // from Java interface MemberService
     function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
-
-    // from Java interface MemberService
-    function getABTestGroup (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
@@ -46,16 +37,7 @@ public interface MemberService extends InvocationService
     function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function getGroupHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
-    function getGroupName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
     function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
-    function getHomePageGridItems (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function inviteAllToBeFriends (arg1 :Client, arg2 :TypedArray /* of int */, arg3 :InvocationService_ConfirmListener) :void;
@@ -67,9 +49,6 @@ public interface MemberService extends InvocationService
     function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function loadAllBadges (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
     function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
@@ -79,22 +58,10 @@ public interface MemberService extends InvocationService
     function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function setHearingGroupChat (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
-
-    // from Java interface MemberService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void;
-
-    // from Java interface MemberService
-    function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void;
-
-    // from Java interface MemberService
-    function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void;
-
-    // from Java interface MemberService
-    function trackVectorAssociation (arg1 :Client, arg2 :String) :void;
 
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;

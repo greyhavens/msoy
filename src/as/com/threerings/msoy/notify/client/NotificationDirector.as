@@ -25,8 +25,8 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.AwardPanel;
 
-import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyService;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -273,7 +273,7 @@ public class NotificationDirector extends BasicDirector
         }
 
         // tell the server to go ahead and dispatch any notifications it had saved up.
-        const msvc :MemberService = client.requireService(MemberService) as MemberService;
+        const msvc :MsoyService = client.requireService(MsoyService) as MsoyService;
         msvc.dispatchDeferredNotifications(_ctx.getClient());
     }
 

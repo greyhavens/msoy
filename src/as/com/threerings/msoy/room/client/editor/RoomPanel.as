@@ -18,10 +18,10 @@ import com.threerings.flex.CommandButton;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MemberService;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.world.client.WorldService;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyScene;
@@ -95,8 +95,8 @@ public class RoomPanel extends BasePanel
                 var resultHandler :Function = function (result :Object) :void {
                     _homeButton.enabled = (sceneModel.sceneId != (result as int));
                 };
-                var svc :MemberService =
-                    _controller.ctx.getClient().requireService(MemberService) as MemberService;
+                var svc :WorldService =
+                    _controller.ctx.getClient().requireService(WorldService) as WorldService;
                 svc.getGroupHomeSceneId(_controller.ctx.getClient(), sceneModel.ownerId,
                     _controller.ctx.resultListener(resultHandler, MsoyCodes.EDITING_MSGS));
             }

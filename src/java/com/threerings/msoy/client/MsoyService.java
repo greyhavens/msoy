@@ -1,0 +1,51 @@
+//
+// $Id$
+
+package com.threerings.msoy.client;
+
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
+
+/**
+ * Provides global non-member-related services.
+ */
+public interface MsoyService extends InvocationService
+{
+    /**
+     * Requests that any notifications that were deferred on the MemberObject be dispatched now
+     */
+    void dispatchDeferredNotifications (Client client);
+
+    /**
+     * Indicate whether we want to hear the group chat of the specified group.
+     */
+    void setHearingGroupChat (Client client, int groupId, boolean hear, ConfirmListener listener);
+
+    /**
+     * Shares a scene by emailing offsite friends.
+     */
+    void emailShare (Client client, boolean isGame, String placeName, int placeId,
+                     String[] emails, String message, ConfirmListener listener);
+
+    /**
+     * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
+     */
+    void getABTestGroup (
+        Client client, String testName, boolean logEvent, ResultListener listener);
+
+    /**
+     * Generic method for tracking a client-side action such as clicking a button.
+     */
+    void trackClientAction (Client client, String actionName, String details);
+
+    /**
+     * Tracking a client-side action such as clicking a button during an a/b test.  If testName
+     * is supplied, the visitor's a/b test group will also be tracked.
+     */
+    void trackTestAction (Client client, String actionName, String testName);
+
+    /**
+     * Requests that any notifications that were deferred on the MemberObject be dispatched now
+     */
+    void trackVectorAssociation (Client client, String vector);
+}

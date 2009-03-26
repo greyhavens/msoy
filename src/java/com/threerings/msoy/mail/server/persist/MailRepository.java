@@ -37,7 +37,6 @@ import com.threerings.msoy.server.util.JSONMarshaller;
 
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
-import com.threerings.msoy.mail.gwt.MailPayload;
 
 /**
  * Manages the persistent store of mail and mailboxes.

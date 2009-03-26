@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.server;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;

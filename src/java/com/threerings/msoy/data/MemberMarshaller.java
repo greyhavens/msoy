@@ -51,17 +51,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #dispatchDeferredNotifications} requests. */
-    public static final int DISPATCH_DEFERRED_NOTIFICATIONS = 4;
-
-    // from interface MemberService
-    public void dispatchDeferredNotifications (Client arg1)
-    {
-        sendRequest(arg1, DISPATCH_DEFERRED_NOTIFICATIONS, new Object[] {});
-    }
-
     /** The method id used to dispatch {@link #ditchFollower} requests. */
-    public static final int DITCH_FOLLOWER = 5;
+    public static final int DITCH_FOLLOWER = 4;
 
     // from interface MemberService
     public void ditchFollower (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -73,21 +64,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #emailShare} requests. */
-    public static final int EMAIL_SHARE = 6;
-
-    // from interface MemberService
-    public void emailShare (Client arg1, boolean arg2, String arg3, int arg4, String[] arg5, String arg6, InvocationService.ConfirmListener arg7)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener7 = new InvocationMarshaller.ConfirmMarshaller();
-        listener7.listener = arg7;
-        sendRequest(arg1, EMAIL_SHARE, new Object[] {
-            Boolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, listener7
-        });
-    }
-
     /** The method id used to dispatch {@link #followMember} requests. */
-    public static final int FOLLOW_MEMBER = 7;
+    public static final int FOLLOW_MEMBER = 5;
 
     // from interface MemberService
     public void followMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -99,21 +77,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #getABTestGroup} requests. */
-    public static final int GET_ABTEST_GROUP = 8;
-
-    // from interface MemberService
-    public void getABTestGroup (Client arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
-    {
-        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, GET_ABTEST_GROUP, new Object[] {
-            arg2, Boolean.valueOf(arg3), listener4
-        });
-    }
-
     /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
-    public static final int GET_CURRENT_MEMBER_LOCATION = 9;
+    public static final int GET_CURRENT_MEMBER_LOCATION = 6;
 
     // from interface MemberService
     public void getCurrentMemberLocation (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -126,7 +91,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getDisplayName} requests. */
-    public static final int GET_DISPLAY_NAME = 10;
+    public static final int GET_DISPLAY_NAME = 7;
 
     // from interface MemberService
     public void getDisplayName (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -138,34 +103,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #getGroupHomeSceneId} requests. */
-    public static final int GET_GROUP_HOME_SCENE_ID = 11;
-
-    // from interface MemberService
-    public void getGroupHomeSceneId (Client arg1, int arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_GROUP_HOME_SCENE_ID, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
-
-    /** The method id used to dispatch {@link #getGroupName} requests. */
-    public static final int GET_GROUP_NAME = 12;
-
-    // from interface MemberService
-    public void getGroupName (Client arg1, int arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_GROUP_NAME, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
-
     /** The method id used to dispatch {@link #getHomeId} requests. */
-    public static final int GET_HOME_ID = 13;
+    public static final int GET_HOME_ID = 8;
 
     // from interface MemberService
     public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
@@ -177,21 +116,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #getHomePageGridItems} requests. */
-    public static final int GET_HOME_PAGE_GRID_ITEMS = 14;
-
-    // from interface MemberService
-    public void getHomePageGridItems (Client arg1, InvocationService.ResultListener arg2)
-    {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, GET_HOME_PAGE_GRID_ITEMS, new Object[] {
-            listener2
-        });
-    }
-
     /** The method id used to dispatch {@link #inviteAllToBeFriends} requests. */
-    public static final int INVITE_ALL_TO_BE_FRIENDS = 15;
+    public static final int INVITE_ALL_TO_BE_FRIENDS = 9;
 
     // from interface MemberService
     public void inviteAllToBeFriends (Client arg1, int[] arg2, InvocationService.ConfirmListener arg3)
@@ -204,7 +130,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
-    public static final int INVITE_TO_BE_FRIEND = 16;
+    public static final int INVITE_TO_BE_FRIEND = 10;
 
     // from interface MemberService
     public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -217,7 +143,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #inviteToFollow} requests. */
-    public static final int INVITE_TO_FOLLOW = 17;
+    public static final int INVITE_TO_FOLLOW = 11;
 
     // from interface MemberService
     public void inviteToFollow (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -229,21 +155,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #loadAllBadges} requests. */
-    public static final int LOAD_ALL_BADGES = 18;
-
-    // from interface MemberService
-    public void loadAllBadges (Client arg1, InvocationService.ResultListener arg2)
-    {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LOAD_ALL_BADGES, new Object[] {
-            listener2
-        });
-    }
-
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 19;
+    public static final int SET_AVATAR = 12;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
@@ -256,7 +169,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setAway} requests. */
-    public static final int SET_AWAY = 20;
+    public static final int SET_AWAY = 13;
 
     // from interface MemberService
     public void setAway (Client arg1, boolean arg2, String arg3)
@@ -267,7 +180,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 21;
+    public static final int SET_DISPLAY_NAME = 14;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
@@ -279,21 +192,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #setHearingGroupChat} requests. */
-    public static final int SET_HEARING_GROUP_CHAT = 22;
-
-    // from interface MemberService
-    public void setHearingGroupChat (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, SET_HEARING_GROUP_CHAT, new Object[] {
-            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
-        });
-    }
-
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 23;
+    public static final int SET_HOME_SCENE_ID = 15;
 
     // from interface MemberService
     public void setHomeSceneId (Client arg1, int arg2, int arg3, int arg4, InvocationService.ConfirmListener arg5)
@@ -306,7 +206,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setMuted} requests. */
-    public static final int SET_MUTED = 24;
+    public static final int SET_MUTED = 16;
 
     // from interface MemberService
     public void setMuted (Client arg1, int arg2, boolean arg3, InvocationService.InvocationListener arg4)
@@ -318,41 +218,8 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #trackClientAction} requests. */
-    public static final int TRACK_CLIENT_ACTION = 25;
-
-    // from interface MemberService
-    public void trackClientAction (Client arg1, String arg2, String arg3)
-    {
-        sendRequest(arg1, TRACK_CLIENT_ACTION, new Object[] {
-            arg2, arg3
-        });
-    }
-
-    /** The method id used to dispatch {@link #trackTestAction} requests. */
-    public static final int TRACK_TEST_ACTION = 26;
-
-    // from interface MemberService
-    public void trackTestAction (Client arg1, String arg2, String arg3)
-    {
-        sendRequest(arg1, TRACK_TEST_ACTION, new Object[] {
-            arg2, arg3
-        });
-    }
-
-    /** The method id used to dispatch {@link #trackVectorAssociation} requests. */
-    public static final int TRACK_VECTOR_ASSOCIATION = 27;
-
-    // from interface MemberService
-    public void trackVectorAssociation (Client arg1, String arg2)
-    {
-        sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, new Object[] {
-            arg2
-        });
-    }
-
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 28;
+    public static final int UPDATE_AVAILABILITY = 17;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)
@@ -363,7 +230,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 29;
+    public static final int UPDATE_STATUS = 18;
 
     // from interface MemberService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)

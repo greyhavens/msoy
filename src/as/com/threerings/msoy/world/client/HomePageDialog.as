@@ -14,20 +14,20 @@ import mx.controls.Text;
 
 import com.threerings.flash.GraphicsUtil;
 import com.threerings.flex.CommandCheckBox;
-import com.threerings.util.Log;
 import com.threerings.io.TypedArray;
+import com.threerings.util.Log;
+
+import com.threerings.msoy.badge.data.all.BadgeCodes;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.data.AVRGameNavItemData;
+import com.threerings.msoy.data.BasicNavItemData;
+import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.HomePageItem;
-import com.threerings.msoy.data.AVRGameNavItemData;
-import com.threerings.msoy.data.BasicNavItemData;
-import com.threerings.msoy.badge.data.all.BadgeCodes;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * The "My Whirled Places" 3x3 grid of recent games and rooms you have visited, plus stamps and
@@ -93,7 +93,7 @@ public class HomePageDialog extends FloatingPanel
 
     public function refresh () :void
     {
-        var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        var svc :WorldService = _ctx.getClient().requireService(WorldService) as WorldService;
         svc.getHomePageGridItems(_ctx.getClient(), _ctx.resultListener(gotItems));
     }
 

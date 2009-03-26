@@ -58,7 +58,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -67,11 +66,8 @@ import com.threerings.msoy.server.util.ServiceUnit;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
-import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.game.server.PlayerNodeActions;
-import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -111,7 +107,7 @@ public class MemberManager
         InvocationManager invmgr, MsoyPeerManager peerMan, MemberLocator locator)
     {
         // register our bootstrap invocation service
-        invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
+        invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MSOY_GROUP);
 
         // register to hear when members logon and off
         locator.addObserver(this);
@@ -290,7 +286,7 @@ public class MemberManager
             @Override public void handleSuccess () {
                 reportRequestProcessed(autoFriended);
                 if (autoFriended) {
-                    trackClientAction(caller, "autoFriendedFlashClient", null);
+                    _msoyMan.trackClientAction(caller, "autoFriendedFlashClient", null);
                 }
             }
         });
@@ -582,22 +578,6 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getGroupName (final ClientObject caller, final int groupId,
-                              final InvocationService.ResultListener listener)
-    {
-        _invoker.postUnit(new PersistingUnit("getGroupName", listener, "gid", groupId) {
-            @Override public void invokePersistent () throws Exception {
-                final GroupRecord rec = _groupRepo.loadGroup(groupId);
-                _groupName = (rec == null) ? "" : rec.name;
-            }
-            @Override public void handleSuccess () {
-                reportRequestProcessed(_groupName);
-            }
-            protected String _groupName;
-        });
-    }
-
-    // from interface MemberProvider
     public void acknowledgeWarning (final ClientObject caller)
     {
         final MemberObject user = (MemberObject) caller;
@@ -643,31 +623,6 @@ public class MemberManager
                 super.handleSuccess();
             }
         });
-    }
-
-    // from interface MemberProvider
-    public void getGroupHomeSceneId (final ClientObject caller, final int groupId,
-                                     final InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        _invoker.postUnit(new PersistingUnit("getHomeSceneId", listener, "gid", groupId) {
-            @Override public void invokePersistent () throws Exception {
-                _homeSceneId = _groupRepo.getHomeSceneId(groupId);
-            }
-            @Override public void handleSuccess () {
-                reportRequestProcessed(_homeSceneId);
-            }
-            protected int _homeSceneId;
-        });
-    }
-
-    // from interface MemberProvider
-    public void setHearingGroupChat (
-        ClientObject caller, int groupId, boolean hear, InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        caller.getLocal(MemberLocal.class).setHearingGroupChat(groupId, hear);
-        listener.requestProcessed();
     }
 
     // from interface MemberProvider
@@ -749,154 +704,6 @@ public class MemberManager
                 member.setHeadline(commitStatus);
                 MemberNodeActions.updateFriendEntries(member);
             }
-        });
-    }
-
-    // from interface MemberProvider
-    public void trackVectorAssociation (ClientObject caller, final String vector)
-    {
-        final VisitorInfo info = ((MemberObject)caller).visitorInfo;
-        _invoker.postUnit(new WriteOnlyUnit("trackVectorAssociation") {
-            @Override public void invokePersist () throws Exception {
-                _memberLogic.trackVectorAssociation(info, vector);
-            }
-        });
-    }
-
-    // from interface MemberProvider
-    public void emailShare (ClientObject caller, boolean isGame, String placeName, int placeId,
-                            String[] emails, String message, InvocationService.ConfirmListener cl)
-    {
-        final MemberObject memObj = (MemberObject) caller;
-        String page;
-        if (isGame) {
-            page = "world-game_g_" + placeId;
-        } else {
-            page = "world-s" + placeId;
-        }
-
-        // set them up with the affiliate info
-        String url = ServerConfig.getServerURL() + "welcome/" + memObj.getMemberId() +
-            "/" + StringUtil.encode(page);
-
-        final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
-        // username is their authentication username which is their email address
-        final String from = memObj.username.toString();
-        for (final String recip : emails) {
-            // this just passes the buck to an executor, so we can call it from the dobj thread
-            _mailer.sendTemplateEmail(
-                MailSender.By.HUMAN, recip, from, template, "inviter", memObj.memberName,
-                "name", placeName, "message", message, "link", url);
-        }
-
-        cl.requestProcessed();
-    }
-
-    // from interface MemberProvider
-    public void getABTestGroup (final ClientObject caller, final String testName,
-        final boolean logEvent, final InvocationService.ResultListener listener)
-    {
-        final MemberObject memObj = (MemberObject) caller;
-        _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
-            @Override public void invokePersistent () throws Exception {
-                _testGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, logEvent);
-            }
-            @Override public void handleSuccess () {
-                reportRequestProcessed(_testGroup);
-            }
-            protected Integer _testGroup;
-        });
-    }
-
-    // from interface MemberProvider
-    public void trackClientAction (final ClientObject caller, final String actionName,
-        final String details)
-    {
-        final MemberObject memObj = (MemberObject) caller;
-        if (memObj.visitorInfo == null) {
-            log.warning("Failed to log client action with null visitorInfo", "caller", caller.who(),
-                        "actionName", actionName);
-            return;
-        }
-        _eventLog.clientAction(memObj.getVisitorId(), actionName, details);
-    }
-
-    // from interface MemberProvider
-    public void trackTestAction (final ClientObject caller, final String actionName,
-        final String testName)
-    {
-        final MemberObject memObj = (MemberObject) caller;
-        if (memObj.visitorInfo == null) {
-            log.warning("Failed to log test action with null visitorInfo", "caller", caller.who(),
-                        "actionName", actionName);
-            return;
-        }
-
-        _invoker.postUnit(new Invoker.Unit("getABTestGroup") {
-            @Override public boolean invoke () {
-                int abTestGroup = -1;
-                String actualTestName;
-                if (testName != null) {
-                    // grab the group without logging a tracking event about it
-                    abTestGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, false);
-                    actualTestName = testName;
-                } else {
-                    actualTestName = "";
-                }
-                _eventLog.testAction(memObj.getVisitorId(), actionName, actualTestName,
-                    abTestGroup);
-                return false;
-            }
-        });
-    }
-
-    // from interface MemberProvider
-    public void loadAllBadges (ClientObject caller, InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        long now = System.currentTimeMillis();
-        List<EarnedBadge> badges = Lists.newArrayList();
-        for (BadgeType type : BadgeType.values()) {
-            int code = type.getCode();
-            for (int ii = 0; ii < type.getNumLevels(); ii++) {
-                String levelUnits = type.getRequiredUnitsString(ii);
-                int coinValue = type.getCoinValue(ii);
-                badges.add(new EarnedBadge(code, ii, levelUnits, coinValue, now));
-            }
-        }
-
-        listener.requestProcessed(badges.toArray(new EarnedBadge[badges.size()]));
-    }
-
-    // from interface MemberProvider
-    public void dispatchDeferredNotifications (ClientObject caller)
-    {
-        _notifyMan.dispatchDeferredNotifications((MemberObject)caller);
-    }
-
-    // from interface MemberProvider
-    public void getHomePageGridItems (
-        ClientObject caller, InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        MemberObject memObj = (MemberObject) caller;
-        final MemberExperience[] experiences = new MemberExperience[memObj.experiences.size()];
-        memObj.experiences.toArray(experiences);
-        final boolean onTour = memObj.onTour;
-        final int memberId = memObj.getMemberId();
-        final short badgesVersion = memObj.getLocal(MemberLocal.class).badgesVersion;
-
-        _invoker.postUnit(new PersistingUnit("getHPGridItems", listener, "who", memObj.who()) {
-            @Override public void invokePersistent () throws Exception {
-                _result = _memberLogic.getHomePageGridItems(
-                    memberId, experiences, onTour, badgesVersion);
-            }
-
-            @Override public void handleSuccess () {
-                reportRequestProcessed(_result);
-            }
-
-            protected Object _result;
         });
     }
 
@@ -1124,6 +931,7 @@ public class MemberManager
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected BodyManager _bodyMan;
+    @Inject protected MsoyManager _msoyMan;
     @Inject protected ClientManager _clmgr;
     @Inject protected CronLogic _cronLogic;
     @Inject protected FeedRepository _feedRepo;
@@ -1131,7 +939,6 @@ public class MemberManager
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected MailLogic _mailLogic;
-    @Inject protected MailSender _mailer;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;

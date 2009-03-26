@@ -10,8 +10,8 @@ import com.threerings.presents.data.InvocationCodes;
  */
 public interface MsoyCodes extends InvocationCodes
 {
-    /** Defines our member invocation services group. */
-    public static final String MEMBER_GROUP = "msoy.member";
+    /** Defines our msoy (shared) invocation services group. */
+    public static final String MSOY_GROUP = "msoy";
 
     /** Defines our game invocation services group. */
     public static final String GAME_GROUP = "msoy.game";
