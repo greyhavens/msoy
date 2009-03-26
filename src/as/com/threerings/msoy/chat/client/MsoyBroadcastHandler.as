@@ -26,10 +26,8 @@ public class MsoyBroadcastHandler extends BroadcastHandler
         ctx :CrowdContext, speakSvc :SpeakService,
         cmd :String, args :String, history :Array) :String
     {
-        // get member object. if it is admin, do a normal broadcast
-        var client :Client = ctx.getClient();
-        var memObj :MemberObject = MemberObject(client.getClientObject());
-        if (memObj == null || memObj.getTokens().isAdmin()) {
+        // if they have access to the normal broadcast, that's what they get
+        if (super.checkAccess(BodyObject(ctx.getClient().getClientObject()))) {
             return super.handleCommand(ctx, speakSvc, cmd, args, history);
         }
 
@@ -41,11 +39,8 @@ public class MsoyBroadcastHandler extends BroadcastHandler
 
     override public function checkAccess (user :BodyObject) :Boolean
     {
-        // guests can't do this
-        if (!(user is MemberObject) || MemberObject(user).isPermaguest()) {
-            return super.checkAccess(user);
-        }
-        return true;
+        // no permaguests
+        return (user is MemberObject) && !MemberObject(user).isPermaguest();
     }
 }
 }
