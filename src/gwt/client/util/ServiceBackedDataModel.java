@@ -94,6 +94,7 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
 
     protected void onSuccess (R result, AsyncCallback<List<T>> callback)
     {
+        setCurrentResult(result);
         if (_count < 0) {
             _count = getCount(result);
         }
@@ -108,6 +109,14 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
         } else {
             MsoyUI.error(CShell.serverError(caught));
         }
+    }
+
+    /**
+     * Lets subclasses know that the result has arrived for the current page. This is handy if the
+     * getRows method needs to access a cross-section of the result such as a map of member names.
+     */
+    protected void setCurrentResult (R result)
+    {
     }
 
     /**
