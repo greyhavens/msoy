@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
@@ -36,7 +37,7 @@ public class MultiServerAverageResult extends FieldAggregatedResult
     public boolean putData (final Map<String, Object> result)
     {
         // sort our samples by time
-        List<Sample> sorted = Lists.sortedCopy(samples);
+        List<Sample> sorted = Ordering.natural().sortedCopy(samples);
 
         // per-server time series
         Map<String, TreeSet<Sample>> timeSeries = toServerTimeSeries(samples);
