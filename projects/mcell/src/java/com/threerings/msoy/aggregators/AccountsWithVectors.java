@@ -12,8 +12,8 @@ import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.result.Result;
-import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.aggregator.result.field.FieldKey;
+import com.threerings.panopticon.aggregator.result.field.FieldResult;
 import com.threerings.panopticon.aggregator.result.field.FieldWritable;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.efs.storev2.EventWriter;
@@ -38,12 +38,12 @@ public class AccountsWithVectors
     }
     
     @Result(inputs="VectorAssociated")
-    public static class VectorMap extends FieldAggregatedResult 
+    public static class VectorMap extends FieldResult<VectorMap> 
     {
         public Map<String, String> trackerToVector = Maps.newHashMap();
 
         @Override
-        public void doInit (EventData eventData)
+        public boolean init (EventData eventData)
         {
             String tracker = eventData.getString("tracker");
             String vector = eventData.getString("vector");
@@ -54,24 +54,26 @@ public class AccountsWithVectors
                     vector = vector.substring(0, ampersand);
                 }
                 trackerToVector.put(tracker, vector);
+                return true;
             }
+            return false;
         }
 
         @Override
-        public void combine (FieldAggregatedResult result)
+        public void combine (VectorMap result)
         {
             // we're really not supposed to have multiple vectors per tracker, so just overwrite
-            trackerToVector.putAll(((VectorMap) result).trackerToVector);
+            trackerToVector.putAll(result.trackerToVector);
         }
     }
 
     @Result(inputs="AccountCreated")
-    public static class AccountMap extends FieldAggregatedResult
+    public static class AccountMap extends FieldResult<AccountMap>
     {
         public Map<String, Account> trackerToAccount = Maps.newHashMap();
 
         @Override
-        public void doInit (EventData eventData)
+        public boolean init (EventData eventData)
         {
             Boolean isGuestValue = (Boolean)eventData.getData().get("isGuest");
 
@@ -80,14 +82,16 @@ public class AccountsWithVectors
                     eventData.getInt("newMemberId"),
                     eventData.getDate("timestamp"),
                     eventData.getInt("affiliateId")));
+                return true;
             }
+            return false;
         }
         
         @Override
-        public void combine (FieldAggregatedResult result)
+        public void combine (AccountMap result)
         {
             // we're really not supposed to have multiple accounts per tracker, so just overwrite
-            trackerToAccount.putAll(((AccountMap) result).trackerToAccount);
+            trackerToAccount.putAll(result.trackerToAccount);
         }
     }
     
