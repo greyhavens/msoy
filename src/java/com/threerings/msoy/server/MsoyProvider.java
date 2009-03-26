@@ -32,6 +32,18 @@ public interface MsoyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MsoyService#purchaseAndSendBroadcast} request.
+     */
+    void purchaseAndSendBroadcast (ClientObject caller, int arg1, String arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MsoyService#secureBroadcastQuote} request.
+     */
+    void secureBroadcastQuote (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MsoyService#setHearingGroupChat} request.
      */
     void setHearingGroupChat (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)

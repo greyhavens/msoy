@@ -53,6 +53,18 @@ public class MsoyDispatcher extends InvocationDispatcher<MsoyMarshaller>
             );
             return;
 
+        case MsoyMarshaller.PURCHASE_AND_SEND_BROADCAST:
+            ((MsoyProvider)provider).purchaseAndSendBroadcast(
+                source, ((Integer)args[0]).intValue(), (String)args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
+        case MsoyMarshaller.SECURE_BROADCAST_QUOTE:
+            ((MsoyProvider)provider).secureBroadcastQuote(
+                source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
         case MsoyMarshaller.SET_HEARING_GROUP_CHAT:
             ((MsoyProvider)provider).setHearingGroupChat(
                 source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]

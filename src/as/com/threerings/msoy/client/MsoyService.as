@@ -24,6 +24,12 @@ public interface MsoyService extends InvocationService
     function getABTestGroup (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface MsoyService
+    function purchaseAndSendBroadcast (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface MsoyService
+    function secureBroadcastQuote (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+
+    // from Java interface MsoyService
     function setHearingGroupChat (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MsoyService

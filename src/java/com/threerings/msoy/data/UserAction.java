@@ -46,7 +46,7 @@ public class UserAction extends SimpleStreamableObject
         EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55),
 
         // buying shit from OOO
-        BOUGHT_ROOM(100), BOUGHT_GROUP(101),
+        BOUGHT_ROOM(100), BOUGHT_GROUP(101), BOUGHT_BROADCAST(102),
 
         UNUSED(255);
 

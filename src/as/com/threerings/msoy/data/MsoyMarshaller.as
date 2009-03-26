@@ -61,8 +61,34 @@ public class MsoyMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>purchaseAndSendBroadcast</code> requests. */
+    public static const PURCHASE_AND_SEND_BROADCAST :int = 4;
+
+    // from interface MsoyService
+    public function purchaseAndSendBroadcast (arg1 :Client, arg2 :int, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
+    {
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, PURCHASE_AND_SEND_BROADCAST, [
+            Integer.valueOf(arg2), arg3, listener4
+        ]);
+    }
+
+    /** The method id used to dispatch <code>secureBroadcastQuote</code> requests. */
+    public static const SECURE_BROADCAST_QUOTE :int = 5;
+
+    // from interface MsoyService
+    public function secureBroadcastQuote (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    {
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, SECURE_BROADCAST_QUOTE, [
+            listener2
+        ]);
+    }
+
     /** The method id used to dispatch <code>setHearingGroupChat</code> requests. */
-    public static const SET_HEARING_GROUP_CHAT :int = 4;
+    public static const SET_HEARING_GROUP_CHAT :int = 6;
 
     // from interface MsoyService
     public function setHearingGroupChat (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
@@ -75,7 +101,7 @@ public class MsoyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>trackClientAction</code> requests. */
-    public static const TRACK_CLIENT_ACTION :int = 5;
+    public static const TRACK_CLIENT_ACTION :int = 7;
 
     // from interface MsoyService
     public function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void
@@ -86,7 +112,7 @@ public class MsoyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>trackTestAction</code> requests. */
-    public static const TRACK_TEST_ACTION :int = 6;
+    public static const TRACK_TEST_ACTION :int = 8;
 
     // from interface MsoyService
     public function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void
@@ -97,7 +123,7 @@ public class MsoyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>trackVectorAssociation</code> requests. */
-    public static const TRACK_VECTOR_ASSOCIATION :int = 7;
+    public static const TRACK_VECTOR_ASSOCIATION :int = 9;
 
     // from interface MsoyService
     public function trackVectorAssociation (arg1 :Client, arg2 :String) :void

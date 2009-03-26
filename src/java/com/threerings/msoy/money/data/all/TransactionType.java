@@ -32,6 +32,7 @@ public enum TransactionType
     ROOM_PURCHASE(17),
     GROUP_PURCHASE(18),
     CREATED_LISTING(19),
+    BROADCAST_PURCHASE(20),
     ;
 
     // Required by ByteEnum

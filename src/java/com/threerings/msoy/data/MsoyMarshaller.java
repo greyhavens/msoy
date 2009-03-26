@@ -53,8 +53,34 @@ public class MsoyMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #purchaseAndSendBroadcast} requests. */
+    public static final int PURCHASE_AND_SEND_BROADCAST = 4;
+
+    // from interface MsoyService
+    public void purchaseAndSendBroadcast (Client arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, PURCHASE_AND_SEND_BROADCAST, new Object[] {
+            Integer.valueOf(arg2), arg3, listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #secureBroadcastQuote} requests. */
+    public static final int SECURE_BROADCAST_QUOTE = 5;
+
+    // from interface MsoyService
+    public void secureBroadcastQuote (Client arg1, InvocationService.ResultListener arg2)
+    {
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, SECURE_BROADCAST_QUOTE, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #setHearingGroupChat} requests. */
-    public static final int SET_HEARING_GROUP_CHAT = 4;
+    public static final int SET_HEARING_GROUP_CHAT = 6;
 
     // from interface MsoyService
     public void setHearingGroupChat (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
@@ -67,7 +93,7 @@ public class MsoyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackClientAction} requests. */
-    public static final int TRACK_CLIENT_ACTION = 5;
+    public static final int TRACK_CLIENT_ACTION = 7;
 
     // from interface MsoyService
     public void trackClientAction (Client arg1, String arg2, String arg3)
@@ -78,7 +104,7 @@ public class MsoyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackTestAction} requests. */
-    public static final int TRACK_TEST_ACTION = 6;
+    public static final int TRACK_TEST_ACTION = 8;
 
     // from interface MsoyService
     public void trackTestAction (Client arg1, String arg2, String arg3)
@@ -89,7 +115,7 @@ public class MsoyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackVectorAssociation} requests. */
-    public static final int TRACK_VECTOR_ASSOCIATION = 7;
+    public static final int TRACK_VECTOR_ASSOCIATION = 9;
 
     // from interface MsoyService
     public void trackVectorAssociation (Client arg1, String arg2)

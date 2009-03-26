@@ -16,6 +16,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -23,15 +24,22 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.TransactionType;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import static com.threerings.msoy.Log.log;
@@ -181,10 +189,62 @@ public class MsoyManager
         _notifyMan.dispatchDeferredNotifications((MemberObject)caller);
     }
 
+    // from MemberProvider
+    public void secureBroadcastQuote (
+        ClientObject caller, final InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        final int memberId = ((MemberObject)caller).getMemberId();
+        _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
+            @Override public void invokePersistent () {
+                _quote = _moneyLogic.securePrice(memberId, BROADCAST_PURCHASE_KEY,
+                    Currency.BARS, _moneyLogic.getBroadcastCost()).getBars();
+            }
+            @Override public void handleSuccess () {
+                reportRequestProcessed(_quote);
+            }
+            protected int _quote;
+        });
+    }
+
+    // from MemberProvider
+    public void purchaseAndSendBroadcast (
+        ClientObject caller, final int authedCost, String message, ConfirmListener listener)
+        throws InvocationException
+    {
+        final int memberId = ((MemberObject)caller).getMemberId();
+        _invoker.postUnit(new PersistingUnit("purchaseBroadcast", listener) {
+            public void invokePersistent () 
+                throws Exception {
+                int costNow = _moneyLogic.getBroadcastCost();
+                if (costNow != authedCost) {
+                    // TODO: add this string to MsoyCodes; the client will need to know about
+                    // this particular failure
+                    throw new InvocationException("e.broadcast_inflation");
+                }
+                // TODO: create the broadcast history record with this
+                BuyOperation<Void> buyOp = null;
+                // TODO: translate exceptions
+                MemberRecord mrec = _memberRepo.loadMember(memberId);
+                _moneyLogic.buyFromOOO(mrec, BROADCAST_PURCHASE_KEY, Currency.BARS, authedCost,
+                    Currency.BARS, _moneyLogic.getBroadcastCost(), buyOp, UserAction.Type.BOUGHT_BROADCAST,
+                    "m.broadcast_bought", TransactionType.BROADCAST_PURCHASE, null);
+            }
+            public void handleSuccess () {
+                // TODO: send the message if everything went well
+            }
+        });
+    }
+
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected NotificationManager _notifyMan;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MemberRepository _memberRepo;
+
+    /** An arbitrary key for tracking quotes for broadcast messages. */
+    protected static final Object BROADCAST_PURCHASE_KEY = new Object();
 }
