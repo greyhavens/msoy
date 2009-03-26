@@ -16,7 +16,7 @@ import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
 
-import com.threerings.msoy.money.client.CurrencyButton;
+import com.threerings.msoy.money.client.BuyButton;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
@@ -30,19 +30,11 @@ public class BroadcastPanel extends FloatingPanel
 {
     public static var log :Log = Log.getLog(BroadcastPanel);
 
-    /**
-     * Shows the panel and if everything is confirmed broadcasts the given message for a fee.
-     */
-    public static function show (ctx :MsoyContext, msg :String) :void
-    {
-        var panel :BroadcastPanel = new BroadcastPanel(ctx, msg);
-        panel.requestQuote();
-    }
-
     public function BroadcastPanel (ctx :MsoyContext, msg :String)
     {
         super(ctx);
         _msg = msg;
+        open();
     }
 
     override protected function createChildren () :void
@@ -56,7 +48,8 @@ public class BroadcastPanel extends FloatingPanel
         _barCost = new Label();
         addChild(_barCost);
 
-        addChild(_barButton = new CurrencyButton(processPurchase));
+        addChild(_barButton = new BuyButton(Currency.BARS, processPurchase));
+        _barButton.enabled = false;
 
         showCloseButton = true;
     }
@@ -64,8 +57,10 @@ public class BroadcastPanel extends FloatingPanel
     /**
      * Asks the server for the going rate for a broadcast.
      */
-    protected function requestQuote () :void
+    override protected function didOpen () :void
     {
+        super.didOpen();
+
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
         msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotQuote, getQuoteFailed));
@@ -75,14 +70,11 @@ public class BroadcastPanel extends FloatingPanel
     {
         log.info("Got quote", "result", result);
         _quote = result.getBars();
-        if (!isOpen()) {
-            // if we weren't shown before, let createChildren take care of setting the bar value
-            open();
-        }
 
         // update displayed value
         _barCost.text = "" + _quote;
-        _barButton.setValue(Currency.BARS, _quote);
+        _barButton.setValue(_quote);
+        _barButton.enabled = true;
     }
 
     protected function getQuoteFailed (cause :String) :void
@@ -122,6 +114,6 @@ public class BroadcastPanel extends FloatingPanel
     protected var _msg :String;
     protected var _barCost :Label;
     protected var _quote :int;
-    protected var _barButton :CurrencyButton;
+    protected var _barButton :BuyButton;
 }
 }

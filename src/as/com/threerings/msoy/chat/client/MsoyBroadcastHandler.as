@@ -31,7 +31,7 @@ public class MsoyBroadcastHandler extends BroadcastHandler
             super.doBroadcast(ctx, msg);
 
         } else {
-            BroadcastPanel.show(MsoyContext(ctx), msg);
+            new BroadcastPanel(MsoyContext(ctx), msg);
         }
     }
 }
