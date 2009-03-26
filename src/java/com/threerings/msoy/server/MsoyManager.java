@@ -21,7 +21,6 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.PersistingUnit;
 
-import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -33,8 +32,6 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import static com.threerings.msoy.Log.log;

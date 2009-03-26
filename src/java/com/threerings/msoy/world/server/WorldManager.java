@@ -3,15 +3,10 @@
 
 package com.threerings.msoy.world.server;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -24,20 +19,10 @@ import com.threerings.presents.util.PersistingUnit;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.util.MailSender;
 
-import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.notify.server.NotificationManager;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Handles various global world services.

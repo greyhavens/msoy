@@ -60,7 +60,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.ServiceUnit;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;

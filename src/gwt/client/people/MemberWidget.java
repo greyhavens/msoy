@@ -3,9 +3,6 @@
 
 package client.people;
 
-import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -15,7 +12,6 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MemberStatusLabel;
-import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
 
