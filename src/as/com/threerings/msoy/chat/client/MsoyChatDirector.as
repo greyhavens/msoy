@@ -31,6 +31,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.whirled.ui.PlayerList;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -68,6 +69,9 @@ public class MsoyChatDirector extends ChatDirector
         registerCommandHandler(msg, "away", new AwayHandler(true));
         registerCommandHandler(msg, "back", new AwayHandler(false));
         registerCommandHandler(msg, "bleepall", new BleepAllHandler());
+        if (DeploymentConfig.devDeployment) {
+            registerCommandHandler(msg, "broadcast", new MsoyBroadcastHandler());
+        }
 
         // Ye Olde Easter Eggs
         registerCommandHandler(msg, "~egg", new HackHandler(function (args :String) :void {
