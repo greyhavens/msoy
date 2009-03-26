@@ -95,7 +95,7 @@ public class SurveyRepository extends DepotRepository
 
     /**
      * Updates an existing survey question. Note that the index is part of the primary key, so
-     * {@link #moveQuestion()} must be used to update that.
+     * {@link #moveQuestion} must be used to update that.
      */
     public void updateQuestion (SurveyQuestionRecord question)
     {
