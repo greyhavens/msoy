@@ -50,6 +50,7 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -659,7 +660,7 @@ public class MemberManager
         for (ChatMessage msg : SpeakUtil.getChatHistory(complainerName)) {
             UserMessage umsg = (UserMessage)msg;
             chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ').
-                append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
+                append(StringUtil.pad(MsoyChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
                 append(umsg.speaker);
             if (umsg.speaker instanceof MemberName) {
                 int memberId = ((MemberName)umsg.speaker).getMemberId();
