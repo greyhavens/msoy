@@ -5,9 +5,10 @@ package com.threerings.msoy.chat.client {
 
 import mx.controls.Label;
 
-import com.threerings.util.Integer;
 import com.threerings.util.Log;
 import com.threerings.presents.client.ResultAdapter;
+
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.data.MsoyCodes;
@@ -15,6 +16,8 @@ import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
 
+import com.threerings.msoy.money.client.CurrencyButton;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
@@ -44,13 +47,17 @@ public class BroadcastPanel extends FloatingPanel
 
     override protected function createChildren () :void
     {
+        super.createChildren();
+
+        addChild(FlexUtil.createLabel(_msg));
+
         // TODO: add text that explains what's going on
         // TODO: big orange buy button with bar graphic and big orange "get bars" button
-        super.createChildren();
         _barCost = new Label();
-        _barCost.text = "" + _quote;
         addChild(_barCost);
-        addButtons(OK_BUTTON);
+
+        addChild(_barButton = new CurrencyButton(processPurchase));
+
         showCloseButton = true;
     }
 
@@ -71,11 +78,11 @@ public class BroadcastPanel extends FloatingPanel
         if (!isOpen()) {
             // if we weren't shown before, let createChildren take care of setting the bar value
             open();
-
-        } else {
-            // otherwise, update it
-            _barCost.text = "" + _quote;
         }
+
+        // update displayed value
+        _barCost.text = "" + _quote;
+        _barButton.setValue(Currency.BARS, _quote);
     }
 
     protected function getQuoteFailed (cause :String) :void
@@ -104,20 +111,17 @@ public class BroadcastPanel extends FloatingPanel
         _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    protected function processPurchase () :void
     {
-        if (buttonId == OK_BUTTON) {
-            var client :MsoyClient = _ctx.getMsoyClient();
-            var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-            msoySvc.purchaseAndSendBroadcast(client, _quote, _msg,
-                new ResultAdapter(broadcastSent, broadcastFailed));
-        } else {
-            super.buttonClicked(buttonId);
-        }
+        var client :MsoyClient = _ctx.getMsoyClient();
+        var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
+        msoySvc.purchaseAndSendBroadcast(client, _quote, _msg,
+            new ResultAdapter(broadcastSent, broadcastFailed));
     }
 
     protected var _msg :String;
     protected var _barCost :Label;
     protected var _quote :int;
+    protected var _barButton :CurrencyButton;
 }
 }
