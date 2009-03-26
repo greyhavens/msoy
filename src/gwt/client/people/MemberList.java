@@ -91,9 +91,10 @@ public class MemberList extends PagedGrid<MemberCard>
         @Override
         protected void addExtras (SmartTable extras, MemberCard card)
         {
+            super.addExtras(extras, card);
+
             int row = extras.getRowCount();
             boolean isNotMe = CShell.getMemberId() != card.name.getMemberId();
-
             ClickListener onClick;
 
             // potentially show the add friend button
@@ -115,8 +116,11 @@ public class MemberList extends PagedGrid<MemberCard>
                     MsoyUI.createActionLabel(_msgs.mlSendMail(), onClick));
             }
 
-            super.addExtras(extras, card);
-            row = extras.getRowCount();
+            onClick = Link.createListener(Pages.WORLD, "m" + card.name.getMemberId());
+            extras.setWidget(row, 0,
+                MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
+            extras.setWidget(row++, 1,
+                MsoyUI.createActionLabel(_msgs.mlVisitHome(), onClick));
 
             // if they are our friend, show the remove friend button
             if (isNotMe && card.isFriend) {

@@ -60,15 +60,6 @@ public class MemberWidget extends SmartTable
 
     protected void addExtras (SmartTable extras, MemberCard card)
     {
-        int row = extras.getRowCount();
-
-        // always show the visit home button
-        ClickListener onClick = Link.createListener(Pages.WORLD, "m" + card.name.getMemberId());
-        extras.setWidget(row, 0,
-            MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
-        extras.setWidget(row++, 1,
-            MsoyUI.createActionLabel(_msgs.mlVisitHome(), onClick));
+        // nothing, presently
     }
-
-    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }
