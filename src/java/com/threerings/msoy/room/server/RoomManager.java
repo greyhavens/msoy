@@ -98,8 +98,6 @@ import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.chat.data.MsoyChatCodes;
-
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -350,14 +348,6 @@ public class RoomManager extends SpotSceneManager
         if (!canManage(caller)) {
             throw new InvocationException(RoomCodes.E_CANNOT_ADD_PET);
         }
-    }
-
-    @Override // from PlaceManager, via SpeakerValidator
-    public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode)
-    {
-        // don't allow anyone to fake-up a paid broadcast
-        return (mode != MsoyChatCodes.PAID_BROADCAST_MODE) &&
-            super.isValidSpeaker(speakObj, speaker, mode);
     }
 
     /**
