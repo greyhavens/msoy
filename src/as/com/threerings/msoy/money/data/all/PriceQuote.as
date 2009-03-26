@@ -75,8 +75,8 @@ public class PriceQuote extends SimpleStreamableObject
     /* For debugging */
     override public function toString () :String
     {
-        return "PriceQuote[" + _listedCurrency + "-listed]: " +
-            _coins + "coins, " + _bars + "bars.";
+        return "PriceQuote[listed=" + _listedCurrency + ", coins=" + _coins + ", bars=" + _bars +
+            ", change=" + _coinChange + ", rate=" + _rate + ", centsPerBar=" + _centsPerBar + "]";
     }
 
     // from interface Streamable
