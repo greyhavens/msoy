@@ -18,6 +18,12 @@ public class DateUtil
     }
 
     @SuppressWarnings("deprecation")
+    public static int[] toDateVec (Date date)
+    {
+        return new int[]{date.getYear(), date.getMonth(), date.getDate()};
+    }
+
+    @SuppressWarnings("deprecation")
     public static Date newDate (String dateStr)
     {
         return new Date(dateStr);
