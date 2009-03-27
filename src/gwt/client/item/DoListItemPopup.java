@@ -45,8 +45,8 @@ public class DoListItemPopup extends VerticalPanel
 
     public static void show (Item item, CatalogListing listing, ListedListener listener)
     {
-        // make sure the item in question has a thumbnmail image, reject if not
-        if (item.getRawThumbnailMedia() == null) {
+        // if salable, require that the item in question have a thumbnmail image
+        if (item.isSalable() && item.getRawThumbnailMedia() == null) {
             MsoyUI.error(_imsgs.doListNeedThumb());
             return;
         }
@@ -63,9 +63,6 @@ public class DoListItemPopup extends VerticalPanel
         _item = item;
         _listener = listener;
 
-        // determine whether or not this item is salable
-        boolean salableItem = !(_item instanceof SubItem) || ((SubItem)_item).isSalable();
-
         // note whether we are listing this item for the first time or updating its listing or
         // whether or not we're repricing an existing listing
         boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
@@ -75,7 +72,7 @@ public class DoListItemPopup extends VerticalPanel
             add(MsoyUI.createLabel(_imsgs.doUppriceBlurb(), "Blurb"));
         } else {
             String message = _imsgs.doUpdateBlurb();
-            if (salableItem) {
+            if (_item.isSalable()) {
                 message += _imsgs.doUpdateSalableNote();
             }
             add(MsoyUI.createHTML(message, "Blurb"));
@@ -92,7 +89,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // add a rating interface
-        if (salableItem && firstTime) {
+        if (_item.isSalable() && firstTime) {
             SmartTable rating = new SmartTable(0, 3);
             rating.addWidget(MsoyUI.createHTML(_imsgs.doListRatingIntro(), null), 2, null);
             rating.addWidget(WidgetUtil.makeShim(5, 5), 2, null);
@@ -114,7 +111,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // possibly add the pricing selection UI
-        if (salableItem && (firstTime || repricing)) {
+        if (_item.isSalable() && (firstTime || repricing)) {
             SmartTable pricing = new SmartTable(0, 3);
 
             int row = pricing.addWidget(
@@ -123,9 +120,8 @@ public class DoListItemPopup extends VerticalPanel
 
             row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
-            boolean isSalable = (_item instanceof SubItem && !((SubItem) _item).isSalable());
-            int selectedPricingIndex =
-                (isSalable ? CatalogListing.PRICING_HIDDEN : CatalogListing.PRICING_ESCALATE)-1;
+            int selectedPricingIndex = (_item.isSalable() ? CatalogListing.PRICING_HIDDEN :
+                                        CatalogListing.PRICING_ESCALATE)-1;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(_dmsgs.xlate(key));
