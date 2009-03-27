@@ -20,6 +20,15 @@ public class DateFields extends HorizontalPanel
 {
     public DateFields ()
     {
+        this(-100, -MIN_AGE);
+    }
+
+    /**
+     * Create new date fields showing all years between those given. The years are relative to the
+     * current year.
+     */
+    public DateFields (int year0, int yearN)
+    {
         setStyleName("dateFields");
         setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 
@@ -44,8 +53,8 @@ public class DateFields extends HorizontalPanel
         divider.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 
         add(_year = new ListBox());
-        int start = DateUtil.getYear(new Date())+1900-MIN_AGE;
-        for (int ii = 0; ii < 100-MIN_AGE; ii++) {
+        int start = DateUtil.getYear(new Date())+1900+yearN;
+        for (int ii = 0; ii < yearN-year0; ii++) {
             _year.addItem(""+(start-ii));
         }
     }
