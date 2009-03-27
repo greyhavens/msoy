@@ -618,7 +618,7 @@ public class GroupRepository extends DepotRepository
             SQLOperator tagExistsExp = search.tagExistsExpression();
             if (tagExistsExp != null) {
                 orderBy = OrderBy.descending(new Arithmetic.Add(new SQLOperator[] {
-                    new Case(tagExistsExp, new ValueExp(0.6), new ValueExp(0.0)),
+                    new Case(tagExistsExp, new ValueExp(0.3), new ValueExp(0.0)),
                     search.fullTextRank(),
                 }));
             } else {
