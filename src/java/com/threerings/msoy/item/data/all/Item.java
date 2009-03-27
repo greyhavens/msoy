@@ -344,6 +344,14 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     /**
+     * Returns true if this item can be sold in the catalog, false otherwise.
+     */
+    public boolean isSalable ()
+    {
+        return true;
+    }
+
+    /**
      * Returns true if this item can be rated (it is a clone of a catalog entry, or a catalog entry
      * itself), false if not.
      */

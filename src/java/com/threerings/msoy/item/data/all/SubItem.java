@@ -25,14 +25,6 @@ public abstract class SubItem extends Item
      */
     public abstract byte getSuiteMasterType ();
 
-    /**
-     * Returns true if this sub-item can be sold in the catalog, false otherwise.
-     */
-    public boolean isSalable ()
-    {
-        return true;
-    }
-
     @Override // from Item
     public boolean isConsistent ()
     {
