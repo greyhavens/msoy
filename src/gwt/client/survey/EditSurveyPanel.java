@@ -48,6 +48,8 @@ public class EditSurveyPanel extends VerticalPanel
      */
     public EditSurveyPanel()
     {
+        setStyleName("editSurveys");
+        setWidth("100%");
     }
 
     /**
@@ -57,18 +59,16 @@ public class EditSurveyPanel extends VerticalPanel
      */
     public void setArgs (Args args)
     {
-        boolean survey = args.getArgCount() >= 2;
-        boolean question = args.getArgCount() >= 3;
-
-        int surveyId = args.get(1, 0);
-        int questionIndex = args.get(2, 0);
-
-        if (!survey) {
+        if (args.getArgCount() < 2) {
             // show survey list
             clear();
             add(new SurveysPanel());
+            return;
 
-        } else if (!question) {
+        }
+
+        int surveyId = args.get(1, 0);
+        if (args.getArgCount() < 3) {
             if (surveyId == 0) {
                 // add a new survey
                 clear();
@@ -79,17 +79,19 @@ public class EditSurveyPanel extends VerticalPanel
                 clear();
                 add(new SurveyPanel(surveyId));
             }
-        } else {
-            if (questionIndex == -1) {
-                // add a new question
-                clear();
-                add(new QuestionPanel(surveyId));
+            return;
+        }
 
-            } else {
-                // edit an existing question
-                clear();
-                add(new QuestionPanel(surveyId, questionIndex));
-            }
+        int questionIndex = args.get(2, 0);
+        if (questionIndex == -1) {
+            // add a new question
+            clear();
+            add(new QuestionPanel(surveyId));
+
+        } else {
+            // edit an existing question
+            clear();
+            add(new QuestionPanel(surveyId, questionIndex));
         }
     }
 
@@ -103,6 +105,9 @@ public class EditSurveyPanel extends VerticalPanel
          */
         public SurveysPanel ()
         {
+            setStyleName("surveys");
+            setWidth("100%");
+
             // show a loading message and load em up
             add(MsoyUI.createLabel(_msgs.loadingSurveys(), null));
             _cache.getSurveys(new AsyncCallback<List<SurveyMetaData>>() {
@@ -146,10 +151,12 @@ public class EditSurveyPanel extends VerticalPanel
                 }
             };
             table.setModel(new SimpleDataModel<SurveyMetaData>(surveys), 0);
+            table.addStyleName("table");
+            table.setWidth("100%");
             add(table);
 
             // link to add a new survey (id 0)
-            add(Link.create(_msgs.addNew(), Pages.ADMINZ, Args.compose(ACTION, 0)));
+            add(Link.create(_msgs.addNew(), "addNew", Pages.ADMINZ, Args.compose(ACTION, 0)));
         }
     }
 
@@ -163,6 +170,9 @@ public class EditSurveyPanel extends VerticalPanel
          */
         public SurveyPanel ()
         {
+            setWidth("100%");
+            setStyleName("survey");
+
             init(new SurveyWithQuestions(new SurveyMetaData(), new ArrayList<SurveyQuestion>()));
         }
 
@@ -171,6 +181,9 @@ public class EditSurveyPanel extends VerticalPanel
          */
         public SurveyPanel (int surveyId)
         {
+            setWidth("100%");
+            setStyleName("survey");
+
             // show a loading message and load em up
             add(MsoyUI.createLabel(_msgs.loadingSurvey(), null));
             _cache.getQuestions(surveyId, new AsyncCallback<SurveyWithQuestions>() {
@@ -192,8 +205,9 @@ public class EditSurveyPanel extends VerticalPanel
 
             // metadata fields w/ save button
             SmartTable table = new SmartTable();
+            table.setWidth("100%");
             final TextBox name = MsoyUI.createTextBox(_result.survey.name, 80, 40);
-            table.setText(0, 0, _msgs.nameLabel());
+            table.setText(0, 0, _msgs.nameLabel(), 1, "label");
             table.setWidget(0, 1, name);
             Button save = new Button(_msgs.save());
             new ClickCallback<SurveyMetaData>(save) {
@@ -242,16 +256,12 @@ public class EditSurveyPanel extends VerticalPanel
                     // last column is controls to rearrange or delete questions
                     HorizontalPanel alterBox = new HorizontalPanel();
                     alterBox.setSpacing(2);
-                    if (index > 0) {
-                        alterBox.add(MsoyUI.createActionLabel(_msgs.moveUp(),
-                            new AlterQuestion(index, -1)));
-                    }
-                    if (index < _result.questions.size() - 1) {
-                        alterBox.add(MsoyUI.createActionLabel(_msgs.moveDown(),
-                            new AlterQuestion(index, 1)));
-                    }
-                    alterBox.add(MsoyUI.createActionLabel(_msgs.delete(),
-                        new AlterQuestion(index, 0)));
+                    Button button;
+                    alterBox.add(button = new Button(_msgs.moveUp(), new AlterQuestion(index, -1)));
+                    button.setEnabled(index > 0);
+                    alterBox.add(button = new Button(_msgs.moveDown(), new AlterQuestion(index, 1)));
+                    button.setEnabled(index < _result.questions.size() - 1);
+                    alterBox.add(new Button(_msgs.delete(), new AlterQuestion(index, 0)));
                     row.add(alterBox);
                     return row;
                 }
@@ -261,10 +271,12 @@ public class EditSurveyPanel extends VerticalPanel
                 }
             };
             _questions.setModel(new SimpleDataModel<SurveyQuestion>(_result.questions), 0);
+            _questions.setWidth("100%");
+            _questions.addStyleName("table");
             add(_questions);
 
             // link to create a new question
-            add(Link.create(_msgs.addNewQuestion(), Pages.ADMINZ,
+            add(Link.create(_msgs.addNewQuestion(), "addNew", Pages.ADMINZ,
                 Args.compose(ACTION, _result.survey.surveyId, -1)));
         }
 
@@ -348,6 +360,10 @@ public class EditSurveyPanel extends VerticalPanel
          */
         public QuestionPanel (int surveyId, final int questionIndex)
         {
+            setStyleName("question");
+            setWidth("100%");
+            setSpacing(10);
+
             // show a loading message and load em up
             add(MsoyUI.createLabel(_msgs.loadingSurvey(), null));
             _cache.getQuestions(surveyId, new AsyncCallback<SurveyWithQuestions>() {
@@ -373,6 +389,7 @@ public class EditSurveyPanel extends VerticalPanel
 
             // if we're editing, the type is read only so fill in the rest of the form
             add(_editGrid = new SmartTable());
+            _editGrid.setStyleName("fieldsTable");
             _editGrid.setText(0, 0, _msgs.questionTypeLabel());
             if (_question != null) {
                 finishInit();
@@ -414,7 +431,7 @@ public class EditSurveyPanel extends VerticalPanel
                 _question.type == SurveyQuestion.Type.SUBSET_CHOICE) {
 
                 // existing choices
-                _editGrid.setText(2, 0, _msgs.choices());
+                _editGrid.setText(2, 0, _msgs.choices(), 1, "choicesLabel");
                 refreshChoices();
                 _editGrid.setText(3, 0, "");
 
@@ -464,13 +481,16 @@ public class EditSurveyPanel extends VerticalPanel
 
         protected void refreshChoices ()
         {
+            if (_question.choices == null) {
+                _question.choices = new String[]{};
+            }
+
             // set up the table of choices for this question. show the choice string and a way to
             // delete it. these should usually be pretty short and not worth the trouble of doing
             // up/down controls.
             SmartTable choices = new SmartTable();
-            if (_question.choices == null) {
-                _question.choices = new String[]{};
-            }
+            choices.setWidth("100%");
+            choices.setStyleName("choices");
             int row = 0;
             for (String choice : _question.choices) {
                 final int frow = row++;

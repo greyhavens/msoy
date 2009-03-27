@@ -1,3 +1,5 @@
+/* TakeSurveyPanel */
+
 .takeSurvey {
   font-size: 13px;
 }
@@ -17,4 +19,34 @@
 
 .takeSurvey tr.response td.ui {
   padding-bottom: 20px;
+}
+
+/* EditSurveyPanel */
+
+.editSurveys {
+  font-size: 14px;
+}
+
+.editSurveys .table .header {
+  background: #ff992b;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.editSurveys .surveys .table .col0 { /* name */
+  width: 80%;
+}
+
+.editSurveys .survey .table .col0 { /* text */
+  width: 65%;
+}
+
+.editSurveys .survey .table .row1 {
+  background: #dbeffc;
+}
+
+.editSurveys .question .fieldsTable .choicesLabel {
+  border-right: solid 2px black;
 }
