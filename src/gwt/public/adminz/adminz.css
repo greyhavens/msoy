@@ -330,7 +330,7 @@
    BroadcastHistoryPanel
 -------------------------------------*/
 .BroadcastHistory {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .BroadcastHistory .table .row1 {
@@ -351,6 +351,6 @@
 
 .BroadcastHistory .table .col3 {
   width: 55%;
-  font-size: 9px;
+  font-size: 10px;
   vertical-align: center;
 }
