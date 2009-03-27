@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.game.LocalSubControl,addEventListener,clearScores,feedback,filter,getHeadShot,getInviteToken,getInviterMemberId,getSize,removeEventListener,setFrameRate,setMappedScores,setOccupantsLabel,setPlayerScores,setShowReplay,setStageQuality,showGameLobby,showGameShop,showInvitePage,showTrophies" name="keywords">
+<meta content="LocalSubControl,com.whirled.game.LocalSubControl,addEventListener,clearScores,feedback,filter,getHeadShot,getInviteToken,getInviterMemberId,getSize,isEmbedded,removeEventListener,setFrameRate,setMappedScores,setOccupantsLabel,setPlayerScores,setStageQuality,showAllGames,showGameLobby,showGameShop,showInvitePage,showTrophies" name="keywords">
 <title>com.whirled.game.LocalSubControl</title>
 </head>
 <body>
@@ -155,6 +155,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#isEmbedded()">isEmbedded</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Is the game being played in a "Whirled embed", and not on the main site?
+     In the game testing environment, this will always be false.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#removeEventListener()">removeEventListener</a>(type:String, listener:Function, useCapture:Boolean = false):void</div>
 <div class="summaryTableDescription">
      
@@ -196,17 +205,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setShowReplay()">setShowReplay</a>(show:Boolean):void</div>
+<a class="signatureLink" href="#setStageQuality()">setStageQuality</a>(quality:String = "medium"):void</div>
 <div class="summaryTableDescription">
-     Set whether the rematch/replay button is shown at the end of the game.</div>
+     Set the stage quality to use in your game.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setStageQuality()">setStageQuality</a>(quality:String = "medium"):void</div>
+<a class="signatureLink" href="#showAllGames()">showAllGames</a>():void</div>
 <div class="summaryTableDescription">
-     Set the stage quality to use in your game.</div>
+     Opens the web page for all the games at whirled.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
@@ -510,6 +519,24 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="isEmbedded()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isEmbedded</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isEmbedded():Boolean</code><p>
+     Is the game being played in a "Whirled embed", and not on the main site?
+     In the game testing environment, this will always be false. 
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="removeEventListener()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -626,24 +653,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="setShowReplay()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">setShowReplay</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function setShowReplay(show:Boolean):void</code><p>
-     Set whether the rematch/replay button is shown at the end of the game. It is shown
-     by default, but some games may not support rematching and so should hide the button.
-          <b>Note:</b> this function changes local display only; other clients will not be affected.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">show</span>:Boolean</code></td>
-</tr>
-</table>
-</div>
 <a name="setStageQuality()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -661,6 +670,16 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="showAllGames()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showAllGames</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showAllGames():void</code><p>
+     Opens the web page for all the games at whirled. (Does nothing in the test environment)
+     </p></div>
 <a name="showGameLobby()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

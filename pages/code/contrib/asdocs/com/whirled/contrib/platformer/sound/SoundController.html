@@ -159,7 +159,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#startBackgroundMusic()">startBackgroundMusic</a>(name:String, crossfade:Boolean = true):void</div>
+<a class="signatureLink" href="#startBackgroundMusic()">startBackgroundMusic</a>(name:String, crossfade:Boolean = true, loop:Boolean = true):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">SoundController</td>
 </tr>
@@ -699,7 +699,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function startBackgroundMusic(name:String, crossfade:Boolean = true):void</code><span class="label">Parameters</span>
+<code>public function startBackgroundMusic(name:String, crossfade:Boolean = true, loop:Boolean = true):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
@@ -709,6 +709,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">crossfade</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">loop</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
 </tr>
 </table>
 </div>

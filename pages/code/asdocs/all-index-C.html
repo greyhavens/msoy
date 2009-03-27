@@ -81,6 +81,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Returns true if the local client has management privileges in the current room.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlClient.html#canManageRoom()">canManageRoom</a>(memberId) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlClient.html">RoomSubControlClient</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Can the specified memberId manage the current room?
+     </td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html#_capacity">_capacity</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RingBuffer.html">RingBuffer</a></td>
 </tr>
 <tr>
@@ -121,6 +129,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#event:chatReceived">chatReceived</a> &mdash; Event in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched to entities when they overhear chatter in the room.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlClient.html#event:chatReceived">chatReceived</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlClient.html">RoomSubControlClient</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -258,6 +273,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/CameraSnapshotter.html#clearSnapshot()">clearSnapshot</a>() &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/CameraSnapshotter.html">CameraSnapshotter</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/Mp3AudioPlayer.html#_cliData">_cliData</a> &mdash; Property in class com.threerings.flash.media.<a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/Mp3AudioPlayer.html">Mp3AudioPlayer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -485,7 +506,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#COMPARABLE()">COMPARABLE</a>(c1:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, c2:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#COMPARABLE()">COMPARABLE</a>(c1:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, c2:<a href="com/threerings/util/Comparable.html" onclick="javascript:loadClassListFrame('com/threerings/util./class-list.html');">com.threerings.util:Comparable</a>, ... rest) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -515,7 +536,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparable.html#compareTo()">compareTo</a>(other) &mdash; Method in interface com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparable.html">Comparable</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Compare this object to the other one, and return 0 if they're equal,
+     -1 if this object is less than the other, or 1 if this object is greater.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html#compareTo()">compareTo</a>(other) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Enum.html">Enum</a></td>
@@ -918,6 +941,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td width="20"></td><td>
      Create a sort Function that can be used to compare Points in an
      Array according to their distance from the specified Point.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html#createReverse()">createReverse</a>(comparator) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Comparators.html">Comparators</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Create a Comparator function that reverses the ordering of the specified Comparator.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/SimpleSkinButton.html#createState()">createState</a>(bmp, text, textFieldProps, textFormatProps, padding, height, xshift, yshift, outline) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/SimpleSkinButton.html">SimpleSkinButton</a></td>

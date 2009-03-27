@@ -57,7 +57,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#compareTo()">compareTo</a>(other:Object):int</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Compare this object to the other one, and return 0 if they're equal,
+     -1 if this object is less than the other, or 1 if this object is greater.</div>
 </td><td class="summaryTableOwnerCol">Comparable</td>
 </tr>
 </table>
@@ -76,7 +78,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function compareTo(other:Object):int</code><span class="label">Parameters</span>
+<code>public function compareTo(other:Object):int</code><p>
+     Compare this object to the other one, and return 0 if they're equal,
+     -1 if this object is less than the other, or 1 if this object is greater.
+     Note: Please use [-1, 0, 1] to be compatible with flex Sort objects.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">other</span>:Object</code></td>

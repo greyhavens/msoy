@@ -123,7 +123,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setValue()">setValue</a>(name:String, value:Object):void</div>
+<a class="signatureLink" href="#setValue()">setValue</a>(name:String, value:Object, flush:Boolean = true):void</div>
 <div class="summaryTableDescription">
      Returns the value specified.</div>
 </td><td class="summaryTableOwnerCol">Config</td>
@@ -305,7 +305,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setValue(name:String, value:Object):void</code><p>
+<code>public function setValue(name:String, value:Object, flush:Boolean = true):void</code><p>
      Returns the value specified.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -317,6 +317,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">flush</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
 </tr>
 </table>
 </div>

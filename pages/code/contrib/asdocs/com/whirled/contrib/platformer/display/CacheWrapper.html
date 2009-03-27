@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="CacheWrapper,com.whirled.contrib.platformer.display.CacheWrapper,_disp,_filter,_name,_recolor,disp,name,onComplete,recolor,reset,resetOnComplete,start" name="keywords">
+<meta content="CacheWrapper,com.whirled.contrib.platformer.display.CacheWrapper,_disp,_filter,_listeners,_name,_recolor,disp,name,addDispListener,onComplete,recolor,reset,resetOnComplete,start" name="keywords">
 <title>com.whirled.contrib.platformer.display.CacheWrapper</title>
 </head>
 <body>
@@ -76,6 +76,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">CacheWrapper</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_listeners">_listeners</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">CacheWrapper</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_name">_name</a> : String<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">CacheWrapper</td>
 </tr>
@@ -96,6 +100,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#CacheWrapper()">CacheWrapper</a>(name:String, disp:DisplayObject)</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">CacheWrapper</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addDispListener()">addDispListener</a>(event:String, func:Function):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">CacheWrapper</td>
 </tr>
@@ -182,6 +193,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _filter:ColorMatrixFilter</code>
 </div>
+<a name="_listeners"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_listeners</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _listeners:Array</code>
+</div>
 <a name="_name"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -236,10 +256,30 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="addDispListener()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addDispListener</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addDispListener(event:String, func:Function):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">func</span>:Function</code></td>
+</tr>
+</table>
+</div>
 <a name="onComplete()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">onComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">onComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">

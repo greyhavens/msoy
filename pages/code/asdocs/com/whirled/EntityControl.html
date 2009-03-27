@@ -715,7 +715,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getMemories():Object</code><p>
      Return an associative hash of all the memories. This is not a cheap operation. Use
-     lookupMemory if you know what you want.
+     <code>getMemory</code> if you know what you want.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -723,6 +723,12 @@ showHideInherited();
 <td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../whirled/EntityControl.html#getMemory" target="">getMemory</a>
+</div>
 </div>
 <a name="getMemory()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1022,7 +1028,8 @@ showHideInherited();
 <code>public function setMemory(key:String, value:Object, callback:Function = null):void</code><p>
      Requests that this item's memory be updated with the supplied key/value pair. The supplied
      value must be a simple object (Integer, Number, String) or an Array of simple objects. The
-     contents of the Pet's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.
+     contents of the entity's memory (keys and values) must not exceed 4096 bytes when AMF3
+     encoded.
           </p><p>Setting the memory for a key to null clears that key; subsequent lookups will return the
      default value.</p>
           <p>Note: any instance can update memories!</p>
@@ -1062,8 +1069,7 @@ showHideInherited();
           </p><p>Ticking mechanism is turned off by default. Application needs to set the interval
      explicitly to start receiving tick events. The tick interval can be no smaller than 100ms
      to avoid bogging down the client.</p>
-     
-     <span class="label">Parameters</span>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">interval</span>:Number</code> &mdash; Delay between ticks in milliseconds, either 0ms, or a value larger
@@ -1175,8 +1181,7 @@ showHideInherited();
 <span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#ACTION_TRIGGERED"><code>com.whirled.ControlEvent.ACTION_TRIGGERED</code></a>
 <br><p>
  Dispatched when the instance in control sends a trigger action to all instances.
- 
- </p><p> An event type dispatched when an action is triggered.
+  </p><p> An event type dispatched when an action is triggered.
      name: action name 
      value: action value
           </p></div>
@@ -1193,8 +1198,7 @@ showHideInherited();
 <br><p>
  Dispatched to entities when they overhear chatter in the room. Only
  the instance in control receives this event.
- 
- </p><p> An event type dispatched to all entities when someone chats.
+  </p><p> An event type dispatched to all entities when someone chats.
      Note that only the instance in control receives this event.
      name: the speaker's entity ID
      value: chat message
@@ -1300,8 +1304,7 @@ showHideInherited();
 <span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#MESSAGE_RECEIVED"><code>com.whirled.ControlEvent.MESSAGE_RECEIVED</code></a>
 <br><p>
  Dispatched when any instance sends a message to all instances.
- 
- </p><p> An event type dispatched when a message is received.
+  </p><p> An event type dispatched when a message is received.
      name: message name
      value: message value
           </p></div>
@@ -1318,8 +1321,7 @@ showHideInherited();
 <br><p>
  Dispatched when any entity or AVR game sends a message to all other entities.
  </p><p>Note: this is only dispatched to the instance in control.</p>
- 
- <p> An event type dispatched when a signal is received.
+  <p> An event type dispatched when a signal is received.
      Dispatched only to the instance in control.
      name: signal name
      value: signal value
@@ -1342,8 +1344,7 @@ showHideInherited();
 <p></p><p>
  Dispatched once per tick, only when this instance has control and only if tick interval is
  registered.
- 
- </p></div>
+  </p></div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
 <a name="PROP_DIMENSIONS"></a>

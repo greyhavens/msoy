@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ResourceManager,com.whirled.contrib.simplegame.resource.ResourceManager,_completeCallback,_errorCallback,_loading,_pendingResources,_resourceClasses,_resources,log,isLoading,cancelLoad,createResource,getResource,isResourceLoaded,loadQueuedResources,onSingleResourceError,onSingleResourceLoaded,queueResourceLoad,registerResourceType,shutdown,unload,unloadAll" name="keywords">
+<meta content="ResourceManager,com.whirled.contrib.simplegame.resource.ResourceManager,_loadingResources,_pendingResources,_resourceClasses,_resources,log,isLoading,cancelLoad,createResource,getResource,isResourceLoaded,loadQueuedResources,onSingleResourceError,onSingleResourceLoaded,queueResourceLoad,registerResourceType,resourceExists,shutdown,unload,unloadAll" name="keywords">
 <title>com.whirled.contrib.simplegame.resource.ResourceManager</title>
 </head>
 <body>
@@ -64,15 +64,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_completeCallback">_completeCallback</a> : Function<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_errorCallback">_errorCallback</a> : Function<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_loading">_loading</a> : Boolean<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_loadingResources">_loadingResources</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
@@ -80,7 +72,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pendingResources">_pendingResources</a> : HashMap<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pendingResources">_pendingResources</a> : ResourceSet<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
@@ -184,14 +176,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#onSingleResourceError()">onSingleResourceError</a>(rsrc:<a href="Resource.html">Resource</a>, err:String):void</div>
+<a class="signatureLink" href="#onSingleResourceError()">onSingleResourceError</a>(rsrc:<a href="Resource.html">Resource</a>, err:String, rsrcSet:ResourceSet):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#onSingleResourceLoaded()">onSingleResourceLoaded</a>(rsrc:<a href="Resource.html">Resource</a>):void</div>
+<a class="signatureLink" href="#onSingleResourceLoaded()">onSingleResourceLoaded</a>(rsrc:<a href="Resource.html">Resource</a>, rsrcSet:ResourceSet):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ResourceManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#resourceExists()">resourceExists</a>(name:String):Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
@@ -204,28 +203,10 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_completeCallback"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_completeCallback</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _completeCallback:Function</code>
-</div>
-<a name="_errorCallback"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_errorCallback</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _errorCallback:Function</code>
-</div>
 <a name="isLoading"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">isLoading</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">isLoading</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -234,14 +215,14 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get isLoading():Boolean</code>
 <br>
 </div>
-<a name="_loading"></a>
+<a name="_loadingResources"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_loading</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_loadingResources</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _loading:Boolean</code>
+<code>protected var _loadingResources:Array</code>
 </div>
 <a name="log"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -259,7 +240,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _pendingResources:HashMap</code>
+<code>protected var _pendingResources:ResourceSet</code>
 </div>
 <a name="_resourceClasses"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -392,7 +373,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function onSingleResourceError(rsrc:<a href="Resource.html">Resource</a>, err:String):void</code><span class="label">Parameters</span>
+<code>protected function onSingleResourceError(rsrc:<a href="Resource.html">Resource</a>, err:String, rsrcSet:ResourceSet):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">rsrc</span>:<a href="Resource.html">Resource</a></code></td>
@@ -403,6 +384,12 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">err</span>:String</code></td>
 </tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcSet</span>:ResourceSet</code></td>
+</tr>
 </table>
 </div>
 <a name="onSingleResourceLoaded()"></a>
@@ -412,10 +399,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function onSingleResourceLoaded(rsrc:<a href="Resource.html">Resource</a>):void</code><span class="label">Parameters</span>
+<code>protected function onSingleResourceLoaded(rsrc:<a href="Resource.html">Resource</a>, rsrcSet:ResourceSet):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">rsrc</span>:<a href="Resource.html">Resource</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcSet</span>:ResourceSet</code></td>
 </tr>
 </table>
 </div>
@@ -462,6 +455,27 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">theClass</span>:Class</code></td>
+</tr>
+</table>
+</div>
+<a name="resourceExists()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">resourceExists</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function resourceExists(name:String):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
