@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
-import mx.controls.Label;
+import mx.controls.Text;
 
 import com.threerings.util.Log;
 import com.threerings.presents.client.ResultAdapter;
@@ -12,6 +12,7 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
@@ -32,7 +33,7 @@ public class BroadcastPanel extends FloatingPanel
 
     public function BroadcastPanel (ctx :MsoyContext, msg :String)
     {
-        super(ctx);
+        super(ctx, Msgs.CHAT.get("t.broadcast"));
         _msg = msg;
         open();
     }
@@ -40,13 +41,14 @@ public class BroadcastPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
+        styleName = "broadcastPanel";
 
         addChild(FlexUtil.createLabel(_msg));
 
-        // TODO: add text that explains what's going on
-        // TODO: big orange buy button with bar graphic and big orange "get bars" button
-        _barCost = new Label();
-        addChild(_barCost);
+        _instructions = new Text();
+        _instructions.text = Msgs.CHAT.get("m.broadcast_instructions_initial", "...");
+        _instructions.width = 350;
+        addChild(_instructions);
 
         addChild(_barButton = new BuyButton(Currency.BARS, processPurchase));
         _barButton.enabled = false;
@@ -63,16 +65,24 @@ public class BroadcastPanel extends FloatingPanel
 
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotQuote, getQuoteFailed));
+        msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotFirstQuote, getQuoteFailed));
     }
 
-    protected function gotQuote (result :PriceQuote) :void
+    protected function gotFirstQuote (result :PriceQuote) :void
+    {
+        gotQuote(result, true);
+    }
+
+    protected function gotQuote (result :PriceQuote, first :Boolean) :void
     {
         log.info("Got quote", "result", result);
         _quote = result.getBars();
 
-        // update displayed value
-        _barCost.text = "" + _quote;
+        if (first) {
+            _instructions.text = Msgs.CHAT.get("m.broadcast_instructions_initial", _quote);
+        } else {
+            _instructions.text = Msgs.CHAT.get("m.broadcast_instructions_price_change", _quote);
+        }
         _barButton.setValue(_quote);
         _barButton.enabled = true;
     }
@@ -89,7 +99,7 @@ public class BroadcastPanel extends FloatingPanel
         if (result != null) {
             // oops, the price went up, inform the user and keep the dialog open
             // TODO: do something more exciting here
-            gotQuote(result);
+            gotQuote(result, false);
 
         } else {
             // otherwise, close. The user should see the broadcast as feedback
@@ -112,7 +122,7 @@ public class BroadcastPanel extends FloatingPanel
     }
 
     protected var _msg :String;
-    protected var _barCost :Label;
+    protected var _instructions :Text;
     protected var _quote :int;
     protected var _barButton :BuyButton;
 }
