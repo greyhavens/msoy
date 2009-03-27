@@ -135,6 +135,11 @@ public class SurveyServlet extends MsoyServiceServlet
         if (survey == null) {
             throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
         }
+        long now = System.currentTimeMillis();
+        if (!survey.enabled || (survey.start != null && now < survey.start.getTime()) ||
+            (survey.finish != null && now >= survey.finish.getTime() + 24*60*60*1000)) {
+            throw new ServiceException("e.survey_inactive");
+        }
         SurveySubmissionRecord subRec = new SurveySubmissionRecord();
         subRec.completed = new Date(System.currentTimeMillis());
         subRec.memberId = mrec.memberId;
