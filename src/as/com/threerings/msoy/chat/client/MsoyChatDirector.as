@@ -69,9 +69,9 @@ public class MsoyChatDirector extends ChatDirector
         registerCommandHandler(msg, "away", new AwayHandler(true));
         registerCommandHandler(msg, "back", new AwayHandler(false));
         registerCommandHandler(msg, "bleepall", new BleepAllHandler());
-        if (DeploymentConfig.devDeployment) {
-            registerCommandHandler(msg, "broadcast", new MsoyBroadcastHandler());
-        }
+
+        // override the broadcast command from ChatDirector
+        registerCommandHandler(msg, "broadcast", new MsoyBroadcastHandler());
 
         // Ye Olde Easter Eggs
         registerCommandHandler(msg, "~egg", new HackHandler(function (args :String) :void {
