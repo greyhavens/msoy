@@ -13,14 +13,17 @@ public class BuyButton extends CommandButton
     {
         super(null, cmdOrFn, arg);
 
-        styleName = "buyButton" + currency;
+        if (currency == Currency.BARS) {
+            styleName = "orangeButton";
+        }
+        setStyle("icon", currency.getLargeIconClass());
+        setStyle("fontSize", 24);
+        setStyle("fontFamily", "_sans");
     }
 
     public function setValue (value :int) :void
     {
-        // TODO: update UI
-
-//        _arg = [ currency, value ];
+        label = "" + value;
     }
 }
 }

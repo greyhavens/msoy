@@ -42,6 +42,30 @@ public final class Currency extends Enum
     }
 
     /**
+     * Get the complete URL for the large icon for this currency.
+     */
+    public function getLargeIcon () :String
+    {
+        return DeploymentConfig.serverURL + "/images/ui/" + toString().toLowerCase() + "_large.png";
+    }
+
+    /**
+     * Get the large icon, as a class.
+     */
+    public function getLargeIconClass () :Class
+    {
+        switch (this) {
+        case COINS:
+        default:
+            return CoinsIconClass;
+        case BARS:
+            return BarsIconClass;
+        case BLING:
+            return BlingIconClass;
+        }
+    }
+
+    /**
      * Format a currency value.
      */
     public function format (value :int) :String
@@ -89,4 +113,36 @@ public final class Currency extends Enum
         return Enum.values(Currency);
     }
 }
+}
+
+import com.threerings.flex.LoadedAsset;
+
+import com.threerings.msoy.money.data.all.Currency;
+
+/**
+ * Fucking flex can take a flying fuck. Many style properties may only be classes.
+ * These classes are here so that we don't have to embed these images in the client.
+ */
+class CoinsIconClass extends LoadedAsset
+{
+    public function CoinsIconClass ()
+    {
+        super(Currency.COINS.getLargeIcon());
+    }
+}
+
+class BarsIconClass extends LoadedAsset
+{
+    public function BarsIconClass ()
+    {
+        super(Currency.BARS.getLargeIcon());
+    }
+}
+
+class BlingIconClass extends LoadedAsset
+{
+    public function BlingIconClass ()
+    {
+        super(Currency.BLING.getLargeIcon());
+    }
 }
