@@ -12,8 +12,7 @@ import mx.states.State;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-import com.threerings.flash.MediaContainer;
-import com.threerings.util.ValueEvent;
+import com.threerings.flex.LoadedAsset;
 
 /** The image used to be the buttons skin. Is automatically lightened/darkened/offset. */
 [Style(name="image")]
@@ -51,6 +50,16 @@ public class ImageButtonSkin extends UIComponent
         updateDisplayedState();
     }
 
+    override public function invalidateSize () :void
+    {
+        super.invalidateSize();
+
+        if (_image is LoadedAsset && parent != null) {
+            parent.width = LoadedAsset(_image).measuredWidth;
+            parent.height = LoadedAsset(_image).measuredHeight;
+        }
+    }
+
     /**
      * Re-read the image out of our style specification.
      */
@@ -59,21 +68,16 @@ public class ImageButtonSkin extends UIComponent
         // the "image" style may be a class or a DisplayObject
         var rsrc :* = getStyle("image");
 
-        if (rsrc is String) {
-            // If it's a string, treat it like an URL
-            rsrc = new MediaContainer(DeploymentConfig.serverURL + rsrc);
-            rsrc.addEventListener(MediaContainer.SIZE_KNOWN, function (event :ValueEvent) :void {
-                parent.width = event.value[0];
-                parent.height = event.value[1];
-                setImage(rsrc as DisplayObject);
-            });
-        } else {
-            if (rsrc is Class) {
-                rsrc = new (Class(rsrc))();
-            }
+        if (rsrc is Class) {
+            // instantiate it
+            rsrc = new (Class(rsrc))();
 
-            setImage(rsrc as DisplayObject);
+        } else if (rsrc is String) {
+            // If it's a string, treat it like an URL
+            rsrc = new LoadedAsset(DeploymentConfig.serverURL + rsrc);
         }
+
+        setImage(rsrc as DisplayObject);
     }
 
     protected function setImage (image :DisplayObject) :void
