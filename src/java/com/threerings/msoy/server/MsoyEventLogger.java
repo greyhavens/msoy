@@ -370,6 +370,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.Experience(Type.SHOP_DETAILS, memberId, tracker));
     }
 
+    public void broadcastSent (int memberId, int barsPaid)
+    {
+        post(new MsoyEvents.BroadcastSent(memberId, barsPaid));
+    }
+    
     /**
      * Action performed on the client such as clicking a particular button.
      * @param tracker The visitors' tracking ID

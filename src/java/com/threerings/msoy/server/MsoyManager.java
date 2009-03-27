@@ -266,6 +266,7 @@ public class MsoyManager
                     log.info("Sending broadcast message", "from", from);
                     _chatprov.broadcast(
                         from, MsoyChatCodes.PAID_BROADCAST_MODE, null, message, true);
+                    _eventLog.broadcastSent(memberId, authedCost);
                 }
             }
 

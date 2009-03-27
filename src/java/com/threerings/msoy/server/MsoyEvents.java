@@ -707,6 +707,24 @@ public class MsoyEvents
         }
     }
 
+    /**
+     * Notes that a user paid for a broadcast message to be sent.
+     */
+    @Event(name="BroadcastSent") // note: do not change this event name
+    public static class BroadcastSent implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public int barsPaid;
+
+        public BroadcastSent (int memberId, int barsPaid)
+        {
+            this.timestamp = new Date(System.currentTimeMillis());
+            this.memberId = memberId;
+            this.barsPaid = barsPaid;
+        }
+    }
+
     protected static String toValue (String input) {
         return (input != null) ? input : "";
     }
