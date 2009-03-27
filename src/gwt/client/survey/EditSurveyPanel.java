@@ -149,7 +149,16 @@ public class EditSurveyPanel extends VerticalPanel
                 @Override protected String getEmptyMessage () {
                     return _msgs.noSurveys();
                 }
+
+                @Override protected SmartTable createContents (
+                    int start, int count, List<SurveyMetaData> list) {
+                    SmartTable table = super.createContents(start, count, list);
+                    table.setCellPadding(3);
+                    table.setCellSpacing(1);
+                    return table;
+                }
             };
+
             table.setModel(new SimpleDataModel<SurveyMetaData>(surveys), 0);
             table.addStyleName("table");
             table.setWidth("100%");
@@ -269,10 +278,18 @@ public class EditSurveyPanel extends VerticalPanel
                 @Override protected String getEmptyMessage () {
                     return _msgs.noQuestions();
                 }
+
+                @Override protected SmartTable createContents (
+                    int start, int count, List<SurveyQuestion> list) {
+                    SmartTable table = super.createContents(start, count, list);
+                    table.setCellPadding(3);
+                    table.setCellSpacing(1);
+                    return table;
+                }
             };
             _questions.setModel(new SimpleDataModel<SurveyQuestion>(_result.questions), 0);
             _questions.setWidth("100%");
-            _questions.addStyleName("table");
+            _questions.addStyleName("questions");
             add(_questions);
 
             // link to create a new question
@@ -383,12 +400,13 @@ public class EditSurveyPanel extends VerticalPanel
         {
             _survey = survey;
             _question = question;
+            _choices = _question.choices;
 
             add(MsoyUI.createLabel(_question == null ? _msgs.addNewQuestionTitle(survey.name) :
                 _msgs.editQuestionTitle(survey.name), null));
 
             // if we're editing, the type is read only so fill in the rest of the form
-            add(_editGrid = new SmartTable());
+            add(_editGrid = new SmartTable(0, 10));
             _editGrid.setStyleName("fieldsTable");
             _editGrid.setText(0, 0, _msgs.questionTypeLabel());
             if (_question != null) {
@@ -431,7 +449,7 @@ public class EditSurveyPanel extends VerticalPanel
                 _question.type == SurveyQuestion.Type.SUBSET_CHOICE) {
 
                 // existing choices
-                _editGrid.setText(2, 0, _msgs.choices(), 1, "choicesLabel");
+                _editGrid.setText(2, 0, _msgs.questionChoicesLabel(), 1, "choicesLabel");
                 refreshChoices();
                 _editGrid.setText(3, 0, "");
 
@@ -441,8 +459,8 @@ public class EditSurveyPanel extends VerticalPanel
                 add.add(choice);
                 add.add(new Button(_msgs.newChoiceButtonLabel(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        _question.choices = ArrayUtil.append(
-                            _question.choices, choice.getText(), ArrayUtil.STRING_TYPE);
+                        _choices = ArrayUtil.append(
+                            _choices, choice.getText(), ArrayUtil.STRING_TYPE);
                         refreshChoices();
                     }
                 }));
@@ -450,7 +468,7 @@ public class EditSurveyPanel extends VerticalPanel
 
             } else if (_question.type == SurveyQuestion.Type.RATING) {
                 // maximum rating box
-                _editGrid.setText(2, 0, _msgs.maxValue());
+                _editGrid.setText(2, 0, _msgs.questionMaxValueLabel());
                 maxValue = MsoyUI.createTextBox(String.valueOf(_question.maxValue), 2, 2);
                 _editGrid.setWidget(2, 1, maxValue);
             }
@@ -461,6 +479,7 @@ public class EditSurveyPanel extends VerticalPanel
             new ClickCallback<SurveyQuestion>(save) {
                 protected boolean callService () {
                     _question.text = text.getText();
+                    _question.choices = _choices;
                     if (fmaxValue != null) {
                         _question.maxValue = Integer.parseInt(fmaxValue.getText());
                     }
@@ -481,34 +500,36 @@ public class EditSurveyPanel extends VerticalPanel
 
         protected void refreshChoices ()
         {
-            if (_question.choices == null) {
-                _question.choices = new String[]{};
+            if (_choices == null) {
+                _choices = new String[]{};
             }
 
             // set up the table of choices for this question. show the choice string and a way to
             // delete it. these should usually be pretty short and not worth the trouble of doing
             // up/down controls.
-            SmartTable choices = new SmartTable();
+            SmartTable choices = new SmartTable(3, 1);
             choices.setWidth("100%");
             choices.setStyleName("choices");
             int row = 0;
-            for (String choice : _question.choices) {
+            for (int ii = 0; ii < _choices.length; ++ii) {
                 final int frow = row++;
-                choices.setText(frow, 0, choice);
-                choices.setWidget(frow, 1, MsoyUI.createActionLabel(_msgs.delete(),
+                choices.setText(frow, 0, String.valueOf(ii + 1) + ".", 1, "number");
+                choices.setText(frow, 1, _choices[ii], 1, "choice");
+                choices.setWidget(frow, 2, MsoyUI.createActionLabel(_msgs.delete(),
                     new ClickListener() {
                         public void onClick (Widget sender) {
-                            _question.choices = ArrayUtil.splice(
-                                _question.choices, frow, 1, ArrayUtil.STRING_TYPE);
+                            _choices = ArrayUtil.splice(_choices, frow, 1, ArrayUtil.STRING_TYPE);
                             refreshChoices();
                         }
-                    }));
+                    }), 1, "delete");
+                choices.getRowFormatter().addStyleName(frow, "row" + ii % 2);
             }
             _editGrid.setWidget(2, 1, choices);
         }
 
         protected SurveyMetaData _survey;
         protected SurveyQuestion _question;
+        protected String[] _choices;
         protected int _questionIndex;
         protected SmartTable _editGrid;
     }

@@ -27,7 +27,7 @@
   font-size: 14px;
 }
 
-.editSurveys .table .header {
+.editSurveys tr.header {
   background: #ff992b;
   color: white;
   text-align: center;
@@ -35,18 +35,30 @@
   font-size: 14px;
 }
 
-.editSurveys .surveys .table .col0 { /* name */
+.editSurveys .surveys .table td.col0 { /* name */
   width: 80%;
 }
 
-.editSurveys .survey .table .col0 { /* text */
-  width: 65%;
-}
-
-.editSurveys .survey .table .row1 {
+.editSurveys .surveys .table tr.row1 {
   background: #dbeffc;
 }
 
-.editSurveys .question .fieldsTable .choicesLabel {
-  border-right: solid 2px black;
+.editSurveys .survey .questions tr.row1 {
+  background: #dbeffc;
+}
+
+.editSurveys .survey .questions td.col0 { /* text */
+  width: 65%;
+}
+
+.editSurveys .question .fieldsTable .choices  tr.row1 {
+  background: #dbeffc;
+}
+
+.editSurveys .question .fieldsTable td.choicesLabel {
+  vertical-align: top;
+}
+
+.editSurveys .question .fieldsTable .choices td.choice {
+  width: 90%;
 }
