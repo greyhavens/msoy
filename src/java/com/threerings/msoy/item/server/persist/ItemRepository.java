@@ -1424,13 +1424,13 @@ public abstract class ItemRepository<T extends ItemRecord>
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
             ops = ArrayUtil.append(ops,
-                new Case(tagExistsExp, new ValueExp(1), new ValueExp(0)));
+                new Case(tagExistsExp, new ValueExp(0.6), new ValueExp(0)));
         }
 
         SQLOperator madeByExp = context.madeByExpression();
         if (madeByExp != null) {
             ops = ArrayUtil.append(ops,
-                new Case(madeByExp, new ValueExp(1), new ValueExp(0)));
+                new Case(madeByExp, new ValueExp(0.6), new ValueExp(0)));
         }
 
         exprs.add(new Arithmetic.Add(ops));
