@@ -221,8 +221,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 buttons = new RowPanel();
                 buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUplist(), onDoList));
 
-                boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
-                if (listedOriginal && salable) {
+                if (listedOriginal && _item.isSalable()) {
                     // add a button for repricing the listing
                     PushButton button =
                         MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUpprice(), null);
