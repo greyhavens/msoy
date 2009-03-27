@@ -100,10 +100,14 @@ public class PartyDirector extends BasicDirector
         return (_partyObj != null) && _partyObj.peeps.containsKey(memberId);
     }
 
+    public function getPartyId () :int
+    {
+        return _wctx.getMemberObject().partyId;
+    }
+
     public function isInParty () :Boolean
     {
-        var clobj :Object = _wctx.getClient().getClientObject();
-        return (clobj is MemberObject) && (MemberObject(clobj).partyId != 0);
+        return (0 != getPartyId());
     }
 
     public function isPartyLeader () :Boolean
