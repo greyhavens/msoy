@@ -28,6 +28,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
@@ -40,7 +41,6 @@ import com.samskivert.depot.operator.Conditionals.FullText;
 import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Logic.Not;
-import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -129,20 +129,8 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupRecord> getGroups (int offset, int count, GroupQuery query)
     {
-        // if there is a search string, do a full text match, order by relevance
-        if (query.search != null) {
-            // for now, always operate with boolean searching enabled, without query expansion
-            return findAll(GroupRecord.class, getGroupWhere(query),
-                new Limit(offset, count));
-
-        // if there is a tag, fetch groups with GroupTagRecords for that tag, order by groupId
-        } else if (query.tag != null) {
-            return findAll(GroupRecord.class, getGroupWhere(query),
-                           new Join(GroupRecord.GROUP_ID,
-                               _tagRepo.getTagColumn(TagRecord.TARGET_ID)),
-                           new Limit(offset, count));
-        }
-
+        List<QueryClause> clauses = buildSearchClauses(query);
+        
         // if no full text or tag search, return a subset of all records, order by query.sort
         OrderBy orderBy;
         if (query.sort == GroupQuery.SORT_BY_NAME) {
@@ -151,6 +139,12 @@ public class GroupRepository extends DepotRepository
             orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
         } else if (query.sort == GroupQuery.SORT_BY_CREATED_DATE) {
             orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE);
+        } else if (query.tag != null) {
+            // for a tag search, define 'relevance' as member count
+            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
+        } else if (query.search != null) {
+            // TODO: actual FTS relevance
+            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
@@ -159,9 +153,10 @@ public class GroupRepository extends DepotRepository
                     new Arithmetic.Div(
                         new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay)));
         }
+        clauses.add(orderBy);
+        clauses.add(new Limit(offset, count));
 
-        return findAll(
-            GroupRecord.class, getGroupWhere(query), new Limit(offset, count), orderBy);
+        return findAll(GroupRecord.class, clauses);
     }
 
     /**
@@ -170,22 +165,9 @@ public class GroupRepository extends DepotRepository
      */
     public int getGroupCount (GroupQuery query)
     {
-        // if there is a search string, return count of full text search
-        if (query.search != null) {
-            return load(CountRecord.class, new FromOverride(GroupRecord.class),
-                getGroupWhere(query)).count;
-
-        // if there is a tag, return count of GroupTagRecords for that tag
-        } else if (query.tag != null) {
-            return load(CountRecord.class, new FromOverride(GroupRecord.class),
-                        new Join(GroupRecord.GROUP_ID, _tagRepo.getTagColumn(TagRecord.TARGET_ID)),
-                        getGroupWhere(query)).count;
-
-        // if no full text or tag search, return count of all public records
-        } else {
-            return load(CountRecord.class, new FromOverride(GroupRecord.class),
-                getGroupWhere(query)).count;
-        }
+        List<QueryClause> clauses = buildSearchClauses(query);
+        clauses.add(new FromOverride(GroupRecord.class));
+        return load(CountRecord.class, clauses).count;
     }
 
     /**
@@ -529,23 +511,32 @@ public class GroupRepository extends DepotRepository
     /**
      * Return the where clause for a group select based on a given query
      */
-    protected Where getGroupWhere (GroupQuery query)
+    protected List<QueryClause> buildSearchClauses (GroupQuery query)
     {
-        SQLOperator publicOnly = new Not(new Equals(GroupRecord.POLICY, Group.POLICY_EXCLUSIVE));
+        List<QueryClause> clauses = Lists.newArrayList();
+        
+        List<SQLExpression> conditions = Lists.<SQLExpression>newArrayList(
+            new Not(new Equals(GroupRecord.POLICY, Group.POLICY_EXCLUSIVE)));
+
         if (query.search != null) {
-            return new Where(new And(publicOnly, new FullText(GroupRecord.class,
-                GroupRecord.FTS_NBC, query.search).match()));
+            conditions.add(new FullText(
+                GroupRecord.class, GroupRecord.FTS_NBC, query.search).match());
+
         } else if (query.tag != null) {
+            clauses.add(new Join(GroupRecord.GROUP_ID, _tagRepo.getTagColumn(TagRecord.TARGET_ID)));
+
             TagNameRecord tnr = _tagRepo.getTag(query.tag);
             if (tnr == null) {
-                return new Where(new ValueExp(false));
+                conditions.add(new ValueExp(false));
+
             } else {
-                return new Where(new And(publicOnly, new Equals(
-                    _tagRepo.getTagColumn(TagRecord.TAG_ID), tnr.tagId)));
+                conditions.add(new Equals(_tagRepo.getTagColumn(TagRecord.TAG_ID), tnr.tagId));
             }
-        } else {
-            return new Where(publicOnly);
         }
+        if (conditions.size() > 0) {
+            clauses.add(new Where(new And(conditions)));
+        }
+        return clauses;
     }
 
     /**
