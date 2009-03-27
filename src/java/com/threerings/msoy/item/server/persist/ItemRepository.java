@@ -1418,7 +1418,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByRelevance (
         List<SQLExpression> exprs, List<OrderBy.Order> orders, WordSearch context)
     {
-        SQLOperator[] ops = new SQLOperator[] { context._fts.rank() };
+        SQLOperator[] ops = new SQLOperator[] { context.fullTextRank() };
 
         SQLOperator tagExistsExp = 
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
