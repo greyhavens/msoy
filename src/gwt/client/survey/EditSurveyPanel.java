@@ -4,8 +4,10 @@
 package client.survey;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.ClickCallback;
@@ -16,6 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -28,6 +31,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
@@ -213,16 +217,36 @@ public class EditSurveyPanel extends VerticalPanel
             _result = result;
 
             // metadata fields w/ save button
-            SmartTable table = new SmartTable();
+            SmartTable table = new SmartTable(0, 5);
             table.setWidth("100%");
+            table.setStyleName("fields");
+            int row = 0;
+
             final TextBox name = MsoyUI.createTextBox(_result.survey.name, 80, 40);
-            table.setText(0, 0, _msgs.nameLabel(), 1, "label");
-            table.setWidget(0, 1, name);
+            table.setText(row, 0, _msgs.nameLabel(), 1, "label");
+            table.setWidget(row++, 1, name);
+
+            final CheckBox enabled = new CheckBox();
+            enabled.setChecked(_result.survey.enabled);
+            table.setText(row, 0, _msgs.enabledLabel(), 1, "label");
+            table.setWidget(row++, 1, enabled);
+
+            final OptionalDate start = new OptionalDate(_result.survey.startDate);
+            table.setText(row, 0, _msgs.startLabel(), 1, "label");
+            table.setWidget(row++, 1, start);
+
+            final OptionalDate finish = new OptionalDate(_result.survey.finishDate);
+            table.setText(row, 0, _msgs.finishLabel(), 1, "label");
+            table.setWidget(row++, 1, finish);
+
             Button save = new Button(_msgs.save());
             new ClickCallback<SurveyMetaData>(save) {
                 @Override // from ClickCallback
                 protected boolean callService () {
                     _result.survey.name = name.getText();
+                    _result.survey.enabled = enabled.isChecked();
+                    _result.survey.startDate = start.getDate();
+                    _result.survey.finishDate = finish.getDate();
                     _surveySvc.updateSurvey(_result.survey, this);
                     return true;
                 }
@@ -235,8 +259,8 @@ public class EditSurveyPanel extends VerticalPanel
                     return true;
                 }
             };
-            table.setText(1, 0, "");
-            table.setWidget(1, 1, save);
+            table.setText(row, 0, "");
+            table.setWidget(row++, 1, save);
             add(table);
 
             // list of questions
@@ -295,6 +319,35 @@ public class EditSurveyPanel extends VerticalPanel
             // link to create a new question
             add(Link.create(_msgs.addNewQuestion(), "addNew", Pages.ADMINZ,
                 Args.compose(ACTION, _result.survey.surveyId, -1)));
+        }
+
+        public class OptionalDate extends HorizontalPanel
+        {
+            public OptionalDate (Date initialValue)
+            {
+                CheckBox set = new CheckBox();
+                add(set);
+                set.addClickListener(new ClickListener() {
+                    public void onClick (Widget w) {
+                        _date.setVisible(((CheckBox)w).isChecked());
+                    }
+                });
+                add(_date = new DateFields(-50, 1));
+                set.setChecked(initialValue != null);
+                _date.setVisible(initialValue != null);
+                _date.setDate(DateUtil.toDateVec(
+                    initialValue != null ? initialValue : new Date()));
+            }
+
+            public Date getDate ()
+            {
+                if (_date.isVisible()) {
+                    return DateUtil.toDate(_date.getDate());
+                }
+                return null;
+            }
+
+            protected DateFields _date;
         }
 
         /**

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.survey.gwt;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -16,4 +18,13 @@ public class SurveyMetaData
 
     /** The name of this survey. */
     public String name;
+
+    /** Whether this survey is enabled. */
+    public boolean enabled;
+
+    /** First day of this server (optional, may be null). */
+    public Date startDate;
+
+    /** Last day of this survey (optional, may be null). */
+    public Date finishDate;
 }

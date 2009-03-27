@@ -62,6 +62,9 @@ public class SurveyRecord extends PersistentRecord
         SurveyMetaData s = new SurveyMetaData();
         s.surveyId = surveyId;
         s.name = name;
+        s.enabled = enabled;
+        s.startDate = start == null ? null : new java.util.Date(start.getTime());
+        s.finishDate = finish == null ? null : new java.util.Date(finish.getTime());
         return s;
     }
 
@@ -72,6 +75,9 @@ public class SurveyRecord extends PersistentRecord
     {
         name = survey.name;
         surveyId = survey.surveyId;
+        enabled = survey.enabled;
+        start = survey.startDate == null ? null : new Date(survey.startDate.getTime());
+        finish = survey.finishDate == null ? null : new Date(survey.finishDate.getTime());
     }
 
     // AUTO-GENERATED: METHODS START
