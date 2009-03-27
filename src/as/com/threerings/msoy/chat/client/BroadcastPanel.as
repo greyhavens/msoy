@@ -35,6 +35,10 @@ public class BroadcastPanel extends FloatingPanel
         super(ctx, Msgs.CHAT.get("t.broadcast"));
         _msg = msg;
         open();
+
+        var client :MsoyClient = _ctx.getMsoyClient();
+        var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
+        msoySvc.secureBroadcastQuote(client, _ctx.resultListener(gotQuote));
     }
 
     override protected function createChildren () :void
@@ -42,7 +46,7 @@ public class BroadcastPanel extends FloatingPanel
         super.createChildren();
         styleName = "broadcastPanel";
 
-        addChild(FlexUtil.createLabel(_msg));
+        addChild(FlexUtil.createText("\" " + _msg + " \"", 350));
 
         _instructions = FlexUtil.createText(
             Msgs.CHAT.get("m.broadcast_instructions_initial", "..."), 350);
@@ -51,19 +55,7 @@ public class BroadcastPanel extends FloatingPanel
         addChild(_barButton = new BuyButton(Currency.BARS, processPurchase));
         _barButton.enabled = false;
 
-        showCloseButton = true;
-    }
-
-    /**
-     * Asks the server for the going rate for a broadcast.
-     */
-    override protected function didOpen () :void
-    {
-        super.didOpen();
-
-        var client :MsoyClient = _ctx.getMsoyClient();
-        var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.secureBroadcastQuote(client, _ctx.resultListener(gotQuote));
+        addButtons(CANCEL_BUTTON);
     }
 
     protected function gotQuote (result :PriceQuote, first :Boolean = true) :void
