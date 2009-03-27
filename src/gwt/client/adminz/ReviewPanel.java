@@ -146,6 +146,11 @@ public class ReviewPanel extends FlowPanel
         {
             _adminsvc.getItemFlags(start, count, needCount, callback);
         }
+
+        @Override protected void setCurrentResult (ItemFlagsResult result)
+        {
+            _result = result;
+        }
     }
 
     protected PagedTable<ItemFlag> _contents;
