@@ -317,8 +317,10 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             String path = "/images/msgs/" +
                 ((_message.messageId > _thread.lastReadPostId) ? "unread" : "read") + ".png";
+            // fake up a message index that will put us on the correct page
+            int msgIndex = _page * MESSAGES_PER_PAGE;
             String args = ThreadListPanel.threadArgs(
-                _thread.threadId, _thread.posts, _message.messageId);
+                _thread.threadId, msgIndex, _message.messageId);
             return Link.createImage(path, _mmsgs.permaLink(), Pages.GROUPS, args);
         }
 

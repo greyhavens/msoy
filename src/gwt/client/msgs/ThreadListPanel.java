@@ -259,10 +259,10 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 
     protected static String threadArgs (int threadId, int msgIndex, int msgId)
     {
-        Object[] args = new Object[msgIndex > 0 ? 4 : 2];
+        Object[] args = new Object[msgId > 0 ? 4 : 2];
         args[0] = "t";
         args[1] = threadId;
-        if (msgIndex > 0) {
+        if (msgId > 0) {
             args[2] = (msgIndex / MessagesPanel.MESSAGES_PER_PAGE);
             args[3] = msgId;
         }
