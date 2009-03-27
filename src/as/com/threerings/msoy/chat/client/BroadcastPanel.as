@@ -75,12 +75,12 @@ public class BroadcastPanel extends FloatingPanel
 
         var vbox :VBox = new VBox();
         vbox.setStyle("horizontalAlignment", "left");
-        vbox.addChild(makeLinkOption("m.br_linkGroup_none", true, true));
+        vbox.addChild(makeLinkOption("m.br_link_none", true, true));
         var placeInfo :Array = _ctx.getMsoyController().getPlaceInfo();
-        vbox.addChild(makeLinkOption("m.br_linkGroup_room",
+        vbox.addChild(makeLinkOption("m.br_link_room",
             !Boolean(placeInfo[0]) && (placeInfo[2] != 0), false,
-            Msgs.CHAT.get("m.visit", placeInfo[2])));
-        vbox.addChild(makeLinkOption("m.br_linkGroup_party",
+            Msgs.CHAT.get("m.visit_room", placeInfo[2])));
+        vbox.addChild(makeLinkOption("m.br_link_party",
             WorldContext(_ctx).getPartyDirector().isInParty(), false,
             Msgs.CHAT.get("m.view_party", WorldContext(_ctx).getPartyDirector().getPartyId())));
         addChild(vbox);
