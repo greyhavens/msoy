@@ -20,7 +20,7 @@ public class DateUtil
     @SuppressWarnings("deprecation")
     public static int[] toDateVec (Date date)
     {
-        return new int[]{date.getYear(), date.getMonth(), date.getDate()};
+        return new int[]{date.getYear() + 1900, date.getMonth(), date.getDate()};
     }
 
     @SuppressWarnings("deprecation")
