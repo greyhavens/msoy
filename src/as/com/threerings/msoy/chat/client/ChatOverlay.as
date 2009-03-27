@@ -759,7 +759,7 @@ public class ChatOverlay
     {
         var texts :Array = TextUtil.parseLinks(msg.message, userSpeakFmt, true);
 
-        var format :String = msg.getFormat();
+        var format :String = (type == PAID_BROADCAST) ? "m.paid_broadcast_format" : msg.getFormat();
         if ((format != null) && (forceSpeaker || alwaysUseSpeaker(type))) {
             var umsg :UserMessage = (msg as UserMessage);
             var name :Name = umsg.getSpeakerDisplayName();
