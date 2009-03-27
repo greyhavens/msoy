@@ -6,7 +6,6 @@ package com.threerings.msoy.chat.client {
 import mx.controls.Text;
 
 import com.threerings.util.Log;
-import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.flex.FlexUtil;
 
@@ -45,9 +44,8 @@ public class BroadcastPanel extends FloatingPanel
 
         addChild(FlexUtil.createLabel(_msg));
 
-        _instructions = new Text();
-        _instructions.text = Msgs.CHAT.get("m.broadcast_instructions_initial", "...");
-        _instructions.width = 350;
+        _instructions = FlexUtil.createText(
+            Msgs.CHAT.get("m.broadcast_instructions_initial", "..."), 350);
         addChild(_instructions);
 
         addChild(_barButton = new BuyButton(Currency.BARS, processPurchase));
@@ -65,32 +63,18 @@ public class BroadcastPanel extends FloatingPanel
 
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotFirstQuote, getQuoteFailed));
+        msoySvc.secureBroadcastQuote(client, _ctx.resultListener(gotQuote));
     }
 
-    protected function gotFirstQuote (result :PriceQuote) :void
-    {
-        gotQuote(result, true);
-    }
-
-    protected function gotQuote (result :PriceQuote, first :Boolean) :void
+    protected function gotQuote (result :PriceQuote, first :Boolean = true) :void
     {
         log.info("Got quote", "result", result);
         _quote = result.getBars();
 
-        if (first) {
-            _instructions.text = Msgs.CHAT.get("m.broadcast_instructions_initial", _quote);
-        } else {
-            _instructions.text = Msgs.CHAT.get("m.broadcast_instructions_price_change", _quote);
-        }
+        _instructions.text = Msgs.CHAT.get(
+            "m.broadcast_instructions_" + (first ? "initial" : "price_change"), _quote);
         _barButton.setValue(_quote);
         _barButton.enabled = true;
-    }
-
-    protected function getQuoteFailed (cause :String) :void
-    {
-        log.info("Get quote failed", "cause", cause);
-        _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
     }
 
     protected function broadcastSent (result :PriceQuote) :void
@@ -107,18 +91,12 @@ public class BroadcastPanel extends FloatingPanel
         }
     }
 
-    protected function broadcastFailed (cause :String) :void
-    {
-        log.info("Broadcast failed", "cause", cause);
-        _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-    }
-
     protected function processPurchase () :void
     {
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
         msoySvc.purchaseAndSendBroadcast(client, _quote, _msg,
-            new ResultAdapter(broadcastSent, broadcastFailed));
+            _ctx.resultListener(broadcastSent, MsoyCodes.GENERAL_MSGS, null, _barButton));
     }
 
     protected var _msg :String;
