@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.chat.client {
 
+import mx.containers.HBox;
+import mx.controls.Label;
 import mx.controls.Text;
 
 import com.threerings.util.Log;
 
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -52,21 +55,28 @@ public class BroadcastPanel extends FloatingPanel
             Msgs.CHAT.get("m.broadcast_instructions_initial", "..."), 350);
         addChild(_instructions);
 
+        var hbox :HBox = new HBox();
+        hbox.addChild(new CommandCheckBox("", setAgreeTOS));
+        var tos :Label = new Label();
+        tos.selectable = true;
+        tos.htmlText = Msgs.CHAT.get("l.broadcast_tos");
+        hbox.addChild(tos);
+        addChild(hbox);
+
         addChild(_barButton = new BuyButton(Currency.BARS, processPurchase));
         _barButton.enabled = false;
 
         addButtons(CANCEL_BUTTON);
     }
 
-    protected function gotQuote (result :PriceQuote, first :Boolean = true) :void
+    protected function gotQuote (quote :PriceQuote, first :Boolean = true) :void
     {
-        log.info("Got quote", "result", result);
-        _quote = result.getBars();
+        _quote = quote;
 
         _instructions.text = Msgs.CHAT.get(
-            "m.broadcast_instructions_" + (first ? "initial" : "price_change"), _quote);
-        _barButton.setValue(_quote);
-        _barButton.enabled = true;
+            "m.broadcast_instructions_" + (first ? "initial" : "price_change"), _quote.getBars());
+        _barButton.setValue(_quote.getBars());
+        setAgreeTOS(_agreeTos);
     }
 
     protected function broadcastSent (result :PriceQuote) :void
@@ -83,17 +93,24 @@ public class BroadcastPanel extends FloatingPanel
         }
     }
 
+    protected function setAgreeTOS (agree :Boolean) :void
+    {
+        _agreeTos = agree;
+        _barButton.enabled = (_quote != null) && _agreeTos;
+    }
+
     protected function processPurchase () :void
     {
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.purchaseAndSendBroadcast(client, _quote, _msg,
+        msoySvc.purchaseAndSendBroadcast(client, _quote.getBars(), _msg,
             _ctx.resultListener(broadcastSent, MsoyCodes.GENERAL_MSGS, null, _barButton));
     }
 
     protected var _msg :String;
     protected var _instructions :Text;
-    protected var _quote :int;
+    protected var _quote :PriceQuote;
     protected var _barButton :BuyButton;
+    protected var _agreeTos :Boolean;
 }
 }
