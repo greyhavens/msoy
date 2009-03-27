@@ -1233,7 +1233,7 @@ public class ChatOverlay
 
     // used to color chat bubbles
     protected static const BROADCAST_COLOR :uint = 0x990000;
-    protected static const PAID_BROADCAST_COLOR :uint = 0x996600;
+    protected static const PAID_BROADCAST_COLOR :uint = 0xFFFF00;
     protected static const FEEDBACK_COLOR :uint = 0x00AA00;
     protected static const TELL_COLOR :uint = 0x0000AA;
     protected static const TELLFEEDBACK_COLOR :uint = 0x00AAAA;
