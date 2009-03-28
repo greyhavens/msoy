@@ -30,6 +30,7 @@ public class SurveyRecord extends PersistentRecord
     public static final ColumnExp START = colexp(_R, "start");
     public static final ColumnExp FINISH = colexp(_R, "finish");
     public static final ColumnExp ENABLED = colexp(_R, "enabled");
+    public static final ColumnExp MAX_SUBMISSIONS = colexp(_R, "maxSubmissions");
     // AUTO-GENERATED: FIELDS END
 
     /** Unique integer key of this survey. */
@@ -50,9 +51,12 @@ public class SurveyRecord extends PersistentRecord
     /** Whether this survey is currently enabled. */
     public boolean enabled;
 
+    /** After this number of submissions, the survey automatically disables. */
+    public int maxSubmissions;
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /**
      * Converts to a runtime record.
@@ -65,6 +69,7 @@ public class SurveyRecord extends PersistentRecord
         s.enabled = enabled;
         s.startDate = start == null ? null : new java.util.Date(start.getTime());
         s.finishDate = finish == null ? null : new java.util.Date(finish.getTime());
+        s.maxSubmissions = maxSubmissions;
         return s;
     }
 
@@ -78,6 +83,7 @@ public class SurveyRecord extends PersistentRecord
         enabled = survey.enabled;
         start = survey.startDate == null ? null : new Date(survey.startDate.getTime());
         finish = survey.finishDate == null ? null : new Date(survey.finishDate.getTime());
+        maxSubmissions = survey.maxSubmissions;
     }
 
     // AUTO-GENERATED: METHODS START

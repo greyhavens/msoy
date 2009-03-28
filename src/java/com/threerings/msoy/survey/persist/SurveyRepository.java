@@ -14,6 +14,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
@@ -35,6 +36,9 @@ public class SurveyRepository extends DepotRepository
     @Inject public SurveyRepository (PersistenceContext context)
     {
         super(context);
+
+        context.registerMigration(SurveyResponseRecord.class,
+            new SchemaMigration.Drop(3, "suveryId"));
     }
 
     /**
@@ -167,11 +171,26 @@ public class SurveyRepository extends DepotRepository
         return load(CountRecord.class, clauses).count;
     }
 
+    /**
+     * Inserts the meta data for a user's response to a survey.
+     */
     public void insertSubmission (SurveySubmissionRecord submitRec)
     {
         insert(submitRec);
     }
 
+    /**
+     * Returns the number of submissions for a survey.
+     */
+    public int countSubmissions (int surveyId)
+    {
+        return load(CountRecord.class, new Where(SurveySubmissionRecord.SURVEY_ID, surveyId),
+            new FromOverride(SurveySubmissionRecord.class)).count;
+    }
+
+    /**
+     * Insert's a user's response to an individual question.
+     */
     public void insertQuestionResponse(SurveyResponseRecord responseRec)
     {
         insert(responseRec);

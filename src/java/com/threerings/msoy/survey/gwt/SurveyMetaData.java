@@ -27,4 +27,7 @@ public class SurveyMetaData
 
     /** Last day of this survey (optional, may be null). */
     public Date finishDate;
+
+    /** After this number of submissions, the survey automatically disables. */
+    public int maxSubmissions;
 }

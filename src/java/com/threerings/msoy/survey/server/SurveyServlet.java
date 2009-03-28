@@ -150,14 +150,18 @@ public class SurveyServlet extends MsoyServiceServlet
         } catch (DuplicateKeyException dke) {
             throw new ServiceException("e.survey_already_completed");
         }
-
         for (SurveyResponse resp : responses) {
             SurveyResponseRecord responseRec = new SurveyResponseRecord();
-            responseRec.suveryId = surveyId;
+            responseRec.surveyId = surveyId;
             responseRec.memberId = mrec.memberId;
             responseRec.questionIndex = resp.questionIndex;
             responseRec.response = resp.response;
             _surveyRepo.insertQuestionResponse(responseRec);
+        }
+        if (survey.maxSubmissions > 0 && _surveyRepo.countSubmissions(surveyId) >=
+            survey.maxSubmissions) {
+            survey.enabled = false;
+            _surveyRepo.updateSurvey(survey);
         }
     }
 

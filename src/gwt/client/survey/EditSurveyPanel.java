@@ -226,6 +226,11 @@ public class EditSurveyPanel extends VerticalPanel
             table.setText(row, 0, _msgs.nameLabel(), 1, "label");
             table.setWidget(row++, 1, name);
 
+            final TextBox maxSubmissions = MsoyUI.createTextBox(
+                String.valueOf(_result.survey.maxSubmissions), 6, 6);
+            table.setText(row, 0, _msgs.maxSubmissionsLabel(), 1, "label");
+            table.setWidget(row++, 1, maxSubmissions);
+
             final CheckBox enabled = new CheckBox();
             enabled.setChecked(_result.survey.enabled);
             table.setText(row, 0, _msgs.enabledLabel(), 1, "label");
@@ -247,6 +252,7 @@ public class EditSurveyPanel extends VerticalPanel
                     _result.survey.enabled = enabled.isChecked();
                     _result.survey.startDate = start.getDate();
                     _result.survey.finishDate = finish.getDate();
+                    _result.survey.maxSubmissions = Integer.parseInt(maxSubmissions.getText());
                     _surveySvc.updateSurvey(_result.survey, this);
                     return true;
                 }
