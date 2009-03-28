@@ -81,6 +81,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.spam.server.SpamLogic;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.tour.server.TourManager;
+import com.threerings.msoy.world.server.WorldManager;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -444,6 +445,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** The Whirled Tour manager. */
     @Inject protected TourManager _tourMan;
+
+    /** The Whirled World manager. */
+    @Inject protected WorldManager _worldMan;
 
     /** Provides parlor game services. */
     @Inject protected ParlorManager _parlorMan;

@@ -49,14 +49,16 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.world.data.WorldMarshaller;
 
 /**
  * Handles the main services for the world and game clients.
  */
 public class WorldClient extends MsoyClient
 {
+    WorldMarshaller; // static reference for deserialization
+
     public function WorldClient (stage :Stage)
     {
         super(stage);
