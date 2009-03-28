@@ -41,6 +41,12 @@ public class MobObject extends MsoyBodyObject
         return Name.BLANK;
     }
 
+    @Override // from MsoyBodyObject
+    public boolean isActor ()
+    {
+        return false;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the <code>gameId</code> field be set to the
