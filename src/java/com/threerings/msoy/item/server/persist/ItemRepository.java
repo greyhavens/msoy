@@ -1415,25 +1415,29 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
+    // Construct a relevance ordering for item searches; based on (1 + fts search rank),
+    // boosted by 50% for tag hits, boosted by 50% for creator hits.
     protected void addOrderByRelevance (
         List<SQLExpression> exprs, List<OrderBy.Order> orders, WordSearch context)
     {
-        SQLOperator[] ops = new SQLOperator[] { context.fullTextRank() };
+        SQLOperator[] ops = new SQLOperator[] {
+            new Arithmetic.Add(new ValueExp(1.0), context.fullTextRank())
+        };
 
         SQLOperator tagExistsExp = 
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
             ops = ArrayUtil.append(ops,
-                new Case(tagExistsExp, new ValueExp(0.6), new ValueExp(0)));
+                new Case(tagExistsExp, new ValueExp(1.5), new ValueExp(1.0)));
         }
 
         SQLOperator madeByExp = context.madeByExpression();
         if (madeByExp != null) {
             ops = ArrayUtil.append(ops,
-                new Case(madeByExp, new ValueExp(0.6), new ValueExp(0)));
+                new Case(madeByExp, new ValueExp(1.5), new ValueExp(1.0)));
         }
 
-        exprs.add(new Arithmetic.Add(ops));
+        exprs.add(new Arithmetic.Mul(ops));
         orders.add(OrderBy.Order.DESC);
 
         exprs.add(getRatingExpression());
