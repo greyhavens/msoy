@@ -7,30 +7,28 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
+import com.threerings.msoy.aggregators.result.RetentionEmailResult;
+import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
 import com.threerings.panopticon.aggregator.hadoop.KeyInitData;
 import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
-import com.threerings.panopticon.efs.storev2.StorageStrategy;
 
-import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
-import com.threerings.msoy.aggregators.result.RetentionEmailResult;
-
-@Aggregator(outputs=RetentionEmail.EVENT_NAME, schedule="DAILY")
+@Aggregator(output = RetentionEmail.EVENT_NAME, schedule = Schedule.DAILY)
 public class RetentionEmail
     implements JavaAggregator<Keys.LongKey>, KeyFactory<Keys.LongKey>
 {
     public static final String EVENT_NAME = "msoy.RetentionEmailResponse";
-    
+
     // Our results
     public RetentionEmailResult mailings;
     public RetentionEmailLoginsResult logins;
@@ -62,7 +60,7 @@ public class RetentionEmail
     }
 
     @Override
-    public void write (EventWriter writer, Keys.LongKey key)
+    public void write (EventWriter writer, EventDataBuilder builder, Keys.LongKey key)
         throws IOException
     {
         // count the respondents
@@ -73,12 +71,8 @@ public class RetentionEmail
             }
         }
         // write an event
-        writer.write(new EventData(EVENT_NAME,
-            new ImmutableMap.Builder<String, Object>()
-                .put("respondents", respondents)
-                .put("mailings", mailings.sent.size())
-                .put("date", new Date(key.get())).build(),
-            new HashMap<String, Object>()), StorageStrategy.PROCESSED);
+        writer.write(builder.create("respondents", respondents, "mailings", mailings.sent.size(),
+            "date", new Date(key.get())));
     }
 
     protected static Calendar getDayOfEvent (EventData eventData)

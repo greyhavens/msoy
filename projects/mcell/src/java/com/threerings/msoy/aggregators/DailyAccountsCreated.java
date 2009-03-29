@@ -3,10 +3,6 @@ package com.threerings.msoy.aggregators;
 import java.io.IOException;
 
 import java.util.Date;
-import java.util.HashMap;
-
-import com.google.common.collect.ImmutableMap;
-
 import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
@@ -15,14 +11,13 @@ import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.aggregator.result.field.FieldKey;
 
 import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.common.event.EventDataBuilder;
 
 import com.threerings.panopticon.efs.storev2.EventWriter;
-import com.threerings.panopticon.efs.storev2.StorageStrategy;
-
 import com.threerings.panopticon.shared.util.PartialDateType;
 import com.threerings.panopticon.shared.util.TimeRange;
 
-@Aggregator(outputs=DailyAccountsCreated.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY)
+@Aggregator(output=DailyAccountsCreated.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY)
 public class DailyAccountsCreated
     implements JavaAggregator<DailyAccountsCreated.DayKey>
 {
@@ -43,9 +38,9 @@ public class DailyAccountsCreated
             }
         }
     }
-    
+
     @Result(inputs=AccountsWithVectors.OUTPUT_EVENT_NAME)
-    public static class CountTypes extends FieldAggregatedResult 
+    public static class CountTypes extends FieldAggregatedResult
     {
         public int total;
         public int affiliated;
@@ -56,7 +51,7 @@ public class DailyAccountsCreated
         public void doInit (EventData eventData)
         {
             total = 1;
-            
+
             if (eventData.getInt("affiliateId") > 0) {
                 affiliated = 1;
             } else if (eventData.getString("vector").startsWith("a.")) {
@@ -69,16 +64,11 @@ public class DailyAccountsCreated
     }
 
     public CountTypes types;
-    
-    public void write (EventWriter writer, DayKey key)
+
+    public void write (EventWriter writer, EventDataBuilder builder, DayKey key)
         throws IOException
     {
-        EventData event = new EventData(OUTPUT_EVENT_NAME, new ImmutableMap.Builder<String, Object>()
-            .put("date", key.day)
-            .put("total", types.total)
-            .put("affiliated", types.affiliated)
-            .put("fromAd", types.fromAd)
-            .put("organic", types.organic).build(), new HashMap<String, Object>());
-        writer.write(event, StorageStrategy.PROCESSED);
+        writer.write(builder.create("date", key.day, "total", types.total, "affiliated",
+            types.affiliated, "fromAd", types.fromAd, "organic", types.organic));
     }
 }
