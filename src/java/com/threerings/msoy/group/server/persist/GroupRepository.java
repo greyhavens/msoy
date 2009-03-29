@@ -35,7 +35,9 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Arithmetic.Add;
+import com.samskivert.depot.operator.Arithmetic.Div;
+import com.samskivert.depot.operator.Arithmetic.Mul;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Conditionals.Case;
@@ -617,10 +619,11 @@ public class GroupRepository extends DepotRepository
         } else if (search != null) {
             SQLOperator tagExistsExp = search.tagExistsExpression();
             if (tagExistsExp != null) {
-                orderBy = OrderBy.descending(new Arithmetic.Add(new SQLOperator[] {
-                    new Case(tagExistsExp, new ValueExp(0.3), new ValueExp(0.0)),
-                    search.fullTextRank(),
-                }));
+                // the rank is (1 + fts rank), boosted by 25% if there's a tag match
+                orderBy = OrderBy.descending(new Mul(
+                    new Add(search.fullTextRank(), new ValueExp(1.0)),
+                    new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0))));
+
             } else {
                 orderBy = OrderBy.descending(search.fullTextRank());
             }
@@ -628,10 +631,9 @@ public class GroupRepository extends DepotRepository
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
-            orderBy = OrderBy.descending(
-                new Arithmetic.Add(GroupRecord.MEMBER_COUNT,
-                    new Arithmetic.Div(
-                        new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay)));
+            orderBy = OrderBy.descending(new Add(
+                new Div(new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay),
+                GroupRecord.MEMBER_COUNT));
         }
         return orderBy;
     }
