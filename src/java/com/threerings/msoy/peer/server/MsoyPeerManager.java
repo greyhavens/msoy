@@ -42,6 +42,7 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.whirled.data.ScenePlace;
 import com.threerings.whirled.server.SceneRegistry;
 
+import com.threerings.msoy.data.AuthName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
@@ -340,8 +341,8 @@ public class MsoyPeerManager extends CrowdPeerManager
             } else {
                 _lastRequestName = null;
             }
-            if ((entry == null) && (username instanceof MemberName) &&
-                    (null != getMemberLocation(((MemberName) username).getMemberId()))) {
+            if ((entry == null) && (username instanceof AuthName) &&
+                    (null != getMemberLocation(((AuthName) username).getMemberId()))) {
                 log.warning("Asked for forwarded member object, on another node",
                     "name", username);
             }
