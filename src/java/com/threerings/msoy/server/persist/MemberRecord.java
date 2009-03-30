@@ -55,7 +55,7 @@ public class MemberRecord extends PersistentRecord
         /** A flag denoting that this user has opted to be a whirled greeter. */
         GREETER(1 << 6),
 
-        /** The next unused flag. Copy this and update the bit mask when making a new flag. */
+        /** Indicates that this user has been known to make trouble. */ 
         TROUBLEMAKER(1 << 7),
 
         /** Indicates that the user has validated their email address. */
