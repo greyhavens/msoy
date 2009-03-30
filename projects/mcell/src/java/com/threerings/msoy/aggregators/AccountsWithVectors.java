@@ -2,15 +2,13 @@ package com.threerings.msoy.aggregators;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.samskivert.util.StringUtil;
 import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
-import com.threerings.panopticon.aggregator.result.Result;
 import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldKey;
 import com.threerings.panopticon.aggregator.result.field.FieldResult;
@@ -18,7 +16,6 @@ import com.threerings.panopticon.aggregator.result.field.FieldWritable;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
-import com.threerings.panopticon.efs.storev2.StorageStrategy;
 
 @Aggregator(output="AccountsWithVectors", schedule=Schedule.NIGHTLY,
     nexts=DailyAccountsCreated.class)
