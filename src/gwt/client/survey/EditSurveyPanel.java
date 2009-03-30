@@ -459,7 +459,7 @@ public class EditSurveyPanel extends VerticalPanel
         {
             _survey = survey;
             _question = question;
-            _choices = _question.choices;
+            _choices = _question == null ? null : _question.choices;
 
             add(MsoyUI.createLabel(_question == null ? _msgs.addNewQuestionTitle(survey.name) :
                 _msgs.editQuestionTitle(survey.name), null));
