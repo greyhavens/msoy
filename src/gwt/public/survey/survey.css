@@ -1,30 +1,39 @@
-/* TakeSurveyPanel */
+/* TakeSurveyPanel and ViewSurveyResultsPanel */
 
-.takeSurvey {
+.takeSurvey, .viewSurveyResults {
   font-size: 13px;
 }
 
-.takeSurvey .name {
+.takeSurvey .name, .viewSurveyResults .name {
   font-size: 18px;
   font-weight: bold;
 }
 
-.takeSurvey tr.question {
+.takeSurvey tr.question, .viewSurveyResults tr.question {
   background: #dbeffc;
 }
 
-.takeSurvey td.text {
+.takeSurvey td.text, .viewSurveyResults td.text {
   width: 90%;
 }
 
-.takeSurvey td.optional {
+.takeSurvey td.optional, .viewSurveyResults td.optional {
   width: 10%;
   text-align: right;
   font-size: 10px;
 }
 
-.takeSurvey tr.response td.ui {
+.takeSurvey tr.response td.ui, .viewSurveyResults tr.summary td.summary {
   padding-bottom: 20px;
+}
+
+.viewSurveyResults table.responses td.label {
+  padding-right: 20px;
+}
+
+.viewSurveyResults table.responses tr.total td {
+  padding-bottom: 2px;
+  border-bottom: solid lightgrey 1px;
 }
 
 /* EditSurveyPanel */
