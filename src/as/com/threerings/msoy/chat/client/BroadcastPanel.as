@@ -11,6 +11,7 @@ import mx.controls.RadioButtonGroup;
 import mx.controls.Text;
 
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
@@ -89,8 +90,7 @@ public class BroadcastPanel extends FloatingPanel
     }
 
     protected function makeLinkOption (
-        labelKey :String, enabled :Boolean, selected :Boolean,
-        link :String = null) :RadioButton
+        labelKey :String, enabled :Boolean, selected :Boolean, link :String = "") :RadioButton
     {
         var rb :RadioButton = new RadioButton();
         rb.enabled = enabled;
@@ -134,7 +134,7 @@ public class BroadcastPanel extends FloatingPanel
     protected function processPurchase () :void
     {
         var finalMsg :String = _msg;
-        if (_linkGroup.selectedValue != null) {
+        if (!StringUtil.isBlank(_linkGroup.selectedValue as String)) {
             finalMsg += " " + _linkGroup.selectedValue;
         }
 
