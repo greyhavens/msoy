@@ -5,6 +5,7 @@ package com.threerings.msoy.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Name;
 
 /**
@@ -21,6 +22,19 @@ public class AuthName extends Name
     public function getMemberId () :int
     {
         return _memberId;
+    }
+
+    // from Name
+    override public function hashCode () :int
+    {
+        return _memberId;
+    }
+
+    // from Name
+    override public function equals (other :Object) :Boolean
+    {
+        return (other != null) && ClassUtil.isSameClass(this, other) &&
+            (AuthName(other).getMemberId() == getMemberId());
     }
 
     // from interface Streamable
