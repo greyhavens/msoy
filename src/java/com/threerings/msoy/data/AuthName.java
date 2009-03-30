@@ -38,8 +38,8 @@ public class AuthName extends Name
     @Override // from Name
     public boolean equals (Object other)
     {
-        return other.getClass().equals(getClass()) &&
-            ((AuthName)other).getMemberId() == getMemberId();
+        return (other != null) && other.getClass().equals(getClass()) &&
+            (((AuthName)other).getMemberId() == getMemberId());
     }
 
     @Override // from Name
