@@ -226,6 +226,11 @@ public class EditSurveyPanel extends VerticalPanel
             table.setText(row, 0, _msgs.nameLabel(), 1, "label");
             table.setWidget(row++, 1, name);
 
+            final TextBox coinAward = MsoyUI.createTextBox(
+                String.valueOf(_result.survey.coinAward), 6, 6);
+            table.setText(row, 0, _msgs.coinAwardLabel(), 1, "label");
+            table.setWidget(row++, 1, coinAward);
+
             final TextBox maxSubmissions = MsoyUI.createTextBox(
                 String.valueOf(_result.survey.maxSubmissions), 6, 6);
             table.setText(row, 0, _msgs.maxSubmissionsLabel(), 1, "label");
@@ -253,6 +258,7 @@ public class EditSurveyPanel extends VerticalPanel
                     _result.survey.startDate = start.getDate();
                     _result.survey.finishDate = finish.getDate();
                     _result.survey.maxSubmissions = Integer.parseInt(maxSubmissions.getText());
+                    _result.survey.coinAward = Integer.parseInt(coinAward.getText());
                     _surveySvc.updateSurvey(_result.survey, this);
                     return true;
                 }

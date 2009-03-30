@@ -39,7 +39,7 @@ public class UserAction extends SimpleStreamableObject
         CREATED_ITEM(30), BOUGHT_ITEM(31), LISTED_ITEM(32),
 
         // metagame related actions
-        EARNED_BADGE(40),
+        EARNED_BADGE(40), COMPLETED_SURVEY(41),
 
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), /*obsolete(52),*/ SUPPORT_ADJUST(53),
@@ -184,6 +184,12 @@ public class UserAction extends SimpleStreamableObject
     public static UserAction cashedOutBling (int memberId)
     {
         return new UserAction(Type.CASHED_OUT_BLING, memberId, null);
+    }
+
+    public static UserAction completedSurvey (int memberId, String surveyName, int surveyId)
+    {
+        String descrip = MessageBundle.tcompose("m.completed_survey", surveyName, surveyId);
+        return new UserAction(Type.COMPLETED_SURVEY, memberId, descrip);
     }
 
     /** Used for unserialization. */

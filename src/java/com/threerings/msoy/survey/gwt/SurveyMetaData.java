@@ -30,4 +30,7 @@ public class SurveyMetaData
 
     /** After this number of submissions, the survey automatically disables. */
     public int maxSubmissions;
+
+    /** Number of coins awarded for submitting this survey. */
+    public int coinAward;
 }

@@ -31,6 +31,7 @@ public class SurveyRecord extends PersistentRecord
     public static final ColumnExp FINISH = colexp(_R, "finish");
     public static final ColumnExp ENABLED = colexp(_R, "enabled");
     public static final ColumnExp MAX_SUBMISSIONS = colexp(_R, "maxSubmissions");
+    public static final ColumnExp COIN_AWARD = colexp(_R, "coinAward");
     // AUTO-GENERATED: FIELDS END
 
     /** Unique integer key of this survey. */
@@ -54,9 +55,12 @@ public class SurveyRecord extends PersistentRecord
     /** After this number of submissions, the survey automatically disables. */
     public int maxSubmissions;
 
+    /** Number of coins awarded to users that submit this survey. */
+    public int coinAward;
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /**
      * Converts to a runtime record.
@@ -70,6 +74,7 @@ public class SurveyRecord extends PersistentRecord
         s.startDate = start == null ? null : new java.util.Date(start.getTime());
         s.finishDate = finish == null ? null : new java.util.Date(finish.getTime());
         s.maxSubmissions = maxSubmissions;
+        s.coinAward = coinAward;
         return s;
     }
 
@@ -84,6 +89,7 @@ public class SurveyRecord extends PersistentRecord
         start = survey.startDate == null ? null : new Date(survey.startDate.getTime());
         finish = survey.finishDate == null ? null : new Date(survey.finishDate.getTime());
         maxSubmissions = survey.maxSubmissions;
+        coinAward = survey.coinAward;
     }
 
     // AUTO-GENERATED: METHODS START

@@ -11,16 +11,21 @@ import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
+
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.money.server.MoneyLogic;
+
 import com.threerings.msoy.survey.gwt.Survey;
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyResponse;
 import com.threerings.msoy.survey.gwt.SurveyService;
+
 import com.threerings.msoy.survey.persist.SurveyQuestionRecord;
 import com.threerings.msoy.survey.persist.SurveyRecord;
 import com.threerings.msoy.survey.persist.SurveyRepository;
@@ -150,6 +155,10 @@ public class SurveyServlet extends MsoyServiceServlet
         } catch (DuplicateKeyException dke) {
             throw new ServiceException("e.survey_already_completed");
         }
+        if (survey.coinAward > 0) {
+            _moneyLogic.awardCoins(mrec.memberId, survey.coinAward, true,
+                UserAction.completedSurvey(mrec.memberId, survey.name, surveyId));
+        }
         for (SurveyResponse resp : responses) {
             SurveyResponseRecord responseRec = new SurveyResponseRecord();
             responseRec.surveyId = surveyId;
@@ -166,4 +175,5 @@ public class SurveyServlet extends MsoyServiceServlet
     }
 
     @Inject SurveyRepository _surveyRepo;
+    @Inject MoneyLogic _moneyLogic;
 }
