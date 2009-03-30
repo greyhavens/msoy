@@ -8,10 +8,10 @@
     width="100%" height="100%"
     preloader="com.threerings.msoy.client.Preloader"
     applicationComplete="viewStack.addChild(new RemixControls(this, viewStack));">
-<mx:Style source="../../../rsrc/css/msoy.css"/>
-<mx:Style source="../../../rsrc/css/applets.css"/>
-<mx:Style source="../../../rsrc/css/image.css"/>
-<mx:Style source="../../../rsrc/css/remixer.css"/>
+<mx:Style source="../../../../../../rsrc/css/msoy.css"/>
+<mx:Style source="../../../../../../rsrc/css/applets.css"/>
+<mx:Style source="../../../../../../rsrc/css/image.css"/>
+<mx:Style source="../../../../../../rsrc/css/remixer.css"/>
 <mx:Style>
    LinkButton {
       color: #000000;
