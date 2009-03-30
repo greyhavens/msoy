@@ -59,6 +59,7 @@ public class TakeSurveyPanel extends VerticalPanel
             SurveyQuestion q = _survey.questions[ii];
             questions.setText(ii * 2, 0, (ii + 1) + ".", 1, "number");
             questions.setText(ii * 2, 1, q.text, 1, "text");
+            questions.setText(ii * 2, 2, q.optional ? _msgs.optional() : "", 1, "optional");
 
             switch (q.type) {
             case BOOLEAN:
@@ -79,7 +80,7 @@ public class TakeSurveyPanel extends VerticalPanel
             }
             questions.setText(ii * 2 + 1, 0, "");
             if (_questions[ii] != null) {
-                questions.setWidget(ii * 2 + 1, 1, _questions[ii].makeWidget(ii, q), 1, "ui");
+                questions.setWidget(ii * 2 + 1, 1, _questions[ii].makeWidget(ii, q), 2, "ui");
             }
             questions.getRowFormatter().setStyleName(ii * 2, "question");
             questions.getRowFormatter().setStyleName(ii * 2 + 1, "response");
@@ -88,9 +89,7 @@ public class TakeSurveyPanel extends VerticalPanel
         Button done = new Button(_msgs.doneLabel());
         new ClickCallback<Void>(done) {
             protected boolean callService () {
-                gatherResponses();
-                if (_responses.size() == 0) {
-                    MsoyUI.error(_msgs.errNoResponses());
+                if (!gatherResponses()) {
                     return false;
                 }
                 _surveySvc.submitResponse(_surveyId, _responses, this);
@@ -104,7 +103,7 @@ public class TakeSurveyPanel extends VerticalPanel
         add(done);
     }
 
-    protected void gatherResponses ()
+    protected boolean gatherResponses ()
     {
         _responses.clear();
         for (QuestionUI qui : _questions) {
@@ -118,8 +117,17 @@ public class TakeSurveyPanel extends VerticalPanel
 
             if (resp.response != null) {
                 _responses.add(resp);
+
+            } else if (!_survey.questions[resp.questionIndex].optional) {
+                MsoyUI.error(_msgs.errAnswerRequired(String.valueOf(resp.questionIndex + 1)));
+                return false;
             }
         }
+        if (_responses.size() == 0) {
+            MsoyUI.error(_msgs.errNoResponses());
+            return false;
+        }
+        return true;
     }
 
     protected abstract class QuestionUI

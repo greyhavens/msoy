@@ -32,6 +32,8 @@ import com.threerings.msoy.survey.persist.SurveyRepository;
 import com.threerings.msoy.survey.persist.SurveyResponseRecord;
 import com.threerings.msoy.survey.persist.SurveySubmissionRecord;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Provides survey services.
  */
@@ -135,7 +137,10 @@ public class SurveyServlet extends MsoyServiceServlet
     public void submitResponse (int surveyId, List<SurveyResponse> responses)
         throws ServiceException
     {
+        // check authorization
         MemberRecord mrec = requireAuthedUser();
+
+        // check survey exists and is enabled
         SurveyRecord survey = _surveyRepo.loadSurvey(surveyId);
         if (survey == null) {
             throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
@@ -145,6 +150,26 @@ public class SurveyServlet extends MsoyServiceServlet
             (survey.finish != null && now >= survey.finish.getTime() + 24*60*60*1000)) {
             throw new ServiceException("e.survey_inactive");
         }
+
+        // check required questions have been answered
+        List<SurveyQuestionRecord> questions = _surveyRepo.loadQuestions(surveyId);
+        for (int ii = 0; ii < questions.size(); ++ii) {
+            if (!questions.get(ii).optional) {
+                boolean ok = false;
+                for (SurveyResponse resp : responses) {
+                    if (resp.questionIndex == ii) {
+                        ok = true;
+                    }
+                }
+                if (!ok) {
+                    log.warning("Incomplete survey submitted", "surveyId", surveyId,
+                        "memberId", mrec.memberId, "responses", responses);
+                    throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+                }
+            }
+        }
+
+        // create submission
         SurveySubmissionRecord subRec = new SurveySubmissionRecord();
         subRec.completed = new Date(System.currentTimeMillis());
         subRec.memberId = mrec.memberId;
@@ -155,10 +180,15 @@ public class SurveyServlet extends MsoyServiceServlet
         } catch (DuplicateKeyException dke) {
             throw new ServiceException("e.survey_already_completed");
         }
+
+        // award coins if applicable
         if (survey.coinAward > 0) {
             _moneyLogic.awardCoins(mrec.memberId, survey.coinAward, true,
                 UserAction.completedSurvey(mrec.memberId, survey.name, surveyId));
         }
+
+        // record responses
+        // TODO: validate?
         for (SurveyResponse resp : responses) {
             SurveyResponseRecord responseRec = new SurveyResponseRecord();
             responseRec.surveyId = surveyId;
@@ -167,6 +197,8 @@ public class SurveyServlet extends MsoyServiceServlet
             responseRec.response = resp.response;
             _surveyRepo.insertQuestionResponse(responseRec);
         }
+
+        // auto-disable if maximum submissions has been reached
         if (survey.maxSubmissions > 0 && _surveyRepo.countSubmissions(surveyId) >=
             survey.maxSubmissions) {
             survey.enabled = false;

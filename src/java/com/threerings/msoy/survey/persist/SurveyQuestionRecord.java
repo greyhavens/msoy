@@ -25,6 +25,7 @@ public class SurveyQuestionRecord extends PersistentRecord
     public static final ColumnExp QUESTION_TYPE = colexp(_R, "questionType");
     public static final ColumnExp TEXT = colexp(_R, "text");
     public static final ColumnExp DESCRIPTOR = colexp(_R, "descriptor");
+    public static final ColumnExp OPTIONAL = colexp(_R, "optional");
     // AUTO-GENERATED: FIELDS END
 
     /** The id of the survey we belong to. */
@@ -42,9 +43,12 @@ public class SurveyQuestionRecord extends PersistentRecord
     /** The format of the expected reply, if applicable. */
     @Column(nullable=true) public String descriptor;
 
+    /** Whether this question is required for a submission. */
+    @Column(defaultValue="false") public boolean optional;
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /**
      * Converts to a runtime record.
@@ -54,6 +58,7 @@ public class SurveyQuestionRecord extends PersistentRecord
         SurveyQuestion sq = new SurveyQuestion();
         sq.type = questionType;
         sq.text = text;
+        sq.optional = optional;
         switch (questionType) {
         case EXCLUSIVE_CHOICE:
         case SUBSET_CHOICE:
@@ -74,6 +79,7 @@ public class SurveyQuestionRecord extends PersistentRecord
     {
         questionType = question.type;
         text = question.text;
+        optional = question.optional;
         switch (questionType) {
         case EXCLUSIVE_CHOICE:
         case SUBSET_CHOICE:

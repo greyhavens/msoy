@@ -57,4 +57,7 @@ public class SurveyQuestion
 
     /** The maximum value, applies to RATING (min value is always 1). */
     public int maxValue;
+
+    /** If this question may be omitted. */
+    public boolean optional;
 }

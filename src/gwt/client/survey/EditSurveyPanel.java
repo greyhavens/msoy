@@ -508,15 +508,22 @@ public class EditSurveyPanel extends VerticalPanel
             final TextBox text = MsoyUI.createTextBox(_question.text, 80, 40);
             _editGrid.setWidget(1, 1, text);
 
+            _editGrid.setText(2, 0, _msgs.questionOptionalLabel());
+            final CheckBox optional = new CheckBox();
+            _editGrid.setWidget(2, 1, optional);
+            optional.setChecked(_question.optional);
+
+            _typeStartRow = 3;
+
             // type-specific controls
             TextBox maxValue = null;
             if (_question.type == SurveyQuestion.Type.EXCLUSIVE_CHOICE ||
                 _question.type == SurveyQuestion.Type.SUBSET_CHOICE) {
 
                 // existing choices
-                _editGrid.setText(2, 0, _msgs.questionChoicesLabel(), 1, "choicesLabel");
+                _editGrid.setText(_typeStartRow, 0, _msgs.questionChoicesLabel(), 1, "choicesLabel");
                 refreshChoices();
-                _editGrid.setText(3, 0, "");
+                _editGrid.setText(_typeStartRow + 1, 0, "");
 
                 // controls to add a new choice
                 HorizontalPanel add = new HorizontalPanel();
@@ -529,13 +536,13 @@ public class EditSurveyPanel extends VerticalPanel
                         refreshChoices();
                     }
                 }));
-                _editGrid.setWidget(3, 1, add);
+                _editGrid.setWidget(_typeStartRow + 1, 1, add);
 
             } else if (_question.type == SurveyQuestion.Type.RATING) {
                 // maximum rating box
-                _editGrid.setText(2, 0, _msgs.questionMaxValueLabel());
+                _editGrid.setText(_typeStartRow, 0, _msgs.questionMaxValueLabel());
                 maxValue = MsoyUI.createTextBox(String.valueOf(_question.maxValue), 2, 2);
-                _editGrid.setWidget(2, 1, maxValue);
+                _editGrid.setWidget(_typeStartRow, 1, maxValue);
             }
 
             // save button
@@ -545,6 +552,7 @@ public class EditSurveyPanel extends VerticalPanel
                 protected boolean callService () {
                     _question.text = text.getText();
                     _question.choices = _choices;
+                    _question.optional = optional.isChecked();
                     if (fmaxValue != null) {
                         _question.maxValue = Integer.parseInt(fmaxValue.getText());
                     }
@@ -589,7 +597,7 @@ public class EditSurveyPanel extends VerticalPanel
                     }), 1, "delete");
                 choices.getRowFormatter().addStyleName(frow, "row" + ii % 2);
             }
-            _editGrid.setWidget(2, 1, choices);
+            _editGrid.setWidget(_typeStartRow, 1, choices);
         }
 
         protected SurveyMetaData _survey;
@@ -597,6 +605,7 @@ public class EditSurveyPanel extends VerticalPanel
         protected String[] _choices;
         protected int _questionIndex;
         protected SmartTable _editGrid;
+        protected int _typeStartRow;
     }
 
     /**

@@ -14,7 +14,13 @@
 }
 
 .takeSurvey td.text {
-  width: 100%;
+  width: 90%;
+}
+
+.takeSurvey td.optional {
+  width: 10%;
+  text-align: right;
+  font-size: 10px;
 }
 
 .takeSurvey tr.response td.ui {
