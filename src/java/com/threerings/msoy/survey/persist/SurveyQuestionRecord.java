@@ -6,6 +6,7 @@ package com.threerings.msoy.survey.persist;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
+import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
@@ -14,6 +15,7 @@ import com.threerings.msoy.survey.gwt.SurveyQuestion;
 /**
  * A single question that appears on a survey.
  */
+@Entity
 public class SurveyQuestionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
