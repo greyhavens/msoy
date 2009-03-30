@@ -11,6 +11,7 @@ import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.result.Result;
+import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldKey;
 import com.threerings.panopticon.aggregator.result.field.FieldResult;
 import com.threerings.panopticon.aggregator.result.field.FieldWritable;
@@ -19,13 +20,11 @@ import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 import com.threerings.panopticon.efs.storev2.StorageStrategy;
 
-@Aggregator(output=AccountsWithVectors.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY,
+@Aggregator(output="AccountsWithVectors", schedule=Schedule.NIGHTLY,
     nexts=DailyAccountsCreated.class)
 public class AccountsWithVectors
     implements JavaAggregator<AccountsWithVectors.TrackerKey>
 {
-    public static final String OUTPUT_EVENT_NAME = "AccountsWithVectors";
-
     public static class TrackerKey extends FieldKey
     {
         public String tracker;
@@ -37,7 +36,7 @@ public class AccountsWithVectors
         }
     }
 
-    @Result(inputs="VectorAssociated")
+    @StringInputNameResult(inputs="VectorAssociated")
     public static class VectorMap extends FieldResult<VectorMap>
     {
         public Map<String, String> trackerToVector = Maps.newHashMap();
@@ -67,7 +66,7 @@ public class AccountsWithVectors
         }
     }
 
-    @Result(inputs="AccountCreated")
+    @StringInputNameResult(inputs="AccountCreated")
     public static class AccountMap extends FieldResult<AccountMap>
     {
         public Map<String, Account> trackerToAccount = Maps.newHashMap();

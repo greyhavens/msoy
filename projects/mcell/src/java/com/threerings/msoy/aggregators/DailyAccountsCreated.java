@@ -39,7 +39,7 @@ public class DailyAccountsCreated
         }
     }
 
-    @Result(inputs=AccountsWithVectors.OUTPUT_EVENT_NAME)
+    @Result(inputs=AccountsWithVectors.class)
     public static class CountTypes extends FieldAggregatedResult
     {
         public int total;

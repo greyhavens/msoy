@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.threerings.panopticon.aggregator.result.Result;
+import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
@@ -17,7 +17,7 @@ import com.threerings.panopticon.common.event.EventData;
  * Counts up all the members who were sent a retention email and outputs a map of the member id
  * to the date the email was sent.
  */
-@Result(inputs="RetentionMailSent") // original msoy event
+@StringInputNameResult(inputs="RetentionMailSent") // original msoy event
 public class RetentionEmailResult extends FieldAggregatedResult
 {
     /** The members addressed. */

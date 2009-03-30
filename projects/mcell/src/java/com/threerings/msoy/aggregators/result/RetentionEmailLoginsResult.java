@@ -4,13 +4,13 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.threerings.panopticon.aggregator.result.Result;
+import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
 
 
-@Result(inputs="Login")
+@StringInputNameResult(inputs="Login")
 public class RetentionEmailLoginsResult extends FieldAggregatedResult
 {
     /** The member ids who have logged in. */

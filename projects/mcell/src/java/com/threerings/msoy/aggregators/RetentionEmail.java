@@ -23,12 +23,10 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 
-@Aggregator(output = RetentionEmail.EVENT_NAME, schedule = Schedule.DAILY)
+@Aggregator(output = "msoy.RetentionEmailResponse", schedule = Schedule.DAILY)
 public class RetentionEmail
     implements JavaAggregator<Keys.LongKey>, KeyFactory<Keys.LongKey>
 {
-    public static final String EVENT_NAME = "msoy.RetentionEmailResponse";
-
     // Our results
     public RetentionEmailResult mailings;
     public RetentionEmailLoginsResult logins;
