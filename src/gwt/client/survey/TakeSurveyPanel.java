@@ -136,6 +136,7 @@ public class TakeSurveyPanel extends VerticalPanel
         {
             _index = idx;
             _question = question;
+            _responseChoices = _question.getEncodedChoices();
             return makeWidget();
         }
 
@@ -149,6 +150,7 @@ public class TakeSurveyPanel extends VerticalPanel
 
         protected int _index;
         protected SurveyQuestion _question;
+        protected String[] _responseChoices;
     }
 
     protected class TrueFalse extends QuestionUI
@@ -170,10 +172,10 @@ public class TakeSurveyPanel extends VerticalPanel
         protected String getResponse ()
         {
             if (trueButton.isChecked()) {
-                return String.valueOf(true);
+                return _responseChoices[1];
             }
             if (falseButton.isChecked()) {
-                return String.valueOf(false);
+                return _responseChoices[0];
             }
             return null;
         }
@@ -201,7 +203,7 @@ public class TakeSurveyPanel extends VerticalPanel
         {
             for (int ii = 0; ii < buttons.length; ++ii) {
                 if (buttons[ii].isChecked()) {
-                    return String.valueOf(ii);
+                    return _responseChoices[ii];
                 }
             }
             return null;
@@ -234,7 +236,7 @@ public class TakeSurveyPanel extends VerticalPanel
                     if (response.length() > 0) {
                         response.append(",");
                     }
-                    response.append("" + ii);
+                    response.append(_responseChoices[ii]);
                 }
             }
             if (response.length() > 0) {
@@ -269,7 +271,7 @@ public class TakeSurveyPanel extends VerticalPanel
         {
             for (int ii = 0; ii < buttons.length; ++ii) {
                 if (buttons[ii].isChecked()) {
-                    return String.valueOf(ii + 1);
+                    return _responseChoices[ii];
                 }
             }
             return null;
