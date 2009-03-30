@@ -197,6 +197,15 @@ public class SurveyRepository extends DepotRepository
     }
 
     /**
+     * Loads all the responses to a given survey.
+     */
+    public List<SurveyResponseRecord> loadResponses (int surveyId)
+    {
+        return findAll(SurveyResponseRecord.class, new Where(
+            SurveyResponseRecord.SURVEY_ID, surveyId));
+    }
+
+    /**
      * Utility method to update only the index column of a question.
      */
     protected void updateQuestionIndex (int surveyId, int index, int newIndex)

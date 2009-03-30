@@ -6,6 +6,7 @@ package com.threerings.msoy.survey.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.msoy.survey.gwt.SurveyService.SubmissionSummary;
 
 /** The asynchronous version of {@link SurveyService}. */
 public interface SurveyServiceAsync
@@ -35,4 +36,7 @@ public interface SurveyServiceAsync
     /** The asynchronous version of {@link SurveyService#submitResponse}. */
     void submitResponse (int surveyId, List<SurveyResponse> responses,
         AsyncCallback<Void> callback);
+
+    /** The asynchronous version of {@link SurveyService#getSubmissionSummary}. */
+    void getSubmissionSummary (int surveyId, AsyncCallback<SubmissionSummary> callback);
 }

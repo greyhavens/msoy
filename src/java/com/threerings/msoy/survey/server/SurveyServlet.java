@@ -23,6 +23,7 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.survey.gwt.Survey;
 import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
+import com.threerings.msoy.survey.gwt.SurveyQuestion.Type;
 import com.threerings.msoy.survey.gwt.SurveyResponse;
 import com.threerings.msoy.survey.gwt.SurveyService;
 
@@ -206,6 +207,64 @@ public class SurveyServlet extends MsoyServiceServlet
         }
     }
 
-    @Inject SurveyRepository _surveyRepo;
-    @Inject MoneyLogic _moneyLogic;
+    public SubmissionSummary getSubmissionSummary (int surveyId)
+        throws ServiceException
+    {
+        requireAdminUser();
+
+        // load survey and questions
+        SurveyRecord survey = _surveyRepo.loadSurvey(surveyId);
+        List<SurveyQuestionRecord> questions = _surveyRepo.loadQuestions(surveyId);
+        if (survey == null) {
+            throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+        }
+
+        // fill in survey fields and initialize per-question fields
+        SubmissionSummary summary = new SubmissionSummary();
+        summary.metaData = survey.toSurvey();
+        summary.total = _surveyRepo.countSubmissions(surveyId);
+        summary.responses = new ResponseSummary[questions.size()];
+        summary.questions = new SurveyQuestion[questions.size()];
+        String[][] answers = new String[summary.questions.length][];
+        for (int ii = 0; ii < summary.questions.length; ++ii) {
+            summary.questions[ii] = questions.get(ii).toSurveyQuestion();
+            answers[ii] = summary.questions[ii].getEncodedChoices();
+            summary.responses[ii] = new ResponseSummary();
+            summary.responses[ii].numberChosen = new int[answers[ii].length];
+        }
+
+        // accumulate all responses
+        for (SurveyResponseRecord response : _surveyRepo.loadResponses(surveyId)) {
+            int qidx = response.questionIndex;
+            if (qidx < 0 || qidx >= summary.questions.length) {
+                continue;
+            }
+            summary.responses[qidx].total++;
+            SurveyQuestion question = summary.questions[qidx];
+            ResponseSummary responseSummary = summary.responses[qidx];
+            if (question.type == Type.SUBSET_CHOICE) {
+                for (String resp : response.response.split(",")) {
+                    accumulate(answers[qidx], resp, responseSummary);
+                }
+            } else {
+                accumulate(answers[qidx], response.response, responseSummary);
+            }
+        }
+
+        return summary;
+    }
+
+    public void accumulate (String[] answers, String response, ResponseSummary summary)
+    {
+        for (int ii = 0; ii < answers.length; ++ii) {
+            if (answers[ii].equals(response)) {
+                summary.numberChosen[ii]++;
+                return;
+            }
+        }
+        summary.others++;
+    }
+
+    @Inject protected SurveyRepository _surveyRepo;
+    @Inject protected MoneyLogic _moneyLogic;
 }
