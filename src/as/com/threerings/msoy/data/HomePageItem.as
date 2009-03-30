@@ -8,8 +8,6 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MediaDesc;
-
-import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.data.all.NavItemData;
 
 /**
@@ -25,7 +23,7 @@ public class HomePageItem
     /** Non action. */
     public static const ACTION_NONE :int = 0;
 
-    /** Go and work on a specific badge. The data is an insance of {@link InProgressBadge}. */
+    /** Go and work on a specific badge. The data is an insance of an InProgressBadge. */
     public static const ACTION_BADGE :int = 1;
 
     /** Play a game. The data is an <code>Integer</code> game id. */

@@ -10,7 +10,6 @@ import flash.events.Event;
 import com.threerings.flash.GraphicsUtil;
 import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.RoomElementSprite;
 
 /**
@@ -96,7 +95,7 @@ public class FurniHighlight
     /** Pointer back to the controller. */
     protected var _controller :RoomEditorController;
 
-    /** MsoySprite which the user is targeting. */
+    /** FurniSprite which the user is targeting. */
     protected var _target :FurniSprite;
 
     /** Sprite that contains a UI to display over the target. */

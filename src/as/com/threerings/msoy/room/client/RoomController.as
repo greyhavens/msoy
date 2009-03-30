@@ -40,7 +40,7 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.ui.RadialMenu;
+// import com.threerings.msoy.ui.RadialMenu;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemTypes;
