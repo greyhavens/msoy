@@ -1059,19 +1059,14 @@ public class MoneyLogic
         int last10Mins = _repo.countBroadcastsSince(now - (10 * 60 * 1000));
         int over10MinsUnder2Hours = _repo.countBroadcastsSince(now - (2 * 60 * 60 * 1000))
             - last10Mins;
+        // TODO: better formula? It should _always_ cost more if you are broadcasting within, say,
+        // 5 minutes of the last broadcast, but this could cause a price to drop if stuff moves
+        // out of the 10-minute generation. We'd probably have to load the timestamps
+        // of all broadcasts within the last X minutes and have each one contribute a
+        // bar or fraction thereof to the final price.
         return 10 + // minimum price
             (4 * last10Mins) + // goes up by 4 bars for every bcast in the last 10 mins
             over10MinsUnder2Hours; // 1 bar for every bcast over 10 mins, 2 hour roll-off
-    }
-
-    /**
-     * Calculates the cost of a broadcast if the given number have occurred in the last hour. The
-     * cost is always in bars.
-     */
-    public static int getBroadcastCost (int countInLastTwoHours)
-    {
-        // TODO: proper formula
-        return countInLastTwoHours + 10;
     }
 
     /**
