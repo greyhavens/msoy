@@ -25,6 +25,7 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.AwardPanel;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyService;
 
@@ -185,11 +186,10 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
+            var online :String = entry.online ?
+                Msgs.NOTIFY.get("m.friend_visit", entry.name.getMemberId()) : "";
             var notif :String = MessageBundle.tcompose("m.friend_added",
-                entry.name, entry.name.getMemberId());
-            if (entry.online) {
-                notif += " " + MessageBundle.tcompose("m.friend_visit", entry.name.getMemberId());
-            }
+                entry.name, entry.name.getMemberId(), online);
             addGenericNotification(notif, Notification.PERSONAL);
         }
     }
