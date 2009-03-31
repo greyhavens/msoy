@@ -86,7 +86,7 @@ public class MeServlet extends MsoyServiceServlet
 
         // include all our active promotions
         data.promos = Lists.newArrayList(
-            Iterables.transform(_promoRepo.loadPromotions(), PromotionRecord.TO_PROMOTION));
+            Iterables.transform(_promoRepo.loadActivePromotions(), PromotionRecord.TO_PROMOTION));
 
         if (PROFILING_ENABLED) {
             _profiler.swap("friends");
