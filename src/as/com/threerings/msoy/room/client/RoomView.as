@@ -316,7 +316,8 @@ public class RoomView extends Sprite
      */
     public function getScrollBounds () :Rectangle
     {
-        var r :Rectangle = new Rectangle(0, 0, _actualWidth / scaleX, _actualHeight / scaleY);
+        var r :Rectangle = new Rectangle(0, 0, _actualWidth / scaleX,
+            Math.abs(_actualHeight / scaleY));
         if (_scene != null) {
             r.width = Math.min(_scene.getWidth(), r.width);
             r.height = Math.min(_scene.getHeight(), r.height);
@@ -666,6 +667,7 @@ public class RoomView extends Sprite
     {
         switch (event.name) {
         case Prefs.ZOOM:
+        case Prefs.APRIL_FOOLS:
             relayout();
             break;
         }
@@ -678,11 +680,14 @@ public class RoomView extends Sprite
     {
         var scale :Number = computeScale();
         scaleY = scale;
+        if (UberClient.isRegularClient() && Prefs.isAprilFoolsEnabled()) {
+            scaleY *= -1;
+        }
         scaleX = scale;
         // TODO: What is this line of code actually doing? Can I omit in the
         // avatar viewer mode?
         if (!UberClient.isFeaturedPlaceView()) {
-            y = (_actualHeight - _layout.metrics.sceneHeight * scale) / 2;
+            y = (_actualHeight - _layout.metrics.sceneHeight * scaleY) / 2;
         }
 
         configureScrollRect();

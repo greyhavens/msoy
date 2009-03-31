@@ -52,10 +52,15 @@ public class Prefs
     public static const PERMAGUEST_USERNAME :String = "permaguestUsername";
     public static const AUTOSHOW_PREFIX :String = "autoShow_";
 
+    public static const APRIL_FOOLS :String = "aprilFools";
+
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
 
     public static const GLOBAL_BLEEP :String = "_bleep_";
+
+    public static const IS_APRIL_FOOLS :Boolean =
+        ((new Date().month) == 2) && ((new Date().date) == 31);
 
     public static function setEmbedded (embedded :Boolean) :void
     {
@@ -82,6 +87,16 @@ public class Prefs
             return true;
         }
         return false;
+    }
+
+    public static function isAprilFoolsEnabled () :Boolean
+    {
+        return IS_APRIL_FOOLS && _config.getValue(APRIL_FOOLS, true);
+    }
+
+    public static function setAprilFoolsEnabled (enabled :Boolean) :void
+    {
+        _config.setValue(APRIL_FOOLS, enabled);
     }
 
     /**

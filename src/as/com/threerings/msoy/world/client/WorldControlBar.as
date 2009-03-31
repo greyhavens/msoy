@@ -54,6 +54,8 @@ public class WorldControlBar extends ControlBar
    /** Handles the two party-related popups. */
     public var partyBtn :CommandButton;
 
+    public var foolsBtn :CommandButton;
+
     /**
      * Constructor.
      */
@@ -131,6 +133,13 @@ public class WorldControlBar extends ControlBar
         partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return _wctx.getPartyDirector().createAppropriatePartyPanel();
         }, partyBtn));
+
+        if (Prefs.IS_APRIL_FOOLS) {
+            foolsBtn = createButton("", "Toggle Foolishness");
+            foolsBtn.toggle = true;
+            foolsBtn.selected = Prefs.isAprilFoolsEnabled();
+            foolsBtn.setCallback(Prefs.setAprilFoolsEnabled);
+        }
     }
 
     override protected function checkControls (... ignored) :void
@@ -188,6 +197,10 @@ public class WorldControlBar extends ControlBar
         addButton(roomEditBtn, showRoomEdit, PLACE_PRIORITY);
 
         addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
+
+        if (foolsBtn != null && !isInViewer()) {
+            addButton(foolsBtn, showMusic, VOLUME_PRIORITY);
+        }
     }
 
     // from ControlBar
