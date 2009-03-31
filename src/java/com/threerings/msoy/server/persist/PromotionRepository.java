@@ -53,6 +53,14 @@ public class PromotionRepository extends DepotRepository
     }
 
     /**
+     * Loads a specific promotion.
+     */
+    public PromotionRecord loadPromotion (String id)
+    {
+        return load(PromotionRecord.class, PromotionRecord.getKey(id));
+    }
+
+    /**
      * Adds a promotion to the repository.
      */
     public void addPromotion (Promotion promo)

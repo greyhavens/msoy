@@ -10,11 +10,15 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.PromotionRecord;
+import com.threerings.msoy.server.persist.PromotionRepository;
 
+import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -204,6 +208,9 @@ public class SurveyServlet extends MsoyServiceServlet
             survey.maxSubmissions) {
             survey.enabled = false;
             _surveyRepo.updateSurvey(survey);
+
+            // kill the linked promotion too
+            deactivatePromotion(survey);
         }
     }
 
@@ -254,7 +261,31 @@ public class SurveyServlet extends MsoyServiceServlet
         return summary;
     }
 
-    public void accumulate (String[] answers, String response, ResponseSummary summary)
+    protected void deactivatePromotion (SurveyRecord survey)
+    {
+        if (survey.linkedPromoId.length() == 0) {
+            return;
+        }
+
+        PromotionRecord prec = _promoRepo.loadPromotion(survey.linkedPromoId);
+        if (prec == null) {
+            return;
+        }
+
+        // just set the end date to an hour ago. suppress exceptions since this is probably
+        // happening in response to a user action and they will get confused otherwise
+        try {
+            Promotion promo = prec.toPromotion();
+            promo.ends = new java.util.Date(System.currentTimeMillis() - 60*60*1000L);
+            _promoRepo.updatePromotion(promo);
+
+        } catch (Exception e) {
+            log.warning("Could not save promotion when deactivating a survey",
+                "surveyId", survey.surveyId, e);
+        }
+    }
+
+    protected static void accumulate (String[] answers, String response, ResponseSummary summary)
     {
         for (int ii = 0; ii < answers.length; ++ii) {
             if (answers[ii].equals(response)) {
@@ -267,4 +298,5 @@ public class SurveyServlet extends MsoyServiceServlet
 
     @Inject protected SurveyRepository _surveyRepo;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected PromotionRepository _promoRepo;
 }

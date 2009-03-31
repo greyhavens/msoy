@@ -33,4 +33,8 @@ public class SurveyMetaData
 
     /** Number of coins awarded for submitting this survey. */
     public int coinAward;
+
+    /** If non-null, the survey will automatically update some fields of a promotion when saved,
+     * and delete the promotion when the survey is disabled. */
+    public String linkedPromoId;
 }

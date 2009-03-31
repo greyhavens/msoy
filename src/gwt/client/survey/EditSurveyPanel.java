@@ -249,6 +249,10 @@ public class EditSurveyPanel extends VerticalPanel
             table.setText(row, 0, _msgs.finishLabel(), 1, "label");
             table.setWidget(row++, 1, finish);
 
+            final TextBox promoId = MsoyUI.createTextBox(_result.survey.linkedPromoId, 20, 20);
+            table.setText(row, 0, _msgs.promoIdLabel(), 1, "label");
+            table.setWidget(row++, 1, promoId);
+
             Button save = new Button(_msgs.save());
             new ClickCallback<SurveyMetaData>(save) {
                 @Override // from ClickCallback
@@ -259,6 +263,7 @@ public class EditSurveyPanel extends VerticalPanel
                     _result.survey.finishDate = finish.getDate();
                     _result.survey.maxSubmissions = Integer.parseInt(maxSubmissions.getText());
                     _result.survey.coinAward = Integer.parseInt(coinAward.getText());
+                    _result.survey.linkedPromoId = promoId.getText();
                     _surveySvc.updateSurvey(_result.survey, this);
                     return true;
                 }
