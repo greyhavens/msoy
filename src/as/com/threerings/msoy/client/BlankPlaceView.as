@@ -28,9 +28,9 @@ public class BlankPlaceView extends Canvas
         var swidth :int = UberClient.getApplication().stage.stageWidth;
         var sheight :int = UberClient.getApplication().stage.stageHeight;
         var hheight :int = HeaderBar.HEIGHT;
-        if (ctx.getMsoyClient().isEmbedded()) {
-            hheight += EmbedHeader.HEIGHT;
-        }
+//        if (ctx.getMsoyClient().isEmbedded()) {
+//            hheight += EmbedHeader.HEIGHT;
+//        }
 
         var spinner :LoadingSpinner = new LoadingSpinner();
         addChild(new FlexWrapper(spinner));

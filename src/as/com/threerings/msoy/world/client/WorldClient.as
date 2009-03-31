@@ -31,7 +31,7 @@ import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.EmbedHeader;
+//import com.threerings.msoy.client.EmbedHeader;
 import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
@@ -77,7 +77,7 @@ public class WorldClient extends MsoyClient
         // if we're an embedded client, turn on the embed header
         if (getHostname() == null && !_featuredPlaceView) {
             _wctx.getUIState().setEmbedded(true);
-            _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
+//            _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
         }
 
         // if we are going right into a game, do that now and once we get into the game, then we'll

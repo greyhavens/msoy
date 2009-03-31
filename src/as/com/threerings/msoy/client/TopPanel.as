@@ -152,15 +152,15 @@ public class TopPanel extends Canvas
         if (_comicOverlay != null) {
             _comicOverlay.displayChat((mView != null) && mView.shouldUseChatOverlay());
         }
-
-        if (_topPanel is EmbedHeader) {
-            const embedHeader :EmbedHeader = _topPanel as EmbedHeader;
-            if (mView != null) {
-                embedHeader.setPlaceName(mView.getPlaceName(), mView.getPlaceLogo());
-            } else {
-                embedHeader.setPlaceName(null);
-            }
-        }
+//
+//        if (_topPanel is EmbedHeader) {
+//            const embedHeader :EmbedHeader = _topPanel as EmbedHeader;
+//            if (mView != null) {
+//                embedHeader.setPlaceName(mView.getPlaceName(), mView.getPlaceLogo());
+//            } else {
+//                embedHeader.setPlaceName(null);
+//            }
+//        }
     }
 
     /**
