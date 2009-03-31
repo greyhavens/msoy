@@ -1055,7 +1055,7 @@ public class MoneyLogic
      */
     public int getBroadcastCost ()
     {
-        long then = System.currentTimeMillis() - 60 * 60 * 1000;
+        long then = System.currentTimeMillis() - (2 * 60 * 60 * 1000);
         return getBroadcastCost(_repo.countBroadcastsSince(then));
     }
 
@@ -1063,10 +1063,10 @@ public class MoneyLogic
      * Calculates the cost of a broadcast if the given number have occurred in the last hour. The
      * cost is always in bars.
      */
-    public static int getBroadcastCost (int countInLastHour)
+    public static int getBroadcastCost (int countInLastTwoHours)
     {
         // TODO: proper formula
-        return countInLastHour + 1;
+        return countInLastTwoHours + 10;
     }
 
     /**

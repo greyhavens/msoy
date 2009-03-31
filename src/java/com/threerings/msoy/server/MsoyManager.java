@@ -210,7 +210,7 @@ public class MsoyManager
         _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
             @Override public void invokePersistent ()
                 throws InvocationException {
-                    // make sure they're not a troublemaker
+                // make sure they're not a troublemaker
                 MemberRecord mrec = _memberRepo.loadMember(memberId);
                 if (true || mrec == null || mrec.isTroublemaker()) {
                     throw new InvocationException("e.broadcast_restricted");
