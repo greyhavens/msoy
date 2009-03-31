@@ -13,6 +13,9 @@ import com.threerings.crowd.chat.client.BroadcastHandler;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.client.GameContext;
+
 /**
  * Msoy version of broadcasting. Allow non-admins to access the command but shows a confirmation
  * panel (that will charge them money and then send a slightly less important looking broadcast
@@ -23,7 +26,8 @@ public class MsoyBroadcastHandler extends BroadcastHandler
     override public function checkAccess (user :BodyObject) :Boolean
     {
         // no permaguests
-        return (user is MemberObject) && !MemberObject(user).isPermaguest();
+        return ((user is MemberObject) && !MemberObject(user).isPermaguest()) ||
+            ((user is PlayerObject) && !PlayerObject(user).isPermaguest());
     }
 
     override protected function doBroadcast (ctx :CrowdContext, msg :String) :void
@@ -38,8 +42,11 @@ public class MsoyBroadcastHandler extends BroadcastHandler
             }
         }
 
-        // do the paid broadcast thing
-        new BroadcastPanel(MsoyContext(ctx), msg);
+        var mctx :MsoyContext = ctx as MsoyContext;
+        if (mctx == null) {
+            mctx = GameContext(ctx).getMsoyContext();
+        }
+        new BroadcastPanel(mctx, msg);
     }
 }
 }

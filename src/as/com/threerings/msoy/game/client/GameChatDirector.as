@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.SpeakService;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -12,15 +11,16 @@ import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.chat.client.BaseChatDirector;
+
 /**
  * Does some special business for handling chat on the game server side of things.
  */
-public class GameChatDirector extends ChatDirector
+public class GameChatDirector extends BaseChatDirector
 {
     public function GameChatDirector (gctx :GameContext)
     {
-        super(gctx, gctx.getMsoyContext().getMessageManager(), MsoyCodes.CHAT_MSGS);
-        _mctx = gctx.getMsoyContext();
+        super(gctx, gctx.getMsoyContext());
         addChatDisplay(_mctx.getTopPanel().getHeaderBar().getChatTabs());
         addChatDisplay(_mctx.getMsoyChatDirector().getHistoryList());
     }
@@ -36,17 +36,5 @@ public class GameChatDirector extends ChatDirector
         }
         return super.requestChat(speakSvc, text, record);
     }
-
-    override protected function suppressTooManyCaps () :Boolean
-    {
-        return false;
-    }
-
-    override protected function clearChatOnClientExit () :Boolean
-    {
-        return false; // TODO: we need this because on msoy we "exit" when change servers
-    }
-
-    protected var _mctx :MsoyContext;
 }
 }

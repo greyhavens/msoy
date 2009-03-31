@@ -3,13 +3,10 @@
 
 package com.threerings.msoy.chat.client {
 
-import flash.utils.getTimer; // function
-
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
-import com.threerings.util.Throttle;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
@@ -19,7 +16,6 @@ import com.threerings.presents.client.ResultAdapter;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChannelSpeakService;
-import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChannelSpeakMarshaller;
 import com.threerings.crowd.chat.data.ChatChannel;
@@ -49,12 +45,9 @@ import com.threerings.msoy.chat.client.JabberService;
  * Handles the dispatching of chat messages based on their "channel" (room/game, individual, or
  * actual custom channel). Manages chat history tracking for same.
  */
-public class MsoyChatDirector extends ChatDirector
+public class MsoyChatDirector extends BaseChatDirector
 {
     public static const log :Log = Log.getLog(MsoyChatDirector);
-
-    /** The maximum size of any utterance. */
-    public static const MAX_CHAT_LENGTH :int = 200;
 
     // statically reference classes we require
     JabberMarshaller;
@@ -62,29 +55,7 @@ public class MsoyChatDirector extends ChatDirector
 
     public function MsoyChatDirector (ctx :MsoyContext)
     {
-        super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
-        _mctx = ctx;
-
-        var msg :MessageBundle = _msgmgr.getBundle(_bundle);
-        registerCommandHandler(msg, "away", new AwayHandler(true));
-        registerCommandHandler(msg, "back", new AwayHandler(false));
-        registerCommandHandler(msg, "bleepall", new BleepAllHandler());
-
-        // override the broadcast command from ChatDirector
-        registerCommandHandler(msg, "broadcast", new MsoyBroadcastHandler());
-
-        // Ye Olde Easter Eggs
-        registerCommandHandler(msg, "~egg", new HackHandler(function (args :String) :void {
-            _handlers.remove("~egg");
-            _mctx.getControlBar().setFullOn();
-            SubtitleGlyph.thumbsEnabled = true;
-            displayFeedback(null, MessageBundle.taint("Easter eggs enabled:\n" +
-                " * Full-screen button.\n" +
-                " * Chat link hover pics.\n" +
-                "\n" +
-                "These experimental features may be removed in the future. Let us know if you " +
-                "find them incredibly useful."));
-        }));
+        super(ctx, ctx);
 
         addChatDisplay(_chatHistory = new HistoryList(this));
 
@@ -270,36 +241,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override protected function suppressTooManyCaps () :Boolean
-    {
-        return false;
-    }
-
-    // from ChatDirector
-    override protected function clearChatOnClientExit () :Boolean
-    {
-        return false; // TODO: we need this because on msoy we "exit" when change servers
-    }
-
-    // from ChatDirector
-    override protected function checkCanChat (
-        speakSvc :SpeakService, message :String, mode :int) :String
-    {
-        var now :int = getTimer();
-        if (_throttle.throttleOpAt(now)) {
-            return "e.chat_throttled";
-        }
-        // if we allow it, we might also count this message as more than one "op"
-        if (message.length > 8) {
-            _throttle.noteOp(now);
-        }
-        if (message.length > (MAX_CHAT_LENGTH / 2)) {
-            _throttle.noteOp(now);
-        }
-        return null;
-    }
-
-    // from ChatDirector
     override protected function getChannelLocalType (channel :ChatChannel) :String
     {
         var mchannel :MsoyChatChannel = (channel as MsoyChatChannel);
@@ -370,15 +311,11 @@ public class MsoyChatDirector extends ChatDirector
         }
     }
 
-    protected var _mctx :MsoyContext;
     protected var _chatTabs :ChatTabBar;
     protected var _chatHistory :HistoryList;
     protected var _roomOccList :RoomOccupantList;
 
     protected var _csservice :ChannelSpeakService;
     protected var _jservice :JabberService;
-
-    /** You may utter 8 things per 5 seconds, but large things count as two. */
-    protected var _throttle :Throttle = new Throttle(8, 5000);
 }
 }
