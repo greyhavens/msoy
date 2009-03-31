@@ -463,6 +463,13 @@ public class AdminServlet extends MsoyServiceServlet
         _promoRepo.addPromotion(promo);
     }
 
+    public void updatePromotion (Promotion promo)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _promoRepo.updatePromotion(promo);
+    }
+
     // from interface AdminService
     public void deletePromotion (String promoId)
         throws ServiceException

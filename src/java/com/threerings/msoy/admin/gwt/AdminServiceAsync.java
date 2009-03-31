@@ -103,6 +103,11 @@ public interface AdminServiceAsync
     void addPromotion (Promotion promo, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#updatePromotion}.
+     */
+    void updatePromotion (Promotion promo, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#deletePromotion}.
      */
     void deletePromotion (String promoId, AsyncCallback<Void> callback);

@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -72,16 +74,22 @@ public class PromotionEditor extends FlowPanel
         }
         add(new TongueBox(_msgs.promoTitle(), _ptable));
 
-        final SmartTable create = new SmartTable("Create", 0, 10);
+        editPromotion(_edit, createBlankPromotion());
+        // TODO: update the title of the tongue box depending on mode
+        add(new TongueBox(_msgs.promoCreateOrEdit(), _edit));
+    }
+
+    protected void editPromotion (final SmartTable create, Promotion promo)
+    {
         int row = 0;
         create.setText(row, 0, _msgs.promoId());
-        create.setWidget(row++, 1, _promoId = MsoyUI.createTextBox("", 80, 20), 2, null);
+        create.setWidget(row++, 1, _promoId = MsoyUI.createTextBox(promo.promoId, 80, 20), 2, null);
         create.setText(row, 0, _msgs.promoStarts());
-        create.setWidget(row++, 1, _starts = new DatePicker(new Date()));
+        create.setWidget(row++, 1, _starts = new DatePicker(promo.starts));
         _starts.setTimeVisible(true);
         _starts.display(); // fucking crack smokers
         create.setText(row, 0, _msgs.promoEnds());
-        create.setWidget(row++, 1, _ends = new DatePicker(DateUtil.toDate(THE_FUTURE)));
+        create.setWidget(row++, 1, _ends = new DatePicker(promo.ends));
         _ends.setTimeVisible(true);
         _ends.display(); // can't anyone write a sane library?
         create.setText(row, 0, _msgs.promoIcon());
@@ -99,14 +107,16 @@ public class PromotionEditor extends FlowPanel
         }));
         create.setText(row, 0, _msgs.promoBlurb());
         create.setWidget(row++, 1, _blurb = new LimitedTextArea(255, 60, 5), 2, null);
+        _blurb.setText(promo.blurb);
         TextBoxUtil.addTypingListener(_blurb.getTextArea(), new Command() {
             public void execute () {
                 create.setWidget(_previewRow, 1, new PromotionBox(createPromotion()));
             }
         });
 
+        _promoIcon = promo.icon;
         create.setText(row, 0, _msgs.promoPreview());
-        _previewRow = row++;
+        create.setWidget(_previewRow = row++, 1, new PromotionBox(createPromotion()));
 
         create.setWidget(row, 0, new Button(_msgs.promoAdd(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -114,13 +124,15 @@ public class PromotionEditor extends FlowPanel
             }
         }), 2, null);
         create.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-
-        add(new TongueBox(_msgs.promoCreate(), create));
     }
 
     protected void addPromotion (SmartTable ptable, final Promotion promo)
     {
-        final int row = ptable.getRowCount();
+        setPromotion(ptable, ptable.getRowCount(), promo);
+    }
+
+    protected void setPromotion (SmartTable ptable, final int row, final Promotion promo)
+    {
         int col = 0;
         ptable.setText(row, col++, promo.promoId);
         if (promo.icon != null) {
@@ -131,9 +143,19 @@ public class PromotionEditor extends FlowPanel
         ptable.setText(row, col++, MsoyUI.formatDateTime(promo.starts));
         ptable.setText(row, col++, MsoyUI.formatDateTime(promo.ends));
 
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.setSpacing(5);
+        buttons.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        Button edit = new Button(_msgs.promoEdit(), new ClickListener () {
+            public void onClick (Widget sender) {
+                editPromotion(_edit, promo);
+            }
+        });
+        buttons.add(edit);
         PushButton delete = MsoyUI.createCloseButton(null);
         delete.setTitle(_msgs.promoDeleteTip());
-        ptable.setWidget(row, col++, delete);
+        buttons.add(delete);
+        ptable.setWidget(row, col++, buttons);
         new ClickCallback<Void>(delete, _msgs.promoDeleteConfirm()) {
             protected boolean callService () {
                 _adminsvc.deletePromotion(promo.promoId, this);
@@ -157,23 +179,56 @@ public class PromotionEditor extends FlowPanel
         return promo;
     }
 
+    protected Promotion createBlankPromotion ()
+    {
+        Promotion promo = new Promotion();
+        promo.promoId = "";
+        promo.blurb = "";
+        promo.icon = null;
+        promo.starts = new Date();
+        promo.ends = DateUtil.toDate(THE_FUTURE);
+        return promo;
+    }
+
     protected void publishPromotion (final Promotion promo)
     {
         if (promo.promoId.length() == 0 || promo.blurb.length() == 0) {
             return;
         }
 
-        _adminsvc.addPromotion(promo, new InfoCallback<Void>() {
-            public void onSuccess (Void result) {
-                _promoId.setText("");
-                _blurb.setText("");
-                _promoIcon = null;
-                addPromotion(_ptable, promo);
+        int row = -1;
+        for (int ii = 0; ii < _ptable.getRowCount(); ++ii) {
+            if (_ptable.getText(ii, 0).equals(promo.promoId)) {
+                row = ii;
+                break;
             }
-        });
+        }
+
+        if (row == -1) {
+            _adminsvc.addPromotion(promo, new InfoCallback<Void>() {
+                public void onSuccess (Void result) {
+                    _promoId.setText("");
+                    _blurb.setText("");
+                    _promoIcon = null;
+                    addPromotion(_ptable, promo);
+                }
+            });
+
+        } else {
+            final int frow = row;
+            _adminsvc.updatePromotion(promo, new InfoCallback<Void>() {
+                public void onSuccess (Void result) {
+                    _promoId.setText("");
+                    _blurb.setText("");
+                    _promoIcon = null;
+                    setPromotion(_ptable, frow, promo);
+                }
+            });
+        }
     }
 
     protected SmartTable _ptable = new SmartTable("Promos", 0, 10);
+    protected SmartTable _edit = new SmartTable("Create", 0, 10);
 
     protected TextBox _promoId;
     protected DatePicker _starts, _ends;

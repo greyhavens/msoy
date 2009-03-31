@@ -180,6 +180,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Updates an existing promotion.
+     */
+    void updatePromotion (Promotion promo)
+        throws ServiceException;
+
+    /**
      * Deletes the specified promotion.
      */
     void deletePromotion (String promoId)
