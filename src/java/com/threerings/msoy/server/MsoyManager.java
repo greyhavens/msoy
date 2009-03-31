@@ -212,7 +212,7 @@ public class MsoyManager
                 throws InvocationException {
                 // make sure they're not a troublemaker
                 MemberRecord mrec = _memberRepo.loadMember(memberId);
-                if (true || mrec == null || mrec.isTroublemaker()) {
+                if (mrec == null || mrec.isTroublemaker()) {
                     throw new InvocationException("e.broadcast_restricted");
                 }
                 _quote = secureBroadcastQuote(memberId);
@@ -237,7 +237,7 @@ public class MsoyManager
                 throws ServiceException, InvocationException {
                 // make sure they're not a troublemaker
                 MemberRecord mrec = _memberRepo.loadMember(memberId);
-                if (true || mrec == null || mrec.isTroublemaker()) {
+                if (mrec == null || mrec.isTroublemaker()) {
                     throw new InvocationException("e.broadcast_restricted");
                 }
 
