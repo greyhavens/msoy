@@ -16,6 +16,8 @@ import com.threerings.util.StringUtil;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.presents.client.ResultAdapter;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.client.Msgs;
@@ -49,7 +51,13 @@ public class BroadcastPanel extends FloatingPanel
 
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
-        msoySvc.secureBroadcastQuote(client, _ctx.resultListener(gotQuote));
+        msoySvc.secureBroadcastQuote(client, new ResultAdapter(gotQuote, handleNoPermission));
+    }
+
+    protected function handleNoPermission (reason :String) :void
+    {
+        _ctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
+        close();
     }
 
     override protected function createChildren () :void
