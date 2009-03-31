@@ -295,7 +295,7 @@ public class ProfileServlet extends MsoyServiceServlet
         if (!mrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
-        _spamLogic.testFeedEmail(profileMemberId);
+        _spamLogic.testFeedEmail(profileMemberId, mrec.accountName);
     }
 
     /**

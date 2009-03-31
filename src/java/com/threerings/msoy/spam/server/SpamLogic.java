@@ -224,9 +224,10 @@ public class SpamLogic
      * checking.
      * TODO: remove
      */
-    public boolean testFeedEmail (int memberId)
+    public boolean testFeedEmail (int memberId, String address)
     {
-        Result result = sendFeedEmail(_memberRepo.loadMember(memberId), Result.SENT_LAPSED, false);
+        Result result = sendFeedEmail(
+            _memberRepo.loadMember(memberId), Result.SENT_LAPSED, address, false);
         log.info("Sent test feed email", "result", result);
         return result.success;
     }
@@ -317,7 +318,7 @@ public class SpamLogic
         // now send the email, overwriting result in case of not enough friends etc
         // TODO: algorithm for resurrecting these failures (e.g. if they failed due to no feed
         // activity, maybe their friends have since been persuaded and created some activity)
-        result = sendFeedEmail(mrec, result, true);
+        result = sendFeedEmail(mrec, result, null, true);
 
         // NOTE: this is sort of redundant but increases the integrity of the spam record and
         // reduces chance of a user getting two emails when we are 1M strong
@@ -337,7 +338,7 @@ public class SpamLogic
      * @param realDeal testing flag; if false, we make sure the mail is sent regardless
      */
     protected Result sendFeedEmail (
-        final MemberRecord mrec, Result successResult, boolean realDeal)
+        final MemberRecord mrec, Result successResult, String addressOverride, boolean realDeal)
     {
         int memberId = mrec.memberId;
 
@@ -395,8 +396,9 @@ public class SpamLogic
         params.set("server_url", DeploymentConfig.serverURL);
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
+        String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
-            mrec.accountName, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
+            address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return successResult;
     }
 
