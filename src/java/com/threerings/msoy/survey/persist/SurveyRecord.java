@@ -61,7 +61,7 @@ public class SurveyRecord extends PersistentRecord
 
     /** If non-null, the survey will automatically update some fields of a promotion when saved,
      * and delete the promotion when the survey is disabled. */
-    @Column(defaultValue="")
+    @Column(defaultValue="''")
     public String linkedPromoId;
 
     /** Increment this value if you modify the definition of this persistent object in a way that
