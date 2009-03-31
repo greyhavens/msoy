@@ -1055,8 +1055,13 @@ public class MoneyLogic
      */
     public int getBroadcastCost ()
     {
-        long then = System.currentTimeMillis() - (2 * 60 * 60 * 1000);
-        return getBroadcastCost(_repo.countBroadcastsSince(then));
+        long now = System.currentTimeMillis();
+        int last10Mins = _repo.countBroadcastsSince(now - (10 * 60 * 1000));
+        int over10MinsUnder2Hours = _repo.countBroadcastsSince(now - (2 * 60 * 60 * 1000))
+            - last10Mins;
+        return 10 + // minimum price
+            (4 * last10Mins) + // goes up by 4 bars for every bcast in the last 10 mins
+            over10MinsUnder2Hours; // 1 bar for every bcast over 10 mins, 2 hour roll-off
     }
 
     /**
