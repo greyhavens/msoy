@@ -44,9 +44,6 @@ import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
  */
 public class EditSurveyPanel extends VerticalPanel
 {
-    /** The action string for this panel. */
-    public static final String ACTION = "surveys";
-
     /**
      * Creates a new survey editor.
      */
@@ -63,7 +60,7 @@ public class EditSurveyPanel extends VerticalPanel
      */
     public void setArgs (Args args)
     {
-        if (args.getArgCount() < 2) {
+        if (args.getArgCount() < 3) {
             // show survey list
             clear();
             add(new SurveysPanel());
@@ -71,8 +68,8 @@ public class EditSurveyPanel extends VerticalPanel
 
         }
 
-        int surveyId = args.get(1, 0);
-        if (args.getArgCount() < 3) {
+        int surveyId = args.get(2, 0);
+        if (args.getArgCount() < 4) {
             if (surveyId == 0) {
                 // add a new survey
                 clear();
@@ -86,7 +83,7 @@ public class EditSurveyPanel extends VerticalPanel
             return;
         }
 
-        int questionIndex = args.get(2, 0);
+        int questionIndex = args.get(3, 0);
         if (questionIndex == -1) {
             // add a new question
             clear();
@@ -134,18 +131,22 @@ public class EditSurveyPanel extends VerticalPanel
                 @Override protected List<Widget> createHeader () {
                     List<Widget> header = new ArrayList<Widget>();
                     header.add(MsoyUI.createLabel(_msgs.surveyNameHeader(), null));
-                    header.add(MsoyUI.createLabel("", null));
-                    header.add(MsoyUI.createLabel("", null));
+                    header.add(MsoyUI.createLabel(_msgs.surveyLinksHeader(), null));
                     return header;
                 }
 
                 @Override protected List<Widget> createRow (SurveyMetaData item) {
                     List<Widget> row = new ArrayList<Widget>();
                     row.add(MsoyUI.createLabel(item.name, null));
-                    row.add(Link.create(_msgs.edit(), Pages.ADMINZ,
-                        Args.compose(ACTION, item.surveyId)));
-                    row.add(Link.create(_msgs.view(), Pages.ME,
+                    HorizontalPanel links = new HorizontalPanel();
+                    links.setSpacing(5);
+                    links.add(Link.create(_msgs.edit(), Pages.ADMINZ,
+                        Args.compose("survey", "e", item.surveyId)));
+                    links.add(Link.create(_msgs.results(), Pages.ADMINZ,
+                        Args.compose("survey", "r", item.surveyId)));
+                    links.add(Link.create(_msgs.view(), Pages.ME,
                         Args.compose("survey", item.surveyId)));
+                    row.add(links);
                     // TODO: action link to delete a survey
                     return row;
                 }
@@ -169,7 +170,7 @@ public class EditSurveyPanel extends VerticalPanel
             add(table);
 
             // link to add a new survey (id 0)
-            add(Link.create(_msgs.addNew(), "addNew", Pages.ADMINZ, Args.compose(ACTION, 0)));
+            add(Link.create(_msgs.addNew(), "addNew", Pages.ADMINZ, Args.compose("survey", "e", 0)));
         }
     }
 
@@ -300,7 +301,7 @@ public class EditSurveyPanel extends VerticalPanel
 
                     // edit link
                     int index = _result.getQuestionIndex(item);
-                    row.add(Link.create(_msgs.edit(), Pages.ADMINZ, Args.compose(ACTION,
+                    row.add(Link.create(_msgs.edit(), Pages.ADMINZ, Args.compose("survey", "e",
                         _result.survey.surveyId, index)));
 
                     // last column is controls to rearrange or delete questions
@@ -335,7 +336,7 @@ public class EditSurveyPanel extends VerticalPanel
 
             // link to create a new question
             add(Link.create(_msgs.addNewQuestion(), "addNew", Pages.ADMINZ,
-                Args.compose(ACTION, _result.survey.surveyId, -1)));
+                Args.compose("survey", "e", _result.survey.surveyId, -1)));
         }
 
         public class OptionalDate extends HorizontalPanel

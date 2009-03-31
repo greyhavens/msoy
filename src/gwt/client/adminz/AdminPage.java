@@ -12,6 +12,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.shell.Page;
 import client.survey.EditSurveyPanel;
+import client.survey.ViewSurveyResultsPanel;
 import client.ui.MsoyUI;
 
 /**
@@ -84,12 +85,15 @@ public class AdminPage extends Page
         } else if (action.equals("panopticonStatus")) {
             setContent("Panopticon Status", new PanopticonStatusPanel());
 
-        } else if (action.equals(EditSurveyPanel.ACTION)) {
+        } else if (action.equals("survey") && args.get(1, "").equals("e")) {
             if (_surveyPanel == null) {
                 _surveyPanel = new EditSurveyPanel();
             }
             _surveyPanel.setArgs(args);
             setContent("Surveys", _surveyPanel);
+
+        } else if (action.equals("survey") && args.get(1, "").equals("r")) {
+            setContent("Survey Results", new ViewSurveyResultsPanel(args.get(2, 0)));
 
         } else if (action.equals("broadcasts")) {
             setContent("Broadcasts", new BroadcastHistoryPanel());

@@ -61,7 +61,7 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.viewABTests(), "testlist"));
             admin.add(makeLink(_msgs.viewBureaus(), "bureaus"));
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
-            admin.add(makeLink(_msgs.viewSurveys(), "surveys"));
+            admin.add(makeLink(_msgs.viewSurveys(), "survey_e"));
             setWidget(row, col, admin);
             getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);
 
