@@ -35,6 +35,7 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -207,7 +208,13 @@ public class MsoyManager
     {
         final int memberId = ((MemberObject)caller).getMemberId();
         _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
-            @Override public void invokePersistent () {
+            @Override public void invokePersistent ()
+                throws InvocationException {
+                    // make sure they're not a troublemaker
+                MemberRecord mrec = _memberRepo.loadMember(memberId);
+                if (true || mrec == null || mrec.isTroublemaker()) {
+                    throw new InvocationException("e.broadcast_restricted");
+                }
                 _quote = secureBroadcastQuote(memberId);
             }
             @Override public void handleSuccess () {
@@ -227,7 +234,13 @@ public class MsoyManager
         final Name from = ((MemberObject)caller).getVisibleName();
         _invoker.postUnit(new ServiceUnit("purchaseBroadcast", listener) {
             public void invokePersistent ()
-                throws ServiceException {
+                throws ServiceException, InvocationException {
+                // make sure they're not a troublemaker
+                MemberRecord mrec = _memberRepo.loadMember(memberId);
+                if (true || mrec == null || mrec.isTroublemaker()) {
+                    throw new InvocationException("e.broadcast_restricted");
+                }
+
                 // check for a price change
                 int costNow = _moneyLogic.getBroadcastCost();
                 if (costNow != authedCost) {
