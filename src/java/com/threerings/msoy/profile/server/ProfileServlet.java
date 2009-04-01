@@ -265,7 +265,7 @@ public class ProfileServlet extends MsoyServiceServlet
         // first check for an email match (and use only that if we have a match)
         MemberRecord memrec = _memberRepo.loadMember(search);
         if (memrec != null) {
-            mids.put(memrec.memberId, (double) 1.0);
+            mids.put(memrec.memberId, 1.0);
 
         } else {
             // look for a display name match
@@ -292,7 +292,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // how long ago were they on?
             double age = System.currentTimeMillis() - ((NotOnline) result.status).lastLogon;
             // measured in years?
-            age /= (365 * 24 * 3600 * 1000);
+            age /= (365L * 24 * 3600 * 1000L);
 
             int memberId = result.name.getMemberId();
             // if they were on 0 ms, divide by 1, if they were on a year ago, divide by 2
