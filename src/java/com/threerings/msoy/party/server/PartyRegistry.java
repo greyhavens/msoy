@@ -35,6 +35,7 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -214,23 +215,18 @@ public class PartyRegistry
                 }
             }));
 
-        _invoker.postUnit(new RepositoryUnit("loadPartyGroup") {
-            public void invokePersist () throws Exception {
+        _invoker.postUnit(new PersistingUnit("loadPartyGroup", rl) {
+            @Override public void invokePersistent () throws Exception {
                 for (GroupRecord rec : _groupRepo.loadGroups(icons.keySet())) {
                     icons.put(rec.groupId, rec.toLogo());
                 }
             }
 
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 for (PartyBoardInfo party : results) {
                     party.icon = icons.get(party.info.groupId);
                 }
                 rl.requestProcessed(results);
-            }
-
-            @Override public void handleFailure (Exception e) {
-                super.handleFailure(e);
-                rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             }
         });
     }
