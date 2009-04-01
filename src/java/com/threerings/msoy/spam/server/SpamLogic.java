@@ -4,6 +4,8 @@
 package com.threerings.msoy.spam.server;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,7 +15,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.CountHashMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
@@ -25,6 +29,14 @@ import com.threerings.util.MessageBundle;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberMailUtil;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.FavoritesRepository;
+import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
@@ -54,6 +66,7 @@ import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.SharedMediaUtil;
 import com.threerings.msoy.web.gwt.SharedMediaUtil.Dimensions;
 
@@ -158,6 +171,54 @@ public class SpamLogic
     }
 
     /**
+     * Item listing for the purposes of filling in a velocity template. NOTE: this class must be
+     * public so that velocity can inspect its members.
+     */
+    public class Listing
+    {
+        /**
+         * Returns the game id associated with this listing, if any.
+         */
+        public int getGameId()
+        {
+            return _gameId;
+        }
+
+        /**
+         * Returns the url of this listing's thumbnail image.
+         */
+        public String getThumbnail ()
+        {
+            return _listing.thumbMedia.getMediaPath();
+        }
+
+        /**
+         * Returns the name of this listing.
+         */
+        public String getName ()
+        {
+            return _listing.name;
+        }
+
+        protected Listing (ListingCard listing)
+        {
+            _listing = listing;
+            if (listing.itemType == Item.GAME) {
+                try{
+                    _gameId = ((GameRecord)_itemLogic.requireListing(
+                        Item.GAME, listing.catalogId, true).item).gameId;
+                } catch (ServiceException e) {
+                    log.warning("Could not load game id for new & hot game",
+                        "catalogID", listing.catalogId);
+                }
+            }
+        }
+
+        protected ListingCard _listing;
+        protected int _gameId;
+    }
+
+    /**
      * Creates new spam logic.
      */
     @Inject public SpamLogic (ServerMessages messages)
@@ -172,14 +233,16 @@ public class SpamLogic
     public void init ()
     {
         // run nightly at 1am
-        _cronLogic.scheduleAt(1, new Runnable () {
-            public void run () {
-                sendFeedEmails();
-            }
-            public String toString () {
-                return "News feed emailer";
-            }
-        });
+        if (DeploymentConfig.devDeployment) {
+            _cronLogic.scheduleAt(1, new Runnable () {
+                public void run () {
+                    sendFeedEmails();
+                }
+                public String toString () {
+                    return "News feed emailer";
+                }
+            });
+        }
     }
 
     /**
@@ -195,12 +258,15 @@ public class SpamLogic
         List<Integer> lapsedIds = findRetentionCandidates(new Date(now - LAPSED_CUTOFF));
         log.info("Found lapsed members", "size", lapsedIds.size());
 
+        // load the filler, data from this is included in all mailings
+        NewStuff filler = loadFiller();
+
         // do the sending and record results
         int totalSent = 0;
         Date secondEmailCutoff = new Date(now - SECOND_EMAIL_CUTOFF);
         CountHashMap<Result> stats = new CountHashMap<Result>();
         for (Integer memberId : lapsedIds) {
-            Result result = sendFeedEmail(memberId, secondEmailCutoff);
+            Result result = sendFeedEmail(memberId, secondEmailCutoff, filler);
             if (DeploymentConfig.devDeployment) {
                 log.info("Feed email result (not sent)", "member", memberId, "result", result);
             }
@@ -227,7 +293,7 @@ public class SpamLogic
     public boolean testFeedEmail (int memberId, String address)
     {
         Result result = sendFeedEmail(
-            _memberRepo.loadMember(memberId), Result.SENT_LAPSED, address, false);
+            _memberRepo.loadMember(memberId), Result.SENT_LAPSED, address, loadFiller(), false);
         log.info("Sent test feed email", "result", result);
         return result.success;
     }
@@ -249,11 +315,11 @@ public class SpamLogic
      * cutoff date is passed in for consistency since the feed mailer job could take a long time to
      * run.
      */
-    protected Result sendFeedEmail (int memberId, Date secondEmailCutoff)
+    protected Result sendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
         Result result = Result.OTHER;
         try {
-            result = trySendFeedEmail(memberId, secondEmailCutoff);
+            result = trySendFeedEmail(memberId, secondEmailCutoff, filler);
 
         } catch (Exception e) {
             log.warning("Failed to send feed", "memberId", e);
@@ -264,7 +330,7 @@ public class SpamLogic
     /**
      * Non-exception-aware version of the above.
      */
-    protected Result trySendFeedEmail (int memberId, Date secondEmailCutoff)
+    protected Result trySendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
         SpamRecord spamRec = _spamRepo.loadSpamRecord(memberId);
         Date last = spamRec == null ? null : spamRec.lastRetentionEmailSent;
@@ -318,7 +384,7 @@ public class SpamLogic
         // now send the email, overwriting result in case of not enough friends etc
         // TODO: algorithm for resurrecting these failures (e.g. if they failed due to no feed
         // activity, maybe their friends have since been persuaded and created some activity)
-        result = sendFeedEmail(mrec, result, null, true);
+        result = sendFeedEmail(mrec, result, null, filler, true);
 
         // NOTE: this is sort of redundant but increases the integrity of the spam record and
         // reduces chance of a user getting two emails when we are 1M strong
@@ -338,27 +404,20 @@ public class SpamLogic
      * @param realDeal testing flag; if false, we make sure the mail is sent regardless
      */
     protected Result sendFeedEmail (
-        final MemberRecord mrec, Result successResult, String addressOverride, boolean realDeal)
+        final MemberRecord mrec, Result successResult, String addressOverride, NewStuff filler,
+        boolean realDeal)
     {
         int memberId = mrec.memberId;
 
-        // load up friends, bail if not enough
+        // load up friends and feed categories
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        if (realDeal && friendIds.size() < MIN_FRIEND_COUNT) {
-            return Result.NOT_ENOUGH_FRIENDS;
-        }
-
-        // load the feed by categories
-        List<FeedCategory> categories = _feedLogic.loadFeedCategories(
-            mrec, friendIds, ITEMS_PER_CATEGORY, null);
+        List<FeedCategory> categories = friendIds.size() > 0 ? _feedLogic.loadFeedCategories(
+            mrec, friendIds, ITEMS_PER_CATEGORY, null) : new ArrayList<FeedCategory>();
 
         // count up all messages
         int count = 0;
         for (FeedCategory cat : categories) {
             count += cat.messages.length;
-        }
-        if (realDeal && count < MIN_ITEM_COUNT) {
-            return Result.NOT_ENOUGH_NEWS;
         }
 
         // prepare the generators!
@@ -391,15 +450,81 @@ public class SpamLogic
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them
         // as sent. I also like my pie at 30,000 feet please.
+        // only generate the feed if we have at least a few items
         Parameters params = new Parameters();
         params.set("feed", ecats);
         params.set("server_url", DeploymentConfig.serverURL);
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
+        params.set("avatars", filler.avatars);
+        params.set("furniture", filler.furniture);
+        params.set("games", filler.games);
         String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
             address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
         return successResult;
+    }
+
+    /**
+     * Load up the filler listings.
+     */
+    protected NewStuff loadFiller ()
+    {
+        NewStuff filler = new NewStuff();
+        ArrayIntSet memberIds = new ArrayIntSet(ServerConfig.getShopFavoriteMemberIds());
+        try {
+            filler.avatars = randomItems(memberIds, Item.AVATAR);
+            filler.furniture = randomItems(memberIds, Item.FURNITURE);
+            filler.games = randomGames();
+
+        } catch (ServiceException e) {
+            throw new RuntimeException("Could not create feed mailing filler", e);
+        }
+
+        return filler;
+    }
+
+    /**
+     * Loads a random set of new & hot games for the filler.
+     */
+    protected List<Listing> randomGames ()
+        throws ServiceException
+    {
+        List<ListingCard> games = randomSubset(GAME_COUNT, loadNewAndHot(Item.GAME, GAME_COUNT*2));
+        return Lists.transform(games, _toListing);
+    }
+
+    /**
+     * Loads a random set of new & hot and staff pick items for the filler.
+     */
+    protected List<Listing> randomItems (Collection<Integer> memberIds, byte itemType)
+        throws ServiceException
+    {
+        List<ListingCard> items = uniqueRandomSubset(ITEM_COUNT, loadNewAndHot(
+            Item.AVATAR, ITEM_COUNT * 2), loadFavorites(memberIds, Item.AVATAR, ITEM_COUNT * 2));
+        return Lists.transform(items, _toListing);
+    }
+
+    /**
+     * Loads the given number of new & hot items of the given type.
+     */
+    protected List<ListingCard> loadNewAndHot (byte itemType, int count)
+        throws ServiceException
+    {
+        return Lists.transform(_itemLogic.getRepository(itemType).loadCatalog(
+            CatalogQuery.SORT_BY_NEW_AND_HOT, false, null, 0, 0, null, 0, 0, count),
+            CatalogRecord.TO_CARD);
+    }
+
+    /**
+     * Loads the given number of recent favorites of the given member ids.
+     */
+    protected List<ListingCard> loadFavorites (
+        Collection<Integer> memberIds, byte itemType, int count)
+        throws ServiceException
+    {
+        return _itemLogic.resolveFavorites(
+            _faveRepo.loadRecentFavorites(memberIds, count, itemType));
     }
 
     /**
@@ -562,6 +687,21 @@ public class SpamLogic
     }
 
     /**
+     * Data for prepending to retention emails.
+     */
+    protected static class NewStuff
+    {
+        /** New avatar listings. */
+        public List<Listing> avatars;
+
+        /** New furniture listings. */
+        protected List<Listing> furniture;
+
+        /** New game listings. */
+        protected List<Listing> games;
+    }
+
+    /**
      * The result of attempting to send a feed email.
      */
     protected enum Result
@@ -590,6 +730,40 @@ public class SpamLogic
             this.success = success;
         }
     }
+
+    /**
+     * Returns a random subset of a list, or the list itself if there are not enough items.
+     */
+    protected static <T> List<T> randomSubset (int size, List<T> list)
+    {
+        if (list.size() < size) {
+            return list;
+        }
+        return CollectionUtil.selectRandomSubset(list, size);
+    }
+
+    /**
+     * Appends items from list2 to list1 that are not already in list1, then returns a random
+     * subset of list1.
+     */
+    protected static <T> List<T> uniqueRandomSubset (int size, List<T> list1, List<T> list2)
+    {
+        if (list2 != null) {
+            for (T item : list2) {
+                if (!list1.contains(item)) {
+                    list1.add(item);
+                }
+            }
+        }
+        return randomSubset(size, list1);
+    }
+
+    /** Converts listing cards to the velocity listing. */
+    protected Function<ListingCard, Listing> _toListing = new Function<ListingCard, Listing> () {
+        public Listing apply (ListingCard card) {
+            return new Listing(card);
+        }
+    };
 
     /** Messages instance that delegates to the bundles in our parent class. */
     protected Messages _messages = new Messages () {
@@ -717,13 +891,16 @@ public class SpamLogic
     @Inject protected MemberRepository _memberRepo; 
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected SpamRepository _spamRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected FavoritesRepository _faveRepo;
 
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";
     protected static final int LAPSED_CUTOFF = 3 * 24*60*60*1000;
     protected static final int SECOND_EMAIL_CUTOFF = 10 * 24*60*60*1000;
-    protected static final int MIN_FRIEND_COUNT = 1;
-    protected static final int MIN_ITEM_COUNT = 5;
+    protected static final int MIN_NEWS_ITEM_COUNT = 5;
+    protected static final int ITEM_COUNT = 5;
+    protected static final int GAME_COUNT = 10;
     protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;
 
     protected static final String IMG_STYLE = "border: 0px; padding: 2px; margin: 2px; " +
