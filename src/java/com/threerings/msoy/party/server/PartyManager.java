@@ -177,35 +177,21 @@ public class PartyManager
         removePlayer(playerId);
     }
 
-    protected MemberObject requireLeader (ClientObject client)
-        throws InvocationException
-    {
-        MemberObject member = (MemberObject)client;
-        if (member.getMemberId() != _partyObj.leaderId) {
-            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
-        }
-        return member;
-    }
-
     // from interface PartyProvider
     public void leaveParty (ClientObject caller, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
-        removePlayer(member.getMemberId());
+        PartierObject partier = (PartierObject)caller;
+        removePlayer(partier.getMemberId());
         listener.requestProcessed();
     }
 
     // from interface PartyProvider
-    public void moveParty (ClientObject caller, int sceneId, InvocationService.InvocationListener il)
+    public void moveParty (
+        ClientObject caller, int sceneId, InvocationService.InvocationListener il)
         throws InvocationException
     {
-        // only the leader can move the party
-        PartierObject partier = (PartierObject)caller;
-        if (partier.getMemberId() != _partyObj.leaderId) {
-            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
-        }
-
+        requireLeader(caller);
         if (_partyObj.sceneId == sceneId) {
             return; // NOOP!
         }
@@ -251,10 +237,10 @@ public class PartyManager
         ClientObject caller, String status, InvocationService.InvocationListener listener)
         throws InvocationException
     {
+        requireLeader(caller);
         if (status == null) {
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        requireLeader(caller);
         setStatus(MessageBundle.taint(
             StringUtil.truncate(status, PartyCodes.MAX_NAME_LENGTH)));
     }
@@ -265,7 +251,6 @@ public class PartyManager
         throws InvocationException
     {
         requireLeader(caller);
-
         _partyObj.setRecruitment(recruitment);
         updatePartyInfo();
     }
@@ -275,7 +260,7 @@ public class PartyManager
         ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject inviter = (MemberObject)caller;
+        PartierObject inviter = (PartierObject)caller;
         if (_partyObj.recruitment == PartyCodes.RECRUITMENT_CLOSED &&
                 _partyObj.leaderId != inviter.getMemberId()) {
             throw new InvocationException(PartyCodes.E_CANT_INVITE_CLOSED);
@@ -284,7 +269,18 @@ public class PartyManager
         _invitedIds.add(memberId);
         // send them a notification
         //MemberNodeActions.sendNotification(memberId, createInvite(inviter));
-        MemberNodeActions.inviteToParty(memberId, inviter, _partyObj.id, _partyObj.name);
+        MemberNodeActions.inviteToParty(
+            memberId, inviter.memberName.toMemberName(), _partyObj.id, _partyObj.name);
+    }
+
+    protected PartierObject requireLeader (ClientObject client)
+        throws InvocationException
+    {
+        PartierObject partier = (PartierObject)client;
+        if (partier.getMemberId() != _partyObj.leaderId) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
+        return partier;
     }
 
     /**

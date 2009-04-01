@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -233,17 +231,7 @@ public class RoomManager extends SpotSceneManager
                 return info.updatePartyId(0);
             }
         });
-
-        // remove the party summary if no one remains in this party
-        Predicate<OccupantInfo> havePartiers = new Predicate<OccupantInfo>() {
-            public boolean apply (OccupantInfo info) {
-                return (info instanceof MemberInfo) && ((MemberInfo)info).getPartyId() == partyId;
-            }
-        };
-        if (_roomObj.parties.containsKey(partyId) &&
-            !Iterables.any(_occInfo.values(), havePartiers)) {
-            _roomObj.removeFromParties(partyId);
-        }
+        _roomObj.maybeRemoveParty(partyId);
     }
 
     @Override
@@ -876,16 +864,18 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     public void bodyWillLeave (BodyObject body)
     {
+        super.bodyWillLeave(body);
+
+        // Note: Calling MemberLocal.willLeave() must now occur after we've removed the
+        // OccupantInfo, which happens in super.
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject)body;
             member.getLocal(MemberLocal.class).willLeave(member, _roomObj);
 
             if (!isStrictlyManager(member)) {
-                removeAllMemberSongs(member);
+                removeVisitorSongs(member);
             }
         }
-
-        super.bodyWillLeave(body);
     }
 
     @Override // from SpotSceneManager
@@ -1753,20 +1743,30 @@ public class RoomManager extends SpotSceneManager
     /**
      * Remove all the songs from the specified member from the playlist.
      */
-    protected void removeAllMemberSongs (MemberObject member)
+    protected void removeVisitorSongs (MemberObject member)
     {
-        Audio[] songs = _roomObj.playlist.toArray(new Audio[_roomObj.playlist.size()]);
+        List<Comparable<?>> removeKeys = null;
         int memberId = member.getMemberId();
+        boolean removedPlaying = false;
+        for (Audio song : _roomObj.playlist) {
+            if ((song.ownerId == memberId) && !song.isUsed()) { // don't remove if added as mgr
+                if (removeKeys == null) {
+                    removeKeys = Lists.newArrayList();
+                }
+                removeKeys.add(song.getKey());
+                if (song.itemId == _roomObj.currentSongId) {
+                    removedPlaying = true;
+                }
+            }
+        }
+        if (removeKeys == null) {
+            return;
+        }
+
         _roomObj.startTransaction();
         try {
-            boolean removedPlaying = false;
-            for (Audio song : songs) {
-                if (song.ownerId == memberId) {
-                    _roomObj.removeFromPlaylist(song.getKey());
-                    if (song.itemId == _roomObj.currentSongId) {
-                        removedPlaying = true;
-                    }
-                }
+            for (Comparable<?> key : removeKeys) {
+                _roomObj.removeFromPlaylist(key);
             }
             if (removedPlaying) {
                 playNextSong(false);
@@ -1774,8 +1774,6 @@ public class RoomManager extends SpotSceneManager
         } finally {
             _roomObj.commitTransaction();
         }
-        // TODO: ensure we clear the usage on these items? In case they were added by a manager
-        // who is no longer a manager
     }
 
     /**

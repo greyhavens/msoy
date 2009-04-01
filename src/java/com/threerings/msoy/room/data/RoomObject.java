@@ -5,6 +5,8 @@ package com.threerings.msoy.room.data;
 
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.item.data.all.Audio;
@@ -353,6 +355,23 @@ public class RoomObject extends SpotSceneObject
         this.playCount = value;
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * Remove the specified PartySummary if there are no more partiers in this room.
+     */
+    public void maybeRemoveParty (int partyId)
+    {
+        if (!parties.containsKey(partyId)) {
+            return;
+        }
+        // only remove the party if there are no more partiers in the room
+        for (OccupantInfo info : occupantInfo) {
+            if ((info instanceof MemberInfo) && (((MemberInfo)info).getPartyId() == partyId)) {
+                return; // there's still a partier here!
+            }
+        }
+        removeFromParties(partyId);
+    }
 
     /**
      * Do whatever's necessary to update the specified memory value.

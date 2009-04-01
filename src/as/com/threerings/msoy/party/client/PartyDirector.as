@@ -217,7 +217,7 @@ public class PartyDirector extends BasicDirector
     {
         // if we have our party object already, tell them we're leaving
         if (_partyObj != null) {
-            _partyObj.partyService.leaveParty(_wctx.getClient(),
+            _partyObj.partyService.leaveParty(_pctx.getClient(),
                 _wctx.confirmListener(handleLeaveParty, MsoyCodes.PARTY_MSGS));
         }
         clearParty(); // and always shut everything down
@@ -225,19 +225,19 @@ public class PartyDirector extends BasicDirector
 
     public function assignLeader (memberId :int) :void
     {
-        _partyObj.partyService.assignLeader(_wctx.getClient(), memberId,
+        _partyObj.partyService.assignLeader(_pctx.getClient(), memberId,
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateStatus (status :String) :void
     {
-        _partyObj.partyService.updateStatus(_wctx.getClient(), status,
+        _partyObj.partyService.updateStatus(_pctx.getClient(), status,
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateRecruitment (recruitment :int) :void
     {
-        _partyObj.partyService.updateRecruitment(_wctx.getClient(), recruitment,
+        _partyObj.partyService.updateRecruitment(_pctx.getClient(), recruitment,
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
@@ -246,13 +246,13 @@ public class PartyDirector extends BasicDirector
      */
     public function bootMember (memberId :int) :void
     {
-        _partyObj.partyService.bootMember(_wctx.getClient(), memberId,
+        _partyObj.partyService.bootMember(_pctx.getClient(), memberId,
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function inviteMember (memberId :int) :void
     {
-        _partyObj.partyService.inviteMember(_wctx.getClient(), memberId,
+        _partyObj.partyService.inviteMember(_pctx.getClient(), memberId,
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
@@ -363,6 +363,7 @@ public class PartyDirector extends BasicDirector
         _partyListener = new AttributeChangeAdapter(partyAttrChanged);
         _partyListener2 = new SetAdapter(partySetChanged, partySetChanged, partySetChanged);
         _partyObj.addListener(_partyListener);
+        _partyObj.addListener(_partyListener2);
 
         // if the party popup is up, change to the new popup...
         var btn :CommandButton = getButton();
@@ -405,16 +406,16 @@ public class PartyDirector extends BasicDirector
         panel.open();
     }
 
-    protected function closeAllDetailPanels () :void
-    {
-        var panels :Array = [];
-        for each (var o :Object in _detailPanels) {
-            panels.push(o);
-        }
-        for each (var panel :PartyDetailPanel in panels) {
-            panel.close();
-        }
-    }
+//    protected function closeAllDetailPanels () :void
+//    {
+//        var panels :Array = [];
+//        for each (var o :Object in _detailPanels) {
+//            panels.push(o);
+//        }
+//        for each (var panel :PartyDetailPanel in panels) {
+//            panel.close();
+//        }
+//    }
 
     /**
      * Called when we've failed to subscribe to a party.
@@ -431,7 +432,7 @@ public class PartyDirector extends BasicDirector
     protected function locationDidChange (place :PlaceObject) :void
     {
         // if we're the leader of the party, change the party's location when we move
-        if (_partyObj != null && _partyObj.leaderId == _wctx.getMyId()) {
+        if (isPartyLeader()) {
             var sceneId :int = _wctx.getSceneDirector().getScene().getId();
             if (sceneId != _partyObj.sceneId) {
                 _partyObj.partyService.moveParty(

@@ -208,10 +208,10 @@ public class MemberLocal extends BodyLocal
                     "memories", memories, "roomOid", roomObj.getOid(), "source", "willLeave");
             }
 
-//            // if we're in a party and the last member to leave this room, clean up our bits
-//            if (party != null && roomObj.parties.containsKey(party.id)) {
-//                roomObj.removeFromParties(party.id);
-//            }
+            // if we're in a party and the last member to leave this room, clean up our bits
+            if (party != null) {
+                roomObj.maybeRemoveParty(party.id);
+            }
 
         } finally {
             roomObj.commitTransaction();

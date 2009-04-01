@@ -220,8 +220,8 @@ public class MemberNodeActions
     /**
      * Sends an invite to the specified member to the specified party.
      */
-    public static void inviteToParty (int memberId, MemberObject inviter, int partyId,
-                                      String partyName)
+    public static void inviteToParty (
+        int memberId, MemberName inviter, int partyId, String partyName)
     {
         _peerMan.invokeNodeAction(new PartyInviteAction(memberId, inviter, partyId, partyName));
     }
@@ -603,10 +603,10 @@ public class MemberNodeActions
         public PartyInviteAction () {}
 
         public PartyInviteAction (
-            int targetId, MemberObject inviter, int partyId, String partyName)
+            int targetId, MemberName inviter, int partyId, String partyName)
         {
             super(targetId);
-            _inviter = inviter.memberName.toMemberName();
+            _inviter = inviter;
             _partyId = partyId;
             _partyName = partyName;
         }
