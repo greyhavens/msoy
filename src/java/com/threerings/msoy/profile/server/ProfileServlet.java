@@ -302,7 +302,7 @@ public class ProfileServlet extends MsoyServiceServlet
         // finally sort the results using our rank mapping for the ordering
         Collections.sort(results, new Comparator<MemberCard>() {
             public int compare (MemberCard o1, MemberCard o2) {
-                // not ascending sort order, not descending
+                // note: ascending sort order, not descending
                 return Double.compare(
                     rankFromId.apply(o2.name.getMemberId()),
                     rankFromId.apply(o1.name.getMemberId()));
