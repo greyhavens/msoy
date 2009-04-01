@@ -100,6 +100,7 @@ server_root = /export/msoy
 
 from_address = "Whirled Mailbot" <peas@whirled.com>
 agents_address = "Whirled Agents" <msoy-agents@threerings.net>
+cashout_address = "Whirled Cash Outs" <blingcashout@threerings.net>
 
 #
 # Configures the group used to determine who is eligible for issue assignment

@@ -190,6 +190,15 @@ public class ServerConfig
     }
 
     /**
+     * Returns the address for bling cash out requests.
+     */
+    public static String getCashOutAddress ()
+    {
+        return config.getValue("cashout_address",
+            "\"Whirled Cashouts\" <blingcashout@threerings.net>");
+    }
+
+    /**
      * Returns the HTTP port on which the specified node should be listening.
      */
     public static int getHttpPort (String nodeName)

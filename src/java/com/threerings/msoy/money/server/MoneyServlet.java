@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -105,8 +106,9 @@ public class MoneyServlet extends MsoyServiceServlet
 
         // Spam the cash out mailing list
         _mailer.sendTemplateEmail(
-            MailSender.By.HUMAN, CASHOUT_NOTIFY_EMAIL, "no-reply@whirled.com", "blingCashOutNotice",
-            "memberId", mrec.memberId, "name", mrec.name, "server_url", DeploymentConfig.serverURL,
+            MailSender.By.HUMAN, ServerConfig.getCashOutAddress(), "no-reply@whirled.com",
+            "blingCashOutNotice", "memberId", mrec.memberId, "name", mrec.name,
+            "server_url", DeploymentConfig.serverURL,
             "url", Pages.makeURL(Pages.ADMINZ, "cashout")); // TODO: A more meaningful URL
 
         return result;
@@ -265,6 +267,4 @@ public class MoneyServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyAuthenticator _authenticator;
     @Inject protected RuntimeConfig _runtime;
-
-    protected static final String CASHOUT_NOTIFY_EMAIL = "blingcashout@threerings.net";
 }
