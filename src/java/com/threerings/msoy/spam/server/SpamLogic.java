@@ -19,8 +19,11 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.CountHashMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -272,9 +275,9 @@ public class SpamLogic
         // do the sending and record results
         int totalSent = 0;
         Date secondEmailCutoff = new Date(now - SECOND_EMAIL_CUTOFF);
-        CountHashMap<Result> stats = new CountHashMap<Result>();
+        CountHashMap<Status> stats = new CountHashMap<Status>();
         for (Integer memberId : lapsedIds) {
-            Result result = sendFeedEmail(memberId, secondEmailCutoff, filler);
+            Status result = sendFeedEmail(memberId, secondEmailCutoff, filler);
             if (DeploymentConfig.devDeployment) {
                 log.info("Feed email result (not sent)", "member", memberId, "result", result);
             }
@@ -286,7 +289,7 @@ public class SpamLogic
 
         // log results, we could use keys here but seeing e.g. OTHER = 0 might be comforting
         List<Object> statLog = Lists.newArrayList();
-        for (Result r : Result.values()) {
+        for (Status r : Status.values()) {
             statLog.add(r);
             statLog.add(stats.getCount(r));
         }
@@ -300,10 +303,11 @@ public class SpamLogic
      */
     public boolean testFeedEmail (int memberId, String address)
     {
-        Result result = sendFeedEmail(
-            _memberRepo.loadMember(memberId), Result.SENT_LAPSED, address, loadFiller(), false);
-        log.info("Sent test feed email", "result", result);
-        return result.success;
+        MailContent result = sendFeedEmail(
+            _memberRepo.loadMember(memberId), address, loadFiller(), false);
+        log.info("Sent test feed email", "memberId", memberId, "address", address,
+            "result", result);
+        return true;
     }
 
     /**
@@ -323,9 +327,9 @@ public class SpamLogic
      * cutoff date is passed in for consistency since the feed mailer job could take a long time to
      * run.
      */
-    protected Result sendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
+    protected Status sendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
-        Result result = Result.OTHER;
+        Status result = Status.OTHER;
         try {
             result = trySendFeedEmail(memberId, secondEmailCutoff, filler);
 
@@ -338,31 +342,32 @@ public class SpamLogic
     /**
      * Non-exception-aware version of the above.
      */
-    protected Result trySendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
+    protected Status trySendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
         SpamRecord spamRec = _spamRepo.loadSpamRecord(memberId);
         Date last = spamRec == null ? null : spamRec.lastRetentionEmailSent;
+        Status status = last == null ? null : Status.lookup(spamRec.lastRetentionEmailResult);
 
-        if (last != null && last.after(secondEmailCutoff)) {
+        if (last != null && last.after(secondEmailCutoff) && status != null && status.success) {
             // spammed recently, skip
-            return Result.TOO_RECENTLY_SPAMMED;
+            return Status.TOO_RECENTLY_SPAMMED;
         }
 
         // load the member
         MemberRecord mrec = _memberRepo.loadMember(memberId);
         if (mrec == null) {
             log.warning("Member deleted during feed mailing?", "memberId", memberId);
-            return Result.MEMBER_DELETED;
+            return Status.MEMBER_DELETED;
         }
 
         // skip placeholder addresses
         if (MemberMailUtil.isPlaceholderAddress(mrec.accountName)) {
-            return Result.PLACEHOLDER_ADDRESS;
+            return Status.PLACEHOLDER_ADDRESS;
         }
 
         // skip invalid addresses
         if (!MailUtil.isValidAddress(mrec.accountName)) {
-            return Result.INVALID_ADDRESS;
+            return Status.INVALID_ADDRESS;
         }
 
         // oh look, they've logged in! maybe the email(s) worked. clear counter
@@ -371,9 +376,14 @@ public class SpamLogic
             spamRec.retentionEmailCountSinceLastLogin = 0;
             // fall through, we'll send a mail and save the record below
 
+        } else if (status == Status.NOT_ENOUGH_FRIENDS || status == Status.NOT_ENOUGH_NEWS) {
+            // reset legacy failures, we now send filler for these people
+            spamRec.retentionEmailCountSinceLastLogin = 0;
+            // fall through, we'll send a mail and save the record below
+
         } else if (spamRec != null && spamRec.retentionEmailCountSinceLastLogin >= 2) {
             // they are never coming back... oh well, there are plenty of other fish in the sea
-            return Result.LOST_CAUSE;
+            return Status.LOST_CAUSE;
         }
 
         // sending the email could take a while so update the spam record here to reduce window
@@ -382,38 +392,35 @@ public class SpamLogic
         _spamRepo.noteRetentionEmailSending(memberId, spamRec);
 
         // choose a successful result based on previous attempts
-        Result result = Result.SENT_DORMANT;
+        status = Status.SENT_DORMANT;
         if (persuaded) {
-            result = Result.SENT_PERSUADED;
+            status = Status.SENT_PERSUADED;
         } else if (spamRec == null || spamRec.retentionEmailCount == 0) {
-            result = Result.SENT_LAPSED;
+            status = Status.SENT_LAPSED;
         }
 
-        // now send the email, overwriting result in case of not enough friends etc
-        // TODO: algorithm for resurrecting these failures (e.g. if they failed due to no feed
-        // activity, maybe their friends have since been persuaded and created some activity)
-        result = sendFeedEmail(mrec, result, null, filler, true);
+        // now send the email
+        MailContent content = sendFeedEmail(mrec, null, filler, true);
 
         // NOTE: this is sort of redundant but increases the integrity of the spam record and
         // reduces chance of a user getting two emails when we are 1M strong
-        _spamRepo.noteRetentionEmailResult(memberId, result.code);
+        _spamRepo.noteRetentionEmailResult(memberId, status.value);
 
         // log an event for successes. the result is the lapse status
-        if (result.success) {
-            _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, result.name());
+        if (status.success) {
+            _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, status.name());
         }
 
-        return result;
+        return status;
     }
 
     /**
-     * Does the heavy lifting of sending a feed email. If successful, returns the given result,
-     * otherwise returns an unsuccessful result.
+     * Does the heavy lifting of sending a retention/feed email. Returns a result indicating what
+     * was included in the mailing.
      * @param realDeal testing flag; if false, we make sure the mail is sent regardless
      */
-    protected Result sendFeedEmail (
-        final MemberRecord mrec, Result successResult, String addressOverride, NewStuff filler,
-        boolean realDeal)
+    protected MailContent sendFeedEmail (
+        final MemberRecord mrec, String addressOverride, NewStuff filler, boolean realDeal)
     {
         int memberId = mrec.memberId;
 
@@ -430,7 +437,8 @@ public class SpamLogic
 
         // generate the feed if we have at least a couple of items
         Parameters params = new Parameters();
-        if (count >= MIN_NEWS_ITEM_COUNT) {
+        boolean sufficientFeed = count >= MIN_NEWS_ITEM_COUNT;
+        if (sufficientFeed) {
             // prepare the generators!
             final Generator generators[] = {
                 new Generator(memberId, new PlainTextBuilder(), _messages),
@@ -478,7 +486,7 @@ public class SpamLogic
         String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
             address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
-        return successResult;
+        return new MailContent(sufficientFeed);
     }
 
     /**
@@ -718,9 +726,9 @@ public class SpamLogic
     }
 
     /**
-     * The result of attempting to send a feed email.
+     * The status of a user in regard to retention email sending.
      */
-    protected enum Result
+    protected enum Status
     {
         // successful results
         SENT_LAPSED(1, true), SENT_PERSUADED(2, true), SENT_DORMANT(3, true),
@@ -730,20 +738,51 @@ public class SpamLogic
         PLACEHOLDER_ADDRESS(8), INVALID_ADDRESS(9), LOST_CAUSE(10), OTHER(11);
 
         /** Persisted value for results. */
-        public int code;
+        public int value;
 
         /** Whether the results indicates a successfully sent message. */
         public boolean success;
 
-        Result (int code)
+        /**
+         * Returns the result with the given code, or null if none.
+         */
+        public static Status lookup (int value)
         {
-            this(code, false);
+            return _lookup.get(value);
         }
 
-        Result (int code, boolean success)
+        Status (int value)
         {
-            this.code = code;
+            this(value, false);
+        }
+
+        Status (int value, boolean success)
+        {
+            this.value = value;
             this.success = success;
+        }
+    }
+
+    /**
+     * Relevant information on the content of a sent retention mailing.
+     */
+    protected static class MailContent
+    {
+        /** Whether the feed was included in the mailing. */
+        public boolean feed;
+
+        /** Creates a new content summary. */
+        public MailContent (boolean feed)
+        {
+            this.feed = feed;
+        }
+
+        public String toString ()
+        {
+            StringBuilder buf = new StringBuilder("SpamLogic.Result [");
+            StringUtil.fieldsToString(buf, this);
+            buf.append("]");
+            return buf.toString();
         }
     }
 
@@ -912,6 +951,9 @@ public class SpamLogic
     @Inject protected ItemLogic _itemLogic;
     @Inject protected FavoritesRepository _faveRepo;
 
+    /** Map of result codes to results. */
+    protected static IntMap<Status> _lookup = IntMaps.newHashIntMap();
+
     protected static final int ITEMS_PER_CATEGORY = 50;
     protected static final String MAIL_TEMPLATE = "feed";
     protected static final int LAPSED_CUTOFF = 3 * 24*60*60*1000;
@@ -928,4 +970,12 @@ public class SpamLogic
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
         Category.ROOMS, Category.TROPHIES, Category.FRIENDINGS};
+
+    static
+    {
+        // set up the static lookup table for result codes
+        for (Status result : Status.values()) {
+            _lookup.put(result.value, result);
+        }
+    }
 }
