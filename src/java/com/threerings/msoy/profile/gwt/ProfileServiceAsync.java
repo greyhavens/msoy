@@ -44,7 +44,7 @@ public interface ProfileServiceAsync
                        AsyncCallback<List<FeedMessage>> callback);
 
     /**
-     * The asynchronous version of {@link ProfileService#sendTestFeedEmail}.
+     * The asynchronous version of {@link ProfileService#sendRetentionEmail}.
      */
-    void sendTestFeedEmail (int profileMemberId, AsyncCallback<Void> callback);
+    void sendRetentionEmail (int profileMemberId, AsyncCallback<Void> callback);
 }

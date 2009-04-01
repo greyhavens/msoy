@@ -247,7 +247,7 @@ public class SpamLogic
         if (DeploymentConfig.devDeployment) {
             _cronLogic.scheduleAt(1, new Runnable () {
                 public void run () {
-                    sendFeedEmails();
+                    sendRetentionEmails();
                 }
                 public String toString () {
                     return "News feed emailer";
@@ -257,12 +257,12 @@ public class SpamLogic
     }
 
     /**
-     * Loads up all candidate users for getting their feeds mailed to them, does various bits
-     * of pruning and sends emails to a random subset of qualifying users.
+     * Loads up all candidate users for getting a retention email, does various bits of pruning and
+     * sends emails to a random subset of qualifying users.
      */
-    public void sendFeedEmails ()
+    public void sendRetentionEmails ()
     {
-        log.info("Starting feed mailing");
+        log.info("Starting retention mailing");
         long now = System.currentTimeMillis();
 
         // find everyone who is lapsed, shuffled
@@ -277,9 +277,9 @@ public class SpamLogic
         Date secondEmailCutoff = new Date(now - SECOND_EMAIL_CUTOFF);
         CountHashMap<Status> stats = new CountHashMap<Status>();
         for (Integer memberId : lapsedIds) {
-            Status result = sendFeedEmail(memberId, secondEmailCutoff, filler);
+            Status result = sendRetentionEmail(memberId, secondEmailCutoff, filler);
             if (DeploymentConfig.devDeployment) {
-                log.info("Feed email result (not sent)", "member", memberId, "result", result);
+                log.info("Retention email result (not sent)", "member", memberId, "result", result);
             }
             stats.incrementCount(result, 1);
             if (result.success && ++totalSent >= SEND_LIMIT) {
@@ -293,19 +293,19 @@ public class SpamLogic
             statLog.add(r);
             statLog.add(stats.getCount(r));
         }
-        log.info("Finished feed mailing", statLog.toArray(new Object[statLog.size()]));
+        log.info("Finished retention mailing", statLog.toArray(new Object[statLog.size()]));
     }
 
     /**
-     * For testing the feed email content, just sends a message to the given member id with no
-     * checking.
+     * For testing the retention email content, just sends a message to the given member id with no
+     * checking. If non-null, send to the provided address instead of the member's address.
      * TODO: remove
      */
-    public boolean testFeedEmail (int memberId, String address)
+    public boolean testRetentionEmail (int memberId, String address)
     {
-        MailContent result = sendFeedEmail(
+        MailContent result = sendRetentionEmail(
             _memberRepo.loadMember(memberId), address, loadFiller(), false);
-        log.info("Sent test feed email", "memberId", memberId, "address", address,
+        log.info("Sent test retention email", "memberId", memberId, "address", address,
             "result", result);
         return true;
     }
@@ -323,18 +323,18 @@ public class SpamLogic
     }
 
     /**
-     * Checks all relevant spam history and tries to send the feed to the given member id. The
-     * cutoff date is passed in for consistency since the feed mailer job could take a long time to
-     * run.
+     * Checks all relevant spam history and tries to send a retention email to the given member id.
+     * The cutoff date is passed in for consistency since the feed mailer job could take a long time
+     * to run.
      */
-    protected Status sendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
+    protected Status sendRetentionEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
         Status result = Status.OTHER;
         try {
-            result = trySendFeedEmail(memberId, secondEmailCutoff, filler);
+            result = trySendRetentionEmail(memberId, secondEmailCutoff, filler);
 
         } catch (Exception e) {
-            log.warning("Failed to send feed", "memberId", e);
+            log.warning("Failed to send retention mail", "memberId", e);
         }
         return result;
     }
@@ -342,7 +342,7 @@ public class SpamLogic
     /**
      * Non-exception-aware version of the above.
      */
-    protected Status trySendFeedEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
+    protected Status trySendRetentionEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
         SpamRecord spamRec = _spamRepo.loadSpamRecord(memberId);
         Date last = spamRec == null ? null : spamRec.lastRetentionEmailSent;
@@ -356,7 +356,7 @@ public class SpamLogic
         // load the member
         MemberRecord mrec = _memberRepo.loadMember(memberId);
         if (mrec == null) {
-            log.warning("Member deleted during feed mailing?", "memberId", memberId);
+            log.warning("Member deleted during retention mailing?", "memberId", memberId);
             return Status.MEMBER_DELETED;
         }
 
@@ -400,7 +400,7 @@ public class SpamLogic
         }
 
         // now send the email
-        MailContent content = sendFeedEmail(mrec, null, filler, true);
+        MailContent content = sendRetentionEmail(mrec, null, filler, true);
 
         // NOTE: this is sort of redundant but increases the integrity of the spam record and
         // reduces chance of a user getting two emails when we are 1M strong
@@ -415,11 +415,11 @@ public class SpamLogic
     }
 
     /**
-     * Does the heavy lifting of sending a retention/feed email. Returns a result indicating what
-     * was included in the mailing.
+     * Does the heavy lifting of sending a retention email. Returns a result indicating what was
+     * included in the mailing.
      * @param realDeal testing flag; if false, we make sure the mail is sent regardless
      */
-    protected MailContent sendFeedEmail (
+    protected MailContent sendRetentionEmail (
         final MemberRecord mrec, String addressOverride, NewStuff filler, boolean realDeal)
     {
         int memberId = mrec.memberId;

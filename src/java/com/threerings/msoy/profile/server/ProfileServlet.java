@@ -320,14 +320,14 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void sendTestFeedEmail (int profileMemberId)
+    public void sendRetentionEmail (int profileMemberId)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
         if (!mrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
-        _spamLogic.testFeedEmail(profileMemberId, mrec.accountName);
+        _spamLogic.testRetentionEmail(profileMemberId, mrec.accountName);
     }
 
     /**

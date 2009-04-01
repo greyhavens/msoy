@@ -138,8 +138,9 @@ public interface ProfileService extends RemoteService
         throws ServiceException;
 
     /**
-     * Sends a test feed email to the user.
+     * For testing, sends the given user's retention email to the authenticated user's email
+     * address.
      */
-    void sendTestFeedEmail (int profileMemberId)
+    void sendRetentionEmail (int profileMemberId)
         throws ServiceException;
 }

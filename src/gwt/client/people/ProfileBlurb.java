@@ -195,7 +195,7 @@ public class ProfileBlurb extends Blurb
         if (CShell.isAdmin()) {
             buttons.add(new Button ("Admin: Send feed", new ClickListener() {
                 public void onClick (Widget sender) {
-                    _profilesvc.sendTestFeedEmail(_name.getMemberId(), new InfoCallback<Void>() {
+                    _profilesvc.sendRetentionEmail(_name.getMemberId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             MsoyUI.info("Sent");
                         }
