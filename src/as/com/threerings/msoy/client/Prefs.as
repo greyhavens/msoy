@@ -60,7 +60,7 @@ public class Prefs
     public static const GLOBAL_BLEEP :String = "_bleep_";
 
     public static const IS_APRIL_FOOLS :Boolean =
-        ((new Date().month) == 2) && ((new Date().date) == 31);
+        ((new Date().month) == 3) && ((new Date().date) == 1); // April 1st
 
     public static function setEmbedded (embedded :Boolean) :void
     {
