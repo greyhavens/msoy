@@ -657,6 +657,10 @@ public class ChatOverlay
         if (type == IGNORECHAT) {
             return false;
         }
+        if ((type == PAID_BROADCAST) && _ctx.getMsoyClient().isEmbedded() &&
+                Boolean(_ctx.getMsoyController().getPlaceInfo()[0])) {
+            return false; // Omit PAID_BROADCASTS if we're embedded and in a game
+        }
 
         // if _localtype is null, we're still starting up - anything that shows up at this stage
         // should go ahead and get displayed (startup notifications and the like)
