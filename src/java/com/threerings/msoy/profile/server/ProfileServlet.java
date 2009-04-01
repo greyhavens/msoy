@@ -298,13 +298,14 @@ public class ProfileServlet extends MsoyServiceServlet
             // if they were on 0 ms, divide by 1, if they were on a year ago, divide by 2
             mids.put(memberId, rankFromId.apply(memberId) / (1 + age));
         }
-
+        
         // finally sort the results using our rank mapping for the ordering
         Collections.sort(results, new Comparator<MemberCard>() {
             public int compare (MemberCard o1, MemberCard o2) {
+                // not ascending sort order, not descending
                 return Double.compare(
-                    rankFromId.apply(o1.name.getMemberId()),
-                    rankFromId.apply(o2.name.getMemberId()));
+                    rankFromId.apply(o2.name.getMemberId()),
+                    rankFromId.apply(o1.name.getMemberId()));
             }
         });
 
