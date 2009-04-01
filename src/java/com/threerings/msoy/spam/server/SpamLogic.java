@@ -25,6 +25,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -410,7 +411,8 @@ public class SpamLogic
 
         // log an event for successes. the result is the lapse status
         if (status.success) {
-            _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, status.name());
+            _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, status.name(),
+                content.subjectLine, content.feed);
         }
 
         return status;
@@ -474,6 +476,8 @@ public class SpamLogic
             params.set("feed", null);
         }
 
+        String subjectLine = _subjectLines[RandomUtil.getInt(_subjectLines.length)];
+
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them
@@ -484,10 +488,11 @@ public class SpamLogic
         params.set("member_id", mrec.memberId);
         params.set("avatars", filler.avatars);
         params.set("games", filler.games);
+        params.set("subject", subjectLine);
         String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
             address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
-        return new MailContent(sufficientFeed);
+        return new MailContent(subjectLine, sufficientFeed);
     }
 
     /**
@@ -750,18 +755,23 @@ public class SpamLogic
      */
     protected static class MailContent
     {
+        /** Which subject line was sent. */
+        public String subjectLine;
+
         /** Whether the feed was included in the mailing. */
         public boolean feed;
 
         /** Creates a new content summary. */
-        public MailContent (boolean feed)
+        public MailContent (String subjectLine, boolean feed)
         {
+            this.subjectLine = subjectLine;
             this.feed = feed;
         }
 
         public String toString ()
         {
-            StringBuilder buf = new StringBuilder("SpamLogic.Result [");
+            StringBuilder buf = new StringBuilder(getClass().getSimpleName());
+            buf.append(" [");
             StringUtil.fieldsToString(buf, this);
             buf.append("]");
             return buf.toString();
@@ -947,6 +957,10 @@ public class SpamLogic
     protected static final String IMG_STYLE = "border: 0px; padding: 2px; margin: 2px; " +
         "vertical-align: middle;";
     protected static final String A_STYLE = "text-decoration: none;";
+
+    /** Choices of subject line for retention mailings. NOTE: the values here are for logging; they
+     * are translated to full subject lines by the velocity template feed.tmpl. */
+    protected static final String[] _subjectLines = {"default"};
 
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 

@@ -186,9 +186,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.MailSent(senderId, recipientId, payloadType));
     }
 
-    public void retentionMailSent (int recipientId, String visitorId, String lapseStatus)
+    public void retentionMailSent (int recipientId, String visitorId, String lapseStatus,
+        String subjectLine, boolean feedIncluded)
     {
-        post(new MsoyEvents.RetentionMailSent(recipientId, visitorId, lapseStatus));
+        post(new MsoyEvents.RetentionMailSent(recipientId, visitorId, lapseStatus, subjectLine,
+            feedIncluded));
     }
 
     public void friendAdded (int memberId, int friendId)
