@@ -200,6 +200,14 @@ public class SpamLogic
             return _listing.name;
         }
 
+        /**
+         * Returns the catalog id of this listing.
+         */
+        public int getCatalogId ()
+        {
+            return _listing.catalogId;
+        }
+
         protected Listing (ListingCard listing)
         {
             _listing = listing;
@@ -420,39 +428,47 @@ public class SpamLogic
             count += cat.messages.length;
         }
 
-        // prepare the generators!
-        final Generator generators[] = {
-            new Generator(memberId, new PlainTextBuilder(), _messages),
-            new Generator(memberId, new HTMLBuilder(), _messages)};
-
-        // convert to our wrapped categories and items
-        List<EmailFeedCategory> ecats = Lists.newArrayList();
-        for (FeedCategory category : categories) {
-            List<EmailFeedItem> eitems = Lists.transform(
-                FeedMessageAggregator.aggregate(category.messages, false),
-                new Function<FeedMessage, EmailFeedItem>() {;
-                    public EmailFeedItem apply (FeedMessage fm) {
-                        return new EmailFeedItem(generators, mrec.memberId, fm);
-                    }
-                });
-            if (eitems.isEmpty()) {
-                continue;
+        // generate the feed if we have at least a couple of items
+        Parameters params = new Parameters();
+        if (count >= MIN_NEWS_ITEM_COUNT) {
+            // prepare the generators!
+            final Generator generators[] = {
+                new Generator(memberId, new PlainTextBuilder(), _messages),
+                new Generator(memberId, new HTMLBuilder(), _messages)};
+    
+            // convert to our wrapped categories and items
+            List<EmailFeedCategory> ecats = Lists.newArrayList();
+            for (FeedCategory category : categories) {
+                List<EmailFeedItem> eitems = Lists.transform(
+                    FeedMessageAggregator.aggregate(category.messages, false),
+                    new Function<FeedMessage, EmailFeedItem>() {;
+                        public EmailFeedItem apply (FeedMessage fm) {
+                            return new EmailFeedItem(generators, mrec.memberId, fm);
+                        }
+                    });
+                if (eitems.isEmpty()) {
+                    continue;
+                }
+                EmailFeedCategory ecat = new EmailFeedCategory(
+                    Category.values()[category.category], eitems);
+                ecats.add(ecat);
             }
-            EmailFeedCategory ecat = new EmailFeedCategory(
-                Category.values()[category.category], eitems);
-            ecats.add(ecat);
-        }
+    
+            // Sort to CATEGORIES order
+            Collections.sort(ecats);
 
-        // Sort to CATEGORIES order
-        Collections.sort(ecats);
+            params.set("feed", ecats);
+
+        } else {
+            // otherwise, tell the template not to show the feed section at all
+            params.set("feed", null);
+        }
 
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them
         // as sent. I also like my pie at 30,000 feet please.
         // only generate the feed if we have at least a few items
-        Parameters params = new Parameters();
-        params.set("feed", ecats);
         params.set("server_url", DeploymentConfig.serverURL);
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
@@ -501,7 +517,7 @@ public class SpamLogic
         throws ServiceException
     {
         List<ListingCard> items = uniqueRandomSubset(ITEM_COUNT, loadNewAndHot(
-            Item.AVATAR, ITEM_COUNT * 2), loadFavorites(memberIds, Item.AVATAR, ITEM_COUNT * 2));
+            itemType, ITEM_COUNT * 2), loadFavorites(memberIds, itemType, ITEM_COUNT * 2));
         return Lists.transform(items, _toListing);
     }
 
@@ -898,7 +914,7 @@ public class SpamLogic
     protected static final String MAIL_TEMPLATE = "feed";
     protected static final int LAPSED_CUTOFF = 3 * 24*60*60*1000;
     protected static final int SECOND_EMAIL_CUTOFF = 10 * 24*60*60*1000;
-    protected static final int MIN_NEWS_ITEM_COUNT = 5;
+    protected static final int MIN_NEWS_ITEM_COUNT = 2;
     protected static final int ITEM_COUNT = 5;
     protected static final int GAME_COUNT = 10;
     protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;

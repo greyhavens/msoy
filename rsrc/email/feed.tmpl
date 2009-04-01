@@ -11,6 +11,28 @@ New & Hot Games:
     $server_url#games
 
 #end
+#if ($avatars.size() > 0)
+New and Staff Picked Avatars:
+#foreach ($avi in $avatars)
+    * $avi.name
+      $server_url#shop-l_5_$avi.catalogId
+
+#end
+    See more avatars:
+    $server_url#shop-5_7_
+
+#end
+#if ($furniture.size() > 0)
+New and Staff Picked Furniture:
+#foreach ($furni in $furniture)
+    * $furni.name
+      $server_url#shop-l_3_$furni.catalogId
+
+#end
+    See more furniture:
+    $server_url#shop-3_7_
+
+#end
 #if ($feed)
 Your News Feed. Here are a few things that have been happening on Whirled.
 
