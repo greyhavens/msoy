@@ -476,7 +476,7 @@ public class SpamLogic
             params.set("feed", null);
         }
 
-        String subjectLine = _subjectLines[RandomUtil.getInt(_subjectLines.length)];
+        String subjectLine = RandomUtil.pickRandom(_subjectLines);
 
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
