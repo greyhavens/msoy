@@ -21,6 +21,7 @@ import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic.And;
@@ -125,7 +126,7 @@ public class ProfileRepository extends DepotRepository
     }
 
     /**
-     * Finds the ids of members who's real names match the search parameter.
+     * Finds the ids of members whose real names match the search parameter.
      */
     public List<MemberSearchRecord> findMembersByRealName (String search, int limit)
     {
@@ -133,6 +134,7 @@ public class ProfileRepository extends DepotRepository
         return findAll(MemberSearchRecord.class, new FromOverride(ProfileRecord.class),
             new FieldDefinition("rank", fts.rank()),
             new FieldDefinition("memberId", ProfileRecord.MEMBER_ID),
+            OrderBy.descending(fts.rank()),
             new Where(fts.match()), new Limit(0, limit));
     }
 

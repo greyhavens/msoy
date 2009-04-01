@@ -366,6 +366,8 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns ids for all members whose display name match the supplied search string in a
      * natural language sense.
+     * 
+     * TODO: Stop calling this fancy version from GroupServlet.
      */
     public List<MemberSearchRecord> findMembersByDisplayName (String search, int limit)
     {
@@ -375,6 +377,7 @@ public class MemberRepository extends DepotRepository
             new FieldDefinition("memberId", MemberRecord.MEMBER_ID),
             new FieldDefinition("rank", fts.rank()),
             new Where(fts.match()),
+            OrderBy.descending(fts.rank()),
             new Limit(0, limit));
     }
     /**
