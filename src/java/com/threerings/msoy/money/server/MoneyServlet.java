@@ -24,6 +24,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -105,7 +106,7 @@ public class MoneyServlet extends MsoyServiceServlet
         // Spam the cash out mailing list
         _mailer.sendTemplateEmail(
             MailSender.By.HUMAN, CASHOUT_NOTIFY_EMAIL, "no-reply@whirled.com", "blingCashOutNotice",
-            "memberId", mrec.memberId, "name", mrec.name,
+            "memberId", mrec.memberId, "name", mrec.name, "server_url", DeploymentConfig.serverURL,
             "url", Pages.makeURL(Pages.ADMINZ, "cashout")); // TODO: A more meaningful URL
 
         return result;
