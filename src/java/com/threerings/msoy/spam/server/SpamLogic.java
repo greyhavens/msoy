@@ -759,19 +759,21 @@ public class SpamLogic
     }
 
     /**
-     * Appends items from list2 to list1 that are not already in list1, then returns a random
-     * subset of list1.
+     * Appends items from list2 to a copy of list1 that are not already in list1, then returns a
+     * random subset of the copy.
      */
     protected static <T> List<T> uniqueRandomSubset (int size, List<T> list1, List<T> list2)
     {
+        List<T> result = Lists.newArrayListWithCapacity(size);
+        result.addAll(list1);
         if (list2 != null) {
             for (T item : list2) {
-                if (!list1.contains(item)) {
-                    list1.add(item);
+                if (!result.contains(item)) {
+                    result.add(item);
                 }
             }
         }
-        return randomSubset(size, list1);
+        return randomSubset(size, result);
     }
 
     /** Converts listing cards to the velocity listing. */
