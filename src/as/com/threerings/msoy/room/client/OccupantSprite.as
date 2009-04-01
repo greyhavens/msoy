@@ -22,6 +22,7 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
@@ -649,7 +650,11 @@ public class OccupantSprite extends MsoySprite
         // little in Whirled, and we've decided we don't care. Avatars with hidden names are cool,
         // and you can still click on the avatar to do whatever you need to do.
         // Also, the room's occupant list can be used to act on other avatars.
-        _label.y = (baseY - _label.height) / _extras.scaleY;
+        if (Prefs.isAprilFoolsEnabled()) {
+            _label.y = baseY / _extras.scaleY;
+        } else {
+            _label.y = (baseY - _label.height) / _extras.scaleY;
+        }
     }
 
     /**
@@ -658,11 +663,16 @@ public class OccupantSprite extends MsoySprite
      */
     protected function arrangeDecorations () :void
     {
+        const FOOL :Boolean = Prefs.isAprilFoolsEnabled();
+
         // note: may overflow the media area..
         var hotSpot :Point = getMediaHotSpot();
         var hotX :Number = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX*/) * hotSpot.x;
 
         var baseY :Number = _label.y; // we depend on recheckLabel()
+        if (FOOL) {
+            baseY += _label.height;
+        }
         if (_decorations != null) {
             // place the decorations over the name label, with our best guess as to their size
             for (var ii :int = 0; ii < _decorations.length; ii++) {
@@ -671,9 +681,15 @@ public class OccupantSprite extends MsoySprite
                 if (rect == null) {
                     rect = dec.getRect(dec);
                 }
-                baseY -= (rect.height + DECORATION_PAD);
                 dec.x = (hotX - (rect.width/2) - rect.x) / _extras.scaleX;
-                dec.y = (baseY - rect.y);
+                if (FOOL) {
+                    baseY += DECORATION_PAD;
+                    dec.y = (baseY - rect.y);
+                    baseY += rect.height;
+                } else {
+                    baseY -= (rect.height + DECORATION_PAD);
+                    dec.y = (baseY - rect.y);
+                }
             }
         }
 
