@@ -1,7 +1,6 @@
 ## Expands the list of feed categories in $feed into a text listing.
 What you've been missing on Whirled, $name!
-#if ($games.size() > 0)
-New & Hot Games:
+New and recently staff picked Games:
 #foreach ($game in $games)
     * $game.name
       $server_url#games-d_$game.gameId
@@ -10,31 +9,17 @@ New & Hot Games:
     See more games on Whirled:
     $server_url#games
 
-#end
-#if ($avatars.size() > 0)
-New and Staff Picked Avatars:
+New and recently staff picked Avatars:
 #foreach ($avi in $avatars)
     * $avi.name
       $server_url#shop-l_5_$avi.catalogId
 
 #end
-    See more avatars:
+    See more avatars on Whirled:
     $server_url#shop-5_7_
 
-#end
-#if ($furniture.size() > 0)
-New and Staff Picked Furniture:
-#foreach ($furni in $furniture)
-    * $furni.name
-      $server_url#shop-l_3_$furni.catalogId
-
-#end
-    See more furniture:
-    $server_url#shop-3_7_
-
-#end
 #if ($feed)
-Your News Feed. Here are a few things that have been happening on Whirled.
+Your News Feed; Here are a few things that have been happening on Whirled.
 
 #foreach ($cat in $feed)
 #if ($cat.items.size() > 0)

@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -481,7 +483,6 @@ public class SpamLogic
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
         params.set("avatars", filler.avatars);
-        params.set("furniture", filler.furniture);
         params.set("games", filler.games);
         String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
@@ -498,8 +499,7 @@ public class SpamLogic
         ArrayIntSet memberIds = new ArrayIntSet(ServerConfig.getShopFavoriteMemberIds());
         try {
             filler.avatars = randomItems(memberIds, Item.AVATAR);
-            filler.furniture = randomItems(memberIds, Item.FURNITURE);
-            filler.games = randomGames();
+            filler.games = randomItems(memberIds, Item.GAME);
 
         } catch (ServiceException e) {
             throw new RuntimeException("Could not create feed mailing filler", e);
@@ -509,46 +509,31 @@ public class SpamLogic
     }
 
     /**
-     * Loads a random set of new & hot games for the filler.
-     */
-    protected List<Listing> randomGames ()
-        throws ServiceException
-    {
-        List<ListingCard> games = randomSubset(GAME_COUNT, loadNewAndHot(Item.GAME, GAME_COUNT*2));
-        return Lists.transform(games, _toListing);
-    }
-
-    /**
      * Loads a random set of new & hot and staff pick items for the filler.
      */
     protected List<Listing> randomItems (Collection<Integer> memberIds, byte itemType)
         throws ServiceException
     {
-        List<ListingCard> items = uniqueRandomSubset(ITEM_COUNT, loadNewAndHot(
-            itemType, ITEM_COUNT * 2), loadFavorites(memberIds, itemType, ITEM_COUNT * 2));
-        return Lists.transform(items, _toListing);
-    }
+        int count = ITEM_COUNT;
 
-    /**
-     * Loads the given number of new & hot items of the given type.
-     */
-    protected List<ListingCard> loadNewAndHot (byte itemType, int count)
-        throws ServiceException
-    {
-        return Lists.transform(_itemLogic.getRepository(itemType).loadCatalog(
+        // load up items from new & hot and staff picks (x2), no dupes
+        Set<ListingCard> resultSet = Sets.newHashSet();
+        resultSet.addAll(Lists.transform(_itemLogic.getRepository(itemType).loadCatalog(
             CatalogQuery.SORT_BY_NEW_AND_HOT, false, null, 0, 0, null, 0, 0, count),
-            CatalogRecord.TO_CARD);
-    }
+            CatalogRecord.TO_CARD));
+        resultSet.addAll(_itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(memberIds,
+            count * 2, itemType)));
 
-    /**
-     * Loads the given number of recent favorites of the given member ids.
-     */
-    protected List<ListingCard> loadFavorites (
-        Collection<Integer> memberIds, byte itemType, int count)
-        throws ServiceException
-    {
-        return _itemLogic.resolveFavorites(
-            _faveRepo.loadRecentFavorites(memberIds, count, itemType));
+        // get a random subset into a list
+        List<ListingCard> result;
+        if (resultSet.size() > count) {
+            result = CollectionUtil.selectRandomSubset(resultSet, count);
+        } else {
+            result = Lists.newArrayList(resultSet);
+        }
+
+        // transform to velocity wrapper
+        return Lists.transform(result, _toListing);
     }
 
     /**
@@ -717,9 +702,6 @@ public class SpamLogic
     {
         /** New avatar listings. */
         public List<Listing> avatars;
-
-        /** New furniture listings. */
-        protected List<Listing> furniture;
 
         /** New game listings. */
         protected List<Listing> games;
@@ -960,7 +942,6 @@ public class SpamLogic
     protected static final int SECOND_EMAIL_CUTOFF = 10 * 24*60*60*1000;
     protected static final int MIN_NEWS_ITEM_COUNT = 2;
     protected static final int ITEM_COUNT = 5;
-    protected static final int GAME_COUNT = 10;
     protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;
 
     protected static final String IMG_STYLE = "border: 0px; padding: 2px; margin: 2px; " +

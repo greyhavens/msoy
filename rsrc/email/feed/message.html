@@ -32,80 +32,36 @@ Check out these new and hot items on
 <a href="$server_url" style="text-decoration: none;">Whirled</a>:
 </h3>
 
-#if ($games.size() > 0)
-    <h4>Games</h4>
-    <table cellpadding=0 cellspacing=0><tr>
-        #set ($col = -1)
-        #foreach ($game in $games)
-            #set ($col = $col + 1)
-            #if ($col == 5)
-                </tr><tr>
-                #set ($col = -1)
-            #end
-            <td style="$itemCellStyle"><a href="$server_url#games-d_$game.gameId"
-                style="text-decoration: none;"><img src="$game.thumbnail"
-                style="border: 0px;"/><br>$game.name
-            </a></td>
-        #end
-        #foreach ($foo in [$col..4])
-            <td style="$itemCellStyle"></td>
-        #end
-    </tr><tr>
-        <td colspan=5 style="text-align: right;"><i><a href="$server_url#games"
-            style="font-size: 12px;">See More...</a></i></td>
-    </tr></table>
-#end
+## Games
+<table cellpadding=0 cellspacing=0><tr style="background: #E0E0F0;">
+    <td colspan=3 style="padding: 1px 0 3px 5px;">Games</td>
+    <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a href="$server_url#games"
+        style="font-size: 12px;">See More...</a></i></td>
+</tr><tr>
+    #foreach ($item in $games)
+        <td style="$itemCellStyle"><a href="$server_url#games-d_$item.gameId"
+            style="text-decoration: none;"><img src="$item.thumbnail"
+            style="border: 0px;"/><br>$item.name
+        </a></td>
+    #end
+</tr></table>
 
-#if ($avatars.size() > 0)
-    <h4>Avatars</h4>
-    <table cellpadding=0 cellspacing=0><tr>
-        #set ($col = -1)
-        #foreach ($avi in $avatars)
-            #set ($col = $col + 1)
-            #if ($col == 5)
-                </tr><tr>
-                #set ($col = -1)
-            #end
-            <td style="$itemCellStyle"><a href="$server_url#shop-l_5_$avi.catalogId"
-                style="text-decoration: none;"><img src="$avi.thumbnail"
-                style="border: 0px;"/><br>$avi.name
-            </a></td>
-        #end
-        #foreach ($foo in [$col..4])
-            <td style="$itemCellStyle"></td>
-        #end
-    </tr><tr>
-        <td colspan=5 style="text-align: right;"><i><a href="$server_url#shop"
-            style="font-size: 12px;">Go To Shop</a></i> | <i><a href="$server_url#shop-5_7_"
-            style="font-size: 12px;">See More Avatars</a></i></td>
-    </tr></table>
-#end
+## Avatars
+<table cellpadding=0 cellspacing=0><tr style="background: #E0E0F0; padding-bottom: 3px;">
+    <td colspan=3 style="padding: 1px 0 3px 5px;">Avatars</td>
+    <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a href="$server_url#shop"
+        style="font-size: 12px;">Go To Shop</a></i> | <i><a href="$server_url#shop-5_7_"
+        style="font-size: 12px;">See More Avatars</a></i></td>
+</tr><tr>
+    #foreach ($item in $avatars)
+        <td style="$itemCellStyle"><a href="$server_url#shop-l_5_$item.catalogId"
+            style="text-decoration: none;"><img src="$item.thumbnail"
+            style="border: 0px;"/><br>$item.name
+        </a></td>
+    #end
+</tr></table>
 
-#if ($furniture.size() > 0)
-    <h4>Furniture</h4>
-    <table cellpadding=0 cellspacing=0><tr>
-        #set ($col = -1)
-        #foreach ($furni in $furniture)
-            #set ($col = $col + 1)
-            #if ($col == 5)
-                </tr><tr>
-                #set ($col = -1)
-            #end
-            <td style="$itemCellStyle"><a href="$server_url#shop-l_3_$furni.catalogId"
-                style="text-decoration: none;"><img src="$furni.thumbnail"
-                style="border: 0px;"/><br>$furni.name
-            </a></td>
-        #end
-        #foreach ($foo in [$col..4])
-            <td style="$itemCellStyle"></td>
-        #end
-    </tr><tr>
-        <td colspan=5 style="text-align: right;"><i><a href="$server_url#shop"
-            style="font-size: 12px;">Go To Shop</a></i> | <i><a href="$server_url#shop-3_7_"
-            style="font-size: 12px;">See More Furniture</a></i></td>
-    </tr></table>
-#end
-
+## News feed
 #if ($feed)
     <h3 style="border-bottom: 1px solid gray;">
     Your news feed. Come on back and get in the game!
