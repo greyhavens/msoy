@@ -34,7 +34,7 @@ public class SpamRecord extends PersistentRecord
     @Column(nullable = true)
     public Date lastRetentionEmailSent;
 
-    /** Result of last sending (-1 if cleared). */
+    /** Result of last sending (only valid if the last sent date is non-null). */
     public int lastRetentionEmailResult;
 
     /** Number of retention emails sent. */
