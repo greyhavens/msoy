@@ -157,7 +157,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             _memberIds = new ArrayIntSet();
             // look up the first 100 members whose name matches each search term exactly
             for (String term : searchTerms) {
-                _memberIds.addAll(_memberRepo.findMembersByDisplayName(term, true, 100));
+                _memberIds.addAll(_memberRepo.findMembersByExactDisplayName(term, 100));
             }
             
             _fts = new FullText(getItemClass(), ItemRecord.FTS_ND, search);

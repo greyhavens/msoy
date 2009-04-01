@@ -50,7 +50,7 @@ public class MsoyGameInfoProvider extends GameInfoProvider
     public String[] lookupAccountNames (String gameName)
     {
         List<Integer> memberIds =
-            _memberRepo.findMembersByDisplayName(gameName, true, LOOKUP_LIMIT);
+            _memberRepo.findMembersByExactDisplayName(gameName, LOOKUP_LIMIT);
         ArrayList<String> names = new ArrayList<String>(memberIds.size());
         for (Integer memberId : memberIds) {
             names.add(memberId.toString());

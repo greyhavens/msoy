@@ -17,6 +17,8 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.FieldDefinition;
+import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.Where;
@@ -26,7 +28,7 @@ import com.samskivert.depot.operator.Logic.And;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.RecordFunctions;
+import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
 
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.profile.gwt.Profile;
@@ -125,12 +127,13 @@ public class ProfileRepository extends DepotRepository
     /**
      * Finds the ids of members who's real names match the search parameter.
      */
-    public List<Integer> findMembersByRealName (String search, int limit)
+    public List<MemberSearchRecord> findMembersByRealName (String search, int limit)
     {
-        Where where = new Where(
-            new FullText(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search).match());
-        return Lists.transform(findAllKeys(ProfileRecord.class, false, where, new Limit(0, limit)),
-                               RecordFunctions.<ProfileRecord>getIntKey());
+        FullText fts = new FullText(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search);
+        return findAll(MemberSearchRecord.class, new FromOverride(ProfileRecord.class),
+            new FieldDefinition("rank", fts.rank()),
+            new FieldDefinition("memberId", ProfileRecord.MEMBER_ID),
+            new Where(fts.match()), new Limit(0, limit));
     }
 
     /**

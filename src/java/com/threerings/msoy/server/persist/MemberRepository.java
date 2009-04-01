@@ -38,6 +38,7 @@ import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 
+import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
@@ -109,6 +110,14 @@ public class MemberRepository extends DepotRepository
     {
         public int memberId;
         public String accountName;
+    }
+
+    @Entity @Computed
+    public static class MemberSearchRecord extends PersistentRecord
+    {
+        public int memberId;
+
+        public double rank;
     }
 
     @Inject public MemberRepository (PersistenceContext ctx)
@@ -341,19 +350,33 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns ids for all members whose display name matches the supplied search string.
+     * Returns ids for all members whose display name is an exact (in the case-insensitive sense)
+     * match of the supplied search string.
      */
-    public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
+    public List<Integer> findMembersByExactDisplayName (String search, int limit)
     {
-        SQLOperator op = exact ?
-            new Equals(new FunctionExp("LOWER", MemberRecord.NAME),
-                       new FunctionExp("LOWER", new ValueExp(search))) :
-            new FullText(MemberRecord.class, MemberRecord.FTS_NAME, search).match();
         return Lists.transform(
-            findAllKeys(MemberRecord.class, false, new Where(op), new Limit(0, limit)),
+            findAllKeys(MemberRecord.class, false,
+                new Where(new Equals(new FunctionExp("LOWER", MemberRecord.NAME),
+                          new FunctionExp("LOWER", new ValueExp(search)))),
+                new Limit(0, limit)),
             RecordFunctions.<MemberRecord>getIntKey());
     }
 
+    /**
+     * Returns ids for all members whose display name match the supplied search string in a
+     * natural language sense.
+     */
+    public List<MemberSearchRecord> findMembersByDisplayName (String search, int limit)
+    {
+        FullText fts = new FullText(MemberRecord.class, MemberRecord.FTS_NAME, search);
+
+        return findAll(MemberSearchRecord.class, new FromOverride(MemberRecord.class),
+            new FieldDefinition("memberId", MemberRecord.MEMBER_ID),
+            new FieldDefinition("rank", fts.rank()),
+            new Where(fts.match()),
+            new Limit(0, limit));
+    }
     /**
      * Returns MemberCardRecords for all members that are part of the given collection and also
      * substring match their displayName against the given search string.
@@ -374,7 +397,7 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads ids of member records that are initial candidates for a retention email. Members are
-     * selected if 1. their last login time is between two timestamps, and 2. if they have not 
+     * selected if 1. their last login time is between two timestamps, and 2. if they have not
      * decided to forego announcement emails.
      */
     public List<Integer> findRetentionCandidates (Date earliestLastSession, Date latestLastSession)
@@ -1025,7 +1048,7 @@ public class MemberRepository extends DepotRepository
      */
     public int[] loadMutelist (int memberId)
     {
-        List<MuteRecord> list = 
+        List<MuteRecord> list =
             findAll(MuteRecord.class, new Where(new Equals(MuteRecord.MUTER_ID, memberId)));
         int[] ids = new int[list.size()];
         for (int ii = 0; ii < ids.length; ii++) {

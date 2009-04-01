@@ -44,6 +44,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRepository;
+import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -678,10 +679,16 @@ public class GroupServlet extends MsoyServiceServlet
         if (mrec.isSupport()) {
             GroupRecord grec = _groupRepo.loadGroup(groupId);
             if (grec.official) {
+                List<Integer> memberIds = Lists.transform(
+                    _memberRepo.findMembersByDisplayName(search, MAX_MEMBER_MATCHES),
+                        new Function<MemberSearchRecord, Integer>() {
+                            public Integer apply (MemberSearchRecord record) {
+                                return record.memberId;
+                            }
+                        });
+
                 return Lists.newArrayList(Lists.transform(
-                    _memberRepo.loadMemberCards(_memberRepo.findMembersByDisplayName(
-                        search, false, MAX_MEMBER_MATCHES)),
-                    MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
+                    _memberRepo.loadMemberCards(memberIds), MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
             }
         }
 

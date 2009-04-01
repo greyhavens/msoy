@@ -8,13 +8,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -34,12 +36,13 @@ import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.server.persist.MemberRepository.MemberSearchRecord;
 import com.threerings.msoy.spam.server.SpamLogic;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
-import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.gwt.MemberCard.NotOnline;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -249,34 +252,63 @@ public class ProfileServlet extends MsoyServiceServlet
     public List<MemberCard> findProfiles (final String search)
         throws ServiceException
     {
-        final MemberRecord mrec = getAuthedUser();
+        MemberRecord mrec = getAuthedUser();
 
         // if the caller is a member, load up their friends set
-        final IntSet callerFriendIds = (mrec == null) ? null :
-            _memberRepo.loadFriendIds(mrec.memberId);
+        IntSet friendIds = (mrec == null) ? null : _memberRepo.loadFriendIds(mrec.memberId);
 
-        // locate the members that match the supplied search
-        final IntSet mids = new ArrayIntSet();
+        // ccumulate & refine a map of memberId -> that member's current search rank
+        final Map<Integer, Double> mids = Maps.newHashMap();
+
+        // convenience Function for getting the search rank for a member while defaulting to 0
+        final Function<Integer, Double> rankFromId = Functions.forMap(mids, 0.0);
 
         // first check for an email match (and use only that if we have a match)
-        final MemberRecord memrec = _memberRepo.loadMember(search);
+        MemberRecord memrec = _memberRepo.loadMember(search);
         if (memrec != null) {
-            mids.add(memrec.memberId);
+            mids.put(memrec.memberId, (double) 1.0);
 
         } else {
             // look for a display name match
-            mids.addAll(_memberRepo.findMembersByDisplayName(
-                            search, false, MAX_PROFILE_MATCHES));
+            for (MemberSearchRecord rec :
+                    _memberRepo.findMembersByDisplayName(search, MAX_PROFILE_MATCHES)) {
+                mids.put(rec.memberId, Math.max(rankFromId.apply(rec.memberId), rec.rank));
+            }
+
             // look for a real name match
-            mids.addAll(_profileRepo.findMembersByRealName(
-                            search, MAX_PROFILE_MATCHES));
-            // look for an interests match
-            mids.addAll(_profileRepo.findMembersByInterest(search, MAX_PROFILE_MATCHES));
+            for (MemberSearchRecord rec :
+                _profileRepo.findMembersByRealName(search, MAX_PROFILE_MATCHES)) {
+                mids.put(rec.memberId, Math.max(rankFromId.apply(rec.memberId), rec.rank));
+            }
         }
 
-        // finally resolve cards for these members
-        List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, callerFriendIds);
-        Collections.sort(results, MemberHelper.SORT_BY_LAST_ONLINE);
+        // now resolve cards for these members
+        List<MemberCard> results = _mhelper.resolveMemberCards(mids.keySet(), false, friendIds);
+
+        // for each successful result, potentially tweak search ranking by recent-ness
+        for (MemberCard result : results) {
+            if (!(result.status instanceof NotOnline)) {
+                continue;
+            }
+            // how long ago were they on?
+            double age = System.currentTimeMillis() - ((NotOnline) result.status).lastLogon;
+            // measured in years?
+            age /= (365 * 24 * 3600 * 1000);
+
+            int memberId = result.name.getMemberId();
+            // if they were on 0 ms, divide by 1, if they were on a year ago, divide by 2
+            mids.put(memberId, rankFromId.apply(memberId) / (1 + age));
+        }
+
+        // finally sort the results using our rank mapping for the ordering
+        Collections.sort(results, new Comparator<MemberCard>() {
+            public int compare (MemberCard o1, MemberCard o2) {
+                return Double.compare(
+                    rankFromId.apply(o1.name.getMemberId()),
+                    rankFromId.apply(o2.name.getMemberId()));
+            }
+        });
+
         return results;
     }
 
