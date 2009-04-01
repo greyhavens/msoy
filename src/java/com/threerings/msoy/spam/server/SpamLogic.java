@@ -345,8 +345,8 @@ public class SpamLogic
     protected Status trySendRetentionEmail (int memberId, Date secondEmailCutoff, NewStuff filler)
     {
         SpamRecord spamRec = _spamRepo.loadSpamRecord(memberId);
-        Date last = spamRec == null ? null : spamRec.lastRetentionEmailSent;
-        Status status = last == null ? null : Status.lookup(spamRec.lastRetentionEmailResult);
+        Date last = spamRec == null ? null : spamRec.retentionSent;
+        Status status = last == null ? null : Status.lookup(spamRec.retentionStatus);
 
         if (last != null && last.after(secondEmailCutoff) && status != null && status.success) {
             // spammed recently, skip
@@ -373,15 +373,15 @@ public class SpamLogic
         // oh look, they've logged in! maybe the email(s) worked. clear counter
         boolean persuaded = last != null && mrec.lastSession.after(last);
         if (persuaded) {
-            spamRec.retentionEmailCountSinceLastLogin = 0;
+            spamRec.retentionCountSinceLogin = 0;
             // fall through, we'll send a mail and save the record below
 
         } else if (status == Status.NOT_ENOUGH_FRIENDS || status == Status.NOT_ENOUGH_NEWS) {
             // reset legacy failures, we now send filler for these people
-            spamRec.retentionEmailCountSinceLastLogin = 0;
+            spamRec.retentionCountSinceLogin = 0;
             // fall through, we'll send a mail and save the record below
 
-        } else if (spamRec != null && spamRec.retentionEmailCountSinceLastLogin >= 2) {
+        } else if (spamRec != null && spamRec.retentionCountSinceLogin >= 2) {
             // they are never coming back... oh well, there are plenty of other fish in the sea
             return Status.LOST_CAUSE;
         }
@@ -395,7 +395,7 @@ public class SpamLogic
         status = Status.SENT_DORMANT;
         if (persuaded) {
             status = Status.SENT_PERSUADED;
-        } else if (spamRec == null || spamRec.retentionEmailCount == 0) {
+        } else if (spamRec == null || spamRec.retentionCount == 0) {
             status = Status.SENT_LAPSED;
         }
 

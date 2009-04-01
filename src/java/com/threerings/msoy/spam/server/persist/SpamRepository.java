@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -22,9 +23,18 @@ import com.threerings.presents.annotation.BlockingThread;
 @Singleton @BlockingThread
 public class SpamRepository extends DepotRepository
 {
-    @Inject SpamRepository (PersistenceContext ctx)
+    @Inject public SpamRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        ctx.registerMigration(SpamRecord.class, new SchemaMigration.Rename(3,
+            "lastRetentionEmailResult", SpamRecord.RETENTION_STATUS));
+        ctx.registerMigration(SpamRecord.class, new SchemaMigration.Rename(3,
+            "lastRetentionEmailSent", SpamRecord.RETENTION_SENT));
+        ctx.registerMigration(SpamRecord.class, new SchemaMigration.Rename(3,
+            "retentionEmailCount", SpamRecord.RETENTION_COUNT));
+        ctx.registerMigration(SpamRecord.class, new SchemaMigration.Rename(3,
+            "retentionEmailCountSinceLastLogin", SpamRecord.RETENTION_COUNT_SINCE_LOGIN));
     }
 
     /**
@@ -64,27 +74,26 @@ public class SpamRepository extends DepotRepository
             spamRec = new SpamRecord();
             spamRec.memberId = memberId;
         }
-        spamRec.retentionEmailCount++;
-        spamRec.retentionEmailCountSinceLastLogin++;
-        spamRec.lastRetentionEmailSent = new Date(System.currentTimeMillis());
-        spamRec.lastRetentionEmailResult = -1;
+        spamRec.retentionCount++;
+        spamRec.retentionCountSinceLogin++;
+        spamRec.retentionSent = new Date(System.currentTimeMillis());
+        spamRec.retentionStatus = -1;
         if (newRecord) {
             insert(spamRec);
 
         } else {
             // do the update, just retention fields
             updatePartial(SpamRecord.getKey(spamRec.memberId),
-                SpamRecord.LAST_RETENTION_EMAIL_SENT, spamRec.lastRetentionEmailSent,
-                SpamRecord.RETENTION_EMAIL_COUNT, spamRec.retentionEmailCount,
-                SpamRecord.LAST_RETENTION_EMAIL_RESULT, spamRec.lastRetentionEmailResult,
-                SpamRecord.RETENTION_EMAIL_COUNT_SINCE_LAST_LOGIN,
-                    spamRec.retentionEmailCountSinceLastLogin);
+                SpamRecord.RETENTION_SENT, spamRec.retentionSent,
+                SpamRecord.RETENTION_COUNT, spamRec.retentionCount,
+                SpamRecord.RETENTION_STATUS, spamRec.retentionStatus,
+                SpamRecord.RETENTION_COUNT_SINCE_LOGIN, spamRec.retentionCountSinceLogin);
         }
     }
 
     public void noteRetentionEmailResult (int memberId, int cause)
     {
-        updatePartial(SpamRecord.getKey(memberId), SpamRecord.LAST_RETENTION_EMAIL_RESULT, cause);
+        updatePartial(SpamRecord.getKey(memberId), SpamRecord.RETENTION_STATUS, cause);
     }
 
     @Override
