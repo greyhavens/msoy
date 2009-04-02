@@ -65,6 +65,10 @@ public class MyWhirled extends FlowPanel
                 FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
                 feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
                 feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
+                if (data.updatedThreads > 0) {
+                    feedBox.add(MsoyUI.createHTML(_msgs.myDiscussionsQuickSummary(
+                        String.valueOf(data.updatedThreads)), "NewsLink"));
+                }
                 feedBox.add(feed);
                 feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 

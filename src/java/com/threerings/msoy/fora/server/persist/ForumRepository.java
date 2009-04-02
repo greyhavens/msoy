@@ -23,6 +23,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
@@ -60,23 +61,21 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> loadUnreadThreads (int memberId, Set<Integer> groupIds, int max)
     {
-        SQLExpression join = new And(
-            new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
-            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
-        );
-        SQLExpression where = new And(
-            new In(ForumThreadRecord.GROUP_ID, groupIds),
-            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
-                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
-                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
-                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+        List<QueryClause> clauses = getUnreadThreadsClauses(memberId, groupIds);
+        clauses.add(new Limit(0, max));
+        clauses.add(OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID));
+        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, clauses);
+    }
 
-        // consult the cache for records, but not for the keyset
-        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
-            new Where(where),
-            new Limit(0, max),
-            OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID)));
+    /**
+     * Counts how many threads there are posted to the given set of groups that have not been read
+     * by the given member.
+     */
+    public int countUnreadThreads (int memberId, Set<Integer> groupIds)
+    {
+        List<QueryClause> clauses = getUnreadThreadsClauses(memberId, groupIds);
+        clauses.add(new FromOverride(ForumThreadRecord.class));
+        return load(CountRecord.class, clauses).count;
     }
 
     /**
@@ -396,6 +395,23 @@ public class ForumRepository extends DepotRepository
     {
         deleteAll(ReadTrackingRecord.class,
                   new Where(new Conditionals.In(ReadTrackingRecord.MEMBER_ID, memberIds)));
+    }
+
+    protected List<QueryClause> getUnreadThreadsClauses (int memberId, Set<Integer> groupIds)
+    {
+        SQLExpression join = new And(
+            new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
+            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
+        );
+        SQLExpression where = new And(
+            new In(ForumThreadRecord.GROUP_ID, groupIds),
+            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
+                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
+                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+        return Lists.newArrayList(
+            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
+            new Where(where));
     }
 
     @Override // from DepotRepository

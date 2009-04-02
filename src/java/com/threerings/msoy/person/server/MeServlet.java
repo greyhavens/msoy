@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -21,7 +22,10 @@ import com.google.inject.Inject;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.fora.server.persist.ForumRepository;
+
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
@@ -49,6 +53,7 @@ import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -126,6 +131,17 @@ public class MeServlet extends MsoyServiceServlet
 
         // shuffle to avoid greeter fighting (shortList is sorted, thus the cards are too)
         Collections.shuffle(data.greeters);
+
+        if (PROFILING_ENABLED) {
+            _profiler.swap("forums");
+        }
+
+        Set<Integer> groupIds = Sets.newHashSet();
+        for (GroupMembershipRecord gmrec : _groupRepo.getMemberships(mrec.memberId)) {
+            groupIds.add(gmrec.groupId);
+        }
+        groupIds.add(ServerConfig.getAnnounceGroupId());
+        data.updatedThreads = _forumRepo.countUnreadThreads(mrec.memberId, groupIds);
 
         if (PROFILING_ENABLED) {
             _profiler.exit(null);
@@ -357,6 +373,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected RPCProfiler _profiler;
+    @Inject protected ForumRepository _forumRepo;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int MAX_GREETERS_TO_SHOW = 10;

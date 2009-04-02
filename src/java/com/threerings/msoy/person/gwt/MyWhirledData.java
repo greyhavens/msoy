@@ -56,4 +56,9 @@ public class MyWhirledData
      * This member's recent feed messages broken up by category.
      */
     public List<FeedCategory> feed;
+
+    /**
+     * The number of threads with posts that the member has not read.
+     */
+    public int updatedThreads;
 }
