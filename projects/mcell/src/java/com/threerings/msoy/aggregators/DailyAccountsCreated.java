@@ -3,7 +3,6 @@ package com.threerings.msoy.aggregators;
 import java.io.IOException;
 
 import java.util.Date;
-import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.result.Result;
@@ -17,7 +16,7 @@ import com.threerings.panopticon.efs.storev2.EventWriter;
 import com.threerings.panopticon.shared.util.PartialDateType;
 import com.threerings.panopticon.shared.util.TimeRange;
 
-@Aggregator(output=DailyAccountsCreated.OUTPUT_EVENT_NAME, schedule=Schedule.NIGHTLY)
+@Aggregator(output=DailyAccountsCreated.OUTPUT_EVENT_NAME)
 public class DailyAccountsCreated
     implements JavaAggregator<DailyAccountsCreated.DayKey>
 {
