@@ -132,6 +132,7 @@ public class BlingPanel extends FlowPanel
             _cashOutPanel.setWidget(row);
 
         } else if (result.timeToNextRequest > 0) {
+            // TODO: port TimeUtil to gwt
             int minutes = (int)(1 + (result.timeToNextRequest - 1) / 1000 / 60);
             int hours = minutes / 60;
             minutes -= hours * 60;
