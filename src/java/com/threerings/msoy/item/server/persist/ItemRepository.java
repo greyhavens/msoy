@@ -78,6 +78,7 @@ import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
+import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
@@ -1415,24 +1416,41 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
-    // Construct a relevance ordering for item searches; based on (1 + fts search rank),
-    // boosted by 50% for tag hits, boosted by 50% for creator hits.
+    // Construct a relevance ordering for item searches
     protected void addOrderByRelevance (
         List<SQLExpression> exprs, List<OrderBy.Order> orders, WordSearch context)
     {
+        // The relevance of a catalog entry is a product of several factors, each chosen
+        // to have a tunable impact. The actual value is not important, only the relative
+        // sizes.
         SQLOperator[] ops = new SQLOperator[] {
-            new Arithmetic.Add(new ValueExp(1.0), context.fullTextRank())
+            // The base value is just the Full Text Search rank value, the scale of which is
+            // entirely unknown. We only give it a tiny linear shift so that the creator and
+            // tag factors below have something non-zero to work with when there is no full
+            // text hit at all
+            new Arithmetic.Add(new ValueExp(0.1), context.fullTextRank()),
+            
+            // adjust the FTS rank by (5 + rating), which means a 5-star item is rated
+            // (approximately) twice as high rated as a 1-star item
+            new Arithmetic.Add(new ValueExp(1.0), getRatingExpression()),
+            
+            // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
+            // is rated twice as high as something that's sold 1 copy
+            new Arithmetic.Add(new ValueExp(1.0), new FunctionExp("LOG", 
+                getCatalogColumn(CatalogRecord.PURCHASES))),
         };
-
+        
         SQLOperator tagExistsExp = 
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
+            // if there is a tag match, immediately boost relevance by 50%
             ops = ArrayUtil.append(ops,
                 new Case(tagExistsExp, new ValueExp(1.5), new ValueExp(1.0)));
         }
 
         SQLOperator madeByExp = context.madeByExpression();
         if (madeByExp != null) {
+            // if the item was made by a creator who matches the description, also boost by 50%
             ops = ArrayUtil.append(ops,
                 new Case(madeByExp, new ValueExp(1.5), new ValueExp(1.0)));
         }
