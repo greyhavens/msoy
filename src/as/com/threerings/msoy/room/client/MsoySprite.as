@@ -349,6 +349,18 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Does this sprite have a custom config panel?
+     */
+    public function hasCustomConfigPanel () :Boolean
+    {
+        var has :* = callUserCode("hasConfigPanel_v1");
+        if (has === undefined) { // if they don't have the hasConfigPanel_v1 method....
+            return (null != getCustomConfigPanel()); // the old way: wasteful but rare
+        }
+        return Boolean(has);
+    }
+
+    /**
      * Get a custom configuration panel for this piece of furniture, if any.
      */
     public function getCustomConfigPanel () :DisplayObject

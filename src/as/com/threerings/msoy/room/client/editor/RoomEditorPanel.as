@@ -204,7 +204,7 @@ public class RoomEditorPanel extends FlyingPanel
     /** Shows the custom config panel. */
     protected function showCustomConfig () :void
     {
-        _controller.roomView.getRoomController().showFurniConfigPopup(_curTarget);
+        _controller.roomView.getRoomController().showConfigPopup(_curTarget);
     }
 
     /** Swaps two UI components in a container. */
@@ -234,7 +234,7 @@ public class RoomEditorPanel extends FlyingPanel
     {
         var hasPanel :Boolean = false;
         if (_curTarget != null) {
-            hasPanel = (null != _curTarget.getCustomConfigPanel());
+            hasPanel = _curTarget.hasCustomConfigPanel();
             if (!hasPanel && !_curTarget.isContentInitialized()) {
                 _curTarget.addEventListener(Event.INIT, handleTargetInit);
             }

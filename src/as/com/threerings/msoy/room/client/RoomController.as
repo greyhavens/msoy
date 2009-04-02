@@ -383,10 +383,9 @@ public class RoomController extends SceneController
 
         // custom config
         var config :DisplayObject = avatar.getCustomConfigPanel();
-        if (config != null) {
+        if (avatar.hasCustomConfigPanel()) {
             menuItems.push({ label: Msgs.GENERAL.get("b.config_item", "avatar"),
-                callback: showEntityPopup, arg: [ avatar, Msgs.GENERAL.get("t.config_item"),
-                    config, config.width, config.height, 0xFFFFFF, 1.0, false ] });
+                callback: showConfigPopup, arg: avatar });
         }
     }
 
@@ -900,7 +899,7 @@ public class RoomController extends SceneController
      * Called to show the custom config panel for the specified FurniSprite in
      * a pop-up.
      */
-    public function showFurniConfigPopup (sprite :FurniSprite) :void
+    public function showConfigPopup (sprite :MsoySprite) :void
     {
         var configger :DisplayObject = sprite.getCustomConfigPanel();
         if (configger == null) {

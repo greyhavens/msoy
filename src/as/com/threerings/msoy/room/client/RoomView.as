@@ -646,10 +646,10 @@ public class RoomView extends Sprite
     protected function populateSpriteContextMenu (sprite :MsoySprite, menuItems :Array) :void
     {
         if (sprite.getItemIdent() != null && (sprite is FurniSprite) && _ctrl.canManageRoom() &&
-                (null != (sprite as FurniSprite).getCustomConfigPanel())) {
+                sprite.hasCustomConfigPanel()) {
             var kind :String = Msgs.GENERAL.get(sprite.getDesc());
             menuItems.push(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.config_item", kind), _ctrl.showFurniConfigPopup, sprite));
+                Msgs.GENERAL.get("b.config_item", kind), _ctrl.showConfigPopup, sprite));
         }
     }
 
