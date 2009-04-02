@@ -382,7 +382,6 @@ public class RoomController extends SceneController
         }
 
         // custom config
-        var config :DisplayObject = avatar.getCustomConfigPanel();
         if (avatar.hasCustomConfigPanel()) {
             menuItems.push({ label: Msgs.GENERAL.get("b.config_item", "avatar"),
                 callback: showConfigPopup, arg: avatar });
