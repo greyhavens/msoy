@@ -68,6 +68,7 @@ public class PartyManager
     public void init (PartyObject partyObj, int creatorId)
     {
         _partyObj = partyObj;
+        _summary = new PartySummary(_partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon);
         _partyObj.setAccessController(new PartyAccessController(this));
         _partyObj.startTransaction();
         try {
@@ -93,7 +94,7 @@ public class PartyManager
             _partyReg.partyWasRemoved(_partyObj.id);
             // clear the party info from all remaining players' member objects
             for (PartyPeep peep : _partyObj.peeps) {
-                updatePartySummary(peep.name.getMemberId(), false);
+                setPartySummary(peep.name.getMemberId(), false);
             }
             _invMgr.clearDispatcher(_partyObj.partyService);
             // _invMgr.clearDispatcher(_partyObj.speakService);
@@ -137,7 +138,7 @@ public class PartyManager
         _invitedIds.remove(partier.getMemberId());
 
         // update member's party info via a node action
-        updatePartySummary(partier.getMemberId(), true);
+        setPartySummary(partier.getMemberId(), true);
 
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
@@ -283,7 +284,7 @@ public class PartyManager
         }
 
         // clear the party info from this player's member object
-        updatePartySummary(memberId, false);
+        setPartySummary(memberId, false);
 
         _partyObj.startTransaction();
         try {
@@ -298,11 +299,9 @@ public class PartyManager
         updatePartyInfo();
     }
 
-    protected void updatePartySummary (int memberId, boolean added)
+    protected void setPartySummary (int memberId, boolean set)
     {
-        PartySummary summary = added ?
-            new PartySummary(_partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon) : null;
-        MemberNodeActions.updateParty(memberId, summary);
+        MemberNodeActions.updateParty(memberId, set ? _summary : null);
     }
 
 //    // from SpeakHandler.SpeakerValidator
@@ -385,6 +384,7 @@ public class PartyManager
     }
 
     protected PartyObject _partyObj;
+    protected PartySummary _summary;
     protected PartyInfo _lastInfo;
     protected ArrayIntSet _invitedIds = new ArrayIntSet();
 
