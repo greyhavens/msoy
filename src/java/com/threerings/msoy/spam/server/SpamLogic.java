@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -476,7 +478,8 @@ public class SpamLogic
             params.set("feed", null);
         }
 
-        String subjectLine = RandomUtil.pickRandom(_subjectLines);
+        String subjectLine = RandomUtil.pickRandom(
+            sufficientFeed ? _subjectLinesWithFeed : _subjectLinesGeneric);
 
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
@@ -958,9 +961,14 @@ public class SpamLogic
         "vertical-align: middle;";
     protected static final String A_STYLE = "text-decoration: none;";
 
-    /** Choices of subject line for retention mailings. NOTE: the values here are for logging; they
-     * are translated to full subject lines by the velocity template feed.tmpl. */
-    protected static final String[] _subjectLines = {"default"};
+    /** Choices of subject line for retention mailings, mapped to whether or not a feed is required.
+     * NOTE: the values here are for logging; they are translated to full subject lines by the
+     * velocity template feed.tmpl. */
+    protected static final Map<String, Boolean> _allSubjectLines =
+        new ImmutableMap.Builder<String, Boolean>().put("nameNewThings", false)
+            .put("nameBusyFriends", true).put("whirledFeedAndNewThings", false).build();
+    protected static final List<String> _subjectLinesWithFeed = Lists.newArrayList();
+    protected static final List<String> _subjectLinesGeneric = Lists.newArrayList();
 
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
@@ -971,6 +979,14 @@ public class SpamLogic
         // set up the static lookup table for result codes
         for (Status result : Status.values()) {
             _lookup.put(result.value, result);
+        }
+
+        // set up our two lists of subject lines
+        for (Map.Entry<String, Boolean> subj : _allSubjectLines.entrySet()) {
+            _subjectLinesWithFeed.add(subj.getKey());
+            if (!subj.getValue()) {
+                _subjectLinesGeneric.add(subj.getKey());
+            }
         }
     }
 }

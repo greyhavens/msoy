@@ -1,5 +1,18 @@
 ## Expands the list of feed categories in $feed into a text listing.
+##
+## subject, switch on parameter
+##
+#if ($subject == "nameNewThings")
+$name: new games, avatars and activity on Whirled!
+#elseif ($subject == "nameBusyFriends")
+$name, your friends on Whirled have been busy!
+#elseif ($subject == "whirledFeedAndNewThings")
+Whirled friend feed, new avatars, and games!
+#else
 What you've been missing on Whirled, $name!
+#end
+##
+##
 New and recently staff picked Games:
 #foreach ($game in $games)
     * $game.name
