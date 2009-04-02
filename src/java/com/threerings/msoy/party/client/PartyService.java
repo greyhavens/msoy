@@ -8,9 +8,6 @@ import com.threerings.presents.client.InvocationService;
 
 public interface PartyService extends InvocationService
 {
-    /** Requests to leave the party. */
-    void leaveParty (Client client, ConfirmListener cl);
-
     /** Requests to boot a player from the party. */
     void bootMember (Client client, int memberId, InvocationListener il);
 

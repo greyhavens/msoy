@@ -5,7 +5,6 @@ package com.threerings.msoy.party.client {
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
 /**
@@ -21,9 +20,6 @@ public interface PartyService extends InvocationService
 
     // from Java interface PartyService
     function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
-
-    // from Java interface PartyService
-    function leaveParty (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PartyService
     function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;

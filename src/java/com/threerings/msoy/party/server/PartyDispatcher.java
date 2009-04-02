@@ -53,12 +53,6 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
-        case PartyMarshaller.LEAVE_PARTY:
-            ((PartyProvider)provider).leaveParty(
-                source, (InvocationService.ConfirmListener)args[0]
-            );
-            return;
-
         case PartyMarshaller.MOVE_PARTY:
             ((PartyProvider)provider).moveParty(
                 source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]

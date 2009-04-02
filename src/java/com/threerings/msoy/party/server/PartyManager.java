@@ -170,15 +170,6 @@ public class PartyManager
     }
 
     // from interface PartyProvider
-    public void leaveParty (ClientObject caller, InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        PartierObject partier = (PartierObject)caller;
-        removePlayer(partier.getMemberId());
-        listener.requestProcessed();
-    }
-
-    // from interface PartyProvider
     public void moveParty (
         ClientObject caller, int sceneId, InvocationService.InvocationListener il)
         throws InvocationException

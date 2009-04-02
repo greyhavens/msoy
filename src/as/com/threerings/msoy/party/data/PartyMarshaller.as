@@ -5,10 +5,8 @@ package com.threerings.msoy.party.data {
 
 import com.threerings.msoy.party.client.PartyService;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.util.Byte;
 import com.threerings.util.Integer;
@@ -62,21 +60,8 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>leaveParty</code> requests. */
-    public static const LEAVE_PARTY :int = 4;
-
-    // from interface PartyService
-    public function leaveParty (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void
-    {
-        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LEAVE_PARTY, [
-            listener2
-        ]);
-    }
-
     /** The method id used to dispatch <code>moveParty</code> requests. */
-    public static const MOVE_PARTY :int = 5;
+    public static const MOVE_PARTY :int = 4;
 
     // from interface PartyService
     public function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -89,7 +74,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateRecruitment</code> requests. */
-    public static const UPDATE_RECRUITMENT :int = 6;
+    public static const UPDATE_RECRUITMENT :int = 5;
 
     // from interface PartyService
     public function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -102,7 +87,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateStatus</code> requests. */
-    public static const UPDATE_STATUS :int = 7;
+    public static const UPDATE_STATUS :int = 6;
 
     // from interface PartyService
     public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void

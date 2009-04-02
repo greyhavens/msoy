@@ -57,21 +57,8 @@ public class PartyMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #leaveParty} requests. */
-    public static final int LEAVE_PARTY = 4;
-
-    // from interface PartyService
-    public void leaveParty (Client arg1, InvocationService.ConfirmListener arg2)
-    {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LEAVE_PARTY, new Object[] {
-            listener2
-        });
-    }
-
     /** The method id used to dispatch {@link #moveParty} requests. */
-    public static final int MOVE_PARTY = 5;
+    public static final int MOVE_PARTY = 4;
 
     // from interface PartyService
     public void moveParty (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -84,7 +71,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRecruitment} requests. */
-    public static final int UPDATE_RECRUITMENT = 6;
+    public static final int UPDATE_RECRUITMENT = 5;
 
     // from interface PartyService
     public void updateRecruitment (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
@@ -97,7 +84,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 7;
+    public static final int UPDATE_STATUS = 6;
 
     // from interface PartyService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)
