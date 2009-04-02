@@ -559,6 +559,18 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
+     * Retrieves the most recent bling cash out request for a given member (regardless of whether
+     * it is finished). Returns null if there are no cash outs.
+     */
+    public BlingCashOutRecord getMostRecentBlingCashout (int memberId)
+    {
+        List<BlingCashOutRecord> cashouts = findAll(BlingCashOutRecord.class,
+            new Where (new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID, memberId)),
+            OrderBy.descending(BlingCashOutRecord.TIME_REQUESTED), new Limit(0, 1));
+        return cashouts.size() > 0 ? cashouts.get(0) : null;
+    }
+
+    /**
      * Deletes all data associated with the supplied members. This is done as a part of purging
      * member accounts.
      */

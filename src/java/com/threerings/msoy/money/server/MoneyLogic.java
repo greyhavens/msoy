@@ -22,7 +22,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.RandomUtil;
-import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
 
@@ -843,7 +842,8 @@ public class MoneyLogic
      * for cashing out.
      */
     public BlingInfo requestCashOutBling (int memberId, int amount, CashOutBillingInfo info)
-        throws NotEnoughMoneyException, AlreadyCashedOutException, BelowMinimumBlingException
+        throws NotEnoughMoneyException, AlreadyCashedOutException, BelowMinimumBlingException,
+               CashedOutTooRecentlyException
     {
         MemberAccountRecord account = _repo.load(memberId);
 
@@ -864,12 +864,27 @@ public class MoneyLogic
             throw new AlreadyCashedOutException(memberId, account.cashOutBling);
         }
 
+        long waitTime = getTimeToNextBlingCashOutRequest(memberId);
+        if (waitTime > 0) {
+            throw new CashedOutTooRecentlyException(memberId, waitTime);
+        }
+
         // Add a cash out record for this member.
         BlingCashOutRecord cashOut = _repo.createCashOut(
             memberId, blingAmount, _runtime.money.blingWorth, info);
 
-        return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
-                account, cashOut));
+        return toBlingInfo(account, cashOut, CASHOUT_FREQUENCY);
+    }
+
+    /**
+     * Calculates how long the given member must wait until requesting another cash out, in
+     * milliseconds.
+     */
+    public long getTimeToNextBlingCashOutRequest (int memberId)
+    {
+        BlingCashOutRecord recent = _repo.getMostRecentBlingCashout(memberId);
+        long lastTime = recent == null ? 0 : recent.timeRequested.getTime();
+        return Math.max(0, lastTime - System.currentTimeMillis() + CASHOUT_FREQUENCY);
     }
 
     /**
@@ -907,8 +922,8 @@ public class MoneyLogic
      */
     public BlingInfo getBlingInfo (int memberId)
     {
-        return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
-                _repo.load(memberId), _repo.getCurrentCashOutRequest(memberId)));
+        return toBlingInfo(_repo.load(memberId), _repo.getCurrentCashOutRequest(memberId),
+            getTimeToNextBlingCashOutRequest(memberId));
     }
 
     /**
@@ -1181,6 +1196,17 @@ public class MoneyLogic
     }
 
     /**
+     * Creates a new bling info using the provided parameters and our current runtime settings.
+     */
+    protected BlingInfo toBlingInfo (
+        MemberAccountRecord account, BlingCashOutRecord pendingCashOut, long waitTime)
+    {
+        return new BlingInfo(account.bling, _runtime.money.blingWorth,
+            _runtime.money.minimumBlingCashOut * 100, waitTime,
+            pendingCashOut == null ? null : pendingCashOut.toInfo());
+    }
+
+    /**
      * Converts the amount of pennies into a string to display to the user as a valid currency.
      * Note: there are some other utilities around to do this, but they're either in a different
      * project (and there's some concern about exposing them directly), or they don't properly
@@ -1255,17 +1281,6 @@ public class MoneyLogic
         }
     }
 
-    /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */
-    protected final Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>
-        TO_BLING_INFO =
-        new Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>() {
-            public BlingInfo apply (Tuple<MemberAccountRecord, BlingCashOutRecord> records) {
-                return new BlingInfo(records.left.bling, _runtime.money.blingWorth,
-                    _runtime.money.minimumBlingCashOut * 100,
-                    records.right == null ? null : records.right.toInfo());
-            }
-        };
-
     /** A Function that transforms a CashOutRecord into a CashOutInfo. */
     protected final Function<BlingCashOutRecord, CashOutInfo> TO_CASH_OUT_INFO =
         new Function<BlingCashOutRecord, CashOutInfo>() {
@@ -1290,4 +1305,7 @@ public class MoneyLogic
 
     /** An arbitrary key for tracking quotes in {@link #listItem}. */
     protected static final Object LIST_ITEM_KEY = new Object();
+
+    /** We don't service bling cashouts at any lower frequency than this. */
+    protected static final long CASHOUT_FREQUENCY = BlingInfo.CASHOUT_DAYS*24*60*60*1000L;
 }

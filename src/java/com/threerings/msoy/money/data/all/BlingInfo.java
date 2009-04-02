@@ -26,14 +26,22 @@ public class BlingInfo
      * active. */
     public CashOutInfo cashOut;
 
-    public BlingInfo (int bling, int worthPerBling, int minCashOutBling, CashOutInfo cashOut)
+    /** If the most recent cashout was too recently requested, indicates when the next request may
+     * be submitted (in milliseconds). */
+    public long timeToNextRequest;
+
+    public BlingInfo (
+        int bling, int worthPerBling, int minCashOutBling, long waitTime, CashOutInfo cashOut)
     {
         this.bling = bling;
         this.worthPerBling = worthPerBling;
         this.minCashOutBling = minCashOutBling;
         this.cashOut = cashOut;
+        this.timeToNextRequest = waitTime;
     }
 
     /** For serialization purposes. */
     public BlingInfo () { }
+
+    public static final int CASHOUT_DAYS = 30;
 }
