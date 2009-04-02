@@ -249,16 +249,14 @@ public class SpamLogic
     public void init ()
     {
         // run nightly at 1am
-        if (DeploymentConfig.devDeployment) {
-            _cronLogic.scheduleAt(1, new Runnable () {
-                public void run () {
-                    sendRetentionEmails();
-                }
-                public String toString () {
-                    return "News feed emailer";
-                }
-            });
-        }
+        _cronLogic.scheduleAt(1, new Runnable () {
+            public void run () {
+                sendRetentionEmails();
+            }
+            public String toString () {
+                return "News feed emailer";
+            }
+        });
     }
 
     /**
@@ -955,7 +953,7 @@ public class SpamLogic
     protected static final int SECOND_EMAIL_CUTOFF = 10 * 24*60*60*1000;
     protected static final int MIN_NEWS_ITEM_COUNT = 2;
     protected static final int ITEM_COUNT = 5;
-    protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 1000;
+    protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 5000;
 
     protected static final String IMG_STYLE = "border: 0px; padding: 2px; margin: 2px; " +
         "vertical-align: middle;";
