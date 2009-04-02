@@ -132,16 +132,13 @@ public class BlingPanel extends FlowPanel
             _cashOutPanel.setWidget(row);
 
         } else if (result.timeToNextRequest > 0) {
-            long minutes = result.timeToNextRequest / 1000 / 60;
-            String msg;
-            if (minutes >= 24 * 60) {
-                msg = _msgs.cashOutWaitDays(String.valueOf(1 + (minutes - 1) / (24 * 60)));
-            } else if (minutes > 60) {
-                msg = _msgs.cashOutWaitHours(String.valueOf(1 + (minutes - 1) / 60));
-            } else {
-                msg = _msgs.cashOutWaitMinutes(String.valueOf(1 + minutes));
-            }
-            _cashOutPanel.setWidget(MsoyUI.createLabel(msg, "Wait"));
+            int minutes = (int)(1 + (result.timeToNextRequest - 1) / 1000 / 60);
+            int hours = minutes / 60;
+            minutes -= hours * 60;
+            int days = hours / 24;
+            hours -= days * 24;
+            _cashOutPanel.setWidget(MsoyUI.createLabel(_msgs.cashOutWait(
+                String.valueOf(days), String.valueOf(hours), String.valueOf(minutes)), "Wait"));
 
         } else {
             if (result.bling >= result.minCashOutBling) {
