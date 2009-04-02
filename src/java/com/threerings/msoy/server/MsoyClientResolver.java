@@ -264,7 +264,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     }
 
     @Override // from ClientResolver
-    protected void finishResolution (final ClientObject clobj)
+    protected void finishResolution (ClientObject clobj)
     {
         super.finishResolution(clobj);
 
@@ -273,15 +273,11 @@ public class MsoyClientResolver extends CrowdClientResolver
             // load up their recently used avatars
             _itemMan.loadRecentlyTouched(
                 user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,
-                new ResultListener<List<Item>>() {
-                public void requestCompleted (final List<Item> items) {
-                    final Avatar[] avatars = new Avatar[items.size()];
-                    for (int ii = 0; ii < avatars.length; ii++) {
-                        avatars[ii] = (Avatar) items.get(ii);
-                    }
-                    user.setAvatarCache(new DSet<Avatar>(avatars));
+                new ResultListener<List<Avatar>>() {
+                public void requestCompleted (List<Avatar> items) {
+                    user.setAvatarCache(DSet.newDSet(items));
                 }
-                public void requestFailed (final Exception cause) {
+                public void requestFailed (Exception cause) {
                     log.warning("Failed to load member's avatar cache", "who", user.who(), cause);
                 }
             });

@@ -295,8 +295,8 @@ public class ItemManager
     /**
      * Load at most maxCount recently-touched items from the specified user's inventory.
      */
-    public void loadRecentlyTouched (
-        final int memberId, byte type, final int maxCount, ResultListener<List<Item>> lner)
+    public <T extends Item> void loadRecentlyTouched (
+        final int memberId, byte type, final int maxCount, ResultListener<List<T>> lner)
     {
         // locate the appropriate repo
         final ItemRepository<ItemRecord> repo = getRepository(type, lner);
@@ -306,14 +306,10 @@ public class ItemManager
 
         // load ye items
         _invoker.postUnit(
-            new RepositoryListenerUnit<List<Item>>("loadRecentlyTouched", lner) {
-            public List<Item> invokePersistResult () throws Exception {
+            new RepositoryListenerUnit<List<T>>("loadRecentlyTouched", lner) {
+            public List<T> invokePersistResult () throws Exception {
                 List<ItemRecord> list = repo.loadRecentlyTouched(memberId, maxCount);
-                List<Item> returnList = Lists.newArrayListWithExpectedSize(list.size());
-                for (int ii = 0, nn = list.size(); ii < nn; ii++) {
-                    returnList.add(list.get(ii).toItem());
-                }
-                return returnList;
+                return Lists.transform(list, new ItemRecord.ToItem<T>());
             }
         });
     }
