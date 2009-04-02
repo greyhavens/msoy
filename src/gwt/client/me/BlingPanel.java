@@ -131,6 +131,18 @@ public class BlingPanel extends FlowPanel
             }));
             _cashOutPanel.setWidget(row);
 
+        } else if (result.timeToNextRequest > 0) {
+            long minutes = result.timeToNextRequest / 1000 / 60;
+            String msg;
+            if (minutes >= 24 * 60) {
+                msg = _msgs.cashOutWaitDays(String.valueOf(1 + (minutes - 1) / (24 * 60)));
+            } else if (minutes > 60) {
+                msg = _msgs.cashOutWaitHours(String.valueOf(1 + (minutes - 1) / 60));
+            } else {
+                msg = _msgs.cashOutWaitMinutes(String.valueOf(1 + minutes));
+            }
+            _cashOutPanel.setWidget(MsoyUI.createLabel(msg, "Wait"));
+
         } else {
             if (result.bling >= result.minCashOutBling) {
                 _cashOutPanel.setWidget(new CashOutForm(result.worthPerBling));
@@ -174,6 +186,8 @@ public class BlingPanel extends FlowPanel
 
             int row = 0;
             setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
+            setText(row++, 0, _msgs.blingCashOutWarning(
+                String.valueOf(BlingInfo.CASHOUT_DAYS)), 3, "warning");
             setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
             final Label worthLabel = new InlineLabel();
             _cashOutBox = new NumberTextBox(true);
