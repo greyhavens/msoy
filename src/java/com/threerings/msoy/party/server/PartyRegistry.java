@@ -304,7 +304,6 @@ public class PartyRegistry
      */
     void partyWasRemoved (int partyId)
     {
-        // TODO: this will get more complicated
         _parties.remove(partyId);
     }
 
@@ -400,7 +399,8 @@ public class PartyRegistry
             _id = id;
         }
 
-        // NOTE: we do not implement equals or hashCode. All scores are not equal.
+        // NOTE: we do not implement equals or hashCode. We want every PartySort object to
+        // only be equal to itself.
 
         // from Comparable
         public int compareTo (PartySort other)

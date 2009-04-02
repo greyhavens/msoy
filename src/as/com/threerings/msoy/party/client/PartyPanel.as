@@ -101,7 +101,7 @@ public class PartyPanel extends FloatingPanel
         hbox.addChild(spacer);
 
         hbox.addChild(
-            new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().leaveParty));
+            new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().clearParty));
         box.addChild(hbox);
         addChild(box);
     }

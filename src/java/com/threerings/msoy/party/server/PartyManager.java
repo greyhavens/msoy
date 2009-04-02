@@ -89,7 +89,8 @@ public class PartyManager
     public void shutdown ()
     {
         if (_partyObj != null) {
-            removeFromNode();
+            _peerMgr.removePartyInfo(_partyObj.id);
+            _partyReg.partyWasRemoved(_partyObj.id);
             // clear the party info from all remaining players' member objects
             for (PartyPeep peep : _partyObj.peeps) {
                 updatePartySummary(peep.name.getMemberId(), false);
@@ -99,15 +100,6 @@ public class PartyManager
             _omgr.destroyObject(_partyObj.getOid());
             _partyObj = null;
         }
-    }
-
-    /**
-     * Remove this party from the current node.
-     */
-    public void removeFromNode ()
-    {
-        _peerMgr.removePartyInfo(_partyObj.id);
-        _partyReg.partyWasRemoved(_partyObj.id);
     }
 
     /**

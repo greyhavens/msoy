@@ -32,6 +32,8 @@ import com.threerings.presents.util.SafeSubscriber;
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.whirled.data.Scene;
+
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
@@ -200,7 +202,7 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         if (isInParty()) {
-            leaveParty();
+            clearParty();
         }
 
         // first we have to find out what node is hosting the party in question
@@ -211,16 +213,32 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
-     * Leaves the current party.
+     * Clear/leave the current party, if any.
      */
-    public function leaveParty () :void
+    public function clearParty () :void
     {
-        // if we have our party object already, tell them we're leaving
-        if (_partyObj != null) {
-            _partyObj.partyService.leaveParty(_pctx.getClient(),
-                _wctx.confirmListener(handleLeaveParty, MsoyCodes.PARTY_MSGS));
+        // pop down the party window.
+        var btn :CommandButton = getButton();
+        if (btn.selected) {
+            btn.activate();
         }
-        clearParty(); // and always shut everything down
+
+        if (_safeSubscriber != null) {
+            _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
+            _safeSubscriber = null;
+        }
+        if (_partyObj != null) {
+            _partyObj.removeListener(_partyListener);
+            _partyObj.removeListener(_partyListener2);
+            _partyListener = null;
+            _partyListener2 = null;
+            _partyObj = null;
+            partyChanged();
+        }
+        if (_pctx != null) {
+            _pctx.getClient().logoff(false);
+            _pctx = null;
+        }
     }
 
     public function assignLeader (memberId :int) :void
@@ -256,17 +274,6 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
-    // from BasicDirector
-    override public function clientDidLogoff (event :ClientEvent) :void
-    {
-        super.clientDidLogoff(event);
-
-        // if they're in a party and have the popup down, make a note to not pop it
-        // up on the new node
-        _suppressPartyPop = (_partyObj != null) && !getButton().selected;
-        clearParty();
-    }
-
     protected function checkFollowParty () :void
     {
         /* TODO: if (_partyObj.partyFollowsLeader) */
@@ -280,20 +287,6 @@ public class PartyDirector extends BasicDirector
     {
         if (sceneId != 0) {
             _wctx.getSceneDirector().moveTo(sceneId);
-        }
-    }
-
-    /**
-     * Handles the response from a leaveParty() request.
-     */
-    protected function handleLeaveParty () :void
-    {
-        clearParty();
-
-        // TODO: have the party popup pop itself down, or something
-        var btn :CommandButton = getButton();
-        if (btn.selected) {
-            btn.activate(); // pop down the party window.
         }
     }
 
@@ -327,31 +320,14 @@ public class PartyDirector extends BasicDirector
 
     protected function connectParty (partyId :int, hostname :String, port :int) :void
     {
+        // we are joining a party- close all detail panels
+        closeAllDetailPanels();
+
         // create a new party session and connect to our party host node
         _pctx = new PartyContextImpl(_wctx);
         _pctx.getClient().addClientObserver(new ClientAdapter(
             null, partyDidLogon, null, null, partyLogonFailed, partyConnectFailed));
         _pctx.connect(partyId, hostname, port);
-    }
-
-    protected function clearParty () :void
-    {
-        if (_safeSubscriber != null) {
-            _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
-            _safeSubscriber = null;
-        }
-        if (_partyObj != null) {
-            _partyObj.removeListener(_partyListener);
-            _partyObj.removeListener(_partyListener2);
-            _partyListener = null;
-            _partyListener2 = null;
-            _partyObj = null;
-            partyChanged();
-        }
-        if (_pctx != null) {
-            _pctx.getClient().logoff(false);
-            _pctx = null;
-        }
     }
 
     /**
@@ -372,10 +348,9 @@ public class PartyDirector extends BasicDirector
             btn.activate();
             btn.activate();
 
-        } else if (!_suppressPartyPop) {
+        } else {
             btn.activate();
         }
-        _suppressPartyPop = false;
 
         // we might need to warp to the party location
         checkFollowParty();
@@ -406,16 +381,16 @@ public class PartyDirector extends BasicDirector
         panel.open();
     }
 
-//    protected function closeAllDetailPanels () :void
-//    {
-//        var panels :Array = [];
-//        for each (var o :Object in _detailPanels) {
-//            panels.push(o);
-//        }
-//        for each (var panel :PartyDetailPanel in panels) {
-//            panel.close();
-//        }
-//    }
+    protected function closeAllDetailPanels () :void
+    {
+        var panels :Array = [];
+        for each (var o :Object in _detailPanels) {
+            panels.push(o);
+        }
+        for each (var panel :PartyDetailPanel in panels) {
+            panel.close();
+        }
+    }
 
     /**
      * Called when we've failed to subscribe to a party.
@@ -433,10 +408,10 @@ public class PartyDirector extends BasicDirector
     {
         // if we're the leader of the party, change the party's location when we move
         if (isPartyLeader()) {
-            var sceneId :int = _wctx.getSceneDirector().getScene().getId();
-            if (sceneId != _partyObj.sceneId) {
+            var scene :Scene = _wctx.getSceneDirector().getScene();
+            if ((scene != null) && (scene.getId() != _partyObj.sceneId)) {
                 _partyObj.partyService.moveParty(
-                    _pctx.getClient(), sceneId, _wctx.listener(MsoyCodes.PARTY_MSGS));
+                    _pctx.getClient(), scene.getId(), _wctx.listener(MsoyCodes.PARTY_MSGS));
             }
         }
     }
@@ -495,9 +470,6 @@ public class PartyDirector extends BasicDirector
     protected var _pctx :PartyContextImpl;
     protected var _partyObj :PartyObject;
     protected var _safeSubscriber :SafeSubscriber;
-
-    /** True if we should not pop up the party panel when subscribing to a party. */
-    protected var _suppressPartyPop :Boolean = false;
 
     protected var _detailRequests :Dictionary = new Dictionary();
     protected var _detailPanels :Dictionary = new Dictionary();
