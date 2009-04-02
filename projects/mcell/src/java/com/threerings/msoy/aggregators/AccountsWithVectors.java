@@ -41,16 +41,18 @@ public class AccountsWithVectors
         @Override
         public boolean init (EventData eventData)
         {
-            String tracker = eventData.getString("tracker");
-            String vector = eventData.getString("vector");
-            if (tracker != null && vector != null) {
-                int ampersand = vector.indexOf("&");
-                if (ampersand > -1) {
-                    // remove any parameters that got passed in accidentally
-                    vector = vector.substring(0, ampersand);
+            if (shouldInit(eventData)) {
+                String tracker = eventData.getString("tracker");
+                String vector = eventData.getString("vector");
+                if (tracker != null && vector != null) {
+                    int ampersand = vector.indexOf("&");
+                    if (ampersand > -1) {
+                        // remove any parameters that got passed in accidentally
+                        vector = vector.substring(0, ampersand);
+                    }
+                    trackerToVector.put(tracker, vector);
+                    return true;
                 }
-                trackerToVector.put(tracker, vector);
-                return true;
             }
             return false;
         }
@@ -71,14 +73,16 @@ public class AccountsWithVectors
         @Override
         public boolean init (EventData eventData)
         {
-            Boolean isGuestValue = (Boolean)eventData.getData().get("isGuest");
+            if (shouldInit(eventData)) {
+                Boolean isGuestValue = (Boolean)eventData.getData().get("isGuest");
 
-            if (isGuestValue == null || !isGuestValue.booleanValue()) {
-                trackerToAccount.put(eventData.getString("tracker"), new Account(
-                    eventData.getInt("newMemberId"),
-                    eventData.getDate("timestamp"),
-                    eventData.getInt("affiliateId")));
-                return true;
+                if (isGuestValue == null || !isGuestValue.booleanValue()) {
+                    trackerToAccount.put(eventData.getString("tracker"), new Account(
+                        eventData.getInt("newMemberId"),
+                        eventData.getDate("timestamp"),
+                        eventData.getInt("affiliateId")));
+                    return true;
+                }
             }
             return false;
         }
