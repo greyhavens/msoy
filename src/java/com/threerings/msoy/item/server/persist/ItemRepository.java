@@ -78,7 +78,6 @@ import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
-import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
