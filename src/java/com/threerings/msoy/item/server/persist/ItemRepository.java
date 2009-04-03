@@ -1435,16 +1435,16 @@ public abstract class ItemRepository<T extends ItemRecord>
             
             // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            new Arithmetic.Add(new ValueExp(1.0), new FunctionExp("LOG", 
+            new Arithmetic.Add(new ValueExp(3.0), new FunctionExp("LOG", 
                 new Arithmetic.Add(new ValueExp(1.0), getCatalogColumn(CatalogRecord.PURCHASES)))),
         };
         
         SQLOperator tagExistsExp = 
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
-            // if there is a tag match, immediately boost relevance by 50%
+            // if there is a tag match, immediately boost relevance by 25%
             ops = ArrayUtil.append(ops,
-                new Case(tagExistsExp, new ValueExp(1.5), new ValueExp(1.0)));
+                new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0)));
         }
 
         SQLOperator madeByExp = context.madeByExpression();
