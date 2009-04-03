@@ -15,7 +15,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.MethodQueue;
 
 import com.threerings.flash.FilterUtil;
 import com.threerings.flash.TextFieldUtil;
@@ -239,21 +238,8 @@ public class OccupantSprite extends MsoySprite
         var oldInfo :OccupantInfo = _occInfo;
         _occInfo = newInfo;
 
-        var oldIdent :ItemIdent = _ident;
-
         // potentially update our visualization
-        // Broadcast to usercode if there was a display change
-        if (configureDisplay(oldInfo, newInfo)) {
-            var view :RoomView = parent as RoomView;
-            if (view != null) {
-                view.dispatchEntityLeft(oldIdent);
-                // Dispatch it on the next frame, after we've been fully updated
-                MethodQueue.callLater(view.dispatchEntityEntered, [ _ident ]);
-
-                // Since we re-use the same sprite, pop any the popup
-                view.getRoomController().clearEntityPopup(this);
-            }
-        }
+        configureDisplay(oldInfo, newInfo);
 
         // potentially update our name and decorations
         if (configureDecorations(oldInfo, newInfo)) {
@@ -261,6 +247,8 @@ public class OccupantSprite extends MsoySprite
         }
 
         // check to see if we're blocked
+        // TODO: this shouldn't be necessary, right? I don't have time to look right now,
+        // I'm prepping a release, but I should come back...
         if (_desc != null) {
             checkBlocked();
         }

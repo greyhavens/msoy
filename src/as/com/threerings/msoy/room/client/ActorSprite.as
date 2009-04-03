@@ -4,11 +4,14 @@
 package com.threerings.msoy.room.client {
 
 import com.threerings.util.Log;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.Util;
 
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -122,15 +125,37 @@ public class ActorSprite extends OccupantSprite
     override protected function configureDisplay (
         oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
-        // always update the itemIdent
-        setItemIdent((newInfo as ActorInfo).getItemIdent());
-        // but avoid loading the new media unless it's actually different
-        var newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
-        if (!newMedia.equals(_desc)) {
-            setMediaDesc(newMedia);
-            return true;
+        // update the item ident
+        const oldIdent :ItemIdent = getItemIdent();
+        const newIdent :ItemIdent = ActorInfo(newInfo).getItemIdent();
+        const identChanged :Boolean = !newIdent.equals(oldIdent);
+        if (identChanged) {
+            var view :RoomView = parent as RoomView;
+            if (view != null) {
+                // pop down any popup
+                view.getRoomController().clearEntityPopup(this);
+                // indicate that the old entity has left, the new one arrives
+                view.dispatchEntityLeft(oldIdent);
+                MethodQueue.callLater(view.dispatchEntityLeft, [ newIdent ]);
+            }
+
+            // and set the new ident
+            setItemIdent(newIdent);
         }
-        return false;
+
+        // check the media
+        const newMedia :MediaDesc = (newInfo as ActorInfo).getMedia();
+        const mediaChanged :Boolean = !newMedia.equals(_desc);
+        if (!mediaChanged && !identChanged) {
+            return false; // nothing changed, bail
+        }
+        if (!mediaChanged) {
+            // if the media didn't change, but the ident did, we still need to reload the media
+            // so force a change
+            setMediaDesc(null);
+        }
+        setMediaDesc(newMedia);
+        return true; // and indicate to callers that something changed
     }
 
     // from OccupantSprite

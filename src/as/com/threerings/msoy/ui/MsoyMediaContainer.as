@@ -221,7 +221,7 @@ public class MsoyMediaContainer extends MediaContainer
         } else {
             desc = _desc;
         }
-        super.setMedia(desc.getMediaPath());
+        super.setMedia((desc == null) ? null : desc.getMediaPath());
     }
 
     /**
