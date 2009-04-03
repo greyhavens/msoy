@@ -118,13 +118,13 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
     {
-        return findAll(ForumThreadRecord.class,
+        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
                        new Where(ForumThreadRecord.GROUP_ID, groupId),
                        new Limit(offset, count),
                        new OrderBy(
                            new SQLExpression[] { ForumThreadRecord.STICKY,
                                                  ForumThreadRecord.MOST_RECENT_POST_ID },
-                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
+                           new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC })));
     }
 
     /**
