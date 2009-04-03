@@ -232,13 +232,15 @@ public class ThaneAVRGameBackend
         // .getRoom()
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
-        o["getAvatarInfo_v1"] = getAvatarInfo_v1;
+        o["getAvatarInfo_v2"] = getAvatarInfo_v2;
         o["spawnMob_v1"] = spawnMob_v1;
         o["despawnMob_v1"] = despawnMob_v1;
         o["getSpawnedMobs_v1"] = getSpawnedMobs_v1;
         o["moveMob_v1"] = moveMob_v1;
         o["room_sendMessage_v1"] = room_sendMessage_v1;
         o["room_sendSignal_v1"] = room_sendSignal_v1;
+        // .getRoom() backwards compat
+        o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
         // .getRoom().props
         o["room_getGameData_v1"] = room_getGameData_v1;
@@ -358,6 +360,13 @@ public class ThaneAVRGameBackend
 
     protected function getAvatarInfo_v1 (roomId :int, playerId :int) :Array
     {
+        var obj :Object = getAvatarInfo_v2(roomId, playerId);
+        return [ obj["name"], obj["state"], obj["x"], obj["y"], obj["z"], obj["orient"],
+                 obj["moveSpeed"], obj["isMoving"], obj["isIdle"], obj["bounds"] ];
+    }
+
+    protected function getAvatarInfo_v2 (roomId :int, playerId :int) :Object
+    {
         var roomId :int = getPlayerRoomId(playerId);
         if (roomId == 0) {
             throw new UserError("Player not in any room [playerId=" + playerId + "]");
@@ -374,17 +383,18 @@ public class ThaneAVRGameBackend
             loc = new MsoyLocation(.5, 0, .5);
         }
 
-        var data :Array = new Array(10);
-        data[0] = actorInfo.username.toString();
-        data[1] = actorInfo.getState();
-        data[2] = loc.x;
-        data[3] = loc.y;
-        data[4] = loc.z;
-        data[5] = loc.orient;
-        data[6] = 1.0; // TODO moveSpeed
-        data[7] = false; // TODO isMoving
-        data[8] = actorInfo.status == OccupantInfo.IDLE;
-        data[9] = null; // TODO: bounds
+        var data :Object = new Object();
+        data["entityId"] = actorInfo.getItemIdent().toString();
+        data["state"] = actorInfo.getState();
+        data["x"] = loc.x;
+        data["y"] = loc.y;
+        data["z"] = loc.z;
+        data["orient"] = loc.orient;
+        data["moveSpeed"] = 1.0; // TODO moveSpeed
+        data["isMoving"] = false; // TODO isMoving
+        data["isIdle"] = (actorInfo.status == OccupantInfo.IDLE);
+        data["bounds"] = null; // TODO: bounds
+        data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
         return data;
     }
 
