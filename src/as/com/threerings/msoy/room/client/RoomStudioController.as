@@ -276,7 +276,7 @@ public class RoomStudioController extends RoomController
                     decoder.decode(encoded);
                     var bytes :ByteArray = decoder.flush();
                     var count :int = bytes.readShort();
-                    for (; count >= 0; count--) {
+                    for (; count > 0; count--) {
                         var key :String = bytes.readUTF();
                         var length :int = bytes.readShort();
                         var value :ByteArray = new ByteArray();
