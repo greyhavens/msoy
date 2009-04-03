@@ -962,9 +962,10 @@ public class SpamLogic
     /** Choices of subject line for retention mailings, mapped to whether or not a feed is required.
      * NOTE: the values here are for logging; they are translated to full subject lines by the
      * velocity template feed.tmpl. */
-    protected static final Map<String, Boolean> _allSubjectLines =
-        new ImmutableMap.Builder<String, Boolean>().put("nameNewThings", false)
-            .put("nameBusyFriends", true).put("whirledFeedAndNewThings", false).build();
+    protected static final Map<String, Boolean> _allSubjectLines = ImmutableMap.of(
+        "nameNewThings", false,
+        "nameBusyFriends", true,
+        "whirledFeedAndNewThings", false);
     protected static final List<String> _subjectLinesWithFeed = Lists.newArrayList();
     protected static final List<String> _subjectLinesGeneric = Lists.newArrayList();
 
