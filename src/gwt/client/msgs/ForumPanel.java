@@ -57,13 +57,31 @@ public class ForumPanel extends TitledListPanel
         setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), threads), threads);
     }
 
-    public void startNewThread (int groupId)
+    public void startNewThread (final int groupId)
     {
-        if (MsoyUI.requireValidated()) {
-            ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
+        if (!MsoyUI.requireValidated()) {
+            return;
+        }
+
+        final ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
+        if (gthreads.canStartThread()) {
             setContents(_mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager(),
                                                               gthreads.isAnnounce()));
+            return;
         }
+
+        if (gthreads.isFetched()) {
+            setContents(_mmsgs.ntpTitle(), MsoyUI.createLabel(
+                _mmsgs.errNoPermissionsToPost(), null));
+            return;
+        }
+
+        gthreads.doFetch(new AsyncCallback<Void>() {
+            public void onSuccess (Void result) {
+                startNewThread(groupId);
+            }
+            public void onFailure (Throwable caught) {} // not used
+        });
     }
 
     protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)
