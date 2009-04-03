@@ -262,11 +262,15 @@ public class MsoySceneRepository extends DepotRepository
     // from interface SceneRepository
     public Object loadExtras (int sceneId, SceneModel model)
     {
+        MsoySceneModel mmodel = (MsoySceneModel) model;
         List<ItemIdent> memoryIds = Lists.newArrayList();
-        for (FurniData furni : ((MsoySceneModel) model).furnis) {
+        for (FurniData furni : mmodel.furnis) {
             if (furni.itemType != Item.NOT_A_TYPE) {
                 memoryIds.add(furni.getItemIdent());
             }
+        }
+        if (mmodel.decor != null) {
+            memoryIds.add(mmodel.decor.getIdent());
         }
         RoomExtras extras = new RoomExtras();
         if (memoryIds.size() > 0) {
