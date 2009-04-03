@@ -17,6 +17,7 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumService.ThreadResult;
 
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
@@ -49,6 +50,29 @@ public class ForumModels
 
         public boolean isAnnounce () {
             return _isAnnounce;
+        }
+
+        /**
+         * Are the above calls returning data from the server or just their default constructed
+         * values?
+         */
+        public boolean isFetched () {
+            return _fetched;
+        }
+
+        /**
+         * Get the information from the server to be able to accurately respond to the above
+         * requests.
+         */
+        public void doFetch (final AsyncCallback<Void> callback) {
+            doFetchRows(0, 1, new AsyncCallback<List<ForumThread>>() {
+                public void onFailure (Throwable caught) {
+                    callback.onFailure(caught);
+                }
+                public void onSuccess (List<ForumThread> result) {
+                    callback.onSuccess(null);
+                }
+            });
         }
 
         /**
@@ -86,9 +110,9 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected void onSuccess (ForumService.ThreadResult result,
-            AsyncCallback<List<ForumThread>> callback)
+        protected void setCurrentResult (ForumService.ThreadResult result)
         {
+            _fetched = true;
             _canStartThread = result.canStartThread;
             _isManager = result.isManager;
             _isAnnounce = result.isAnnounce;
@@ -100,7 +124,6 @@ public class ForumModels
             if (result.threads.size() > 0) {
                 gotGroupName(result.threads.get(0).group);
             }
-            super.onSuccess(result, callback);
         }
 
         @Override // from ServiceBackedDataModel
@@ -116,7 +139,7 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected List<ForumThread> getRows (ForumService.ThreadResult result) {
+        protected List<ForumThread> getRows (ThreadResult result) {
             return result.threads;
         }
 
@@ -138,6 +161,7 @@ public class ForumModels
 
         protected int _groupId;
         protected GroupName _group;
+        protected boolean _fetched;
         protected boolean _canStartThread, _isManager, _isAnnounce;
 
         protected ListenerList<AsyncCallback<GroupName>> _gotNameListeners;
