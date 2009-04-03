@@ -50,7 +50,8 @@ public class UnreadThreadListPanel extends ThreadListPanel
     @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
-        return MsoyUI.createHTML(_mmsgs.noUnreadThreads(), "Empty");
+        return _query.length() > 0 ? super.createEmptyContents() :
+            MsoyUI.createHTML(_mmsgs.noUnreadThreads(), "Empty");
     }
 
     @Override // from PagedGrid

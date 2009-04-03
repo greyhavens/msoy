@@ -140,7 +140,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return _mmsgs.noThreads();
+        return _query.length() > 0 ? _mmsgs.noMatchingThreads() : _mmsgs.noThreads();
     }
 
     @Override // from PagedGrid
