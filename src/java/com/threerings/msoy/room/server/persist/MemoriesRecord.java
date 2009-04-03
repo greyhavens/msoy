@@ -105,7 +105,7 @@ public class MemoriesRecord extends PersistentRecord
         this.data = Base64.decodeBase64(base64Data.getBytes());
         if (this.data.length > 4096) {
             log.warning("Encoded fat memories for purchase", "length", this.data.length);
-            if (this.data.length >= 8196) {
+            if (this.data.length >= 8192) {
                 throw new Exception("Memories too fat!");
             }
         }
