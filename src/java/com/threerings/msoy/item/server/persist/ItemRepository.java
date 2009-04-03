@@ -1436,7 +1436,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
             new Arithmetic.Add(new ValueExp(1.0), new FunctionExp("LOG", 
-                getCatalogColumn(CatalogRecord.PURCHASES))),
+                new Arithmetic.Add(new ValueExp(1.0), getCatalogColumn(CatalogRecord.PURCHASES)))),
         };
         
         SQLOperator tagExistsExp = 
