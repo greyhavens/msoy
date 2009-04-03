@@ -6,16 +6,19 @@ package client.msgs;
 import java.util.List;
 
 import client.ui.MsoyUI;
-import client.util.InfoCallback;
+import client.util.Link;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * Overrides and adds functionality to the threads list for displaying group threads.
@@ -24,25 +27,20 @@ public class GroupThreadListPanel extends ThreadListPanel
 {
     public GroupThreadListPanel (ForumPanel parent, ForumModels fmodels, int groupId)
     {
-        super(parent, fmodels);
+        super(parent, fmodels, new Object[] {"f", groupId});
         _groupId = groupId;
-        setModel(_fmodels.getGroupThreads(groupId), 0);
     }
 
-    // from interface SearchBox.Listener
-    public void search (String search)
+    @Override // from ThreadListPanel
+    protected void doSearch (AsyncCallback<List<ForumThread>> callback)
     {
-        _fmodels.searchGroupThreads(_groupId, search, new InfoCallback<List<ForumThread>>() {
-            public void onSuccess (List<ForumThread> threads) {
-                setModel(new SimpleDataModel<ForumThread>(threads), 0);
-            }
-        });
+        _fmodels.searchGroupThreads(_groupId, _query, callback);
     }
 
-    // from interface SearchBox.Listener
-    public void clearSearch ()
+    @Override // from ThreadListPanel
+    protected DataModel<ForumThread> getThreadListModel ()
     {
-        setModel(_fmodels.getGroupThreads(_groupId), 0);
+        return _fmodels.getGroupThreads(_groupId);
     }
 
     @Override // from PagedGrid
@@ -54,7 +52,7 @@ public class GroupThreadListPanel extends ThreadListPanel
         _startThread = new Button(_mmsgs.tlpStartNewThread(), new ClickListener() {
             public void onClick (Widget sender) {
                 if (MsoyUI.requireValidated()) {
-                    _parent.startNewThread(_groupId);
+                    Link.go(Pages.GROUPS, Args.compose("p", _groupId));
                 }
             }
         });

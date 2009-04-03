@@ -3,7 +3,10 @@
 
 package client.msgs;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -12,6 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
@@ -22,23 +27,108 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
+import client.util.ArrayUtil;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
- * Displays a list of threads. Suitable for subclassing to override what kind of threads are
- * displayed.
+ * Displays a list of threads. Subclasses determine the specifics of accessing the threads on the
+ * server, performing searches and display customizations.
  */
 public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     implements SearchBox.Listener
 {
-    public ThreadListPanel (ForumPanel parent, ForumModels fmodels)
+    /**
+     * Creates a new thread list panel.
+     * @param baseArgs used when redirecting the browser to a new page or the results of a search
+     */
+    protected ThreadListPanel (ForumPanel parent, ForumModels fmodels, Object[] baseArgs)
     {
         super(MsoyUI.computeRows(USED_HEIGHT, THREAD_HEIGHT, 10), 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
         _parent = parent;
         _fmodels = fmodels;
+        _baseArgs = baseArgs;
+    }
+
+    /**
+     * Goes directly to the given page of the given search. If the search string is empty, go to
+     * the given page of the thread list. This is called by the forum panel in response to a
+     * history change.
+     */
+    public void setPage (String query, int page)
+    {
+        setPage(query, page, false);
+    }
+
+    // from interface SearchBox.Listener
+    public void search (String search)
+    {
+        // when the user searches, display results via the url
+        Link.go(Pages.GROUPS, compose(search));
+    }
+
+    // from interface SearchBox.Listener
+    public void clearSearch ()
+    {
+        // when the users clears a search, return to the groups page via the url
+        // TODO: store the most recent page number and return to it here
+        Link.go(Pages.GROUPS, compose());
+    }
+
+    /**
+     * Get the "native" model for the thread list.
+     */
+    protected abstract DataModel<ForumThread> getThreadListModel();
+
+    /**
+     * Perform a search on the contents of this thread list using the current value of
+     * {@link #_query}. This will normally involve a call to a model from {@link ForumModels}.
+     */
+    protected abstract void doSearch (AsyncCallback<List<ForumThread>> callback);
+
+    /**
+     * Same as {@link #setPage(String, int)}, but optionally forces the model to be reset to that
+     * provided by the subclass implementation, {@link #getThreadListModel()}.
+     */
+    protected void setPage (String query, int page, boolean force)
+    {
+        query = query.trim();
+        if (!force && _model != null && _query.equals(query)) {
+            displayPage(page, false);
+
+        } else {
+            if ((_query = query).length() == 0) {
+                setModel(getThreadListModel(), page);
+
+            } else {
+                doSearch(new InfoCallback<List<ForumThread>>() {
+                    public void onSuccess (List<ForumThread> threads) {
+                        setModel(new SimpleDataModel<ForumThread>(threads), 0);
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Rebuilds our current page, including getting the model again.
+     */
+    protected void refresh ()
+    {
+        setPage(_query, getPage(), true);
+    }
+
+    /**
+     * Shortcut for concatenating our base args with some more args and {@link Args#compose}'ing
+     * the result.
+     */
+    protected String compose (Object ...moreArgs)
+    {
+        Object[] args = ArrayUtil.concatenate(_baseArgs, moreArgs, ArrayUtil.OBJECT_TYPE);
+        return Args.compose((Object[])args);
     }
 
     @Override // from PagedGrid
@@ -65,11 +155,24 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
         return new MiniNowLoadingWidget();
     }
 
+    @Override
+    protected void displayPageFromClick (int page)
+    {
+        // route the page request through the url
+        Link.go(Pages.GROUPS, compose(_query, page));
+    }
+
+    /**
+     * Creates a thread summary line for a thread. Subclasses can override to put in more widgets.
+     */
     protected ThreadSummaryPanel createThreadSummaryPanel (ForumThread thread)
     {
         return new ThreadSummaryPanel(thread);
     }
 
+    /**
+     * Summary panel for a single thread.
+     */
     protected class ThreadSummaryPanel extends SmartTable
     {
         public ThreadSummaryPanel (ForumThread thread)
@@ -154,6 +257,12 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
 
     /** Provides access to our forum models. */
     protected ForumModels _fmodels;
+
+    /** The query we are currently looking at. */
+    protected String _query = ""; 
+
+    /** The first (prepended) arguments for accessing this page. */
+    protected Object[] _baseArgs;
 
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)

@@ -7,9 +7,9 @@ import java.util.List;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.InfoCallback;
 import client.util.Link;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -32,24 +32,19 @@ public class UnreadThreadListPanel extends ThreadListPanel
 {
     public UnreadThreadListPanel (ForumPanel parent, ForumModels fmodels)
     {
-        super(parent, fmodels);
-        setModel(fmodels.getUnreadThreads(false), 0);
+        super(parent, fmodels, new String[] {"unread"});
     }
 
-    // from interface SearchBox.Listener
-    public void search (String search)
+    @Override // from ThreadListPanel
+    protected void doSearch (AsyncCallback<List<ForumThread>> callback)
     {
-        _fmodels.searchUnreadThreads(search, new InfoCallback<List<ForumThread>>() {
-            public void onSuccess (List<ForumThread> threads) {
-                setModel(new SimpleDataModel<ForumThread>(threads), 0);
-            }
-        });
+        _fmodels.searchUnreadThreads(_query, callback);
     }
 
-    // from interface SearchBox.Listener
-    public void clearSearch ()
+    @Override // from ThreadListPanel
+    protected DataModel<ForumThread> getThreadListModel ()
     {
-        setModel(_fmodels.getUnreadThreads(true), 0);
+        return _fmodels.getUnreadThreads(false);
     }
 
     @Override // from PagedGrid
@@ -67,13 +62,13 @@ public class UnreadThreadListPanel extends ThreadListPanel
         _refresh = new Button(_mmsgs.tlpRefresh(), new ClickListener() {
             public void onClick (Widget sender) {
                 _fmodels.getUnreadThreads(true); // refresh
-                _parent.displayUnreadThreads();
+                refresh();
             }
         });
         controls.setWidget(0, 1, _refresh);
     }
 
-    @Override
+    @Override // from ThreadListPanel
     protected ThreadSummaryPanel createThreadSummaryPanel (ForumThread thread)
     {
         return new UnreadThreadSummaryPanel(thread);

@@ -21,8 +21,8 @@ import client.ui.MsoyUI;
 public class GroupsPage extends Page
 {
     public enum Nav {
-        DETAIL("d"), EDIT("edit"), MYGROUPS("mygroups"), UNREAD("unread"), FORUM("f"), THREAD("t"),
-        MEDALS("m"), CREATEMEDAL("cm"), EDITMEDAL("em"), DEFAULT("");
+        DETAIL("d"), EDIT("edit"), MYGROUPS("mygroups"), UNREAD("unread"), FORUM("f"), POST("p"),
+        THREAD("t"), MEDALS("m"), CREATEMEDAL("cm"), EDITMEDAL("em"), DEFAULT("");
 
         public static Nav getGroupPage (Args args)
         {
@@ -86,14 +86,13 @@ public class GroupsPage extends Page
             setContent(_msgs.myGroupsTitle(), myGroups);
 
         } else if (page == Nav.UNREAD) {
-            ForumPanel fpanel = new ForumPanel(_fmodels);
-            fpanel.displayUnreadThreads();
-            setContent(_msgs.myForumsTitle(), fpanel);
+            showForumPanel(ForumPanel.Mode.UNREAD, 0, args.get(1, ""), args.get(2, 0));
 
         } else if (page == Nav.FORUM) {
-            ForumPanel forums = new ForumPanel(_fmodels);
-            forums.displayGroupThreads(args.get(1, 0));
-            setContent(_msgs.forumsTitle(), forums);
+            showForumPanel(ForumPanel.Mode.GROUPS, args.get(1, 0), args.get(2, ""), args.get(3, 0));
+
+        } else if (page == Nav.POST) {
+            showForumPanel(ForumPanel.Mode.NEW_THREAD, args.get(1, 0), null, 0);
 
         } else if (page == Nav.THREAD) {
             ThreadPanel tpanel = new ThreadPanel();
@@ -129,7 +128,17 @@ public class GroupsPage extends Page
         return Pages.GROUPS;
     }
 
+    protected void showForumPanel (ForumPanel.Mode mode, int groupId, String search, int page)
+    {
+        if (_fpanel == null || !_fpanel.isInMode(mode, groupId)) {
+            _fpanel = new ForumPanel(_fmodels, mode, groupId);
+        }
+        _fpanel.setPage(search, page);
+        setContent(_msgs.forumsTitle(), _fpanel);
+    }
+
     protected ForumModels _fmodels = new ForumModels();
+    protected ForumPanel _fpanel;
     protected GroupDetailPanel _detail = new GroupDetailPanel();
     protected GalaxyPanel _galaxy;
 
