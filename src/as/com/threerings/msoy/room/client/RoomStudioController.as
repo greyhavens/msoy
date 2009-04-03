@@ -10,7 +10,6 @@ import flash.events.MouseEvent;
 import flash.external.ExternalInterface;
 
 import flash.utils.ByteArray;
-import flash.utils.Dictionary;
 
 import com.threerings.io.TypedArray;
 
