@@ -32,8 +32,7 @@ public class GroupThreadListPanel extends ThreadListPanel
     // from interface SearchBox.Listener
     public void search (String search)
     {
-        _forumsvc.findThreads(_groupId, search, MAX_RESULTS,
-            new InfoCallback<List<ForumThread>>() {
+        _fmodels.searchGroupThreads(_groupId, search, new InfoCallback<List<ForumThread>>() {
             public void onSuccess (List<ForumThread> threads) {
                 setModel(new SimpleDataModel<ForumThread>(threads), 0);
             }

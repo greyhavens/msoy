@@ -382,15 +382,84 @@ public class ForumModels
         return null;
     }
 
+    /**
+     * Searches a group's threads for a string and invokes a callback when the results are ready.
+     */
+    public void searchGroupThreads (int groupId, String query,
+        AsyncCallback<List<ForumThread>> callback)
+    {
+        if (_search == null || !_search.equals(groupId, query)) {
+            _search = new Search(groupId, query);
+        }
+        _search.execute(callback);
+    }
+
+    /**
+     * Searches the user's unread threads for a string and invokes a callback when the results are
+     * ready.
+     */
+    public void searchUnreadThreads (String query, AsyncCallback<List<ForumThread>> callback)
+    {
+        searchGroupThreads(0, query, callback);
+    }
+
+    /**
+     * Parameters and results of searching a group's threads or the user's unread threads.
+     */
+    protected static class Search
+    {
+        public Search (int groupId, String query) {
+            _groupId = groupId;
+            _query = query;
+        }
+
+        public boolean equals (int groupId, String query) {
+            return _query.equals(_query) && _groupId == groupId;
+        }
+
+        public void execute (final AsyncCallback<List<ForumThread>> callback) {
+            if (_result != null) {
+                callback.onSuccess(_result);
+            }
+            doSearch(new AsyncCallback<List<ForumThread>> () {
+                public void onSuccess (List<ForumThread> result) {
+                    _result = result;
+                    callback.onSuccess(result);
+                }
+                public void onFailure (Throwable cause) {
+                    callback.onFailure(cause);
+                }
+            });
+        }
+
+        protected void doSearch (AsyncCallback<List<ForumThread>> callback) {
+            if (_groupId == 0) {
+                _forumsvc.findUnreadThreads(_query, MAX_RESULTS, callback);
+            } else {
+                _forumsvc.findThreads(_groupId, _query, MAX_RESULTS, callback);
+            }
+        }
+
+        protected int _groupId;
+        protected String _query;
+        protected List<ForumThread> _result;
+    }
+
     /** A cache of GroupThreads data models. */
     protected HashMap<Integer, GroupThreads> _gmodels = new HashMap<Integer, GroupThreads>();
 
     /** A cached UnreadThreads data model. */
     protected UnreadThreads _unreadModel;
 
+    /** A cached search result. */
+    protected Search _search;
+
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
     /** The maximum number of unread threads we'll download at once. */
     protected static final int MAX_UNREAD_THREADS = 100;
+
+    /** The maximum number of thread search results. */
+    protected static final int MAX_RESULTS = 20;
 }

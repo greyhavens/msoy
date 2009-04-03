@@ -159,9 +159,6 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
-    /** The maximum number of thread search results. */
-    protected static final int MAX_RESULTS = 20;
-
     /** The height used by fixed interface elements (including our header and footer and the
      * FrameHeader). */
     protected static final int USED_HEIGHT = 123;

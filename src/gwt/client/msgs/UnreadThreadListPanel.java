@@ -39,7 +39,7 @@ public class UnreadThreadListPanel extends ThreadListPanel
     // from interface SearchBox.Listener
     public void search (String search)
     {
-        _forumsvc.findUnreadThreads(search, MAX_RESULTS, new InfoCallback<List<ForumThread>>() {
+        _fmodels.searchUnreadThreads(search, new InfoCallback<List<ForumThread>>() {
             public void onSuccess (List<ForumThread> threads) {
                 setModel(new SimpleDataModel<ForumThread>(threads), 0);
             }
