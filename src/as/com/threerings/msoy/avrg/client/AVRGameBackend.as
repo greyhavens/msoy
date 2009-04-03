@@ -233,9 +233,11 @@ public class AVRGameBackend extends ControlBackend
         o["room_getRoomName_v1"] = room_getRoomName_v1;
         o["room_canEditRoom_v1"] = room_canEditRoom_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
-        o["getAvatarInfo_v1"] = getAvatarInfo_v1;
+        o["getAvatarInfo_v2"] = getAvatarInfo_v2;
         o["getEntityIds_v1"] = getEntityIds_v1;
         o["getEntityProperty_v1"] = getEntityProperty_v1;
+        // .getRoom() backwards compat
+        o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
         // PlayerSubControl
         o["player_getGameData_v1"] = player_getGameData_v1;
@@ -372,23 +374,33 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // RoomSubControl
-    protected function getAvatarInfo_v1 (targetId :int /* ignored */, playerId :int) :Object
+    protected function getAvatarInfo_v1 (targetId :int /* ignored */, playerId :int) :Array
+    {
+        var obj :Object = getAvatarInfo_v2(targetId, playerId);
+        return (obj == null) ? null :
+            [ obj["name"], obj["state"], obj["x"], obj["y"], obj["z"], obj["orient"],
+              obj["moveSpeed"], obj["isMoving"], obj["isIdle"], obj["bounds"] ];
+    }
+
+    // RoomSubControl
+    protected function getAvatarInfo_v2 (targetId :int /* ignored */, playerId :int) :Object
     {
         validateRoomTargetId(targetId);
         var sprite :MemberSprite = getAvatarSprite(playerId);
         if (sprite != null) {
-            return [
-                sprite.getActorInfo().username.toString(),
-                sprite.getState(),
-                sprite.getLocation().x,
-                sprite.getLocation().y,
-                sprite.getLocation().z,
-                sprite.getLocation().orient,
-                sprite.getMoveSpeed(1), /// TODO: this may be wildly inaccurate. remove?
-                sprite.isMoving(),
-                sprite.isIdle(),
-                sprite.getBounds(sprite.stage)
-            ];
+            var data :Object = new Object();
+            data["entityId"] = sprite.getActorInfo().getItemIdent().toString();
+            data["state"] = sprite.getState();
+            data["x"] = sprite.getLocation().x;
+            data["y"] = sprite.getLocation().y;
+            data["z"] = sprite.getLocation().z;
+            data["orient"] = sprite.getLocation().orient;
+            data["moveSpeed"] = sprite.getMoveSpeed(1); // TODO: this may be inaccurate. remove?
+            data["isMoving"] = sprite.isMoving();
+            data["isIdle"] = sprite.isIdle();
+            data["bounds"] = sprite.getBounds(sprite.stage);
+            data["name"] = sprite.getActorInfo().username.toString(); // deprecated, only for _v1
+            return data;
         }
         return null;
     }
