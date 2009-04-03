@@ -26,6 +26,13 @@ public class ArrayUtil
         }
     };
 
+    /** An object array type. */
+    public static final ArrayType<Object> OBJECT_TYPE = new ArrayType<Object>() {
+        public Object[] makeNew (int size) {
+            return new Object[size];
+        }
+    };
+
     /**
      * Creates an iterator over the supplied array. If the array is null, null is returned.
      */
@@ -54,6 +61,7 @@ public class ArrayUtil
      * @param values the array to copy
      * @param offset the offset of the first element to remove
      * @param length the number of elements to remove
+     * @param type factory for creating the new array
      * @return the copied array
      */
     public static <T extends Object> T[] splice (
@@ -90,6 +98,7 @@ public class ArrayUtil
      * @param values the array to copy
      * @param value the value to insert
      * @param index the index to insert at
+     * @param type factory for creating the new array
      * @return the copied array with one additional element
      */
     public static <T extends Object> T[] insert (T[] values, T value, int index, ArrayType<T> type)
@@ -110,10 +119,28 @@ public class ArrayUtil
      * @param <T> the type of objects in the array
      * @param values the array to copy
      * @param value the value to append
-     * @return the copies array with the new element on the end
+     * @param type factory for creating the new array
+     * @return the copied array with the new element on the end
      */
     public static <T extends Object> T[] append (T[] values, T value, ArrayType<T> type)
     {
         return insert(values, value, values.length, type);
+    }
+
+    /**
+     * Creates a new array that contains the contents of the first array followed by those of the
+     * second.
+     * @param <T> the type of objects in the array
+     * @param v1 the first array to copy
+     * @param v2 the second array to copy
+     * @param type factory for creating the new array
+     * @return the new array
+     */
+    public static <T extends Object> T[] concatenate (T[] v1, T[] v2, ArrayType<T> type)
+    {
+        T[] values = type.makeNew(v1.length + v2.length);
+        System.arraycopy(v1, 0, values, 0, v1.length);
+        System.arraycopy(v2, 0, values, v1.length, v2.length);
+        return values;
     }
 }
