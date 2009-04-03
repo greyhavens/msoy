@@ -5,6 +5,7 @@ package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -167,6 +168,29 @@ public class ItemUtil
             "&decorActorScale=" + decor.actorScale + "&decorFurniScale=" + decor.furniScale +
             "&username=Test%20Avatar"; // add a name for the test avatar..
     }
+
+    /**
+     * Extract memories from the viewer. Used when purchasing.
+     */
+    public static String getMemories ()
+    {
+        return getMemoriesNative(findViewer());
+    }
+
+    public static native Element findViewer () /*-{
+        // do not go to "top"...
+        return $wnd.document.getElementById("viewer");
+    }-*/;
+
+    /**
+     * Does actual getMemories call.
+     */
+    protected static native String getMemoriesNative (Element viewer) /*-{
+        if (viewer) {
+            try { return viewer.getStudioMemories(); } catch (e) {} // block exceptions
+        }
+        return null;
+    }-*/;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

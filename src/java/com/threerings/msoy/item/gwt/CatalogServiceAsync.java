@@ -35,7 +35,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
     void purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost,
-                       AsyncCallback<PurchaseResult<Item>> callback);
+                       String memories, AsyncCallback<PurchaseResult<Item>> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#listItem}

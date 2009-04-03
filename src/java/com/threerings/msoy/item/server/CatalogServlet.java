@@ -48,6 +48,9 @@ import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
 
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
+
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Game;
@@ -161,7 +164,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public PurchaseResult<Item> purchaseItem (
-        byte itemType, int catalogId, Currency currency, int authedCost)
+        byte itemType, int catalogId, Currency currency, int authedCost, String memories)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -184,6 +187,8 @@ public class CatalogServlet extends MsoyServiceServlet
         if (listing.pricing == CatalogListing.PRICING_HIDDEN) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
+        // prepare the MemoriesRecord- catch errors here
+        final MemoriesRecord memoryRec = (memories == null) ? null : new MemoriesRecord(memories);
 
         // Create the operation that will actually take care of creating the item.
         final int fCatalogId = catalogId;
@@ -192,6 +197,17 @@ public class CatalogServlet extends MsoyServiceServlet
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
                 // create the clone row in the database
                 _newClone = repo.insertClone(listing.item, mrec.memberId, currency, amountPaid);
+                // set up the initial memories, if any
+                if (memoryRec != null) {
+                    try {
+                        memoryRec.itemType = _newClone.getType();
+                        memoryRec.itemId = _newClone.itemId;
+                        _memoryRepo.storeMemories(memoryRec);
+                    } catch (Exception e) {
+                        log.warning("Unable to save initial item memories", e);
+                        // but cope and continue the purchase
+                    }
+                }
                 // note the new purchase for the item, but only if it wasn't magicFree.
                 if (!magicFree) {
                     repo.nudgeListing(fCatalogId, true);
@@ -728,6 +744,7 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberLogic _memberLogic; // ABTEST: 2009 03 buypanel
+    @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;

@@ -11,6 +11,8 @@ import java.io.IOException;
 
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -92,6 +94,20 @@ public class MemoriesRecord extends PersistentRecord
 
         } catch (IOException ioe) {
             throw new RuntimeException("Can't happen", ioe);
+        }
+    }
+
+    /**
+     * Create a memory record initialized with the pre-encoded memories from the viewer.
+     */
+    public MemoriesRecord (String base64Data)
+    {
+        this.data = Base64.decodeBase64(base64Data.getBytes());
+        if (this.data.length > 4096) {
+            log.warning("Encoded fat memories for purchase", "length", this.data.length);
+            if (this.data.length >= 8196) {
+                throw new Exception("Memories too fat!");
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ItemActivator;
+import client.item.ItemUtil;
 import client.money.BuyPanel;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -57,7 +58,7 @@ public class ItemBuyPanel extends BuyPanel<Item>
 
         } else {
             _catalogsvc.purchaseItem(_listing.detail.item.getType(), _listing.catalogId,
-                currency, amount, listener);
+                currency, amount, ItemUtil.getMemories(), listener);
             return true;
         }
     }

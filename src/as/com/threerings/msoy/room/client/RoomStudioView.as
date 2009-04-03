@@ -151,6 +151,14 @@ public class RoomStudioView extends RoomView
         super.dispatchSpriteMessage(item, name, arg, isAction);
     }
 
+    /**
+     * Provide access to the primary testing sprite.
+     */
+    public function getTestingSprite () :MsoySprite
+    {
+        return _testingSprite;
+    }
+
     public function setSpriteScale (scale :Number) :void
     {
         if (_testingSprite is MemberSprite) {

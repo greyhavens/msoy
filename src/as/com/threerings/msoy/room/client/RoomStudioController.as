@@ -7,6 +7,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import flash.external.ExternalInterface;
+
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
@@ -24,6 +26,7 @@ import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.UberClientModes;
+import com.threerings.msoy.utils.Base64Encoder;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -55,6 +58,12 @@ public class RoomStudioController extends RoomController
 
         _throttleChecker.start();
 
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.addCallback("getStudioMemories", getStudioMemories);
+            }
+        } catch (e :Error) {}
+
         initScene();
     }
 
@@ -70,9 +79,11 @@ public class RoomStudioController extends RoomController
     override public function getMemories (ident :ItemIdent) :Object
     {
         var mems :Object = {};
-        var dict :Dictionary = _memories.get(ident) as Dictionary;
-        for (var key :String in dict) {
-            mems[key] = ObjectMarshaller.decode(dict[key]);
+        var map :HashMap = _memories.get(ident) as HashMap;
+        if (map != null) {
+            map.forEach(function (key :String, value :ByteArray) :void {
+                mems[key] = ObjectMarshaller.decode(value);
+            });
         }
         return mems;
     }
@@ -80,8 +91,8 @@ public class RoomStudioController extends RoomController
     // documentation inherited
     override public function lookupMemory (ident :ItemIdent, key :String) :Object
     {
-        var dict :Dictionary = _memories.get(ident) as Dictionary;
-        return (dict == null) ? null : ObjectMarshaller.decode(dict[key]);
+        var map :HashMap = _memories.get(ident) as HashMap;
+        return (map == null) ? null : ObjectMarshaller.decode(map.get(key));
     }
 
     // documentation inherited
@@ -202,15 +213,15 @@ public class RoomStudioController extends RoomController
     protected function updateMemory3 (
         ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
     {
-        var dict :Dictionary = _memories.get(ident) as Dictionary;
-        if (dict == null) {
-            dict = new Dictionary();
-            _memories.put(ident, dict);
+        var map :HashMap = _memories.get(ident) as HashMap;
+        if (map == null) {
+            map = new HashMap();
+            _memories.put(ident, map);
         }
         if (data == null) {
-            delete dict[key];
+            map.remove(key);
         } else {
-            dict[key] = data;
+            map.put(key, data);
         }
 
         MethodQueue.callLater(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
@@ -219,9 +230,37 @@ public class RoomStudioController extends RoomController
         }
     }
 
+    /**
+     * Get the memories of the _testingSprite, for use when purchasing a configurable item.
+     */
+    protected function getStudioMemories () :String
+    {
+        var spr :MsoySprite = _studioView.getTestingSprite();
+        if (spr == null) {
+            return null;
+        }
+        var map :HashMap = _memories.get(spr.getItemIdent()) as HashMap;
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+
+        // Perhaps this is risky, but I can't see how it's any riskier than anything else-
+        // Encode the memories directly into the database representation. Easy.
+        var bytes :ByteArray = new ByteArray();
+        bytes.writeShort(map.size());
+        map.forEach(function (key :String, value :ByteArray) :void {
+            bytes.writeUTF(key);
+            bytes.writeShort(value.length);
+            bytes.writeBytes(value);
+        });
+        var encoder :Base64Encoder = new Base64Encoder();
+        encoder.encodeBytes(bytes);
+        return encoder.flush();
+    }
+
     protected var _studioView :RoomStudioView;
 
-    /** Maps ItemIdent -> (Dictionary[key] -> encoded value) */
+    /** Maps ItemIdent -> HashMap<String, ByteArray> */
     protected var _memories :HashMap = new HashMap();
 }
 }
