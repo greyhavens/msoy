@@ -89,7 +89,7 @@ public class ItemUtil
     /**
      * Creates a generic item viewer, mostly using the UberClient!
      */
-    public static HTML createViewer (Item item, boolean userOwnsItem)
+    public static HTML createViewer (Item item, boolean userOwnsItem, String memories)
     {
         int w = 360;
         int h = 385;
@@ -130,6 +130,9 @@ public class ItemUtil
         String flashVars = "mode=" + mode +
             "&media=" + URL.encodeComponent(preview.getMediaPath()) +
             "&name=" + URL.encodeComponent(item.name);
+        if (memories != null) {
+            flashVars += "&mems=" + URL.encodeComponent(memories);
+        }
         switch (mode) {
         case UberClientModes.AVATAR_VIEWER:
             flashVars += "&scale=" + ((Avatar) item).scale;

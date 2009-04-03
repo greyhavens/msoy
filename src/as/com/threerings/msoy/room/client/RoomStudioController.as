@@ -25,6 +25,8 @@ import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.UberClientModes;
+
+import com.threerings.msoy.utils.Base64Decoder;
 import com.threerings.msoy.utils.Base64Encoder;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -78,20 +80,16 @@ public class RoomStudioController extends RoomController
     override public function getMemories (ident :ItemIdent) :Object
     {
         var mems :Object = {};
-        var map :HashMap = _memories.get(ident) as HashMap;
-        if (map != null) {
-            map.forEach(function (key :String, value :ByteArray) :void {
-                mems[key] = ObjectMarshaller.decode(value);
-            });
-        }
+        getMemoryMap(ident).forEach(function (key :String, value :ByteArray) :void {
+            mems[key] = ObjectMarshaller.decode(value);
+        });
         return mems;
     }
 
     // documentation inherited
     override public function lookupMemory (ident :ItemIdent, key :String) :Object
     {
-        var map :HashMap = _memories.get(ident) as HashMap;
-        return (map == null) ? null : ObjectMarshaller.decode(map.get(key));
+        return ObjectMarshaller.decode(getMemoryMap(ident).get(key));
     }
 
     // documentation inherited
@@ -212,11 +210,7 @@ public class RoomStudioController extends RoomController
     protected function updateMemory3 (
         ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
     {
-        var map :HashMap = _memories.get(ident) as HashMap;
-        if (map == null) {
-            map = new HashMap();
-            _memories.put(ident, map);
-        }
+        var map :HashMap = getMemoryMap(ident);
         if (data == null) {
             map.remove(key);
         } else {
@@ -238,7 +232,7 @@ public class RoomStudioController extends RoomController
         if (spr == null) {
             return null;
         }
-        var map :HashMap = _memories.get(spr.getItemIdent()) as HashMap;
+        var map :HashMap = getMemoryMap(spr.getItemIdent());
         if (map == null || map.isEmpty()) {
             return null;
         }
@@ -257,9 +251,48 @@ public class RoomStudioController extends RoomController
         return encoder.flush();
     }
 
+    /**
+     * Takes care of initializing any memory sent down from the server.
+     */
+    protected function getMemoryMap (ident :ItemIdent) :HashMap
+    {
+        var map :HashMap;
+        if (_memories == null) { // see if we need to initialize
+            _memories = new HashMap();
+            // first things first- we need to set up memories from the server
+            try {
+                map = getMemoryMap(_studioView.getTestingSprite().getItemIdent());
+                var encoded :String = MsoyParameters.get()["mems"];
+                if (encoded != null) {
+                    var decoder :Base64Decoder = new Base64Decoder();
+                    decoder.decode(encoded);
+                    var bytes :ByteArray = decoder.flush();
+                    var count :int = bytes.readShort();
+                    for (; count >= 0; count--) {
+                        var key :String = bytes.readUTF();
+                        var length :int = bytes.readShort();
+                        var value :ByteArray = new ByteArray();
+                        bytes.readBytes(value, 0, length);
+                        map.put(key, value);
+                    }
+                }
+            } catch (e :Error) {
+                log.warning("Unable to decode memories", e);
+            }
+        }
+
+        // after that, just return a map, always
+        map = _memories.get(ident) as HashMap;
+        if (map == null) {
+            map = new HashMap();
+            _memories.put(ident, map);
+        }
+        return map;
+    }
+
     protected var _studioView :RoomStudioView;
 
     /** Maps ItemIdent -> HashMap<String, ByteArray> */
-    protected var _memories :HashMap = new HashMap();
+    protected var _memories :HashMap;
 }
 }

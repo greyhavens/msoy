@@ -63,7 +63,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         SimplePanel preview = new SimplePanel();
         preview.setStyleName("ItemPreview");
 
-        preview.setWidget(ItemUtil.createViewer(_item, userOwnsItem()));
+        preview.setWidget(ItemUtil.createViewer(_item, userOwnsItem(), detail.memories));
         bits.add(preview);
         if (_item.isRatable()) {
             HorizontalPanel row = new HorizontalPanel();

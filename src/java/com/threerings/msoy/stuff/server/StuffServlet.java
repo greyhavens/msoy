@@ -16,6 +16,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -39,6 +40,8 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -248,7 +251,8 @@ public class StuffServlet extends MsoyServiceServlet
         // subitems as the owner sees it which is useful and reduces confusion
         if (!hasOriginals && suiteId > 0 && memrec.isSupport()) {
             // load up the parent item (parent item id is the suite id in this case)
-            ItemRecord parent = _itemLogic.getRepository(getSuiteMasterType(type)).loadItem(suiteId);
+            ItemRecord parent =
+                _itemLogic.getRepository(getSuiteMasterType(type)).loadItem(suiteId);
             if (parent != null) {
                 items.addAll(
                     Lists.transform(repo.loadOriginalItems(parent.ownerId, suiteId), toItem));
@@ -310,6 +314,13 @@ public class StuffServlet extends MsoyServiceServlet
         }
         List<TagNameRecord> trecs = repo.getTagRepository().getTags(iident.itemId);
         detail.tags = Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
+        // for entity types: try loading up their memory
+        if (-1 != ArrayUtil.indexOf(Item.ENTITY_TYPES, iident.type)) {
+            MemoriesRecord memories = _memoryRepo.loadMemory(iident.type, iident.itemId);
+            if (memories != null) {
+                detail.memories = memories.toBase64();
+            }
+        }
 
         return new DetailOrIdent(detail, null);
     }
@@ -333,8 +344,8 @@ public class StuffServlet extends MsoyServiceServlet
 
         // make sure the item isn't boochy
         if (item != null && !item.isConsistent()) {
-            log.warning("Requested to remix item with invalid version [who=" + who(mrec) +
-                        ", item=" + item + "].");
+            log.warning("Requested to remix item with invalid version",
+               "who", who(mrec), "item", item);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -387,6 +398,7 @@ public class StuffServlet extends MsoyServiceServlet
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected StatLogic _statLogic;
 }

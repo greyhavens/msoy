@@ -36,4 +36,7 @@ public class ItemDetail implements Streamable, IsSerializable
 
     /** The tags on this item. */
     public List<String> tags;
+
+    /** Encoded memories, or null if not applicable. */
+    public String memories;
 }

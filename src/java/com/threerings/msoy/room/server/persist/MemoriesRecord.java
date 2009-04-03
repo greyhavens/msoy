@@ -102,13 +102,27 @@ public class MemoriesRecord extends PersistentRecord
      */
     public MemoriesRecord (String base64Data)
     {
+        if (base64Data == null) {
+            return;
+        }
         this.data = Base64.decodeBase64(base64Data.getBytes());
         if (this.data.length > 4096) {
             log.warning("Encoded fat memories for purchase", "length", this.data.length);
             if (this.data.length >= 8192) {
-                throw new Exception("Memories too fat!");
+                throw new RuntimeException("Memories too fat!");
             }
         }
+    }
+
+    /**
+     * Encode the memory data.
+     */
+    public String toBase64 ()
+    {
+        if (data == null) {
+            return null;
+        }
+        return new String(Base64.encodeBase64(data));
     }
 
     /**

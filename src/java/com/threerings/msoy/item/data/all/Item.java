@@ -73,6 +73,13 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
         FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
     };
 
+    /**
+     * A list of item types that are entities and can have memory and other such things.
+     */
+    public static final byte[] ENTITY_TYPES = {
+        AVATAR, PET, FURNITURE, TOY, DECOR
+    };
+
     /** A 'used' constant value to indicate that the item is unused. */
     public static final byte UNUSED = (byte) 0;
 
