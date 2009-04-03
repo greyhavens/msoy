@@ -1387,15 +1387,6 @@ public class RoomManager extends SpotSceneManager
             // massage the room name to make sure it's kosher
             up.name = StringUtil.truncate(up.name, MsoySceneModel.MAX_NAME_LENGTH);
 
-            // if decor was modified, we should mark new decor as used, and clear the old one
-            Decor decor = msoyScene.getDecor();
-            if (decor != null && decor.itemId != up.decor.itemId) { // modified?
-                _itemMan.updateItemUsage(
-                    Item.DECOR, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
-                    decor.itemId, up.decor.itemId, new ComplainingListener<Void>(
-                        log, "Unable to update decor usage"));
-            }
-
             // if the name or access controls were modified, we need to update our HostedPlace
             boolean nameChange = !msoyScene.getName().equals(up.name);
             if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
@@ -1405,6 +1396,23 @@ public class RoomManager extends SpotSceneManager
             }
 
             // TODO: if playlistControl changed, remove all inappropriate songs?
+
+            // if decor was modified, we should mark new decor as used, and clear the old one
+            Decor decor = msoyScene.getDecor();
+            if (decor.itemId != up.decor.itemId) { // modified?
+                _itemMan.updateItemUsage(
+                    Item.DECOR, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
+                    decor.itemId, up.decor.itemId, new ComplainingListener<Void>(
+                        log, "Unable to update decor usage"));
+                if (decor.itemId != 0) {
+                    removeAndFlushMemories(decor.getIdent());
+                }
+                if (up.decor.itemId != 0) {
+                    resolveMemories(up.decor.getIdent(), doUpdateScene);
+                    return; // <--- Be careful, we're returning here...
+                }
+            }
+            // NOTE: nothing else after decor, since it may return;
 
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate) update;
@@ -1437,7 +1445,7 @@ public class RoomManager extends SpotSceneManager
                     log, "Unable to set furni item usage"));
 
             // and resolve any memories it may have, calling the scene updater when it's done
-            resolveMemories(Collections.singleton(data.getItemIdent()), doUpdateScene);
+            resolveMemories(data.getItemIdent(), doUpdateScene);
             // don't fall through here
             return;
         }
@@ -1553,6 +1561,14 @@ public class RoomManager extends SpotSceneManager
             _roomObj.commitTransaction();
         }
         return true;
+    }
+
+    /**
+     * Loads up the specified memories and places them into the room object.
+     */
+    protected void resolveMemories (ItemIdent ident, Runnable onSuccess)
+    {
+        resolveMemories(Collections.singleton(ident), onSuccess);
     }
 
     /**
