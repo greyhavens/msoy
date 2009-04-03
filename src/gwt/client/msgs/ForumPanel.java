@@ -35,8 +35,7 @@ public class ForumPanel extends TitledListPanel
      */
     public void displayGroupThreads (final int groupId)
     {
-        ThreadListPanel threads = new ThreadListPanel(this);
-        threads.displayGroupThreads(groupId, _fmodels);
+        ThreadListPanel threads = new GroupThreadListPanel(this, _fmodels, groupId);
         setContents(createHeader(groupId, _mmsgs.groupThreadListHeader(), threads), threads);
 
         // set up a callback to configure our page title when we learn this group's name
@@ -52,10 +51,9 @@ public class ForumPanel extends TitledListPanel
     /**
      * Display unread threads from all groups
      */
-    public void displayUnreadThreads (boolean refresh)
+    public void displayUnreadThreads ()
     {
-        ThreadListPanel threads = new ThreadListPanel(this);
-        threads.displayUnreadThreads(_fmodels, refresh);
+        ThreadListPanel threads = new UnreadThreadListPanel(this, _fmodels);
         setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), threads), threads);
     }
 

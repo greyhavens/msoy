@@ -87,7 +87,7 @@ public class GroupsPage extends Page
 
         } else if (page == Nav.UNREAD) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
-            fpanel.displayUnreadThreads(false);
+            fpanel.displayUnreadThreads();
             setContent(_msgs.myForumsTitle(), fpanel);
 
         } else if (page == Nav.FORUM) {
