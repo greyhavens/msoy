@@ -145,6 +145,14 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Return true if we're in a place in which memories will save.
+     */
+    public function memoriesWillSave () :Boolean
+    {
+        return true;
+    }
+
+    /**
      * Get the specified item's room memories in a map.
      */
     public function getMemories (ident :ItemIdent) :Object
@@ -384,7 +392,7 @@ public class RoomController extends SceneController
         // custom config
         if (avatar.hasCustomConfigPanel()) {
             menuItems.push({ label: Msgs.GENERAL.get("b.config_item", "avatar"),
-                callback: showConfigPopup, arg: avatar });
+                callback: showConfigPopup, arg: avatar, enabled: memoriesWillSave() });
         }
     }
 

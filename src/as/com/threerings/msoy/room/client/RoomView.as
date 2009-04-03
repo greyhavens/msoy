@@ -649,7 +649,8 @@ public class RoomView extends Sprite
                 sprite.hasCustomConfigPanel()) {
             var kind :String = Msgs.GENERAL.get(sprite.getDesc());
             menuItems.push(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.config_item", kind), _ctrl.showConfigPopup, sprite));
+                Msgs.GENERAL.get("b.config_item", kind), _ctrl.showConfigPopup, sprite, false,
+                _ctrl.memoriesWillSave()));
         }
     }
 

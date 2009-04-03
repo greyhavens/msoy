@@ -63,7 +63,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         SimplePanel preview = new SimplePanel();
         preview.setStyleName("ItemPreview");
 
-        preview.setWidget(ItemUtil.createViewer(_item, userOwnsItem(), detail.memories));
+        preview.setWidget(ItemUtil.createViewer(_item, inShop(), userOwnsItem(), detail.memories));
         bits.add(preview);
         if (_item.isRatable()) {
             HorizontalPanel row = new HorizontalPanel();
@@ -177,6 +177,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (!CShell.isGuest()) {
             row.add(new FavoriteIndicator(_item, _detail.memberItemInfo));
         }
+    }
+
+    /**
+     * Are we showing in the shop?
+     */
+    protected boolean inShop ()
+    {
+        return false;
     }
 
     /**

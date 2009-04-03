@@ -182,6 +182,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }));
     }
 
+    @Override
+    protected boolean inShop ()
+    {
+        return true;
+    }
+
     protected static Widget createSeparator ()
     {
         return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");

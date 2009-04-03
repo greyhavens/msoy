@@ -65,6 +65,8 @@ public class RoomStudioController extends RoomController
             }
         } catch (e :Error) {}
 
+        _inShop = (null != MsoyParameters.get()["inShop"]);
+
         initScene();
     }
 
@@ -74,6 +76,12 @@ public class RoomStudioController extends RoomController
         // move it one frame later
         throttle(ident, MethodQueue.callLater, _studioView.doEntityMove, [ ident, newLoc ]);
         return true;
+    }
+
+    // documentation inherited
+    override public function memoriesWillSave () :Boolean
+    {
+        return _inShop;
     }
 
     // documentation inherited
@@ -294,5 +302,7 @@ public class RoomStudioController extends RoomController
 
     /** Maps ItemIdent -> HashMap<String, ByteArray> */
     protected var _memories :HashMap;
+
+    protected var _inShop :Boolean = false;
 }
 }
