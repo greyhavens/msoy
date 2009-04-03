@@ -243,6 +243,7 @@ public class AVRGameBackend extends ControlBackend
         o["player_getRoomId_v1"] = player_getRoomId_v1;
         o["getAvatarMasterItemId_v1"] = getAvatarMasterItemId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
+        o["getPlayerName_v1"] = getPlayerName_v1;
         o["holdsTrophy_v1"] = holdsTrophy_v1;
         o["getPlayerItemPacks_v1"] = getPlayerItemPacks_v1;
         o["getPlayerLevelPacks_v1"] = getPlayerLevelPacks_v1;
@@ -435,6 +436,12 @@ public class AVRGameBackend extends ControlBackend
     {
         validatePlayerTargetId(targetId);
         return _wctx.getMyId();
+    }
+
+    // PlayerSubControl
+    protected function getPlayerName_v1 (targetId :int /* ignored */) :String
+    {
+        return _wctx.getMyName().toString();
     }
 
     // PlayerSubControl

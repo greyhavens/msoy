@@ -6,6 +6,7 @@ package com.threerings.msoy.avrg.client {
 import flash.utils.ByteArray;
 
 import com.threerings.util.Integer;
+import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
@@ -22,12 +23,7 @@ import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
-import com.threerings.msoy.avrg.client.BackendUtils;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
-
-import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
@@ -35,6 +31,13 @@ import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
+
+import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.avrg.client.BackendUtils;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
 
 import flash.utils.Dictionary;
 
@@ -243,6 +246,7 @@ public class ThaneAVRGameBackend
 
         // .getPlayer()
         o["player_getRoomId_v1"] = player_getRoomId_v1;
+        o["getPlayerName_v1"] = getPlayerName_v1;
         o["holdsTrophy_v1"] = holdsTrophy_v1;
         o["awardTrophy_v1"] = awardTrophy_v1;
         o["awardPrize_v1"] = awardPrize_v1;
@@ -464,9 +468,16 @@ public class ThaneAVRGameBackend
         return getPlayerRoomId(playerId);
     }
 
-    protected function deactivateGame_v1 (playerId :int) :void
+    protected function getPlayerName_v1 (playerId :int) :String
     {
-        _controller.deactivateGame(playerId);
+        var iterator :Iterator = _gameObj.occupantInfo.iterator();
+        while (iterator.hasNext()) {
+            var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
+            if (name != null && name.getMemberId() == playerId) {
+                return name.toString();
+            }
+        }
+        return null;
     }
 
     protected function holdsTrophy_v1 (targetId :int /* ignored */, ident :String) :Boolean
@@ -506,6 +517,11 @@ public class ThaneAVRGameBackend
     protected function getPlayerLevelPacks_v1 (targetId :int /* ignored */) :Array
     {
         return BackendUtils.getPlayerLevelPacks(_gameObj.gameData, targetId, playerOwnsData);
+    }
+
+    protected function deactivateGame_v1 (playerId :int) :void
+    {
+        _controller.deactivateGame(playerId);
     }
 
     protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :void
