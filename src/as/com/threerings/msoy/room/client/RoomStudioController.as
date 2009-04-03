@@ -111,6 +111,9 @@ public class RoomStudioController extends RoomController
     // handle control requests
     override public function requestControl (ident :ItemIdent) :void
     {
+        // immediately dispatch control without a delay: RoomObjectController acts like
+        // that if you request control for your own avatar, or if you already have control
+        // for the specified entity.
         dispatchEntityGotControl(ident);
     }
 
@@ -241,7 +244,7 @@ public class RoomStudioController extends RoomController
             return null;
         }
         var map :HashMap = getMemoryMap(spr.getItemIdent());
-        if (map == null || map.isEmpty()) {
+        if (map.isEmpty()) {
             return null;
         }
 
