@@ -89,6 +89,15 @@
 
   <target name="clean">
     <delete dir="${deploy.dir}/classes"/>
+    <delete>
+        <fileset dir="cell">
+          <include name="cell.conf"/>
+          <include name="cell.properties"/>
+          <include name="aggregator_classes"/>
+          <include name="msoy-hadoop-mr.jar"/>
+        </fileset>
+    </delete>
+    <delete dir="cell/tasks"/>
   </target>
 
   <target name="distclean">
