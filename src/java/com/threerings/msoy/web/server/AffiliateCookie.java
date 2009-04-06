@@ -7,11 +7,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.samskivert.util.StringUtil;
-
 import com.samskivert.servlet.util.CookieUtil;
-
-import com.threerings.msoy.web.gwt.TrackingCookieUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -28,8 +24,7 @@ public class AffiliateCookie
      */
     public static int get (HttpServletRequest req)
     {
-        String aff = TrackingCookieUtil.decode(
-            StringUtil.unhexlate(CookieUtil.getCookieValue(req, NAME)));
+        String aff = CookieUtil.getCookieValue(req, NAME);
         try {
             return (aff == null) ? 0 : Integer.parseInt(aff);
         } catch (Exception e) {
@@ -43,8 +38,7 @@ public class AffiliateCookie
      */
     public static void set (HttpServletResponse rsp, int affiliateId)
     {
-        Cookie cookie = new Cookie(
-            NAME, StringUtil.hexlate(TrackingCookieUtil.encode(String.valueOf(affiliateId))));
+        Cookie cookie = new Cookie(NAME, String.valueOf(affiliateId));
         cookie.setMaxAge(365 * 24 * 60 * 60); // 1 year
         cookie.setPath("/");
         rsp.addCookie(cookie);
