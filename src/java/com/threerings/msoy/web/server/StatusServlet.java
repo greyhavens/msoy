@@ -167,6 +167,10 @@ public class StatusServlet extends HttpServlet
             collectReportInfo(info, client, nodeobj, ReportManager.DEFAULT_TYPE);
             break;
 
+        case PROFILE:
+            collectReportInfo(info, client, nodeobj, ReportManager.PROFILE_TYPE);
+            break;
+
         case PANOPTICON:
             collectReportInfo(info, client, nodeobj, MsoyEventLogger.PANOPTICON_REPORT_TYPE);
             break;
@@ -216,7 +220,7 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, PANOPTICON
+        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, PROFILE, PANOPTICON
     };
 
     protected static class ServerInfo
