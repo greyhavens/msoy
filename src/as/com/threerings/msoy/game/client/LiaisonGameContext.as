@@ -39,9 +39,10 @@ public class LiaisonGameContext
 
         var gcreds :GameCredentials = new GameCredentials(null);
 
-        // inherit our visitor id from our world creds
+        // inherit our visitor and affiliate ids from our world creds
         var wcreds :WorldCredentials = (wctx.getClient().getCredentials() as WorldCredentials);
         gcreds.visitorId = wcreds.visitorId;
+        gcreds.affiliateId = wcreds.affiliateId;
 
         // if we have a session token in our world credentials use that
         if (wcreds.sessionToken != null) {
