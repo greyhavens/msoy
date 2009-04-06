@@ -29,11 +29,9 @@ public class AVRGameRepository extends DepotRepository
         super(context);
     }
 
-    public List<PlayerGameStateRecord> getPlayerGameState (int gameId, int memberId)
+    public List<AgentStateRecord> getAgentState (int gameId)
     {
-        return findAll(PlayerGameStateRecord.class, new Where(
-            PlayerGameStateRecord.GAME_ID, gameId,
-            PlayerGameStateRecord.MEMBER_ID, memberId));
+        return findAll(AgentStateRecord.class, new Where(AgentStateRecord.GAME_ID, gameId));
     }
 
     public List<GameStateRecord> getGameState (int gameId)
@@ -41,10 +39,30 @@ public class AVRGameRepository extends DepotRepository
         return findAll(GameStateRecord.class, new Where(GameStateRecord.GAME_ID, gameId));
     }
 
+    public List<PlayerGameStateRecord> getPlayerGameState (int gameId, int memberId)
+    {
+        return findAll(PlayerGameStateRecord.class, new Where(
+            PlayerGameStateRecord.GAME_ID, gameId,
+            PlayerGameStateRecord.MEMBER_ID, memberId));
+    }
+
     /**
      * Stores a particular memory record in the repository.
      */
     public void storeState (GameStateRecord record)
+    {
+        if (record.datumValue == null) {
+            delete(record);
+
+        } else {
+            store(record);
+        }
+    }
+
+    /**
+     * Stores a particular memory record in the repository.
+     */
+    public void storeAgentState (AgentStateRecord record)
     {
         if (record.datumValue == null) {
             delete(record);
@@ -67,16 +85,6 @@ public class AVRGameRepository extends DepotRepository
         }
     }
 
-    public void deleteProperty (int gameId, String key)
-    {
-        delete(GameStateRecord.class, GameStateRecord.getKey(gameId, key));
-    }
-
-    public void deletePlayerProperty (int gameId, int memberId, String key)
-    {
-        delete(PlayerGameStateRecord.class, PlayerGameStateRecord.getKey(gameId, memberId, key));
-    }
-
     /**
      * Deletes all data associated with the supplied members. This is done as a part of purging
      * member accounts.
@@ -91,6 +99,7 @@ public class AVRGameRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(GameStateRecord.class);
+        classes.add(AgentStateRecord.class);
         classes.add(PlayerGameStateRecord.class);
     }
 }

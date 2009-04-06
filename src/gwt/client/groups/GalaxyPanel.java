@@ -203,7 +203,7 @@ public class GalaxyPanel extends FlowPanel
             }
         }
 
-        // If the query has changed, instanciate a new data model for the group grid.
+        // If the query has changed, instantiate a new data model for the group grid.
         if (_query == null || !_query.equals(query)) {
             _query = query;
             _groupGrid.setModel(new GroupDataModel(), page);

@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: GameStateRecord.java 14274 2009-01-08 02:20:15Z mdb $
 
 package com.threerings.msoy.avrg.server.persist;
 
@@ -11,13 +11,13 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 /**
- * Maintains persistent global state for a given game.
+ * Maintains persistent server-private state for a given game.
  */
 @Entity
-public class GameStateRecord extends PersistentRecord
+public class AgentStateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    public static final Class<GameStateRecord> _R = GameStateRecord.class;
+    public static final Class<AgentStateRecord> _R = AgentStateRecord.class;
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp DATUM_KEY = colexp(_R, "datumKey");
     public static final ColumnExp DATUM_VALUE = colexp(_R, "datumValue");
@@ -39,14 +39,14 @@ public class GameStateRecord extends PersistentRecord
     public byte[] datumValue;
 
     /** Used when loading instances from the repository. */
-    public GameStateRecord ()
+    public AgentStateRecord ()
     {
     }
 
     /**
      * Creates a memory record from the supplied memory information.
      */
-    public GameStateRecord (int gameId, String key, byte[] data)
+    public AgentStateRecord (int gameId, String key, byte[] data)
     {
         this.gameId = gameId;
         this.datumKey = key;
@@ -55,13 +55,13 @@ public class GameStateRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link GameStateRecord}
+     * Create and return a primary {@link Key} to identify a {@link AgentStateRecord}
      * with the supplied key values.
      */
-    public static Key<GameStateRecord> getKey (int gameId, String datumKey)
+    public static Key<AgentStateRecord> getKey (int gameId, String datumKey)
     {
-        return new Key<GameStateRecord>(
-                GameStateRecord.class,
+        return new Key<AgentStateRecord>(
+                AgentStateRecord.class,
                 new ColumnExp[] { GAME_ID, DATUM_KEY },
                 new Comparable[] { gameId, datumKey });
     }

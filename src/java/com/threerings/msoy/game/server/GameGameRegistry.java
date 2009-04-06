@@ -99,8 +99,10 @@ import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.avrg.server.AVRProvider;
+import com.threerings.msoy.avrg.server.AgentPropertySpaceDelegate;
 import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.AgentStateRecord;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 
 import com.threerings.msoy.game.data.LobbyObject;
@@ -611,7 +613,8 @@ public class GameGameRegistry
             public void invokePersist () throws Exception {
                 _content = assembleGameContent(gameId);
                 if (_content.game != null) {
-                    _recs = _avrgRepo.getGameState(gameId);
+                    _agentStateRecs = _avrgRepo.getAgentState(gameId);
+                    _gameStateRecs = _avrgRepo.getGameState(gameId);
                 }
             }
 
@@ -669,23 +672,47 @@ public class GameGameRegistry
 
                 delegates.add(new AgentTraceDelegate(gameId, minLogInterval, maxLogInterval));
 
-                final Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                for (GameStateRecord record : _recs) {
-                    initialState.put(record.datumKey, record.datumValue);
+                // set up the global property space
+                final Map<String, byte[]> initialGameState = new HashMap<String, byte[]>();
+                for (GameStateRecord record : _gameStateRecs) {
+                    initialGameState.put(record.datumKey, record.datumValue);
                 }
                 delegates.add(new PropertySpaceDelegate() {
                     @Override
                     protected Map<String, byte[]> initialStateFromStore () {
-                        return initialState;
+                        return initialGameState;
                     }
                     @Override
                     protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
                         // the map should be quite safe to pass to another thread
                         _invoker.postUnit(new WriteOnlyUnit("shutdown") {
-                            @Override
-                            public void invokePersist () throws Exception {
+                            @Override public void invokePersist () throws Exception {
                                 for (Map.Entry<String, byte[]> entry : state.entrySet()) {
                                     _avrgRepo.storeState(new GameStateRecord(
+                                        gameId, entry.getKey(), entry.getValue()));
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // set up the agent-private property space
+                final Map<String, byte[]> initialAgentState = new HashMap<String, byte[]>();
+                for (AgentStateRecord record : _agentStateRecs) {
+                    initialAgentState.put(record.datumKey, record.datumValue);
+                }
+                delegates.add(new AgentPropertySpaceDelegate() {
+                    @Override
+                    protected Map<String, byte[]> initialStateFromStore () {
+                        return initialAgentState;
+                    }
+                    @Override
+                    protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
+                        // the map should be quite safe to pass to another thread
+                        _invoker.postUnit(new WriteOnlyUnit("shutdown") {
+                            @Override public void invokePersist () throws Exception {
+                                for (Map.Entry<String, byte[]> entry : state.entrySet()) {
+                                    _avrgRepo.storeAgentState(new AgentStateRecord(
                                         gameId, entry.getKey(), entry.getValue()));
                                 }
                             }
@@ -733,7 +760,8 @@ public class GameGameRegistry
             }
 
             protected GameContent _content;
-            protected List<GameStateRecord> _recs;
+            protected List<AgentStateRecord> _agentStateRecs;
+            protected List<GameStateRecord> _gameStateRecs;
         });
     }
 

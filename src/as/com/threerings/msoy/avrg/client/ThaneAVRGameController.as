@@ -66,7 +66,7 @@ public class ThaneAVRGameController
         _gameAgentObj = gameAgentObj;
 
         // create the backend
-        _backend = new ThaneAVRGameBackend(ctx, gameObj, this);
+        _backend = new ThaneAVRGameBackend(ctx, gameObj, gameAgentObj, this);
 
         _playerSubs = new SafeObjectManager(
             _ctx.getClient().getDObjectManager(), log, gotPlayerObject);

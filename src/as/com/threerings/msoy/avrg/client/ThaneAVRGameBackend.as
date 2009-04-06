@@ -35,6 +35,7 @@ import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.avrg.client.BackendUtils;
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
@@ -52,10 +53,12 @@ public class ThaneAVRGameBackend
      * Constructs a new base avr game backend.
      */
     public function ThaneAVRGameBackend (
-        ctx :MsoyBureauContext, gameObj :AVRGameObject, controller :ThaneAVRGameController)
+        ctx :MsoyBureauContext, gameObj :AVRGameObject, gameAgentObj: AVRGameAgentObject,
+        controller :ThaneAVRGameController)
     {
         _ctx = ctx;
         _gameObj = gameObj;
+        _gameAgentObj = gameAgentObj;
         _controller = controller;
     }
 
@@ -216,6 +219,10 @@ public class ThaneAVRGameBackend
         o["startTransaction"] = startTransaction_v1;
         o["commitTransaction"] = commitTransaction_v1;
 
+        // .props
+        o["agent_getGameData_v1"] = agent_getGameData_v1;
+        o["agent_setProperty_v1"] = agent_setProperty_v1;
+
         // .game
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
         o["game_sendMessage_v1"] = game_sendMessage_v1;
@@ -319,6 +326,26 @@ public class ThaneAVRGameBackend
     {
         BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.ITEM_DATA,
                                   onLoaded, onFailure);
+    }
+
+    // -------------------- .props --------------------
+    protected function agent_getGameData_v1 (targetId :int) :Object
+    {
+        if (targetId != 0) {
+            throw new UserError("Internal error: unexpected target id");
+        }
+        return _gameAgentObj.getUserProps();
+    }
+
+    protected function agent_setProperty_v1 (
+        targetId :int, name :String, value :Object, key :Object, isArray :Boolean,
+        immediate :Boolean) :void
+    {
+        if (targetId != 0) {
+            throw new UserError("Internal error: unexpected target id");
+        }
+        BackendUtils.encodeAndSet(
+            ensureGameClient(), _gameAgentObj, name, value, key, isArray, immediate);
     }
 
     // -------------------- .game.props --------------------
@@ -751,6 +778,7 @@ public class ThaneAVRGameBackend
     protected var _ctx :MsoyBureauContext; // this is for the game server
     protected var _controller :ThaneAVRGameController;
     protected var _gameObj :AVRGameObject;
+    protected var _gameAgentObj :AVRGameAgentObject;
 
     protected var _offline :int = 0;
 

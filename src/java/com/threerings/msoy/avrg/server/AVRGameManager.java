@@ -147,7 +147,11 @@ public class AVRGameManager extends PlaceManager
 
         } else if (delegate instanceof AgentTraceDelegate) {
             _traceDelegate = (AgentTraceDelegate) delegate;
+        
+        } else if (delegate instanceof AgentPropertySpaceDelegate) {
+            _agentPropertySpaceDelegate = (AgentPropertySpaceDelegate) delegate;
         }
+        
     }
 
     // from PlayManager
@@ -230,6 +234,7 @@ public class AVRGameManager extends PlaceManager
                     return ((PlayerObject)caller).getMemberId();
                 }
             })));
+        
         _gameObj.setPropertiesService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(
             new PropertySpaceHandler(_gameObj) {
                 @Override protected void validateUser (ClientObject caller)
@@ -239,7 +244,7 @@ public class AVRGameManager extends PlaceManager
                     }
                 }
             })));
-
+        
         _sceneCheck = new Interval(_omgr) {
             public void expired () {
                 checkScenes();
@@ -267,6 +272,17 @@ public class AVRGameManager extends PlaceManager
 
         // else ask the bureau to start it and wait for its initialization
         _gameAgentObj.gameOid = _gameObj.getOid();
+        
+        _gameAgentObj.setPropertiesService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(
+            new PropertySpaceHandler(_gameAgentObj) {
+                @Override protected void validateUser (ClientObject caller)
+                    throws InvocationException {
+                    if (!isAgent(caller)) {
+                        throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+                    }
+                }
+            })));
+        
         _breg.startAgent(_gameAgentObj);
 
         // inform the observer if the agent dies and we didn't kill it
@@ -455,6 +471,7 @@ public class AVRGameManager extends PlaceManager
         log.debug("AVRG Agent ready", "clientOid", caller.getOid(),
                   "agentOid", _gameAgentObj.getOid());
         _agentStarted = true;
+        _agentPropertySpaceDelegate.agentStarted(_gameAgentObj);
         _lifecycleObserver.avrGameReady(this);
     }
 
@@ -1019,6 +1036,8 @@ public class AVRGameManager extends PlaceManager
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;
+    
+    protected AgentPropertySpaceDelegate _agentPropertySpaceDelegate;
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
