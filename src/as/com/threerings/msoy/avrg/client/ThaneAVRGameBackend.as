@@ -299,7 +299,7 @@ public class ThaneAVRGameBackend
 
     protected function game_getOccupantName_v1 (playerId :int) :String
     {
-        return BackendUtils.getOccupantName(_gameObj, playerId;
+        return BackendUtils.getOccupantName(_gameObj, playerId);
     }
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
