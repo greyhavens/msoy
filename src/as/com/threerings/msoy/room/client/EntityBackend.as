@@ -9,6 +9,7 @@ import flash.media.Camera;
 import flash.media.Microphone;
 
 import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.data.MsoyLocation;
 
 import com.threerings.util.Log;
@@ -27,6 +28,7 @@ public class EntityBackend extends ControlBackend
         _sprite = sprite;
     }
 
+    // from ControlBackend
     override public function shutdown () :void
     {
         super.shutdown();
@@ -57,6 +59,7 @@ public class EntityBackend extends ControlBackend
         o["canEditRoom_v1"] = canEditRoom_v1;
         o["showPopup_v1"] = showPopup_v1;
         o["clearPopup_v1"] = clearPopup_v1;
+        o["showPage_v1"] = showPage_v1;
         o["getMemories_v1"] = getMemories_v1;
         o["getCamera_v1"] = getCamera_v1;
         o["getMicrophone_v1"] = getMicrophone_v1;
@@ -228,6 +231,22 @@ public class EntityBackend extends ControlBackend
         if (_sprite != null) {
             (_sprite.parent as RoomView).getRoomController().clearEntityPopup(_sprite);
         }
+    }
+
+    protected function showPage_v1 (token :String) :Boolean
+    {
+        // TODO: only allow a page to be shown if we're processing a mouse click
+        if (_ctx is WorldContext) {
+            var didx :int = token.indexOf("-");
+            if (didx == -1) {
+                (_ctx as WorldContext).getWorldController().displayPage(token, "");
+            } else {
+                (_ctx as WorldContext).getWorldController().displayPage(
+                    token.substring(0, didx), token.substring(didx+1));
+            }
+            return true;
+        }
+        return false; // shouldn't ever happen
     }
 
     // Deprecated on 2007-03-12
