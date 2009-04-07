@@ -12,6 +12,9 @@ import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.BodyManager;
+import com.threerings.crowd.server.PlaceRegistry;
+
+import com.threerings.whirled.server.SceneSender;
 
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
@@ -47,7 +50,10 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.room.server.RoomManager;
 
 /**
  * Contains various member node actions.
@@ -258,6 +264,16 @@ public class MemberNodeActions
     public static void removeFollower (int leaderId, int followerId)
     {
         _peerMan.invokeNodeAction(new RemoveFollowerAction(leaderId, followerId));
+    }
+
+    /**
+     * Forces the specified member to move to the specified scene. This simply sends a notification
+     * to the client to instruct it to move to the specified scene. The scene move may still fail
+     * for all the standard reasons.
+     */
+    public static void forcedMove (int memberId, int sceneId, MsoyLocation exit)
+    {
+        _peerMan.invokeNodeAction(new ForcedMoveAction(memberId, sceneId, exit));
     }
 
     protected static class InfoChanged extends MemberNodeAction
@@ -727,6 +743,38 @@ public class MemberNodeActions
         @Inject protected transient PartyRegistry _partyReg;
 
         protected PartySummary _party;
+    }
+
+    protected static class ForcedMoveAction extends MemberNodeAction
+    {
+        public ForcedMoveAction () {}
+
+        public ForcedMoveAction (int memberId, int sceneId, MsoyLocation exit)
+        {
+            super(memberId);
+            _sceneId = sceneId;
+            _exit = exit;
+        }
+
+        @Override protected void execute (MemberObject memObj) {
+            // if we have a desired exit location, look up the room manager and fake a
+            // willTraversePortal call with a fake portal at our exit location
+            if (_exit != null) {
+                RoomManager rmgr = (RoomManager)_plreg.getPlaceManager(memObj.getPlaceOid());
+                if (rmgr != null) {
+                    MsoyPortal portal = new MsoyPortal();
+                    portal.loc = _exit;
+                    rmgr.willTraversePortal(memObj, portal);
+                }
+            }
+            // now send the notification to the client to switch scenes
+            SceneSender.forcedMove(memObj, _sceneId);
+        }
+
+        protected int _sceneId;
+        protected MsoyLocation _exit;
+
+        @Inject protected transient PlaceRegistry _plreg;
     }
 
     protected static MsoyPeerManager _peerMan;

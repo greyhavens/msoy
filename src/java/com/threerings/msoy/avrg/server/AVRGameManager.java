@@ -60,6 +60,8 @@ import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
 
+import com.threerings.msoy.server.MemberNodeActions;
+
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
@@ -77,6 +79,8 @@ import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.TrophyDelegate;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
+import com.threerings.msoy.bureau.server.MsoyBureauClient;
+
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -87,7 +91,6 @@ import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import static com.threerings.msoy.Log.log;
 
@@ -460,7 +463,11 @@ public class AVRGameManager extends PlaceManager
                                   ConfirmListener listener)
         throws InvocationException
     {
-        // TODO
+        if (!isAgent(caller)) {
+            log.warning("Call to movePlayerToRoom() from non-agent", "caller", caller.who());
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+        MemberNodeActions.forcedMove(playerId, roomId, exit);
     }
 
     // from AVRGameAgentProvider
