@@ -11,8 +11,8 @@ import com.threerings.whirled.spot.data.Location;
 
 /**
  * Body location and orientation (left hand coordinates, with origin at left, bottom, near walls).
- * This class is equivalent to its Java class except that the Java superclass
- * has been incorporated.
+ * This class is equivalent to its Java class except that the Java superclass has been
+ * incorporated.
  */
 public class MsoyLocation
     implements Location // Location extends Cloneable, Streamable, Hashable
@@ -29,8 +29,7 @@ public class MsoyLocation
     /** The body's orientation (interpreted by the display system). */
     public var orient :int;
 
-    public function MsoyLocation (
-            x :Number = 0, y :Number = 0, z :Number = 0, orient :int = 0)
+    public function MsoyLocation (x :Number = 0, y :Number = 0, z :Number = 0, orient :int = 0)
     {
         this.x = x;
         this.y = y;
@@ -73,7 +72,16 @@ public class MsoyLocation
         return Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
 
-    // documentation inherited from interface Location
+    /**
+     * Locations are equivalent if they have the same coordinates and orientation.
+     */
+    public function equivalent (oloc :Location) :Boolean
+    {
+        return equals(oloc) &&
+            (orient == (oloc as MsoyLocation).orient);
+    }
+
+    // from interface Location
     public function getOpposite () :Location
     {
         var l :MsoyLocation = (clone() as MsoyLocation);
@@ -82,7 +90,7 @@ public class MsoyLocation
         return l;
     }
 
-    // documentation inherited from interface Streamable
+    // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeFloat(x);
@@ -91,7 +99,7 @@ public class MsoyLocation
         out.writeShort(orient);
     }
 
-    // documentation inherited from interface Streamable
+    // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
         x = ins.readFloat();
@@ -100,7 +108,7 @@ public class MsoyLocation
         orient = ins.readShort();
     }
 
-    // documentation inherited from interface Hashable
+    // from interface Hashable
     public function equals (other :Object) :Boolean
     {
         if (other is MsoyLocation) {
@@ -111,32 +119,22 @@ public class MsoyLocation
         return false;
     }
 
-    // documentation inherited from interface Hashable
+    // from interface Hashable
     public function hashCode () :int
     {
         return int(x) ^ int(y) ^ int(z);
     }
 
-    /**
-     * Locations are equivalent if they have the same coordinates and
-     * orientation.
-     */
-    public function equivalent (oloc :Location) :Boolean
-    {
-        return equals(oloc) &&
-            (orient == (oloc as MsoyLocation).orient);
-    }
-
-    // documentation inherited from interface Location
+    // from interface Location
     public function clone () :Object
     {
         return new MsoyLocation(x, y, z, orient);
     }
 
+    // from Object
     public function toString () :String
     {
-        return "[MsoyLocation(" + x + ", " + y + ", " + z + ") at " +
-            orient + " degrees]";
+        return "[MsoyLocation(" + x + ", " + y + ", " + z + ") at " + orient + " degrees]";
     }
 }
 }
