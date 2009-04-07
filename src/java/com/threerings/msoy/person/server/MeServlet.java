@@ -142,6 +142,7 @@ public class MeServlet extends MsoyServiceServlet
         }
         groupIds.add(ServerConfig.getAnnounceGroupId());
         data.updatedThreads = _forumRepo.countUnreadThreads(mrec.memberId, groupIds);
+        data.unreadFriendPosts = _forumRepo.countUnreadPosts(mrec.memberId, friendIds);
 
         if (PROFILING_ENABLED) {
             _profiler.exit(null);

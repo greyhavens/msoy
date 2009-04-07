@@ -58,7 +58,12 @@ public class MyWhirledData
     public List<FeedCategory> feed;
 
     /**
-     * The number of threads with posts that the member has not read.
+     * The number of threads in this member's groups with unread posts.
      */
     public int updatedThreads;
+
+    /**
+     * The number of threads with unread posts from this member's friends.
+     */
+    public int unreadFriendPosts;
 }
