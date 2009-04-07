@@ -505,6 +505,15 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // PlayerSubControl
+    protected function player_moveToRoom_v1 (
+        targetId :int /* ignored */, roomId :int, exitCoords :Array) :void
+    {
+        validatePlayerTargetId(targetId);
+        // TODO: how to handle exit coords?
+        _wctx.getWorldController().handleGoScene(roomId);
+    }
+
+    // PlayerSubControl
     protected function getAvatarMasterItemId_v1 (targetId :int) :int
     {
         validatePlayerTargetId(targetId);

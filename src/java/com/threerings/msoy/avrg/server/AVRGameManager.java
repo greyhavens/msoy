@@ -21,7 +21,6 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMap.IntEntry;
 
-import com.threerings.parlor.server.PlayManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -36,7 +35,6 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
-import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.CrowdObjectAccess;
@@ -44,31 +42,11 @@ import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.server.AgentTraceDelegate;
-import com.threerings.msoy.game.server.ContentOwnershipUnit;
-import com.threerings.msoy.game.server.GameWatcherManager.Observer;
-import com.threerings.msoy.game.server.GameWatcherManager;
-import com.threerings.msoy.game.server.PlayerLocator;
-import com.threerings.msoy.game.server.PlayerNodeActions;
-import com.threerings.msoy.game.server.TrophyDelegate;
-import com.threerings.msoy.game.server.persist.TrophyRepository;
-import com.threerings.msoy.room.server.RoomManager;
-
-import com.threerings.msoy.avrg.client.AVRService;
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameConfig;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
-import com.threerings.msoy.avrg.data.SceneInfo;
-import com.threerings.msoy.avrg.server.AVRGameDispatcher;
-import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-import com.threerings.msoy.bureau.server.MsoyBureauClient;
+import com.threerings.bureau.server.BureauRegistry;
+import com.threerings.parlor.server.PlayManager;
 
 import com.whirled.bureau.data.BureauTypes;
+
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
@@ -84,6 +62,32 @@ import com.whirled.game.server.WhirledGameMessageHandler;
 
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
+
+import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.server.RoomManager;
+
+import com.threerings.msoy.game.data.MsoyGameDefinition;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.AgentTraceDelegate;
+import com.threerings.msoy.game.server.ContentOwnershipUnit;
+import com.threerings.msoy.game.server.GameWatcherManager.Observer;
+import com.threerings.msoy.game.server.GameWatcherManager;
+import com.threerings.msoy.game.server.PlayerLocator;
+import com.threerings.msoy.game.server.PlayerNodeActions;
+import com.threerings.msoy.game.server.TrophyDelegate;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
+
+import com.threerings.msoy.avrg.client.AVRService;
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameConfig;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
+import com.threerings.msoy.avrg.data.SceneInfo;
+import com.threerings.msoy.avrg.server.AVRGameDispatcher;
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import static com.threerings.msoy.Log.log;
 
@@ -325,8 +329,7 @@ public class AVRGameManager extends PlaceManager
      * Called by the client to report its idleness state changing. We do not accumulate
      * play time for idle players.
      */
-    public void setIdle (ClientObject caller, boolean nowIdle,
-                         InvocationService.ConfirmListener listener)
+    public void setIdle (ClientObject caller, boolean nowIdle, ConfirmListener listener)
         throws InvocationException
     {
         _questDelegate.setIdle(caller, nowIdle, listener);
@@ -334,7 +337,7 @@ public class AVRGameManager extends PlaceManager
 
     // from AVRGameProvider
     public void completeTask (ClientObject caller, final int playerId, final String questId,
-                              final float payoutLevel, InvocationService.ConfirmListener listener)
+                              final float payoutLevel, ConfirmListener listener)
         throws InvocationException
     {
         PlayerObject player;
@@ -409,6 +412,7 @@ public class AVRGameManager extends PlaceManager
         });
     }
 
+    // from AVRGameProvider
     public void setOfflinePlayerProperty (
         ClientObject caller, int playerId, String propName, Object data, Integer key,
         boolean isArray, ConfirmListener listener)
@@ -449,6 +453,14 @@ public class AVRGameManager extends PlaceManager
             log.warning("Failed to apply offline property set", "gameId", _gameId,
                         "playerId", playerId, "name", propName, pse);
         }
+    }
+
+    // from AVRGameProvider
+    public void movePlayerToRoom (ClientObject caller, int playerId, int roomId, MsoyLocation exit,
+                                  ConfirmListener listener)
+        throws InvocationException
+    {
+        // TODO
     }
 
     // from AVRGameAgentProvider

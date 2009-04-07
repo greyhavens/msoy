@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.client {
 
+import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -19,6 +20,9 @@ public interface AVRGameService extends InvocationService
 
     // from Java interface AVRGameService
     function loadOfflinePlayer (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+
+    // from Java interface AVRGameService
+    function movePlayerToRoom (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
     function setIdle (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void;

@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.server;
 
 import com.threerings.msoy.avrg.client.AVRGameService;
+import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -24,6 +25,12 @@ public interface AVRGameProvider extends InvocationProvider
      * Handles a {@link AVRGameService#loadOfflinePlayer} request.
      */
     void loadOfflinePlayer (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link AVRGameService#movePlayerToRoom} request.
+     */
+    void movePlayerToRoom (ClientObject caller, int arg1, int arg2, MsoyLocation arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

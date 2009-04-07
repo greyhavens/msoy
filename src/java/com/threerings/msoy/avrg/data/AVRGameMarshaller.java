@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.data;
 
 import com.threerings.msoy.avrg.client.AVRGameService;
+import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -44,8 +45,21 @@ public class AVRGameMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #movePlayerToRoom} requests. */
+    public static final int MOVE_PLAYER_TO_ROOM = 3;
+
+    // from interface AVRGameService
+    public void movePlayerToRoom (Client arg1, int arg2, int arg3, MsoyLocation arg4, InvocationService.ConfirmListener arg5)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, MOVE_PLAYER_TO_ROOM, new Object[] {
+            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+        });
+    }
+
     /** The method id used to dispatch {@link #setIdle} requests. */
-    public static final int SET_IDLE = 3;
+    public static final int SET_IDLE = 4;
 
     // from interface AVRGameService
     public void setIdle (Client arg1, boolean arg2, InvocationService.ConfirmListener arg3)
@@ -58,7 +72,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setOfflinePlayerProperty} requests. */
-    public static final int SET_OFFLINE_PLAYER_PROPERTY = 4;
+    public static final int SET_OFFLINE_PLAYER_PROPERTY = 5;
 
     // from interface AVRGameService
     public void setOfflinePlayerProperty (Client arg1, int arg2, String arg3, Object arg4, Integer arg5, boolean arg6, InvocationService.ConfirmListener arg7)

@@ -525,6 +525,17 @@ public class ThaneAVRGameBackend
         return getPlayerRoomId(playerId);
     }
 
+    protected function player_moveToRoom_v1 (playerId :int, roomId :int, exitCoords :Array) :void
+    {
+        var exit :MsoyLocation = null;
+        if (exitCoords != null) {
+            exit = new MsoyLocation(exitCoords[0], exitCoords[1], exitCoords[2]);
+        }
+        _gameObj.avrgService.movePlayerToRoom(
+            _ctx.getClient(), playerId, roomId, exit, BackendUtils.loggingConfirmListener(
+                "movePlayerToRoom", null, _controller.outputToUserCode));
+    }
+
     protected function getPlayerName_v1 (playerId :int) :String
     {
         var iterator :Iterator = _gameObj.occupantInfo.iterator();

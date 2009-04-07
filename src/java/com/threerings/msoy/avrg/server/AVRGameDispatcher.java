@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.server;
 
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
+import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
@@ -44,6 +45,12 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         case AVRGameMarshaller.LOAD_OFFLINE_PLAYER:
             ((AVRGameProvider)provider).loadOfflinePlayer(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
+        case AVRGameMarshaller.MOVE_PLAYER_TO_ROOM:
+            ((AVRGameProvider)provider).movePlayerToRoom(
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (MsoyLocation)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 

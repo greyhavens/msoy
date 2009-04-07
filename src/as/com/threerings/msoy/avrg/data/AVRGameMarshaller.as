@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.data {
 
 import com.threerings.msoy.avrg.client.AVRGameService;
+import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -50,8 +51,21 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>movePlayerToRoom</code> requests. */
+    public static const MOVE_PLAYER_TO_ROOM :int = 3;
+
+    // from interface AVRGameService
+    public function movePlayerToRoom (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :InvocationService_ConfirmListener) :void
+    {
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, MOVE_PLAYER_TO_ROOM, [
+            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
+        ]);
+    }
+
     /** The method id used to dispatch <code>setIdle</code> requests. */
-    public static const SET_IDLE :int = 3;
+    public static const SET_IDLE :int = 4;
 
     // from interface AVRGameService
     public function setIdle (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
@@ -64,7 +78,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setOfflinePlayerProperty</code> requests. */
-    public static const SET_OFFLINE_PLAYER_PROPERTY :int = 4;
+    public static const SET_OFFLINE_PLAYER_PROPERTY :int = 5;
 
     // from interface AVRGameService
     public function setOfflinePlayerProperty (arg1 :Client, arg2 :int, arg3 :String, arg4 :Object, arg5 :Integer, arg6 :Boolean, arg7 :InvocationService_ConfirmListener) :void
