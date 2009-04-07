@@ -23,12 +23,18 @@ import com.threerings.msoy.web.gwt.Pages;
 /**
  * Overrides and adds functionality to the threads list for displaying group threads.
  */
-public class GroupThreadListPanel extends ThreadListPanel
+public class GroupThreadListPanel extends ThreadListPanel<ForumThread>
 {
     public GroupThreadListPanel (ForumPanel parent, ForumModels fmodels, int groupId)
     {
         super(parent, fmodels, new Object[] {"f", groupId});
         _groupId = groupId;
+    }
+
+    @Override // from ThreadListPanel
+    protected ForumThread getThread (ForumThread item)
+    {
+        return item;
     }
 
     @Override // from ThreadListPanel

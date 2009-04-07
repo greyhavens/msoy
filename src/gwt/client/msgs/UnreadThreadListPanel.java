@@ -28,11 +28,17 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 /**
  * Overrides and adds functionality to the threads list for displaying unread threads.
  */
-public class UnreadThreadListPanel extends ThreadListPanel
+public class UnreadThreadListPanel extends ThreadListPanel<ForumThread>
 {
     public UnreadThreadListPanel (ForumPanel parent, ForumModels fmodels)
     {
         super(parent, fmodels, new String[] {"unread"});
+    }
+
+    @Override // from ThreadListPanel
+    protected ForumThread getThread (ForumThread item)
+    {
+        return item;
     }
 
     @Override // from ThreadListPanel

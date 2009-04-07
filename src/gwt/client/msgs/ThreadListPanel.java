@@ -34,9 +34,12 @@ import client.util.ServiceUtil;
 
 /**
  * Displays a list of threads. Subclasses determine the specifics of accessing the threads on the
- * server, performing searches and display customizations.
+ * server, performing searches and display customizations. In addition, this class does not assume
+ * that the server will be returning {@link ForumThread} instances directly, but potentially a list
+ * of objects that contain <code>ForumThread</code> instances.
+ * @param <T> the type of item we are listing; {@link ForumThread} should be derivable from this
  */
-public abstract class ThreadListPanel extends PagedGrid<ForumThread>
+public abstract class ThreadListPanel<T> extends PagedGrid<T>
     implements SearchBox.Listener
 {
     /**
@@ -79,15 +82,22 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     }
 
     /**
-     * Get the "native" model for the thread list.
+     * Converts one of our result list items into a forum thread. This will normally involve
+     * returning the item itself or a member of the item.
      */
-    protected abstract DataModel<ForumThread> getThreadListModel();
+    protected abstract ForumThread getThread (T item);
 
     /**
-     * Perform a search on the contents of this thread list using the current value of
+     * Gets the "native" model for the thread list, i.e. for when we are not viewing the results of
+     * a search.
+     */
+    protected abstract DataModel<T> getThreadListModel();
+
+    /**
+     * Performs a search on the contents of this thread list using the current value of
      * {@link #_query}. This will normally involve a call to a model from {@link ForumModels}.
      */
-    protected abstract void doSearch (AsyncCallback<List<ForumThread>> callback);
+    protected abstract void doSearch (AsyncCallback<List<T>> callback);
 
     /**
      * Same as {@link #setPage(String, int)}, but optionally forces the model to be reset to that
@@ -104,9 +114,9 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
                 setModel(getThreadListModel(), page);
 
             } else {
-                doSearch(new InfoCallback<List<ForumThread>>() {
-                    public void onSuccess (List<ForumThread> threads) {
-                        setModel(new SimpleDataModel<ForumThread>(threads), 0);
+                doSearch(new InfoCallback<List<T>>() {
+                    public void onSuccess (List<T> threads) {
+                        setModel(new SimpleDataModel<T>(threads), 0);
                     }
                 });
             }
@@ -132,9 +142,9 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (ForumThread thread)
+    protected Widget createWidget (T item)
     {
-        return createThreadSummaryPanel(thread);
+        return createThreadSummaryPanel(getThread(item));
     }
 
     @Override // from PagedGrid
