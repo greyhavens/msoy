@@ -144,7 +144,7 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
     @Override // from PagedGrid
     protected Widget createWidget (T item)
     {
-        return createThreadSummaryPanel(getThread(item));
+        return createThreadSummaryPanel(item);
     }
 
     @Override // from PagedGrid
@@ -173,21 +173,23 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
     }
 
     /**
-     * Creates a thread summary line for a thread. Subclasses can override to put in more widgets.
+     * Creates a thread summary line for a thread item. Subclasses can override to put in more
+     * widgets.
      */
-    protected ThreadSummaryPanel createThreadSummaryPanel (ForumThread thread)
+    protected ThreadSummaryPanel createThreadSummaryPanel (T item)
     {
-        return new ThreadSummaryPanel(thread);
+        return new ThreadSummaryPanel(item);
     }
 
     /**
-     * Summary panel for a single thread.
+     * Summary panel for a single thread item.
      */
     protected class ThreadSummaryPanel extends SmartTable
     {
-        public ThreadSummaryPanel (ForumThread thread)
+        public ThreadSummaryPanel (T item)
         {
             super("threadSummaryPanel", 0, 0);
+            ForumThread thread = getThread(item);
 
             int col = 0;
             Image statusImage = new Image();
