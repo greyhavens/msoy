@@ -75,7 +75,7 @@ public class ForumServlet extends MsoyServiceServlet
     implements ForumService
 {
     // from interface ForumService
-    public ThreadResult loadUnreadThreads (int maximum)
+    public List<ForumThread> loadUnreadThreads (int maximum)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -100,16 +100,7 @@ public class ForumServlet extends MsoyServiceServlet
             thrrecs = _forumRepo.loadUnreadThreads(mrec.memberId, groups.keySet(), maximum);
         }
 
-        // load up additional fiddly bits and create a result record
-        ThreadResult result = new ThreadResult();
-        result.threads = _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
-
-        // we cheat on the total count here with the idea that the client basically just asks
-        // for "all" of the unread threads and we give them all as long as all is not
-        // ridiculously many
-        result.threadCount = result.threads.size();
-
-        return result;
+        return _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
     }
 
     // from interface ForumService
@@ -131,7 +122,7 @@ public class ForumServlet extends MsoyServiceServlet
         // load up additional fiddly bits and create a result record
         ThreadResult result = new ThreadResult();
         Map<Integer,GroupName> gmap = Collections.singletonMap(group.groupId, group.getName());
-        result.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, true, false);
+        result.page = _forumLogic.resolveThreads(mrec, thrrecs, gmap, true, false);
 
         // fill in this caller's new thread starting privileges
         result.canStartThread = (mrec != null) &&
@@ -144,8 +135,8 @@ public class ForumServlet extends MsoyServiceServlet
 
         // fill in our total thread count if needed
         if (needTotalCount) {
-            result.threadCount = (result.threads.size() < count && offset == 0) ?
-                result.threads.size() : _forumRepo.loadThreadCount(groupId);
+            result.total = (result.page.size() < count && offset == 0) ?
+                result.page.size() : _forumRepo.loadThreadCount(groupId);
         }
 
         return result;

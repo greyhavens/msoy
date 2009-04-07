@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -16,11 +17,8 @@ import com.threerings.msoy.web.gwt.ServiceException;
 public interface ForumService extends RemoteService
 {
     /** Provides results for {@link #loadThreads}. */
-    public static class ThreadResult implements IsSerializable
+    public static class ThreadResult extends PagedResult<ForumThread>
     {
-        /** The total count of threads. */
-        public int threadCount;
-
         /** Whether or not the caller can start a thread in this group. */
         public boolean canStartThread;
 
@@ -29,9 +27,6 @@ public interface ForumService extends RemoteService
 
         /** True if this is the global announcements forum, false otherwise. */
         public boolean isAnnounce;
-
-        /** The range of threads that were requested. */
-        public List<ForumThread> threads;
     }
 
     /** Provides results for {@link #loadMessages}. */
@@ -58,7 +53,7 @@ public interface ForumService extends RemoteService
      * which there are messages not yet read by same. The threads are sorted from most to least
      * recently active.
      */
-    ThreadResult loadUnreadThreads (int maximum)
+    List<ForumThread> loadUnreadThreads (int maximum)
         throws ServiceException;
 
     /**

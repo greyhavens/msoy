@@ -15,7 +15,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#loadUnreadThreads}.
      */
-    void loadUnreadThreads (int maximum, AsyncCallback<ForumService.ThreadResult> callback);
+    void loadUnreadThreads (int maximum, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The asynchronous version of {@link ForumService#loadThreads}.

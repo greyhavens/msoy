@@ -17,8 +17,8 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.fora.gwt.ForumService.ThreadResult;
 
+import client.util.PagedServiceDataModel;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -29,7 +29,7 @@ public class ForumModels
 {
     /** A data model that provides a particular group's threads. */
     public static class GroupThreads
-        extends ServiceBackedDataModel<ForumThread, ForumService.ThreadResult>
+        extends PagedServiceDataModel<ForumThread, ForumService.ThreadResult>
     {
         public GroupThreads (int groupId) {
             _groupId = groupId;
@@ -117,12 +117,12 @@ public class ForumModels
             _isManager = result.isManager;
             _isAnnounce = result.isAnnounce;
             // note all of our threads so that we can provide them later to non-PagedGrid consumers
-            for (ForumThread thread : result.threads) {
+            for (ForumThread thread : result.page) {
                 mapThread(thread);
             }
             // grab our real group name from one of our thread records
-            if (result.threads.size() > 0) {
-                gotGroupName(result.threads.get(0).group);
+            if (result.page.size() > 0) {
+                gotGroupName(result.page.get(0).group);
             }
         }
 
@@ -131,16 +131,6 @@ public class ForumModels
             AsyncCallback<ForumService.ThreadResult> callback)
         {
             _forumsvc.loadThreads(_groupId, start, count, needCount, callback);
-        }
-
-        @Override // from ServiceBackedDataModel
-        protected int getCount (ForumService.ThreadResult result) {
-            return result.threadCount;
-        }
-
-        @Override // from ServiceBackedDataModel
-        protected List<ForumThread> getRows (ThreadResult result) {
-            return result.threads;
         }
 
         protected void mapThread (ForumThread thread) {
@@ -201,10 +191,10 @@ public class ForumModels
             }
 
             _forumsvc.loadUnreadThreads(MAX_UNREAD_THREADS,
-                                        new AsyncCallback<ForumService.ThreadResult>() {
-                public void onSuccess (ForumService.ThreadResult result) {
-                    _items = result.threads;
-                    for (ForumThread thread : result.threads) {
+                                        new AsyncCallback<List<ForumThread>>() {
+                public void onSuccess (List<ForumThread> result) {
+                    _items = result;
+                    for (ForumThread thread : result) {
                         _threads.put(thread.threadId, thread);
                     }
                     doFetchRows(start, count, callback);
