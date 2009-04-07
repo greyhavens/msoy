@@ -79,6 +79,29 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Counts the number of posts by any of the given posters that are unread by the given member.
+     */
+    public int countUnreadPosts (int memberId, Set<Integer> posterIds)
+    {
+        SQLExpression join = new And(
+            new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
+            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
+        );
+        SQLExpression where = new And(
+            new In(ForumMessagePosterRecord.POSTER_ID, posterIds),
+            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
+                           new GreaterThan(ForumMessagePosterRecord.MESSAGE_ID,
+                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+
+        List<QueryClause> clauses = Lists.newArrayList(
+            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
+            new Where(where));
+        clauses.add(new FromOverride(ForumMessageRecord.class));
+        return load(CountRecord.class, clauses).count;
+    }
+
+    /**
      * Loads the latest threads for the specified group. Ordered by threadId (ie: creation time).
      */
     public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
@@ -100,7 +123,7 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Loads the total number of threads in the specified group.
+     * Loads the total number of messages in all threads in the specified group.
      */
     public int loadMessageCount (int groupId)
     {
