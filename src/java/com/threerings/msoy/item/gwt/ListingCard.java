@@ -53,4 +53,10 @@ public class ListingCard implements IsSerializable
         }
         return false;
     }
+
+    @Override // from Object
+    public int hashCode ()
+    {
+        return itemType << 24 + catalogId;
+    }
 }
