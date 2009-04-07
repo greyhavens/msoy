@@ -37,7 +37,7 @@ import client.util.ServiceUtil;
  * server, performing searches and display customizations. In addition, this class does not assume
  * that the server will be returning {@link ForumThread} instances directly, but potentially a list
  * of objects that contain <code>ForumThread</code> instances.
- * @param <T> the type of item we are listing; {@link ForumThread} should be derivable from this
+ * @param <T> the type of item we are listing; {@link ForumThread} should be obtainable from this
  */
 public abstract class ThreadListPanel<T> extends PagedGrid<T>
     implements SearchBox.Listener
@@ -82,8 +82,8 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
     }
 
     /**
-     * Converts one of our result list items into a forum thread. This will normally involve
-     * returning the item itself or a member of the item.
+     * Obtains a forum thread from one of our result items. This normally means returning the item
+     * itself or a member of the item.
      */
     protected abstract ForumThread getThread (T item);
 
