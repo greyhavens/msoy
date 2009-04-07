@@ -223,12 +223,15 @@ public class AVRGameBackend extends ControlBackend
         // GameSubControl
         o["game_getGameData_v1"] = game_getGameData_v1;
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
+        o["game_getOccupantName_v1"] = game_getOccupantName_v1;
         o["getLevelPacks_v2"] = getLevelPacks_v2;
         o["getItemPacks_v1"] = getItemPacks_v1;
 
         // RoomSubControl
         o["room_getGameData_v1"] = room_getGameData_v1;
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
+        o["room_getOccupantIds_v1"] = room_getOccupantIds_v1;
+        o["room_getOccupantName_v1"] = room_getOccupantName_v1;
         o["room_getRoomId_v1"] = room_getRoomId_v1;
         o["room_getRoomName_v1"] = room_getRoomName_v1;
         o["room_canEditRoom_v1"] = room_canEditRoom_v1;
@@ -302,6 +305,12 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // GameSubControl
+    protected function game_getOccupantName_v1 (playerId :int) :String
+    {
+        return BackendUtils.getOccupantName(_gameObj, playerId);
+    }
+
+    // GameSubControl
     protected function getLevelPacks_v2 (filter :Function = null) :Array
     {
         return BackendUtils.getLevelPacks(_gameObj.gameData, filter);
@@ -349,8 +358,27 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying() || _ctrl.getRoom() == null) {
             return null;
         }
-
         return BackendUtils.getPlayerIds(_gameObj, _ctrl.getRoom(), getRoomId());
+    }
+
+    // RoomSubControl
+    protected function room_getOccupantIds_v1 (targetId :int /* ignored */) :Array
+    {
+        validateRoomTargetId(targetId);
+        if (!isPlaying() || _ctrl.getRoom() == null) {
+            return null;
+        }
+        return BackendUtils.getOccupantIds(_ctrl.getRoom());
+    }
+
+    // RoomSubControl
+    protected function room_getOccupantName_v1 (targetId :int /* ignored */, playerId :int) :String
+    {
+        validateRoomTargetId(targetId);
+        if (!isPlaying() || _ctrl.getRoom() == null) {
+            return null;
+        }
+        return BackendUtils.getOccupantName(_ctrl.getRoom(), playerId);
     }
 
     // RoomSubControl

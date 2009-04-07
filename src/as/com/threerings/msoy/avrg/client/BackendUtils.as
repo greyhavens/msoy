@@ -25,6 +25,7 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.client.WhirledGameMessageService;
@@ -130,7 +131,7 @@ public class BackendUtils
         gameObj :AVRGameObject, room :RoomObject, roomId :int, extraFilter :Function=null) :Array
     {
         // TODO: if searching a room, this could have a high miss rate, consider passing a roomObj
-        var result :Array = new Array();
+        var result :Array = [];
         var iterator :Iterator = gameObj.occupantInfo.iterator();
         while (iterator.hasNext()) {
             var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
@@ -149,6 +150,39 @@ public class BackendUtils
             result.push(memberId);
         }
         return result;
+    }
+
+    /**
+     * Get the ids of all the occupants of the specified place.
+     */
+    public static function getOccupantIds (placeObj :PlaceObject) :Array
+    {
+        var result :Array = [];
+        if (placeObj != null) {
+            for each (var occ :OccupantInfo in placeObj.occupantInfo.toArray()) {
+                var name :MemberName = occ.username as MemberName;
+                if (name != null) {
+                    result.push(name.getMemberId());
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get the display name of the specified occupant.
+     */
+    public static function getOccupantName (placeObj :PlaceObject, playerId :int) :String
+    {
+        if (placeObj != null) {
+            for each (var occ :OccupantInfo in placeObj.occupantInfo.toArray()) {
+                var name :MemberName = occ.username as MemberName;
+                if ((name != null) && (playerId == name.getMemberId())) {
+                    return name.toString();
+                }
+            }
+        }
+        return null;
     }
 
     public static function getLevelPacks (gameData :TypedArray, filter :Function) :Array

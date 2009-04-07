@@ -225,6 +225,7 @@ public class ThaneAVRGameBackend
 
         // .game
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
+        o["game_getOccupantName_v1"] = game_getOccupantName_v1;
         o["game_sendMessage_v1"] = game_sendMessage_v1;
         o["isRoomLoaded_v1"] = isRoomLoaded_v1
         o["getLevelPacks_v2"] = getLevelPacks_v2;
@@ -238,6 +239,8 @@ public class ThaneAVRGameBackend
 
         // .getRoom()
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
+        o["room_getOccupantIds_v1"] = room_getOccupantIds_v1;
+        o["room_getOccupantName_v1"] = room_getOccupantName_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v2"] = getAvatarInfo_v2;
         o["spawnMob_v1"] = spawnMob_v1;
@@ -292,6 +295,11 @@ public class ThaneAVRGameBackend
     protected function game_getPlayerIds_v1 () :Array
     {
         return BackendUtils.getPlayerIds(_gameObj, null, 0, filterPlayer);
+    }
+
+    protected function game_getOccupantName_v1 (playerId :int) :String
+    {
+        return BackendUtils.getOccupantName(_gameObj, playerId;
     }
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
@@ -373,6 +381,18 @@ public class ThaneAVRGameBackend
     {
         var roomObj :RoomObject = _controller.getRoom(roomId);
         return BackendUtils.getPlayerIds(_gameObj, roomObj, roomId, filterPlayer);
+    }
+
+    protected function room_getOccupantIds_v1 (roomId :int) :Array
+    {
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        return BackendUtils.getOccupantIds(roomObj);
+    }
+
+    protected function room_getOccupantName_v1 (roomId :int, playerId :int) :String
+    {
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        return BackendUtils.getOccupantName(roomObj, playerId);
     }
 
     protected function isPlayerHere_v1 (roomId :int, playerId :int) :Boolean
