@@ -49,6 +49,7 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.client.LogonError;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
@@ -568,7 +569,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientFailedToLogon (event :ClientEvent) :void
     {
-        _topPanel.setPlaceView(new DisconnectedPanel(_mctx, "m.lost_connection"));
+        _topPanel.setPlaceView(new DisconnectedPanel(_mctx, event.getCause().message));
     }
 
     // from ClientObserver
