@@ -951,16 +951,17 @@ public class RoomManager extends SpotSceneManager
      */
     protected boolean validateMemoryUpdate (MemberObject caller, ItemIdent ident)
     {
-// NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
-//        // if this client does not currently control this entity; ignore the request; if no one
-//        // controls it, this will assign this client as controller
-//        if (!checkAssignControl(caller, ident, "updateMemory")) {
-//            return;
-//        }
-
-        // now do type-specific checks
         String reason;
-        if (ident.type == Item.AVATAR || ident.type == Item.PET) {
+        if (ident.type == Item.AVATAR) {
+            // Changed April 7, 2009: only the wearer of an avatar may update memory
+            if ((caller.avatar != null) && (caller.avatar.itemId == ident.itemId)) {
+                return true;
+            }
+            reason = "not wearing avatar";
+
+        } else if (ident.type == Item.PET) {
+            // TODO: keep open, but when we have ThanePetBrain, those pets can only update
+            // memory from the thane process.
             for (OccupantInfo info : _roomObj.occupantInfo) {
                 if ((info instanceof ActorInfo) && ident.equals(((ActorInfo)info).getItemIdent())) {
                     return true;
@@ -969,6 +970,7 @@ public class RoomManager extends SpotSceneManager
             reason = "not in room";
 
         } else if (ident.type == Item.DECOR) {
+            // Control is not required, it was too much of a PITA.
             MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
             if ((msm.decor != null) && (msm.decor.itemId == ident.itemId)) {
                 return true;
@@ -976,6 +978,7 @@ public class RoomManager extends SpotSceneManager
             reason = "decor not in room";
 
         } else {
+            // Control is not required, it was too much of a PITA.
             MsoySceneModel msm = (MsoySceneModel)getScene().getSceneModel();
             for (FurniData furni : msm.furnis) {
                 if ((furni.itemType == ident.type) && (furni.itemId == ident.itemId)) {
@@ -985,8 +988,7 @@ public class RoomManager extends SpotSceneManager
             reason = "furni not in room";
         }
 
-        // TODO: tone down, non warning...
-        log.warning("Rejecting memory update",
+        log.info("Rejecting memory update",
             "caller", caller.who(), "ident", ident, "reason", reason);
         return false;
     }
