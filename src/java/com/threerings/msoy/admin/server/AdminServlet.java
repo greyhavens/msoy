@@ -81,6 +81,7 @@ import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -356,29 +357,44 @@ public class AdminServlet extends MsoyServiceServlet
         final byte type = iident.type;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         final ItemRecord item = repo.loadOriginalItem(iident.itemId);
+
+        if (item == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+
         final IntSet owners = new ArrayIntSet();
 
         ItemDeletionResult result = new ItemDeletionResult();
         owners.add(item.creatorId);
 
-        CatalogRecord catrec = null;
-
-        // we've loaded the original item, if it represents the original listing or a catalog
-        // master item, we want to squish the original catalog listing.
+        // find the catalog record and remove it, load original if any
+        ItemRecord original = null;
         if (item.catalogId != 0) {
-            catrec = repo.loadListing(item.catalogId, true);
-            if (catrec != null && catrec.listedItemId != item.itemId) {
-                catrec = null;
-            }
-        }
+            CatalogRecord catrec = repo.loadListing(item.catalogId, true);
+            if (catrec != null) {
+                if (catrec.listedItemId != item.itemId) {
+                    log.warning("Catalog record doesn't match item", "itemId", item.itemId,
+                        "listedItemId", catrec.listedItemId);
 
-        if (catrec != null) {
-            _itemLogic.removeListing(memrec, type, item.catalogId);
+                } else {
+                    _itemLogic.removeListing(memrec, type, item.catalogId);
+                    if (catrec.originalItemId != item.itemId) {
+                        original = repo.loadOriginalItem(catrec.originalItemId);
+                        if (original == null) {
+                            log.warning("Could not load original item",
+                                "id", catrec.originalItemId);
+                        }
+                    }
+                }
+            }
         }
 
         // reclaim the item and all its copies from scenes
         ItemReclaimer reclaimer = new ItemReclaimer(iident, memrec.memberId);
         reclaimer.addItem(item);
+        if (original != null) {
+            reclaimer.addItem(original);
+        }
         for (final CloneRecord record : repo.loadCloneRecords(item.itemId)) {
             reclaimer.addItem(repo.loadItem(record.itemId));
         }
@@ -401,6 +417,12 @@ public class AdminServlet extends MsoyServiceServlet
         // finally delete the actual item
         repo.deleteItem(item.itemId);
         result.deletionCount ++;
+
+        // ... and the owner's original
+        if (original != null) {
+            repo.deleteItem(original.itemId);
+            result.deletionCount ++;
+        }
 
         // notify the owners of the deletion
         for (final int ownerId : owners) {
