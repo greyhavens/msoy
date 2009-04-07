@@ -27,6 +27,7 @@ import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GwtAuthCodes;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.AuthenticationDomain.Account;
@@ -210,39 +211,62 @@ public class MsoyAuthenticator extends Authenticator
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            if (creds.sessionToken != null) {
-                final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
-                if (member == null) {
-                    throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-                }
-                rsp.authdata = authenticateMember(
-                    creds, rdata, member, false, member.accountName,
-                    AuthenticationDomain.PASSWORD_BYPASS);
-
-            } else if (creds.getUsername() != null) {
-                final String aname = creds.getUsername().toString().toLowerCase();
-                rsp.authdata = authenticateMember(
-                    creds, rdata, null, true, aname, creds.getPassword());
-
-            } else if (!creds.featuredPlaceView) {
-                // create a new guest account
-                MemberRecord mrec = _accountLogic.createGuestAccount(
-                    conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
-
-                // now authenticate just to make sure everything is in order and get the token
-                creds.setUsername(new MsoyAuthName(mrec.accountName, mrec.memberId));
-                rsp.authdata = authenticateMember(
-                    creds, rdata, mrec, true, mrec.accountName, AccountLogic.PERMAGUEST_PASSWORD);
-
-            } else {
-                // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
-                authenticateGuest(conn, creds, rdata, 0);
-            }
+            // finish processing our authentication (the helper method helps simplify the code)
+            rsp.authdata = processAuthentication(conn, creds, rdata);
 
         } catch (final ServiceException se) {
             rdata.code = se.getMessage();
             log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
         }
+    }
+
+    protected Account processAuthentication (
+        AuthingConnection conn, WorldCredentials creds, MsoyAuthResponseData rdata)
+        throws ServiceException
+    {
+        if (creds.sessionToken != null) {
+            final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
+            if (member == null) {
+                throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+            }
+            return authenticateMember(creds, rdata, member, false, member.accountName,
+                                      AuthenticationDomain.PASSWORD_BYPASS);
+        }
+
+        if (creds.getUsername() != null) {
+            final String aname = creds.getUsername().toString().toLowerCase();
+            try {
+                return authenticateMember(creds, rdata, null, true, aname, creds.getPassword());
+            } catch (ServiceException se) {
+                // it's possible that the permaguest account requested has been purged, so instead
+                // of failing the logon, just fall through and create a new permaguest account
+                if (se.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
+                    MemberMailUtil.isPermaguest(aname)) {
+                    log.info("Creating new permaguest for expired auther", "oldacct", aname);
+                    // we need to fake up a new visitor id since the old one is now long gone
+                    if (creds.visitorId == null) {
+                        creds.visitorId = new VisitorInfo().id;
+                    }
+                } else {
+                    throw se;
+                }
+            }
+        }
+
+        if (!creds.featuredPlaceView) {
+            // create a new guest account
+            MemberRecord mrec = _accountLogic.createGuestAccount(
+                conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
+
+            // now authenticate just to make sure everything is in order and get the token
+            creds.setUsername(new MsoyAuthName(mrec.accountName, mrec.memberId));
+            return authenticateMember(creds, rdata, mrec, true, mrec.accountName,
+                                      AccountLogic.PERMAGUEST_PASSWORD);
+        }
+
+        // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
+        authenticateGuest(conn, creds, rdata, 0);
+        return null;
     }
 
     protected void authenticateGuest (final AuthingConnection conn, final WorldCredentials creds,
