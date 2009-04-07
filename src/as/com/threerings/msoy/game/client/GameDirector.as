@@ -170,6 +170,8 @@ public class GameDirector extends BasicDirector
             icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
         menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
+        menuData.push({label: Msgs.GAME.get("b.gamePublishTrophies"),
+            command: publishGameTrophies});
         if (Game.isDevelopmentVersion(_liaison.gameId) && !(_liaison is AVRGameLiaison)) {
             menuData.push({label: Msgs.GAME.get("b.gameRemoveTrophies"), command: removeTrophies});
         }
@@ -228,6 +230,14 @@ public class GameDirector extends BasicDirector
     public function viewGameTrophies () :void
     {
         TrophyPanel.show(getGameContext(), getGameId(), getGameName());
+    }
+
+    /**
+     * Displays the trophies publish page for the currently active game.
+     */
+    public function publishGameTrophies () :void
+    {
+        TrophyFeederPanel.showExisting(getGameContext(), getGameId(), getGameName());
     }
 
     /**
