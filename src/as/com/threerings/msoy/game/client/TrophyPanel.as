@@ -38,6 +38,19 @@ public class TrophyPanel extends FloatingPanel
                 }, MsoyCodes.GAME_MSGS));
     }
 
+    /**
+     * Returns the subset of the given array of trophies which have been earned.
+     */
+    public static function filterEarned (trophies :Array) :Array
+    {
+        if (trophies == null) {
+            return [];
+        }
+        return trophies.filter(function (trophy :Trophy, index :int, arr :Array) :Boolean {
+            return trophy.whenEarned != null;
+        });
+    }
+
     public function TrophyPanel (ctx :GameContext, trophies :Array, gameName :String)
     {
         super(ctx.getMsoyContext(), Msgs.GAME.get("t.trophy"));
@@ -106,16 +119,37 @@ public class TrophyPanel extends FloatingPanel
             }
         }
 
+        if (filterEarned(_trophies).length > 0) {
+            addButtons(PUBLISH_BUTTON);
+        }
+
         addButtons(CANCEL_BUTTON);
     }
 
     override protected function getButtonLabel (buttonId :int) :String
     {
+        if (buttonId == PUBLISH_BUTTON) {
+            return Msgs.GAME.get("b.tp_publish");
+        }
         return Msgs.GENERAL.get("b.ok");
+    }
+
+    override protected function buttonClicked (buttonId :int) :void
+    {
+        if (buttonId == PUBLISH_BUTTON) {
+            close();
+            TrophyFeederPanel.showExisting(
+                _gctx.getMsoyContext(), _gameName, filterEarned(_trophies));
+
+        } else {
+            super.buttonClicked(buttonId);
+        }
     }
 
     protected var _gctx :GameContext;
     protected var _trophies :Array /*of Trophy*/;
     protected var _gameName :String;
+
+    protected static const PUBLISH_BUTTON :int = 100;
 }
 }

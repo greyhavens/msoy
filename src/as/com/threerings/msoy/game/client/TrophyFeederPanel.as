@@ -41,36 +41,30 @@ public class TrophyFeederPanel extends FloatingPanel
 
     /**
      * Shows a popup that asks if the user wants to post any of their earned trophies to their
-     * Facebook feed.
+     * Facebook feed. In this mode, when a trophy is selected for publishing, the popup will
+     * automatically close.
      *
      * @return true if the popup was shown, false if it was not shown because no valid trophies
      * were supplied.
      */
-    public static function showNew (gctx :GameContext, gameId :int, gameName :String,
-        trophies :Array /* of Trophy */, onClose :Function) :Boolean
+    public static function showNew (ctx :MsoyContext, gameName :String,
+        trophies :Array /* of Trophy */, onClose :Function) :void
     {
-        trophies = filterEarned(trophies);
-
-        if (trophies.length == 0) {
-            onClose();
-            return false;
-        }
-
+        // these trophies will always be earned 
         var tfp :TrophyFeederPanel;
-        tfp = new TrophyFeederPanel(gctx.getMsoyContext(), trophies, gameName, MODE_NEW);
+        tfp = new TrophyFeederPanel(ctx, trophies, gameName, MODE_NEW);
         tfp.addCloseCallback(onClose);
         tfp.open();
-        return true;
     }
 
-    public static function showExisting (gctx :GameContext, gameId :int, gameName :String) :void
+    /**
+     * Shows previously earned trophies. In this mode, the panel always pops up and does not close
+     * until the user closes it. When the user clicks a trophy, it is disabled for feedback. The
+     * facebook popup can take up to about 30 seconds to appear.
+     */
+    public static function showExisting (ctx :MsoyContext, gameName :String, trophies :Array) :void
     {
-        (gctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
-            gctx.getClient(), gameId, gctx.getMsoyContext().resultListener(
-                function (trophies :TypedArray) :void {
-                    new TrophyFeederPanel(gctx.getMsoyContext(), filterEarned(trophies), gameName,
-                        trophies.length > 0 ? MODE_EXISTING : MODE_NONE).open();
-                }, MsoyCodes.GAME_MSGS));
+        new TrophyFeederPanel(ctx, trophies, gameName, MODE_EXISTING).open();
     }
 
     public function TrophyFeederPanel (
@@ -89,23 +83,8 @@ public class TrophyFeederPanel extends FloatingPanel
         const descriptionWidth :int = 200;
 
         var title :Text = new Text();
-        var titleKey :String;
-        switch (_mode) {
-        case MODE_NEW:
-            titleKey = "m.trophy_feeder_title_new";
-            break;
-        case MODE_EXISTING:
-            if (_trophies.length > 0) {
-                titleKey = "m.trophy_feeder_title_existing";
-            } else {
-                titleKey = "m.trophy_feeder_title_none_earned";
-            }
-            break;
-        case MODE_NONE:
-            titleKey = "m.trophy_feeder_title_none_awarded";
-            break;
-        }
-        title.text = Msgs.GAME.get(titleKey);
+        title.text = Msgs.GAME.get(
+            _mode == MODE_NEW ? "m.trophy_feeder_title_new" : "m.trophy_feeder_title_existing");
         title.styleName = "trophyFeederPanelTitle";
         title.width = (descriptionWidth + TrophySource.TROPHY_WIDTH) * 2;
         addChild(title);
@@ -127,7 +106,7 @@ public class TrophyFeederPanel extends FloatingPanel
             var tbtn :CommandButton = new CommandButton();
             tbtn.styleName = "trophyFeedTrophy";
             tbtn.setStyle("image", new MsoyMediaContainer(trophy.trophyMedia));
-            tbtn.setCallback(postTrophyToFeed, trophy);
+            tbtn.setCallback(postTrophyToFeed, [trophy, tbtn]);
             tbtn.width = TrophySource.TROPHY_WIDTH;
             tbtn.height = TrophySource.TROPHY_HEIGHT;
             tbox.addChild(tbtn);
@@ -151,24 +130,16 @@ public class TrophyFeederPanel extends FloatingPanel
         showCloseButton = true;
     }
 
-    protected function postTrophyToFeed (trophy :Trophy) :void
+    protected function postTrophyToFeed (trophy :Trophy, btn :CommandButton) :void
     {
         _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
             trophy.gameId, _gameName, trophy.name, trophy.description,
             trophy.trophyMedia.getMediaPath() ]);
+
+        btn.enabled = false;
         if (_mode == MODE_NEW) {
             close();
         }
-    }
-
-    protected static function filterEarned (trophies :Array) :Array
-    {
-        if (trophies == null) {
-            return [];
-        }
-        return trophies.filter(function (trophy :Trophy, index :int, arr :Array) :Boolean {
-            return trophy.whenEarned != null;
-        });
     }
 
     protected var _trophies :Array /*of Trophy*/;
@@ -177,7 +148,6 @@ public class TrophyFeederPanel extends FloatingPanel
 
     protected static const MODE_NEW :int = 0;
     protected static const MODE_EXISTING :int = 1;
-    protected static const MODE_NONE :int = 2;
 
     /** Event dispatched to GWT when the user clicks a trophy. */
     protected static const TROPHY_EVENT :String = "trophy";

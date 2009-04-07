@@ -449,12 +449,13 @@ public class GameLiaison
         // remove the handler, we don't want to show this twice
         _wctx.getWorldController().removePlaceExitHandler(onPlaceExit);
 
-        // if this is a development version of the game, no trophy popup
-        if (Game.isDevelopmentVersion(_gameId)) {
+        // if this is a development version of the game or no trophies were earned, no trophy popup
+        if (_trophies.length == 0 || Game.isDevelopmentVersion(_gameId)) {
             return true;
         }
 
-        return !TrophyFeederPanel.showNew(_gctx, _gameId, gameName, _trophies, onClose);
+        TrophyFeederPanel.showNew(_gctx.getMsoyContext(), gameName, _trophies, onClose);
+        return false;
     }
 
     /** Provides access to main client services. */
