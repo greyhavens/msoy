@@ -9,7 +9,7 @@ import flash.media.Camera;
 import flash.media.Microphone;
 
 import com.threerings.msoy.client.ControlBackend;
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.room.data.MsoyLocation;
 
 import com.threerings.util.Log;
@@ -235,18 +235,9 @@ public class EntityBackend extends ControlBackend
 
     protected function showPage_v1 (token :String) :Boolean
     {
-        // TODO: only allow a page to be shown if we're processing a mouse click
-        if (_ctx is WorldContext) {
-            var didx :int = token.indexOf("-");
-            if (didx == -1) {
-                (_ctx as WorldContext).getWorldController().displayPage(token, "");
-            } else {
-                (_ctx as WorldContext).getWorldController().displayPage(
-                    token.substring(0, didx), token.substring(didx+1));
-            }
-            return true;
-        }
-        return false; // shouldn't ever happen
+        // handleViewUrl will do the "right thing"
+        _ctx.getMsoyController().handleViewUrl(DeploymentConfig.serverURL + "#" + token);
+        return true;
     }
 
     // Deprecated on 2007-03-12
