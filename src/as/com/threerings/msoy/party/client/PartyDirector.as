@@ -4,7 +4,6 @@
 package com.threerings.msoy.party.client {
 
 import flash.events.Event;
-import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
 import com.threerings.util.Log;
@@ -42,6 +41,8 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.game.client.GameDirector;
+
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -65,15 +66,14 @@ public class PartyDirector extends BasicDirector
 
     public const log :Log = Log.getLog(this);
 
-    // TEMP!!!
-    public var events :EventDispatcher = new EventDispatcher();
-
     public function PartyDirector (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
         _wctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, locationDidChange, null));
+        _wctx.getGameDirector().addEventListener(GameDirector.GAMING_STATE_CHANGED,
+            handleGamingStateChanged);
     }
 
     // TEMP, for Tim
@@ -85,7 +85,7 @@ public class PartyDirector extends BasicDirector
     // TEMP, for Tim
     protected function partyChanged () :void
     {
-        events.dispatchEvent(new Event("partyChanged"));
+        dispatchEvent(new Event("partyChanged"));
     }
 
     /**
@@ -280,6 +280,23 @@ public class PartyDirector extends BasicDirector
         visitPartyScene(_partyObj.sceneId);
     }
 
+    protected function checkFollowGame () :void
+    {
+        if (isPartyLeader()) {
+            return; // we don't follow! (prevent leaving a game we're in)
+        }
+        const gameDir :GameDirector = _wctx.getGameDirector();
+        // TODO: support for non-avrg
+        if (!_partyObj.avrGame || (_partyObj.gameId == 0)) {
+            gameDir.clearAnyGame();
+            return;
+        }
+        if (!gameDir.isAVRGame() || (_partyObj.gameId != gameDir.getGameId())) {
+            gameDir.clearAnyGame();
+            gameDir.activateAVRGame(_partyObj.gameId);
+        }
+    }
+
     /**
      * A success handler for creating and joining parties.
      */
@@ -354,6 +371,11 @@ public class PartyDirector extends BasicDirector
 
         // we might need to warp to the party location
         checkFollowParty();
+        if (isPartyLeader()) {
+            handleGamingStateChanged();
+        } else {
+            checkFollowGame();
+        }
 
         partyChanged();
     }
@@ -417,6 +439,27 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
+     * Called whenever our gaming state changes.
+     */
+    protected function handleGamingStateChanged (ignored :Event = null) :void
+    {
+        if (!isPartyLeader()) {
+            return;
+        }
+
+        const gameDir :GameDirector = _wctx.getGameDirector();
+        var avrGame :Boolean = gameDir.isAVRGame();
+        var gameId :int = gameDir.getGameId();
+        if (!avrGame) { // TODO: add support for non-AVRGs
+            gameId = 0; // but for now, just treat it like "no game".
+        }
+        if ((gameId != _partyObj.gameId) || (avrGame != _partyObj.avrGame)) {
+            _partyObj.partyService.setGame(
+                _pctx.getClient(), gameId, avrGame, _wctx.listener(MsoyCodes.PARTY_MSGS));
+        }
+    }
+
+    /**
      * Handles changes on the party object.
      */
     protected function partyAttrChanged (event :AttributeChangedEvent) :void
@@ -424,6 +467,10 @@ public class PartyDirector extends BasicDirector
         switch (event.getName()) {
         case PartyObject.SCENE_ID:
             checkFollowParty();
+            break;
+
+        case PartyObject.GAME_ID:
+            checkFollowGame();
             break;
 
             // TEMP

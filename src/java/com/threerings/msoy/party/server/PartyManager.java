@@ -28,6 +28,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 
+import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -191,6 +192,27 @@ public class PartyManager
     }
 
     // from interface PartyProvider
+    public void setGame (
+        ClientObject caller, int gameId, boolean avrGame, InvocationService.InvocationListener il)
+        throws InvocationException
+    {
+        requireLeader(caller);
+        if ((_partyObj.gameId == gameId) && (_partyObj.avrGame == avrGame)) {
+            return; // NOOP!
+        }
+
+        // update the party's game location
+        _partyObj.startTransaction();
+        try {
+            _partyObj.setAvrGame(avrGame);
+            _partyObj.setGameId(gameId);
+            updateStatus();
+        } finally {
+            _partyObj.commitTransaction();
+        }
+    }
+
+    // from interface PartyProvider
     public void assignLeader (
         ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
@@ -320,10 +342,17 @@ public class PartyManager
 //    }
 
     /**
-     * Automatically update the status of the party based on the current scene.
+     * Automatically update the status of the party based on the current scene/party.
      */
     protected void updateStatus ()
     {
+        if (_partyObj.gameId != 0) {
+            Tuple<String, HostedGame> game = _peerMgr.getGameHost(_partyObj.gameId);
+            if (game != null) {
+                setStatus(MessageBundle.tcompose("m.status_game", game.right.name));
+                return;
+            }
+        }
         Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(_partyObj.sceneId);
         if (room != null) {
             setStatus(MessageBundle.tcompose("m.status_room", room.right.name));

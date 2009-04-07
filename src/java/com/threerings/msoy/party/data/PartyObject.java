@@ -40,6 +40,12 @@ public class PartyObject extends DObject
     /** The field name of the <code>sceneId</code> field. */
     public static final String SCENE_ID = "sceneId";
 
+    /** The field name of the <code>gameId</code> field. */
+    public static final String GAME_ID = "gameId";
+
+    /** The field name of the <code>avrGame</code> field. */
+    public static final String AVR_GAME = "avrGame";
+
     /** The field name of the <code>status</code> field. */
     public static final String STATUS = "status";
 
@@ -70,6 +76,12 @@ public class PartyObject extends DObject
 
     /** The current location of the party. */
     public int sceneId;
+
+    /** The current game of the party. */
+    public int gameId;
+
+    /** Is the game an AVR game? */
+    public boolean avrGame;
 
     /** Customizable flavor text. */
     public String status;
@@ -225,6 +237,38 @@ public class PartyObject extends DObject
         requestAttributeChange(
             SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.sceneId = value;
+    }
+
+    /**
+     * Requests that the <code>gameId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGameId (int value)
+    {
+        int ovalue = this.gameId;
+        requestAttributeChange(
+            GAME_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.gameId = value;
+    }
+
+    /**
+     * Requests that the <code>avrGame</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAvrGame (boolean value)
+    {
+        boolean ovalue = this.avrGame;
+        requestAttributeChange(
+            AVR_GAME, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.avrGame = value;
     }
 
     /**

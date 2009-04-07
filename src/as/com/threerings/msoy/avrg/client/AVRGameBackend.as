@@ -57,7 +57,7 @@ public class AVRGameBackend extends ControlBackend
 
         _playerObj = _gctx.getPlayerObject();
 
-        _wctx.getPartyDirector().events.addEventListener("partyChanged", handlePartyChanged);
+        _wctx.getPartyDirector().addEventListener("partyChanged", handlePartyChanged);
     }
 
     // from ControlBackend
@@ -75,7 +75,7 @@ public class AVRGameBackend extends ControlBackend
             _roomPropsNetAdapter.release();
         }
 
-        _wctx.getPartyDirector().events.removeEventListener("partyChanged", handlePartyChanged);
+        _wctx.getPartyDirector().removeEventListener("partyChanged", handlePartyChanged);
 
         super.shutdown();
     }

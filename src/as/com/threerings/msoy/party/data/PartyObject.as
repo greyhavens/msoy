@@ -37,6 +37,12 @@ public class PartyObject extends DObject
     /** The field name of the <code>sceneId</code> field. */
     public static const SCENE_ID :String = "sceneId";
 
+    /** The field name of the <code>gameId</code> field. */
+    public static const GAME_ID :String = "gameId";
+
+    /** The field name of the <code>avrGame</code> field. */
+    public static const AVR_GAME :String = "avrGame";
+
     /** The field name of the <code>status</code> field. */
     public static const STATUS :String = "status";
 
@@ -71,6 +77,12 @@ public class PartyObject extends DObject
     /** The current location of the party. */
     public var sceneId :int;
 
+    /** The current game of the party. */
+    public var gameId :int;
+
+    /** Is the game an AVR game? */
+    public var avrGame :Boolean;
+
     /** Customizable flavor text. */
     public var status :String;
 
@@ -94,6 +106,8 @@ public class PartyObject extends DObject
         peeps = DSet(ins.readObject());
         leaderId = ins.readInt();
         sceneId = ins.readInt();
+        gameId = ins.readInt();
+        avrGame = ins.readBoolean();
         status = ins.readField(String) as String;
         recruitment = ins.readByte();
         partyService = PartyMarshaller(ins.readObject());

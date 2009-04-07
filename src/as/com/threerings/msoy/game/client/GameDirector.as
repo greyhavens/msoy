@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.events.Event;
+
 import mx.styles.StyleManager;
 
 import com.threerings.util.Log;
@@ -37,10 +39,23 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 
 /**
+ * An even dispatched when the user has entered or left any game.
+ *
+ * @eventType com.threerings.msoy.game.client.GameDirector.GAMING_STATE_CHANGED
+ */
+[Event(name="GamingStateChanged", type="flash.events.Event")]
+
+/**
  * A director that manages game related bits.
  */
 public class GameDirector extends BasicDirector
 {
+    /** An event type dispatched when the user has entered or left any game.
+     *
+     * @eventType GamingStateChanged
+     */
+    public static const GAMING_STATE_CHANGED :String = "GamingStateChanged";
+
     public const log :Log = Log.getLog(this);
 
     // statically reference classes we require
@@ -79,11 +94,29 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Is our game an avr game?
+     */
+    public function isAVRGame () :Boolean
+    {
+        return (_liaison is AVRGameLiaison);
+    }
+
+    /**
      * Returns the currently active GameContext or null if no game is active.
      */
     public function getGameContext () :GameContext
     {
         return (_liaison != null) ? _liaison.getGameContext() : null;
+    }
+
+    /**
+     * Clear any game we're in.
+     */
+    public function clearAnyGame () :void
+    {
+        if (_liaison != null) {
+            _liaison.shutdown();
+        }
     }
 
     /**
@@ -307,6 +340,7 @@ public class GameDirector extends BasicDirector
             if (memberObj != null && memberObj.avrGameId != 0) {
                 _liaison = new AVRGameLiaison(_wctx, memberObj.avrGameId);
                 _liaison.start();
+                dispatchGamingStateChanged();
             }
         }
     }
@@ -340,6 +374,7 @@ public class GameDirector extends BasicDirector
         _liaison = new AVRGameLiaison(_wctx, gameId);
         _liaison.setInviteData(inviteToken, inviterMemberId);
         _liaison.start();
+        dispatchGamingStateChanged();
     }
 
     public function leaveAVRGame () :void
@@ -394,6 +429,7 @@ public class GameDirector extends BasicDirector
         // another one was active.
         if (_liaison == liaison) {
             _liaison = null;
+            dispatchGamingStateChanged();
             // if this was a lobbied game, see about restarting the AVRG
             if (liaison is LobbyGameLiaison) {
                 checkMemberAVRGame();
@@ -417,8 +453,8 @@ public class GameDirector extends BasicDirector
 
         // if we're actually logging off, rather than just switching servers, then shutdown any
         // active game connection
-        if (!event.isSwitchingServers() && _liaison != null) {
-            _liaison.shutdown();
+        if (!event.isSwitchingServers()) {
+            clearAnyGame();
         }
     }
 
@@ -465,12 +501,18 @@ public class GameDirector extends BasicDirector
         }
         _liaison = new LobbyGameLiaison(_wctx, gameId);
         _liaison.start(ghost, gport);
+        dispatchGamingStateChanged();
     }
 
     protected function showCoordinateDebugPanel () :void
     {
         var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
         ctrl.showCoordinateDebugPanel();
+    }
+
+    protected function dispatchGamingStateChanged () :void
+    {
+        dispatchEvent(new Event(GAMING_STATE_CHANGED));
     }
 
     protected static function encodeBase64 (str :String) :String
