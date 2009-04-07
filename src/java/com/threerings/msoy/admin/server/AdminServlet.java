@@ -81,7 +81,6 @@ import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
-import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
