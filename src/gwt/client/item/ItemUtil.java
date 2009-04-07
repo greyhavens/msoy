@@ -184,6 +184,11 @@ public class ItemUtil
         return getMemoriesNative(findViewer());
     }
 
+    public static void showViewerConfig ()
+    {
+        showViewerConfigNative(findViewer());
+    }
+
     public static native Element findViewer () /*-{
         // do not go to "top"...
         return $wnd.document.getElementById("viewer");
@@ -197,6 +202,15 @@ public class ItemUtil
             try { return viewer.getStudioMemories(); } catch (e) {} // block exceptions
         }
         return null;
+    }-*/;
+
+    /**
+     * Does actual showViewerConfig call.
+     */
+    protected static native void showViewerConfigNative (Element viewer) /*-{
+        if (viewer) {
+            try { viewer.showStudioConfig(); } catch (e) {} // block exceptions
+        }
     }-*/;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

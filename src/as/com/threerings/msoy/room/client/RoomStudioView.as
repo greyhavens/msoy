@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.events.Event;
+
 import flash.external.ExternalInterface;
 
 import flash.system.Capabilities;
@@ -230,11 +232,11 @@ public class RoomStudioView extends RoomView
         var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
         info.setScale(getScaleFromParams(params));
         _avatar = new MemberSprite(_ctx, info, {});
+        setTestingSprite(_avatar);
         addSprite(_avatar);
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         _avatar.roomScaleUpdated();
         setCenterSprite(_avatar);
-        _testingSprite = _avatar;
 
         addTalkControl();
         var idle :CommandButton = new CommandButton(null, emulateIdle);
@@ -254,10 +256,10 @@ public class RoomStudioView extends RoomView
         var name :String = params["name"] || "Pet";
         var info :StudioPetInfo = new StudioPetInfo(name, pet);
         _pet = new PetSprite(_ctx, info, {});
+        setTestingSprite(_pet);
         _pet.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_pet);
         setCenterSprite(_pet);
-        _testingSprite = _pet;
 
         addDefaultAvatar();
     }
@@ -265,7 +267,7 @@ public class RoomStudioView extends RoomView
     protected function initViewDecor (params :Object) :void
     {
         // the Backdrop media will be set all up in RoomStudioController
-        _testingSprite = _bg;
+        setTestingSprite(_bg);
 
         addDefaultAvatar();
     }
@@ -293,7 +295,7 @@ public class RoomStudioView extends RoomView
         furni.hotSpotY = int(params["hotSpotY"]);
         setInitialFurniLocation(furni);
 
-        _testingSprite = addFurni(furni);
+        setTestingSprite(addFurni(furni));
 
         createSpriteScaleControls();
         initScaleProperties(.1, 4);
@@ -446,6 +448,16 @@ public class RoomStudioView extends RoomView
         initScaleProperties(minScale, maxScale);
     }
 
+    protected function handleSpriteInit (ignored :Event = null) :void
+    {
+        if (_testingSprite.hasCustomConfigPanel()) {
+            try {
+                ExternalInterface.call("hasCustomConfig");
+            } catch (e :Error) {
+            }
+        }
+    }
+
     protected function initScaleProperties (minScale :Number, maxScale :Number) :void
     {
         // but we always ensure that scale 1.0 is selectable, even if it seems it shouldn't be.
@@ -460,6 +472,16 @@ public class RoomStudioView extends RoomView
     {
         var scale :Number = Number(params["scale"]);
         return (isNaN(scale) || scale == 0) ? 1 : scale;
+    }
+
+    protected function setTestingSprite (sprite :MsoySprite) :void
+    {
+        _testingSprite = sprite;
+        if (sprite.isContentInitialized()) {
+            handleSpriteInit();
+        } else {
+            _testingSprite.addEventListener(Event.INIT, handleSpriteInit);
+        }
     }
 
     protected var _sctx :StudioContext;

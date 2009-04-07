@@ -61,6 +61,7 @@ public class RoomStudioController extends RoomController
 
         try {
             if (ExternalInterface.available) {
+                ExternalInterface.addCallback("showStudioConfig", showStudioConfig);
                 ExternalInterface.addCallback("getStudioMemories", getStudioMemories);
             }
         } catch (e :Error) {}
@@ -232,6 +233,14 @@ public class RoomStudioController extends RoomController
         if (callback != null) {
             MethodQueue.callLater(callback, [ true ]);
         }
+    }
+
+    /**
+     * Callback to pop-up the configurator.
+     */
+    protected function showStudioConfig () :void
+    {
+        showConfigPopup(_studioView.getTestingSprite());
     }
 
     /**

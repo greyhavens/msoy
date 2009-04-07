@@ -24,6 +24,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
+import client.item.ItemUtil;
 import client.item.RemixButton;
 import client.item.ShopUtil;
 import client.shell.CShell;
@@ -59,6 +60,21 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         });
     }
 
+    @Override
+    protected void onLoad ()
+    {
+        super.onLoad();
+        _singleton = this;
+        configureBridge();
+    }
+
+    @Override
+    protected void onUnload ()
+    {
+        _singleton = null;
+        super.onUnload();
+    }
+
     // ABTEST: 2009 03 buypanel: added abTestGroup
     protected void gotListing (CatalogListing listing, int abTestGroup)
     {
@@ -73,6 +89,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
                     _item.getType(), _item.itemId, _listing.catalogId))));
         }
+        extras.add(_configBtn = new RemixButton(_msgs.listingConfig(), new ClickListener() {
+            public void onClick (Widget sender) {
+                ItemUtil.showViewerConfig();
+            }
+        }));
+        _configBtn.setVisible(false);
 
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 0);
@@ -193,8 +215,26 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
     }
 
+    /**
+     * A callback from the studio viewer, to indicate that custom config is available.
+     */
+    protected static void hasCustomConfig ()
+    {
+        _singleton._configBtn.setVisible(true);
+    }
+
+    protected static native void configureBridge () /*-{
+        $wnd.hasCustomConfig = function () {
+            @client.shop.ListingDetailPanel::hasCustomConfig()();
+        };
+    }-*/;
+
     protected CatalogModels _models;
     protected CatalogListing _listing;
+
+    protected RemixButton _configBtn;
+
+    protected static ListingDetailPanel _singleton;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

@@ -19,6 +19,7 @@ public class RemixButton extends RowPanel
         setCellSpacing(6);
 
         add(MsoyUI.createImageButton("remixButton", onClick));
-        add(MsoyUI.createLabel(label, "remixLabel"), HasVerticalAlignment.ALIGN_MIDDLE);
+        add(MsoyUI.createActionLabel(label, "remixLabel", onClick),
+            HasVerticalAlignment.ALIGN_MIDDLE);
     }
 }
