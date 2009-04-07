@@ -20,6 +20,15 @@ public class CostsConfigObject extends ConfigObject
 
     /** The field name of the <code>newGroup</code> field. */
     public static final String NEW_GROUP = "newGroup";
+
+    /** The field name of the <code>broadcastBase</code> field. */
+    public static final String BROADCAST_BASE = "broadcastBase";
+
+    /** The field name of the <code>broadcastIncrement</code> field. */
+    public static final String BROADCAST_INCREMENT = "broadcastIncrement";
+
+    /** The field name of the <code>startParty</code> field. */
+    public static final String START_PARTY = "startParty";
     // AUTO-GENERATED: FIELDS END
 
     /** The cost of a new room. */
@@ -27,6 +36,15 @@ public class CostsConfigObject extends ConfigObject
 
     /** The cost of new group. */
     public int newGroup = -3;
+
+    /** The base cost of a paid broadcast. */
+    public int broadcastBase = -10;
+
+    /** The increment for each recent broadcast. */
+    public int broadcastIncrement = -4;
+
+    /** The cost to start a party. */
+    public int startParty = 2000;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -59,6 +77,54 @@ public class CostsConfigObject extends ConfigObject
         requestAttributeChange(
             NEW_GROUP, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.newGroup = value;
+    }
+
+    /**
+     * Requests that the <code>broadcastBase</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBroadcastBase (int value)
+    {
+        int ovalue = this.broadcastBase;
+        requestAttributeChange(
+            BROADCAST_BASE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.broadcastBase = value;
+    }
+
+    /**
+     * Requests that the <code>broadcastIncrement</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBroadcastIncrement (int value)
+    {
+        int ovalue = this.broadcastIncrement;
+        requestAttributeChange(
+            BROADCAST_INCREMENT, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.broadcastIncrement = value;
+    }
+
+    /**
+     * Requests that the <code>startParty</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setStartParty (int value)
+    {
+        int ovalue = this.startParty;
+        requestAttributeChange(
+            START_PARTY, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.startParty = value;
     }
     // AUTO-GENERATED: METHODS END
 }

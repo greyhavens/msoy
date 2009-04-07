@@ -1065,23 +1065,18 @@ public class MoneyLogic
     }
 
     /**
-     * Calculates the cost of a broadcast. This is based on the number of broadcasts in a recent
-     * time period. The cost is always in bars.
+     * Calculates the cost factor of a broadcast, which is multiplied by the configured
+     * cost to arrive at the actual cost.
      */
-    public int getBroadcastCost ()
+    public float getRecentBroadcastFactor ()
     {
         long now = System.currentTimeMillis();
+        // TODO: logarithmic decay
         int last10Mins = _repo.countBroadcastsSince(now - (10 * 60 * 1000));
         int over10MinsUnder2Hours = _repo.countBroadcastsSince(now - (2 * 60 * 60 * 1000))
             - last10Mins;
-        // TODO: better formula? It should _always_ cost more if you are broadcasting within, say,
-        // 5 minutes of the last broadcast, but this could cause a price to drop if stuff moves
-        // out of the 10-minute generation. We'd probably have to load the timestamps
-        // of all broadcasts within the last X minutes and have each one contribute a
-        // bar or fraction thereof to the final price.
-        return 10 + // minimum price
-            (4 * last10Mins) + // goes up by 4 bars for every bcast in the last 10 mins
-            over10MinsUnder2Hours; // 1 bar for every bcast over 10 mins, 2 hour roll-off
+        return last10Mins + // within the last 10 minutes count fully
+            (.25f * over10MinsUnder2Hours); // else only 1/4th as much.
     }
 
     /**
@@ -1307,5 +1302,5 @@ public class MoneyLogic
     protected static final Object LIST_ITEM_KEY = new Object();
 
     /** We don't service bling cashouts at any lower frequency than this. */
-    protected static final long CASHOUT_FREQUENCY = BlingInfo.CASHOUT_DAYS*24*60*60*1000L;
+    protected static final long CASHOUT_FREQUENCY = ((long)BlingInfo.CASHOUT_DAYS)*24*60*60*1000L;
 }

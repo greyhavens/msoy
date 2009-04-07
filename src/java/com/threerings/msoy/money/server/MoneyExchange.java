@@ -57,20 +57,44 @@ public class MoneyExchange
     {
         switch (listedCurrency) {
         case COINS:
-            // if the coin price is 0, the bar price is 0.
-            // but otherwise never let the bar price get below 1.
-            int bars = (amount == 0) ? 0 : Math.max(1, ((int) Math.ceil(amount / _rate)));
+            int bars = coinsToBars(amount);
+            int change = coinChange(amount, bars);
             return new PriceQuote(
-                listedCurrency, amount, bars, (int) (Math.floor(bars * _rate) - amount), _rate,
-                _runtime.money.barCost);
+                listedCurrency, amount, bars, change, _rate, _runtime.money.barCost);
 
         case BARS:
-            int coins = (amount == 0) ? 0 : Math.max(1, ((int) Math.ceil(amount * _rate)));
+            int coins = barsToCoins(amount);
             return new PriceQuote(listedCurrency, coins, amount, 0, _rate, _runtime.money.barCost);
 
         default:
             throw new RuntimeException("Error: listing not in bars or coins?");
         }
+    }
+
+    /**
+     * Get the current bar price of the specified coin price.
+     */
+    public int coinsToBars (int coins)
+    {
+        // if the coin price is 0, the bar price is 0.
+        // but otherwise never let the bar price get below 1.
+        return (coins == 0) ? 0 : Math.max(1, ((int) Math.ceil(coins / _rate)));
+    }
+
+    /**
+     * Get the current coin price of the specified bar price.
+     */
+    public int barsToCoins (int bars)
+    {
+        return (bars == 0) ? 0 : Math.max(1, ((int) Math.ceil(bars * _rate)));
+    }
+
+    /**
+     * Get the coin change for the specified prices.
+     */
+    public int coinChange (int coinPrice, int barPrice)
+    {
+        return (int) (Math.floor(barPrice * _rate) - coinPrice);
     }
 
     /**

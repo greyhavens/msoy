@@ -40,6 +40,9 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.ServiceUnit;
 
+import com.threerings.msoy.admin.data.CostsConfigObject;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -206,6 +209,8 @@ public class MsoyManager
         ClientObject caller, final InvocationService.ResultListener listener)
         throws InvocationException
     {
+        final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
+        final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
         final int memberId = ((MemberObject)caller).getMemberId();
         _invoker.postUnit(new PersistingUnit("secureBroadcastQuote", listener) {
             @Override public void invokePersistent ()
@@ -215,7 +220,7 @@ public class MsoyManager
                 if (mrec == null || mrec.isTroublemaker()) {
                     throw new InvocationException("e.broadcast_restricted");
                 }
-                _quote = secureBroadcastQuote(memberId);
+                _quote = secureBroadcastQuote(memberId, baseCost, increment);
             }
             @Override public void handleSuccess () {
                 reportRequestProcessed(_quote);
@@ -230,6 +235,8 @@ public class MsoyManager
         InvocationService.ResultListener listener)
         throws InvocationException
     {
+        final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
+        final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
         final int memberId = ((MemberObject)caller).getMemberId();
         final Name from = ((MemberObject)caller).getVisibleName();
         _invoker.postUnit(new ServiceUnit("purchaseBroadcast", listener) {
@@ -242,10 +249,9 @@ public class MsoyManager
                 }
 
                 // check for a price change
-                int costNow = _moneyLogic.getBroadcastCost();
-                if (costNow != authedCost) {
-                    // if the price has changed, give the user a new quote
-                    _newQuote = secureBroadcastQuote(memberId);
+                PriceQuote recentQuote = secureBroadcastQuote(memberId, baseCost, increment);
+                if (recentQuote.getBars() > authedCost) {
+                    _newQuote = recentQuote;
                     return;
                 }
                 // our buy operation saves the history record but has no ware
@@ -262,7 +268,7 @@ public class MsoyManager
                 // buy it! with exception translation
                 try {
                     _moneyLogic.buyFromOOO(_memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
-                        Currency.BARS, authedCost, Currency.BARS, costNow, buyOp,
+                        Currency.BARS, authedCost, Currency.BARS, recentQuote.getBars(), buyOp,
                         UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
                         TransactionType.BROADCAST_PURCHASE, null);
 
@@ -290,22 +296,24 @@ public class MsoyManager
     /**
      * Blocks and obtains a price quote.
      */
-    protected PriceQuote secureBroadcastQuote (int memberId)
+    protected PriceQuote secureBroadcastQuote (int memberId, int baseBars, int incrementBars)
     {
-        return _moneyLogic.securePrice(memberId, BROADCAST_PURCHASE_KEY, Currency.BARS,
-            _moneyLogic.getBroadcastCost());
+        int cost = baseBars +
+            (int) Math.ceil(incrementBars * _moneyLogic.getRecentBroadcastFactor());
+        return _moneyLogic.securePrice(memberId, BROADCAST_PURCHASE_KEY, Currency.BARS, cost);
     }
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ChatProvider _chatprov;
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected NotificationManager _notifyMan;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected MoneyRepository _moneyRepo;
-    @Inject protected ChatProvider _chatprov;
+    @Inject protected RuntimeConfig _runtime;
 
     /** An arbitrary key for tracking quotes for broadcast messages. */
     protected static final Object BROADCAST_PURCHASE_KEY = new Object();

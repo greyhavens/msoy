@@ -59,7 +59,21 @@ public class RuntimeConfig
     {
         try {
             int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
-            return (value >= 0) ? value : (int)Math.floor(-1 * value * _exchange.getRate());
+            return (value >= 0) ? value : _exchange.barsToCoins(-value);
+        } catch (ObjectAccessException oae) {
+            // Shouldn't happen as long as you're using CostsConfigObject constants in your code...
+            throw new RuntimeException(oae);
+        }
+    }
+
+    /**
+     * Get the cost, in bars, of the specified field of the CostsConfigObject.
+     */
+    public int getBarCost (String costsFieldName)
+    {
+        try {
+            int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
+            return (value <= 0) ? -value : _exchange.coinsToBars(value);
         } catch (ObjectAccessException oae) {
             // Shouldn't happen as long as you're using CostsConfigObject constants in your code...
             throw new RuntimeException(oae);
