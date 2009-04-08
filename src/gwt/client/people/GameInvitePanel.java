@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
@@ -165,6 +166,9 @@ public class GameInvitePanel extends InvitePanel
      */
     protected static class WhirledFriendsPanel extends SmartTable
     {
+        // holding off on new features until after EC2 deployment
+        public static final boolean FRESH_BLOOD = DeploymentConfig.devDeployment;
+
         /**
          * Creates a new friends panel.
          */
@@ -180,7 +184,8 @@ public class GameInvitePanel extends InvitePanel
 
             // instructions
             setText(row++, 0, _msgs.gameInviteWhirledTitle(), 1, "Bold");
-            setText(row++, 0, _msgs.gameInviteWhirledDetail());
+            setText(row++, 0, FRESH_BLOOD ? _msgs.gameInviteWhirledDetail(gameName) :
+                _msgs.gameInviteWhirledDetail_Old());
 
             // buttons to select and deselect all friends
             SmartTable selectors = new SmartTable();
@@ -194,14 +199,15 @@ public class GameInvitePanel extends InvitePanel
                     selectAll(false);
                 }
             }));
-            _showAll = new CheckBox(_msgs.gameInviteWhirledShowAll());
-            // not yet enabled
-            // selectors.setWidget(0, 2, _showAll);
-            _showAll.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    downloadFriends();
-                }
-            });
+            if (FRESH_BLOOD) {
+                _showAll = new CheckBox(_msgs.gameInviteWhirledShowAll());
+                selectors.setWidget(0, 2, _showAll);
+                _showAll.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        downloadFriends();
+                    }
+                });
+            }
             setWidget(row++, 0, selectors);
 
             // friends grid
@@ -256,7 +262,7 @@ public class GameInvitePanel extends InvitePanel
         protected void downloadFriends ()
         {
             // pass a zero game id to include people who have already played
-            int gameId = _showAll.isChecked() ? 0 : _gameId;
+            int gameId = FRESH_BLOOD ? (_showAll.isChecked() ? 0 : _gameId) : 0;
 
             // get friend list from the server; fill in our grid
             _invitesvc.getFriends(gameId, ROWS * COLS, new InfoCallback<List<MemberCard>>() {
