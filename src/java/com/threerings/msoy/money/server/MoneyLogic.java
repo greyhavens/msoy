@@ -1053,13 +1053,22 @@ public class MoneyLogic
     }
 
     /**
-     * Secure a price for a generic ware.
+     * Secure a price for a generic ware, allowing exchange.
      */
     public PriceQuote securePrice (
         int buyerId, Object wareKey, Currency listedCurrency, int listedAmount)
     {
+        return securePrice(buyerId, wareKey, listedCurrency, listedAmount, true);
+    }
+
+    /**
+     */
+    public PriceQuote securePrice (
+        int buyerId, Object wareKey, Currency listedCurrency, int listedAmount,
+        boolean allowExchange)
+    {
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
-        PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
+        PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount, allowExchange);
         _priceCache.addQuote(buyerId, wareKey, quote);
         return quote;
     }

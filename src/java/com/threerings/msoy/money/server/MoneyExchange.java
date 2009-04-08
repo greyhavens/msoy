@@ -53,17 +53,17 @@ public class MoneyExchange
     /**
      * Secure a price quote based on the current exchange rate.
      */
-    public PriceQuote secureQuote (Currency listedCurrency, int amount)
+    public PriceQuote secureQuote (Currency listedCurrency, int amount, boolean allowExchange)
     {
         switch (listedCurrency) {
         case COINS:
-            int bars = coinsToBars(amount);
-            int change = coinChange(amount, bars);
+            int bars = allowExchange ? coinsToBars(amount) : -1;
+            int change = allowExchange ? coinChange(amount, bars) : 0;
             return new PriceQuote(
                 listedCurrency, amount, bars, change, _rate, _runtime.money.barCost);
 
         case BARS:
-            int coins = barsToCoins(amount);
+            int coins = allowExchange ? barsToCoins(amount) : -1;
             return new PriceQuote(listedCurrency, coins, amount, 0, _rate, _runtime.money.barCost);
 
         default:

@@ -250,7 +250,7 @@ public class MsoyManager
 
                 // check for a price change
                 PriceQuote recentQuote = secureBroadcastQuote(memberId, baseCost, increment);
-                if (recentQuote.getBars() > authedCost) {
+                if (recentQuote.isPurchaseValid(Currency.BARS, authedCost, 0 /* unused exrate */)) {
                     _newQuote = recentQuote;
                     return;
                 }
@@ -300,7 +300,8 @@ public class MsoyManager
     {
         int cost = baseBars +
             (int) Math.ceil(incrementBars * _moneyLogic.getRecentBroadcastFactor());
-        return _moneyLogic.securePrice(memberId, BROADCAST_PURCHASE_KEY, Currency.BARS, cost);
+        return _moneyLogic.securePrice(
+            memberId, BROADCAST_PURCHASE_KEY, Currency.BARS, cost, false);
     }
 
     // dependencies

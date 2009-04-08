@@ -51,7 +51,8 @@ public class PriceQuote extends SimpleStreamableObject
         }
 
         // otherwise, as long as they have authorized enough dough...
-        return (getAmount(buyCurrency) <= authorizedAmount);
+        int amount = getAmount(buyCurrency);
+        return (amount >= 0) && (amount <= authorizedAmount);
     }
 
     /**
