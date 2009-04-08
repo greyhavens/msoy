@@ -151,7 +151,7 @@ public class ForumPanel extends TitledListPanel
             header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
         }
         header.setText(0, col++, _mmsgs.groupThreadPosts(), 1, "Posts");
-        header.setText(0, col++, _mode == Mode.FRIENDS_POSTS ? _mmsgs.groupThreadFriendPost() :
+        header.setText(0, col++, _mode == Mode.FRIENDS ? _mmsgs.groupThreadFriendPost() :
             _mmsgs.groupThreadLastPost(), 1, "LastPost");
         if (groupId == 0) {
             header.setText(0, col++, "", 1, "IgnoreThread");
