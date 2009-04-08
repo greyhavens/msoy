@@ -450,8 +450,8 @@ public class RoomStudioView extends RoomView
 
     protected function handleSpriteInit (ignored :Event = null) :void
     {
-        if (_testingSprite.hasCustomConfigPanel()) {
-            // add a button for configuring
+        // add a button for configuring, if we're not in the inventory
+        if (!_sctrl.isInInventory() && _testingSprite.hasCustomConfigPanel()) {
             var config :CommandButton = new CommandButton(null, _sctrl.showStudioConfig);
             config.styleName = "controlBarConfig";
             config.toolTip = Msgs.STUDIO.get("i.config");

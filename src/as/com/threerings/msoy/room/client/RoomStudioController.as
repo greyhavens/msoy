@@ -68,9 +68,18 @@ public class RoomStudioController extends RoomController
             }
         } catch (e :Error) {}
 
-        _inShop = (null != MsoyParameters.get()["inShop"]);
+        _env = MsoyParameters.get()["env"];
 
         initScene();
+    }
+
+    /**
+     * Are we running in inventory? This could go away if we differentiated between
+     * viewer and inventory to usercode, and we could just call getEnvironment().
+     */
+    public function isInInventory () :Boolean
+    {
+        return (_env == "inventory");
     }
 
     // allow other actor moves
@@ -84,13 +93,15 @@ public class RoomStudioController extends RoomController
     // documentation inherited
     override public function getEnvironment () :String
     {
-        return _inShop ? "shop" : super.getEnvironment();
+        // shop if we're in the shop,
+        // else we don't currently differentiate between viewer and inventory to usercode...
+        return (_env == "shop") ? "shop" : super.getEnvironment();
     }
 
     // documentation inherited
     override public function memoriesWillSave () :Boolean
     {
-        return _inShop;
+        return (_env == "shop");
     }
 
     // documentation inherited
@@ -333,6 +344,7 @@ public class RoomStudioController extends RoomController
     /** Have we warned the user that the memories won't save? */
     protected var _warnedMemory :Boolean;
 
-    protected var _inShop :Boolean = false;
+    /** Our environment: shop, inv, or null (for the SDK viewer). */
+    protected var _env :String;
 }
 }

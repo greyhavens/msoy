@@ -130,10 +130,8 @@ public class ItemUtil
         // set up the flashvars
         String flashVars = "mode=" + mode +
             "&media=" + URL.encodeComponent(preview.getMediaPath()) +
-            "&name=" + URL.encodeComponent(item.name);
-        if (inShop) {
-            flashVars += "&inShop=t";
-        }
+            "&name=" + URL.encodeComponent(item.name) +
+            "&env=" + (inShop ? "shop" : "inventory");
         if (memories != null) {
             flashVars += "&mems=" + URL.encodeComponent(memories);
         }
