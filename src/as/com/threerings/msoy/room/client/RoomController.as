@@ -230,8 +230,7 @@ public class RoomController extends SceneController
         ident :ItemIdent, name :String, arg :Object, isAction :Boolean) :void
     {
         if (isAction && !checkCanRequest(ident, "triggerAction")) {
-            log.info("Dropping message for lack of control [ident=" + ident +
-                     ", name=" + name + "].");
+            log.info("Dropping message for lack of control", "ident", ident, "name", name);
             return;
         }
 
@@ -256,8 +255,7 @@ public class RoomController extends SceneController
     public function setActorState (ident :ItemIdent, actorOid :int, state :String) :void
     {
         if (!checkCanRequest(ident, "setState")) {
-            log.info("Dropping state change for lack of control [ident=" + ident +
-                ", state=" + state + "].");
+            log.info("Dropping state change for lack of control", "ident", ident, "state", state);
             return;
         }
 
@@ -843,8 +841,7 @@ public class RoomController extends SceneController
             return true;
         }
 
-        log.info("Dropping request as we are not controller [from=" + from +
-                 ", item=" + ident + "].");
+        log.info("Dropping request as we are not controller", "from", from, "item", ident);
         return false;
     }
 
