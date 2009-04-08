@@ -7,7 +7,6 @@ import java.util.List;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.Link;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -19,9 +18,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.DataModel;
-
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
 
@@ -113,9 +109,7 @@ public class UnreadThreadListPanel extends ThreadListPanel<ForumThread>
             super.addSubjectBits(bits, thread);
 
             // we're displaying unread threads from many groups, so display the group name w/ link
-            Widget groupLink = Link.create(_mmsgs.tlpFromGroup(thread.group.toString()),
-                "GroupName", Pages.GROUPS, Args.compose("f", thread.group.getGroupId()));
-            bits.add(groupLink);
+            bits.add(makeGroupLink(thread));
         }
     }
 

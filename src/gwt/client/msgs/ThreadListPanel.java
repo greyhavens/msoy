@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -18,6 +19,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -182,6 +184,33 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
     }
 
     /**
+     * Gets the time to display in the post column for a given item row. Returns the most recent
+     * post time by default.
+     */
+    protected Date getPostTime (T item)
+    {
+        return getThread(item).mostRecentPostTime;
+    }
+
+    /**
+     * Gets the member name to display in the post column for a given item row. Returns the most
+     * recent poster by default.
+     */
+    protected MemberName getPoster (T item)
+    {
+        return getThread(item).mostRecentPoster;
+    }
+
+    /**
+     * Creates a link to the given group.
+     */
+    protected static Widget makeGroupLink (ForumThread thread)
+    {
+        return Link.create(_mmsgs.tlpFromGroup(thread.group.toString()),
+            "GroupName", Pages.GROUPS, Args.compose("f", thread.group.getGroupId()));
+    }
+
+    /**
      * Summary panel for a single thread item.
      */
     protected class ThreadSummaryPanel extends SmartTable
@@ -209,14 +238,14 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
 
             setText(0, col++, String.valueOf(thread.posts), 1, "Posts");
 
-            FlowPanel mrp = MsoyUI.createFlowPanel("LastPost");
-            mrp.add(new Label(MsoyUI.formatDateTime(thread.mostRecentPostTime)));
-            Widget latest = Link.create(
-                _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
+            FlowPanel post = MsoyUI.createFlowPanel("LastPost");
+            post.add(new Label(MsoyUI.formatDateTime(getPostTime(item))));
+            Widget by = Link.create(
+                _mmsgs.tlpBy(getPoster(item).toString()),
                 Pages.GROUPS, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
-            latest.setTitle(_mmsgs.tlpLastTip());
-            mrp.add(latest);
-            setWidget(0, col++, mrp, 1, "LPCell");
+            by.setTitle(_mmsgs.tlpLastTip());
+            post.add(by);
+            setWidget(0, col++, post, 1, "LPCell");
         }
 
         protected void addSubjectBits (FlowPanel bits, ForumThread thread)
