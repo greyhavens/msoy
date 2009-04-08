@@ -60,6 +60,7 @@ public class ControlBackend
         _sharedEvents.removeEventListener("controlConnect", handleUserCodeConnect);
         _sharedEvents = null;
         _props = null;
+        _ctx = null;
     }
 
     /**
