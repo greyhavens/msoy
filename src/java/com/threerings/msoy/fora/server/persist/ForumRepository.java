@@ -150,6 +150,14 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Load the list of threads with ids in the given set, in no particular order.
+     */
+    public List<ForumThreadRecord> loadThreads (Collection<Integer> threadIds)
+    {
+        return loadAll(ForumThreadRecord.class, threadIds);
+    }
+
+    /**
      * Finds all threads that match the specified search in their subject or for which one or more
      * of their messages matches the supplied search.
      */

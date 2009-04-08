@@ -117,26 +117,22 @@ public class ForumServlet extends MsoyServiceServlet
         List<ForumMessagePosterRecord> posters = _forumRepo.loadUnreadPosts(mrec.memberId,
             _memberRepo.loadFriendIds(mrec.memberId), maximum);
 
-        // keep track of all the member ids we'll need to do the resolution later
+        // load all the threads into a map, tracking required member and groups ids as we go
         Set<Integer> memberIds = Sets.newHashSet();
-
-        // load all the threads
         Map<Integer, ForumThreadRecord> threadRecMap = Maps.newHashMap();
-        for (ForumMessagePosterRecord poster : posters) {
-            memberIds.add(poster.posterId);
-            if (threadRecMap.get(poster.threadId) != null) {
-                continue;
-            }
-            ForumThreadRecord threc = _forumRepo.loadThread(poster.threadId);
-            threadRecMap.put(poster.threadId, threc);
-            memberIds.add(threc.mostRecentPosterId);
-        }
-
-        // load the names of all the groups
+        Set<Integer> threadIds = Sets.newHashSet();
         Set<Integer> groupIds = Sets.newHashSet();
-        for (ForumThreadRecord threc : threadRecMap.values()) {
+        for (ForumMessagePosterRecord poster : posters) {
+            threadIds.add(poster.threadId);
+            memberIds.add(poster.posterId);
+        }
+        for (ForumThreadRecord threc : _forumRepo.loadThreads(threadIds)) {
+            threadRecMap.put(threc.threadId, threc);
+            memberIds.add(threc.mostRecentPosterId);
             groupIds.add(threc.groupId);
         }
+
+        // load group names
         Map<Integer, GroupName> groupNames = Maps.newHashMap();
         for (GroupName name : _groupRepo.loadGroupNames(groupIds)) {
             groupNames.put(name.getGroupId(), name);
