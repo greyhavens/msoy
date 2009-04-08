@@ -249,9 +249,9 @@ public class MsoyManager
                 }
 
                 // check for a price change
-                PriceQuote recentQuote = secureBroadcastQuote(memberId, baseCost, increment);
-                if (recentQuote.isPurchaseValid(Currency.BARS, authedCost, 0 /* unused exrate */)) {
-                    _newQuote = recentQuote;
+                PriceQuote newQuote = secureBroadcastQuote(memberId, baseCost, increment);
+                if (!newQuote.isPurchaseValid(Currency.BARS, authedCost, 0 /* unused exrate */)) {
+                    _newQuote = newQuote;
                     return;
                 }
                 // our buy operation saves the history record but has no ware
@@ -268,7 +268,7 @@ public class MsoyManager
                 // buy it! with exception translation
                 try {
                     _moneyLogic.buyFromOOO(_memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
-                        Currency.BARS, authedCost, Currency.BARS, recentQuote.getBars(), buyOp,
+                        Currency.BARS, authedCost, Currency.BARS, newQuote.getBars(), buyOp,
                         UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
                         TransactionType.BROADCAST_PURCHASE, null);
 
