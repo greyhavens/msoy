@@ -38,6 +38,9 @@ public class ForumPanel extends TitledListPanel
         /** Viewing the threads of a group. */
         GROUPS,
 
+        /** Viewing threads with unread posts from friends. */
+        FRIENDS,
+
         /** Starting a new thread. */
         NEW_THREAD
     }
@@ -70,6 +73,10 @@ public class ForumPanel extends TitledListPanel
             _threads = new UnreadThreadListPanel(this, _fmodels);
             setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), _threads), _threads);
             break;
+        case FRIENDS:
+            _threads = new FriendThreadListPanel(this, _fmodels);
+            setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), _threads), _threads);
+            break;
         case NEW_THREAD:
             startNewThread(groupId);
             break;
@@ -90,7 +97,10 @@ public class ForumPanel extends TitledListPanel
      */
     public void setPage (String query, int page)
     {
-        if (_mode == Mode.GROUPS || _mode == Mode.UNREAD) {
+        switch (_mode) {
+        case GROUPS:
+        case FRIENDS:
+        case UNREAD:
             _threads.setPage(query, page);
         }
     }
@@ -141,7 +151,8 @@ public class ForumPanel extends TitledListPanel
             header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
         }
         header.setText(0, col++, _mmsgs.groupThreadPosts(), 1, "Posts");
-        header.setText(0, col++, _mmsgs.groupThreadLastPost(), 1, "LastPost");
+        header.setText(0, col++, _mode == Mode.FRIENDS_POSTS ? _mmsgs.groupThreadFriendPost() :
+            _mmsgs.groupThreadLastPost(), 1, "LastPost");
         if (groupId == 0) {
             header.setText(0, col++, "", 1, "IgnoreThread");
         }
@@ -181,7 +192,7 @@ public class ForumPanel extends TitledListPanel
     protected int _groupId;
 
     /** The current list of threads, if any. */
-    protected ThreadListPanel _threads;
+    protected ThreadListPanel<?> _threads;
 
     /** Title for the page, set to group name after data load */
     protected SimplePanel _title;
