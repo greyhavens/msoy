@@ -450,7 +450,7 @@ public class RoomStudioView extends RoomView
 
     protected function handleSpriteInit (ignored :Event = null) :void
     {
-        if (_sctrl.memoriesWillSave() && _testingSprite.hasCustomConfigPanel()) {
+        if (_testingSprite.hasCustomConfigPanel()) {
             // add a button for configuring
             var config :CommandButton = new CommandButton(null, _sctrl.showStudioConfig);
             config.styleName = "controlBarConfig";
