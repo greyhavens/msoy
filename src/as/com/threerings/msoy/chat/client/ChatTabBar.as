@@ -228,16 +228,17 @@ public class ChatTabBar extends HBox
     public function getCurrentChannel () :MsoyChatChannel
     {
         if (_selectedIndex == -1) {
-            log.warning("getCurrentChannel() with no selected tab");
+            log.warning("getCurrentChannel() with no selected tab", new Error());
             return null;
         }
         if (_tabs.length == 0) {
-            log.warning("getCurrentChannel() without tabs", "selectedIndex", _selectedIndex);
+            log.warning("getCurrentChannel() without tabs", "selectedIndex", _selectedIndex,
+                new Error());
             return null;
         }
         if (_selectedIndex >= _tabs.length) {
             log.warning("getCurrentChannel() indexing error", "selectedIndex", _selectedIndex,
-                        "tabs.length", "_tabs.length");
+                        "tabs.length", _tabs.length, new Error());
             return null;
         }
         return (_tabs[_selectedIndex] as ChatTab).channel;
