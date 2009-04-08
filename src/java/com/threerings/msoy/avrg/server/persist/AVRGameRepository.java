@@ -4,10 +4,11 @@
 package com.threerings.msoy.avrg.server.persist;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -15,6 +16,12 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.GroupBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -25,6 +32,17 @@ import com.threerings.presents.annotation.BlockingThread;
 @Singleton @BlockingThread
 public class AVRGameRepository extends DepotRepository
 {
+    /**
+     * Computed record for checking if a player has a property without actually loading any. It
+     * would be protected but depot needs to create it by reflection.
+     */
+    @Entity @Computed
+    public static class HasPropertyRecord extends PersistentRecord
+    {
+        @Computed(shadowOf=PlayerGameStateRecord.class)
+        public int memberId;
+    }
+
     @Inject public AVRGameRepository (PersistenceContext context)
     {
         super(context);
@@ -101,10 +119,18 @@ public class AVRGameRepository extends DepotRepository
      */
     public Set<Integer> getPropertiedMembers (int gameId, Set<Integer> memberIds)
     {
-        // TODO
-        // select "memberId", count(*) from "PlayerGameStateRecord" where "gameId" = {gameId} and
-        //     "memberId" in {memberIds} group by "memberId";
-        return Collections.emptySet();
+        List<QueryClause> clauses = Lists.newArrayList(
+            new Where(new Logic.And(
+                new Conditionals.Equals(PlayerGameStateRecord.GAME_ID, gameId),
+                new Conditionals.In(PlayerGameStateRecord.MEMBER_ID, memberIds))),
+            new GroupBy(PlayerGameStateRecord.MEMBER_ID),
+            new FromOverride(PlayerGameStateRecord.class));
+
+        memberIds = Sets.newHashSet();
+        for (HasPropertyRecord prop : findAll(HasPropertyRecord.class, clauses)) {
+            memberIds.add(prop.memberId);
+        }
+        return memberIds;
     }
 
     @Override

@@ -256,21 +256,25 @@ public class InviteServlet extends MsoyServiceServlet
         return requireAuthedUser().homeSceneId;
     }
 
+    // from InviteService
     public List<MemberCard> getFriends (int gameId, int count)
         throws ServiceException
     {
+        // load friends
         MemberRecord memrec = requireAuthedUser();
         Set<Integer> friendIds = _memberRepo.loadFriendIds(memrec.memberId);
-        if (gameId != 0) {
-            GameRecord grec = _gameRepo.loadItem(gameId);
-            if (grec != null) {
-                if (Game.detectIsInWorld(grec.config)) {
-                    friendIds.removeAll(_avrGameRepo.getPropertiedMembers(gameId, friendIds));
-                } else {
-                    friendIds.removeAll(_gameCookieRepo.getCookiedPlayers(gameId, friendIds));
-                }
+
+        // if requested, remove friends that have already saved some progress in the game
+        GameRecord grec;
+        if (gameId != 0 && (grec = _mgameRepo.loadGameRecord(gameId)) != null) {
+            if (Game.detectIsInWorld(grec.config)) {
+                friendIds.removeAll(_avrGameRepo.getPropertiedMembers(gameId, friendIds));
+            } else {
+                friendIds.removeAll(_gameCookieRepo.getCookiedPlayers(gameId, friendIds));
             }
         }
+
+        // resolve to member cards
         List<MemberCard> cards = Lists.newArrayList();
         for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendIds, 0, count, true)) {
             cards.add(mcr.toMemberCard());
