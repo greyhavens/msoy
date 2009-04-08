@@ -170,9 +170,9 @@ public class QuestDelegate extends PlayManagerDelegate
         final int rawPayout = Math.round(payoutFactor * payoutLevel);
         final int payout = Math.min(flowPerHour, rawPayout);
         if (payout != rawPayout) {
-            log.warning("Capped AVRG payout at one hour [game=" + _gameId +
-                        ", factor=" + payoutFactor + ", level=" + payoutLevel +
-                        ", wanted=" + rawPayout + ", got=" + payout + "].");
+            log.warning("Capped AVRG payout at one hour",
+               "game", _gameId, "factor", payoutFactor, "level", payoutLevel,
+               "wanted", rawPayout, "got", payout);
         }
 
         // we don't actually award coins if we're the development version of the game

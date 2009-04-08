@@ -35,7 +35,7 @@ public class PartyBoardPanel extends FloatingPanel
         _partyList = new List();
         _partyList.selectable = false;
         _partyList.itemRenderer = cf;
-        _partyList.verticalScrollPolicy = ScrollPolicy.ON;
+        //_partyList.verticalScrollPolicy = ScrollPolicy.ON;
         _partyList.percentWidth = 100;
         _partyList.percentHeight = 100;
 
@@ -44,8 +44,8 @@ public class PartyBoardPanel extends FloatingPanel
         loading.percentHeight = 100;
 
         _content = new VBox();
-        _content.width = 400;
-        _content.height = 360;
+        _content.width = 450;
+        _content.height = 300;
         _content.addChild(loading);
 
         getPartyBoard();

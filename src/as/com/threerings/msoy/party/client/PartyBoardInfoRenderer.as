@@ -70,7 +70,7 @@ public class PartyBoardInfoRenderer extends HBox
 //        _status.percentWidth = 50;
         // GODDAMN YOU FLEX AND YOUR CHIMPASS LAYOUT
         _name.width = 150;
-        _status.width = 110;
+        _status.width = 160;
 
         addChild(_picHolder);
         addChild(_name);
