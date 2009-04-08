@@ -3,6 +3,7 @@
 
 package client.people;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -213,11 +214,12 @@ public class GameInvitePanel extends InvitePanel
             setWidget(row++, 0, message);
 
             // send button
-            PushButton send = MsoyUI.createButton("shortThin", _cmsgs.send(), null);
-            new ClickCallback<Void>(send) {
+            _send = MsoyUI.createButton("shortThin", _cmsgs.send(), null);
+            new ClickCallback<Void>(_send) {
                 public boolean callService () {
                     Set<Integer> recipients = getRecipients();
-                    if (recipients == null) {
+                    if (recipients.size() == 0) {
+                        // this should not happen, but check anyway
                         return false;
                     }
                     String inviter = CShell.creds.name.toString();
@@ -235,7 +237,8 @@ public class GameInvitePanel extends InvitePanel
                     return true;
                 }
             };
-            setWidget(row, 0, send, 2, null);
+            _send.setEnabled(false);
+            setWidget(row, 0, _send, 2, null);
             getFlexCellFormatter().setHorizontalAlignment(
                 row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 
@@ -244,12 +247,12 @@ public class GameInvitePanel extends InvitePanel
                 public void onSuccess (List<MemberCard> result) {
                     _grid.clear();
                     for (int ii = 0; ii < result.size(); ++ii) {
-                        SelectaFriend friend = new SelectaFriend(result.get(ii));
+                        SelectaFriend friend = new SelectaFriend(result.get(ii), _updateSendButton);
+                        _friends.add(friend);
                         _grid.setWidget(ii / COLS, ii % COLS, friend);
                         _grid.getFlexCellFormatter().setWidth(ii / COLS, ii % COLS, COL_WIDTH);
                     }
-                    _gridFilled = result.size() != 0;
-                    if (!_gridFilled) {
+                    if (_friends.size() == 0) {
                         _grid.setText(0, 0, _msgs.gameInviteWhirledNoFriends());
                     }
                 }
@@ -261,46 +264,51 @@ public class GameInvitePanel extends InvitePanel
          */
         protected void selectAll (boolean select)
         {
-            if (!_gridFilled) {
-                return;
+            for (SelectaFriend friend : _friends) {
+                friend.select(select);
             }
-            for (int row = 0; row < _grid.getRowCount(); ++row) {
-                for (int col = 0; col < _grid.getCellCount(row); ++col) {
-                    ((SelectaFriend)_grid.getWidget(row, col)).select(select);
+            new Timer() {
+                public void run () {
+                    updateSendButton();
                 }
-            }
+            }.schedule(1);
         }
 
         /**
-         * Gets the recipients for a message. If there are no recipients, shows an error and
-         * returns null.
+         * Gets the recipients for a message.
          */
         protected Set<Integer> getRecipients ()
         {
-            if (!_gridFilled) {
-                // TODO: the send button should just be disabled here
-                MsoyUI.error("There are no friends to send to.");
-                return null;
-            }
             HashSet<Integer> selected = new HashSet<Integer>();
-            for (int row = 0; row < _grid.getRowCount(); ++row) {
-                for (int col = 0; col < _grid.getCellCount(row); ++col) {
-                    SelectaFriend saf = (SelectaFriend)_grid.getWidget(row, col);
-                    if (saf.isSelected()) {
-                        selected.add(saf.getMemberId());
-                    }
+            for (SelectaFriend saf : _friends) {
+                if (saf.isSelected()) {
+                    selected.add(saf.getMemberId());
                 }
-            }
-            if (selected.size() == 0) {
-                // TODO: the send button should just be disabled here
-                MsoyUI.error("Select one or more friends by clicking the check boxes.");
-                return null;
             }
             return selected;
         }
 
+        protected void updateSendButton ()
+        {
+            boolean enable = false;
+            for (SelectaFriend saf : _friends) {
+                if (saf.isSelected()) {
+                    enable = true;
+                    break;
+                }
+            }
+            _send.setEnabled(enable);
+        }
+
+        protected ClickListener _updateSendButton = new ClickListener() {
+            public void onClick (Widget sender) {
+                updateSendButton();
+            }
+        };
+
         protected SmartTable _grid;
-        protected boolean _gridFilled;
+        protected PushButton _send;
+        protected List<SelectaFriend> _friends = new ArrayList<SelectaFriend>();
         protected static final int ROWS = 12;
         protected static final int COLS = 3;
         protected static final String COL_WIDTH = "33%";
@@ -311,7 +319,7 @@ public class GameInvitePanel extends InvitePanel
      */
     protected static class SelectaFriend extends SmartTable
     {
-        public SelectaFriend (MemberCard card)
+        public SelectaFriend (MemberCard card, ClickListener listener)
         {
             super(0, 1);
             _card = card;
@@ -319,6 +327,7 @@ public class GameInvitePanel extends InvitePanel
             setWidget(0, 1, new ThumbBox(card.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE));
             setWidget(0, 2, MsoyUI.createLabel(card.name.toString(), "memberName"));
             getFlexCellFormatter().setWidth(0, 2, "100%");
+            _check.addClickListener(listener);
         }
 
         public int getMemberId ()
