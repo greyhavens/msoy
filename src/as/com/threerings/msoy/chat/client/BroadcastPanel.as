@@ -25,7 +25,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyService;
 
-import com.threerings.msoy.money.client.BuyButton;
+import com.threerings.msoy.money.client.BuyPanel;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
@@ -76,8 +76,8 @@ public class BroadcastPanel extends FloatingPanel
         hbox.addChild(tos);
         addChild(hbox);
 
-        addChild(_barButton = new BuyButton(Currency.BARS, processPurchase));
-        _barButton.enabled = false;
+        addChild(_buyPanel = new BuyPanel(_ctx, processPurchase));
+        _buyPanel.enabled = false;
 
         var vbox :VBox = new VBox();
         vbox.setStyle("horizontalAlignment", "left");
@@ -108,7 +108,7 @@ public class BroadcastPanel extends FloatingPanel
 
     protected function gotQuote (quote :PriceQuote, first :Boolean = true) :void
     {
-        _barButton.setPriceQuote(quote);
+        _buyPanel.setPriceQuote(quote);
         _instructions.text = Msgs.CHAT.get(
             "m.broadcast_instructions_" + (first ? "initial" : "price_change"), quote.getBars());
     }
@@ -128,7 +128,7 @@ public class BroadcastPanel extends FloatingPanel
 
     protected function setAgreeTOS (agree :Boolean) :void
     {
-        _barButton.enabled = agree;
+        _buyPanel.enabled = agree;
     }
 
     protected function processPurchase (currency :Currency, authedAmount :int) :void
@@ -141,12 +141,12 @@ public class BroadcastPanel extends FloatingPanel
         var client :MsoyClient = _ctx.getMsoyClient();
         var msoySvc :MsoyService = client.requireService(MsoyService) as MsoyService;
         msoySvc.purchaseAndSendBroadcast(client, authedAmount, finalMsg,
-            _ctx.resultListener(broadcastSent, MsoyCodes.GENERAL_MSGS, null, _barButton));
+            _ctx.resultListener(broadcastSent, MsoyCodes.GENERAL_MSGS, null, _buyPanel));
     }
 
     protected var _msg :String;
     protected var _instructions :Text;
-    protected var _barButton :BuyButton;
+    protected var _buyPanel :BuyPanel;
     protected var _linkGroup :RadioButtonGroup = new RadioButtonGroup();
 }
 }
