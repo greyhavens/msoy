@@ -26,6 +26,8 @@ import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.UberClientModes;
 
+import com.threerings.msoy.ui.BubblePopup;
+
 import com.threerings.msoy.utils.Base64Decoder;
 import com.threerings.msoy.utils.Base64Encoder;
 
@@ -239,6 +241,13 @@ public class RoomStudioController extends RoomController
         if (callback != null) {
             MethodQueue.callLater(callback, [ true ]);
         }
+
+        // perhaps show a little message...
+        if (!_warnedMemory && !memoriesWillSave()) {
+            _warnedMemory = true;
+            BubblePopup.showHelpBubble(_wdctx, _wdctx.getControlBar().volBtn,
+                Msgs.STUDIO.get("m.mems_wont_save"), 0, false);
+        }
     }
 
     /**
@@ -320,6 +329,9 @@ public class RoomStudioController extends RoomController
 
     /** Maps ItemIdent -> HashMap<String, ByteArray> */
     protected var _memories :HashMap;
+
+    /** Have we warned the user that the memories won't save? */
+    protected var _warnedMemory :Boolean;
 
     protected var _inShop :Boolean = false;
 }

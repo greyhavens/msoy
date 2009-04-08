@@ -28,7 +28,6 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
-import com.threerings.msoy.client.BubblePopup;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -39,6 +38,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.ui.BubblePopup;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Avatar;

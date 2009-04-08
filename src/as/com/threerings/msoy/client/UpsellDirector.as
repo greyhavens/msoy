@@ -18,6 +18,7 @@ import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.ui.BubblePopup;
 
 public class UpsellDirector extends BasicDirector
 {

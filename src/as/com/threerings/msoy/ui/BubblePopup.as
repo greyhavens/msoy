@@ -1,4 +1,4 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.ui {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
@@ -17,6 +17,9 @@ import caurina.transitions.Tweener;
 
 import com.threerings.msoy.utils.TextUtil;
 
+import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.PlaceBox;
+
 import com.threerings.msoy.chat.client.ChatOverlay;
 
 /**
@@ -32,7 +35,8 @@ public class BubblePopup extends Sprite
      * @param gloc the global location where the tail of the bubble should be
      */
     public static function showHelpBubble (
-        ctx :MsoyContext, target :DisplayObject, message :String, yOffset :int = 0) :void
+        ctx :MsoyContext, target :DisplayObject, message :String, yOffset :int = 0,
+        showTail :Boolean = true) :void
     {
         var p :Point = target.localToGlobal(new Point(target.width / 2, yOffset));
 
@@ -42,7 +46,7 @@ public class BubblePopup extends Sprite
         p = parent.globalToLocal(p);
 
         // TODO: orient bubble tail based on the edge of the container the new point is closest to
-        var bubble :BubblePopup = new BubblePopup(message);
+        var bubble :BubblePopup = new BubblePopup(message, showTail);
         bubble.x = p.x;
         bubble.y = p.y;
         bubble.alpha = 0;
@@ -85,7 +89,7 @@ public class BubblePopup extends Sprite
     /**
      * Creates a new notification bubble.
      */
-    public function BubblePopup (message :String)
+    public function BubblePopup (message :String, showTail :Boolean)
     {
         // NB: 0, 0 is the tip of the tail
 
@@ -111,17 +115,19 @@ public class BubblePopup extends Sprite
             text.height + PADDING * 2, ROUNDING);
         graphics.endFill();
 
-        // tail interior
-        graphics.lineStyle(1, FILL);
-        graphics.beginFill(FILL);
-        graphics.drawRect(-TAIL_BASE_X + 1, -TAIL_HEIGHT - PADDING / 2, TAIL_BASE_WIDTH - 2,
-            PADDING / 2);
-        drawTailWedge();
-        graphics.endFill();
+        if (showTail) {
+            // tail interior
+            graphics.lineStyle(1, FILL);
+            graphics.beginFill(FILL);
+            graphics.drawRect(-TAIL_BASE_X + 1, -TAIL_HEIGHT - PADDING / 2, TAIL_BASE_WIDTH - 2,
+                PADDING / 2);
+            drawTailWedge();
+            graphics.endFill();
 
-        // tail exterior
-        graphics.lineStyle(1, OUTLINE);
-        drawTailWedge();
+            // tail exterior
+            graphics.lineStyle(1, OUTLINE);
+            drawTailWedge();
+        }
 
         // make sure our children get the alpha setting too (contrary to flash documentation)
         blendMode = BlendMode.LAYER;
