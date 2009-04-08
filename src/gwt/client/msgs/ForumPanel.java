@@ -36,7 +36,7 @@ public class ForumPanel extends TitledListPanel
         UNREAD,
 
         /** Viewing the threads of a group. */
-        GROUPS,
+        GROUP,
 
         /** Viewing threads with unread posts from friends. */
         FRIENDS,
@@ -47,7 +47,7 @@ public class ForumPanel extends TitledListPanel
 
     /**
      * Creates a new panel in the given mode with the given group id. For UNREAD mode, the groupId
-     * should always be 0. For GROUPS and UNREAD modes, the panel will not be functional until
+     * should always be 0. For GROUP and UNREAD modes, the panel will not be functional until
      * {@link #setPage(String, int)} is called for the first time.
      */
     public ForumPanel (ForumModels fmodels, Mode mode, final int groupId)
@@ -56,9 +56,9 @@ public class ForumPanel extends TitledListPanel
         _mode = mode;
         _groupId = groupId;
         switch (mode) {
-        case GROUPS:
+        case GROUP:
             _threads = new GroupThreadListPanel(this, _fmodels, groupId);
-            setContents(createHeader(groupId, _mmsgs.groupThreadListHeader(), _threads), _threads);
+            setContents(createHeader(_mmsgs.groupThreadListHeader(), _threads), _threads);
 
             // set up a callback to configure our page title when we learn this group's name
             _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
@@ -71,11 +71,12 @@ public class ForumPanel extends TitledListPanel
             break;
         case UNREAD:
             _threads = new UnreadThreadListPanel(this, _fmodels);
-            setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), _threads), _threads);
+            setContents(createHeader(_mmsgs.msgUnreadThreadsHeader(), _threads), _threads);
             break;
         case FRIENDS:
             _threads = new FriendThreadListPanel(this, _fmodels);
-            setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), _threads), _threads);
+            // TODO: enable searching friend threads
+            setContents(createHeader(_mmsgs.msgFriendThreadsHeader(), null), _threads);
             break;
         case NEW_THREAD:
             startNewThread(groupId);
@@ -98,7 +99,7 @@ public class ForumPanel extends TitledListPanel
     public void setPage (String query, int page)
     {
         switch (_mode) {
-        case GROUPS:
+        case GROUP:
         case FRIENDS:
         case UNREAD:
             _threads.setPage(query, page);
@@ -133,13 +134,13 @@ public class ForumPanel extends TitledListPanel
         });
     }
 
-    protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)
+    protected SmartTable createHeader (String title, SearchBox.Listener listener)
     {
         SmartTable header = new SmartTable(0, 0);
         header.setWidth("100%");
         int col = 0;
-        if (groupId > 0) {
-            Anchor rss = new Anchor("/rss/" + groupId, "", "_blank");
+        if (_mode == Mode.GROUP) {
+            Anchor rss = new Anchor("/rss/" + _groupId, "", "_blank");
             rss.setHTML(_images.rss().getHTML());
             header.setWidget(0, col++, rss, 1, "RSS");
         }
@@ -153,7 +154,8 @@ public class ForumPanel extends TitledListPanel
         header.setText(0, col++, _mmsgs.groupThreadPosts(), 1, "Posts");
         header.setText(0, col++, _mode == Mode.FRIENDS ? _mmsgs.groupThreadFriendPost() :
             _mmsgs.groupThreadLastPost(), 1, "LastPost");
-        if (groupId == 0) {
+        // TODO: enable ignore thread for FRIENDS mode too
+        if (_mode == Mode.UNREAD) {
             header.setText(0, col++, "", 1, "IgnoreThread");
         }
         return header;

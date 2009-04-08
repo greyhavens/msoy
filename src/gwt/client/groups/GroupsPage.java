@@ -93,7 +93,7 @@ public class GroupsPage extends Page
             showForumPanel(ForumPanel.Mode.FRIENDS, 0, args.get(1, ""), args.get(2, 0));
 
         } else if (page == Nav.FORUM) {
-            showForumPanel(ForumPanel.Mode.GROUPS, args.get(1, 0), args.get(2, ""), args.get(3, 0));
+            showForumPanel(ForumPanel.Mode.GROUP, args.get(1, 0), args.get(2, ""), args.get(3, 0));
 
         } else if (page == Nav.POST) {
             showForumPanel(ForumPanel.Mode.NEW_THREAD, args.get(1, 0), null, 0);

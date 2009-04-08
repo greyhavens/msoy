@@ -35,7 +35,7 @@ public class FriendThreadListPanel extends ThreadListPanel<FriendThread>
     @Override // from ThreadListPanel
     protected void doSearch (AsyncCallback<List<FriendThread>> callback)
     {
-        // TODO
+        // TODO: this is not called because the search box is disabled in ForumPanel
     }
 
     @Override // from ThreadListPanel
