@@ -33,6 +33,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
@@ -176,19 +177,17 @@ public class GameInvitePanel extends InvitePanel
             int row = 0;
 
             // instructions
-            setText(row++, 0, "Select the friends you want to invite", 1, "Bold");
-            setText(row++, 0, "These are your most recently online friends. Select the ones you " +
-                "want to invite by checking the boxes next to their names. Then click Send to " +
-                "send a Whirled mail message to each selected friend.");
+            setText(row++, 0, _msgs.gameInviteWhirledTitle(), 1, "Bold");
+            setText(row++, 0, _msgs.gameInviteWhirledDetail());
 
             // buttons to select and deselect all friends
             SmartTable selectors = new SmartTable();
-            selectors.setWidget(0, 0, new Button("Select All", new ClickListener () {
+            selectors.setWidget(0, 0, new Button(_cmsgs.selectAll(), new ClickListener () {
                 public void onClick (Widget source) {
                     selectAll(true);
                 }
             }));
-            selectors.setWidget(0, 1, new Button("Deselect All", new ClickListener () {
+            selectors.setWidget(0, 1, new Button(_cmsgs.deselectAll(), new ClickListener () {
                 public void onClick (Widget source) {
                     selectAll(false);
                 }
@@ -198,13 +197,13 @@ public class GameInvitePanel extends InvitePanel
             // friends grid
             _grid = new SmartTable(0, 0);
             _grid.setWidth("100%");
-            _grid.setText(0, 0, "Loading friends...");
+            _grid.setText(0, 0, _msgs.gameInviteWhirledLoading());
             setWidget(row++, 0, _grid);
 
             // message label
             SmartTable messageLabel = new SmartTable();
-            messageLabel.setText(0, 0, "Message", 1, "Bold");
-            messageLabel.setText(0, 1, "(optional)", 1, "labelparen");
+            messageLabel.setText(0, 0, _msgs.gameInviteWhirledMessageLabel(), 1, "Bold");
+            messageLabel.setText(0, 1, _msgs.gameInviteWhirledOptional(), 1, "labelparen");
             setWidget(row++, 0, messageLabel);
 
             // custom message
@@ -214,7 +213,7 @@ public class GameInvitePanel extends InvitePanel
             setWidget(row++, 0, message);
 
             // send button
-            PushButton send = MsoyUI.createButton("shortThin", "Send", null);
+            PushButton send = MsoyUI.createButton("shortThin", _cmsgs.send(), null);
             new ClickCallback<Void>(send) {
                 public boolean callService () {
                     Set<Integer> recipients = getRecipients();
@@ -232,7 +231,7 @@ public class GameInvitePanel extends InvitePanel
 
                 public boolean gotResult (Void result) {
                     selectAll(false);
-                    MsoyUI.info("Messages sent.");
+                    MsoyUI.info(_msgs.gameInviteWhirledSent());
                     return true;
                 }
             };
@@ -251,7 +250,7 @@ public class GameInvitePanel extends InvitePanel
                     }
                     _gridFilled = result.size() != 0;
                     if (!_gridFilled) {
-                        _grid.setText(0, 0, "No Whirled friends found!");
+                        _grid.setText(0, 0, _msgs.gameInviteWhirledNoFriends());
                     }
                 }
             });
@@ -279,6 +278,7 @@ public class GameInvitePanel extends InvitePanel
         protected Set<Integer> getRecipients ()
         {
             if (!_gridFilled) {
+                // TODO: the send button should just be disabled here
                 MsoyUI.error("There are no friends to send to.");
                 return null;
             }
@@ -292,6 +292,7 @@ public class GameInvitePanel extends InvitePanel
                 }
             }
             if (selected.size() == 0) {
+                // TODO: the send button should just be disabled here
                 MsoyUI.error("Select one or more friends by clicking the check boxes.");
                 return null;
             }
@@ -343,6 +344,7 @@ public class GameInvitePanel extends InvitePanel
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
         ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final String FBINVITE_WINDOW_NAME = "_whirled_fbinvite";
 }

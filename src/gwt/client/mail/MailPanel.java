@@ -27,6 +27,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
@@ -94,7 +95,7 @@ public class MailPanel extends FlowPanel
             SmartTable footer = new SmartTable("Footer", 0, 0);
             footer.setWidth("100%");
             footer.setHTML(0, col++, "&nbsp;", 1, "BottomLeft");
-            CheckBox selall = new CheckBox(_msgs.mailSelAll());
+            CheckBox selall = new CheckBox(_cmsgs.selectAll());
             selall.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     boolean select = ((CheckBox)sender).isChecked();
@@ -223,6 +224,7 @@ public class MailPanel extends FlowPanel
     }
 
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 
