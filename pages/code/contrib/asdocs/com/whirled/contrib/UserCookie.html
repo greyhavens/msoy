@@ -39,70 +39,63 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- <p>A class to manage complicated user cookies on a GameControl.  Using this class, user 
+ <p>A class to manage complicated user cookies on a GameControl.  Using this class, user
  cookies can contain a list of various different data types, which are read from the server and
- saved back to the server automatically.  The data structure is compressed into a ByteArray to 
+ saved back to the server automatically.  The data structure is compressed into a ByteArray to
  save space (user cookies are only allowed to go up to 4k).  Data is saved to the server as it is
- updated on this object, but no faster than once per every 2 seconds so that this class doesn't 
- add too much to the game's networking activity, as games are limited to 100 messages per every 
+ updated on this object, but no faster than once per every 2 seconds so that this class doesn't
+ add too much to the game's networking activity, as games are limited to 100 messages per every
  10 seconds.</p>
- 
- <p>This class enables versioning, up to a point.  It currently supports adding parameters to the 
+  <p>This class enables versioning, up to a point.  It currently supports adding parameters to the
  cookie definition, but does not support removing them or changing their data type.  The only
  overhead added by this class to the cookie itself is a single int that holds the version number
  of the cookie.</p>
   <p>example usage:  This could be used for a game that has 5 levels.  At first the developer only
- needed to know which was the last level the player played on, so it was stored in the cookie.  
+ needed to know which was the last level the player played on, so it was stored in the cookie.
  Later he wanted to know how many times each level had been played by the player, so he added it
  to the cookie definition in a new version.</p>
   <pre>
  protected var LAST_LEVEL_PLAYED :String = "lastLevelPlayed";
  protected var TIMES_LEVELS_PLAYED :String = "timesLevelsPlayed";
- 
- public function getCookie () :void 
+  public function getCookie () :void
  {
      var timesPlayed :Array = [];
      for (level = 0; level < 5; level++) {
-         // parameter names are not used if the parameter is nested in an array.  Arrays can also 
+         // parameter names are not used if the parameter is nested in an array.  Arrays can also
          // hold array parameters as children.
          timesPlayed.push(UserCookie.getIntParameter("", 0));
      }
- 
-     var cookieDef :Array = [
+      var cookieDef :Array = [
          // start at version 1
          UserCookie.getVersionParameter(),
          UserCookie.getIntParameter(LAST_LEVEL_PLAYED, 0),
-     
-         // version 2 added the number of times each level was played
+          // version 2 added the number of times each level was played
          UserCookie.getVersionParameter(),
          UserCookie.getArrayParameter(TIMES_LEVELS_PLAYED, timesPlayed)
      ];
-     
-     UserCookie.getCookie(wgc, function (cookie :UserCookie) :void {
+      UserCookie.getCookie(wgc, function (cookie :UserCookie) :void {
          // notify those that need to know that the UserCookie is valid and available.
          _cookie = cookie;
      }, cookieDef);
  }
- 
- public function setLastLevelPlayed (level :int) :void
+  public function setLastLevelPlayed (level :int) :void
  {
      if (_cookie != null) {
          _cookie.set(LAST_LEVEL_PLAYED, level);
      }
  }
- 
- public function playedLevel (level :int) :void
+  public function playedLevel (level :int) :void
  {
      if (_cookie != null) {
          // increment the array value for this level.
-         var previousValue :int = _cookie.get(TIMES_LEVELS_PLAYED, level);     
+         var previousValue :int = _cookie.get(TIMES_LEVELS_PLAYED, level);
          _cookie.set(TIMES_LEVELS_PLAYED, previousValue + 1, level);
      }
  }
  </pre>
   <p>One more note: this class creates a timer and registers the TimerEvent.TIMER listener with
  com.whirled.contrib.EventHandlers.  To make sure that this class stops checking the timer when
- your game is unloaded, call EventHandlers.freeAllHandlers() when your game receives the 
+ your game is unloaded, call EventHandlers.freeAllHandlers() when your game receives the
  Event.UNLOAD event.</p>
  <p></p>
 <br>
@@ -437,12 +430,11 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function get(name:String, ... indices):*</code><p>
-     Get the value of the cookie parameter identified by name.  
-     
-     </p><span class="label">Parameters</span>
+     Get the value of the cookie parameter identified by name.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code> &mdash; The first arg should be the parameter identified as a String.  Any further 
+<td width="20px"></td><td><code><span class="label">name</span>:String</code> &mdash; The first arg should be the parameter identified as a String.  Any further
      arguments are the array indices to use.  There can be multiple array indices, if a value
      in a nested array is being retrieved.
      </td>
@@ -471,7 +463,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public static function getArrayParameter(name:String, children:Array):CookieParameter</code><p>
      Returns an Array typped parameter for use in the cookieDef argument to getCookie().  All of
-     the children must be CookieParameters returned from a getarameter() function, or an 
+     the children must be CookieParameters returned from a getarameter() function, or an
      ArgumentError will be thrown.  Also, you cannot embed a version in an array.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -503,8 +495,7 @@ showHideInherited();
 <code>public static function getCookie(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
      Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.
-     
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">wgc</span>:GameControl</code> &mdash; The GameControl of the current instance
@@ -522,7 +513,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">cookieDef</span>:Array</code> &mdash; An array of cookie parameters that define the format of the user cookie.  
+<td width="20px"></td><td><code><span class="label">cookieDef</span>:Array</code> &mdash; An array of cookie parameters that define the format of the user cookie.
                       See the various getarameter() functions for more detail.
      </td>
 </tr>
@@ -647,12 +638,11 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static function getVersionParameter():CookieParameter</code><p>
-     Returns a version flag for use in the cookieDef argument to getCookie().  If the cookie 
+     Returns a version flag for use in the cookieDef argument to getCookie().  If the cookie
      definition for a game is extended after some players may have the old cookie already set,
      there should be a version flag added before adding in the new parameters.  This will allow
      the old players to gracefully add in the new values when they play the game again.
-     
-     If a player with an old cookie or no cookie plays the game, each parameter will return
+          If a player with an old cookie or no cookie plays the game, each parameter will return
      its default type.  The default type will also get set for this player on the server until
      a new value is defined.
      </p><p></p>
@@ -690,8 +680,8 @@ showHideInherited();
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code> &mdash;  The first arg should be the parameter identifier as a String.  The next 
-     argument should be the value to set.  Any further arguments are the array indices to use.  
+<td width="20px"></td><td><code><span class="label">name</span>:String</code> &mdash;  The first arg should be the parameter identifier as a String.  The next
+     argument should be the value to set.  Any further arguments are the array indices to use.
      There can be multiple array indices, if a value in a nested array is being set.
      </td>
 </tr>

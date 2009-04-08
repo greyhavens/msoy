@@ -359,11 +359,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get the default datapack for this entity, or null if there is none defined.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html#getDictionaryLetterSet()">getDictionaryLetterSet</a>(locale, dictionary, count, callback) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html">ServicesSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html#getDictionaryLetters()">getDictionaryLetters</a>(locale, dictionary, count, callback) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html">ServicesSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Requests a set of random letters from the dictionary service.</td>
+     Requests a list of random letters from the dictionary service.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html#getDictionaryWords()">getDictionaryWords</a>(locale, dictionary, count, callback) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/ServicesSubControl.html">ServicesSubControl</a></td>
@@ -445,6 +445,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Looks up and returns the specified property for the specified entity.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#getEnvironment()">getEnvironment</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the "environment" in which this entity is presently running.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/BaseDataPack.html#getFile()">getFile</a>(name) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/BaseDataPack.html">BaseDataPack</a></td>
@@ -836,11 +843,32 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Convenience function to access some data as a Number.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html#getOccupantIds()">getOccupantIds</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html">RoomSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Gets an array of the ids of all the occupants in this room.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#getOccupantIds()">getOccupantIds</a>() &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Returns the player ids of all occupants in the game room: players and watchers.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html#getOccupantName()">getOccupantName</a>(playerId) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the name of an occupant of the game, or null if not found.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html#getOccupantName()">getOccupantName</a>(playerId) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html">RoomSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the name of the specified occupant, who may be a player, or null if not found.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#getOccupantName()">getOccupantName</a>(playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
@@ -917,7 +945,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Returns a vector that is perpendicular to this.</td>
+     Returns a vector that is perpendicular to this one.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#getPixelLocation()">getPixelLocation</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
@@ -945,21 +973,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Gets the id of this player.</td>
+     Returns the id of this player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlClient.html#getPlayerId()">getPlayerId</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlClient.html">PlayerSubControlClient</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> 
-     Gets the id of this player.</td>
+     Returns the id of this player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html#getPlayerId()">getPlayerId</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> 
-     Gets the id of this player.</td>
+     Returns the id of this player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html#getPlayerIds()">getPlayerIds</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html">GameSubControlBase</a></td>
@@ -1016,6 +1044,27 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Returns all level packs owned by this client's player (the default) or a specified player.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlBase.html#getPlayerName()">getPlayerName</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlBase.html">PlayerSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the name of this player.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlClient.html#getPlayerName()">getPlayerName</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlClient.html">PlayerSubControlClient</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Returns the name of this player.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html#getPlayerName()">getPlayerName</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> 
+     Returns the name of this player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SeatingSubControl.html#getPlayerNames()">getPlayerNames</a>() &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/SeatingSubControl.html">SeatingSubControl</a></td>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerCustomConfig,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,ENV_ROOM,ENV_SHOP,ENV_VIEWER,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,_env,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getEnvironment,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerCustomConfig,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPage,showPopup,triggerAction" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../all-classes.html')" href="../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../all-classes.html')" href="../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../index-list.html')" href="../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../index.html?com/whirled/EntityControl.html&amp;com/whirled/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;EntityControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;EntityControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class EntityControl"); titleBar_setSubNav(true,false,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class EntityControl"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -50,6 +50,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  <p></p>
 <br>
 <hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_env">_env</a> : String<div class="summaryTableDescription"> The environment in which we're running.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+</table>
 </div>
 <a name="methodSummary"></a>
 <div class="summarySection">
@@ -137,6 +150,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getEntityProperty()">getEntityProperty</a>(key:String, entityId:String = null):Object</div>
 <div class="summaryTableDescription">
      Looks up and returns the specified property for the specified entity.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getEnvironment()">getEnvironment</a>():String</div>
+<div class="summaryTableDescription">
+     Get the "environment" in which this entity is presently running.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -298,6 +319,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#showPage()">showPage</a>(token:String):Boolean</div>
+<div class="summaryTableDescription">
+     Shows the Whirled page identified by the supplied token.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#showPopup()">showPopup</a>(title:String, panel:DisplayObject, width:Number, height:Number, backgroundColor:uint = 0xFFFFFF, backgroundAlpha:Number = 1.0):Boolean</div>
 <div class="summaryTableDescription">
      Show a popup to the current user in the whirled.</div>
@@ -428,6 +457,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ENV_ROOM">ENV_ROOM</a> : String = "room"<div class="summaryTableDescription">[static] A constant returned by getEnvironment() to indicate that this entity is
+     being viewed in a room.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ENV_SHOP">ENV_SHOP</a> : String = "shop"<div class="summaryTableDescription">[static] A constant returned by getEnvironment() to indicate that this entity is
+     being viewed in the shop.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ENV_VIEWER">ENV_VIEWER</a> : String = "viewer"<div class="summaryTableDescription">[static] A constant returned by getEnvironment() to indicate that this entity is
+     being viewed in the "viewer": memories may be set and read, but they will not be saved.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PROP_DIMENSIONS">PROP_DIMENSIONS</a> : String = "std:dimensions"<div class="summaryTableDescription">[static] The entity pixel dimensions (an Array [width, height]).</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
@@ -488,6 +532,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_env"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_env</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _env:String</code><p> The environment in which we're running. </p></div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
 <a name="canManageRoom()"></a>
@@ -655,6 +709,26 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getEnvironment()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getEnvironment</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getEnvironment():String</code><p>
+     Get the "environment" in which this entity is presently running.
+     
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code> &mdash; one of the ENV_VIEWER, ENV_SHOP, or ENV_ROOM constants,
+     or null if we're not connected.
+     </td>
+</tr>
+</table>
+</div>
 <a name="getInstanceId()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -671,9 +745,8 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code> &mdash; the memberId of the player viewing this instance. Only ids greater than 0
-     represent whirled members. Ids less than 0 represent guests, and 0 means that the
-     instance is being viewed by something other than a player.
+<td width="20"></td><td><code>int</code> &mdash; the memberId of the player viewing this instance, or zero if the instance is being
+     viewed by something other than a player.
      </td>
 </tr>
 </table>
@@ -852,11 +925,12 @@ showHideInherited();
 <code>public function getViewerName(id:int = 0):String</code><p>
      Get the non-unique display name of the user viewing a particular instance. Note
      that this cannot be used to look up member names of people who are not in the room.
-          </p><span class="label">Parameters</span>
+          </p><p>TODO: other examples of where the member id comes from.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">id</span>:int</code> (default = <code>0</code>)<code></code> &mdash; a permanent memberId or transient guestId, or 0 to just get this instance's
-     viewer name without first calling getInstanceId() to get the id.
+<td width="20px"></td><td><code><span class="label">id</span>:int</code> (default = <code>0</code>)<code></code> &mdash; a memberId, for example one obtained from <code>getInstanceId</code>. If the
+     default argument of zero is passed, the instance id is used.
           </td>
 </tr>
 </table>
@@ -1032,12 +1106,14 @@ showHideInherited();
      encoded.
           </p><p>Setting the memory for a key to null clears that key; subsequent lookups will return the
      default value.</p>
-          <p>Note: any instance can update memories!</p>
+          <p>Note: for avatars, only the instance "in control" can update memories, but this
+     restriction does not hold (presently) for pets, furni, toys, or backdrops. Put another
+     way, only the instance of the person wearing the avatar can update memories.</p>
           <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">key</span>:String</code> &mdash; An optional function that is passed a Boolean indicating whether the
-     memory was successfully updated or not. True if the memory was safely persisted, or false
+     memory was successfully updated or not. True if the memory update was accepted, or false
      if the memory update failed due to size or other restrictions.
      </td>
 </tr>
@@ -1075,6 +1151,33 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">interval</span>:Number</code> &mdash; Delay between ticks in milliseconds, either 0ms, or a value larger
      than 100ms. Value larger than zero activates the ticking mechanism,
      and a value of exactly zero deactivates it.
+     </td>
+</tr>
+</table>
+</div>
+<a name="showPage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showPage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showPage(token:String):Boolean</code><p>
+     Shows the Whirled page identified by the supplied token.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">token</span>:String</code> &mdash; the token that identifies the page to be shown. This is <em>not</em> the full
+     URL, just the part after http://www.whirled.com/#. For example: passing "me" would show the
+     Me page. Passing "shop-l_5_343" would show the shop page for the Kawaii Knight avatar.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the page was shown, false if it could not be shown for some reason.
      </td>
 </tr>
 </table>
@@ -1347,10 +1450,38 @@ showHideInherited();
   </p></div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="ENV_ROOM"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ENV_ROOM</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ENV_ROOM:String = "room"</code><p> A constant returned by getEnvironment() to indicate that this entity is
+     being viewed in a room. Memories are persistent. </p></div>
+<a name="ENV_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ENV_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ENV_SHOP:String = "shop"</code><p> A constant returned by getEnvironment() to indicate that this entity is
+     being viewed in the shop. If the user buys the item, any memories will be saved for
+     the user's new copy of the item. </p></div>
+<a name="ENV_VIEWER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ENV_VIEWER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ENV_VIEWER:String = "viewer"</code><p> A constant returned by getEnvironment() to indicate that this entity is
+     being viewed in the "viewer": memories may be set and read, but they will not be saved. </p></div>
 <a name="PROP_DIMENSIONS"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">PROP_DIMENSIONS</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">PROP_DIMENSIONS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -1372,7 +1503,11 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const PROP_LOCATION_LOGICAL:String = "std:location_logical"</code><p>
      The entity's location in logical coordinates (an Array [ x, y, z ]). x, y, and z are Numbers
-     between 0 and 1 or null if our location is unknown. Use with getEntityProperty().
+     between that are typically between 0 and 1 or null if our location is unknown.
+     Note that Whirled allows furniture to be positioned "outside" the room, at locations less
+     than 0 or greater than 1, in order to create a desired effect, so don't be surprised if
+     something is placed at wacky coordinates.
+     Use with getEntityProperty().
      </p></div>
 <a name="PROP_LOCATION_PIXEL"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

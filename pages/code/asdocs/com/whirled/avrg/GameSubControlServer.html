@@ -66,7 +66,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#props">props</a> : <a href="../net/PropertySubControl.html">PropertySubControl</a>
 <div class="summaryTableDescription">[read-only]
-     Accesses the properties for this room.</div>
+     Accesses the global properties for this game.</div>
 </td><td class="summaryTableOwnerCol">GameSubControlServer</td>
 </tr>
 </table>
@@ -133,6 +133,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      premium - boolean indicating that content is premium or not
      </pre>
      </div>
+</td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="GameSubControlBase.html#getOccupantName()">getOccupantName</a>(playerId:int):String</div>
+<div class="summaryTableDescription">
+     Get the name of an occupant of the game, or null if not found.</div>
 </td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -270,9 +278,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>props:<a href="../net/PropertySubControl.html">PropertySubControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Accesses the properties for this room. Game properties marked as such will be persisted
-     and restored whenever the server agent starts. Persistent properties should only be used
-     when genuinely necessary.
+     Accesses the global properties for this game. Game properties marked as such will be
+     persisted  and restored whenever the server agent starts. Persistent properties should
+     only be used when genuinely necessary.
           </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get props():<a href="../net/PropertySubControl.html">PropertySubControl</a></code>

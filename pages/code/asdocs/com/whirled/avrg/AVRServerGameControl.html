@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="AVRServerGameControl,com.whirled.avrg.AVRServerGameControl,game,getPlayer,getRoom,loadOfflinePlayer" name="keywords">
+<meta content="AVRServerGameControl,com.whirled.avrg.AVRServerGameControl,game,props,getPlayer,getRoom,loadOfflinePlayer" name="keywords">
 <title>com.whirled.avrg.AVRServerGameControl</title>
 </head>
 <body>
@@ -72,6 +72,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#game">game</a> : <a href="../avrg/GameSubControlServer.html">GameSubControlServer</a>
 <div class="summaryTableDescription">[read-only]
      Accesses the server agent's game sub control.</div>
+</td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#props">props</a> : <a href="../net/PropertySubControl.html">PropertySubControl</a>
+<div class="summaryTableDescription">[read-only]
+     Accesses the private properties for the server agent: these are not distributed to any
+     clients and can thus be updated with greater frequency than the game-global ones.</div>
 </td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
 </tr>
 </table>
@@ -210,6 +217,28 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get game():<a href="../avrg/GameSubControlServer.html">GameSubControlServer</a></code>
 <br>
 </div>
+<a name="props"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">props</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>props:<a href="../net/PropertySubControl.html">PropertySubControl</a></code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the private properties for the server agent: these are not distributed to any
+     clients and can thus be updated with greater frequency than the game-global ones.
+          Properties marked as such will be persisted and restored whenever the server agent starts.
+          </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get props():<a href="../net/PropertySubControl.html">PropertySubControl</a></code>
+<br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../net/NetConstants.html#makePersistent()" target="">com.whirled.net.NetConstants.makePersistent()</a>
+</div>
+</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="AVRServerGameControl()"></a>
@@ -310,13 +339,7 @@ showHideInherited();
      argument. Within this callback, you may read and write persistent properties as you
      see fit. Note: To preserve some semblance of sanity, you can only load the properties
      of a player who has already had at least one persistent property set.
-          An example, whereby one player may leave an offline message for another player:
-             _ctrl.loadOfflinePlayer(opponentPlayerId, function (props :PropertySpaceObject) :void {
-            props.setIn("messages", myPlayerId, myMessage);
-        }, function (failureCause :String) :void {
-            log.warn("Eek! Sending message to offline player failed!", "cause", failureCause);
-       });
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
@@ -334,6 +357,17 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">failure</span>:Function</code></td>
 </tr>
 </table>
+<br>
+<span class="label">Example</span>
+<br>An example, whereby one player may leave an offline message for another player:
+     <div class='listing'><pre>
+        _ctrl.loadOfflinePlayer(opponentPlayerId, function (props :PropertySubControl) :void {
+            props.setIn("messages", myPlayerId, myMessage);
+        }, function (failureCause :String) :void {
+            log.warn("Eek! Sending message to offline player failed!", "cause", failureCause);
+       });
+     </pre></div>
+     <p></p>
 </div>
 <br>
 <br>

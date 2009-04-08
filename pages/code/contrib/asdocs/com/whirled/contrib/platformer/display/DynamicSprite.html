@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="DynamicSprite,com.whirled.contrib.platformer.display.DynamicSprite,HIT_LENGTH,SOUND_NORMAL_DISTANCE,_disp,_dynamic,_hitFilter,_hitFilterIndex,_hitLeft,_particleCallback,_state,_static,displayHeight,displayWidth,bindSoundEffectPlayback,changeState,clearDisp,findNode,forceBack,generateAttachedEffect,generateEffect,getDynamic,getStateFrame,handleAdded,handleRemoved,onAdded,onRemoved,playSoundEffect,playState,recolorNodes,recolorNodesToColor,setParticleCallback,setSoundEffectPlaying,setStatic,showAlways,showHit,shutdown,stopSoundEffect,update" name="keywords">
+<meta content="DynamicSprite,com.whirled.contrib.platformer.display.DynamicSprite,ALWAYS,HIT_LENGTH,NEVER,NORMAL,SOUND_NORMAL_DISTANCE,UNTIL_REMOVED,_disp,_dynamic,_hitFilter,_hitFilterIndex,_hitLeft,_particleCallback,_state,_static,displayHeight,displayWidth,bindSoundEffectPlayback,changeState,clearDisp,findNode,forceBack,generateAttachedEffect,generateEffect,getDynamic,getStateFrame,handleAdded,handleRemoved,onAdded,onRemoved,playSoundEffect,playState,recolorNodes,recolorNodesToColor,setParticleCallback,setSoundEffectPlaying,setStatic,showHit,showState,shutdown,stopSoundEffect,update" name="keywords">
 <title>com.whirled.contrib.platformer.display.DynamicSprite</title>
 </head>
 <body>
@@ -154,7 +154,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#showAlways()">showAlways</a>():Boolean</div>
+<a class="signatureLink" href="#showState()">showState</a>():int</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSprite</td>
 </tr>
@@ -184,7 +184,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#bindSoundEffectPlayback()">bindSoundEffectPlayback</a>(soundEffect:<a href="../sound/SoundEffect.html">SoundEffect</a>):Function</div>
+<a class="signatureLink" href="#bindSoundEffectPlayback()">bindSoundEffectPlayback</a>(soundEffect:<a href="../../sound/SoundEffect.html">SoundEffect</a>):Function</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSprite</td>
 </tr>
@@ -261,7 +261,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#playSoundEffect()">playSoundEffect</a>(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>):void</div>
+<a class="signatureLink" href="#playSoundEffect()">playSoundEffect</a>(effect:<a href="../../sound/SoundEffect.html">SoundEffect</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSprite</td>
 </tr>
@@ -289,7 +289,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setSoundEffectPlaying()">setSoundEffectPlaying</a>(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>, playing:Boolean):void</div>
+<a class="signatureLink" href="#setSoundEffectPlaying()">setSoundEffectPlaying</a>(effect:<a href="../../sound/SoundEffect.html">SoundEffect</a>, playing:Boolean):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSprite</td>
 </tr>
@@ -303,13 +303,38 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#stopSoundEffect()">stopSoundEffect</a>(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>):void</div>
+<a class="signatureLink" href="#stopSoundEffect()">stopSoundEffect</a>(effect:<a href="../../sound/SoundEffect.html">SoundEffect</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSprite</td>
 </tr>
 </table>
 </div>
-<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ALWAYS">ALWAYS</a> : int = 1<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NEVER">NEVER</a> : int = 2<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NORMAL">NORMAL</a> : int = 0<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#UNTIL_REMOVED">UNTIL_REMOVED</a> : int = 3<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicSprite</td>
+</tr>
+</table>
+</div>
+<a name="protectedConstantSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Constants</div>
 <table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
@@ -460,10 +485,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function bindSoundEffectPlayback(soundEffect:<a href="../sound/SoundEffect.html">SoundEffect</a>):Function</code><span class="label">Parameters</span>
+<code>protected function bindSoundEffectPlayback(soundEffect:<a href="../../sound/SoundEffect.html">SoundEffect</a>):Function</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">soundEffect</span>:<a href="../sound/SoundEffect.html">SoundEffect</a></code></td>
+<td width="20px"></td><td><code><span class="label">soundEffect</span>:<a href="../../sound/SoundEffect.html">SoundEffect</a></code></td>
 </tr>
 </table>
 <p></p>
@@ -682,10 +707,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function playSoundEffect(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>):void</code><span class="label">Parameters</span>
+<code>protected function playSoundEffect(effect:<a href="../../sound/SoundEffect.html">SoundEffect</a>):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">effect</span>:<a href="../sound/SoundEffect.html">SoundEffect</a></code></td>
+<td width="20px"></td><td><code><span class="label">effect</span>:<a href="../../sound/SoundEffect.html">SoundEffect</a></code></td>
 </tr>
 </table>
 </div>
@@ -778,10 +803,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function setSoundEffectPlaying(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>, playing:Boolean):void</code><span class="label">Parameters</span>
+<code>protected function setSoundEffectPlaying(effect:<a href="../../sound/SoundEffect.html">SoundEffect</a>, playing:Boolean):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">effect</span>:<a href="../sound/SoundEffect.html">SoundEffect</a></code></td>
+<td width="20px"></td><td><code><span class="label">effect</span>:<a href="../../sound/SoundEffect.html">SoundEffect</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -802,22 +827,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">s</span>:Boolean</code></td>
-</tr>
-</table>
-</div>
-<a name="showAlways()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">showAlways</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function showAlways():Boolean</code>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -848,6 +857,22 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="showState()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showState</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showState():int</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="shutdown()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -864,10 +889,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function stopSoundEffect(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>):void</code><span class="label">Parameters</span>
+<code>protected function stopSoundEffect(effect:<a href="../../sound/SoundEffect.html">SoundEffect</a>):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">effect</span>:<a href="../sound/SoundEffect.html">SoundEffect</a></code></td>
+<td width="20px"></td><td><code><span class="label">effect</span>:<a href="../../sound/SoundEffect.html">SoundEffect</a></code></td>
 </tr>
 </table>
 </div>
@@ -887,14 +912,41 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="ALWAYS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ALWAYS</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ALWAYS:int = 1</code>
+</div>
 <a name="HIT_LENGTH"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">HIT_LENGTH</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">HIT_LENGTH</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
 <code>protected static const HIT_LENGTH:Number = 0.1</code>
+</div>
+<a name="NEVER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">NEVER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const NEVER:int = 2</code>
+</div>
+<a name="NORMAL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">NORMAL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const NORMAL:int = 0</code>
 </div>
 <a name="SOUND_NORMAL_DISTANCE"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -904,6 +956,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static const SOUND_NORMAL_DISTANCE:Number</code>
+</div>
+<a name="UNTIL_REMOVED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">UNTIL_REMOVED</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const UNTIL_REMOVED:int = 3</code>
 </div>
 <br>
 <br>
