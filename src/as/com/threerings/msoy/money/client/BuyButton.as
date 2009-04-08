@@ -42,7 +42,7 @@ public class BuyButton extends CommandButton
     {
         _value = value;
         FlexUtil.setVisible(this, (value >= 0));
-        this.label = (value == 0) ? Msgs.GENERAL.get("b.free") : String(value);
+        this.label = (value == 0) ? Msgs.GENERAL.get("b.free") : _currency.format(value);
         checkEnabled();
     }
 
