@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.server.persist;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -93,6 +94,17 @@ public class AVRGameRepository extends DepotRepository
     {
         deleteAll(PlayerGameStateRecord.class,
                   new Where(new Conditionals.In(PlayerGameStateRecord.MEMBER_ID, memberIds)));
+    }
+
+    /**
+     * Gets the subset of members who have at least one property for the given game id.
+     */
+    public Set<Integer> getPropertiedMembers (int gameId, Set<Integer> memberIds)
+    {
+        // TODO
+        // select "memberId", count(*) from "PlayerGameStateRecord" where "gameId" = {gameId} and
+        //     "memberId" in {memberIds} group by "memberId";
+        return Collections.emptySet();
     }
 
     @Override

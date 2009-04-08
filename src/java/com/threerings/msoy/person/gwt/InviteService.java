@@ -73,8 +73,10 @@ public interface InviteService extends RemoteService
         throws ServiceException;
 
     /**
-     * Gets the user's friends, up to the given maximum, sorted by most recently online.
+     * Gets the user's friends, up to the given maximum, sorted by most recently online. If gameId
+     * is non-zero, the returned members are futher limited to those that have not yet played the
+     * game with that id.
      */
-    List<MemberCard> getFriends (int count)
+    List<MemberCard> getFriends (int gameId, int count)
         throws ServiceException;
 }

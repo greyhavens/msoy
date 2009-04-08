@@ -57,6 +57,7 @@ import com.threerings.whirled.util.SceneFactory;
 import com.whirled.game.server.DictionaryManager;
 import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
+import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -69,6 +70,7 @@ import com.threerings.msoy.chat.server.MsoyChatChannelManager;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
+import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
@@ -109,8 +111,9 @@ public class MsoyServer extends MsoyBaseServer
             bind(SceneFactory.class).to(MsoySceneFactory.class);
             bind(SceneRegistry.class).to(MsoySceneRegistry.class);
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
-            // vilya game dependencies
+            // whirled game dependencies
             bind(GameCookieManager.class).to(RepoCookieManager.class);
+            bind(GameCookieRepository.class).to(MsoyGameCookieRepository.class);
             // msoy auth dependencies
             bind(AuthenticationDomain.class).to(OOOAuthenticationDomain.class);
             // Messaging dependencies

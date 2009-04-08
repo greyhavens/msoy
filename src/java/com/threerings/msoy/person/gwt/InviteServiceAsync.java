@@ -61,5 +61,5 @@ public interface InviteServiceAsync
     /**
      * The asynchronous version of {@link InviteService#getFriends}.
      */
-    void getFriends (int count, AsyncCallback<List<MemberCard>> callback);
+    void getFriends (int gameId, int count, AsyncCallback<List<MemberCard>> callback);
 }

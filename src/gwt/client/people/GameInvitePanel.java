@@ -172,6 +172,7 @@ public class GameInvitePanel extends InvitePanel
             final String gameName, final String args)
         {
             super(0, 5);
+            _gameId = gameId;
             setStyleName("Whirled");
             setWidth("100%");
 
@@ -193,6 +194,14 @@ public class GameInvitePanel extends InvitePanel
                     selectAll(false);
                 }
             }));
+            _showAll = new CheckBox(_msgs.gameInviteWhirledShowAll());
+            // not yet enabled
+            // selectors.setWidget(0, 2, _showAll);
+            _showAll.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    downloadFriends();
+                }
+            });
             setWidget(row++, 0, selectors);
 
             // friends grid
@@ -241,9 +250,16 @@ public class GameInvitePanel extends InvitePanel
             setWidget(row, 0, _send, 2, null);
             getFlexCellFormatter().setHorizontalAlignment(
                 row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+            downloadFriends();
+        }
+
+        protected void downloadFriends ()
+        {
+            // pass a zero game id to include people who have already played
+            int gameId = _showAll.isChecked() ? 0 : _gameId;
 
             // get friend list from the server; fill in our grid
-            _invitesvc.getFriends(ROWS * COLS, new InfoCallback<List<MemberCard>>() {
+            _invitesvc.getFriends(gameId, ROWS * COLS, new InfoCallback<List<MemberCard>>() {
                 public void onSuccess (List<MemberCard> result) {
                     _grid.clear();
                     for (int ii = 0; ii < result.size(); ++ii) {
@@ -306,8 +322,10 @@ public class GameInvitePanel extends InvitePanel
             }
         };
 
+        protected int _gameId;
         protected SmartTable _grid;
         protected PushButton _send;
+        protected CheckBox _showAll;
         protected List<SelectaFriend> _friends = new ArrayList<SelectaFriend>();
         protected static final int ROWS = 12;
         protected static final int COLS = 3;

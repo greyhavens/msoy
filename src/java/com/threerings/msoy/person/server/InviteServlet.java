@@ -18,14 +18,16 @@ import com.google.inject.Inject;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
@@ -254,13 +256,23 @@ public class InviteServlet extends MsoyServiceServlet
         return requireAuthedUser().homeSceneId;
     }
 
-    public List<MemberCard> getFriends (int count)
+    public List<MemberCard> getFriends (int gameId, int count)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        IntSet friendsIds = _memberRepo.loadFriendIds(memrec.memberId);
+        Set<Integer> friendIds = _memberRepo.loadFriendIds(memrec.memberId);
+        if (gameId != 0) {
+            GameRecord grec = _gameRepo.loadItem(gameId);
+            if (grec != null) {
+                if (Game.detectIsInWorld(grec.config)) {
+                    friendIds.removeAll(_avrGameRepo.getPropertiedMembers(gameId, friendIds));
+                } else {
+                    friendIds.removeAll(_gameCookieRepo.getCookiedPlayers(gameId, friendIds));
+                }
+            }
+        }
         List<MemberCard> cards = Lists.newArrayList();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendsIds, 0, count, true)) {
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendIds, 0, count, true)) {
             cards.add(mcr.toMemberCard());
         }
         return cards;
@@ -413,6 +425,8 @@ public class InviteServlet extends MsoyServiceServlet
     @Inject protected MailSender _mailer;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected SpamRepository _spamRepo;
+    @Inject protected AVRGameRepository _avrGameRepo;
+    @Inject protected MsoyGameCookieRepository _gameCookieRepo;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;
