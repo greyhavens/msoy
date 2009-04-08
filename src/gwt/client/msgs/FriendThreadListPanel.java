@@ -29,7 +29,7 @@ public class FriendThreadListPanel extends ThreadListPanel<FriendThread>
 {
     public FriendThreadListPanel (ForumPanel parent, ForumModels fmodels)
     {
-        super(parent, fmodels, new Object[] {"funread"});
+        super(parent, fmodels, new Object[] {"friends"});
     }
 
     @Override // from ThreadListPanel

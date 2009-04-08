@@ -22,7 +22,7 @@ public class GroupsPage extends Page
 {
     public enum Nav {
         DETAIL("d"), EDIT("edit"), MYGROUPS("mygroups"), UNREAD("unread"),
-        FRIENDS_UNREAD("funread"), FORUM("f"), POST("p"), THREAD("t"), MEDALS("m"),
+        FRIENDS("friends"), FORUM("f"), POST("p"), THREAD("t"), MEDALS("m"),
         CREATEMEDAL("cm"), EDITMEDAL("em"), DEFAULT("");
 
         public static Nav getGroupPage (Args args)
@@ -89,7 +89,7 @@ public class GroupsPage extends Page
         } else if (page == Nav.UNREAD) {
             showForumPanel(ForumPanel.Mode.UNREAD, 0, args.get(1, ""), args.get(2, 0));
 
-        } else if (page == Nav.FRIENDS_UNREAD) {
+        } else if (page == Nav.FRIENDS) {
             showForumPanel(ForumPanel.Mode.FRIENDS, 0, args.get(1, ""), args.get(2, 0));
 
         } else if (page == Nav.FORUM) {
