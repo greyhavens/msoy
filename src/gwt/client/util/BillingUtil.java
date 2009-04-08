@@ -4,6 +4,7 @@
 package client.util;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,10 +40,11 @@ public class BillingUtil
                               Link.createListener(Pages.ACCOUNT, "config"));
 
         } else {
-            Window.open(LANDING + "?initUsername=" + CShell.creds.accountName, "_blank",
-                        // For those silly browsers that open this in a new window instead of a new
-                        // tab, enable all the chrome options on the new window.
-                        "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
+            Window.open(LANDING + "?initUsername=" + URL.encodeComponent(CShell.creds.accountName),
+                "_blank",
+                // For those silly browsers that open this in a new window instead of a new
+                // tab, enable all the chrome options on the new window.
+                "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
         }
     }
 
@@ -68,7 +70,7 @@ public class BillingUtil
     public static String getUserStatusPage (String accountName, String permaName)
     {
         return BASE + "admin/user_status.wm?username=" +
-            (permaName == null ? accountName : permaName);
+            URL.encodeComponent(permaName == null ? accountName : permaName);
     }
 
     protected static String capPath (String path)
