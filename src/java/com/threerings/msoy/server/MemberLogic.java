@@ -169,6 +169,25 @@ public class MemberLogic
     }
 
     /**
+     * Enact the specified mute. The muter is not checked for validity, the mutee IS on mutes,
+     * to make sure they're not an admin.
+     */
+    public void setMuted (int muterId, int muteeId, boolean muted)
+        throws ServiceException
+    {
+        if (muted) {
+            MemberRecord muteeRec = _memberRepo.loadMember(muteeId);
+            if (muteeRec == null) {
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+            if (muteeRec.isSupport()) {
+                throw new ServiceException("e.cant_mute_staff");
+            }
+        }
+        _memberRepo.setMuted(muterId, muteeId, muted);
+    }
+
+    /**
      * Clears the friendship between the two specified parties.
      */
     public void clearFriendship (int removerId, int friendId)

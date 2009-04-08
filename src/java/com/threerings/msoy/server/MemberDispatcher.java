@@ -127,7 +127,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.SET_MUTED:
             ((MemberProvider)provider).setMuted(
-                source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.InvocationListener)args[2]
+                source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
             );
             return;
 

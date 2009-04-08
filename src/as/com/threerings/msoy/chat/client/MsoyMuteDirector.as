@@ -7,8 +7,11 @@ import com.threerings.crowd.chat.client.MuteDirector;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.client.InvocationAdapter;
+
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.room.data.PetName;
 
@@ -53,14 +56,25 @@ public class MsoyMuteDirector extends MuteDirector
     // from MuteDirector
     override public function setMuted (name :Name, mute :Boolean, feedback :Boolean = true) :void
     {
-        super.setMuted(name, mute, feedback);
-
-        // take care of persisting to the server
         if (name is MemberName) {
             (_ctx.getClient().requireService(MemberService) as MemberService).setMuted(
                 _ctx.getClient(), MemberName(name).getMemberId(), mute,
-                MsoyContext(_ctx).listener());
+                MsoyContext(_ctx).confirmListener(function () :void {
+                    superSetMuted(name, mute, feedback);
+                }));
+
+        } else {
+            // no server persistence
+            superSetMuted(name, mute, feedback);
         }
+    }
+
+    /**
+     * Broken out so we can call it in the function closure in setMuted().
+     */
+    protected function superSetMuted (name :Name, mute :Boolean, feedback :Boolean) :void
+    {
+        super.setMuted(name, mute, feedback);
     }
 }
 }

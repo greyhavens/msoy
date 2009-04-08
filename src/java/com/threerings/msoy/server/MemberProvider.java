@@ -104,7 +104,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#setMuted} request.
      */
-    void setMuted (ClientObject caller, int arg1, boolean arg2, InvocationService.InvocationListener arg3)
+    void setMuted (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**

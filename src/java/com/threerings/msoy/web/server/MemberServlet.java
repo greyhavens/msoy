@@ -138,8 +138,8 @@ public class MemberServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
-        _memberRepo.setMuted(memberId, muteeId, muted);
-        // TODO: runtime notification? We really should. PITA!
+        _memberLogic.setMuted(memberId, muteeId, muted);
+        // TODO: runtime notification? We should, but it's a PITA.
     }
 
     // from interface WebMemberService

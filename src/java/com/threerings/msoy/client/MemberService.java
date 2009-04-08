@@ -54,7 +54,7 @@ public interface MemberService extends InvocationService
     /**
      * Set the specified member as muted.
      */
-    void setMuted (Client client, int muteeId, boolean muted, InvocationListener listener);
+    void setMuted (Client client, int muteeId, boolean muted, ConfirmListener listener);
 
     /**
      * Invites the specified member to follow the caller. Passing 0 for the memberId will clear all

@@ -220,9 +220,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_MUTED :int = 16;
 
     // from interface MemberService
-    public function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void
+    public function setMuted (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, SET_MUTED, [
             Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4

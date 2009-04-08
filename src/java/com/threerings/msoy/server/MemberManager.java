@@ -488,7 +488,7 @@ public class MemberManager
     // from interface MemberProvider
     public void setMuted (
         ClientObject caller, final int muteeId, final boolean muted,
-        InvocationService.InvocationListener listener)
+        InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         MemberObject user = (MemberObject) caller;
@@ -496,9 +496,9 @@ public class MemberManager
         if (muterId == muteeId || muteeId == 0) {
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        _invoker.postUnit(new PersistingUnit("setMuted()", listener) {
+        _invoker.postUnit(new ServiceUnit("setMuted()", listener) {
             @Override public void invokePersistent () throws Exception {
-                _memberRepo.setMuted(muterId, muteeId, muted);
+                _memberLogic.setMuted(muterId, muteeId, muted);
             }
         });
     }
