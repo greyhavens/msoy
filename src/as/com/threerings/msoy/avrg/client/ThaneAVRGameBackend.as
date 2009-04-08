@@ -258,6 +258,7 @@ public class ThaneAVRGameBackend
 
         // .getPlayer()
         o["player_getRoomId_v1"] = player_getRoomId_v1;
+        o["player_moveToRoom_v1"] = player_moveToRoom_v1;
         o["getPlayerName_v1"] = getPlayerName_v1;
         o["holdsTrophy_v1"] = holdsTrophy_v1;
         o["awardTrophy_v1"] = awardTrophy_v1;

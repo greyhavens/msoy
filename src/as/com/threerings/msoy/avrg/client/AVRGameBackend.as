@@ -246,6 +246,7 @@ public class AVRGameBackend extends ControlBackend
         o["player_getGameData_v1"] = player_getGameData_v1;
         o["player_setProperty_v1"] = player_setProperty_v1;
         o["player_getRoomId_v1"] = player_getRoomId_v1;
+        o["player_moveToRoom_v1"] = player_moveToRoom_v1;
         o["getAvatarMasterItemId_v1"] = getAvatarMasterItemId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
         o["getPlayerName_v1"] = getPlayerName_v1;
