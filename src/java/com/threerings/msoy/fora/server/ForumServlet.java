@@ -4,13 +4,16 @@
 package com.threerings.msoy.fora.server;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -61,6 +64,7 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.gwt.MessageTooLongException;
+import com.threerings.msoy.fora.server.persist.ForumMessagePosterRecord;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
@@ -101,6 +105,63 @@ public class ForumServlet extends MsoyServiceServlet
         }
 
         return _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
+    }
+
+    // from interface ForumService
+    public List<FriendThread> loadUnreadFriendThreads (int maximum)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        // load up the meta data of unread posts by friends
+        List<ForumMessagePosterRecord> posters = _forumRepo.loadUnreadPosts(mrec.memberId,
+            _memberRepo.loadFriendIds(mrec.memberId), maximum);
+
+        // keep track of all the member ids we'll need to do the resolution later
+        Set<Integer> memberIds = Sets.newHashSet();
+
+        // load all the threads
+        Map<Integer, ForumThreadRecord> threadRecMap = Maps.newHashMap();
+        for (ForumMessagePosterRecord poster : posters) {
+            memberIds.add(poster.posterId);
+            if (threadRecMap.get(poster.threadId) != null) {
+                continue;
+            }
+            ForumThreadRecord threc = _forumRepo.loadThread(poster.threadId);
+            threadRecMap.put(poster.threadId, threc);
+            memberIds.add(threc.mostRecentPosterId);
+        }
+
+        // load the names of all the groups
+        Set<Integer> groupIds = Sets.newHashSet();
+        for (ForumThreadRecord threc : threadRecMap.values()) {
+            groupIds.add(threc.groupId);
+        }
+        Map<Integer, GroupName> groupNames = Maps.newHashMap();
+        for (GroupName name : _groupRepo.loadGroupNames(groupIds)) {
+            groupNames.put(name.getGroupId(), name);
+        }
+
+        // load member names
+        IntMap<MemberName> names = _memberRepo.loadMemberNames(memberIds);
+
+        // build result
+        Map<Integer, ForumThread> threadMap = Maps.newHashMap();
+        List<FriendThread> result = Lists.newArrayListWithCapacity(posters.size());
+        for (ForumMessagePosterRecord poster : posters) {
+            ForumThread thread = threadMap.get(poster.threadId);
+            if (thread == null) {
+                thread = threadRecMap.get(poster.threadId).toForumThread(names, groupNames);
+                threadMap.put(poster.threadId, thread);
+            }
+            FriendThread th = new FriendThread();
+            th.thread = thread;
+            th.friendName = names.get(poster.posterId);
+            th.friendPostTime = new Date(poster.created.getTime());
+            result.add(th);
+        }
+
+        return result;
     }
 
     // from interface ForumService
