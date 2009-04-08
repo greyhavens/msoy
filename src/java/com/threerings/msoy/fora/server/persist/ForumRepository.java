@@ -79,24 +79,23 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Counts the number of posts by any of the given posters that are unread by the given member.
+     * Loads posts by specific people that are unread by a given member, up to a maximum.
+     */
+    public List<ForumMessagePosterRecord> loadUnreadPosts (
+        int memberId, Set<Integer> posterIds, int max)
+    {
+        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds);
+        clauses.add(new Limit(0, max));
+        clauses.add(OrderBy.descending(ForumMessagePosterRecord.CREATED));
+        return findAll(ForumMessagePosterRecord.class, clauses);
+    }
+
+    /**
+     * Counts the number of posts by specific people that are unread by a given member.
      */
     public int countUnreadPosts (int memberId, Set<Integer> posterIds)
     {
-        SQLExpression join = new And(
-            new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
-            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
-        );
-        SQLExpression where = new And(
-            new In(ForumMessagePosterRecord.POSTER_ID, posterIds),
-            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
-                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
-                           new GreaterThan(ForumMessagePosterRecord.MESSAGE_ID,
-                                           ReadTrackingRecord.LAST_READ_POST_ID))));
-
-        List<QueryClause> clauses = Lists.newArrayList(
-            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
-            new Where(where));
+        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds);
         clauses.add(new FromOverride(ForumMessageRecord.class));
         return load(CountRecord.class, clauses).count;
     }
@@ -432,6 +431,24 @@ public class ForumRepository extends DepotRepository
                    new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
                            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
                                            ReadTrackingRecord.LAST_READ_POST_ID))));
+        return Lists.newArrayList(
+            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
+            new Where(where));
+    }
+
+    protected List<QueryClause> getUnreadPostsClauses (int memberId, Set<Integer> posterIds)
+    {
+        SQLExpression join = new And(
+            new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
+            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
+        );
+        SQLExpression where = new And(
+            new In(ForumMessagePosterRecord.POSTER_ID, posterIds),
+            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
+                           new GreaterThan(ForumMessagePosterRecord.MESSAGE_ID,
+                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+
         return Lists.newArrayList(
             new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
             new Where(where));
