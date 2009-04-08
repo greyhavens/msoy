@@ -65,7 +65,7 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
      */
     public void setPage (String query, int page)
     {
-        setPage(query, page, false);
+        setPage(query, page, true);
     }
 
     // from interface SearchBox.Listener
