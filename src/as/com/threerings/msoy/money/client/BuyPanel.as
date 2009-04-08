@@ -32,28 +32,30 @@ public class BuyPanel extends VBox
 
     public function setPriceQuote (quote :PriceQuote) :void
     {
-        trace("got quote: " + quote.getBars() + ", " + quote.getCoins());
         _bars.setPriceQuote(quote);
         _coins.setPriceQuote(quote);
         FlexUtil.setVisible(_getBars, _bars.visible);
     }
 
-//    override public function set enabled (value :Boolean) :void
-//    {
-//        super.enabled = true;
-//
-//        _enabled = value;
-//        if (_bars != null) { // enabled gets set during our superclass construction.. wack
-//            _bars.enabled = value;
-//            _coins.enabled = value;
-//            // always enable getBars
-//        }
-//    }
-//
-//    override public function get enabled () :Boolean
-//    {
-//        return _enabled;
-//    }
+    override public function set enabled (value :Boolean) :void
+    {
+        // Note: we do not save the state, see note in getter.
+        if (_bars != null) { // enabled gets set during our superclass construction.. wack
+            _bars.enabled = value;
+            _coins.enabled = value;
+            // always enable getBars
+        }
+    }
+
+    /**
+     * This container can be set enabled or disabled, but it will always read back
+     * out as enabled, due to the fact that if this ever returns false, then our superclass
+     * will draw a white box over us, which we do not want.
+     */
+    override public function get enabled () :Boolean
+    {
+        return true;
+    }
 
     override protected function createChildren () :void
     {
@@ -70,7 +72,5 @@ public class BuyPanel extends VBox
     protected var _bars :BuyButton;
     protected var _coins :BuyButton;
     protected var _getBars :CommandButton;
-
-    protected var _enabled :Boolean = true;
 }
 }
