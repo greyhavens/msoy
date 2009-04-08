@@ -51,8 +51,8 @@ public class RoomStudioView extends RoomView
     public function RoomStudioView (ctx :StudioContext, ctrl :RoomStudioController)
     {
         super(ctx, ctrl);
-
         _sctx = ctx;
+        _sctrl = ctrl;
     }
 
     /**
@@ -65,7 +65,7 @@ public class RoomStudioView extends RoomView
 
     public function initForViewing (params :Object, uberMode :int) :void
     {
-        (_ctrl as RoomStudioController).studioOnStage(uberMode);
+        _sctrl.studioOnStage(uberMode);
 
         switch (uberMode) {
         case UberClientModes.AVATAR_VIEWER:
@@ -450,7 +450,14 @@ public class RoomStudioView extends RoomView
 
     protected function handleSpriteInit (ignored :Event = null) :void
     {
-        if (_testingSprite.hasCustomConfigPanel()) {
+        if (_sctrl.memoriesWillSave() && _testingSprite.hasCustomConfigPanel()) {
+            // add a button for configuring
+            var config :CommandButton = new CommandButton(null, _sctrl.showStudioConfig);
+            config.styleName = "controlBarConfig";
+            config.toolTip = Msgs.STUDIO.get("i.config");
+            _ctx.getControlBar().addCustomButton(config);
+
+            // and tell ye olde external, so it can add a button in WWT
             try {
                 ExternalInterface.call("hasCustomConfig");
             } catch (e :Error) {
@@ -485,6 +492,8 @@ public class RoomStudioView extends RoomView
     }
 
     protected var _sctx :StudioContext;
+
+    protected var _sctrl :RoomStudioController;
 
     protected var _zoom :Number = 1;
 

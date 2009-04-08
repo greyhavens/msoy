@@ -244,7 +244,7 @@ public class RoomStudioController extends RoomController
     /**
      * Callback to pop-up the configurator.
      */
-    protected function showStudioConfig () :void
+    public function showStudioConfig () :void
     {
         showConfigPopup(_studioView.getTestingSprite());
     }

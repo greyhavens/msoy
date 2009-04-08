@@ -554,7 +554,7 @@ TabNavigator, TabBar {
 .controlBarIdleButton, .controlBarScaleButton, .controlBarGameButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
-.controlBarButtonMusic, .controlBarPartyButton,
+.controlBarButtonMusic, .controlBarPartyButton, .controlBarConfig,
 .roomEditScaleDown, .roomEditScaleUp, .roomEditMoveDown, .roomEditMoveUp,
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
@@ -575,7 +575,8 @@ TabNavigator, TabBar {
   image: Embed(source="../media/skins/controlbar/chatoptions.png");
 }
 
-.controlBarButtonEdit {
+/** TODO: different icon for config. */
+.controlBarButtonEdit, .controlBarConfig {
   image: Embed(source="../media/skins/controlbar/editroom.png");
 }
 
