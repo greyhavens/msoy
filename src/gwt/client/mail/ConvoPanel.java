@@ -22,6 +22,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -70,16 +72,8 @@ public class ConvoPanel extends FlowPanel
         header.setText(0, 1, review ? _msgs.convoReview() :
             _msgs.convoWith(""+result.other), 1, "Title");
 
-        boolean otherHasPosted = false;
-        for (ConvMessage msg : result.messages) {
-            if (msg.author.name.getMemberId() != CShell.getMemberId()) {
-                otherHasPosted = true;
-                break;
-            }
-        }
-
         if (!review) {
-            addControls(header, result.other, otherHasPosted);
+            addNavControls(header);
         }
         header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
@@ -94,9 +88,18 @@ public class ConvoPanel extends FlowPanel
         SmartTable footer = new SmartTable("Footer", 0, 0);
         footer.setWidth("100%");
         footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
-        footer.setHTML(0, 1, "&nbsp;", 1, "Title");
         if (!review) {
-            addControls(footer, result.other, otherHasPosted);
+            // only add the "user controls" if the other user has participated
+            for (ConvMessage msg : result.messages) {
+                if (msg.author.name.getMemberId() != CShell.getMemberId()) {
+                    addUserControls(footer, result.other);
+                    break;
+                }
+            }
+        }
+        footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "Title"); // spacer
+        if (!review) {
+            addNavControls(footer);
         }
         footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "BottomRight");
         add(footer);
@@ -105,7 +108,7 @@ public class ConvoPanel extends FlowPanel
         _model.markConversationRead(_convoId);
     }
 
-    protected void addControls (SmartTable table, MemberName targetName, boolean includeComplain)
+    protected void addNavControls (SmartTable table)
     {
         int col = table.getCellCount(0);
 
@@ -128,17 +131,35 @@ public class ConvoPanel extends FlowPanel
         };
         table.setWidget(0, col++, delete, 1, "Control");
 
-        if (includeComplain) {
-            Button complain = new Button(_msgs.convoComplain());
-            new ComplainHandler(complain, targetName.toString());
-            table.setWidget(0, col++, complain, 1, "Control");
-        }
-
         table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
             }
         }), 1, "Control");
+    }
+
+    protected void addUserControls (SmartTable table, MemberName targetName)
+    {
+        int col = table.getCellCount(0);
+
+        Button complain = new Button(_msgs.convoComplain());
+        new ComplainHandler(complain, targetName.toString());
+        table.setWidget(0, col++, complain, 1, "Control");
+
+        final int targetId = targetName.getMemberId();
+        Button block = new Button(_msgs.convoBlock());
+        new ClickCallback<Void>(block, _msgs.convoBlockConfirm()) {
+            @Override protected boolean callService () {
+                _membersvc.setMuted(CShell.getMemberId(), targetId, true, this);
+                return true;
+            }
+
+            @Override protected boolean gotResult (Void result) {
+                MsoyUI.info(_msgs.convoBlockSuccess());
+                return false; // stay disabled
+            }
+        };
+        table.setWidget(0, col++, block, 1, "Control");
     }
 
     protected class MessageWidget extends SmartTable
@@ -313,4 +334,6 @@ public class ConvoPanel extends FlowPanel
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }
