@@ -17,6 +17,7 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumService.FriendThread;
 
 import client.util.PagedServiceDataModel;
 import client.util.ServiceBackedDataModel;
@@ -208,6 +209,56 @@ public class ForumModels
         protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
+    /** A data model that provides all threads with unread posts by friends.  */
+    public static class UnreadFriendsThreads extends SimpleDataModel<FriendThread>
+    {
+        public UnreadFriendsThreads ()
+        {
+            super(null);
+        }
+
+        /**
+         * Looks up the specified thread in the set of all threads ever fetched by this model.
+         */
+        public ForumThread getThread (int threadId)
+        {
+            return _threads.get(threadId);
+        }
+
+        // from interface DataModel
+        public void removeItem (FriendThread ft)
+        {
+            _threads.remove(ft.thread.threadId);
+            super.removeItem(ft);
+        }
+
+        // from interface DataModel
+        public void doFetchRows (
+            final int start, final int count, final AsyncCallback<List<FriendThread>> callback)
+        {
+            if (_items != null) {
+                super.doFetchRows(start, count, callback);
+                return;
+            }
+
+            _forumsvc.loadUnreadFriendThreads(MAX_UNREAD_THREADS,
+                                        new AsyncCallback<List<FriendThread>>()  {
+                public void onSuccess (List<FriendThread> result) {
+                    _items = result;
+                    for (FriendThread ft : result) {
+                        _threads.put(ft.thread.threadId, ft.thread);
+                    }
+                    doFetchRows(start, count, callback);
+                }
+                public void onFailure (Throwable failure) {
+                    callback.onFailure(failure);
+                }
+           });
+        }
+
+        protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
+    }
+
     /** A data model that provides a particular thread's messages. */
     public static class ThreadMessages
         extends ServiceBackedDataModel<ForumMessage, ForumService.MessageResult>
@@ -349,6 +400,18 @@ public class ForumModels
     }
 
     /**
+     * Returns, creating if necessary, the data model that provides all threads with unread posts
+     * by the authenticated user's friends.
+     */
+    public UnreadFriendsThreads getUnreadFriendsThreads (boolean refresh)
+    {
+        if (refresh || _unreadFriendsModel == null) {
+            _unreadFriendsModel = new UnreadFriendsThreads();
+        }
+        return _unreadFriendsModel;
+    }
+
+    /**
      * Locates the thread in question in the cache. Returns null if the thread could not be found.
      */
     public ForumThread findThread (int threadId)
@@ -440,6 +503,9 @@ public class ForumModels
 
     /** A cached UnreadThreads data model. */
     protected UnreadThreads _unreadModel;
+
+    /** A cached UnreadThreads data model. */
+    protected UnreadFriendsThreads _unreadFriendsModel;
 
     /** A cached search result. */
     protected Search _search;
