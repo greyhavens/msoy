@@ -82,8 +82,7 @@ public class ControlBackend
                 // that this is not an error. Old avatars could be connecting twice and coping,
                 // so we don't want to break them. We use the above "alreadyConnected" property
                 // to inform newer entities that they're booching it.
-                var log :Log = Log.getLog(this);
-                log.warning("Warning: Usercode connected more than once. [backend=" + this + "].");
+                Log.getLog(this).warning("Usercode connected more than once.", "backend", this);
             }
         }
 

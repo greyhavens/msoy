@@ -519,6 +519,11 @@ public class RoomObjectController extends RoomController
             _wdctx.confirmListener("m.pet_ordered" + command));
     }
 
+    override public function getEnvironment () :String
+    {
+        return "room"; // EntityControl.ENV_ROOM
+    }
+
     override public function getMemories (ident :ItemIdent) :Object
     {
         var mems :Object = {};
@@ -945,6 +950,10 @@ public class RoomObjectController extends RoomController
     override protected function hasEntityControl (ident :ItemIdent) :Object
     {
         var ourOid :int = _wdctx.getMemberObject().getOid();
+
+        // TODO: see if this can be made more efficient for avatars.
+        // I would think that we could just check the itemId against the user's worn avatar,
+        // but that might not work with certain edge cases (default avatar, for example).
 
         // first, let's check all the MemberInfos
         for each (var occInfo :Object in _roomObj.occupantInfo.toArray()) {

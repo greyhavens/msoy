@@ -80,6 +80,12 @@ public class RoomStudioController extends RoomController
     }
 
     // documentation inherited
+    override public function getEnvironment () :String
+    {
+        return _inShop ? "shop" : super.getEnvironment();
+    }
+
+    // documentation inherited
     override public function memoriesWillSave () :Boolean
     {
         return _inShop;

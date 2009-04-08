@@ -80,6 +80,7 @@ public class EntityBackend extends ControlBackend
         var loc :MsoyLocation = _sprite.getLocation();
         o["location"] = [ loc.x, loc.y, loc.z ];
         o["datapack"] = _sprite.getAndClearDataPack();
+        o["env"] = _sprite.getEnvironment();
     }
 
     override protected function handleUserCodeConnect (event :Object) :void

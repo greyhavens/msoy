@@ -683,6 +683,14 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
+     * Get the environment in which this entity is running.
+     */
+    public function getEnvironment () :String
+    {
+        return getController().getEnvironment();
+    }
+
+    /**
      * Request control of this entity. Called by our backend in response to a request from
      * usercode. If this succeeds, a <code>gotControl</code> notification will be dispatched when
      * we hear back from the server.
