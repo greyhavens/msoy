@@ -202,7 +202,7 @@ public class ControlBar extends HBox
         updateVolumeSkin(Prefs.getSoundVolume());
         volBtn.setCallback(handlePopVolume);
 
-        fullBtn = createButton("controlBarButtonFull", "Toggle full-screen mode");
+        fullBtn = createButton("controlBarButtonFull", "i.full");
         fullBtn.setCommand(MsoyController.SET_DISPLAY_STATE);
 
         commentBtn = createButton("controlBarButtonComment", "i.comment");
