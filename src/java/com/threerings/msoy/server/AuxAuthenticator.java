@@ -70,19 +70,29 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
 
             // if the client supplied no token, create a new permaguest account
             if (creds.sessionToken == null) {
-                MemberRecord guest;
-                // a returning guest
-                if (creds.getUsername() != null) {
-                    accountName = creds.getUsername().toString().toLowerCase();
-                    accountName = _accountLogic.getDomain(accountName).authenticateAccount(
-                        accountName, AccountLogic.PERMAGUEST_PASSWORD).accountName;
-                    guest = _memberRepo.loadMember(accountName);
+                MemberRecord guest = null;
 
-                } else {
-                    // a brand new guest
+                // maybe a returning guest?
+                if (creds.getUsername() != null) {
+                    try {
+                        accountName = creds.getUsername().toString().toLowerCase();
+                        accountName = _accountLogic.getDomain(accountName).authenticateAccount(
+                            accountName, AccountLogic.PERMAGUEST_PASSWORD).accountName;
+                        guest = _memberRepo.loadMember(accountName);
+                    } catch (ServiceException se) {
+                        // purged permaguests fall through and get a new permaguest account
+                        if (!MsoyAuthenticator.isPurgedPermaguest(se, creds)) {
+                            throw se;
+                        }
+                    }
+                }
+
+                // a brand new guest
+                if (guest == null) {
                     guest = _accountLogic.createGuestAccount(
                         conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
                 }
+
                 memberId = guest.memberId;
                 accountName = guest.accountName;
                 name = guest.name;

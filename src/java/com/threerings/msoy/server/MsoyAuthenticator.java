@@ -24,6 +24,7 @@ import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyAuthResponseData;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GwtAuthCodes;
@@ -240,14 +241,7 @@ public class MsoyAuthenticator extends Authenticator
             } catch (ServiceException se) {
                 // it's possible that the permaguest account requested has been purged, so instead
                 // of failing the logon, just fall through and create a new permaguest account
-                if (se.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
-                    MemberMailUtil.isPermaguest(aname)) {
-                    log.info("Creating new permaguest for expired auther", "oldacct", aname);
-                    // we need to fake up a new visitor id since the old one is now long gone
-                    if (creds.visitorId == null) {
-                        creds.visitorId = new VisitorInfo().id;
-                    }
-                } else {
+                if (!isPurgedPermaguest(se, creds)) {
                     throw se;
                 }
             }
@@ -439,6 +433,26 @@ public class MsoyAuthenticator extends Authenticator
         return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
+
+    /**
+     * Checks whether this authentication failure is due to a purged permaguest account.
+     * <em>NOTE:</em> if true, it also magicks up a new visitorId for the authenticator because
+     * they're going to need it when we subsequently create them a new permaguest account.
+     */
+    protected static boolean isPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
+    {
+        final String aname = creds.getUsername().toString().toLowerCase();
+        if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
+            MemberMailUtil.isPermaguest(aname)) {
+            log.info("Coping with expired permaguest", "oldacct", aname);
+            // we need to fake up a new visitor id since the old one is now long gone
+            if (creds.visitorId == null) {
+                creds.visitorId = new VisitorInfo().id;
+            }
+            return true;
+        }
+        return false;
+    }        
 
     // our dependencies
     @Inject protected AccountLogic _accountLogic;
