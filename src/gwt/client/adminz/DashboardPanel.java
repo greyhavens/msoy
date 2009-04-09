@@ -143,7 +143,7 @@ public class DashboardPanel extends SmartTable
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
                                      "authtoken", CShell.getAuthToken() }),
-                  getCellCount(0), null);
+                  getCellCount(row-1), null);
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
