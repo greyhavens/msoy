@@ -129,7 +129,5 @@ public class MemberLocator extends BodyLocator
     /** A list of member session observers. */
     protected ObserverList<Observer> _observers = ObserverList.newFastUnsafe();
 
-    @Inject protected FriendManager _friendMan;
-    @Inject protected MemberManager _memberMan;
     @Inject protected PresentsDObjectMgr _omgr;
 }
