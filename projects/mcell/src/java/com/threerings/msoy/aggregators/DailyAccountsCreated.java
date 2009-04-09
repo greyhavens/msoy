@@ -67,7 +67,12 @@ public class DailyAccountsCreated
     public void write (EventWriter writer, EventDataBuilder builder, DayKey key)
         throws IOException
     {
-        writer.write(builder.create("date", key.day, "total", types.total, "affiliated",
-            types.affiliated, "fromAd", types.fromAd, "organic", types.organic));
+        if (key.day.before(_midnight)) {
+            writer.write(builder.create("date", key.day, "total", types.total, "affiliated",
+                types.affiliated, "fromAd", types.fromAd, "organic", types.organic));
+        }
     }
+
+    protected Date _midnight =
+        TimeRange.roundDown(System.currentTimeMillis(), PartialDateType.DAY).getTime();
 }
