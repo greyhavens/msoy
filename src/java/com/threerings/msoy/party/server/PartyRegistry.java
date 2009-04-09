@@ -420,7 +420,7 @@ public class PartyRegistry
 
     protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
 
-    protected static final int PARTIES_PER_BOARD = 16;
+    protected static final int PARTIES_PER_BOARD = 10;
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
