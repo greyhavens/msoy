@@ -79,7 +79,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public GameRecord loadGameRecord (int gameId)
     {
-        return loadGameRecord(gameId, loadGameDetail(gameId));
+        return loadGameRecord(gameId, loadGameDetail(gameId), false);
     }
 
     /**
@@ -93,13 +93,19 @@ public class MsoyGameRepository extends DepotRepository
     /**
      * Loads the appropriate {@link GameRecord} for the specified game detail.
      */
-    public GameRecord loadGameRecord (int gameId, GameDetailRecord gdr)
+    public GameRecord loadGameRecord (int gameId, GameDetailRecord gdr, boolean skipCache)
     {
         if (gdr == null) {
             return null;
         }
-        return _gameRepo.loadItem(GameRecord.isDeveloperVersion(gameId) ?
-                                  gdr.sourceItemId : gdr.listedItemId);
+        int itemId = GameRecord.isDeveloperVersion(gameId) ? gdr.sourceItemId : gdr.listedItemId;
+        if (skipCache) {
+            // if we need to skip the cache, we have to load things directly (making the assumption
+            // along the way that game records are original items, which they are)
+            return load(GameRecord.class, CacheStrategy.NONE, GameRecord.getKey(itemId));
+        } else {
+            return _gameRepo.loadItem(itemId);
+        }
     }
 
     /**

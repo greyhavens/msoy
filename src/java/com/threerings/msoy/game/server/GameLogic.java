@@ -163,7 +163,7 @@ public class GameLogic
         ArrayIntSet have = new ArrayIntSet();
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
             GameDetailRecord detail = _mgameRepo.loadGameDetail(card.placeId);
-            GameRecord game = _mgameRepo.loadGameRecord(card.placeId, detail);
+            GameRecord game = _mgameRepo.loadGameRecord(card.placeId, detail, false);
             if (game != null && game.getRating() >= 4 && detail.gamesPlayed > 0) {
                 featured.add(toFeaturedGameInfo(game, detail, card.population));
                 have.add(game.gameId);

@@ -1080,7 +1080,7 @@ public class GameGameRegistry
     {
         GameContent content = new GameContent();
         content.detail = _mgameRepo.loadGameDetail(gameId);
-        GameRecord rec = _mgameRepo.loadGameRecord(gameId, content.detail);
+        GameRecord rec = _mgameRepo.loadGameRecord(gameId, content.detail, true);
         if (rec != null) {
             content.game = (Game)rec.toItem();
             int suiteId = content.game.getSuiteId();
