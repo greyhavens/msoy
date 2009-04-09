@@ -95,7 +95,7 @@ public class PartyManager
             _partyReg.partyWasRemoved(_partyObj.id);
             // clear the party info from all remaining players' member objects
             for (PartyPeep peep : _partyObj.peeps) {
-                setPartySummary(peep.name.getMemberId(), false);
+                indicateMemberPartying(peep.name.getMemberId(), false);
             }
             _invMgr.clearDispatcher(_partyObj.partyService);
             // _invMgr.clearDispatcher(_partyObj.speakService);
@@ -139,7 +139,7 @@ public class PartyManager
         _invitedIds.remove(partier.getMemberId());
 
         // update member's party info via a node action
-        setPartySummary(partier.getMemberId(), true);
+        indicateMemberPartying(partier.getMemberId(), true);
 
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
@@ -306,7 +306,7 @@ public class PartyManager
         }
 
         // clear the party info from this player's member object
-        setPartySummary(memberId, false);
+        indicateMemberPartying(memberId, false);
 
         _partyObj.startTransaction();
         try {
@@ -321,9 +321,10 @@ public class PartyManager
         updatePartyInfo();
     }
 
-    protected void setPartySummary (int memberId, boolean set)
+    protected void indicateMemberPartying (int memberId, boolean set)
     {
         MemberNodeActions.updateParty(memberId, set ? _summary : null);
+        _peerMgr.updateMemberParty(memberId, _partyObj.id, set);
     }
 
 //    // from SpeakHandler.SpeakerValidator

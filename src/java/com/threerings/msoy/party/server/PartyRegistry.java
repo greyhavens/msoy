@@ -172,7 +172,8 @@ public class PartyRegistry
     {
         String pnode = _peerMgr.lookupNodeDatum(new Function<NodeObject, String>() {
             public String apply (NodeObject nobj) {
-                return ((MsoyNodeObject)nobj).parties.containsKey(partyId) ? nobj.nodeName : null;
+                return ((MsoyNodeObject)nobj).hostedParties.containsKey(partyId)
+                    ? nobj.nodeName : null;
             }
         });
         if (pnode == null) {
@@ -194,7 +195,7 @@ public class PartyRegistry
         final TreeMap<PartySort,PartyInfo> visParties = Maps.newTreeMap();
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {
-                for (PartyInfo info : ((MsoyNodeObject) node).parties) {
+                for (PartyInfo info : ((MsoyNodeObject) node).hostedParties) {
                     // TODO: We could actually show parties in which you have an invitation,
                     // and or a leader invite...
                     if (info.isVisible(member)) {
@@ -287,7 +288,7 @@ public class PartyRegistry
         int sent = _peerMgr.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Boolean>() {
             public Boolean apply (Tuple<Client,NodeObject> clinode) {
                 MsoyNodeObject mnode = (MsoyNodeObject)clinode.right;
-                if (!mnode.parties.containsKey(partyId)) {
+                if (!mnode.hostedParties.containsKey(partyId)) {
                     return false;
                 }
                 mnode.peerPartyService.getPartyDetail(clinode.left, partyId, rl);

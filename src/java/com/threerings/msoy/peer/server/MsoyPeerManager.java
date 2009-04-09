@@ -59,6 +59,7 @@ import com.threerings.msoy.room.server.MsoySceneRegistry;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MemberParty;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
@@ -168,7 +169,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         final Integer partyKey = partyId;
         return lookupNodeDatum(new Function<NodeObject,PartyInfo>() {
             public PartyInfo apply (NodeObject nodeobj) {
-                return ((MsoyNodeObject)nodeobj).parties.get(partyKey);
+                return ((MsoyNodeObject)nodeobj).hostedParties.get(partyKey);
             }
         });
     }
@@ -206,14 +207,29 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Update the specified member's partying status.
+     */
+    public void updateMemberParty (int memberId, int partyId, boolean in)
+    {
+        // let's just do this dumb, and see if it causes any warnings, because the party code
+        // shouldn't be adding anyone twice, or updating someone's party without first removing
+        // them from the old party.
+        if (in) {
+            _mnobj.addToMemberParties(new MemberParty(memberId, partyId));
+        } else {
+            _mnobj.removeFromMemberParties(memberId);
+        }
+    }
+
+    /**
      * Add or update the specified PartyInfo.
      */
     public void updatePartyInfo (PartyInfo partyInfo)
     {
-        if (_mnobj.parties.contains(partyInfo)) {
-            _mnobj.updateParties(partyInfo);
+        if (_mnobj.hostedParties.contains(partyInfo)) {
+            _mnobj.updateHostedParties(partyInfo);
         } else {
-            _mnobj.addToParties(partyInfo);
+            _mnobj.addToHostedParties(partyInfo);
         }
     }
 
@@ -222,8 +238,8 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void removePartyInfo (int partyId)
     {
-        if (_mnobj.parties.containsKey(partyId)) {
-            _mnobj.removeFromParties(partyId);
+        if (_mnobj.hostedParties.containsKey(partyId)) {
+            _mnobj.removeFromHostedParties(partyId);
         }
     }
 
