@@ -274,6 +274,16 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
+    // from BasicDirector
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+
+        if (!event.isSwitchingServers()) {
+            clearParty();
+        }
+    }
+
     protected function checkFollowParty () :void
     {
         /* TODO: if (_partyObj.partyFollowsLeader) */
