@@ -234,6 +234,7 @@ public class EditAccountPanel extends FlowPanel
         });
         _uppass.setEnabled(false);
         table.setWidget(1, 2, _uppass);
+        table.setWidget(2, 1, MsoyUI.createHTML(_msgs.editChangePasswordTip(), null), 2, "Tip");
         return table;
     }
 
