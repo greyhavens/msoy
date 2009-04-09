@@ -120,13 +120,13 @@ public class DoListItemPopup extends VerticalPanel
 
             row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
-            int selectedPricingIndex = (_item.isSalable() ? CatalogListing.PRICING_HIDDEN :
-                                        CatalogListing.PRICING_ESCALATE)-1;
+            int defaultPricing = repricing ? listing.pricing : CatalogListing.PRICING_ESCALATE;
+            int pricingIndex = -1;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(_dmsgs.xlate(key));
-                if (listing != null && listing.pricing == CatalogListing.PRICING[ii]) {
-                    selectedPricingIndex = ii;
+                if (defaultPricing == CatalogListing.PRICING[ii]) {
+                    pricingIndex = ii;
                 }
             }
             ChangeListener tipper = new ChangeListener() {
@@ -173,7 +173,9 @@ public class DoListItemPopup extends VerticalPanel
             add(MsoyUI.createLabel(_imsgs.doListPricingHeader(), "Header"));
             add(pricing);
 
-            _pricingBox.setSelectedIndex(selectedPricingIndex);
+            if (pricingIndex != -1) {
+                _pricingBox.setSelectedIndex(pricingIndex);
+            }
             tipper.onChange(_pricingBox); // alas setSelectedIndex() doesn't do this, yay DHTML
         }
 
