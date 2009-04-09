@@ -90,6 +90,16 @@ public class MoneyExchange
     }
 
     /**
+     * Get a coin cost such that it converts back to the same number of bars when a quote
+     * is made from it. Well, I just need this, and that's what I need it for, but some
+     * renaming of this method and possible other cleanup would be great.
+     */
+    public int barsToCoinsFloor (int bars)
+    {
+        return (bars == 0) ? 0 : (int)Math.floor(bars * _rate);
+    }
+
+    /**
      * Get the coin change for the specified prices.
      */
     public int coinChange (int coinPrice, int barPrice)

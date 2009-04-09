@@ -59,7 +59,7 @@ public class RuntimeConfig
     {
         try {
             int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
-            return (value >= 0) ? value : _exchange.barsToCoins(-value);
+            return (value >= 0) ? value : _exchange.barsToCoinsFloor(-value);
         } catch (ObjectAccessException oae) {
             // Shouldn't happen as long as you're using CostsConfigObject constants in your code...
             throw new RuntimeException(oae);
