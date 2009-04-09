@@ -37,6 +37,8 @@ import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.PersistingUnit;
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -44,6 +46,7 @@ import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
@@ -71,6 +74,8 @@ import com.threerings.msoy.party.data.PartyCredentials;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartyOccupantInfo;
+import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
 import static com.threerings.msoy.Log.log;
@@ -126,19 +131,42 @@ public class PartyRegistry
      * Called when the specified member has joined or left a party. This is called on the node on
      * which the member has a world session.
      */
-    public void updateMemberParty (MemberObject memobj, PartySummary party)
+    public void updateUserParty (MsoyUserObject userObj, final PartySummary party)
     {
-        // if the member is in a room, update their party info in the room
-        PlaceManager placeMan = _placeReg.getPlaceManager(memobj.getPlaceOid());
-        if (placeMan instanceof RoomManager) {
-            if (party == null) {
-                ((RoomManager)placeMan).memberLeftParty(memobj, memobj.partyId);
-            } else {
-                ((RoomManager)placeMan).memberJoinedParty(memobj, party);
+        int oldPartyId = 0;
+        // also update the member's local bits
+        // TODO: interface-ize this, too?
+        if (userObj instanceof MemberObject) {
+            MemberObject memObj = (MemberObject) userObj;
+            oldPartyId = memObj.getLocal(MemberLocal.class).updateParty(memObj, party);
+
+        } else if (userObj instanceof com.threerings.msoy.game.data.PlayerObject) {
+            // TODO
+            System.err.println("TODO Wanting to update the party of a playerObj: " + userObj);
+        }
+
+        PlaceManager placeMan = _placeReg.getPlaceManager(userObj.getPlaceOid());
+        if (placeMan != null) {
+            PlaceObject placeObj = placeMan.getPlaceObject();
+            if (placeObj instanceof PartyPlaceObject) {
+                // we need to add a new party BEFORE updating the occInfo
+                if (party != null) {
+                    PartyPlaceUtil.maybeAddParty((PartyPlaceObject)placeObj, party);
+                }
+                // update the occupant info
+                placeMan.updateOccupantInfo(userObj.getOid(),
+                    new OccupantInfo.Updater<OccupantInfo>() {
+                        public boolean update (OccupantInfo info) {
+                            return ((PartyOccupantInfo) info).updatePartyId(
+                                (party == null) ? 0 : party.id);
+                        }
+                    });
+                // we need to remove an old party AFTER updating the occInfo
+                if (party == null) {
+                    PartyPlaceUtil.maybeRemoveParty((PartyPlaceObject)placeObj, oldPartyId);
+                }
             }
         }
-        // also update the member's local bits
-        memobj.getLocal(MemberLocal.class).updateParty(memobj, party);
     }
 
     /**

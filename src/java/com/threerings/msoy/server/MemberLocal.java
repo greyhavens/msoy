@@ -20,6 +20,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.party.data.PartySummary;
+import com.threerings.msoy.party.server.PartyPlaceUtil;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
@@ -157,16 +158,20 @@ public class MemberLocal extends BodyLocal
 
     /**
      * Called when we enter or leave a party.
+     *
+     * @return the old partyId.
      */
-    public void updateParty (MemberObject memobj, PartySummary party)
+    public int updateParty (MemberObject memobj, PartySummary summ)
     {
-        if (party == null) {
+        int oldPartyId = (party == null) ? 0 : party.id;
+        if (summ == null) {
             memobj.setPartyId(0);
-            this.party = null;
+            party = null;
         } else {
-            memobj.setPartyId(party.id);
-            this.party = party;
+            memobj.setPartyId(summ.id);
+            party = summ;
         }
+        return oldPartyId;
     }
 
     /**
@@ -184,8 +189,8 @@ public class MemberLocal extends BodyLocal
             putAvatarMemoriesIntoRoom(roomObj);
 
             // if we're in a party, maybe put our party summary in the room as well
-            if (party != null && !roomObj.parties.containsKey(party.id)) {
-                roomObj.addToParties(party);
+            if (party != null) {
+                PartyPlaceUtil.maybeAddParty(roomObj, party);
             }
 
         } finally {
@@ -210,7 +215,7 @@ public class MemberLocal extends BodyLocal
 
             // if we're in a party and the last member to leave this room, clean up our bits
             if (party != null) {
-                roomObj.maybeRemoveParty(party.id);
+                PartyPlaceUtil.maybeRemoveParty(roomObj, party.id);
             }
 
         } finally {

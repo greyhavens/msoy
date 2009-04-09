@@ -13,10 +13,13 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.party.data.PartyOccupantInfo;
+
 /**
  * Contains published information about a member in a scene.
  */
 public class MemberInfo extends ActorInfo
+    implements PartyOccupantInfo
 {
     /** Used to update our avatar info when that changes. */
     public static class AvatarUpdater implements Updater<MemberInfo>
@@ -57,9 +60,7 @@ public class MemberInfo extends ActorInfo
         return ((MemberName) username).getMemberId();
     }
 
-    /**
-     * Get this player's partyId.
-     */
+    // from PartyOccupantInfo
     public int getPartyId ()
     {
         return _partyId;
@@ -90,6 +91,7 @@ public class MemberInfo extends ActorInfo
         }
     }
 
+    // from PartyOccupantInfo
     public boolean updatePartyId (int partyId)
     {
         if (partyId != _partyId) {

@@ -202,38 +202,6 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
-    /**
-     * Called when a member joins a party while they're in our room.
-     */
-    public void memberJoinedParty (MemberObject memobj, final PartySummary party)
-    {
-        // add the party summary to the room, if necessary
-        if (!_roomObj.parties.containsKey(party.id)) {
-            _roomObj.addToParties(party);
-        }
-
-        // now we can update their occupant info (it requires that the party summary be set)
-        updateOccupantInfo(memobj.getOid(), new MemberInfo.Updater<MemberInfo>() {
-            public boolean update (MemberInfo info) {
-                return info.updatePartyId(party.id);
-            }
-        });
-    }
-
-    /**
-     * Called when a member leaves a party while they're in our room.
-     */
-    public void memberLeftParty (MemberObject memobj, final int partyId)
-    {
-        // update their occupant info
-        updateOccupantInfo(memobj.getOid(), new MemberInfo.Updater<MemberInfo>() {
-            public boolean update (MemberInfo info) {
-                return info.updatePartyId(0);
-            }
-        });
-        _roomObj.maybeRemoveParty(partyId);
-    }
-
     @Override
     public String ratifyBodyEntry (BodyObject body)
     {
@@ -245,7 +213,7 @@ public class RoomManager extends SpotSceneManager
         // if we have a bootlist, check against that
         if (_booted != null && (body instanceof MemberObject)) {
             MemberObject user = (MemberObject) body;
-            if (!user.tokens.isSupport() && _booted.contains(user.getMemberId())) {
+            if (_booted.contains(user.getMemberId()) && !user.tokens.isSupport()) {
                 return "e.booted";
             }
         }

@@ -34,6 +34,10 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.PlayerLocator;
+
 import com.threerings.msoy.group.data.all.GroupMembership;
 
 import com.threerings.msoy.item.server.ItemManager;
@@ -726,6 +730,9 @@ public class MemberNodeActions
         protected int _followerId;
     }
 
+    /**
+     * Secretly, this is also a PlayerNodeAction.
+     */
     protected static class UpdatePartyAction extends MemberNodeAction
     {
         public UpdatePartyAction () {}
@@ -736,11 +743,31 @@ public class MemberNodeActions
             _party = party;
         }
 
+        @Override
+        public boolean isApplicable (NodeObject nodeObj)
+        {
+            return super.isApplicable(nodeObj) ||
+                ((MsoyNodeObject)nodeObj).clients.containsKey(GameAuthName.makeKey(_memberId));
+        }
+
+        @Override
+        protected void execute ()
+        {
+            super.execute();
+
+            // do the execute for the player object right here
+            PlayerObject plobj = _playerLocator.lookupPlayer(_memberId);
+            if (plobj != null) {
+                _partyReg.updateUserParty(plobj, _party);
+            }
+        }
+
         @Override protected void execute (MemberObject memObj) {
-            _partyReg.updateMemberParty(memObj, _party);
+            _partyReg.updateUserParty(memObj, _party);
         }
 
         @Inject protected transient PartyRegistry _partyReg;
+        @Inject protected transient PlayerLocator _playerLocator;
 
         protected PartySummary _party;
     }
