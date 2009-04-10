@@ -13,6 +13,12 @@ import com.threerings.crowd.data.OccupantInfo;
 public interface PartyPlaceObject
 {
     /**
+     * Get the occupants of this woot-woot party place, which may include some
+     * non-PartyOccupantInfo occupants.
+     */
+    DSet<OccupantInfo> getOccupants ();
+
+    /**
      * Get the party summary set.
      */
     DSet<PartySummary> getParties ();
@@ -26,10 +32,4 @@ public interface PartyPlaceObject
      * Remove a party summary.
      */
     void removeFromParties (Comparable<?> key);
-
-    /**
-     * Get the occupants of this woot-woot party place, which may include some
-     * non-PartyOccupantInfo occupants.
-     */
-    DSet<OccupantInfo> getOccupantInfo ();
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
@@ -23,11 +24,14 @@ import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 import com.whirled.game.server.PropertySpaceHelper;
 
+import com.threerings.msoy.party.data.PartyPlaceObject;
+import com.threerings.msoy.party.data.PartySummary;
+
 /**
  * The data shared between server, clients and agent for an AVR game.
  */
 public class AVRGameObject extends PlaceObject
-    implements PropertySpaceObject, GameDataObject
+    implements PropertySpaceObject, GameDataObject, PartyPlaceObject
 {
     /** The identifier for a MessageEvent containing a user message. */
     public static final String USER_MESSAGE = "Umsg";
@@ -41,6 +45,9 @@ public class AVRGameObject extends PlaceObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>playerLocs</code> field. */
     public static final String PLAYER_LOCS = "playerLocs";
+
+    /** The field name of the <code>parties</code> field. */
+    public static final String PARTIES = "parties";
 
     /** The field name of the <code>gameData</code> field. */
     public static final String GAME_DATA = "gameData";
@@ -64,6 +71,9 @@ public class AVRGameObject extends PlaceObject
      * requests.
      */
     public DSet<PlayerLocation> playerLocs = DSet.newDSet();
+
+    /** Information on the parties presently in this room. */
+    public DSet<PartySummary> parties = DSet.newDSet();
 
     /** The various game data available to this game. */
     public GameData[] gameData;
@@ -138,6 +148,53 @@ public class AVRGameObject extends PlaceObject
         requestAttributeChange(PLAYER_LOCS, value, this.playerLocs);
         DSet<PlayerLocation> clone = (value == null) ? null : value.typedClone();
         this.playerLocs = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>parties</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToParties (PartySummary elem)
+    {
+        requestEntryAdd(PARTIES, parties, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>parties</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromParties (Comparable<?> key)
+    {
+        requestEntryRemove(PARTIES, parties, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>parties</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateParties (PartySummary elem)
+    {
+        requestEntryUpdate(PARTIES, parties, elem);
+    }
+
+    /**
+     * Requests that the <code>parties</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setParties (DSet<PartySummary> value)
+    {
+        requestAttributeChange(PARTIES, value, this.parties);
+        DSet<PartySummary> clone = (value == null) ? null : value.typedClone();
+        this.parties = clone;
     }
 
     /**
@@ -237,6 +294,18 @@ public class AVRGameObject extends PlaceObject
         this.propertiesService = value;
     }
     // AUTO-GENERATED: METHODS END
+
+    // from PartyPlaceObject
+    public DSet<PartySummary> getParties ()
+    {
+        return parties;
+    }
+    
+    // from PartyPlaceObject
+    public DSet<OccupantInfo> getOccupants ()
+    {
+        return occupantInfo;
+    }
 
     /**
      * A custom serialization method.

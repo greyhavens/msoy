@@ -10,10 +10,13 @@ import com.threerings.util.StringBuilder;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameSummary;
 
+import com.threerings.msoy.party.data.PartyOccupantInfo;
+
 /**
  * Contains published information about a member in a scene.
  */
 public class MemberInfo extends ActorInfo
+    implements PartyOccupantInfo
 {
     /**
      * Get the member id for this user, or 0 if they're a guest.
@@ -48,9 +51,7 @@ public class MemberInfo extends ActorInfo
         _scale = scale;
     }
 
-    /**
-     * Get this player's partyId.
-     */
+    // from PartyOccupantInfo
     public function getPartyId () :int
     {
         return _partyId;

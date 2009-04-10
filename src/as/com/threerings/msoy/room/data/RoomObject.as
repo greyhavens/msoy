@@ -11,6 +11,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.item.data.all.Audio;
 
+import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
 import com.threerings.msoy.room.data.EntityMemories;
@@ -21,6 +22,7 @@ import com.threerings.msoy.room.data.RoomPropertiesEntry;
  * Contains the distributed state of a virtual world room.
  */
 public class RoomObject extends SpotSceneObject
+    implements PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>roomService</code> field. */
@@ -75,6 +77,18 @@ public class RoomObject extends SpotSceneObject
     /** A monotonically increasing integer used to indicate which song we're playing since
      * the room was first resolved. */
     public var playCount :int;
+
+    // from PartyPlaceObject
+    public function getParties () :DSet
+    {
+        return parties;
+    }
+
+    // from PartyPlaceObject
+    public function getOccupants () :DSet
+    {
+        return occupantInfo;
+    }
 
     /**
      * Finds the info of an occupant who is also a member and has a given member id. Performs the

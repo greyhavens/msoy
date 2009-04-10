@@ -19,7 +19,6 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
-import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -38,6 +37,7 @@ import com.threerings.msoy.chat.client.GameChatContainer;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameObject;
 
 /**
  * Coordinates the view for MSOY games.
@@ -229,7 +229,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override protected function getRematchLabel (plobj :PlaceObject) :String
     {
-        const gameObj :WhirledGameObject = plobj as WhirledGameObject;
+        const gameObj :MsoyGameObject = plobj as MsoyGameObject;
         return Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch");
     }
 

@@ -366,7 +366,7 @@ public class RoomObject extends SpotSceneObject
     }
 
     // from PartyPlaceObject
-    public DSet<OccupantInfo> getOccupantInfo ()
+    public DSet<OccupantInfo> getOccupants ()
     {
         return occupantInfo;
     }

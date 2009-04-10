@@ -18,11 +18,14 @@ import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 
+import com.threerings.msoy.party.data.PartyPlaceObject;
+import com.threerings.msoy.party.data.PartySummary;
+
 /**
  * Holds game state for an AVRGame.
  */
 public class AVRGameObject extends PlaceObject
-    implements PropertySpaceObject
+    implements PropertySpaceObject, PartyPlaceObject
 {
     /** The identifier for a MessageEvent containing a user message. */
     public static const USER_MESSAGE :String = "Umsg";
@@ -37,10 +40,16 @@ public class AVRGameObject extends PlaceObject
     /** The field name of the <code>playerLocs</code> field. */
     public static const PLAYER_LOCS :String = "playerLocs";
 
+    /** The field name of the <code>parties</code> field. */
+    public static const PARTIES :String = "parties";
+
     /** The field name of the <code>avrgService</code> field. */
     public static const AVRG_SERVICE :String = "avrgService";
 
     // AUTO-GENERATED: FIELDS END
+
+    // no-op reference; force linkage
+    AVRGameOccupantInfo;
 
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
@@ -48,6 +57,9 @@ public class AVRGameObject extends PlaceObject
      * requests.
      */
     public var playerLocs :DSet; /* of */ PlayerLocation; // no-op reference to force link
+
+    /** Information on the parties presently in this room. */
+    public var parties :DSet; /* of */ PartySummary; // no-op reference to force link
 
     /** The various game data available to this game. */
     public var gameData :TypedArray;
@@ -76,6 +88,18 @@ public class AVRGameObject extends PlaceObject
         return propertiesService;
     }
 
+    // from PartyPlaceObject
+    public function getParties () :DSet
+    {
+        return parties;
+    }
+
+    // from PartyPlaceObject
+    public function getOccupants () :DSet
+    {
+        return occupantInfo;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
@@ -93,6 +117,7 @@ public class AVRGameObject extends PlaceObject
     protected function readDefaultFields (ins :ObjectInputStream) :void
     {
         playerLocs = DSet(ins.readObject());
+        parties = DSet(ins.readObject());
         gameData = TypedArray(ins.readObject());
         avrgService = AVRGameMarshaller(ins.readObject());
         prizeService = PrizeMarshaller(ins.readObject());

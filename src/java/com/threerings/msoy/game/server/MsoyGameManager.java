@@ -17,6 +17,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.whirled.game.data.GameContentOwnership;
@@ -30,6 +31,7 @@ import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
@@ -141,6 +143,12 @@ public class MsoyGameManager extends WhirledGameManager
         }
         sbuf.append("]");
         return sbuf.toString();
+    }
+
+    @Override // from PlaceManager
+    protected PlaceObject createPlaceObject ()
+    {
+        return new MsoyGameObject();
     }
 
     @Override // from PlaceManager

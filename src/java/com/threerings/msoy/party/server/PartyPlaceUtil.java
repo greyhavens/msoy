@@ -32,7 +32,7 @@ public class PartyPlaceUtil
         if (!placeObj.getParties().containsKey(partyId)) {
             return;
         }
-        for (OccupantInfo info : placeObj.getOccupantInfo()) {
+        for (OccupantInfo info : placeObj.getOccupants()) {
             if ((info instanceof PartyOccupantInfo) &&
                     (((PartyOccupantInfo) info).getPartyId() == partyId)) {
                 return; // there's still a partier here!

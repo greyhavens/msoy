@@ -17,7 +17,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.whirled.game.client.HeadShot;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.GameContentOwnership;
-import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.all.VizMemberName;
@@ -28,6 +27,7 @@ import com.threerings.msoy.item.data.all.ItemTypes;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyGameObject;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
@@ -35,7 +35,7 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 public class MsoyGameBackend extends WhirledGameBackend
 {
     public function MsoyGameBackend (
-        ctx :GameContext, gameObj :WhirledGameObject, ctrl :MsoyGameController)
+        ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
 

@@ -11,6 +11,8 @@ import java.util.Set;
 
 import com.threerings.util.Name;
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.PropertySpaceMarshaller;
@@ -28,6 +30,9 @@ import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
+
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.AVRGameOccupantInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -140,6 +145,20 @@ public class PlayerObject extends WhirledPlayerObject
         return _dirty;
     }
 
+    @Override // from BodyObject
+    public OccupantInfo createOccupantInfo (PlaceObject plObj)
+    {
+        if (plObj instanceof MsoyGameObject) {
+            return new MsoyGameOccupantInfo(this);
+
+        } else if (plObj instanceof AVRGameObject)  {
+            return new AVRGameOccupantInfo(this);
+
+        } else {
+            return super.createOccupantInfo(plObj);
+        }
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the <code>memberName</code> field be set to the
@@ -250,7 +269,6 @@ public class PlayerObject extends WhirledPlayerObject
 
         PropertySpaceHelper.readProperties(this, ins);
     }
-
 
     /**
      * The current state of game data.

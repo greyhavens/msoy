@@ -13,6 +13,8 @@ import com.whirled.game.client.BaseGameBackend;
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.OccupantReporter;
 
+import com.threerings.msoy.game.data.MsoyGameObject;
+
 public class MsoyGameController extends WhirledGameController
     implements BootablePlaceController
 {
@@ -44,7 +46,7 @@ public class MsoyGameController extends WhirledGameController
     // from BaseGameController
     override protected function createBackend () :BaseGameBackend
     {
-        return new MsoyGameBackend(_ctx as GameContext, _gameObj, this);
+        return new MsoyGameBackend(_ctx as GameContext, _gameObj as MsoyGameObject, this);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
