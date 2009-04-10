@@ -37,27 +37,6 @@ public class MsoyPeerNode extends PeerNode
         _httpPort = ServerConfig.getHttpPort(record.nodeName);
     }
 
-    @Override // from PeerNode
-    public void objectAvailable (NodeObject object)
-    {
-        super.objectAvailable(object);
-
-        // map and issue a remoteMemberLoggedOn for all logged on members
-        for (ClientInfo info : object.clients) {
-            ((MsoyPeerManager)_peermgr).memberLoggedOn(getNodeName(), (MsoyClientInfo)info);
-        }
-    }
-
-    @Override // from PeerNode
-    public void clientDidLogoff (Client client)
-    {
-        // issue a remoteMemberLoggedOff for all members that were on this peer
-        for (ClientInfo info : nodeobj.clients) {
-            ((MsoyPeerManager)_peermgr).memberLoggedOff(getNodeName(), (MsoyClientInfo)info);
-        }
-        super.clientDidLogoff(client);
-    }
-
     /**
      * Return the HTTP port this Whirled node is listening on.
      */
