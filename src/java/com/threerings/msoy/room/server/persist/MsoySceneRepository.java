@@ -214,11 +214,8 @@ public class MsoySceneRepository extends DepotRepository
 
         case MsoySceneModel.OWNER_TYPE_GROUP:
             GroupRecord grec = _groupRepo.loadGroup(model.ownerId);
-            if (grec == null) {
-                model.ownerName = new Name("");
-                model.gameId = 0;
-            } else {
-                model.ownerName = new Name(grec.name);
+            if (grec != null) {
+                model.ownerName = grec.toGroupName();
                 model.gameId = grec.gameId;
             }
             break;

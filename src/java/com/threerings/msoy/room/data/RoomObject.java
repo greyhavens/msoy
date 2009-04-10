@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.data;
 
+import com.threerings.util.Name;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -26,6 +28,12 @@ public class RoomObject extends SpotSceneObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>name</code> field. */
     public static final String NAME = "name";
+
+    /** The field name of the <code>owner</code> field. */
+    public static final String OWNER = "owner";
+
+    /** The field name of the <code>accessControl</code> field. */
+    public static final String ACCESS_CONTROL = "accessControl";
 
     /** The field name of the <code>roomService</code> field. */
     public static final String ROOM_SERVICE = "roomService";
@@ -54,6 +62,12 @@ public class RoomObject extends SpotSceneObject
 
     /** The name of this room. */
     public String name;
+
+    /** The name of the owner of this room (MemberName or GroupName). */
+    public Name owner;
+
+    /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
+    public byte accessControl;
 
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
@@ -95,6 +109,38 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(
             NAME, value, ovalue);
         this.name = value;
+    }
+
+    /**
+     * Requests that the <code>owner</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setOwner (Name value)
+    {
+        Name ovalue = this.owner;
+        requestAttributeChange(
+            OWNER, value, ovalue);
+        this.owner = value;
+    }
+
+    /**
+     * Requests that the <code>accessControl</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAccessControl (byte value)
+    {
+        byte ovalue = this.accessControl;
+        requestAttributeChange(
+            ACCESS_CONTROL, Byte.valueOf(value), Byte.valueOf(ovalue));
+        this.accessControl = value;
     }
 
     /**

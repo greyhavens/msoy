@@ -6,6 +6,7 @@ package com.threerings.msoy.room.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Iterator;
+import com.threerings.util.Name;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
@@ -27,6 +28,12 @@ public class RoomObject extends SpotSceneObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>name</code> field. */
     public static const NAME :String = "name";
+
+    /** The field name of the <code>owner</code> field. */
+    public static const OWNER :String = "owner";
+
+    /** The field name of the <code>accessControl</code> field. */
+    public static const ACCESS_CONTROL :String = "accessControl";
 
     /** The field name of the <code>roomService</code> field. */
     public static const ROOM_SERVICE :String = "roomService";
@@ -55,6 +62,12 @@ public class RoomObject extends SpotSceneObject
 
     /** The name of this room. */
     public var name :String;
+
+    /** The name of the owner of this room (MemberName or GroupName). */
+    public var owner :Name;
+
+    /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
+    public var accessControl :int;
 
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
@@ -118,6 +131,8 @@ public class RoomObject extends SpotSceneObject
         super.readObject(ins);
 
         name = ins.readField(String) as String;
+        owner = Name(ins.readObject());
+        accessControl = ins.readByte();
         roomService = RoomMarshaller(ins.readObject());
         memories = DSet(ins.readObject());
         controllers = DSet(ins.readObject());

@@ -5,6 +5,8 @@ package com.threerings.msoy.room.data;
 
 import java.util.Iterator;
 
+import com.threerings.util.Name;
+
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.whirled.data.Scene;
@@ -86,6 +88,14 @@ public class MsoyScene extends SceneImpl
     public int getOwnerId ()
     {
         return _model.ownerId;
+    }
+
+    /**
+     * Returns the name of the owner of this scene (MemberName or GroupName).
+     */
+    public Name getOwner ()
+    {
+        return _model.ownerName;
     }
 
     /**

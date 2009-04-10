@@ -58,7 +58,7 @@ public class MsoySceneModel extends SceneModel
     /** The id of the owner of this scene, interpreted using ownerType. */
     public int ownerId;
 
-    /** The name of the owner, either a MemberName or the group's name. */
+    /** The name of the owner, either a MemberName or GroupName. */
     public Name ownerName;
 
     /** The game associated with this room (usually the group's game), or 0 if none. */

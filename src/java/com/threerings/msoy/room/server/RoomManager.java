@@ -84,7 +84,9 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
@@ -1007,7 +1009,9 @@ public class RoomManager extends SpotSceneManager
         _roomObj.startTransaction();
         try {
             // if we have memories for the items in our room, add'em to the room object
-            _roomObj.setName(_scene.getName());
+            _roomObj.setName(mscene.getName());
+            _roomObj.setOwner(mscene.getOwner());
+            _roomObj.setAccessControl(mscene.getAccessControl());
             if (_extras.memories != null) {
                 addMemoriesToRoom(_extras.memories);
             }
@@ -1362,6 +1366,7 @@ public class RoomManager extends SpotSceneManager
 
             // update our room object
             _roomObj.setName(up.name);
+            _roomObj.setAccessControl(up.accessControl);
 
             // if the name or access controls were modified, we need to update our HostedPlace
             boolean nameChange = !msoyScene.getName().equals(up.name);
@@ -1392,10 +1397,14 @@ public class RoomManager extends SpotSceneManager
 
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate) update;
-            _peerMan.roomUpdated(_scene.getId(), _scene.getName(), sou.ownerId, sou.ownerType,
-                sou.lockToOwner ? MsoySceneModel.ACCESS_OWNER_ONLY
-                                : ((MsoyScene) _scene).getAccessControl());
+            byte accessControl = sou.lockToOwner ?
+                MsoySceneModel.ACCESS_OWNER_ONLY : ((MsoyScene) _scene).getAccessControl();
+            _peerMan.roomUpdated(
+                _scene.getId(), _scene.getName(), sou.ownerId, sou.ownerType, accessControl);
 
+            // update our room object
+            _roomObj.setOwner(sou.ownerName);
+            _roomObj.setAccessControl(accessControl);
         }
 
         // furniture modification updates require us to mark item usage
