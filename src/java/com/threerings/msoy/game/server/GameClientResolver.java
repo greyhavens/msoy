@@ -72,7 +72,6 @@ public class GameClientResolver extends CrowdClientResolver
         PlayerObject plobj = (PlayerObject) clobj;
         // try filling in their party info, if applicable
         PartySummary party = _peerMan.getPartySummary(plobj.getMemberId());
-        System.err.println("==== resolved player, party is : " + party);
         if (party != null) {
             plobj.partyId = party.id;
             plobj.getLocal(MsoyUserLocal.class).party = party;
