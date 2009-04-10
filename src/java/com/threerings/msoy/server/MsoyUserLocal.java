@@ -20,15 +20,6 @@ public class MsoyUserLocal extends BodyLocal
     public PartySummary party;
 
     /**
-     * Called when we enter or leave a party.
-     */
-    public void updateParty (MsoyUserObject userObj, PartySummary summ)
-    {
-        userObj.setPartyId((summ == null) ? 0 : summ.id);
-        party = summ;
-    }
-
-    /**
      * Should be called by the managers of PartyPlaceObjects when someone enters.
      */
     public void willEnterPartyPlace (PartyPlaceObject plObj)
