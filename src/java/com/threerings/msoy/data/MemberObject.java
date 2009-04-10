@@ -368,11 +368,11 @@ public class MemberObject extends MsoyBodyObject
         return memberName.getMemberId();
     }
 
-//    // from interface MsoyUserObject
-//    public int getPartyId ()
-//    {
-//        return partyId;
-//    }
+    // from interface MsoyUserObject
+    public int getPartyId ()
+    {
+        return partyId;
+    }
 
     @Override // from MsoyBodyObject
     public boolean canEnterScene (int sceneId, int ownerId, byte ownerType, byte accessControl)

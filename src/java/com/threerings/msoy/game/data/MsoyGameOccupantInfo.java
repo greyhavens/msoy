@@ -18,8 +18,7 @@ public class MsoyGameOccupantInfo extends WhirledGameOccupantInfo
     public MsoyGameOccupantInfo (PlayerObject plObj)
     {
         super(plObj);
-
-        // TODO: set the partyId: maybe we do need it in the PlayerObject
+        updatePartyId(plObj.partyId);
     }
 
     // from PartyOccupantInfo

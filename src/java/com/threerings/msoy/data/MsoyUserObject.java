@@ -17,6 +17,11 @@ public interface MsoyUserObject
     int getOid ();
 
     /**
+     * Get the local attribute. (Provided when you extend DObject.)
+     */
+    <T> T getLocal (Class<T> key);
+
+    /**
      * Get this user's place oid. (Provided if you extend BodyObject.)
      */
     int getPlaceOid ();
@@ -31,13 +36,13 @@ public interface MsoyUserObject
      */
     int getMemberId ();
 
-//    /**
-//     * Get the party to which this user currently belongs.
-//     */
-//    int getPartyId ();
-//
-//    /**
-//     * Set the party occupied by this user.
-//     */
-//    void setPartyId (int partyId);
+    /**
+     * Get the party to which this user currently belongs.
+     */
+    int getPartyId ();
+
+    /**
+     * Set the party occupied by this user.
+     */
+    void setPartyId (int partyId);
 }

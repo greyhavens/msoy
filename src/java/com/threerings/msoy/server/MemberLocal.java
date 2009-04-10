@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.threerings.util.StreamableArrayIntSet;
 
-import com.threerings.crowd.server.BodyLocal;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.data.MemberObject;
@@ -19,8 +18,6 @@ import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.party.data.PartySummary;
-import com.threerings.msoy.party.server.PartyPlaceUtil;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
@@ -30,7 +27,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Contains server-side only information for a member.
  */
-public class MemberLocal extends BodyLocal
+public class MemberLocal extends MsoyUserLocal
 {
     /** The number of non-idle seconds that have elapsed in this member's session. When the member
      * is forwarded between servers, this value is incremented by the time they spent on the server
@@ -62,9 +59,6 @@ public class MemberLocal extends BodyLocal
 
     /** The memories of the member's avatar. */
     public EntityMemories memories;
-
-    /** Info on the party this member is currently rocking (or null if they're dull). */
-    public PartySummary party;
 
     /** The member ids that this user has muted in previous sessions. May be null.
      * Note: Only valid between client resolution and sending the bootstrap,
@@ -157,27 +151,10 @@ public class MemberLocal extends BodyLocal
     }
 
     /**
-     * Called when we enter or leave a party.
-     *
-     * @return the old partyId.
+     * Called by the {@link RoomManager} when we're about to enter a room, and also
+     * takes care of calling willEnterPartyPlace().
      */
-    public int updateParty (MemberObject memobj, PartySummary summ)
-    {
-        int oldPartyId = (party == null) ? 0 : party.id;
-        if (summ == null) {
-            memobj.setPartyId(0);
-            party = null;
-        } else {
-            memobj.setPartyId(summ.id);
-            party = summ;
-        }
-        return oldPartyId;
-    }
-
-    /**
-     * Called by the {@link RoomManager} when we're about to enter a room.
-     */
-    public void willEnter (MemberObject memobj, RoomObject roomObj)
+    public void willEnterRoom (MemberObject memobj, RoomObject roomObj)
     {
         roomObj.startTransaction();
         try {
@@ -188,10 +165,8 @@ public class MemberLocal extends BodyLocal
             }
             putAvatarMemoriesIntoRoom(roomObj);
 
-            // if we're in a party, maybe put our party summary in the room as well
-            if (party != null) {
-                PartyPlaceUtil.maybeAddParty(roomObj, party);
-            }
+            // and take care of parties
+            willEnterPartyPlace(roomObj);
 
         } finally {
             roomObj.commitTransaction();
@@ -199,9 +174,10 @@ public class MemberLocal extends BodyLocal
     }
 
     /**
-     * Called by the {@link RoomManager} when we're about to leave a room.
+     * Called by the {@link RoomManager} when we're about to leave a room, and also
+     * takes care of calling willLeavePartyPlace().
      */
-    public void willLeave (MemberObject memobj, RoomObject roomObj)
+    public void willLeaveRoom (MemberObject memobj, RoomObject roomObj)
     {
         roomObj.startTransaction();
         try {
@@ -213,10 +189,8 @@ public class MemberLocal extends BodyLocal
                     "memories", memories, "roomOid", roomObj.getOid(), "source", "willLeave");
             }
 
-            // if we're in a party and the last member to leave this room, clean up our bits
-            if (party != null) {
-                PartyPlaceUtil.maybeRemoveParty(roomObj, party.id);
-            }
+            // and take care of parties
+            willLeavePartyPlace(roomObj);
 
         } finally {
             roomObj.commitTransaction();

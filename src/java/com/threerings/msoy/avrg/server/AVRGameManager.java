@@ -60,7 +60,9 @@ import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
 
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyUserLocal;
 
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
@@ -190,6 +192,30 @@ public class AVRGameManager extends PlaceManager
     public void agentTrace (ClientObject caller, String[] traces)
     {
         _traceDelegate.recordAgentTrace(traces);
+    }
+
+    @Override
+    public void bodyWillEnter (BodyObject body)
+    {
+        if (body instanceof MsoyUserObject) {
+            body.getLocal(MsoyUserLocal.class).willEnterPartyPlace(_gameObj);
+        }
+
+        // Note: for entering parties, we want to add the PartySummary first, then the occInfo
+
+        super.bodyWillEnter(body);
+    }
+
+    @Override
+    public void bodyWillLeave (BodyObject body)
+    {
+        super.bodyWillLeave(body);
+
+        // Note: for leaving parties, we want to remove the occInfo first, then the PartySummary
+
+        if (body instanceof MsoyUserObject) {
+            body.getLocal(MsoyUserLocal.class).willLeavePartyPlace(_gameObj);
+        }
     }
 
     @Override

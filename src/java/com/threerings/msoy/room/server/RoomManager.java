@@ -823,22 +823,25 @@ public class RoomManager extends SpotSceneManager
 
         if (body instanceof MemberObject) {
             // as we arrive at a room, we entrust it with our memories for broadcast to clients
-            body.getLocal(MemberLocal.class).willEnter((MemberObject)body, _roomObj);
+            body.getLocal(MemberLocal.class).willEnterRoom((MemberObject)body, _roomObj);
         }
 
+        // Note: we want to add the occupant info *after* we set up the party
+        // (in MemberLocal.willEnterRoom), so we call super last.
         super.bodyWillEnter(body);
     }
 
     @Override // from PlaceManager
     public void bodyWillLeave (BodyObject body)
     {
+        // super first. See "Note", below.
         super.bodyWillLeave(body);
 
-        // Note: Calling MemberLocal.willLeave() must now occur after we've removed the
+        // Note: Calling MemberLocal.willLeaveRoom() must now occur after we've removed the
         // OccupantInfo, which happens in super.
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject)body;
-            member.getLocal(MemberLocal.class).willLeave(member, _roomObj);
+            member.getLocal(MemberLocal.class).willLeaveRoom(member, _roomObj);
 
             if (!isStrictlyManager(member)) {
                 removeVisitorSongs(member);

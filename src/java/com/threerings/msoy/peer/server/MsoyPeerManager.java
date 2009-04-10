@@ -55,6 +55,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 
 import com.threerings.msoy.peer.data.HostedGame;
@@ -170,6 +171,25 @@ public class MsoyPeerManager extends CrowdPeerManager
         return lookupNodeDatum(new Function<NodeObject,PartyInfo>() {
             public PartyInfo apply (NodeObject nodeobj) {
                 return ((MsoyNodeObject)nodeobj).hostedParties.get(partyKey);
+            }
+        });
+    }
+
+    /**
+     * Get the PartySummary for the specified player, or null if they're not partying.
+     */
+    public PartySummary getPartySummary (int memberId)
+    {
+        final Integer memberKey = memberId;
+        return lookupNodeDatum(new Function<NodeObject,PartySummary>() {
+            public PartySummary apply (NodeObject nodeobj) {
+                MemberParty mp = ((MsoyNodeObject)nodeobj).memberParties.get(memberKey);
+                if (mp == null) {
+                    return null;
+                }
+                // TODO: Refactor so that PartySummaries are kept in node objects.
+                // For now, I'm wanging it with a hand-created PartySummary
+                return new PartySummary(mp.partyId, "TODO partyName", null, null);
             }
         });
     }

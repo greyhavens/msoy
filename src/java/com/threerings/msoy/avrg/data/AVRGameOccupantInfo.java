@@ -20,8 +20,7 @@ public class AVRGameOccupantInfo extends OccupantInfo
     public AVRGameOccupantInfo (PlayerObject plObj)
     {
         super(plObj);
-
-        // TODO: init the party id
+        updatePartyId(plObj.partyId);
     }
 
     // from PartyOccupantInfo

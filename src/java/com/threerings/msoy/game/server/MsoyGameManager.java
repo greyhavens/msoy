@@ -9,7 +9,6 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -20,10 +19,15 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.parlor.game.data.GameConfig;
+
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.WhirledGameManager;
+
+import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.server.MsoyUserLocal;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
@@ -106,6 +110,30 @@ public class MsoyGameManager extends WhirledGameManager
         }
     }
 
+    @Override
+    public void bodyWillEnter (BodyObject body)
+    {
+        if (body instanceof MsoyUserObject) {
+            body.getLocal(MsoyUserLocal.class).willEnterPartyPlace(_gameObj);
+        }
+
+        // Note: for entering parties, we want to add the PartySummary first, then the occInfo
+
+        super.bodyWillEnter(body);
+    }
+
+    @Override
+    public void bodyWillLeave (BodyObject body)
+    {
+        super.bodyWillLeave(body);
+
+        // Note: for leaving parties, we want to remove the occInfo first, then the PartySummary
+
+        if (body instanceof MsoyUserObject) {
+            body.getLocal(MsoyUserLocal.class).willLeavePartyPlace(_gameObj);
+        }
+    }
+
     @Override // from WhirledGameManager
     public void agentReady (ClientObject caller)
     {
@@ -149,6 +177,14 @@ public class MsoyGameManager extends WhirledGameManager
     protected PlaceObject createPlaceObject ()
     {
         return new MsoyGameObject();
+    }
+
+    @Override // from PlaceManager
+    protected void didStartup ()
+    {
+        super.didStartup();
+
+        _gameObj = (MsoyGameObject) _plobj;
     }
 
     @Override // from PlaceManager
@@ -219,6 +255,9 @@ public class MsoyGameManager extends WhirledGameManager
                 }
             });
     }
+
+    /** A casted reference to the GameObject. */
+    protected MsoyGameObject _gameObj;
 
     /** A delegate that takes care of awarding flow and ratings. */
     protected AwardDelegate _awardDelegate;

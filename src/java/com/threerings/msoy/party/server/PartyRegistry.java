@@ -50,7 +50,7 @@ import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
-import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.MsoyUserLocal;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -128,23 +128,18 @@ public class PartyRegistry
     }
 
     /**
-     * Called when the specified member has joined or left a party. This is called on the node on
-     * which the member has a world session.
+     * Called when the specified member has joined or left a party. This is called on any node
+     * on which the user has a MsoyUserObject session, for each of their MsoyUserObjects.
      */
-    public void updateUserParty (MsoyUserObject userObj, final PartySummary party)
+    public void updateUserParty (MsoyUserObject userObj, PartySummary party)
     {
-        int oldPartyId = 0;
-        // also update the member's local bits
-        // TODO: interface-ize this, too?
-        if (userObj instanceof MemberObject) {
-            MemberObject memObj = (MemberObject) userObj;
-            oldPartyId = memObj.getLocal(MemberLocal.class).updateParty(memObj, party);
+        // first update the user
+        int oldPartyId = userObj.getPartyId();
+        final int newPartyId = (party == null) ? 0 : party.id;
+        userObj.setPartyId(newPartyId);
+        userObj.getLocal(MsoyUserLocal.class).party = party;
 
-        } else if (userObj instanceof com.threerings.msoy.game.data.PlayerObject) {
-            // TODO
-            System.err.println("TODO Wanting to update the party of a playerObj: " + userObj);
-        }
-
+        // then any place they may occupy
         PlaceManager placeMan = _placeReg.getPlaceManager(userObj.getPlaceOid());
         if (placeMan != null) {
             PlaceObject placeObj = placeMan.getPlaceObject();
@@ -157,8 +152,7 @@ public class PartyRegistry
                 placeMan.updateOccupantInfo(userObj.getOid(),
                     new OccupantInfo.Updater<OccupantInfo>() {
                         public boolean update (OccupantInfo info) {
-                            return ((PartyOccupantInfo) info).updatePartyId(
-                                (party == null) ? 0 : party.id);
+                            return ((PartyOccupantInfo) info).updatePartyId(newPartyId);
                         }
                     });
                 // we need to remove an old party AFTER updating the occInfo

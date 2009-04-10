@@ -55,6 +55,9 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>visitorInfo</code> field. */
     public static final String VISITOR_INFO = "visitorInfo";
 
+    /** The field name of the <code>partyId</code> field. */
+    public static final String PARTY_ID = "partyId";
+
     /** The field name of the <code>propertyService</code> field. */
     public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
@@ -71,6 +74,9 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Player's referral information. */
     public VisitorInfo visitorInfo;
+
+    /** The player's current partyId, or 0 if they're not in a party. */
+    public int partyId;
 
     /** Service for setting player properties. */
     public PropertySpaceMarshaller propertyService;
@@ -119,6 +125,12 @@ public class PlayerObject extends WhirledPlayerObject
     public float getHumanity ()
     {
         return humanity / (float)MsoyCodes.MAX_HUMANITY;
+    }
+
+    // from interface MsoyUserObject
+    public int getPartyId ()
+    {
+        return partyId;
     }
 
     @Override // from BodyObject
@@ -222,6 +234,22 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             VISITOR_INFO, value, ovalue);
         this.visitorInfo = value;
+    }
+
+    /**
+     * Requests that the <code>partyId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPartyId (int value)
+    {
+        int ovalue = this.partyId;
+        requestAttributeChange(
+            PARTY_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.partyId = value;
     }
 
     /**
