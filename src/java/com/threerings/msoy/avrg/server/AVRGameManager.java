@@ -580,54 +580,54 @@ public class AVRGameManager extends PlaceManager
         }
 
         _invoker.postUnit(new ContentOwnershipUnit(gameId, config.getSuiteId(), playerId) {
-                @Override public void invokePersist () throws Exception {
-                    // read the game state records from store
-                    if (offlineProps == null) {
-                        _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+            @Override public void invokePersist () throws Exception {
+                // read the game state records from store
+                if (offlineProps == null) {
+                    _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+                }
+
+                if (resolveOwnership) {
+                    super.invokePersist();
+                }
+            }
+
+            @Override public void handleSuccess() {
+                Map<String, Object> props;
+                if (offlineProps != null) {
+                    props = offlineProps.getUserProps();
+                } else {
+                    // turn them into a handy mapping
+                    Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                    for (PlayerGameStateRecord record : _stateRecs) {
+                        initialState.put(record.datumKey, record.datumValue);
                     }
-
-                    if (resolveOwnership) {
-                        super.invokePersist();
-                    }
+                    props = PropertySpaceHelper.recordsToProperties(initialState);
                 }
+                // and fire up the game -- after decoding the property values
+                doJoinGame(playerId, props, _content, listener);
 
-                @Override public void handleSuccess() {
-                    Map<String, Object> props;
-                    if (offlineProps != null) {
-                        props = offlineProps.getUserProps();
-                    } else {
-                        // turn them into a handy mapping
-                        Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                        for (PlayerGameStateRecord record : _stateRecs) {
-                            initialState.put(record.datumKey, record.datumValue);
-                        }
-                        props = PropertySpaceHelper.recordsToProperties(initialState);
-                    }
-                    // and fire up the game -- after decoding the property values
-                    doJoinGame(playerId, props, _content, listener);
+                if (offlineProps != null) {
+                    flushPlayerGameState(playerId, offlineProps);
+                }
+            }
 
-                    if (offlineProps != null) {
-                        flushPlayerGameState(playerId, offlineProps);
-                    }
-                }
+            @Override public void handleFailure (Exception pe) {
+                log.warning("Unable to resolve player state", "gameId", _gameId,
+                            "player", playerId, pe);
+                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            }
 
-                @Override public void handleFailure (Exception pe) {
-                    log.warning("Unable to resolve player state", "gameId", _gameId,
-                                "player", playerId, pe);
-                    listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-                }
+            @Override protected ItemPackRepository getIpackRepo() {
+                return _ipackRepo;
+            }
+            @Override protected LevelPackRepository getLpackRepo() {
+                return _lpackRepo;
+            }
+            @Override protected TrophyRepository getTrophyRepo() {
+                return _trophyRepo;
+            }
 
-                @Override protected ItemPackRepository getIpackRepo() {
-                    return _ipackRepo;
-                }
-                @Override protected LevelPackRepository getLpackRepo() {
-                    return _lpackRepo;
-                }
-                @Override protected TrophyRepository getTrophyRepo() {
-                    return _trophyRepo;
-                }
-
-                protected List<PlayerGameStateRecord> _stateRecs;
+            protected List<PlayerGameStateRecord> _stateRecs;
         });
     }
 
