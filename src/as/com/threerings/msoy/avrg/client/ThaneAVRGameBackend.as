@@ -241,6 +241,7 @@ public class ThaneAVRGameBackend
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
         o["room_getOccupantIds_v1"] = room_getOccupantIds_v1;
         o["room_getOccupantName_v1"] = room_getOccupantName_v1;
+        o["room_getRoomName_v1"] = room_getRoomName_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v2"] = getAvatarInfo_v2;
         o["spawnMob_v1"] = spawnMob_v1;
@@ -378,6 +379,12 @@ public class ThaneAVRGameBackend
     }
 
     // -------------------- .getRoom() --------------------
+    protected function room_getRoomName_v1 (roomId :int) :String
+    {
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        return (roomObj == null) ? null : roomObj.name;
+    }
+
     protected function room_getPlayerIds_v1 (roomId :int) :Array
     {
         var roomObj :RoomObject = _controller.getRoom(roomId);

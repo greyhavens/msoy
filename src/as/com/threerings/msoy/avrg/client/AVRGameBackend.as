@@ -228,13 +228,13 @@ public class AVRGameBackend extends ControlBackend
         o["getItemPacks_v1"] = getItemPacks_v1;
 
         // RoomSubControl
-        o["room_getGameData_v1"] = room_getGameData_v1;
+        o["room_getRoomId_v1"] = room_getRoomId_v1;
+        o["room_getRoomName_v1"] = room_getRoomName_v1;
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
         o["room_getOccupantIds_v1"] = room_getOccupantIds_v1;
         o["room_getOccupantName_v1"] = room_getOccupantName_v1;
-        o["room_getRoomId_v1"] = room_getRoomId_v1;
-        o["room_getRoomName_v1"] = room_getRoomName_v1;
         o["room_canEditRoom_v1"] = room_canEditRoom_v1;
+        o["room_getGameData_v1"] = room_getGameData_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v2"] = getAvatarInfo_v2;
         o["getEntityIds_v1"] = getEntityIds_v1;
@@ -324,18 +324,6 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // RoomSubControl
-    protected function room_getGameData_v1 (targetId :int) :Object
-    {
-        validateRoomTargetId(targetId);
-        var roomProps :RoomPropertiesObject = _ctrl.getRoomProperties();
-        if (roomProps == null) {
-            log.warning("Room properties not found [roomObj=" + _ctrl.getRoom() + "]");
-            return { };
-        }
-        return roomProps.getUserProps();
-    }
-
-    // RoomSubControl
     protected function room_getRoomId_v1 (targetId :int /* ignored */) :int
     {
         validateRoomTargetId(targetId);
@@ -348,8 +336,8 @@ public class AVRGameBackend extends ControlBackend
     protected function room_getRoomName_v1 (targetId :int /* ignored */) :String
     {
         validateRoomTargetId(targetId);
-        var scene :Scene = _wctx.getSceneDirector().getScene();
-        return scene != null ? scene.getName() : null;
+        var robj :RoomObject = (_wctx.getLocationDirector().getPlaceObject() as RoomObject);
+        return (robj == null) ? null : robj.name;
     }
 
     // RoomSubControl
@@ -388,6 +376,18 @@ public class AVRGameBackend extends ControlBackend
         validateRoomTargetId(targetId);
         var ctrl :RoomController = getRoomController("room_canEditRoom(" + memberId + ")");
         return (ctrl != null) && ctrl.canManageRoom(memberId);
+    }
+
+    // RoomSubControl
+    protected function room_getGameData_v1 (targetId :int) :Object
+    {
+        validateRoomTargetId(targetId);
+        var roomProps :RoomPropertiesObject = _ctrl.getRoomProperties();
+        if (roomProps == null) {
+            log.warning("Room properties not found [roomObj=" + _ctrl.getRoom() + "]");
+            return { };
+        }
+        return roomProps.getUserProps();
     }
 
     // RoomSubControl
