@@ -123,9 +123,6 @@ public class WorldController extends MsoyController
     /** Command to logoff an im account. */
     public static const UNREGISTER_IM :String = "UnregisterIM";
 
-    /** Command to view a member's profile, arg is [ memberId ] */
-    public static const VIEW_MEMBER :String = "ViewMember";
-
     /** Command to view a game, arg is [ gameId ] */
     public static const VIEW_GAME :String = "ViewGame";
 
@@ -1326,40 +1323,6 @@ public class WorldController extends MsoyController
         }
     }
 
-    override protected function setIdle (nowIdle :Boolean) :void
-    {
-        const wasGameIdle :Boolean = (_idle || _away);
-
-        super.setIdle(nowIdle);
-
-        // only change game idleness when it truly changes
-        if (wasGameIdle != (_idle || _away)) {
-            // let AVRGs know about our idleness changes
-            var gd :GameDirector = _wctx.getGameDirector();
-            if (gd != null) { // studio has no GameDirector
-                // game idleness = whirled idle or whirled away
-                gd.setIdle(_idle || _away);
-            }
-        }
-    }
-
-    override public function setAway (nowAway :Boolean, message :String = null) :void
-    {
-        const wasGameIdle :Boolean = (_idle || _away);
-
-        super.setAway(nowAway, message);
-
-        // only change game idleness when it truly changes
-        if (wasGameIdle != (_idle || _away)) {
-            // let AVRGs know about our idleness changes
-            var gd :GameDirector = _wctx.getGameDirector();
-            if (gd != null) { // studio has no GameDirector
-                // game idleness = whirled idle or whirled away
-                gd.setIdle(_idle || _away);
-            }
-        }
-    }
-
     /**
      * Indicate on the menu item whether or not we have the specified chat channel open
      * or not.
@@ -1388,32 +1351,6 @@ public class WorldController extends MsoyController
         return false;
     }
 
-    // from MsoyController
-    override protected function updateTopPanel (headerBar :HeaderBar, controlBar :ControlBar) :void
-    {
-        super.updateTopPanel(headerBar, controlBar);
-
-        // TODO: The way I think we should consider doing this is have PlaceView's dispatch
-        // some sort of NewPlaceEvent when they're showing and have downloaded whatever data
-        // needed, and then various components up the hierarchy can react to this event.
-
-        // if we moved to a scene, set things up thusly
-        var scene :Scene = _wctx.getSceneDirector().getScene();
-        if (scene != null) {
-            addRecentScene(scene);
-            return;
-        }
-
-        // TODO:  move this to MsoyGamePanel
-        // if we're in a game, display the game name and activate the back button
-        var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
-        if (cfg != null) {
-            _wctx.getMsoyClient().setWindowTitle(cfg.game.name);
-            headerBar.setLocationName(cfg.game.name);
-            headerBar.setOwnerLink("");
-        }
-    }
-
     protected function addRecentScene (scene :Scene) :void
     {
         const id :int = scene.getId();
@@ -1431,39 +1368,6 @@ public class WorldController extends MsoyController
 
         // and make sure we're not tracking too many
         _recentScenes.length = Math.min(_recentScenes.length, MAX_RECENT_SCENES);
-    }
-
-    override protected function populateGoMenu (menuData :Array) :void
-    {
-        super.populateGoMenu(menuData);
-
-        const curSceneId :int = getCurrentSceneId();
-        var sceneSubmenu :Array = [];
-        for each (var entry :Object in _recentScenes) {
-            sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
-                command: GO_SCENE, arg: entry.id, enabled: (entry.id != curSceneId) });
-        }
-        if (sceneSubmenu.length == 0) {
-            sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });
-        }
-        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
-
-        const me :MemberObject = _wctx.getMemberObject();
-        const ourHomeId :int = me.homeSceneId;
-        if (ourHomeId != 0) {
-            menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
-                enabled: (ourHomeId != curSceneId) });
-        }
-
-        var friends :Array = new Array();
-        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
-            friends.push({ label: fe.name.toString(),
-                command: VISIT_MEMBER, arg: fe.name.getMemberId() });
-        }
-        if (friends.length == 0) {
-            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
-        }
-        menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
     }
 
     protected function handleBleepChange (event :ValueEvent) :void
@@ -1537,6 +1441,88 @@ public class WorldController extends MsoyController
             _musicPausedForGwt = false;
             _musicPlayer.play();
         }
+    }
+
+    // from MsoyController
+    override protected function setIdle (nowIdle :Boolean) :void
+    {
+        const wasGameIdle :Boolean = (_idle || _away);
+
+        super.setIdle(nowIdle);
+
+        // only change game idleness when it truly changes
+        if (wasGameIdle != (_idle || _away)) {
+            // let AVRGs know about our idleness changes
+            var gd :GameDirector = _wctx.getGameDirector();
+            if (gd != null) { // studio has no GameDirector
+                // game idleness = whirled idle or whirled away
+                gd.setIdle(_idle || _away);
+            }
+        }
+    }
+
+    // from MsoyController
+    override public function setAway (nowAway :Boolean, message :String = null) :void
+    {
+        const wasGameIdle :Boolean = (_idle || _away);
+
+        super.setAway(nowAway, message);
+
+        // only change game idleness when it truly changes
+        if (wasGameIdle != (_idle || _away)) {
+            // let AVRGs know about our idleness changes
+            var gd :GameDirector = _wctx.getGameDirector();
+            if (gd != null) { // studio has no GameDirector
+                // game idleness = whirled idle or whirled away
+                gd.setIdle(_idle || _away);
+            }
+        }
+    }
+
+    // from MsoyController
+    override protected function locationDidChange (place :PlaceObject) :void
+    {
+        super.locationDidChange(place);
+
+        // if we moved to a scene, set things up thusly
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        if (scene != null) {
+            addRecentScene(scene);
+        }
+    }
+
+    // from MsoyController
+    override protected function populateGoMenu (menuData :Array) :void
+    {
+        super.populateGoMenu(menuData);
+
+        const curSceneId :int = getCurrentSceneId();
+        var sceneSubmenu :Array = [];
+        for each (var entry :Object in _recentScenes) {
+            sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
+                command: GO_SCENE, arg: entry.id, enabled: (entry.id != curSceneId) });
+        }
+        if (sceneSubmenu.length == 0) {
+            sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });
+        }
+        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
+
+        const me :MemberObject = _wctx.getMemberObject();
+        const ourHomeId :int = me.homeSceneId;
+        if (ourHomeId != 0) {
+            menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
+                enabled: (ourHomeId != curSceneId) });
+        }
+
+        var friends :Array = new Array();
+        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
+            friends.push({ label: fe.name.toString(),
+                command: VISIT_MEMBER, arg: fe.name.getMemberId() });
+        }
+        if (friends.length == 0) {
+            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
+        }
+        menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
     }
 
     /** Giver of life, context. */

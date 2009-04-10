@@ -16,6 +16,9 @@ import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.presents.dobj.AttributeChangeAdapter;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
@@ -28,11 +31,11 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
-import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -738,10 +741,14 @@ public class RoomObjectController extends RoomController
         super.willEnterPlace(plobj);
 
         _roomObj = (plobj as RoomObject);
+        _roomObj.addListener(_roomAttrListener);
+
+        // report our location name and owner to interested listeners
+        reportLocationName();
+        reportLocationOwner();
 
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
-        configureLocationName();
 
         _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
         _wdctx.getMuteDirector().addMuteObserver(this);
@@ -792,8 +799,12 @@ public class RoomObjectController extends RoomController
         _roomView.removeChild(_flyTarget);
         setHoverSprite(null);
 
+        if (_roomObj != null) {
+            _roomObj.removeListener(_roomAttrListener);
+            _roomObj = null;
+        }
+
         _scene = null;
-        _roomObj = null;
 
         super.didLeavePlace(plobj);
     }
@@ -1037,33 +1048,18 @@ public class RoomObjectController extends RoomController
         if (_editor != null) {
             _editor.processUpdate(update);
         }
-
-        if ((update is SceneAttrsUpdate) || (update is SceneOwnershipUpdate)) {
-            configureLocationName();
-        }
     }
 
-    /**
-     * Set up the location name.
-     */
-    protected function configureLocationName () :void
+    protected function reportLocationName () :void
     {
-        _wdctx.getMsoyClient().setWindowTitle(_scene.getName());
-        var headerBar :HeaderBar = _wdctx.getTopPanel().getHeaderBar();
-        if (headerBar == null) {
-            return;
-        }
+        _wdctx.getTopPanel().dispatchEvent(
+            new ValueEvent(TopPanel.LOCATION_NAME_CHANGED, _roomObj.name));
+    }
 
-        headerBar.setLocationName(_scene.getName());
-        var model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
-        if (model.ownerName != null) {
-            headerBar.setOwnerLink(model.ownerName.toString(),
-                (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) ? WorldController.VIEW_MEMBER
-                                                                      : MsoyController.VIEW_GROUP,
-                model.ownerId);
-        } else {
-            headerBar.setOwnerLink("");
-        }
+    protected function reportLocationOwner () :void
+    {
+        _wdctx.getTopPanel().dispatchEvent(
+            new ValueEvent(TopPanel.LOCATION_OWNER_CHANGED, _roomObj.owner));
     }
 
     /**
@@ -1083,6 +1079,15 @@ public class RoomObjectController extends RoomController
                 command: WorldController.PLAY_GAME, arg: model.gameId });
         }
         return stuff;
+    }
+
+    protected function roomAttrChanged (event :AttributeChangedEvent) :void
+    {
+        if (event.getName() == RoomObject.NAME) {
+            reportLocationName();
+        } else if (event.getName() == RoomObject.OWNER) {
+            reportLocationOwner();
+        }
     }
 
     /** A casted version of _roomView. */
@@ -1105,5 +1110,9 @@ public class RoomObjectController extends RoomController
 
     /** A flag to indicate that the room editor should be opened when the view is un-minimized */
     protected var _openEditor :Boolean = false;
+
+    /** Listens for room attribute changes. */
+    protected var _roomAttrListener :AttributeChangeAdapter =
+        new AttributeChangeAdapter(roomAttrChanged);
 }
 }

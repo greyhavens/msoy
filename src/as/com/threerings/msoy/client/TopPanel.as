@@ -16,17 +16,40 @@ import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 
+/**
+ * Dispatched when the name of our current location changes. The value supplied will be a string
+ * with the new location name.
+ *
+ * @eventType com.threerings.msoy.client.TopPanel.LOCATION_NAME_CHANGED
+ */
+[Event(name="locationNameChanged", type="com.threerings.util.ValueEvent")]
+
+/**
+ * Dispatched when the owner for our current location changes. The value supplied will either be a
+ * MemberName or a GroupName, or null if we move to a location with no owner.
+ *
+ * @eventType com.threerings.msoy.client.TopPanel.LOCATION_OWNER_CHANGED
+ */
+[Event(name="locationOwnerChanged", type="com.threerings.util.ValueEvent")]
+
 public class TopPanel extends Canvas
 {
     public static const DECORATIVE_MARGIN_HEIGHT :int = 0;
 
     public static const RIGHT_SIDEBAR_WIDTH :int = 300;
+
+    /** An event dispatched when our location name changes. */
+    public static const LOCATION_NAME_CHANGED :String = "locationNameChanged";
+
+    /** An event dispatched when our location owner changes. */
+    public static const LOCATION_OWNER_CHANGED :String = "locationOwnerChanged";
 
     /**
      * Construct the top panel.
@@ -44,7 +67,7 @@ public class TopPanel extends Canvas
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
         if (UberClient.isRegularClient()) {
-            _headerBar = new HeaderBar(_ctx, chatTabs);
+            _headerBar = new HeaderBar(_ctx, this, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
             _headerBar.setStyle("left", 0);

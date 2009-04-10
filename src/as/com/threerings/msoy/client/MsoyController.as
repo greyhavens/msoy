@@ -125,6 +125,9 @@ public class MsoyController extends Controller
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
+    /** Command to view a member's profile, arg is [ memberId ] */
+    public static const VIEW_MEMBER :String = "ViewMember";
+
     /** Command to view a groups's page, arg is [ groupId ] */
     public static const VIEW_GROUP :String = "ViewGroup";
 
@@ -495,8 +498,6 @@ public class MsoyController extends Controller
      */
     public function updateLocationDisplay () :void
     {
-        updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getControlBar());
-
         _mctx.getUpsellDirector().locationUpdated();
 
         if (_goMenu != null) {
@@ -712,14 +713,6 @@ public class MsoyController extends Controller
         if (UberClient.isRegularClient()) {
             updateLocationDisplay();
         }
-    }
-
-    /**
-     * Called when our location changes so that we can update our top panel bits.
-     */
-    protected function updateTopPanel (headerBar :HeaderBar, controlBar :ControlBar) :void
-    {
-        // handled by our derived classes
     }
 
     protected function handlePollIdleMouse (event :TimerEvent) :void

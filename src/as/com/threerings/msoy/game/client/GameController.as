@@ -85,23 +85,6 @@ public class GameController extends MsoyController
         // TODO
     }
 
-    // from MsoyController
-    override protected function updateTopPanel (headerBar :HeaderBar, controlBar :ControlBar) :void
-    {
-        super.updateTopPanel(headerBar, controlBar);
-
-        // TODO: what to do when we're in the lobby?
-
-        // if we're in a game, display the game name and activate the back button
-        var cfg :MsoyGameConfig =
-            (_gctx.getLocationDirector().getPlaceController().getPlaceConfig() as MsoyGameConfig);
-        if (cfg != null) {
-            _mctx.getMsoyClient().setWindowTitle(cfg.game.name);
-            headerBar.setLocationName(cfg.game.name);
-            headerBar.setOwnerLink("");
-        }
-    }
-
     protected var _gctx :GameContext;
 
     private static const log :Log = Log.getLog(GameController);

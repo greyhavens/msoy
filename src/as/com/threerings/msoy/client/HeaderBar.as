@@ -16,6 +16,7 @@ import mx.controls.Image;
 import mx.controls.Label;
 
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
@@ -27,6 +28,8 @@ import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
@@ -38,7 +41,7 @@ public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 17;
 
-    public function HeaderBar (ctx :MsoyContext, chatTabs :ChatTabBar)
+    public function HeaderBar (ctx :MsoyContext, topPanel :TopPanel, chatTabs :ChatTabBar)
     {
         _ctx = ctx;
         _tabs = chatTabs;
@@ -50,43 +53,14 @@ public class HeaderBar extends HBox
         percentWidth = 100;
         height = HEIGHT;
 
-        // TODO: should we be doing this?
-        addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
-            _ctx.getMsoyClient().setWindowTitle(getChatTabs().locationName);
-        });
+        // listen for location name and ownership changes
+        topPanel.addEventListener(TopPanel.LOCATION_NAME_CHANGED, locationNameChanged);
+        topPanel.addEventListener(TopPanel.LOCATION_OWNER_CHANGED, locationOwnerChanged);
     }
 
     public function getChatTabs () :ChatTabBar
     {
         return _tabs;
-    }
-
-    public function setLocationName (loc :String) :void
-    {
-        _loc.text = loc;
-        _loc.validateNow();
-        // allow text to center under the whirled logo if its not too long.
-        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
-
-        if (!(_ctx.getPlaceView() is RoomView)) {
-            _tabs.locationName = loc;
-        }
-    }
-
-    /**
-     * Shows or clears the owner link. Passing "" for the owner will clear the link.
-     */
-    public function setOwnerLink (owner :String, cmdOrFn :Object = null, arg :Object = null) :void
-    {
-        while (_owner.numChildren > 0) {
-            _owner.removeChildAt(0);
-        }
-        if (owner != "") {
-            var nameLink :CommandLinkButton = new CommandLinkButton(
-                Msgs.GENERAL.get("m.room_owner", owner), cmdOrFn, arg);
-            nameLink.styleName = "headerLink";
-            _owner.addChild(nameLink);
-        }
     }
 
     public function stretchSpacer (stretch :Boolean) :void
@@ -191,6 +165,43 @@ public class HeaderBar extends HBox
         hb.percentHeight = 100;
         hb.addChild(icon);
         addChild(hb);
+    }
+
+    protected function locationNameChanged (event :ValueEvent) :void
+    {
+        var name :String = (event.value as String);
+        _loc.text = name;
+        _loc.validateNow();
+        // allow text to center under the whirled logo if its not too long.
+        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
+
+        if (!(_ctx.getPlaceView() is RoomView)) {
+            _tabs.locationName = name;
+        }
+
+        // update our window title with the location name
+        _ctx.getMsoyClient().setWindowTitle(name);
+    }
+
+    protected function locationOwnerChanged (event :ValueEvent) :void
+    {
+        while (_owner.numChildren > 0) {
+            _owner.removeChildAt(0);
+        }
+        if (event.value != null) {
+            var name :String = event.value.toString(), cmd :String, arg :Object;
+            if (event.value is MemberName) {
+                cmd = MsoyController.VIEW_MEMBER;
+                arg = (event.value as MemberName).getMemberId();
+            } else if (event.value is GroupName) {
+                cmd = MsoyController.VIEW_GROUP;
+                arg = (event.value as GroupName).getGroupId();
+            }
+            var nameLink :CommandLinkButton = new CommandLinkButton(
+                Msgs.GENERAL.get("m.room_owner", name), cmd, arg);
+            nameLink.styleName = "headerLink";
+            _owner.addChild(nameLink);
+        }
     }
 
     protected function setCompVisible (comp :UIComponent, visible :Boolean) :void

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.ValueEvent;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
@@ -12,7 +14,9 @@ import com.whirled.game.client.BaseGameBackend;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.OccupantReporter;
+import com.threerings.msoy.client.TopPanel;
 
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 
 public class MsoyGameController extends WhirledGameController
@@ -25,6 +29,12 @@ public class MsoyGameController extends WhirledGameController
 
         // wire up our occupant reporter (don't report initial occupants)
         _occReporter.willEnterPlace((_pctx as GameContext).getMsoyContext(), plobj);
+
+        // dispatch an event with our current location and (lack of) owner info
+        var top :TopPanel = (_pctx as GameContext).getMsoyContext().getTopPanel();
+        top.dispatchEvent(new ValueEvent(TopPanel.LOCATION_NAME_CHANGED,
+                                         (_gconfig as MsoyGameConfig).game.name));
+        top.dispatchEvent(new ValueEvent(TopPanel.LOCATION_OWNER_CHANGED, null));
     }
 
     // from PlaceController
