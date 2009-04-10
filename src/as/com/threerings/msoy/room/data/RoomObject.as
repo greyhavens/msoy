@@ -25,6 +25,9 @@ public class RoomObject extends SpotSceneObject
     implements PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>name</code> field. */
+    public static const NAME :String = "name";
+
     /** The field name of the <code>roomService</code> field. */
     public static const ROOM_SERVICE :String = "roomService";
 
@@ -49,6 +52,9 @@ public class RoomObject extends SpotSceneObject
     /** The field name of the <code>playCount</code> field. */
     public static const PLAY_COUNT :String = "playCount";
     // AUTO-GENERATED: FIELDS END
+
+    /** The name of this room. */
+    public var name :String;
 
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
@@ -111,6 +117,7 @@ public class RoomObject extends SpotSceneObject
     {
         super.readObject(ins);
 
+        name = ins.readField(String) as String;
         roomService = RoomMarshaller(ins.readObject());
         memories = DSet(ins.readObject());
         controllers = DSet(ins.readObject());

@@ -1007,6 +1007,7 @@ public class RoomManager extends SpotSceneManager
         _roomObj.startTransaction();
         try {
             // if we have memories for the items in our room, add'em to the room object
+            _roomObj.setName(_scene.getName());
             if (_extras.memories != null) {
                 addMemoriesToRoom(_extras.memories);
             }
@@ -1358,6 +1359,9 @@ public class RoomManager extends SpotSceneManager
 
             // massage the room name to make sure it's kosher
             up.name = StringUtil.truncate(up.name, MsoySceneModel.MAX_NAME_LENGTH);
+
+            // update our room object
+            _roomObj.setName(up.name);
 
             // if the name or access controls were modified, we need to update our HostedPlace
             boolean nameChange = !msoyScene.getName().equals(up.name);

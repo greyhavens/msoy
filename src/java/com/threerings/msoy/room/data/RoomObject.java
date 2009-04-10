@@ -24,6 +24,9 @@ public class RoomObject extends SpotSceneObject
     implements PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>name</code> field. */
+    public static final String NAME = "name";
+
     /** The field name of the <code>roomService</code> field. */
     public static final String ROOM_SERVICE = "roomService";
 
@@ -48,6 +51,9 @@ public class RoomObject extends SpotSceneObject
     /** The field name of the <code>playCount</code> field. */
     public static final String PLAY_COUNT = "playCount";
     // AUTO-GENERATED: FIELDS END
+
+    /** The name of this room. */
+    public String name;
 
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
@@ -75,6 +81,22 @@ public class RoomObject extends SpotSceneObject
     public int playCount;
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>name</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setName (String value)
+    {
+        String ovalue = this.name;
+        requestAttributeChange(
+            NAME, value, ovalue);
+        this.name = value;
+    }
+
     /**
      * Requests that the <code>roomService</code> field be set to the
      * specified value. The local value will be updated immediately and an
