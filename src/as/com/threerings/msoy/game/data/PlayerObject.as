@@ -42,9 +42,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The field name of the <code>visitorInfo</code> field. */
     public static const VISITOR_INFO :String = "visitorInfo";
-
-    /** The field name of the <code>partyId</code> field. */
-    public static const PARTY_ID :String = "partyId";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -58,9 +55,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
-
-    /** The player's current partyId, or 0 if they're not in a party. */
-    public var partyId :int;
 
     /** Service for setting properties. */
     public var propertyService :PropertySpaceMarshaller;
@@ -142,7 +136,6 @@ public class PlayerObject extends WhirledPlayerObject
         tokens = MsoyTokenRing(ins.readObject());
         humanity = ins.readInt();
         visitorInfo = VisitorInfo(ins.readObject());
-        partyId = ins.readInt();
         propertyService = PropertySpaceMarshaller(ins.readObject());
     }
 

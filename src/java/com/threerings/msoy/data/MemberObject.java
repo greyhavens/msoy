@@ -24,6 +24,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
+import com.threerings.msoy.party.data.PartySummary;
+
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
@@ -209,7 +211,8 @@ public class MemberObject extends MsoyBodyObject
      * is null, but that's not sent to the client. */
     public boolean onTour;
 
-    /** The player's current partyId, or 0 if they're not in a party. */
+    /** The player's current partyId, or 0 if they're not in a party.
+     * Used to signal the PartyDirector. */
     public int partyId;
 
     /** List of experiences this member has had recently. */
@@ -369,9 +372,19 @@ public class MemberObject extends MsoyBodyObject
     }
 
     // from interface MsoyUserObject
-    public int getPartyId ()
+    public void setParty (PartySummary summary)
     {
-        return partyId;
+        _party = summary;
+        int newPartyId = (summary == null) ? 0 : summary.id;
+        if (newPartyId != partyId) {
+            setPartyId(newPartyId); // avoid generating an extra event when we cross nodes
+        }
+    }
+
+    // from interface MsoyUserObject
+    public PartySummary getParty ()
+    {
+        return _party;
     }
 
     @Override // from MsoyBodyObject
@@ -1101,6 +1114,9 @@ public class MemberObject extends MsoyBodyObject
         buf.append("mid=").append(getMemberId()).append(" oid=");
         super.addWhoData(buf);
     }
+
+    /** The user's party summary. Only needed on the server. */
+    protected transient PartySummary _party;
 
 //    /** Limits the number of recent scenes tracked in {@link #recentScenes}. */
 //    protected static final int MAX_RECENT_SCENES = 10;

@@ -8,6 +8,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.party.data.PartyOccupantInfo;
+import com.threerings.msoy.party.data.PartySummary;
 
 public class AVRGameOccupantInfo extends OccupantInfo
     implements PartyOccupantInfo
@@ -20,7 +21,9 @@ public class AVRGameOccupantInfo extends OccupantInfo
     public AVRGameOccupantInfo (PlayerObject plObj)
     {
         super(plObj);
-        updatePartyId(plObj.partyId);
+
+        PartySummary party = plObj.getParty();
+        updatePartyId((party == null) ? 0 : party.id);
     }
 
     // from PartyOccupantInfo

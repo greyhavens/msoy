@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.server.ClientLocal;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -16,7 +15,6 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.server.MsoyUserLocal;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -36,12 +34,6 @@ public class GameClientResolver extends CrowdClientResolver
     public ClientObject createClientObject ()
     {
         return new PlayerObject();
-    }
-
-    @Override
-    public ClientLocal createLocalAttribute ()
-    {
-        return new MsoyUserLocal();
     }
 
     @Override // from PresentsSession
@@ -70,12 +62,8 @@ public class GameClientResolver extends CrowdClientResolver
         super.finishResolution(clobj);
 
         PlayerObject plobj = (PlayerObject) clobj;
-        // try filling in their party info, if applicable
-        PartySummary party = _peerMan.getPartySummary(plobj.getMemberId());
-        if (party != null) {
-            plobj.partyId = party.id;
-            plobj.getLocal(MsoyUserLocal.class).party = party;
-        }
+        // resolve their party info
+        plobj.setParty(_peerMan.getPartySummary(plobj.getMemberId()));
     }
 
     // our dependencies

@@ -62,7 +62,6 @@ import com.whirled.game.server.WhirledGameMessageHandler;
 
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyUserLocal;
 
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
@@ -93,6 +92,8 @@ import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+
+import com.threerings.msoy.party.server.PartyPlaceUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -198,7 +199,7 @@ public class AVRGameManager extends PlaceManager
     public void bodyWillEnter (BodyObject body)
     {
         if (body instanceof MsoyUserObject) {
-            body.getLocal(MsoyUserLocal.class).willEnterPartyPlace(_gameObj);
+            PartyPlaceUtil.addParty((MsoyUserObject)body, _gameObj);
         }
 
         // Note: for entering parties, we want to add the PartySummary first, then the occInfo
@@ -214,7 +215,7 @@ public class AVRGameManager extends PlaceManager
         // Note: for leaving parties, we want to remove the occInfo first, then the PartySummary
 
         if (body instanceof MsoyUserObject) {
-            body.getLocal(MsoyUserLocal.class).willLeavePartyPlace(_gameObj);
+            PartyPlaceUtil.removeParty((MsoyUserObject)body, _gameObj);
         }
     }
 

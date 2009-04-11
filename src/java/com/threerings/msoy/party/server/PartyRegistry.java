@@ -47,7 +47,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MsoyUserLocal;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -361,10 +360,8 @@ public class PartyRegistry
     protected void updateUserParty (MsoyUserObject userObj, PartySummary party)
     {
         // first update the user
-        int oldPartyId = userObj.getPartyId();
-        final int newPartyId = (party == null) ? 0 : party.id;
-        userObj.setPartyId(newPartyId);
-        userObj.getLocal(MsoyUserLocal.class).party = party;
+        PartySummary oldSummary = userObj.getParty();
+        userObj.setParty(party);
 
         // then any place they may occupy
         PlaceManager placeMan = _placeReg.getPlaceManager(userObj.getPlaceOid());
@@ -372,10 +369,9 @@ public class PartyRegistry
             PlaceObject placeObj = placeMan.getPlaceObject();
             if (placeObj instanceof PartyPlaceObject) {
                 // we need to add a new party BEFORE updating the occInfo
-                if (party != null) {
-                    PartyPlaceUtil.maybeAddParty((PartyPlaceObject)placeObj, party);
-                }
+                PartyPlaceUtil.addParty(userObj, (PartyPlaceObject)placeObj);
                 // update the occupant info
+                final int newPartyId = (party == null) ? 0 : party.id;
                 placeMan.updateOccupantInfo(userObj.getOid(),
                     new OccupantInfo.Updater<OccupantInfo>() {
                         public boolean update (OccupantInfo info) {
@@ -383,9 +379,7 @@ public class PartyRegistry
                         }
                     });
                 // we need to remove an old party AFTER updating the occInfo
-                if (party == null) {
-                    PartyPlaceUtil.maybeRemoveParty((PartyPlaceObject)placeObj, oldPartyId);
-                }
+                PartyPlaceUtil.removeParty(oldSummary, (PartyPlaceObject)placeObj);
             }
         }
     }

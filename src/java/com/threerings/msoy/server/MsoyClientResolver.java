@@ -282,6 +282,9 @@ public class MsoyClientResolver extends CrowdClientResolver
                 }
             });
         }
+
+        // resolve their party info
+        user.setParty(_peerMan.getPartySummary(user.getMemberId()));
     }
 
     /** Info on our member object forwarded from another server. */

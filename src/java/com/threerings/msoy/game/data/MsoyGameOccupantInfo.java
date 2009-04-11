@@ -6,6 +6,7 @@ package com.threerings.msoy.game.data;
 import com.whirled.game.data.WhirledGameOccupantInfo;
 
 import com.threerings.msoy.party.data.PartyOccupantInfo;
+import com.threerings.msoy.party.data.PartySummary;
 
 public class MsoyGameOccupantInfo extends WhirledGameOccupantInfo
     implements PartyOccupantInfo
@@ -18,7 +19,8 @@ public class MsoyGameOccupantInfo extends WhirledGameOccupantInfo
     public MsoyGameOccupantInfo (PlayerObject plObj)
     {
         super(plObj);
-        updatePartyId(plObj.partyId);
+        PartySummary party = plObj.getParty();
+        updatePartyId((party == null) ? 0 : party.id);
     }
 
     // from PartyOccupantInfo

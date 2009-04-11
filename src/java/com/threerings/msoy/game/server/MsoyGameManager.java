@@ -27,7 +27,6 @@ import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.msoy.server.MsoyUserLocal;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
@@ -38,6 +37,8 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
+
+import com.threerings.msoy.party.server.PartyPlaceUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -114,7 +115,7 @@ public class MsoyGameManager extends WhirledGameManager
     public void bodyWillEnter (BodyObject body)
     {
         if (body instanceof MsoyUserObject) {
-            body.getLocal(MsoyUserLocal.class).willEnterPartyPlace(_gameObj);
+            PartyPlaceUtil.addParty((MsoyUserObject)body, _gameObj);
         }
 
         // Note: for entering parties, we want to add the PartySummary first, then the occInfo
@@ -130,7 +131,7 @@ public class MsoyGameManager extends WhirledGameManager
         // Note: for leaving parties, we want to remove the occInfo first, then the PartySummary
 
         if (body instanceof MsoyUserObject) {
-            body.getLocal(MsoyUserLocal.class).willLeavePartyPlace(_gameObj);
+            PartyPlaceUtil.removeParty((MsoyUserObject)body, _gameObj);
         }
     }
 

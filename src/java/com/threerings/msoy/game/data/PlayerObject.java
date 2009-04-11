@@ -34,6 +34,8 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.AVRGameOccupantInfo;
 
+import com.threerings.msoy.party.data.PartySummary;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -55,9 +57,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>visitorInfo</code> field. */
     public static final String VISITOR_INFO = "visitorInfo";
 
-    /** The field name of the <code>partyId</code> field. */
-    public static final String PARTY_ID = "partyId";
-
     /** The field name of the <code>propertyService</code> field. */
     public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
@@ -74,9 +73,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Player's referral information. */
     public VisitorInfo visitorInfo;
-
-    /** The player's current partyId, or 0 if they're not in a party. */
-    public int partyId;
 
     /** Service for setting player properties. */
     public PropertySpaceMarshaller propertyService;
@@ -128,9 +124,16 @@ public class PlayerObject extends WhirledPlayerObject
     }
 
     // from interface MsoyUserObject
-    public int getPartyId ()
+    public void setParty (PartySummary summary)
     {
-        return partyId;
+        _party = summary;
+        // we do not separately track a partyId here.
+    }
+
+    // from interface MsoyUserObject
+    public PartySummary getParty ()
+    {
+        return _party;
     }
 
     @Override // from BodyObject
@@ -237,22 +240,6 @@ public class PlayerObject extends WhirledPlayerObject
     }
 
     /**
-     * Requests that the <code>partyId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setPartyId (int value)
-    {
-        int ovalue = this.partyId;
-        requestAttributeChange(
-            PARTY_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.partyId = value;
-    }
-
-    /**
      * Requests that the <code>propertyService</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -297,6 +284,9 @@ public class PlayerObject extends WhirledPlayerObject
 
         PropertySpaceHelper.readProperties(this, ins);
     }
+
+    /** The party to which this player belongs. */
+    protected transient PartySummary _party;
 
     /**
      * The current state of game data.

@@ -9,6 +9,8 @@ import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.stats.data.StatSet;
 
+import com.threerings.crowd.server.BodyLocal;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 
@@ -18,6 +20,7 @@ import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.party.server.PartyPlaceUtil;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
@@ -27,7 +30,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Contains server-side only information for a member.
  */
-public class MemberLocal extends MsoyUserLocal
+public class MemberLocal extends BodyLocal
 {
     /** The number of non-idle seconds that have elapsed in this member's session. When the member
      * is forwarded between servers, this value is incremented by the time they spent on the server
@@ -166,7 +169,7 @@ public class MemberLocal extends MsoyUserLocal
             putAvatarMemoriesIntoRoom(roomObj);
 
             // and take care of parties
-            willEnterPartyPlace(roomObj);
+            PartyPlaceUtil.addParty(memobj, roomObj);
 
         } finally {
             roomObj.commitTransaction();
@@ -190,7 +193,7 @@ public class MemberLocal extends MsoyUserLocal
             }
 
             // and take care of parties
-            willLeavePartyPlace(roomObj);
+            PartyPlaceUtil.removeParty(memobj, roomObj);
 
         } finally {
             roomObj.commitTransaction();
