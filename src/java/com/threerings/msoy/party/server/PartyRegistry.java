@@ -132,7 +132,6 @@ public class PartyRegistry
      */
     public void updateUserParty (int memberId, int partyId, MsoyNodeObject nodeObj)
     {
-        System.err.println("Was told about a player party change: " + memberId + ", " + partyId);
         MsoyUserObject memberObj = _memberLocator.lookupMember(memberId);
         MsoyUserObject playerObj = _playerLocator.lookupPlayer(memberId);
         if (memberObj == null && playerObj == null) {
