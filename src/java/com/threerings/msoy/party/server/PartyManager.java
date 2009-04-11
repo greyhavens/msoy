@@ -30,6 +30,8 @@ import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MemberParty;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 //import com.threerings.msoy.notify.data.PartyInviteNotification;
@@ -63,7 +65,7 @@ public class PartyManager
     public PartyDetail getPartyDetail ()
     {
         return new PartyDetail(
-            _lastInfo, _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
+            _summary, _lastInfo, _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
     }
 
     public void init (PartyObject partyObj, int creatorId)
@@ -71,14 +73,25 @@ public class PartyManager
         _partyObj = partyObj;
         _summary = new PartySummary(_partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon);
         _partyObj.setAccessController(new PartyAccessController(this));
-        _partyObj.startTransaction();
+
+        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        nodeObj.startTransaction();
         try {
-            _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
-//            _partyObj.setSpeakService(_invMgr.registerDispatcher(
-//                new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
-            updateStatus();
+            nodeObj.addToHostedParties(_summary);
+
+            // in the middle of that, update the party object (and status), which will
+            // also publish a partyInfo to the node object in this transaction
+            _partyObj.startTransaction();
+            try {
+                _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
+    //            _partyObj.setSpeakService(_invMgr.registerDispatcher(
+    //                new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
+                updateStatus();
+            } finally {
+                _partyObj.commitTransaction();
+            }
         } finally {
-            _partyObj.commitTransaction();
+            nodeObj.commitTransaction();
         }
 
         // "invite" the creator
@@ -90,18 +103,31 @@ public class PartyManager
      */
     public void shutdown ()
     {
-        if (_partyObj != null) {
-            _peerMgr.removePartyInfo(_partyObj.id);
-            _partyReg.partyWasRemoved(_partyObj.id);
+        if (_partyObj == null) {
+            return; // already shut down
+        }
+
+        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        nodeObj.startTransaction();
+        try {
+            nodeObj.removeFromHostedParties(_partyObj.id);
+            nodeObj.removeFromPartyInfos(_partyObj.id);
             // clear the party info from all remaining players' member objects
             for (PartyPeep peep : _partyObj.peeps) {
                 indicateMemberPartying(peep.name.getMemberId(), false);
             }
-            _invMgr.clearDispatcher(_partyObj.partyService);
-            // _invMgr.clearDispatcher(_partyObj.speakService);
-            _omgr.destroyObject(_partyObj.getOid());
-            _partyObj = null;
+        } finally {
+            nodeObj.commitTransaction();
         }
+
+        _invMgr.clearDispatcher(_partyObj.partyService);
+        // _invMgr.clearDispatcher(_partyObj.speakService);
+        _omgr.destroyObject(_partyObj.getOid());
+
+        _partyReg.partyWasRemoved(_partyObj.id);
+        _partyObj = null;
+        _lastInfo = null;
+        _summary = null;
     }
 
     /**
@@ -323,8 +349,17 @@ public class PartyManager
 
     protected void indicateMemberPartying (int memberId, boolean set)
     {
-        MemberNodeActions.updateParty(memberId, set ? _summary : null);
-        _peerMgr.updateMemberParty(memberId, _partyObj.id, set);
+        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+
+        // TODO: leaderId indication...
+        if (set) {
+            nodeObj.addToMemberParties(new MemberParty(memberId, _partyObj.id));
+        } else {
+            nodeObj.removeFromMemberParties(memberId);
+        }
+
+        // tell the registry about this one directly
+        _partyReg.updateUserParty(memberId, set ? _partyObj.id : 0, nodeObj);
     }
 
 //    // from SpeakHandler.SpeakerValidator
@@ -407,10 +442,14 @@ public class PartyManager
      */
     protected void updatePartyInfo ()
     {
-        _lastInfo = new PartyInfo(
-            _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group.getGroupId(),
-            _partyObj.status, _partyObj.peeps.size(), _partyObj.recruitment);
-        _peerMgr.updatePartyInfo(_lastInfo);
+        _lastInfo = new PartyInfo(_partyObj.id, _partyObj.leaderId, _partyObj.status,
+            _partyObj.peeps.size(), _partyObj.recruitment);
+        MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
+        if (nodeObj.partyInfos.containsKey(_partyObj.id)) {
+            nodeObj.updatePartyInfos(_lastInfo);
+        } else {
+            nodeObj.addToPartyInfos(_lastInfo);
+        }
     }
 
     protected PartyObject _partyObj;

@@ -54,7 +54,6 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 
@@ -163,33 +162,18 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Get the PartyInfo of the specified party, or null if not found.
-     */
-    public PartyInfo getPartyInfo (int partyId)
-    {
-        final Integer partyKey = partyId;
-        return lookupNodeDatum(new Function<NodeObject,PartyInfo>() {
-            public PartyInfo apply (NodeObject nodeobj) {
-                return ((MsoyNodeObject)nodeobj).hostedParties.get(partyKey);
-            }
-        });
-    }
-
-    /**
      * Get the PartySummary for the specified player, or null if they're not partying.
      */
     public PartySummary getPartySummary (int memberId)
     {
         final Integer memberKey = memberId;
         return lookupNodeDatum(new Function<NodeObject,PartySummary>() {
-            public PartySummary apply (NodeObject nodeobj) {
-                MemberParty mp = ((MsoyNodeObject)nodeobj).memberParties.get(memberKey);
+            public PartySummary apply (NodeObject nodeObj) {
+                MemberParty mp = ((MsoyNodeObject)nodeObj).memberParties.get(memberKey);
                 if (mp == null) {
                     return null;
                 }
-                // TODO: Refactor so that PartySummaries are kept in node objects.
-                // For now, I'm wanging it with a hand-created PartySummary
-                return new PartySummary(mp.partyId, "TODO partyName", null, null);
+                return ((MsoyNodeObject) nodeObj).hostedParties.get(mp.partyId);
             }
         });
     }
@@ -224,43 +208,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
 
         memberEnteredScene(_nodeName, newloc);
-    }
-
-    /**
-     * Update the specified member's partying status.
-     */
-    public void updateMemberParty (int memberId, int partyId, boolean in)
-    {
-        // let's just do this dumb, and see if it causes any warnings, because the party code
-        // shouldn't be adding anyone twice, or updating someone's party without first removing
-        // them from the old party.
-        if (in) {
-            _mnobj.addToMemberParties(new MemberParty(memberId, partyId));
-        } else {
-            _mnobj.removeFromMemberParties(memberId);
-        }
-    }
-
-    /**
-     * Add or update the specified PartyInfo.
-     */
-    public void updatePartyInfo (PartyInfo partyInfo)
-    {
-        if (_mnobj.hostedParties.contains(partyInfo)) {
-            _mnobj.updateHostedParties(partyInfo);
-        } else {
-            _mnobj.addToHostedParties(partyInfo);
-        }
-    }
-
-    /**
-     * Remove the PartyInfo for the specified party.
-     */
-    public void removePartyInfo (int partyId)
-    {
-        if (_mnobj.hostedParties.containsKey(partyId)) {
-            _mnobj.removeFromHostedParties(partyId);
-        }
     }
 
     /**

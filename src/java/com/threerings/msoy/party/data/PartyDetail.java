@@ -5,9 +5,6 @@ package com.threerings.msoy.party.data;
 
 public class PartyDetail extends PartyBoardInfo
 {
-    /** The name of the group. */
-    public String groupName;
-
     /** The people in this party. */
     public PartyPeep[] peeps;
 
@@ -17,9 +14,9 @@ public class PartyDetail extends PartyBoardInfo
     /**
      * Construct a party detail.
      */
-    public PartyDetail (PartyInfo info, PartyPeep[] peeps)
+    public PartyDetail (PartySummary summary, PartyInfo info, PartyPeep[] peeps)
     {
-        super(info);
+        super(summary, info);
         this.peeps = peeps;
     }
 }

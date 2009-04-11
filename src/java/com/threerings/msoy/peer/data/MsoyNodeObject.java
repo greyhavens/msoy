@@ -12,6 +12,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.party.data.PeerPartyMarshaller;
 
 /**
@@ -20,6 +21,9 @@ import com.threerings.msoy.party.data.PeerPartyMarshaller;
 public class MsoyNodeObject extends CrowdNodeObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>memberLocs</code> field. */
+    public static final String MEMBER_LOCS = "memberLocs";
+
     /** The field name of the <code>hostedScenes</code> field. */
     public static final String HOSTED_SCENES = "hostedScenes";
 
@@ -29,8 +33,8 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>hostedParties</code> field. */
     public static final String HOSTED_PARTIES = "hostedParties";
 
-    /** The field name of the <code>memberLocs</code> field. */
-    public static final String MEMBER_LOCS = "memberLocs";
+    /** The field name of the <code>partyInfos</code> field. */
+    public static final String PARTY_INFOS = "partyInfos";
 
     /** The field name of the <code>memberParties</code> field. */
     public static final String MEMBER_PARTIES = "memberParties";
@@ -45,17 +49,20 @@ public class MsoyNodeObject extends CrowdNodeObject
     public static final String PEER_PARTY_SERVICE = "peerPartyService";
     // AUTO-GENERATED: FIELDS END
 
+    /** Contains the current location of all members on this server. */
+    public DSet<MemberLocation> memberLocs = DSet.newDSet();
+
     /** Contains info on all scenes hosted by this server. */
     public DSet<HostedRoom> hostedScenes = DSet.newDSet();
 
     /** Contains info on all games hosted by this server. */
     public DSet<HostedGame> hostedGames = DSet.newDSet();
 
-    /** Contains the current party info for all parties on this server. */
-    public DSet<PartyInfo> hostedParties = DSet.newDSet();
+    /** Contains the immutable summaries for all parties on this node. */
+    public DSet<PartySummary> hostedParties = DSet.newDSet();
 
-    /** Contains the current location of all members on this server. */
-    public DSet<MemberLocation> memberLocs = DSet.newDSet();
+    /** Contains the mutable attributes of a party. */
+    public DSet<PartyInfo> partyInfos = DSet.newDSet();
 
     /** Contains the current partyId of all members partying on this server. */
     public DSet<MemberParty> memberParties = DSet.newDSet();
@@ -109,6 +116,53 @@ public class MsoyNodeObject extends CrowdNodeObject
     }
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the specified entry be added to the
+     * <code>memberLocs</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToMemberLocs (MemberLocation elem)
+    {
+        requestEntryAdd(MEMBER_LOCS, memberLocs, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>memberLocs</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromMemberLocs (Comparable<?> key)
+    {
+        requestEntryRemove(MEMBER_LOCS, memberLocs, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>memberLocs</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateMemberLocs (MemberLocation elem)
+    {
+        requestEntryUpdate(MEMBER_LOCS, memberLocs, elem);
+    }
+
+    /**
+     * Requests that the <code>memberLocs</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setMemberLocs (DSet<MemberLocation> value)
+    {
+        requestAttributeChange(MEMBER_LOCS, value, this.memberLocs);
+        DSet<MemberLocation> clone = (value == null) ? null : value.typedClone();
+        this.memberLocs = clone;
+    }
+
     /**
      * Requests that the specified entry be added to the
      * <code>hostedScenes</code> set. The set will not change until the event is
@@ -208,7 +262,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedParties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToHostedParties (PartyInfo elem)
+    public void addToHostedParties (PartySummary elem)
     {
         requestEntryAdd(HOSTED_PARTIES, hostedParties, elem);
     }
@@ -228,7 +282,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * <code>hostedParties</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateHostedParties (PartyInfo elem)
+    public void updateHostedParties (PartySummary elem)
     {
         requestEntryUpdate(HOSTED_PARTIES, hostedParties, elem);
     }
@@ -243,45 +297,45 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setHostedParties (DSet<PartyInfo> value)
+    public void setHostedParties (DSet<PartySummary> value)
     {
         requestAttributeChange(HOSTED_PARTIES, value, this.hostedParties);
-        DSet<PartyInfo> clone = (value == null) ? null : value.typedClone();
+        DSet<PartySummary> clone = (value == null) ? null : value.typedClone();
         this.hostedParties = clone;
     }
 
     /**
      * Requests that the specified entry be added to the
-     * <code>memberLocs</code> set. The set will not change until the event is
+     * <code>partyInfos</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMemberLocs (MemberLocation elem)
+    public void addToPartyInfos (PartyInfo elem)
     {
-        requestEntryAdd(MEMBER_LOCS, memberLocs, elem);
+        requestEntryAdd(PARTY_INFOS, partyInfos, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>memberLocs</code> set. The set will not change until the
+     * the <code>partyInfos</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMemberLocs (Comparable<?> key)
+    public void removeFromPartyInfos (Comparable<?> key)
     {
-        requestEntryRemove(MEMBER_LOCS, memberLocs, key);
+        requestEntryRemove(PARTY_INFOS, partyInfos, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>memberLocs</code> set. The set will not change until the event is
+     * <code>partyInfos</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMemberLocs (MemberLocation elem)
+    public void updatePartyInfos (PartyInfo elem)
     {
-        requestEntryUpdate(MEMBER_LOCS, memberLocs, elem);
+        requestEntryUpdate(PARTY_INFOS, partyInfos, elem);
     }
 
     /**
-     * Requests that the <code>memberLocs</code> field be set to the
+     * Requests that the <code>partyInfos</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -290,11 +344,11 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemberLocs (DSet<MemberLocation> value)
+    public void setPartyInfos (DSet<PartyInfo> value)
     {
-        requestAttributeChange(MEMBER_LOCS, value, this.memberLocs);
-        DSet<MemberLocation> clone = (value == null) ? null : value.typedClone();
-        this.memberLocs = clone;
+        requestAttributeChange(PARTY_INFOS, value, this.partyInfos);
+        DSet<PartyInfo> clone = (value == null) ? null : value.typedClone();
+        this.partyInfos = clone;
     }
 
     /**

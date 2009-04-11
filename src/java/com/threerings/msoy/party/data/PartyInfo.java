@@ -10,8 +10,8 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.data.MemberObject;
 
 /**
- * Summarized party info that is both published to the node objects and returned
- * to users as part of the party board.
+ * Contains the mutable attributes of a party, published to the node objects and returned
+ * as party of the party board.
  *
  * NOTE: please be careful about what fields you add. If fields are added that are needed by
  * one usage but not the other, we may need to consider having two different objects...
@@ -22,14 +22,8 @@ public class PartyInfo extends SimpleStreamableObject
     /** The unique party id. */
     public int id;
 
-    /** The name of this party. */
-    public String name;
-
     /** The leader of this party. */
     public int leaderId;
-
-    /** The group sponsoring this party. */
-    public int groupId;
 
     /** The status line indicating what this party is doing. */
     public String status;
@@ -47,40 +41,13 @@ public class PartyInfo extends SimpleStreamableObject
 
     /** Create a PartyInfo. */
     public PartyInfo (
-        int id, String name, int leaderId, int groupId, String status,
-        int population, byte recruitment)
+        int id, int leaderId, String status, int population, byte recruitment)
     {
         this.id = id;
-        this.name = name;
         this.leaderId = leaderId;
-        this.groupId = groupId;
         this.status = status;
         this.population = population;
         this.recruitment = recruitment;
-    }
-
-    /**
-     * Does this party appear on the partyBoard for the specified user?
-     * Note that this just affects visibility, not whether the member may join.
-     * Compare with PartyObject.mayJoin.
-     */
-    public boolean isVisible (MemberObject member)
-    {
-        if (population >= PartyCodes.MAX_PARTY_SIZE) {
-            return false;
-        }
-
-        switch (recruitment) {
-        case PartyCodes.RECRUITMENT_OPEN:
-            return true;
-
-        case PartyCodes.RECRUITMENT_GROUP:
-            return member.isGroupMember(groupId);
-
-        default:
-        case PartyCodes.RECRUITMENT_CLOSED:
-            return false;
-        }
     }
 
     // from DSet.Entry

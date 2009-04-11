@@ -34,10 +34,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.game.data.GameAuthName;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.server.PlayerLocator;
-
 import com.threerings.msoy.group.data.all.GroupMembership;
 
 import com.threerings.msoy.item.server.ItemManager;
@@ -47,7 +43,6 @@ import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.notify.server.NotificationManager;
 
-import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.party.server.PartyRegistry;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -216,15 +211,6 @@ public class MemberNodeActions
     public static void addExperience (int memberId, byte action, int data)
     {
         _peerMan.invokeNodeAction(new AddExperienceAction(memberId, action, data));
-    }
-
-    /**
-     * Informs the specified member that they are in the specified party (or not in a party any
-     * longer if <code>party</code> is null.
-     */
-    public static void updateParty (int memberId, PartySummary party)
-    {
-        _peerMan.invokeNodeAction(new UpdatePartyAction(memberId, party));
     }
 
     /**
@@ -728,48 +714,6 @@ public class MemberNodeActions
         }
 
         protected int _followerId;
-    }
-
-    /**
-     * Secretly, this is also a PlayerNodeAction.
-     */
-    protected static class UpdatePartyAction extends MemberNodeAction
-    {
-        public UpdatePartyAction () {}
-
-        public UpdatePartyAction (int memberId, PartySummary party)
-        {
-            super(memberId);
-            _party = party;
-        }
-
-        @Override
-        public boolean isApplicable (NodeObject nodeObj)
-        {
-            return super.isApplicable(nodeObj) ||
-                ((MsoyNodeObject)nodeObj).clients.containsKey(GameAuthName.makeKey(_memberId));
-        }
-
-        @Override
-        protected void execute ()
-        {
-            super.execute();
-
-            // do the execute for the player object right here
-            PlayerObject plobj = _playerLocator.lookupPlayer(_memberId);
-            if (plobj != null) {
-                _partyReg.updateUserParty(plobj, _party);
-            }
-        }
-
-        @Override protected void execute (MemberObject memObj) {
-            _partyReg.updateUserParty(memObj, _party);
-        }
-
-        @Inject protected transient PartyRegistry _partyReg;
-        @Inject protected transient PlayerLocator _playerLocator;
-
-        protected PartySummary _party;
     }
 
     protected static class ForcedMoveAction extends MemberNodeAction

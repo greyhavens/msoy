@@ -10,16 +10,18 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 public class PartyBoardInfo extends SimpleStreamableObject
 {
-    public var info :PartyInfo;
+    /** The immutable info. */
+    public var summary :PartySummary;
 
-    public var icon :MediaDesc;
+    /** The mutable info. */
+    public var info :PartyInfo;
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
+        summary = PartySummary(ins.readObject());
         info = PartyInfo(ins.readObject());
-        icon = MediaDesc(ins.readObject());
     }
 }
 }

@@ -3,24 +3,20 @@
 
 package com.threerings.msoy.party.server;
 
-import java.util.TreeMap;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 
-import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.RandomUtil;
+import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -50,6 +46,7 @@ import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
+import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyUserLocal;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -64,7 +61,8 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.room.server.RoomManager;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.data.PartyAuthName;
@@ -128,38 +126,26 @@ public class PartyRegistry
     }
 
     /**
-     * Called when the specified member has joined or left a party. This is called on any node
-     * on which the user has a MsoyUserObject session, for each of their MsoyUserObjects.
+     * Called when a user's party id changes. Happens in two places:
+     * - from PartyManager, when the party is hosted on this node.
+     * - from MsoyPeerNode, for parties hosted on other nodes.
      */
-    public void updateUserParty (MsoyUserObject userObj, PartySummary party)
+    public void updateUserParty (int memberId, int partyId, MsoyNodeObject nodeObj)
     {
-        // first update the user
-        int oldPartyId = userObj.getPartyId();
-        final int newPartyId = (party == null) ? 0 : party.id;
-        userObj.setPartyId(newPartyId);
-        userObj.getLocal(MsoyUserLocal.class).party = party;
+        System.err.println("Was told about a player party change: " + memberId + ", " + partyId);
+        MsoyUserObject memberObj = _memberLocator.lookupMember(memberId);
+        MsoyUserObject playerObj = _playerLocator.lookupPlayer(memberId);
+        if (memberObj == null && playerObj == null) {
+            return; // this node officially doesn't care
+        }
 
-        // then any place they may occupy
-        PlaceManager placeMan = _placeReg.getPlaceManager(userObj.getPlaceOid());
-        if (placeMan != null) {
-            PlaceObject placeObj = placeMan.getPlaceObject();
-            if (placeObj instanceof PartyPlaceObject) {
-                // we need to add a new party BEFORE updating the occInfo
-                if (party != null) {
-                    PartyPlaceUtil.maybeAddParty((PartyPlaceObject)placeObj, party);
-                }
-                // update the occupant info
-                placeMan.updateOccupantInfo(userObj.getOid(),
-                    new OccupantInfo.Updater<OccupantInfo>() {
-                        public boolean update (OccupantInfo info) {
-                            return ((PartyOccupantInfo) info).updatePartyId(newPartyId);
-                        }
-                    });
-                // we need to remove an old party AFTER updating the occInfo
-                if (party == null) {
-                    PartyPlaceUtil.maybeRemoveParty((PartyPlaceObject)placeObj, oldPartyId);
-                }
-            }
+        // we know that the PartySummary for this party is on the same nodeObj
+        PartySummary summary = (partyId == 0) ? null : nodeObj.hostedParties.get(partyId);
+        if (memberObj != null) {
+            updateUserParty(memberObj, summary);
+        }
+        if (playerObj != null) {
+            updateUserParty(playerObj, summary);
         }
     }
 
@@ -211,47 +197,36 @@ public class PartyRegistry
     {
         final MemberObject member = (MemberObject)caller;
 
-        // add every party we have access to to a collection sorted by score
-        // Note: maybe we use a KeyValue, and create a top-N data structure that only even
-        // saves the top-N candidates
-        final TreeMap<PartySort,PartyInfo> visParties = Maps.newTreeMap();
+        final List<PartyBoardInfo> list = Lists.newArrayList();
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {
-                for (PartyInfo info : ((MsoyNodeObject) node).hostedParties) {
-                    // TODO: We could actually show parties in which you have an invitation,
-                    // and or a leader invite...
-                    if (info.isVisible(member)) {
-                        visParties.put(computePartySort(info, member), info);
+                MsoyNodeObject nodeObj = (MsoyNodeObject) node;
+                for (PartyInfo info : nodeObj.partyInfos) {
+                    if ((info.population >= PartyCodes.MAX_PARTY_SIZE) ||
+                            (info.recruitment == PartyCodes.RECRUITMENT_CLOSED)) {
+                        continue; // skip: too big, or closed
                     }
+                    PartySummary summary = nodeObj.hostedParties.get(info.id);
+                    if ((info.recruitment == PartyCodes.RECRUITMENT_GROUP) &&
+                            !member.isGroupMember(summary.group.getGroupId())) {
+                        continue; // skip: user not a group member
+                    }
+                    PartyBoardInfo boardInfo = new PartyBoardInfo(summary, info);
+                    boardInfo.computeScore(member);
+                    list.add(boardInfo);
                 }
                 return null; // Void
             }
         });
 
-        final IntMap<MediaDesc> icons = IntMaps.newHashIntMap();
-        final List<PartyBoardInfo> results = Lists.newArrayList(Iterables.transform(
-            Iterables.limit(visParties.values(), PARTIES_PER_BOARD),
-            new Function<PartyInfo,PartyBoardInfo>() {
-                public PartyBoardInfo apply (PartyInfo info) {
-                    icons.put(info.groupId, null);
-                    return new PartyBoardInfo(info);
-                }
-            }));
-
-        _invoker.postUnit(new PersistingUnit("loadPartyGroup", rl) {
-            @Override public void invokePersistent () throws Exception {
-                for (GroupRecord rec : _groupRepo.loadGroups(icons.keySet())) {
-                    icons.put(rec.groupId, rec.toLogo());
-                }
-            }
-
-            @Override public void handleSuccess () {
-                for (PartyBoardInfo party : results) {
-                    party.icon = icons.get(party.info.groupId);
-                }
-                rl.requestProcessed(results);
-            }
-        });
+        // sort and prune
+        // Note: perhaps create a data structure that only saves the top N items and rolls
+        // the rest off.
+        QuickSort.sort(list);
+        if (list.size() > PARTIES_PER_BOARD) {
+            list.subList(PARTIES_PER_BOARD, list.size()).clear();
+        }
+        rl.requestProcessed(list);
     }
 
     // from PartyBoardProvider
@@ -291,18 +266,7 @@ public class PartyRegistry
         // see if we can handle it locally
         PartyManager mgr = _parties.get(partyId);
         if (mgr != null) {
-            final PartyDetail detail = mgr.getPartyDetail();
-            _invoker.postUnit(new RepositoryUnit("loadPartyGroup") {
-                public void invokePersist () throws Exception {
-                    GroupRecord rec = _groupRepo.loadGroup(detail.info.groupId);
-                    detail.groupName = rec.name;
-                    detail.icon = rec.toLogo();
-                }
-
-                public void handleSuccess () {
-                    rl.requestProcessed(detail);
-                }
-            });
+            rl.requestProcessed(mgr.getPartyDetail());
             return;
         }
 
@@ -393,53 +357,39 @@ public class PartyRegistry
     }
 
     /**
-     * Compute the score for the specified party, or return null if the user
-     * does not have access to it.
+     * Called when the member represented by the specified user object has joined or left a party.
      */
-    protected PartySort computePartySort (PartyInfo info, MemberObject member)
+    protected void updateUserParty (MsoyUserObject userObj, PartySummary party)
     {
-        // start by giving every party a random score between 0 and 1
-        float score = RandomUtil.rand.nextFloat();
-        // add your rank in the group. (0, 1, or 2)
-        score += member.getGroupRank(info.groupId);
-        // add 3 if your friend is leading the party. (To make it more important than groups)
-        if (member.isFriend(info.leaderId)) {
-            score += 3;
-        }
-        // now, each party is in a "band" determined by group/friend, and then has a random
-        // position within that band.
-        return new PartySort(score, info.id);
-    }
+        // first update the user
+        int oldPartyId = userObj.getPartyId();
+        final int newPartyId = (party == null) ? 0 : party.id;
+        userObj.setPartyId(newPartyId);
+        userObj.getLocal(MsoyUserLocal.class).party = party;
 
-    /** Holds compared order between parties without having to recompute it for
-     * every comparison. */
-    protected static class PartySort
-        implements Comparable<PartySort>
-    {
-        public PartySort (float score, int id)
-        {
-            _score = score;
-            _id = id;
-        }
-
-        // NOTE: we do not implement equals or hashCode. We want every PartySort object to
-        // only be equal to itself.
-
-        // from Comparable
-        public int compareTo (PartySort other)
-        {
-            // reverse the order, so that higher scores are first
-            int cmp = Float.compare(other._score, _score);
-            if (cmp == 0) {
-                // but lower partyIds take priority
-                cmp = Comparators.compare(_id, other._id);
+        // then any place they may occupy
+        PlaceManager placeMan = _placeReg.getPlaceManager(userObj.getPlaceOid());
+        if (placeMan != null) {
+            PlaceObject placeObj = placeMan.getPlaceObject();
+            if (placeObj instanceof PartyPlaceObject) {
+                // we need to add a new party BEFORE updating the occInfo
+                if (party != null) {
+                    PartyPlaceUtil.maybeAddParty((PartyPlaceObject)placeObj, party);
+                }
+                // update the occupant info
+                placeMan.updateOccupantInfo(userObj.getOid(),
+                    new OccupantInfo.Updater<OccupantInfo>() {
+                        public boolean update (OccupantInfo info) {
+                            return ((PartyOccupantInfo) info).updatePartyId(newPartyId);
+                        }
+                    });
+                // we need to remove an old party AFTER updating the occInfo
+                if (party == null) {
+                    PartyPlaceUtil.maybeRemoveParty((PartyPlaceObject)placeObj, oldPartyId);
+                }
             }
-            return cmp;
         }
-
-        protected float _score;
-        protected int _id;
-    } // end: class PartySort
+    }
 
     protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
 
@@ -450,8 +400,10 @@ public class PartyRegistry
     @Inject protected GroupRepository _groupRepo;
     @Inject protected Injector _injector;
     @Inject protected InvocationManager _invmgr;
+    @Inject protected MemberLocator _memberLocator;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
+    @Inject protected PlayerLocator _playerLocator;
     @Inject protected RootDObjectManager _omgr;
 }

@@ -44,9 +44,9 @@ public class PartyBoardInfoRenderer extends HBox
 
         _picHolder.removeAllChildren();
         _picHolder.addChild(MediaWrapper.createView(
-            Group.logo(party.icon), MediaDesc.QUARTER_THUMBNAIL_SIZE));
+            Group.logo(party.summary.icon), MediaDesc.QUARTER_THUMBNAIL_SIZE));
 
-        _name.text = party.info.name;
+        _name.text = party.summary.name;
         _population.text = String(party.info.population);
         _status.text = Msgs.PARTY.xlate(party.info.status);
 

@@ -26,7 +26,7 @@ public class PartyDetailPanel extends FloatingPanel
 {
     public function PartyDetailPanel (ctx :WorldContext, detail :PartyDetail)
     {
-        super(ctx, detail.info.name);
+        super(ctx, detail.summary.name);
         showCloseButton = true;
         _detail = detail;
     }
@@ -36,10 +36,10 @@ public class PartyDetailPanel extends FloatingPanel
         super.createChildren();
 
         var topBox :HBox = new HBox();
-        topBox.addChild(MediaWrapper.createView(Group.logo(_detail.icon)));
+        topBox.addChild(MediaWrapper.createView(Group.logo(_detail.summary.icon)));
 
         var infoBox :VBox = new VBox();
-        infoBox.addChild(FlexUtil.createLabel(_detail.groupName));
+        infoBox.addChild(FlexUtil.createLabel(_detail.summary.group.toString()));
         infoBox.addChild(FlexUtil.createLabel(
             Msgs.PARTY.xlate(_detail.info.status), "partyStatus"));
         infoBox.addChild(FlexUtil.createLabel(
