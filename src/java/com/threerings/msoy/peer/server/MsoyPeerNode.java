@@ -11,13 +11,10 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
@@ -36,10 +33,9 @@ import com.threerings.msoy.party.server.PartyRegistry;
 public class MsoyPeerNode extends PeerNode
 {
     @Override // from PeerNode
-    public void init (PeerManager peermgr, PresentsDObjectMgr omgr, ConnectionManager conmgr,
-                      NodeRecord record)
+    public void init (NodeRecord record)
     {
-        super.init(peermgr, omgr, conmgr, record);
+        super.init(record);
         _httpPort = ServerConfig.getHttpPort(record.nodeName);
     }
 
