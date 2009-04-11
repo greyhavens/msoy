@@ -41,6 +41,7 @@ public class PartyContextImpl implements PartyContext
         _client.setVersion(DeploymentConfig.version);
         _client.setServer(hostname, [ port ]);
         _client.setCredentials(pcreds);
+        _wctx.getMsoyClient().willConnectToServer(hostname);
         _client.logon();
     }
 

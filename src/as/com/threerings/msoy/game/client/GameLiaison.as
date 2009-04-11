@@ -14,7 +14,6 @@ import flash.events.TimerEvent;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 
-import flash.system.Security;
 import flash.text.TextField;
 import flash.utils.Timer;
 
@@ -232,10 +231,7 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
-        var url :String = "xmlsocket://" + _gctx.getClient().getHostname() + ":" +
-            DeploymentConfig.socketPolicyPort;
-        log.info("Loading security policy: " + url);
-        Security.loadPolicyFile(url);
+        _gctx.getMsoyContext().getMsoyClient().willConnectToServer(_gctx.getClient().getHostname());
     }
 
     // from interface ClientObserver
