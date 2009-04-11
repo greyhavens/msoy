@@ -607,9 +607,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected PeerNode createPeerNode ()
+    protected Class<? extends PeerNode> getPeerNodeClass ()
     {
-        return new MsoyPeerNode();
+        return MsoyPeerNode.class;
     }
 
     @Override // from PeerManager
