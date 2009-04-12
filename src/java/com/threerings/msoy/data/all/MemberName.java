@@ -37,6 +37,9 @@ public class MemberName extends Name
     /** The maximum length for a display name. */
     public static final int MAX_DISPLAY_NAME_LENGTH = 30;
 
+    /** Characters (above ' ') that are illegal in display names. */
+    public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F";
+
     /** The maximum length for an account name (email address). */
     public static final int MAX_EMAIL_LENGTH = 128;
 
@@ -80,7 +83,8 @@ public class MemberName extends Name
     {
         return (name != null && name.trim().equals(name) &&
                 name.length() >= MIN_DISPLAY_NAME_LENGTH &&
-                name.length() <= MAX_DISPLAY_NAME_LENGTH);
+                name.length() <= MAX_DISPLAY_NAME_LENGTH &&
+                containsOnlyLegalChars(name));
     }
 
     /**
@@ -199,6 +203,18 @@ public class MemberName extends Name
     protected static boolean isWhitespace (char c)
     {
         return Character.isSpace(c);
+    }
+
+    /** Helper for {@link #isValidDisplayName}. */
+    protected static boolean containsOnlyLegalChars (String name)
+    {
+        for (int ii = 0, nn = name.length(); ii < nn; ii++) {
+            char c = name.charAt(ii);
+            if ((c < ' ') || (-1 != ILLEGAL_DISPLAY_NAME_CHARS.indexOf(c))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Helper for {@link #isValidNonSupportName}. */
