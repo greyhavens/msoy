@@ -54,7 +54,7 @@ public class MsoyBodyObject extends BodyObject
         return true;
     }
 
-    @Override // from MsoyBodyObject
+    @Override // from BodyObject
     public void didLeavePlace (PlaceObject plobj)
     {
         super.didLeavePlace(plobj);
