@@ -307,16 +307,6 @@ public class AVRGameManager extends PlaceManager
         // else ask the bureau to start it and wait for its initialization
         _gameAgentObj.gameOid = _gameObj.getOid();
         
-        _gameAgentObj.setPropertiesService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(
-            new PropertySpaceHandler(_gameAgentObj) {
-                @Override protected void validateUser (ClientObject caller)
-                    throws InvocationException {
-                    if (!isAgent(caller)) {
-                        throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-                    }
-                }
-            })));
-        
         _breg.startAgent(_gameAgentObj);
 
         // inform the observer if the agent dies and we didn't kill it
@@ -728,6 +718,7 @@ public class AVRGameManager extends PlaceManager
     {
         if (_gameAgentObj != null) {
             _invmgr.clearDispatcher(_gameAgentObj.agentService);
+            _invmgr.clearDispatcher(_gameAgentObj.propertiesService);
             if (_gameAgentObj.isActive()) {
                 _breg.destroyAgent(_gameAgentObj);
             }
@@ -937,7 +928,18 @@ public class AVRGameManager extends PlaceManager
         agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
         agent.gameId = gameId;
         agent.code = code;
+
         agent.agentService = _invmgr.registerDispatcher(new AVRGameAgentDispatcher(this));
+
+        agent.setPropertiesService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
+            @Override protected void validateUser (ClientObject caller)
+                throws InvocationException {
+                if (!isAgent(caller)) {
+                    throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+                }
+            }
+        })));
+        
         if (StringUtil.isBlank(def.server)) {
             agent.className = WhirledGameManager.DEFAULT_SERVER_CLASS;
         } else {
