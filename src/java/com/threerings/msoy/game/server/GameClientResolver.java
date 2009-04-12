@@ -22,9 +22,6 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.PlayerObject;
 
-import com.threerings.msoy.party.data.PartySummary;
-
-
 /**
  * Resolves an MSOY Game client's runtime data.
  */

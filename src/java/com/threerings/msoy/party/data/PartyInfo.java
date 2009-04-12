@@ -7,8 +7,6 @@ import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.data.MemberObject;
-
 /**
  * Contains the mutable attributes of a party, published to the node objects and returned
  * as party of the party board.

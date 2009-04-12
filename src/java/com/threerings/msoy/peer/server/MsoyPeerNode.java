@@ -13,15 +13,12 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.server.net.ServerCommunicator;
 
-import com.threerings.presents.peer.data.ClientInfo;
-import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.peer.data.MemberParty;
-import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.ServerConfig;
 

@@ -31,7 +31,6 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
@@ -43,7 +42,6 @@ import com.threerings.whirled.data.ScenePlace;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocator;
@@ -60,7 +58,6 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.msoy.party.client.PartyBoardService;
@@ -68,7 +65,6 @@ import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyCredentials;
-import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyOccupantInfo;

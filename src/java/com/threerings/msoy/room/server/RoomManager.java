@@ -84,9 +84,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
@@ -95,7 +93,6 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
-import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.item.data.all.Audio;
