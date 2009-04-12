@@ -57,14 +57,36 @@ public class Group
         protected byte _value;
     }
 
-    /** Used for the {@link #forumPerms} setting. */
-    public static final int PERM_ALL = 1;
+    /** Types of permissions, used in various fields. */
+    public enum Perm implements ByteEnum
+    {
+        ALL((byte)1),
+        MEMBER((byte)2),
+        MANAGER((byte)3);
 
-    /** Used for the {@link #forumPerms} setting. */
-    public static final int PERM_MEMBER = 2;
+        // from ByteEnum
+        public byte toByte () {
+            return _value;
+        }
 
-    /** Used for the {@link #forumPerms} setting. */
-    public static final int PERM_MANAGER = 3;
+        /**
+         * Translates a persisted value back to an instance, for depot.
+         */
+        public static Perm fromByte (byte b) {
+            for (Perm e : values()) {
+                if (e._value == b) {
+                    return e;
+                }
+            }
+            throw new IllegalArgumentException("Perm not found for value " + b);
+        }
+
+        Perm (byte value) {
+            _value = value;
+        }
+
+        protected byte _value;
+    }
 
     /** Indicates read access for a group's forums. */
     public static final int ACCESS_READ = 1;
@@ -105,11 +127,14 @@ public class Group
     /** This group's political policy. */
     public Policy policy;
 
-    /** This group's forum permissions (see {@link #makePerms}). */
-    public byte forumPerms;
+    /** Required permission level for starting a thread. */
+    public Perm threadPerm;
 
-    /** This group's party permissions. Either PERM_MEMBER or PERM_MANAGER. */
-    public byte partyPerms;
+    /** Required permission level for replying to a thread. */
+    public Perm postPerm;
+
+    /** Required permission level for starting a party. Should never be {@link Perm#ALL}. */
+    public Perm partyPerm;
 
     /** A snapshot of the number of members in this group. */
     public int memberCount;
@@ -160,11 +185,23 @@ public class Group
     }
 
     /**
-     * Composes thread and post permissions into a {@link #forumPerms} value.
+     * Composes thread and post permissions into a value for DB storage.
      */
-    public static byte makePerms (int threadPerm, int postPerm)
+    public byte getForumPerms ()
     {
-        return (byte)((threadPerm << 4) | postPerm);
+        return (byte)((threadPerm.toByte() << 4) | postPerm.toByte());
+    }
+
+    /**
+     * Assigns our {@link #threadPerm} and {@link #postPerm} from a composed DB value.
+     */
+    public void setForumPerms (byte forumPerms)
+    {
+        // we need to take the max because a bug during 2008 (april to december) that allowed
+        // forum perms to be insterted as zero, which is out of range
+        // TODO: migrate old permission values to max(1, old)
+        threadPerm = Perm.fromByte((byte)(Math.max(1, (forumPerms >> 4) & 0xf)));
+        postPerm = Perm.fromByte((byte)(Math.max(1, forumPerms & 0xf)));
     }
 
     /**
@@ -184,22 +221,6 @@ public class Group
     }
 
     /**
-     * Gets this group's thread permissions. See {@link #makePerms}.
-     */
-    public int getThreadPerm ()
-    {
-        return (forumPerms >> 4) & 0xF;
-    }
-
-    /**
-     * Gets this group's post permissions. See {@link #makePerms}.
-     */
-    public int getPostPerm ()
-    {
-        return forumPerms & 0xF;
-    }
-
-    /**
      * Returns true if a member of the specified rank (or non-member) has the specified access.
      *
      * @param flags only used when checking {@link #ACCESS_THREAD}, indicates the flags of the
@@ -212,7 +233,7 @@ public class Group
             return true;
         }
 
-        int havePerm = (rank == GroupMembership.RANK_MEMBER) ? PERM_MEMBER : PERM_ALL;
+        Perm havePerm = (rank == GroupMembership.RANK_MEMBER) ? Perm.MEMBER : Perm.ALL;
         switch (access) {
         case ACCESS_READ:
             // members can always read, non-members can read messages in non-exclusive groups
@@ -220,14 +241,14 @@ public class Group
 
         case ACCESS_THREAD:
             // the thread must be non-sticky/non-announce and they must have permissions
-            return (flags == 0) && (getThreadPerm() <= havePerm);
+            return (flags == 0) && (threadPerm.ordinal() <= havePerm.ordinal());
 
         case ACCESS_POST:
             // non-managers cannot post to locked threads
             if ((flags & ForumThread.FLAG_LOCKED) != 0) {
                 return false;
             }
-            return getPostPerm() <= havePerm;
+            return postPerm.ordinal() <= havePerm.ordinal();
 
         default:
             throw new IllegalArgumentException(

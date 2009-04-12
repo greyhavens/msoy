@@ -303,7 +303,7 @@ public class PartyRegistry
         PartyManager mgr = null;
         try {
             // validate that they can create the party with this group
-            if ((group.partyPerms == Group.PERM_MANAGER) &&
+            if ((group.partyPerms == Group.Perm.MANAGER) &&
                     (groupInfo.rank < GroupMembership.RANK_MANAGER)) {
                 jl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
                 return;

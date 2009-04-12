@@ -84,8 +84,9 @@ public class GroupEdit extends FlexTable
         // if this is a blank group, set up some defaults
         if (isCreate) {
             _group.policy = Group.Policy.PUBLIC;
-            _group.forumPerms = Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL);
-            _group.partyPerms = Group.PERM_MEMBER;
+            _group.threadPerm = Group.Perm.MEMBER;
+            _group.postPerm = Group.Perm.ALL;
+            _group.partyPerm = Group.Perm.MEMBER;
         }
 
         setStyleName("groupEditor");
@@ -115,21 +116,21 @@ public class GroupEdit extends FlexTable
         _party = new ListBox();
         _party.addItem(_msgs.permsMember());
         _party.addItem(_msgs.permsManager());
-        _party.setSelectedIndex(_group.partyPerms - Group.PERM_MEMBER);
+        _party.setSelectedIndex(_group.partyPerm.ordinal() - Group.Perm.MEMBER.ordinal());
         addRow(_msgs.partyPerm(), _party);
 
         _thread = new ListBox();
         _thread.addItem(_msgs.permsAll());
         _thread.addItem(_msgs.permsMember());
         _thread.addItem(_msgs.permsManager());
-        _thread.setSelectedIndex(_group.getThreadPerm() - Group.PERM_ALL);
+        _thread.setSelectedIndex(_group.threadPerm.ordinal());
         addRow(_msgs.editThread(), _thread);
 
         _post = new ListBox();
         _post.addItem(_msgs.permsAll());
         _post.addItem(_msgs.permsMember());
         _post.addItem(_msgs.permsManager());
-        _post.setSelectedIndex(_group.getPostPerm() - Group.PERM_ALL);
+        _post.setSelectedIndex(_group.postPerm.ordinal());
         addRow(_msgs.editPost(), _post);
 
         addRow(_msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
@@ -240,9 +241,10 @@ public class GroupEdit extends FlexTable
         _group.logo = _logo.getMedia();
         _group.blurb = _blurb.getText().trim();
         _group.policy = Group.Policy.values()[_policy.getSelectedIndex()];
-        _group.partyPerms = (byte)(_party.getSelectedIndex() + Group.PERM_MEMBER);
-        _group.forumPerms = Group.makePerms(_thread.getSelectedIndex()+Group.PERM_ALL,
-                                            _post.getSelectedIndex()+Group.PERM_ALL);
+        _group.partyPerm = Group.Perm.values()[
+            Group.Perm.MEMBER.ordinal() + _party.getSelectedIndex()];
+        _group.threadPerm = Group.Perm.values()[_thread.getSelectedIndex()];
+        _group.postPerm = Group.Perm.values()[_post.getSelectedIndex()];
         _group.official = _official != null && _official.isChecked();
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();

@@ -120,12 +120,13 @@ public class GroupRecord extends PersistentRecord
     @Index(name="ixPolicy")
     public Group.Policy policy;
 
-    /** This group's forum permissions, see {@link Group#forumPerms}. */
+    /** This group's forum permissions, see {@link Group#makeForumPerms()}. */
+    // TODO: split this into two Group.Perm instances? would requite a migration
     public byte forumPerms;
 
     /** This group's party permissions. */
-    @Column(defaultValue="2") // 2 == PERM_MEMBER
-    public byte partyPerms;
+    @Column(defaultValue="2") // 2 == Group.Perm.MEMBER.toByte()
+    public Group.Perm partyPerms;
 
     /** The number of people that are currently members of this group. */
     public int memberCount;
@@ -158,8 +159,8 @@ public class GroupRecord extends PersistentRecord
         group.creatorId = creatorId;
         group.creationDate = new java.util.Date(creationDate.getTime());
         group.policy = policy;
-        group.forumPerms = forumPerms;
-        group.partyPerms = partyPerms;
+        group.setForumPerms(forumPerms);
+        group.partyPerm = partyPerms;
         group.memberCount = memberCount;
         group.gameId = gameId;
         group.official = official;
@@ -236,11 +237,11 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.policy != policy) {
             updates.put(POLICY, groupDef.policy);
         }
-        if (groupDef.forumPerms != forumPerms) {
-            updates.put(FORUM_PERMS, groupDef.forumPerms);
+        if (groupDef.getForumPerms() != forumPerms) {
+            updates.put(FORUM_PERMS, groupDef.getForumPerms());
         }
-        if (groupDef.partyPerms != partyPerms) {
-            updates.put(PARTY_PERMS, groupDef.partyPerms);
+        if (groupDef.partyPerm != partyPerms) {
+            updates.put(PARTY_PERMS, groupDef.partyPerm);
         }
         if (groupDef.official != official) {
             updates.put(OFFICIAL, groupDef.official);
