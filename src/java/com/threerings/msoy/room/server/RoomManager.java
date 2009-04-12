@@ -1105,7 +1105,7 @@ public class RoomManager extends SpotSceneManager
             if (info != null && info.isStatic() != shouldBeStatic) {
                 final MsoyBodyObject abody = (MsoyBodyObject)_omgr.getObject(info.bodyOid);
                 if (abody != null) {
-                    updateOccupantInfo(bodyOid, new ActorInfo.Updater<ActorInfo>() {
+                    updateOccupantInfo(info.bodyOid, new ActorInfo.Updater<ActorInfo>() {
                         public boolean update (ActorInfo info) {
                             info.updateMedia(abody);
                             return true;
