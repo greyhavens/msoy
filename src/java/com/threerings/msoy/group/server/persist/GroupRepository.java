@@ -439,7 +439,7 @@ public class GroupRepository extends DepotRepository
         // potentially filter exclusive groups and resolve the group names
         List<GroupCard> groups = Lists.newArrayList();
         for (GroupRecord group : loadGroups(rmap.keySet())) {
-            if (group.policy != Group.POLICY_EXCLUSIVE || includeExclusive) {
+            if (group.policy != Group.Policy.EXCLUSIVE || includeExclusive) {
                 groups.add(group.toGroupCard());
             }
         }
@@ -578,7 +578,7 @@ public class GroupRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
         
         List<SQLExpression> conditions = Lists.<SQLExpression>newArrayList(
-            new Not(new Equals(GroupRecord.POLICY, Group.POLICY_EXCLUSIVE)));
+            new Not(new Equals(GroupRecord.POLICY, Group.Policy.EXCLUSIVE)));
 
         if (search != null) {
             List<SQLOperator> wordBits = Lists.newArrayList(search.fullTextMatch());

@@ -273,7 +273,7 @@ public class GroupServlet extends MsoyServiceServlet
             memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
                 public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
                     // if we're not the person in question, don't show exclusive groups
-                    if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
+                    if (memberId != requesterId && info.left.policy == Group.Policy.EXCLUSIVE) {
                         return false;
                     }
                     // if we're only including groups into which we can invite, enforce that

@@ -83,7 +83,7 @@ public class GroupEdit extends FlexTable
 
         // if this is a blank group, set up some defaults
         if (isCreate) {
-            _group.policy = Group.POLICY_PUBLIC;
+            _group.policy = Group.Policy.PUBLIC;
             _group.forumPerms = Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL);
             _group.partyPerms = Group.PERM_MEMBER;
         }
@@ -109,7 +109,7 @@ public class GroupEdit extends FlexTable
         _policy.addItem(_msgs.policyPublic());
         _policy.addItem(_msgs.policyInvite());
         _policy.addItem(_msgs.policyExclusive());
-        _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
+        _policy.setSelectedIndex(_group.policy.ordinal());
         addRow(_msgs.editPolicy(), _policy);
 
         _party = new ListBox();
@@ -184,7 +184,7 @@ public class GroupEdit extends FlexTable
         getFlexCellFormatter().setHorizontalAlignment(frow, 1, HasAlignment.ALIGN_RIGHT);
 
         // TODO integrate tags into the main form
-        if (!isCreate && (_group.policy != Group.POLICY_EXCLUSIVE)) {
+        if (!isCreate && (_group.policy != Group.Policy.EXCLUSIVE)) {
             TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback<TagHistory> cback) {
                     _groupsvc.tagGroup(_group.groupId, tag, true, cback);
@@ -239,7 +239,7 @@ public class GroupEdit extends FlexTable
         } // else keep name the same
         _group.logo = _logo.getMedia();
         _group.blurb = _blurb.getText().trim();
-        _group.policy = (byte)(_policy.getSelectedIndex()+Group.POLICY_PUBLIC);
+        _group.policy = Group.Policy.values()[_policy.getSelectedIndex()];
         _group.partyPerms = (byte)(_party.getSelectedIndex() + Group.PERM_MEMBER);
         _group.forumPerms = Group.makePerms(_thread.getSelectedIndex()+Group.PERM_ALL,
                                             _post.getSelectedIndex()+Group.PERM_ALL);

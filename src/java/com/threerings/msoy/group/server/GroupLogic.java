@@ -165,7 +165,7 @@ public class GroupLogic
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
             // make sure they're not making a tagged group exclusive
-            if ((group.policy == Group.POLICY_EXCLUSIVE) &&
+            if ((group.policy == Group.Policy.EXCLUSIVE) &&
                     !_groupRepo.getTagRepository().getTags(group.groupId).isEmpty()) {
                 throw new ServiceException(GroupCodes.E_GROUP_TAGS_ON_EXCLUSIVE);
             }

@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.samskivert.depot.ByteEnum;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -20,14 +21,41 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 public class Group
     implements Streamable, IsSerializable, Comparable<Group>
 {
-    /** A policy constant for groups that allow all comers. */
-    public static final byte POLICY_PUBLIC = 1;
+    /** Types of political policy a group can have. */
+    public enum Policy implements ByteEnum
+    {
+        /** Allows all comers. */
+        PUBLIC((byte)1),
 
-    /** A policy constant for groups that only allow membership by invitation. */
-    public static final byte POLICY_INVITE_ONLY = 2;
+        /** Allows membership by invitation only. */
+        INVITE_ONLY((byte)2),
 
-    /** A policy constant for groups that are not visible to non-members. */
-    public static final byte POLICY_EXCLUSIVE = 3;
+        /** The group is hidden from non-members. */
+        EXCLUSIVE((byte)3);
+
+        // from ByteEnum
+        public byte toByte () {
+            return _value;
+        }
+
+        /**
+         * Translates a persisted value back to an instance, for depot.
+         */
+        public static Policy fromByte (byte b) {
+            for (Policy p : values()) {
+                if (p._value == b) {
+                    return p;
+                }
+            }
+            throw new IllegalArgumentException("Policy not found for value " + b);
+        }
+
+        Policy (byte value) {
+            _value = value;
+        }
+
+        protected byte _value;
+    }
 
     /** Used for the {@link #forumPerms} setting. */
     public static final int PERM_ALL = 1;
@@ -74,8 +102,8 @@ public class Group
     /** The date on which this group was created. */
     public Date creationDate;
 
-    /** This group's political policy (e.g. {@link #POLICY_PUBLIC}). */
-    public byte policy;
+    /** This group's political policy. */
+    public Policy policy;
 
     /** This group's forum permissions (see {@link #makePerms}). */
     public byte forumPerms;
@@ -113,20 +141,20 @@ public class Group
     /**
      * Returns true if anyone can join a group of the specified policy without an invitation.
      */
-    public static boolean canJoin (byte policy)
+    public static boolean canJoin (Policy policy)
     {
-        return (policy == POLICY_PUBLIC);
+        return (policy == Policy.PUBLIC);
     }
 
     /**
      * Returns true if a person of the specified rank can invite someone to join a group with the
      * specified policy.
      */
-    public static boolean canInvite (byte policy, byte rank)
+    public static boolean canInvite (Policy policy, byte rank)
     {
         switch (rank) {
         case GroupMembership.RANK_MANAGER: return true;
-        case GroupMembership.RANK_MEMBER: return (policy == POLICY_PUBLIC);
+        case GroupMembership.RANK_MEMBER: return (policy == Policy.PUBLIC);
         default: return false;
         }
     }
@@ -188,7 +216,7 @@ public class Group
         switch (access) {
         case ACCESS_READ:
             // members can always read, non-members can read messages in non-exclusive groups
-            return (rank != GroupMembership.RANK_NON_MEMBER) ? true : (policy != POLICY_EXCLUSIVE);
+            return (rank != GroupMembership.RANK_NON_MEMBER) ? true : (policy != Policy.EXCLUSIVE);
 
         case ACCESS_THREAD:
             // the thread must be non-sticky/non-announce and they must have permissions

@@ -116,9 +116,9 @@ public class GroupRecord extends PersistentRecord
     /** The date and time this group was created. */
     public Date creationDate;
 
-    /** The group may be public, invite-only or exclusive as per {@link Group}. */
+    /** The group's political policy. */
     @Index(name="ixPolicy")
-    public byte policy;
+    public Group.Policy policy;
 
     /** This group's forum permissions, see {@link Group#forumPerms}. */
     public byte forumPerms;
