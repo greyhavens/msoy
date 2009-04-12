@@ -25,7 +25,6 @@ import com.threerings.crowd.chat.data.ChatChannel;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.FutureResult;
@@ -146,9 +145,7 @@ public class StatusServlet extends HttpServlet
             }
         }
 
-        for (ClientInfo cinfo : nodeobj.clients) {
-            info.clients++;
-        }
+        info.clients += nodeobj.clients.size();
 
         for (MemberLocation mloc : nodeobj.memberLocs) {
             if (mloc.sceneId != 0) {
