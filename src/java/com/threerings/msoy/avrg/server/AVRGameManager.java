@@ -739,6 +739,7 @@ public class AVRGameManager extends PlaceManager
         }
 
         _invmgr.clearDispatcher(_gameObj.avrgService);
+        _invmgr.clearDispatcher(_gameObj.prizeService);
         _invmgr.clearDispatcher(_gameObj.messageService);
         _invmgr.clearDispatcher(_gameObj.propertiesService);
 
