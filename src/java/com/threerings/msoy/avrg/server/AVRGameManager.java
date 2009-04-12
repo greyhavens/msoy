@@ -938,7 +938,7 @@ public class AVRGameManager extends PlaceManager
                     throw new InvocationException(InvocationCodes.ACCESS_DENIED);
                 }
             }
-        })));
+        }));
         
         if (StringUtil.isBlank(def.server)) {
             agent.className = WhirledGameManager.DEFAULT_SERVER_CLASS;
