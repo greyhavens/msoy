@@ -169,7 +169,7 @@ public class ForumServlet extends MsoyServiceServlet
         // make sure they have read access to this group
         Group group = getGroup(groupId);
         byte groupRank = getGroupRank(mrec, groupId);
-        if (!group.checkAccess(groupRank, Group.ACCESS_READ, 0)) {
+        if (!group.checkAccess(groupRank, Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
@@ -183,7 +183,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // fill in this caller's new thread starting privileges
         result.canStartThread = (mrec != null) &&
-            group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
+            group.checkAccess(groupRank, Group.Access.THREAD, 0);
 
         // fill in our manager and announce status
         result.isManager = (mrec != null && mrec.isSupport()) ||
@@ -207,7 +207,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // make sure they have read access to this group
         Group group = getGroup(groupId);
-        if (!group.checkAccess(getGroupRank(mrec, groupId), Group.ACCESS_READ, 0)) {
+        if (!group.checkAccess(getGroupRank(mrec, groupId), Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
@@ -254,14 +254,14 @@ public class ForumServlet extends MsoyServiceServlet
         }
         Group group = getGroup(ftr.groupId);
         byte rank = getGroupRank(mrec, ftr.groupId);
-        if (!group.checkAccess(rank, Group.ACCESS_READ, 0)) {
+        if (!group.checkAccess(rank, Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
         MessageResult result = new MessageResult();
 
         // fill in this caller's posting privileges and manager status
-        result.canPostReply = (mrec != null) && group.checkAccess(rank, Group.ACCESS_POST, 0);
+        result.canPostReply = (mrec != null) && group.checkAccess(rank, Group.Access.POST, 0);
         result.isManager = (mrec != null && mrec.isSupport()) ||
             (rank == GroupMembership.RANK_MANAGER);
 
@@ -322,7 +322,7 @@ public class ForumServlet extends MsoyServiceServlet
         }
         Group group = getGroup(ftr.groupId);
         byte rank = getGroupRank(mrec, ftr.groupId);
-        if (!group.checkAccess(rank, Group.ACCESS_READ, 0)) {
+        if (!group.checkAccess(rank, Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
@@ -338,7 +338,7 @@ public class ForumServlet extends MsoyServiceServlet
         MemberRecord mrec = requireValidatedUser();
 
         // make sure they're allowed to create a thread in this group
-        Group group = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
+        Group group = checkAccess(mrec, groupId, Group.Access.THREAD, flags);
 
         // sanity check our spam argument (the client should prevent this)
         if (spam && (groupId != ServerConfig.getAnnounceGroupId() || !mrec.isSupport())) {
@@ -396,8 +396,8 @@ public class ForumServlet extends MsoyServiceServlet
         // make sure they have access to both the old and new flags
         Group group = getGroup(ftr.groupId);
         byte groupRank = getGroupRank(mrec, ftr.groupId);
-        if (!group.checkAccess(groupRank, Group.ACCESS_POST, ftr.flags) ||
-            !group.checkAccess(groupRank, Group.ACCESS_POST, flags)) {
+        if (!group.checkAccess(groupRank, Group.Access.POST, ftr.flags) ||
+            !group.checkAccess(groupRank, Group.Access.POST, flags)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
@@ -424,7 +424,7 @@ public class ForumServlet extends MsoyServiceServlet
         if (ftr == null) {
             throw new ServiceException(ForumCodes.E_INVALID_THREAD);
         }
-        checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
+        checkAccess(mrec, ftr.groupId, Group.Access.POST, ftr.flags);
         int previousPosterId = ftr.mostRecentPosterId;
 
         // sanitize this message's HTML, expand Whirled URLs and do length checking
@@ -566,7 +566,7 @@ public class ForumServlet extends MsoyServiceServlet
     /**
      * Checks that the supplied member has the specified access in the specified group.
      */
-    protected Group checkAccess (MemberRecord mrec, int groupId, int access, int flags)
+    protected Group checkAccess (MemberRecord mrec, int groupId, Group.Access access, int flags)
         throws ServiceException
     {
         Group group = getGroup(groupId);

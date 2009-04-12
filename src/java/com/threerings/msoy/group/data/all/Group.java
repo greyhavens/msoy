@@ -88,14 +88,18 @@ public class Group
         protected byte _value;
     }
 
-    /** Indicates read access for a group's forums. */
-    public static final int ACCESS_READ = 1;
+    /** Actions that may be permitted or denied on a group. */
+    public enum Access
+    {
+        /** Ability to read a group's forums. */
+        READ,
 
-    /** Indicates thread-related access for a group's forums. */
-    public static final int ACCESS_THREAD = 2;
+        /** Thread-related access for a group's forums. */
+        THREAD,
 
-    /** Indicates post-related access for a group's forums. */
-    public static final int ACCESS_POST = 3;
+        /** Post-related access for a group's forums. */
+        POST
+    }
 
     /** The maximum allowed length for a group's blurb. */
     public static final int MAX_BLURB_LENGTH = 200;
@@ -223,10 +227,10 @@ public class Group
     /**
      * Returns true if a member of the specified rank (or non-member) has the specified access.
      *
-     * @param flags only used when checking {@link #ACCESS_THREAD}, indicates the flags of the
+     * @param flags only used when checking {@link Access#THREAD}, indicates the flags of the
      * thread to be created/edited.
      */
-    public boolean checkAccess (byte rank, int access, int flags)
+    public boolean checkAccess (byte rank, Access access, int flags)
     {
         // managers can always dowhattheylike
         if (rank == GroupMembership.RANK_MANAGER) {
@@ -235,15 +239,15 @@ public class Group
 
         Perm havePerm = (rank == GroupMembership.RANK_MEMBER) ? Perm.MEMBER : Perm.ALL;
         switch (access) {
-        case ACCESS_READ:
+        case READ:
             // members can always read, non-members can read messages in non-exclusive groups
             return (rank != GroupMembership.RANK_NON_MEMBER) ? true : (policy != Policy.EXCLUSIVE);
 
-        case ACCESS_THREAD:
+        case THREAD:
             // the thread must be non-sticky/non-announce and they must have permissions
             return (flags == 0) && (threadPerm.ordinal() <= havePerm.ordinal());
 
-        case ACCESS_POST:
+        case POST:
             // non-managers cannot post to locked threads
             if ((flags & ForumThread.FLAG_LOCKED) != 0) {
                 return false;
