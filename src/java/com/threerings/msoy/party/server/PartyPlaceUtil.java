@@ -11,6 +11,9 @@ import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
+/**
+ * Server-side utilities for managing a PartyPlaceObject.
+ */
 public class PartyPlaceUtil
 {
     /**

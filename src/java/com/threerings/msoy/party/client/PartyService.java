@@ -6,6 +6,9 @@ package com.threerings.msoy.party.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+/**
+ * Provides services to people in a party.
+ */
 public interface PartyService extends InvocationService
 {
     /** Requests to boot a player from the party. */

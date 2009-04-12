@@ -10,6 +10,9 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MediaDesc;
 
+/**
+ * Contains general info about a party for the party board.
+ */
 public class PartyBoardInfo extends SimpleStreamableObject
     implements Comparable<PartyBoardInfo> // server only
 {

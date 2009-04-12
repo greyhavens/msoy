@@ -34,7 +34,6 @@ import com.threerings.msoy.peer.data.MemberParty;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-//import com.threerings.msoy.notify.data.PartyInviteNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.party.data.PartierObject;
@@ -46,7 +45,7 @@ import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.party.data.PartySummary;
 
 /**
- * Manages a particular party while it lives on a single node.
+ * Manages a particular party, living on a single node.
  */
 public class PartyManager
     implements /* SpeakHandler.SpeakerValidator, */ PartyProvider
@@ -177,15 +176,9 @@ public class PartyManager
         updatePartyInfo();
     }
 
-    public int getSceneId ()
-    {
-        return _partyObj.sceneId;
-    }
-
     public void inviteAllFriends (MemberObject inviter)
     {
         MemberNodeActions.inviteAllFriendsToParty(inviter, _partyObj.id, _partyObj.name);
-        //MemberNodeActions.notifyAllFriends(inviter, createInvite(inviter));
     }
 
     // from interface PartyProvider
@@ -367,14 +360,6 @@ public class PartyManager
 //    {
 //        return (speaker instanceof MemberObject) &&
 //            ((MemberObject) speaker).partyId == _partyObj.id;
-//    }
-
-//    /**
-//     * Create an invitation to this party.
-//     */
-//    protected Notification createInvite (MemberObject inviter)
-//    {
-//        return new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name);
 //    }
 
     /**

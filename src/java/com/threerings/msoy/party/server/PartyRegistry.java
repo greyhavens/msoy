@@ -77,6 +77,11 @@ import com.threerings.msoy.party.data.PartySummary;
 
 import static com.threerings.msoy.Log.log;
 
+/**
+ * The PartyRegistry manages all the PartyManagers on a single node. It handles PartyBoard
+ * requests coming from a user's world connection. Once a user is in a party, they talk
+ * to their PartyManager via their party connection.
+ */
 @Singleton
 public class PartyRegistry
     implements PartyBoardProvider, PeerPartyProvider
@@ -368,18 +373,23 @@ public class PartyRegistry
         if (placeMan != null) {
             PlaceObject placeObj = placeMan.getPlaceObject();
             if (placeObj instanceof PartyPlaceObject) {
-                // we need to add a new party BEFORE updating the occInfo
-                PartyPlaceUtil.addParty(userObj, (PartyPlaceObject)placeObj);
-                // update the occupant info
-                final int newPartyId = (party == null) ? 0 : party.id;
-                placeMan.updateOccupantInfo(userObj.getOid(),
-                    new OccupantInfo.Updater<OccupantInfo>() {
-                        public boolean update (OccupantInfo info) {
-                            return ((PartyOccupantInfo) info).updatePartyId(newPartyId);
-                        }
-                    });
-                // we need to remove an old party AFTER updating the occInfo
-                PartyPlaceUtil.removeParty(oldSummary, (PartyPlaceObject)placeObj);
+                placeObj.startTransaction();
+                try {
+                    // we need to add a new party BEFORE updating the occInfo
+                    PartyPlaceUtil.addParty(userObj, (PartyPlaceObject)placeObj);
+                    // update the occupant info
+                    final int newPartyId = (party == null) ? 0 : party.id;
+                    placeMan.updateOccupantInfo(userObj.getOid(),
+                        new OccupantInfo.Updater<OccupantInfo>() {
+                            public boolean update (OccupantInfo info) {
+                                return ((PartyOccupantInfo) info).updatePartyId(newPartyId);
+                            }
+                        });
+                    // we need to remove an old party AFTER updating the occInfo
+                    PartyPlaceUtil.removeParty(oldSummary, (PartyPlaceObject)placeObj);
+                } finally {
+                    placeObj.commitTransaction();
+                }
             }
         }
     }
