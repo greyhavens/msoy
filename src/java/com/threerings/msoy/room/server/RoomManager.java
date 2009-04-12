@@ -1095,23 +1095,19 @@ public class RoomManager extends SpotSceneManager
         // reassign this occupant's controlled entities
         reassignControllers(bodyOid);
 
-        // remove this body from our actor list
-        _actors.remove((Object)bodyOid); // force usage of the Object, we're not removing by index
-
-        // potentially unstone one or more actors
-        for (int ii = 0, ll = _actors.size(); ii < ll; ii++) {
-            boolean shouldBeStatic = (ii >= ACTOR_RENDERING_LIMIT);
-            ActorInfo info = (ActorInfo)_plobj.occupantInfo.get(_actors.get(ii));
-            if (info != null && info.isStatic() != shouldBeStatic) {
-                final MsoyBodyObject abody = (MsoyBodyObject)_omgr.getObject(info.bodyOid);
-                if (abody != null) {
-                    updateOccupantInfo(info.bodyOid, new ActorInfo.Updater<ActorInfo>() {
-                        public boolean update (ActorInfo info) {
-                            info.updateMedia(abody);
-                            return true;
-                        }
-                    });
-                }
+        // remove this body from our actor list, and possibly unstone someone
+        int actorIndex = _actors.indexOf(bodyOid);
+        if (-1 != actorIndex) {
+            _actors.remove(actorIndex);
+            // if they were unstoned and there are stoned people behind them, unstone the next
+            if ((actorIndex < ACTOR_RENDERING_LIMIT) && (_actors.size() >= ACTOR_RENDERING_LIMIT)) {
+                final int unstoneOid = _actors.get(ACTOR_RENDERING_LIMIT - 1);
+                updateOccupantInfo(unstoneOid, new ActorInfo.Updater<ActorInfo>() {
+                    public boolean update (ActorInfo info) {
+                        info.updateMedia((MsoyBodyObject)_omgr.getObject(unstoneOid));
+                        return true;
+                    }
+                });
             }
         }
 
