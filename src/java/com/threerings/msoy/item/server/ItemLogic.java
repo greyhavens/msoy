@@ -43,7 +43,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.peer.server.GameNodeAction;
@@ -297,7 +297,7 @@ public class ItemLogic
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
                 if (grec.groupId != Game.NO_GROUP) {
-                    if (_groupRepo.getRank(grec.groupId, memberId) < GroupMembership.RANK_MANAGER) {
+                    if (_groupRepo.getRank(grec.groupId, memberId).compare(Rank.MANAGER) < 0) {
                         throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
                     }
                 }

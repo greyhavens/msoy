@@ -15,7 +15,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 /**
  * Contains the details of a group.
@@ -40,8 +40,8 @@ public class GroupDetail
     /** The number of members in this group. */
     public int memberCount;
 
-    /** My rank in this group ({@link GroupMembership#RANK_NON_MEMBER} if we're not a member). */
-    public byte myRank;
+    /** My rank in this group ({@link Rank#NON_MEMBER} if we're not a member). */
+    public Rank myRank;
 
     /** When my rank was assigned (in millis since the epoch), or 0 if we're a non-member. */
     public long myRankAssigned;

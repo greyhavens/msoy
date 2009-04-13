@@ -4,6 +4,7 @@
 package com.threerings.msoy.group.gwt;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 /**
  * Detailed information on a single Group/Whirled for the "My Whirleds" page.
@@ -27,7 +28,7 @@ public class MyGroupCard
     public int numPosts;
 
     /** The member's rank in the group. */
-    public byte rank;
+    public Rank rank;
 
     /** Most recent thread for this Whirled on the My Discussions page */
     public ForumThread latestThread;

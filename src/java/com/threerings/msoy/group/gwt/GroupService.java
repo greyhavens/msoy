@@ -14,6 +14,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -33,7 +34,7 @@ public interface GroupService extends RemoteService
         public GroupName name;
 
         /** The requester's rank in this group (possibly non-member). */
-        public byte rank;
+        public Rank rank;
     }
 
     /** Information needed to fetch a list of groups for the main groups page. */
@@ -78,7 +79,7 @@ public interface GroupService extends RemoteService
         public List<MedalOwners> medals;
 
         /** The group rank of the person who made the service call. */
-        public byte rank;
+        public Rank rank;
     }
 
     /** A Single-object encapsulation of a Medal and the people who have earned it. */
@@ -182,7 +183,7 @@ public interface GroupService extends RemoteService
     /**
      * Update the rank of a group member.
      */
-    void updateMemberRank (int groupId, int memberId, byte newRank)
+    void updateMemberRank (int groupId, int memberId, Rank newRank)
         throws ServiceException;
 
     /**

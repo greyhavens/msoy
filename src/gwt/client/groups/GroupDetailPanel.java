@@ -20,7 +20,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
@@ -175,7 +175,7 @@ public class GroupDetailPanel extends FlowPanel
                 Pages.GAMES, Args.compose("d", "" + _detail.group.gameId))));
         }
 
-        if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
+        if (_detail.myRank == Rank.NON_MEMBER) {
             if (Group.canJoin(_group.policy)) {
                 Label join = MsoyUI.createLabel(_msgs.detailJoin(), null);
                 new ClickCallback<Void>(join, _msgs.detailJoinPrompt()) {
@@ -226,7 +226,7 @@ public class GroupDetailPanel extends FlowPanel
         }));
 
         // edit this group & manage rooms
-        if (_detail.myRank == GroupMembership.RANK_MANAGER || CShell.isSupport()) {
+        if (_detail.myRank == Rank.MANAGER || CShell.isSupport()) {
             FlowPanel managerActions = MsoyUI.createFlowPanel("ManagerActions");
             actions.add(managerActions);
 
@@ -319,7 +319,7 @@ public class GroupDetailPanel extends FlowPanel
                                              Pages.PEOPLE, ""+member.name.getMemberId());
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
-                if (member.rank == GroupMembership.RANK_MANAGER) {
+                if (member.rank == Rank.MANAGER) {
                     members.setHTML(ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""

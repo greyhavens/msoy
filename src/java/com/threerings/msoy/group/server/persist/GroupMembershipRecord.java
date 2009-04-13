@@ -20,6 +20,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 
@@ -54,8 +55,8 @@ public class GroupMembershipRecord extends PersistentRecord
     @Id @Index(name="ixGroup")
     public int groupId;
 
-    /** The rank of the member in the group, defined in {@link GroupMembership}. */
-    public byte rank;
+    /** The rank of the member in the group. */
+    public Rank rank;
 
     /** The date that this rank was assigned on.  Used to decide rank seniority. */
     public Timestamp rankAssigned;

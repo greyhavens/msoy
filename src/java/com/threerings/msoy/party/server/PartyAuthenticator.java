@@ -17,6 +17,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxAuthenticator;
 import com.threerings.msoy.web.gwt.ServiceException;
 
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.party.data.PartyAuthName;
@@ -59,7 +60,7 @@ public class PartyAuthenticator extends AuxAuthenticator<PartyCredentials>
         }
 
         // load up our rank in the group in question
-        final byte groupRank = _groupRepo.getRank(groupId, name.getMemberId());
+        final Rank groupRank = _groupRepo.getRank(groupId, name.getMemberId());
 
         // now we can pre-join the party (to reserve our spot and make sure we're allowed in)
         eventCall(new Callable<Void>() {

@@ -69,6 +69,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -163,7 +164,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         // determine our rank info if we're a member
         if (mrec != null) {
-            Tuple<Byte, Long> minfo = _groupRepo.getMembership(grec.groupId, mrec.memberId);
+            Tuple<Rank, Long> minfo = _groupRepo.getMembership(grec.groupId, mrec.memberId);
             detail.myRank = minfo.left;
             detail.myRankAssigned = minfo.right;
         }
@@ -186,13 +187,13 @@ public class GroupServlet extends MsoyServiceServlet
 
         // first managers
         detail.topMembers = resolveGroupMemberCards(
-            groupId, _groupRepo.getMemberIdsWithRank(groupId, GroupMembership.RANK_MANAGER), 0,
+            groupId, _groupRepo.getMemberIdsWithRank(groupId, Rank.MANAGER), 0,
             GroupDetail.NUM_TOP_MEMBERS);
 
         // then everyone else (if we are below the needed number)
         if (detail.topMembers.size() < GroupDetail.NUM_TOP_MEMBERS) {
             detail.topMembers.addAll(resolveGroupMemberCards(
-                groupId, _groupRepo.getMemberIdsWithRank(groupId, GroupMembership.RANK_MEMBER), 0,
+                groupId, _groupRepo.getMemberIdsWithRank(groupId, Rank.MEMBER), 0,
                 GroupDetail.NUM_TOP_MEMBERS - detail.topMembers.size()));
         }
 
@@ -220,7 +221,7 @@ public class GroupServlet extends MsoyServiceServlet
         _roomLogic.checkCanGiftRoom(mrec, sceneId);
 
         // ensure the caller is a manager of this group
-        if (_groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+        if (_groupRepo.getRank(groupId, mrec.memberId) != Rank.MANAGER) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         GroupRecord grec = _groupRepo.loadGroup(groupId);
@@ -314,8 +315,8 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        Tuple<Byte, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
-        if (tgtinfo.left == GroupMembership.RANK_NON_MEMBER) {
+        Tuple<Rank, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
+        if (tgtinfo.left == Rank.NON_MEMBER) {
             log.info("Requested to remove non-member from group", "who", mrec.who(), "gid", groupId,
                 "mid", memberId);
             return; // no harm no foul
@@ -323,7 +324,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         // if we're not removing ourselves, make sure we're support or outrank the target
         if (mrec.memberId != memberId) {
-            Tuple<Byte, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
+            Tuple<Rank, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
             if (!mrec.isSupport() && !mayChangeOtherMember(gminfo, tgtinfo)) {
                 log.warning("Rejecting remove from group request", "who", mrec.who(),
                             "gid", groupId, "mid", memberId, "reqinfo", gminfo, "tgtinfo", tgtinfo);
@@ -332,7 +333,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         // TODO: if this was the group's last manager, auto-promote e.g. the oldest member?
-        
+
         // if we made it this far, go ahead and remove the member from the group
         _groupRepo.leaveGroup(groupId, memberId);
 
@@ -369,12 +370,12 @@ public class GroupServlet extends MsoyServiceServlet
         // them the UI for joining; this will eventually be a problem
 
         // create a record indicating that we've joined this group
-        _groupRepo.joinGroup(groupId, mrec.memberId, GroupMembership.RANK_MEMBER);
+        _groupRepo.joinGroup(groupId, mrec.memberId, Rank.MEMBER);
 
         // update this member's distributed object if they're online anywhere
         GroupMembership gm = new GroupMembership();
         gm.group = grec.toGroupName();
-        gm.rank = GroupMembership.RANK_MEMBER;
+        gm.rank = Rank.MEMBER;
         MemberNodeActions.joinedGroup(mrec.memberId, gm);
 
         // also let the chat channel manager know that this group has a new member
@@ -383,13 +384,13 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateMemberRank (int groupId, int memberId, byte newRank)
+    public void updateMemberRank (int groupId, int memberId, Rank newRank)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
 
-        Tuple<Byte, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
-        Tuple<Byte, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
+        Tuple<Rank, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
+        Tuple<Rank, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
 
         if (!mrec.isSupport() && !mayChangeOtherMember(gminfo, tgtinfo)) {
             log.warning("in updateMemberRank, invalid permissions");
@@ -412,8 +413,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport() &&
-            _groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+        if (!canManage(mrec, groupId)) {
             log.warning("in tagGroup, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -555,7 +555,7 @@ public class GroupServlet extends MsoyServiceServlet
             memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
                 public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
                     // only groups the member manages
-                    if (info.right.rank < GroupMembership.RANK_MANAGER) {
+                    if (info.right.rank.compare(Rank.MANAGER) < 0) {
                         return false;
                     }
                     // exclude groups connected to other games
@@ -586,8 +586,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        if (!mrec.isSupport() &&
-            _groupRepo.getRank(medal.groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+        if (!canManage(mrec, medal.groupId)) {
             log.warning("Non-manager attempted to update a group medal", "memberId", mrec.memberId,
                 "groupId", medal.groupId);
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
@@ -616,7 +615,7 @@ public class GroupServlet extends MsoyServiceServlet
         GroupService.MedalsResult result = new GroupService.MedalsResult();
         result.groupName = _groupRepo.loadGroupName(groupId);
         result.medals = Lists.newArrayList();
-        result.rank = mrec == null ? GroupMembership.RANK_NON_MEMBER :
+        result.rank = mrec == null ? Rank.NON_MEMBER :
             _groupRepo.getMembership(groupId, mrec.memberId).left;
 
         // we could do a Join to accomplish a similar result, but we need to make sure we return
@@ -667,8 +666,8 @@ public class GroupServlet extends MsoyServiceServlet
 
         // Group member searching is currently only used for finding people to award medals to,
         // which is a manager-only ability.
-        Byte rank = _groupRepo.getMembership(groupId, mrec.memberId).left;
-        if (!mrec.isSupport() && rank != GroupMembership.RANK_MANAGER) {
+        Rank rank = _groupRepo.getMembership(groupId, mrec.memberId).left;
+        if (!mrec.isSupport() && rank != Rank.MANAGER) {
             log.warning("Non-manager attempted to search through group members", "memberId",
                 mrec.memberId, "groupId", groupId);
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
@@ -712,8 +711,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         // make sure the person calling this method has the correct permission.
-        if (!mrec.isSupport() &&
-            _groupRepo.getRank(medalRec.groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+        if (!canManage(mrec, medalRec.groupId)) {
             log.warning("Non-manager attempted to award a group medal", "memberId", mrec.memberId,
                 "groupId", medalRec.groupId);
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
@@ -722,7 +720,7 @@ public class GroupServlet extends MsoyServiceServlet
         // Make sure the group is either official or contains this member.
         GroupRecord groupRec = _groupRepo.loadGroup(medalRec.groupId);
         if (!groupRec.official &&
-            _groupRepo.getRank(medalRec.groupId, memberId) == GroupMembership.RANK_NON_MEMBER) {
+            _groupRepo.getRank(medalRec.groupId, memberId) == Rank.NON_MEMBER) {
             log.warning("Attempted to grant a medal to a group non-member", "recipientId", memberId,
                 "granterId", mrec.memberId, "medalId", medalId);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -810,11 +808,16 @@ public class GroupServlet extends MsoyServiceServlet
      * Checks if the membership info of an actor is sufficient to perform rank changes or remove
      * another member.
      */
-    protected boolean mayChangeOtherMember (Tuple<Byte, Long> actor, Tuple<Byte, Long> target)
+    protected boolean mayChangeOtherMember (Tuple<Rank, Long> actor, Tuple<Rank, Long> target)
     {
         // managers can change non managers and other managers who were promoted later
-        byte mgr = GroupMembership.RANK_MANAGER;
+        Rank mgr = Rank.MANAGER;
         return actor.left == mgr && (target.left != mgr || actor.right < target.right);
+    }
+
+    protected boolean canManage (MemberRecord mrec, int groupId)
+    {
+        return mrec.isSupport() || _groupRepo.getRank(groupId, mrec.memberId) == Rank.MANAGER;        
     }
 
     // our dependencies
@@ -871,27 +874,13 @@ public class GroupServlet extends MsoyServiceServlet
     /** Compartor for sorting by manager status then population then by last post date. */
     protected static Comparator<MyGroupCard> SORT_BY_MANAGER = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
-            if (c1.rank == GroupMembership.RANK_MANAGER && c2.rank < GroupMembership.RANK_MANAGER) {
-                return -1;
-            } else if (c2.rank == GroupMembership.RANK_MANAGER &&
-                       c1.rank < GroupMembership.RANK_MANAGER) {
-                return 1;
+            int cmp = c2.rank.compare(c1.rank); // highest first
+            if (cmp != 0) {
+                return cmp;
             }
 
-            // from here down is the same as SORT_BY_PEOPLE_ONLINE
-            int rv = c2.population - c1.population;
-            if (rv != 0) {
-                return rv;
-            }
-            if (c1.latestThread != null && c2.latestThread == null) {
-                return -1;
-            } else if (c1.latestThread == null && c2.latestThread != null) {
-                return 1;
-            } else if (c1.latestThread != null && c2.latestThread != null) {
-                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
-            }
-            // if neither has a single post or active user, sort by name
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+            // fall back to other sort
+            return SORT_BY_PEOPLE_ONLINE.compare(c1, c2);
         }
     };
 

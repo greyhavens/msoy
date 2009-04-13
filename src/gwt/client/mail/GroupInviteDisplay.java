@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
@@ -63,7 +63,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
         protected void buildUI ()
         {
             clear();
-            if (_enabled && _info.rank != GroupMembership.RANK_NON_MEMBER) {
+            if (_enabled && _info.rank != Rank.NON_MEMBER) {
                 add(MsoyUI.createLabel(_msgs.groupAlreadyMember(""+_info.name), null));
                 return;
             }

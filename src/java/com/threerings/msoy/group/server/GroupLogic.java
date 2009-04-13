@@ -36,6 +36,7 @@ import com.threerings.msoy.money.server.MoneyServiceException;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupExtras;
@@ -113,8 +114,7 @@ public class GroupLogic
                 try {
                     // create the group and then add the creator to it
                     _groupRepo.createGroup(grec);
-                    _groupRepo.joinGroup(
-                        grec.groupId, grec.creatorId, GroupMembership.RANK_MANAGER);
+                    _groupRepo.joinGroup(grec.groupId, grec.creatorId, Rank.MANAGER);
                 } catch (DuplicateKeyException dke) {
                     // inform the user that the name is already in use
                     throw new MoneyServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
@@ -124,7 +124,7 @@ public class GroupLogic
                 try {
                     GroupMembership gm = new GroupMembership();
                     gm.group = grec.toGroupName();
-                    gm.rank = GroupMembership.RANK_MANAGER;
+                    gm.rank = Rank.MANAGER;
                     MemberNodeActions.joinedGroup(grec.creatorId, gm);
                 } catch (Exception e) {
                     log.warning("Error notifying of new group", "memberId", mrec.memberId, e);
@@ -155,7 +155,7 @@ public class GroupLogic
 
         try {
             if (!mrec.isSupport() &&
-                _groupRepo.getRank(group.groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+                _groupRepo.getRank(group.groupId, mrec.memberId) != Rank.MANAGER) {
                 log.warning("in updateGroup, invalid permissions");
                 throw new ServiceException("m.invalid_permissions");
             }

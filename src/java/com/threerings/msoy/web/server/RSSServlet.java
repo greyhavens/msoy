@@ -64,7 +64,7 @@ public class RSSServlet extends HttpServlet
             }
 
             // Make sure the group discussion is readable by non-members
-            if (!group.checkAccess(GroupMembership.RANK_NON_MEMBER, Group.Access.READ, 0)) {
+            if (!group.checkAccess(GroupMembership.Rank.NON_MEMBER, Group.Access.READ, 0)) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }

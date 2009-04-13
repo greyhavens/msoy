@@ -25,6 +25,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership_Rank;
 
 import com.threerings.msoy.item.data.all.Avatar;
 
@@ -313,7 +314,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function isGroupMember (groupId :int) :Boolean
     {
-        return isGroupRank(groupId, GroupMembership.RANK_MEMBER);
+        return isGroupRank(groupId, GroupMembership_Rank.MEMBER);
     }
 
     /**
@@ -321,22 +322,22 @@ public class MemberObject extends MsoyBodyObject
      */
     public function isGroupManager (groupId :int) :Boolean
     {
-        return isGroupRank(groupId, GroupMembership.RANK_MANAGER);
+        return isGroupRank(groupId, GroupMembership_Rank.MANAGER);
     }
 
     /**
      * @return true if the user has at least the specified rank in the
      * specified group.
      */
-    public function isGroupRank (groupId :int, requiredRank :int) :Boolean
+    public function isGroupRank (groupId :int, requiredRank :GroupMembership_Rank) :Boolean
     {
-        return getGroupRank(groupId) >= requiredRank;
+        return getGroupRank(groupId).compare(requiredRank) >= 0;
     }
 
     /**
      * Get the user's rank in the specified group.
      */
-    public function getGroupRank (groupId :int) :int
+    public function getGroupRank (groupId :int) :GroupMembership_Rank
     {
         if (groups != null) {
             var membInfo :GroupMembership = (groups.get(groupId) as GroupMembership);
@@ -344,7 +345,7 @@ public class MemberObject extends MsoyBodyObject
                 return membInfo.rank;
             }
         }
-        return GroupMembership.RANK_NON_MEMBER;
+        return GroupMembership_Rank.NON_MEMBER;
     }
 
     override public function readObject (ins :ObjectInputStream) :void

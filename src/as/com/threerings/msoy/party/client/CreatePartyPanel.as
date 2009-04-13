@@ -75,7 +75,7 @@ public class CreatePartyPanel extends FloatingPanel
         _group.dataProvider = us.groups.toArray().sort(
             function (one :GroupMembership, two :GroupMembership) :int {
                 // sort groups by your rank, then by name
-                var cmp :int = Integer.compare(two.rank, one.rank); // higher rank sorts first
+                var cmp :int = two.rank.compare(one.rank); // higher rank sorts first
                 if (cmp == 0) {
                     cmp = MemberName.BY_DISPLAY_NAME(one.group, two.group);
                 }
@@ -124,7 +124,7 @@ public class CreatePartyPanel extends FloatingPanel
 
 import mx.controls.Label;
 
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership_Rank;
 
 /**
  * Bolds groups in which we're a manager.
@@ -134,6 +134,6 @@ class GroupLabel extends Label
     override public function set data (value :Object) :void
     {
         super.data = value;
-        setStyle("fontWeight", (value.rank == GroupMembership.RANK_MANAGER) ? "bold" : "normal");
+        setStyle("fontWeight", (value.rank == GroupMembership_Rank.MANAGER) ? "bold" : "normal");
     }
 }

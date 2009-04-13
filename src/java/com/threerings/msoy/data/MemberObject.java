@@ -14,6 +14,7 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -263,7 +264,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public boolean isGroupMember (int groupId)
     {
-        return isGroupRank(groupId, GroupMembership.RANK_MEMBER);
+        return isGroupRank(groupId, Rank.MEMBER);
     }
 
     /**
@@ -271,21 +272,21 @@ public class MemberObject extends MsoyBodyObject
      */
     public boolean isGroupManager (int groupId)
     {
-        return isGroupRank(groupId, GroupMembership.RANK_MANAGER);
+        return isGroupRank(groupId, Rank.MANAGER);
     }
 
     /**
      * @return true if the user has at least the specified rank in the specified group.
      */
-    public boolean isGroupRank (int groupId, byte requiredRank)
+    public boolean isGroupRank (int groupId, Rank requiredRank)
     {
-        return getGroupRank(groupId) >= requiredRank;
+        return getGroupRank(groupId).compare(requiredRank) >= 0;
     }
 
     /**
      * Get the user's rank in the specified group.
      */
-    public byte getGroupRank (int groupId)
+    public Rank getGroupRank (int groupId)
     {
         if (groups != null) {
             GroupMembership membInfo = groups.get(groupId);
@@ -293,7 +294,7 @@ public class MemberObject extends MsoyBodyObject
                 return membInfo.rank;
             }
         }
-        return GroupMembership.RANK_NON_MEMBER;
+        return Rank.NON_MEMBER;
     }
 
     /**

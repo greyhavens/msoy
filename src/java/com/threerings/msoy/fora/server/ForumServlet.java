@@ -50,7 +50,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -168,7 +168,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // make sure they have read access to this group
         Group group = getGroup(groupId);
-        byte groupRank = getGroupRank(mrec, groupId);
+        Rank groupRank = getGroupRank(mrec, groupId);
         if (!group.checkAccess(groupRank, Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
@@ -186,8 +186,7 @@ public class ForumServlet extends MsoyServiceServlet
             group.checkAccess(groupRank, Group.Access.THREAD, 0);
 
         // fill in our manager and announce status
-        result.isManager = (mrec != null && mrec.isSupport()) ||
-            (groupRank == GroupMembership.RANK_MANAGER);
+        result.isManager = (mrec != null && mrec.isSupport()) || (groupRank == Rank.MANAGER);
         result.isAnnounce = (groupId == ServerConfig.getAnnounceGroupId());
 
         // fill in our total thread count if needed
@@ -253,7 +252,7 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_INVALID_THREAD);
         }
         Group group = getGroup(ftr.groupId);
-        byte rank = getGroupRank(mrec, ftr.groupId);
+        Rank rank = getGroupRank(mrec, ftr.groupId);
         if (!group.checkAccess(rank, Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
@@ -262,8 +261,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // fill in this caller's posting privileges and manager status
         result.canPostReply = (mrec != null) && group.checkAccess(rank, Group.Access.POST, 0);
-        result.isManager = (mrec != null && mrec.isSupport()) ||
-            (rank == GroupMembership.RANK_MANAGER);
+        result.isManager = (mrec != null && mrec.isSupport()) || (rank == Rank.MANAGER);
 
         // load up the messages, convert to runtime records, compute highest post id
         List<ForumMessage> messages = resolveMessages(
@@ -321,7 +319,7 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_INVALID_THREAD);
         }
         Group group = getGroup(ftr.groupId);
-        byte rank = getGroupRank(mrec, ftr.groupId);
+        Rank rank = getGroupRank(mrec, ftr.groupId);
         if (!group.checkAccess(rank, Group.Access.READ, 0)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
@@ -395,7 +393,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // make sure they have access to both the old and new flags
         Group group = getGroup(ftr.groupId);
-        byte groupRank = getGroupRank(mrec, ftr.groupId);
+        Rank groupRank = getGroupRank(mrec, ftr.groupId);
         if (!group.checkAccess(groupRank, Group.Access.POST, ftr.flags) ||
             !group.checkAccess(groupRank, Group.Access.POST, flags)) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
@@ -492,7 +490,7 @@ public class ForumServlet extends MsoyServiceServlet
             if (ftr == null) {
                 throw new ServiceException(ForumCodes.E_INVALID_THREAD);
             }
-            if (getGroupRank(mrec, ftr.groupId) != GroupMembership.RANK_MANAGER) {
+            if (getGroupRank(mrec, ftr.groupId) != Rank.MANAGER) {
                 throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
             }
         }
@@ -580,12 +578,12 @@ public class ForumServlet extends MsoyServiceServlet
      * Determines the rank of the supplied member in the specified group. If the member is null or
      * not a member of the specified group, rank-non-member will be returned.
      */
-    protected byte getGroupRank (MemberRecord mrec, int groupId)
+    protected Rank getGroupRank (MemberRecord mrec, int groupId)
     {
-        byte rank = GroupMembership.RANK_NON_MEMBER;
+        Rank rank = Rank.NON_MEMBER;
         if (mrec != null) {
             if (mrec.isSupport()) { // support+ is always treated as managers
-                return GroupMembership.RANK_MANAGER;
+                return Rank.MANAGER;
             }
             rank = _groupRepo.getRank(groupId, mrec.memberId);
         }

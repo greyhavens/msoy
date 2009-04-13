@@ -17,30 +17,11 @@ import com.threerings.msoy.data.all.GroupName;
 public class GroupMembership
     implements Streamable, DSet_Entry
 {
-    /** Unused rank code. This is not ever stored in a GroupMembership record, but is useful for
-     * methods that return a user's rank as a byte. */
-    public static const RANK_NON_MEMBER :int = 0;
-
-    /** Rank code for a member. */
-    public static const RANK_MEMBER :int = 1;
-
-    /** Rank code for a manager. */
-    public static const RANK_MANAGER :int = 2;
-
     /** The group's identity. */
     public var group :GroupName;
 
     /** The member's rank in the group. */
-    public var rank :int;
-
-    /**
-     * Returns true if the supplied rank is a valid rank (not {@link #RANK_NON_MEMBER} or an
-     * otherwise invalid number.
-     */
-    public static function isValidRank (rank :int) :Boolean
-    {
-        return rank >= RANK_MEMBER && rank <= RANK_MANAGER;
-    }
+    public var rank :GroupMembership_Rank;
 
     /**
      * A sort function that may be used for GroupMemberships.
@@ -64,14 +45,14 @@ public class GroupMembership
     public function readObject (ins :ObjectInputStream) :void
     {
         group = GroupName(ins.readObject());
-        rank = ins.readByte();
+        rank = GroupMembership_Rank(ins.readObject());
     }
 
     // from Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeObject(group);
-        out.writeByte(rank);
+        out.writeObject(rank);
     }
 }
 }

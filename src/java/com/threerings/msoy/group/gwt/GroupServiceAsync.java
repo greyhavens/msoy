@@ -12,6 +12,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -96,7 +97,7 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#updateMemberRank}
      */
-    void updateMemberRank (int groupId, int memberId, byte newRank, AsyncCallback<Void> callback);
+    void updateMemberRank (int groupId, int memberId, Rank newRank, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GroupService#tagGroup}

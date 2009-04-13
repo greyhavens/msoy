@@ -16,7 +16,7 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -92,11 +92,11 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
 
     public boolean amSenior (GroupMemberCard member)
     {
-        return (_detail.myRank > member.rank) ||
-            (_detail.myRank == member.rank && _detail.myRankAssigned < member.rankAssigned);
+        int cmp = _detail.myRank.compare(member.rank);
+        return cmp > 0 || (cmp == 0 && _detail.myRankAssigned < member.rankAssigned);
     }
 
-    protected Command updateMemberRank (final GroupMemberCard card, final byte rank)
+    protected Command updateMemberRank (final GroupMemberCard card, final Rank rank)
     {
         return new Command() {
             public void execute () {
@@ -138,25 +138,23 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
             setWidget(0, 0, new ThumbBox(card.photo, Pages.PEOPLE, ""+mid), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
             setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");
-            String rankStr = card.rank == GroupMembership.RANK_MANAGER ? "Manager" : "";
+            String rankStr = card.rank == Rank.MANAGER ? "Manager" : "";
             setText(1, 0, rankStr, 1, "tipLabel");
             setWidget(2, 0, new MemberStatusLabel(card), 2, null);
 
-            // if we're not a manager above this member in rank, or we're not support+ don't add
-            // the edit controls
-            if (!CShell.isSupport() &&
-                (_detail.myRank != GroupMembership.RANK_MANAGER || !amSenior(card))) {
+            // if we aren't authorized for membership control on this member, skip these widgets
+            if (!(CShell.isSupport() || (_detail.myRank == Rank.MANAGER && amSenior(card)))) {
                 return;
             }
 
-            if (card.rank == GroupMembership.RANK_MEMBER) {
+            if (card.rank == Rank.MEMBER) {
                 setAction(0, 2, _msgs.detailPromote(),
                           _msgs.detailPromotePrompt(""+card.name),
-                          updateMemberRank(card, GroupMembership.RANK_MANAGER));
+                          updateMemberRank(card, Rank.MANAGER));
             } else {
                 setAction(0, 2, _msgs.detailDemote(),
                           _msgs.detailDemotePrompt(""+card.name),
-                          updateMemberRank(card, GroupMembership.RANK_MEMBER));
+                          updateMemberRank(card, Rank.MEMBER));
             }
 
             setAction(1, 1, _msgs.detailRemove(), _msgs.detailRemovePrompt(

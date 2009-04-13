@@ -26,6 +26,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedGame;
@@ -136,7 +137,7 @@ public class PartyManager
      *
      * @throws InvocationException if the player is not allowed into the party for some reason.
      */
-    public void addPlayer (MemberName name, byte groupRank)
+    public void addPlayer (MemberName name, Rank groupRank)
         throws InvocationException
     {
         // TODO: now that we don't modify the _partyObj here, we could simplify the PartyRegistry

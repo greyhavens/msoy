@@ -14,6 +14,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 /**
  * Contains the basic data of a group.
@@ -179,11 +180,11 @@ public class Group
      * Returns true if a person of the specified rank can invite someone to join a group with the
      * specified policy.
      */
-    public static boolean canInvite (Policy policy, byte rank)
+    public static boolean canInvite (Policy policy, Rank rank)
     {
         switch (rank) {
-        case GroupMembership.RANK_MANAGER: return true;
-        case GroupMembership.RANK_MEMBER: return (policy == Policy.PUBLIC);
+        case MANAGER: return true;
+        case MEMBER: return (policy == Policy.PUBLIC);
         default: return false;
         }
     }
@@ -230,18 +231,18 @@ public class Group
      * @param flags only used when checking {@link Access#THREAD}, indicates the flags of the
      * thread to be created/edited.
      */
-    public boolean checkAccess (byte rank, Access access, int flags)
+    public boolean checkAccess (Rank rank, Access access, int flags)
     {
         // managers can always dowhattheylike
-        if (rank == GroupMembership.RANK_MANAGER) {
+        if (rank == Rank.MANAGER) {
             return true;
         }
 
-        Perm havePerm = (rank == GroupMembership.RANK_MEMBER) ? Perm.MEMBER : Perm.ALL;
+        Perm havePerm = (rank == Rank.MEMBER) ? Perm.MEMBER : Perm.ALL;
         switch (access) {
         case READ:
             // members can always read, non-members can read messages in non-exclusive groups
-            return (rank != GroupMembership.RANK_NON_MEMBER) ? true : (policy != Policy.EXCLUSIVE);
+            return (rank != Rank.NON_MEMBER) ? true : (policy != Policy.EXCLUSIVE);
 
         case THREAD:
             // the thread must be non-sticky/non-announce and they must have permissions

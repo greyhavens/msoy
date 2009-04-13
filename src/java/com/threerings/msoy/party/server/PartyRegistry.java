@@ -49,6 +49,7 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
@@ -186,7 +187,7 @@ public class PartyRegistry
      *
      * @throws InvocationException if the party cannot be joined for some reason.
      */
-    public void preJoinParty (MemberName name, int partyId, byte rank)
+    public void preJoinParty (MemberName name, int partyId, Rank rank)
         throws InvocationException
     {
         PartyManager mgr = _parties.get(partyId);
@@ -328,7 +329,7 @@ public class PartyRegistry
         try {
             // validate that they can create the party with this group
             if ((group.partyPerms == Group.Perm.MANAGER) &&
-                    (groupInfo.rank < GroupMembership.RANK_MANAGER)) {
+                    (groupInfo.rank.compare(Rank.MANAGER) < 0)) {
                 jl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
                 return;
             }

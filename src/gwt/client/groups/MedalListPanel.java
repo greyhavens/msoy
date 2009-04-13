@@ -24,7 +24,7 @@ import com.threerings.gwt.ui.PagedWidget;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -72,7 +72,7 @@ public class MedalListPanel extends FlowPanel
         title.setStyleName("MedalTitle");
         title.add(MsoyUI.createActionLabel(_groupName.toString(), "GroupName", Link.createListener(
             Pages.GROUPS, GroupsPage.Nav.DETAIL.composeArgs(_groupName.getGroupId()))));
-        if (CShell.isSupport() || _rank == GroupMembership.RANK_MANAGER) {
+        if (CShell.isSupport() || _rank == Rank.MANAGER) {
             title.add(MsoyUI.createActionLabel(
                 _msgs.medalListAddMedal(), "AddMedal", Link.createListener(
                     Pages.GROUPS, GroupsPage.Nav.CREATEMEDAL.composeArgs(_groupId))));
@@ -166,7 +166,7 @@ public class MedalListPanel extends FlowPanel
             add(icon);
             add(MsoyUI.createLabel(medal.name, "Name"));
             add(MsoyUI.createLabel(medal.description, "Description"));
-            if (CShell.isSupport() || _rank == GroupMembership.RANK_MANAGER) {
+            if (CShell.isSupport() || _rank == Rank.MANAGER) {
                 add(MsoyUI.createActionLabel(_msgs.medalListEdit(), "Edit", Link.createListener(
                     Pages.GROUPS, GroupsPage.Nav.EDITMEDAL.composeArgs(medal.medalId))));
             }
@@ -175,7 +175,7 @@ public class MedalListPanel extends FlowPanel
 
     protected int _groupId;
     protected GroupName _groupName;
-    protected byte _rank;
+    protected Rank _rank;
 
     protected static final int MEDALS_COLS = 1;
     protected static final int MEDALS_ROWS = 6;

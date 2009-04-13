@@ -21,7 +21,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.group.gwt.MyGroupCard;
@@ -147,7 +147,7 @@ public class MyGroups extends AbsolutePanel
                 nameText.addStyleName("inline");
                 name.add(nameText);
                 // display a star beside name if player is a manager of this group
-                if (card.rank == GroupMembership.RANK_MANAGER) {
+                if (card.rank == Rank.MANAGER) {
                     Image managerStar = MsoyUI.createInlineImage("/images/group/manager_star.png");
                     managerStar.setTitle(_msgs.myManagerStarTitle());
                     managerStar.addStyleName("ManagerStar");

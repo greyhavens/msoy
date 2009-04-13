@@ -72,6 +72,7 @@ import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
 
@@ -338,7 +339,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Makes a given person a member of a given group.
      */
-    public void joinGroup (int groupId, int memberId, byte rank)
+    public void joinGroup (int groupId, int memberId, Rank rank)
     {
         GroupMembershipRecord record = new GroupMembershipRecord();
         record.groupId = groupId;
@@ -354,7 +355,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Sets the rank of a member of a group.
      */
-    public void setRank (int groupId, int memberId, byte newRank)
+    public void setRank (int groupId, int memberId, Rank newRank)
     {
         int rows = updatePartial(
             GroupMembershipRecord.getKey(memberId, groupId),
@@ -365,7 +366,7 @@ public class GroupRepository extends DepotRepository
                 "Couldn't find group membership to modify [groupId=" + groupId +
                 "memberId=" + memberId + "]");
         } else {
-            _eventLog.groupRankChange(memberId, groupId, newRank);
+            _eventLog.groupRankChange(memberId, groupId, newRank.toByte());
         }
     }
 
@@ -373,10 +374,10 @@ public class GroupRepository extends DepotRepository
      * Returns the rank of the specified member in the specified group or {@link
      * GroupMembership#RANK_NON_MEMBER} if they are a non-member.
      */
-    public byte getRank (int groupId, int memberId)
+    public Rank getRank (int groupId, int memberId)
     {
         GroupMembershipRecord gmr = loadMembership(groupId, memberId);
-        return (gmr == null) ? GroupMembership.RANK_NON_MEMBER : gmr.rank;
+        return (gmr == null) ? Rank.NON_MEMBER : gmr.rank;
     }
 
     /**
@@ -384,10 +385,10 @@ public class GroupRepository extends DepotRepository
      * of the specified group, a tuple will be provided with non-member as their rank and the start
      * of the epoch for their rank assigned time.
      */
-    public Tuple<Byte, Long> getMembership (int groupId, int memberId)
+    public Tuple<Rank, Long> getMembership (int groupId, int memberId)
     {
         GroupMembershipRecord gmr = loadMembership(groupId, memberId);
-        return gmr == null ? Tuple.newTuple(GroupMembership.RANK_NON_MEMBER, 0L) :
+        return gmr == null ? Tuple.newTuple(Rank.NON_MEMBER, 0L) :
             Tuple.newTuple(gmr.rank, gmr.rankAssigned.getTime());
     }
 
@@ -474,13 +475,13 @@ public class GroupRepository extends DepotRepository
      */
     public List<Integer> getMemberIds (int groupId)
     {
-        return getMemberIds(groupId, (byte)-1); // all ranks
+        return getMemberIds(groupId, null); // all ranks
     }
 
     /**
      * Fetches the ids of the members of a given group that share a given rank.
      */
-    public List<Integer> getMemberIdsWithRank (int groupId, byte rank)
+    public List<Integer> getMemberIdsWithRank (int groupId, Rank rank)
     {
         return getMemberIds(groupId, rank);
     }
@@ -642,10 +643,10 @@ public class GroupRepository extends DepotRepository
      * Fetches a page of the membership roster of a given group for a given rank.
      * @param rank the rank to select, or -1 for all members
      */
-    protected List<Integer> getMemberIds (int groupId, byte rank)
+    protected List<Integer> getMemberIds (int groupId, Rank rank)
     {
         SQLExpression test = new Equals(GroupMembershipRecord.GROUP_ID, groupId);
-        if (rank != -1) {
+        if (rank != null) {
             test = new And(test, new Equals(GroupMembershipRecord.RANK, rank));
         }
 

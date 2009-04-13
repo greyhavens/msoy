@@ -46,7 +46,7 @@ public class MemberHelper
     /** Sorts lists of GroupMemberCard by rank then most recently online to least. */
     public static Comparator<GroupMemberCard> SORT_BY_RANK = new Comparator<GroupMemberCard>() {
         public int compare (GroupMemberCard c1, GroupMemberCard c2) {
-            int rankDiff = c2.rank - c1.rank;
+            int rankDiff = c2.rank.compare(c1.rank);
             if (rankDiff != 0) {
                 return rankDiff;
             }

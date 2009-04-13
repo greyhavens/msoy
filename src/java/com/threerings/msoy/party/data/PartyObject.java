@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 
 public class PartyObject extends DObject
     implements /*SpeakObject,*/ Cloneable
@@ -334,7 +334,7 @@ public class PartyObject extends DObject
      *
      * @return the reason for failure, or null if joinage may proceed.
      */
-    public String mayJoin (MemberName member, byte groupRank, boolean hasLeaderInvite)
+    public String mayJoin (MemberName member, Rank groupRank, boolean hasLeaderInvite)
     {
         if (peeps.size() >= PartyCodes.MAX_PARTY_SIZE) {
             return PartyCodes.E_PARTY_FULL;
@@ -348,7 +348,7 @@ public class PartyObject extends DObject
             return null;
 
         case PartyCodes.RECRUITMENT_GROUP:
-            if (groupRank > GroupMembership.RANK_NON_MEMBER) {
+            if (groupRank.compare(Rank.NON_MEMBER) > 0) {
                 return null;
             }
             return PartyCodes.E_PARTY_CLOSED;
