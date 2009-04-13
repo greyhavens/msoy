@@ -35,6 +35,8 @@ import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.PlayerNodeActions;
 
+import com.threerings.msoy.party.server.PartyRegistry;
+
 import com.threerings.msoy.server.MsoyEventLogger;
 
 /**
@@ -143,8 +145,8 @@ public class QuestDelegate extends PlayManagerDelegate
      * payout when they leave the game.
      */
     public void completeTask (
-        final PlayerObject plobj, final String questId, final float payoutLevel,
-        final InvocationService.ConfirmListener listener)
+        PlayerObject plobj, String questId, float payoutLevel,
+        InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         // sanity check
@@ -167,12 +169,19 @@ public class QuestDelegate extends PlayManagerDelegate
             ((5 * flowPerHour) / 60) : _content.detail.payoutFactor;
 
         // compute our quest payout; as a sanity check, cap it at one hour of payout
-        final int rawPayout = Math.round(payoutFactor * payoutLevel);
-        final int payout = Math.min(flowPerHour, rawPayout);
+        int rawPayout = Math.round(payoutFactor * payoutLevel);
+        int payout = Math.min(flowPerHour, rawPayout);
         if (payout != rawPayout) {
             log.warning("Capped AVRG payout at one hour",
                "game", _gameId, "factor", payoutFactor, "level", payoutLevel,
                "wanted", rawPayout, "got", payout);
+        }
+        // possibly give the party bonus
+        int partySize = _partyReg.getPartyPopulation(plobj);
+        if (partySize > 0) {
+            float partyBonus = (float) Math.pow(_runtime.money.partyGameBonusFactor,
+                Math.min(partySize, _runtime.money.partyMaxBonusPopulation) - 1);
+            payout = Math.round(payout * partyBonus);
         }
 
         // we don't actually award coins if we're the development version of the game
@@ -369,6 +378,7 @@ public class QuestDelegate extends PlayManagerDelegate
     @Inject protected AVRGameRepository _repo;
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected PartyRegistry _partyReg;
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RuntimeConfig _runtime;
 }

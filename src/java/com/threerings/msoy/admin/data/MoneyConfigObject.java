@@ -17,6 +17,12 @@ public class MoneyConfigObject extends ConfigObject
     /** The field name of the <code>hourlyAVRGameFlowRate</code> field. */
     public static final String HOURLY_AVRGAME_FLOW_RATE = "hourlyAVRGameFlowRate";
 
+    /** The field name of the <code>partyGameBonusFactor</code> field. */
+    public static final String PARTY_GAME_BONUS_FACTOR = "partyGameBonusFactor";
+
+    /** The field name of the <code>partyMaxBonusPopulation</code> field. */
+    public static final String PARTY_MAX_BONUS_POPULATION = "partyMaxBonusPopulation";
+
     /** The field name of the <code>payoutFactorReassessment</code> field. */
     public static final String PAYOUT_FACTOR_REASSESSMENT = "payoutFactorReassessment";
 
@@ -53,6 +59,13 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The amount of flow per hour that an avr game can award a player. */
     public int hourlyAVRGameFlowRate = 3000;
+
+    /** This number is raised to the power of the party size (minus 1) to calc a payout bonus. */
+    public float partyGameBonusFactor = 1.015f;
+
+    /** The maximum number of players considered for the party bonus.
+     * Parties over this size are given a bonus equal to parties of this size. */
+    public int partyMaxBonusPopulation = 20;
 
     /** The number of player minutes between reassessments of a game's payout factor. */
     public int payoutFactorReassessment = 240;
@@ -126,6 +139,38 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             HOURLY_AVRGAME_FLOW_RATE, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.hourlyAVRGameFlowRate = value;
+    }
+
+    /**
+     * Requests that the <code>partyGameBonusFactor</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPartyGameBonusFactor (float value)
+    {
+        float ovalue = this.partyGameBonusFactor;
+        requestAttributeChange(
+            PARTY_GAME_BONUS_FACTOR, Float.valueOf(value), Float.valueOf(ovalue));
+        this.partyGameBonusFactor = value;
+    }
+
+    /**
+     * Requests that the <code>partyMaxBonusPopulation</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPartyMaxBonusPopulation (int value)
+    {
+        int ovalue = this.partyMaxBonusPopulation;
+        requestAttributeChange(
+            PARTY_MAX_BONUS_POPULATION, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.partyMaxBonusPopulation = value;
     }
 
     /**

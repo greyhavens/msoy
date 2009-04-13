@@ -109,6 +109,29 @@ public class PartyRegistry
     }
 
     /**
+     * Return the size of the specified user's party, or 0 if they're not in a party.
+     */
+    public int getPartyPopulation (MsoyUserObject user)
+    {
+        PartySummary party = user.getParty();
+        return (party == null) ? 0 : getPartyPopulation(party.id);
+    }
+
+    /**
+     * Can be called to return the current size of any party, even one not hosted on this node.
+     */
+    public int getPartyPopulation (int partyId)
+    {
+        final Integer partyKey = partyId;
+        PartyInfo info = _peerMgr.lookupNodeDatum(new Function<NodeObject, PartyInfo>() {
+            public PartyInfo apply (NodeObject nobj) {
+                return ((MsoyNodeObject)nobj).partyInfos.get(partyKey);
+            }
+        });
+        return (info == null) ? 0 : info.population;
+    }
+
+    /**
      * Returns the manager for the specified party or null.
      */
     public PartyManager getPartyManager (int partyId)
