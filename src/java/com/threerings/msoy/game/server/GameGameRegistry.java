@@ -458,27 +458,23 @@ public class GameGameRegistry
     /**
      * Attempts to flush any pending coin earnings for the specified player.
      */
-    public void flushCoinEarnings (final int playerId)
+    public void flushCoinEarnings (final PlayerObject plobj)
     {
-        PlayerObject plobj = _locator.lookupPlayer(playerId);
-        if (plobj == null) {
-            return; // not online or not in a game, no problem!
-        }
-
         PlaceManager plmgr = _placeReg.getPlaceManager(plobj.getPlaceOid());
-        if (plmgr != null) {
-            // this will NOOP if their place manager has no AwardDelegate
-            plmgr.applyToDelegates(new PlaceManager.DelegateOp(AwardDelegate.class) {
-                public void apply (PlaceManagerDelegate delegate) {
-                    ((AwardDelegate)delegate).flushCoinEarnings(playerId);
-                }
-            });
-            plmgr.applyToDelegates(new PlaceManager.DelegateOp(QuestDelegate.class) {
-                public void apply (PlaceManagerDelegate delegate) {
-                    ((QuestDelegate)delegate).flushCoinEarnings(playerId);
-                }
-            });
+        if (plmgr == null) {
+            return; // not playing a game, no problem!
         }
+        // this will NOOP if their place manager has no AwardDelegate
+        plmgr.applyToDelegates(new PlaceManager.DelegateOp(AwardDelegate.class) {
+            public void apply (PlaceManagerDelegate delegate) {
+                ((AwardDelegate)delegate).flushCoinEarnings(plobj.getMemberId());
+            }
+        });
+        plmgr.applyToDelegates(new PlaceManager.DelegateOp(QuestDelegate.class) {
+            public void apply (PlaceManagerDelegate delegate) {
+                ((QuestDelegate)delegate).flushCoinEarnings(plobj.getMemberId());
+            }
+        });
     }
 
     // from interface PresentsServer.Shutdowner

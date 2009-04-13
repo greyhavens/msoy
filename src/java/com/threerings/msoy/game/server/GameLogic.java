@@ -43,8 +43,10 @@ import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.server.WorldGameRegistry;
@@ -206,48 +208,29 @@ public class GameLogic
     }
 
     /**
-     * Returns the node name of the world server that is hosting the game being played by the
-     * specified player. Returns null if the player is not online or not playing a game.
-     */
-    public String getPlayerWorldGameNode (final int memberId)
-    {
-        // we want to avoid looking up their current coin count if we can, so first we pop over to
-        // the dobjmgr thread to see if they're currently in a game
-        FutureTask<String> findHost = new FutureTask<String>(new Callable<String>() {
-            public String call () {
-                MemberLocation memloc = _peerMan.getMemberLocation(memberId);
-                if (memloc != null && memloc.gameId != 0) {
-                    Tuple<String, HostedGame> gameHost = _peerMan.getGameHost(memloc.gameId);
-                    if (gameHost != null) {
-                        return gameHost.left;
-                    }
-                }
-                return null;
-            }
-        });
-        _omgr.postRunnable(findHost);
-
-        try {
-            return findHost.get();
-        } catch (Exception e) {
-            log.warning("getPlayerWorldGameNode lookup failure", "memberId", memberId, e);
-            return null; // nothing to do here but NOOP
-        }
-    }
-
-    /**
      * If the specified member is identified as being in a game and if their current in-database
      * coin balance is less than the specified number of required coins, sends a notification to
      * the server hosting their game to flush any pending earnings they may have if they have
      * enough pending earnings to afford the coin cost specified.
      */
-    public void maybeFlushCoinEarnings (int memberId, int requiredCoins)
+    public void maybeFlushCoinEarnings (final int memberId, int requiredCoins)
     {
-        // we'll either get null meaning they're not playing a game or the world node that is
-        // hosting the game that they're playing
-        String gameHost = getPlayerWorldGameNode(memberId);
-        if (gameHost == null) {
-            return; // they're not playing, no problem!
+        // we want to avoid looking up their current coin count if we can, so first we pop over to
+        // the dobjmgr thread to see if they're currently in a game
+        FutureTask<Boolean> findClient = new FutureTask<Boolean>(new Callable<Boolean>() {
+            public Boolean call () {
+                return _peerMan.locateClient(GameAuthName.makeKey(memberId)) != null;
+            }
+        });
+        _omgr.postRunnable(findClient);
+
+        try {
+            if (!findClient.get()) {
+                return; // not in a game, no need to continue
+            }
+        } catch (Exception e) {
+            log.warning("Failed to locate player's game client", "memberId", memberId, e);
+            return; // nothing to do here but NOOP
         }
 
         // they're in a game, so let's go ahead and load up their bankbook and see if they can
@@ -264,7 +247,7 @@ public class GameLogic
         // now we know they can't afford whatever they're looking at and they're playing a game, so
         // we have to go ahead and ship an action off to the game's world host and have it tell its
         // game server to flush this member's pending coin earnings
-        _peerMan.invokeNodeAction(new FlushCoinsAction(gameHost, memberId));
+        _peerMan.invokeNodeAction(new FlushCoinsAction(memberId));
     }
 
     protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
@@ -284,22 +267,16 @@ public class GameLogic
     }
 
     /** Helper action for {@link #maybeFlushCoinEarnings}. */
-    protected static class FlushCoinsAction extends MsoyPeerManager.NodeAction
+    protected static class FlushCoinsAction extends PlayerNodeAction
     {
-        public FlushCoinsAction (String nodeName, int memberId) {
-            _nodeName = nodeName;
-            _memberId = memberId;
+        public FlushCoinsAction (int playerId) {
+            super(playerId);
         }
         public FlushCoinsAction () {
         }
-        public boolean isApplicable (NodeObject nodeobj) {
-            return nodeobj.nodeName.equals(_nodeName);
+        protected void execute (PlayerObject plobj) {
+            _gameReg.flushCoinEarnings(plobj);
         }
-        protected void execute () {
-            _gameReg.flushCoinEarnings(_memberId);
-        }
-        protected String _nodeName;
-        protected int _memberId;
         @Inject protected transient GameGameRegistry _gameReg;
     }
 
