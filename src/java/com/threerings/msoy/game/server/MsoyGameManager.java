@@ -14,6 +14,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
@@ -29,6 +30,7 @@ import com.whirled.game.server.WhirledGameManager;
 import com.threerings.msoy.data.MsoyUserObject;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
@@ -89,12 +91,48 @@ public class MsoyGameManager extends WhirledGameManager
     }
 
     // from interface WhirledGameProvider
-    public void consumeItemPack (ClientObject caller, String ident,
+    public void consumeItemPack (ClientObject caller, final String ident,
                                  InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        // TODO!
-        listener.requestProcessed();
+        final PlayerObject plobj = (PlayerObject)caller;
+        final Game game = ((MsoyGameConfig)getGameConfig()).game;
+
+        // make sure they have at least one copy of this item pack
+        GameContentOwnership gco = plobj.gameContent.get(
+            new GameContentOwnership(game.gameId, GameData.ITEM_DATA, ident));
+        if (gco == null || gco.count < 1) {
+            listener.requestFailed("e.missing_item_pack"); // checked on client, shouldn't happen
+        }
+
+        // reduce their count in the runtime by one
+        if (--gco.count == 0) {
+            plobj.removeFromGameContent(gco);
+        } else {
+            plobj.updateGameContent(gco);
+        }
+
+        // go off to the database and delete one item pack record
+        _invoker.postUnit(new PersistingUnit("consumeItemPack", listener, "who", plobj.who()) {
+            public void invokePersistent () throws Exception {
+                int deleteId = 0;
+                for (ItemPackRecord ipack : _ipackRepo.loadClonedItems(
+                         plobj.getMemberId(), game.getSuiteId())) {
+                    // pick the first item pack with a matching ident to delete; they're all
+                    // exactly the same
+                    if (ipack.ident.equals(ident)) {
+                        deleteId = ipack.itemId;
+                        break;
+                    }
+                }
+                if (deleteId == 0) { // no free lunch
+                    throw new InvocationException("e.missing_item_pack");
+                }
+                // "consume" the item
+                _ipackRepo.deleteItem(deleteId);
+                // returning successfully will tell the confirm listener that all went smoothly
+            }
+        });
     }
 
     /**
@@ -233,11 +271,7 @@ public class MsoyGameManager extends WhirledGameManager
                     plobj.startTransaction();
                     try {
                         for (GameContentOwnership ownership : _content) {
-                            // a player may own multiple copies of a level pack, but we only want
-                            // to add a single content ownership record
-                            if (!plobj.gameContent.contains(ownership)) {
-                                plobj.addToGameContent(ownership);
-                            }
+                            plobj.addToGameContent(ownership);
                         }
                     } finally {
                         plobj.removeFromGameContent(resolving);
