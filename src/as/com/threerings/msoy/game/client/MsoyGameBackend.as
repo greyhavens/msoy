@@ -90,14 +90,41 @@ public class MsoyGameBackend extends WhirledGameBackend
             return false;
         }
 
-        // TODO: display dialog, for now just assume they said yes!
+        // look up the metadata for the item pack
+        var pdata :GameData = null;
+        for each (var gd :GameData in _gameObj.gameData) {
+            if (gd.getType() == GameData.ITEM_DATA && gd.ident == ident) {
+                pdata = gd;
+                break;
+            }
+        }
+        if (pdata == null) { // shouldn't be possible, but better safe than sorry
+            log.warning("Missing game data for item pack consumption?", "ident", ident);
+            return false;
+        }
 
-        // send the request off to the server
-        _gameObj.whirledGameService.consumeItemPack(
-            _ctx.getClient(), ident,
-            createLoggingConfirmListener("consumeItemPack", null, function () :void {
-                notifyGameContentConsumed(GameData.ITEM_DATA, ident, getMyId_v1());
-            }));
+        // if we're already displaying a consume dialog, disallow showing another
+        if (_consumeDialog != null) {
+            return false;
+        }
+
+        // this will get called if they confirm the consume dialog
+        function onAccept () :void {
+            // send the request off to the server
+            _gameObj.whirledGameService.consumeItemPack(
+                _ctx.getClient(), ident,
+                createLoggingConfirmListener("consumeItemPack", null, function () :void {
+                    notifyGameContentConsumed(GameData.ITEM_DATA, ident, getMyId_v1());
+                }));
+        }
+
+        // display the confirmation dialog
+        _consumeDialog = new ConsumeItemPackDialog(
+            (_ctx as GameContext).getMsoyContext(), pdata.name, msg, onAccept);
+        _consumeDialog.addCloseCallback(function () :void {
+            _consumeDialog = null;
+        });
+        _consumeDialog.open(true);
         return true;
     }
 
@@ -205,5 +232,6 @@ public class MsoyGameBackend extends WhirledGameBackend
     }
 
     protected var _contentListener :SetAdapter = new SetAdapter(entryAddedOnUserObject);
+    protected var _consumeDialog :ConsumeItemPackDialog;
 }
 }
