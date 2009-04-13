@@ -30,12 +30,12 @@ public class BuyButton extends CommandButton
         setStyle("fontFamily", "_sans");
 
         _currency = currency;
-        setValue(-1);
+        setPriceQuote(null);
     }
 
     public function setPriceQuote (quote :PriceQuote) :void
     {
-        setValue(quote.getAmount(_currency));
+        setValue((quote == null) ? -1 : quote.getAmount(_currency));
     }
 
     public function setValue (value :int) :void

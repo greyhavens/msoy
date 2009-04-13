@@ -43,6 +43,9 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.client.GameDirector;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -177,13 +180,29 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
+     * Get the cost to start a party from the server.
+     */
+    public function getCreateCost (callback :Function) :void
+    {
+        _pbsvc.getCreateCost(_wctx.getClient(), _wctx.resultListener(callback));
+    }
+
+    /**
      * Create a new party.
      */
-    public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
+    public function createParty (
+        currency :Currency, authedCost :int, name :String, groupId :int, inviteAllFriends :Boolean)
+        :void
     {
         var handleSuccess :Function = function (partyId :int, host :String, port :int) :void {
             connectParty(partyId, host, port);
             Prefs.setPartyGroup(groupId);
+        };
+        var handleNewPrice :Function = function (price :PriceQuote) :void {
+            // re-open...
+            var panel :CreatePartyPanel = new CreatePartyPanel(_wctx, price);
+            panel.open();
+            panel.init(name, groupId, inviteAllFriends);
         };
         var handleFailure :Function = function (error :String) :void {
             _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
@@ -192,8 +211,8 @@ public class PartyDirector extends BasicDirector
             panel.open();
             panel.init(name, groupId, inviteAllFriends);
         };
-        _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
-            new JoinAdapter(handleSuccess, handleFailure));
+        _pbsvc.createParty(_wctx.getClient(), currency, authedCost, name, groupId, inviteAllFriends,
+            new JoinAdapter(handleSuccess, handleNewPrice, handleFailure));
     }
 
     /**
@@ -207,7 +226,7 @@ public class PartyDirector extends BasicDirector
 
         // first we have to find out what node is hosting the party in question
         _pbsvc.locateParty(_wctx.getClient(), id,
-            new JoinAdapter(connectParty, function (cause :String) :void {
+            new JoinAdapter(connectParty, null, function (cause :String) :void {
                 _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
             }));
     }
@@ -539,13 +558,22 @@ public class PartyDirector extends BasicDirector
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 
+import com.threerings.msoy.money.data.all.PriceQuote;
+
 class JoinAdapter extends InvocationAdapter
     implements PartyBoardService_JoinListener
 {
-    public function JoinAdapter (foundFunc :Function, failedFunc :Function)
+    public function JoinAdapter (
+        foundFunc :Function, costUpdatedFunc :Function, failedFunc :Function)
     {
         super(failedFunc);
         _foundFunc = foundFunc;
+        _costUpdatedFunc = costUpdatedFunc;
+    }
+
+    public function priceUpdated (newQuote :PriceQuote) :void
+    {
+        _costUpdatedFunc(newQuote);
     }
 
     public function foundParty (partyId :int, hostname :String, port :int) :void
@@ -554,4 +582,5 @@ class JoinAdapter extends InvocationAdapter
     }
 
     protected var _foundFunc :Function;
+    protected var _costUpdatedFunc :Function;
 }

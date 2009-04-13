@@ -46,6 +46,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.util.ServiceUnit;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -59,7 +60,15 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.admin.data.CostsConfigObject;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.game.server.PlayerLocator;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.gwt.CostUpdatedException;
+import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.data.PartyAuthName;
@@ -253,8 +262,19 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider
+    public void getCreateCost (ClientObject caller, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        MemberObject member = (MemberObject)caller;
+        rl.requestProcessed(
+            _moneyLogic.securePrice(member.getMemberId(), PARTY_PURCHASE_KEY, Currency.COINS,
+            getPartyCoinCost()));
+    }
+
+    // from PartyBoardProvider
     public void createParty (
-        ClientObject caller, final String name, final int groupId, final boolean inviteAllFriends,
+        ClientObject caller, final Currency currency, final int authedAmount,
+        final String name, final int groupId, final boolean inviteAllFriends,
         final PartyBoardService.JoinListener jl)
         throws InvocationException
     {
@@ -270,9 +290,24 @@ public class PartyRegistry
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR); // shouldn't happen
         }
 
-        _invoker.postUnit(new RepositoryUnit("loadPartyGroup") {
-            public void invokePersist () throws Exception {
+        final int cost = getPartyCoinCost();
+        _invoker.postUnit(new ServiceUnit("createParty", jl) {
+            public void invokePersistent () throws Exception {
                 _group = _groupRepo.loadGroup(groupId);
+                if ((_group == null) ||
+                        ((_group.partyPerms == Group.Perm.MANAGER) &&
+                        (groupInfo.rank.compareTo(Rank.MANAGER) < 0))) {
+                    throw new InvocationException(PartyCodes.E_GROUP_MGR_REQUIRED);
+                }
+                _moneyLogic.buyParty(member.getMemberId(), PARTY_PURCHASE_KEY,
+                    currency, authedAmount, Currency.COINS, cost);
+            }
+            @Override public void handleFailure (Exception error) {
+                if (error instanceof CostUpdatedException) {
+                    jl.priceUpdated(((CostUpdatedException) error).getQuote());
+                } else {
+                    super.handleFailure(error);
+                }
             }
             public void handleSuccess () {
                 finishCreateParty(member, name, _group, groupInfo, inviteAllFriends, jl);
@@ -327,13 +362,6 @@ public class PartyRegistry
         PartyObject pobj = null;
         PartyManager mgr = null;
         try {
-            // validate that they can create the party with this group
-            if ((group.partyPerms == Group.Perm.MANAGER) &&
-                    (groupInfo.rank.compareTo(Rank.MANAGER) < 0)) {
-                jl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
-                return;
-            }
-
             // set up the new PartyObject
             pobj = _omgr.registerObject(new PartyObject());
             pobj.id = _peerMgr.getNextPartyId();
@@ -414,9 +442,17 @@ public class PartyRegistry
         }
     }
 
+    protected int getPartyCoinCost ()
+    {
+        return _runtime.getCoinCost(CostsConfigObject.START_PARTY);
+    }
+
     protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
 
     protected static final int PARTIES_PER_BOARD = 10;
+
+    /** Just a unique key. */
+    protected static final Object PARTY_PURCHASE_KEY = new Object();
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BodyManager _bodyMan;
@@ -424,9 +460,11 @@ public class PartyRegistry
     @Inject protected Injector _injector;
     @Inject protected InvocationManager _invmgr;
     @Inject protected MemberLocator _memberLocator;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PlayerLocator _playerLocator;
     @Inject protected RootDObjectManager _omgr;
+    @Inject protected RuntimeConfig _runtime;
 }

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.data {
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 import com.threerings.presents.client.Client;
@@ -26,17 +27,30 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const CREATE_PARTY :int = 1;
 
     // from interface PartyBoardService
-    public function createParty (arg1 :Client, arg2 :String, arg3 :int, arg4 :Boolean, arg5 :PartyBoardService_JoinListener) :void
+    public function createParty (arg1 :Client, arg2 :Currency, arg3 :int, arg4 :String, arg5 :int, arg6 :Boolean, arg7 :PartyBoardService_JoinListener) :void
     {
-        var listener5 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
-        listener5.listener = arg5;
+        var listener7 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
+        listener7.listener = arg7;
         sendRequest(arg1, CREATE_PARTY, [
-            arg2, Integer.valueOf(arg3), langBoolean.valueOf(arg4), listener5
+            arg2, Integer.valueOf(arg3), arg4, Integer.valueOf(arg5), langBoolean.valueOf(arg6), listener7
+        ]);
+    }
+
+    /** The method id used to dispatch <code>getCreateCost</code> requests. */
+    public static const GET_CREATE_COST :int = 2;
+
+    // from interface PartyBoardService
+    public function getCreateCost (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    {
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, GET_CREATE_COST, [
+            listener2
         ]);
     }
 
     /** The method id used to dispatch <code>getPartyBoard</code> requests. */
-    public static const GET_PARTY_BOARD :int = 2;
+    public static const GET_PARTY_BOARD :int = 3;
 
     // from interface PartyBoardService
     public function getPartyBoard (arg1 :Client, arg2 :String, arg3 :InvocationService_ResultListener) :void
@@ -49,7 +63,7 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getPartyDetail</code> requests. */
-    public static const GET_PARTY_DETAIL :int = 3;
+    public static const GET_PARTY_DETAIL :int = 4;
 
     // from interface PartyBoardService
     public function getPartyDetail (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -62,7 +76,7 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>locateParty</code> requests. */
-    public static const LOCATE_PARTY :int = 4;
+    public static const LOCATE_PARTY :int = 5;
 
     // from interface PartyBoardService
     public function locateParty (arg1 :Client, arg2 :int, arg3 :PartyBoardService_JoinListener) :void

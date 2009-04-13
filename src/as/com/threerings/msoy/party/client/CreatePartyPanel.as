@@ -28,6 +28,10 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 
+import com.threerings.msoy.money.client.BuyPanel;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+
 import com.threerings.msoy.party.data.PartyCodes;
 
 /**
@@ -35,10 +39,20 @@ import com.threerings.msoy.party.data.PartyCodes;
  */
 public class CreatePartyPanel extends FloatingPanel
 {
-    public function CreatePartyPanel (ctx :WorldContext)
+    public function CreatePartyPanel (ctx :WorldContext, quote :PriceQuote = null)
     {
         super(ctx, Msgs.PARTY.get("t.create"));
         setButtonWidth(0);
+
+        _buyPanel = new BuyPanel(_ctx, createParty);
+        
+        // if we have no price quote, fire off a request for one
+        if (quote != null) {
+            _buyPanel.setPriceQuote(quote);
+
+        } else {
+            WorldContext(_ctx).getPartyDirector().getCreateCost(_buyPanel.setPriceQuote);
+        }
     }
 
     /**
@@ -97,22 +111,19 @@ public class CreatePartyPanel extends FloatingPanel
         GridUtil.addRow(grid, Msgs.PARTY.get("l.invite_friends"), _inviteAll);
         addChild(grid);
 
-        addButtons(OK_BUTTON, CANCEL_BUTTON);
+        addChild(_buyPanel);
+
+        addButtons(CANCEL_BUTTON);
     }
 
-    override protected function getButtonLabel (buttonId :int) :String
-    {
-        switch (buttonId) {
-        case OK_BUTTON: return Msgs.PARTY.get("b.create");
-        default: return super.getButtonLabel(buttonId);
-        }
-    }
-
-    override protected function okButtonClicked () :void
+    protected function createParty (currency :Currency, authedCost :int) :void
     {
         WorldContext(_ctx).getPartyDirector().createParty(
-            _name.text, int(_group.selectedData), _inviteAll.selected);
+            currency, authedCost, _name.text, int(_group.selectedData), _inviteAll.selected);
+        close();
     }
+
+    protected var _buyPanel :BuyPanel;
 
     protected var _name :TextInput;
 

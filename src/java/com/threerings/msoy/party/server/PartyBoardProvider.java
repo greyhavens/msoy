@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.server;
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -17,7 +18,13 @@ public interface PartyBoardProvider extends InvocationProvider
     /**
      * Handles a {@link PartyBoardService#createParty} request.
      */
-    void createParty (ClientObject caller, String arg1, int arg2, boolean arg3, PartyBoardService.JoinListener arg4)
+    void createParty (ClientObject caller, Currency arg1, int arg2, String arg3, int arg4, boolean arg5, PartyBoardService.JoinListener arg6)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link PartyBoardService#getCreateCost} request.
+     */
+    void getCreateCost (ClientObject caller, InvocationService.ResultListener arg1)
         throws InvocationException;
 
     /**

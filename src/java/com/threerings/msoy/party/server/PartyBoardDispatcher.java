@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.server;
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.presents.client.InvocationService;
@@ -38,7 +39,13 @@ public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshal
         switch (methodId) {
         case PartyBoardMarshaller.CREATE_PARTY:
             ((PartyBoardProvider)provider).createParty(
-                source, (String)args[0], ((Integer)args[1]).intValue(), ((Boolean)args[2]).booleanValue(), (PartyBoardService.JoinListener)args[3]
+                source, (Currency)args[0], ((Integer)args[1]).intValue(), (String)args[2], ((Integer)args[3]).intValue(), ((Boolean)args[4]).booleanValue(), (PartyBoardService.JoinListener)args[5]
+            );
+            return;
+
+        case PartyBoardMarshaller.GET_CREATE_COST:
+            ((PartyBoardProvider)provider).getCreateCost(
+                source, (InvocationService.ResultListener)args[0]
             );
             return;
 

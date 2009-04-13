@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.data;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -38,6 +40,19 @@ public class PartyBoardMarshaller extends InvocationMarshaller
                                new Object[] { Integer.valueOf(arg1), arg2, Integer.valueOf(arg3) }, transport));
         }
 
+        /** The method id used to dispatch {@link #priceUpdated}
+         * responses. */
+        public static final int PRICE_UPDATED = 2;
+
+        // from interface JoinMarshaller
+        public void priceUpdated (PriceQuote arg1)
+        {
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, PRICE_UPDATED,
+                               new Object[] { arg1 }, transport));
+        }
+
         @Override // from InvocationMarshaller
         public void dispatchResponse (int methodId, Object[] args)
         {
@@ -45,6 +60,11 @@ public class PartyBoardMarshaller extends InvocationMarshaller
             case FOUND_PARTY:
                 ((JoinListener)listener).foundParty(
                     ((Integer)args[0]).intValue(), (String)args[1], ((Integer)args[2]).intValue());
+                return;
+
+            case PRICE_UPDATED:
+                ((JoinListener)listener).priceUpdated(
+                    (PriceQuote)args[0]);
                 return;
 
             default:
@@ -58,17 +78,30 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int CREATE_PARTY = 1;
 
     // from interface PartyBoardService
-    public void createParty (Client arg1, String arg2, int arg3, boolean arg4, PartyBoardService.JoinListener arg5)
+    public void createParty (Client arg1, Currency arg2, int arg3, String arg4, int arg5, boolean arg6, PartyBoardService.JoinListener arg7)
     {
-        PartyBoardMarshaller.JoinMarshaller listener5 = new PartyBoardMarshaller.JoinMarshaller();
-        listener5.listener = arg5;
+        PartyBoardMarshaller.JoinMarshaller listener7 = new PartyBoardMarshaller.JoinMarshaller();
+        listener7.listener = arg7;
         sendRequest(arg1, CREATE_PARTY, new Object[] {
-            arg2, Integer.valueOf(arg3), Boolean.valueOf(arg4), listener5
+            arg2, Integer.valueOf(arg3), arg4, Integer.valueOf(arg5), Boolean.valueOf(arg6), listener7
+        });
+    }
+
+    /** The method id used to dispatch {@link #getCreateCost} requests. */
+    public static final int GET_CREATE_COST = 2;
+
+    // from interface PartyBoardService
+    public void getCreateCost (Client arg1, InvocationService.ResultListener arg2)
+    {
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, GET_CREATE_COST, new Object[] {
+            listener2
         });
     }
 
     /** The method id used to dispatch {@link #getPartyBoard} requests. */
-    public static final int GET_PARTY_BOARD = 2;
+    public static final int GET_PARTY_BOARD = 3;
 
     // from interface PartyBoardService
     public void getPartyBoard (Client arg1, String arg2, InvocationService.ResultListener arg3)
@@ -81,7 +114,7 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #getPartyDetail} requests. */
-    public static final int GET_PARTY_DETAIL = 3;
+    public static final int GET_PARTY_DETAIL = 4;
 
     // from interface PartyBoardService
     public void getPartyDetail (Client arg1, int arg2, InvocationService.ResultListener arg3)
@@ -94,7 +127,7 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #locateParty} requests. */
-    public static final int LOCATE_PARTY = 4;
+    public static final int LOCATE_PARTY = 5;
 
     // from interface PartyBoardService
     public void locateParty (Client arg1, int arg2, PartyBoardService.JoinListener arg3)

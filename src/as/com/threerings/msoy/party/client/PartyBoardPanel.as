@@ -80,12 +80,10 @@ public class PartyBoardPanel extends FloatingPanel
 
         addChild(_content);
 
-        var btn :CommandButton = new CommandButton(Msgs.PARTY.get("b.create"),
-            FloatingPanel.createPopper(function () :FloatingPanel {
-                return new CreatePartyPanel(_wctx);
-            }));
+        _createBtn = new CommandButton(Msgs.PARTY.get("b.create"),
+            FloatingPanel.createPopper(createCreatePartyPanel));
         //btn.styleName = "orangeButton";
-        addButtons(btn);
+        addButtons(_createBtn);
         _buttonBar.styleName = "buttonPadding"; // pad out the buttons since we have no border
         _buttonBar.setStyle("buttonStyleName", "orangeButton"); // oh you're kidding me
         // TODO: if we need to add more buttons, and want to undo orangeness, we will
@@ -115,9 +113,19 @@ public class PartyBoardPanel extends FloatingPanel
         }
     }
 
+    /**
+     * Create a CreatePartyPanel.
+     */
+    protected function createCreatePartyPanel () :CreatePartyPanel
+    {
+        return new CreatePartyPanel(_wctx);
+    }
+
     protected var _wctx :WorldContext;
 
     protected var _partyList :List;
+
+    protected var _createBtn :CommandButton;
 
     /** Contains either the loading Label or party List. */
     protected var _content :VBox;

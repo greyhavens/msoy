@@ -79,6 +79,15 @@ public class MoneyLogic
      */
     public static abstract class BuyOperation<T>
     {
+        public static final BuyOperation<Void> NOOP = new BuyOperation<Void>() {
+            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
+                return true;
+            }
+            public Void getWare () {
+                return null;
+            }
+        };
+
         /**
          * Create the thing that is being purchased.
          * You may throw a MoneyServiceException, RuntimeException or return false on failure.
@@ -368,6 +377,25 @@ public class MoneyLogic
             (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
             (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
             (charityTx == null) ? null : charityTx.toMoneyTransaction());
+    }
+
+    /**
+     * Process the purchase of a party.
+     */
+    public BuyResult buyParty (
+        int buyerId, Object partyKey, Currency buyCurrency, int authedAmount,
+        Currency listCurrency, int listAmount)
+        throws ServiceException
+    {
+        try {
+            MemberRecord buyerRec = _memberRepo.loadMember(buyerId);
+            return buyFromOOO(
+                buyerRec, partyKey, buyCurrency, authedAmount, listCurrency, listAmount,
+                BuyOperation.NOOP, UserAction.Type.BOUGHT_PARTY, "m.party_bought",
+                TransactionType.PARTY_PURCHASE, "m.change_rcvd_party");
+        } catch (MoneyException me) {
+            throw me.toServiceException();
+        }
     }
 
     /**
