@@ -109,6 +109,7 @@
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
+    <file name="${extlibs.dir}/xmlrpc-server.jar"/>
     <file name="${extlibs.dir}/rabbitmq-client.jar"/>
 
     <!-- The following are used for Panopticon -->

@@ -326,6 +326,7 @@ public class MsoyHttpServer extends Server
         .put(WebRoomService.ENTRY_POINT, WebRoomServlet.class)
         .put(SurveyService.ENTRY_POINT, SurveyServlet.class)
         .put("/facebook", FacebookServlet.class)
+        .put("/ooo", OOOXmlRpcServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
         .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)
         .put("/snapshotsvc", SnapshotItemUploadServlet.class)
