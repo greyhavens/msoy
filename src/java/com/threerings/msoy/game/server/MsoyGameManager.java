@@ -88,6 +88,15 @@ public class MsoyGameManager extends WhirledGameManager
         _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
     }
 
+    // from interface WhirledGameProvider
+    public void consumeItemPack (ClientObject caller, String ident,
+                                 InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        // TODO!
+        listener.requestProcessed();
+    }
+
     /**
      * Returns true if the game is multiplayer, which is true if the game is not a SEATED_GAME
      * (fixed table size, player count established at game start) with exactly one player.

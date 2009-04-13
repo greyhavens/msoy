@@ -17,6 +17,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.whirled.game.client.HeadShot;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.all.VizMemberName;
@@ -82,6 +83,24 @@ public class MsoyGameBackend extends WhirledGameBackend
         return (_ctx as GameContext).getMsoyContext().getMsoyClient().isEmbedded();
     }
 
+    // from WhirledGameBackend
+    override protected function requestConsumeItemPack_v1 (ident :String, msg :String) :Boolean
+    {
+        if (countPlayerData(GameData.ITEM_DATA, ident, getMyId_v1()) < 1) {
+            return false;
+        }
+
+        // TODO: display dialog, for now just assume they said yes!
+
+        // send the request off to the server
+        _gameObj.whirledGameService.consumeItemPack(
+            _ctx.getClient(), ident,
+            createLoggingConfirmListener("consumeItemPack", null, function () :void {
+                notifyGameContentConsumed(GameData.ITEM_DATA, ident, getMyId_v1());
+            }));
+        return true;
+    }
+
     override protected function systemMessage (bundle :String, msg :String) :void
     {
         (_ctx as GameContext).getMsoyContext().getNotificationDirector().addGameSystemMessage(
@@ -95,13 +114,6 @@ public class MsoyGameBackend extends WhirledGameBackend
         reportGameError((_ctx as GameContext).getMsoyContext().getMessageManager().
             getBundle(MsoyGameCodes.GAME_BUNDLE).
             xlate(MessageBundle.compose("e.game_error", cause)));
-    }
-
-    // TEMP: provide the 'back to lobby' link for games that have it.
-    // TODO: Remove once we have the new standard game-over display sorted out
-    override protected function backToWhirled_v1 (showLobby :Boolean = false) :void
-    {
-        (_ctx as GameContext).backToWhirled(true); // always show lobby
     }
 
     // from WhirledGameBackend
