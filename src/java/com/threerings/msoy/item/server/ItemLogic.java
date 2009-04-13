@@ -41,8 +41,10 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.game.server.PlayerNodeAction;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -964,20 +966,20 @@ public class ItemLogic
     }
 
     /** Notifies other nodes when a user has purchased game content. */
-    protected static class ContentPurchasedAction extends GameNodeAction
+    protected static class ContentPurchasedAction extends PlayerNodeAction
     {
         public ContentPurchasedAction (int memberId, int gameId, byte itemType, String ident) {
-            super(gameId);
-            _memberId = memberId;
+            super(memberId);
+            _gameId = gameId;
             _itemType = itemType;
             _ident = ident;
         }
         public ContentPurchasedAction () {
         }
-        @Override protected void execute () {
-            _gameReg.gameContentPurchased(_memberId, _gameId, _itemType, _ident);
+        @Override protected void execute (PlayerObject plobj) {
+            _gameReg.gameContentPurchased(plobj, _gameId, _itemType, _ident);
         }
-        protected int _memberId;
+        protected int _gameId;
         protected byte _itemType;
         protected String _ident;
         @Inject protected transient GameGameRegistry _gameReg;

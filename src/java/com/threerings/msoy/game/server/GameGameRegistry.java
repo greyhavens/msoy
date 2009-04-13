@@ -258,13 +258,8 @@ public class GameGameRegistry
     /**
      * Called when the player has purchased new game content.
      */
-    public void gameContentPurchased (int playerId, int gameId, byte itemType, String ident)
+    public void gameContentPurchased (PlayerObject plobj, int gameId, byte itemType, String ident)
     {
-        PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player == null) {
-            return; // not online or not in a game, no problem!
-        }
-
         // convert the item type to a GameData content type
         byte contentType;
         if (itemType == Item.LEVEL_PACK) {
@@ -273,13 +268,12 @@ public class GameGameRegistry
             contentType = GameData.ITEM_DATA;
         } else {
             log.warning("Notified that player purchased content of unknown type",
-                        "playerId", playerId, "gameId", gameId, "itemType", itemType,
-                        "ident", ident);
+                        "who", plobj.who(), "gameId", gameId, "itemType", itemType, "ident", ident);
             return;
         }
 
         // make sure they're actually playing the right game
-        PlaceManager plmgr = _placeReg.getPlaceManager(player.getPlaceOid());
+        PlaceManager plmgr = _placeReg.getPlaceManager(plobj.getPlaceOid());
         if (plmgr == null || !(plmgr.getConfig() instanceof MsoyGameConfig) ||
             ((MsoyGameConfig)plmgr.getConfig()).getGameId() != gameId) {
             return;
@@ -287,12 +281,12 @@ public class GameGameRegistry
 
         // if they already own this content, increment the count, otherwise create a new record
         GameContentOwnership entry = new GameContentOwnership(gameId, contentType, ident);
-        GameContentOwnership oentry = player.gameContent.get(entry);
+        GameContentOwnership oentry = plobj.gameContent.get(entry);
         if (oentry == null) {
-            player.addToGameContent(entry);
+            plobj.addToGameContent(entry);
         } else {
             oentry.count++;
-            player.updateGameContent(oentry);
+            plobj.updateGameContent(oentry);
         }
     }
 
