@@ -500,8 +500,6 @@ public class ItemLogic
                 int gameId = getGameId(srecord);
                 if (gameId != 0) {
                     // notify the game that the user has purchased some game content
-                    log.info("Notifying of content purchased", "pid", record.ownerId,
-                             "gameId", gameId, "type", srecord.getType(), "ident", srecord.ident);
                     _peerMan.invokeNodeAction(
                         new ContentPurchasedAction(
                             record.ownerId, gameId, srecord.getType(), srecord.ident));
