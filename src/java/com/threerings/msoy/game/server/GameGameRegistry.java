@@ -280,12 +280,19 @@ public class GameGameRegistry
 
         // make sure they're actually playing the right game
         PlaceManager plmgr = _placeReg.getPlaceManager(player.getPlaceOid());
-        if (plmgr != null && plmgr.getConfig() instanceof MsoyGameConfig &&
-            ((MsoyGameConfig)plmgr.getConfig()).getGameId() == gameId) {
-            GameContentOwnership entry = new GameContentOwnership(gameId, contentType, ident);
-            if (!player.gameContent.contains(entry)) {
-                player.addToGameContent(entry);
-            }
+        if (plmgr == null || !(plmgr.getConfig() instanceof MsoyGameConfig) ||
+            ((MsoyGameConfig)plmgr.getConfig()).getGameId() != gameId) {
+            return;
+        }
+
+        // if they already own this content, increment the count, otherwise create a new record
+        GameContentOwnership entry = new GameContentOwnership(gameId, contentType, ident);
+        GameContentOwnership oentry = player.gameContent.get(entry);
+        if (oentry == null) {
+            player.addToGameContent(entry);
+        } else {
+            oentry.count++;
+            player.updateGameContent(oentry);
         }
     }
 

@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import java.util.List;
 
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.util.CountHashMap;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -57,16 +58,8 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
             lrecords = getLpackRepo().loadClonedItems(_memberId, _suiteId);
             irecords = getIpackRepo().loadClonedItems(_memberId, _suiteId);
         }
-        Function<SubItemRecord, GameContentOwnership> createOwnership =
-            new Function<SubItemRecord, GameContentOwnership>() {
-                public GameContentOwnership apply (SubItemRecord rec) {
-                    return new GameContentOwnership(_gameId,
-                        rec instanceof LevelPackRecord ? GameData.LEVEL_DATA : GameData.ITEM_DATA,
-                        rec.ident);
-                }
-            };
-        Iterables.addAll(_content, Iterables.transform(lrecords, createOwnership));
-        Iterables.addAll(_content, Iterables.transform(irecords, createOwnership));
+        Iterables.addAll(_content, summarize(GameData.LEVEL_DATA, lrecords));
+        Iterables.addAll(_content, summarize(GameData.ITEM_DATA, irecords));
         List<String> trophies = getTrophyRepo().loadTrophyOwnership(_gameId, _memberId);
         Iterables.addAll(_content,
             Iterables.transform(trophies, new Function<String, GameContentOwnership>() {
@@ -74,6 +67,21 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
                     return new GameContentOwnership(_gameId, GameData.TROPHY_DATA, trophy);
                 }
             }));
+    }
+
+    protected Iterable<GameContentOwnership> summarize (
+        final byte type, Iterable<? extends SubItemRecord> records)
+    {
+        CountHashMap<String> counts = new CountHashMap<String>();
+        for (SubItemRecord rec : records) {
+            counts.incrementCount(rec.ident, 1);
+        }
+        return Iterables.transform(counts.countEntrySet(),
+            new Function<CountHashMap.Entry<String>, GameContentOwnership>() {
+            public GameContentOwnership apply (CountHashMap.Entry<String> entry) {
+                return new GameContentOwnership(_gameId, type, entry.getKey(), entry.getCount());
+            }
+        });
     }
 
     protected abstract ItemPackRepository getIpackRepo ();
