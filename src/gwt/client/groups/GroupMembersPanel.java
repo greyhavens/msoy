@@ -92,7 +92,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
 
     public boolean amSenior (GroupMemberCard member)
     {
-        int cmp = _detail.myRank.compare(member.rank);
+        int cmp = _detail.myRank.compareTo(member.rank);
         return cmp > 0 || (cmp == 0 && _detail.myRankAssigned < member.rankAssigned);
     }
 
