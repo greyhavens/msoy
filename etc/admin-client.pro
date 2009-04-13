@@ -8,6 +8,7 @@
 -injars ../dist/lib/samskivert-0.0-SNAPSHOT.jar(
     com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
+-injars ../dist/lib/depot-0.0-SNAPSHOT.jar(**/ByteEnum.class)
 -injars ../dist/lib/getdown.jar(!META-INF/*,!**/tools/**)
 -injars ../dist/lib/narya-base-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib-0.0-SNAPSHOT.jar(!META-INF/*,!**/tools/**,!**/server/**)
@@ -20,8 +21,8 @@
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/item/data/all/**,**/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
-    **/msoy/group/data/all/GroupMembership.class,**/msoy/badge/data/**,
-    **/msoy/notify/data/**,**/msoy/game/data/GameSummary.class)
+    **/msoy/group/data/all/GroupMembership.class,**/msoy/group/data/all/GroupMembership$Rank.class,
+    **/msoy/badge/data/**,**/msoy/notify/data/**,**/msoy/game/data/GameSummary.class)
 
 -dontskipnonpubliclibraryclasses
 -outjars ../dist/admin-client.jar
