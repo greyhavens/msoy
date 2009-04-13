@@ -26,7 +26,8 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 public abstract class ContentOwnershipUnit extends RepositoryUnit
 {
-    public ContentOwnershipUnit (int gameId, int suiteId, int memberId) {
+    public ContentOwnershipUnit (int gameId, int suiteId, int memberId)
+    {
         super("contentOwnershipResolution");
 
         _gameId = gameId;
