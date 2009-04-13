@@ -21,14 +21,13 @@ import com.threerings.msoy.world.client.WorldContext;
 public class EntityPopup extends FloatingPanel
 {
     public function EntityPopup (
-        ctx :WorldContext, entitySprite :MsoySprite, ctrl :RoomController,
+        ctx :WorldContext, entitySprite :MsoySprite,
         title :String, userPanel :DisplayObject, panelWidth :Number, panelHeight :Number,
         panelColor :uint = 0xFFFFFF, panelAlpha :Number = 1.0, doMasking :Boolean = true)
     {
         super(ctx,
             Msgs.GENERAL.get("t.entity_popup", Msgs.GENERAL.get(entitySprite.getDesc()), title));
 
-        _ctrl = ctrl;
         _entitySprite = entitySprite;
 
         showCloseButton = true;
@@ -63,12 +62,6 @@ public class EntityPopup extends FloatingPanel
         return _entitySprite;
     }
 
-    override public function close () :void
-    {
-        super.close();
-        _ctrl.entityPopupClosed();
-    }
-
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -90,8 +83,6 @@ public class EntityPopup extends FloatingPanel
 
     /** We use this to control the size allocated for the displayed content. */
     protected var _canvas :Canvas;
-
-    protected var _ctrl :RoomController;
 
     /** The sprite that owns this. */
     protected var _entitySprite :MsoySprite;

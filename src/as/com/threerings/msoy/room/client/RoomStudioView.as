@@ -50,6 +50,9 @@ public class RoomStudioView extends RoomView
 
     public static const TEST_BUTTON_PRIORITY :int = ControlBar.PLACE_PRIORITY + 50;
 
+    /** Our configure button, if applicable. */
+    public var configBtn :CommandButton;
+
     public function RoomStudioView (ctx :StudioContext, ctrl :RoomStudioController)
     {
         super(ctx, ctrl);
@@ -454,10 +457,11 @@ public class RoomStudioView extends RoomView
     {
         // add a button for configuring, if we're not in the inventory
         if (!_sctrl.isInInventory() && _testingSprite.hasCustomConfigPanel()) {
-            var config :CommandButton = new CommandButton(null, _sctrl.showStudioConfig);
-            config.styleName = "controlBarConfig";
-            config.toolTip = Msgs.STUDIO.get("i.config");
-            _ctx.getControlBar().addCustomButton(config, TEST_BUTTON_PRIORITY);
+            configBtn = new CommandButton(null, _sctrl.showStudioConfig);
+            configBtn.toggle = true;
+            configBtn.styleName = "controlBarConfig";
+            configBtn.toolTip = Msgs.STUDIO.get("i.config");
+            _ctx.getControlBar().addCustomButton(configBtn, TEST_BUTTON_PRIORITY);
 
             // and tell ye olde external, so it can add a button in WWT
             try {

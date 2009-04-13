@@ -912,14 +912,18 @@ public class RoomController extends SceneController
      * Called to show the custom config panel for the specified FurniSprite in
      * a pop-up.
      */
-    public function showConfigPopup (sprite :MsoySprite) :void
+    public function showConfigPopup (sprite :MsoySprite) :Boolean
     {
+        if (_entityPopup != null && _entityPopup.getOwningEntity() == sprite) {
+            return true;
+        }
+
         var configger :DisplayObject = sprite.getCustomConfigPanel();
         if (configger == null) {
-            return;
+            return false;
         }
-        showEntityPopup(sprite, Msgs.GENERAL.get("t.config_item"), configger, configger.width,
-            configger.height, 0xFFFFFF, 1.0, false);
+        return showEntityPopup(sprite, Msgs.GENERAL.get("t.config_item"), configger,
+            configger.width, configger.height, 0xFFFFFF, 1.0, false);
     }
 
     /**
@@ -947,8 +951,8 @@ public class RoomController extends SceneController
             _entityPopup.close();
         }
 
-        _entityPopup = new EntityPopup(_wdctx, sprite, this, title, panel, w, h, color, alpha,
-            mask);
+        _entityPopup = new EntityPopup(_wdctx, sprite, title, panel, w, h, color, alpha, mask);
+        _entityPopup.addCloseCallback(entityPopupClosed);
         _entityPopup.open();
         return true;
     }
@@ -956,7 +960,7 @@ public class RoomController extends SceneController
     /**
      * Clear any popup belonging to the specified sprite.
      */
-    internal function clearEntityPopup (sprite :MsoySprite) :void
+    public function clearEntityPopup (sprite :MsoySprite) :void
     {
         if (_entityPopup != null && _entityPopup.getOwningEntity() == sprite) {
             _entityPopup.close(); // will trigger callback that clears _entityPopup
@@ -966,7 +970,7 @@ public class RoomController extends SceneController
     /**
      * A callback from the EntityPopup to let us know that it's been closed.
      */
-    internal function entityPopupClosed () :void
+    protected function entityPopupClosed () :void
     {
         _entityPopup = null;
     }

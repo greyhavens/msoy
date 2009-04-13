@@ -264,9 +264,20 @@ public class RoomStudioController extends RoomController
     /**
      * Callback to pop-up the configurator.
      */
-    public function showStudioConfig () :void
+    public function showStudioConfig (show :Boolean = true) :void
     {
-        showConfigPopup(_studioView.getTestingSprite());
+        var tester :MsoySprite = _studioView.getTestingSprite();
+        if (!show) {
+            clearEntityPopup(tester);
+        } else if (showConfigPopup(tester)) {
+            _studioView.configBtn.selected = true;
+        }
+    }
+
+    override protected function entityPopupClosed () :void
+    {
+        super.entityPopupClosed();
+        _studioView.configBtn.selected = false;
     }
 
     /**
