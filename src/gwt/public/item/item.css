@@ -175,7 +175,7 @@
   font-size: 12px;
 }
 
-.remixableLabel .inlineL {
+.configLabel .inlineL {
   vertical-align: top;
 }
 
@@ -185,11 +185,17 @@
   height: 39px;
 }
 
-.remixButton-up-hovering {
+.configButton {
+  background-image: url(/images/item/config.png);
+  width: 38px;
+  height: 39px;
+}
+
+.remixButton-up-hovering, .configButton-up-hovering {
   background-image: url(/images/item/remix_over.png);
 }
 
-.remixButton-down-hovering {
+.remixButton-down-hovering, .configButton-down-hovering {
   background-image: url(/images/item/remix_down.png);
 }
 

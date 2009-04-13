@@ -25,7 +25,7 @@ import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemUtil;
-import client.item.RemixButton;
+import client.item.ConfigButton;
 import client.item.ShopUtil;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -85,11 +85,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         extras.setStyleName("Extras");
 
         if (!CShell.isGuest() && isRemixable()) {
-            extras.add(new RemixButton(_msgs.listingRemix(),
+            extras.add(new ConfigButton(false, _msgs.listingRemix(),
                 Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
                     _item.getType(), _item.itemId, _listing.catalogId))));
         }
-        extras.add(_configBtn = new RemixButton(_msgs.listingConfig(), new ClickListener() {
+        extras.add(_configBtn = new ConfigButton(true, _msgs.listingConfig(), new ClickListener() {
             public void onClick (Widget sender) {
                 ItemUtil.showViewerConfig();
             }
@@ -232,7 +232,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected CatalogModels _models;
     protected CatalogListing _listing;
 
-    protected RemixButton _configBtn;
+    protected ConfigButton _configBtn;
 
     protected static ListingDetailPanel _singleton;
 

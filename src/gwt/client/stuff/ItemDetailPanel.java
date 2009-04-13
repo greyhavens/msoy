@@ -30,7 +30,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemActivator;
-import client.item.RemixButton;
+import client.item.ConfigButton;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -64,7 +64,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (isRemixable()) {
             HorizontalPanel extras = new HorizontalPanel();
             extras.setStyleName("Extras");
-            extras.add(new RemixButton(_msgs.detailRemix(),
+            extras.add(new ConfigButton(false, _msgs.detailRemix(),
                 NaviUtil.onRemixItem(_item.getType(), _item.itemId)));
             _indeets.add(extras);
         }
