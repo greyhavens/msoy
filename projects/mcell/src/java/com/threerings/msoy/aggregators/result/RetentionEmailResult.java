@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.aggregators.result;
 
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.threerings.panopticon.aggregator.result.StringInputNameResult;
@@ -20,8 +22,8 @@ import com.threerings.panopticon.common.event.EventData;
 @StringInputNameResult(inputs="RetentionMailSent") // original msoy event
 public class RetentionEmailResult extends FieldAggregatedResult
 {
-    /** The members addressed. */
-    public Set<Integer> sent = Sets.newHashSet();
+    /** The members addressed, mapped by subject. */
+    public Map<String, Set<Integer>> sent = Maps.newHashMap();
 
     public static boolean checkInputs (EventData eventData)
     {
@@ -31,6 +33,14 @@ public class RetentionEmailResult extends FieldAggregatedResult
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
-        sent.add(eventData.getInt("recipientId"));
+        String subj = eventData.getString("subjectLine");
+        if (subj == null) {
+            subj = "default";
+        }
+        Set<Integer> memberIds = sent.get(subj);
+        if (memberIds == null) {
+            sent.put(subj, memberIds = Sets.newHashSet());
+        }
+        memberIds.add(eventData.getInt("recipientId"));
     }
 }
