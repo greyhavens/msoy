@@ -195,7 +195,9 @@ public class MsoyGameBackend extends WhirledGameBackend
             // it should not be possible for a player to have content dynamically added for a game
             // other than the one they are playing, but let's be extra specially safe
             var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
-            if (cfg.getGameId() == content.gameId) {
+            if (cfg.getGameId() == content.gameId &&
+                // we only want to notify on the addition of item and level pack data
+                content.type == GameData.LEVEL_DATA || content.type == GameData.ITEM_DATA) {
                 // TODO: use playerId when we switch to that from playerOid
                 notifyGameContentAdded(content.type, content.ident, event.getTargetOid());
             }
