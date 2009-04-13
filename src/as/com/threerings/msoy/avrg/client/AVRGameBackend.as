@@ -536,7 +536,7 @@ public class AVRGameBackend extends ControlBackend
     protected function getPlayerItemPacks_v1 (targetId :int /* ignored */) :Array
     {
         validatePlayerTargetId(targetId);
-        return BackendUtils.getPlayerItemPacks(_gameObj.gameData, targetId, playerOwnsData);
+        return BackendUtils.getPlayerItemPacks(_gameObj.gameData, targetId, countPlayerData);
     }
 
     // PlayerSubControl
@@ -925,7 +925,15 @@ public class AVRGameBackend extends ControlBackend
      */
     protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
     {
-        return _playerObj.ownsGameContent(_ctrl.getGameId(), type, ident)
+        return countPlayerData(type, ident, playerId) > 0;
+    }
+
+    /**
+     * Returns the number of copies of the specified level or item pack owned by the player.
+     */
+    protected function countPlayerData (type :int, ident :String, playerId :int) :int
+    {
+        return _playerObj.countGameContent(_ctrl.getGameId(), type, ident);
     }
 
     protected function getPartyInfo_temp () :Object

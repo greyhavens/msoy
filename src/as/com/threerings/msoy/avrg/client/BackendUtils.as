@@ -204,12 +204,17 @@ public class BackendUtils
     {
         var packs :Array = [];
         for each (var data :GameData in gameData) {
-            if (data.getType() != GameData.ITEM_DATA || (filter != null && !filter(data))) {
+            if (data.getType() != GameData.ITEM_DATA) {
+                continue;
+            }
+            var count :int = (filter == null) ? 1 : filter(data);
+            if (count == 0) {
                 continue;
             }
             packs.unshift({ ident: data.ident,
                             name: data.name,
-                            mediaURL: data.mediaURL });
+                            mediaURL: data.mediaURL,
+                            count :count });
         }
         return packs;
     }
@@ -293,10 +298,10 @@ public class BackendUtils
     }
 
     public static function getPlayerItemPacks (
-        gameData :TypedArray, playerId :int, playerOwnsData :Function) :Array
+        gameData :TypedArray, playerId :int, countPlayerData :Function) :Array
     {
-        return getItemPacks(gameData, function (data :GameData) :Boolean {
-            return playerOwnsData(data.getType(), data.ident, playerId);
+        return getItemPacks(gameData, function (data :GameData) :int {
+            return countPlayerData(data.getType(), data.ident, playerId);
         });
     }
 

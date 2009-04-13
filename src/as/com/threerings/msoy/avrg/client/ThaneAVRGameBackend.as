@@ -587,7 +587,7 @@ public class ThaneAVRGameBackend
 
     protected function getPlayerItemPacks_v1 (targetId :int /* ignored */) :Array
     {
-        return BackendUtils.getPlayerItemPacks(_gameObj.gameData, targetId, playerOwnsData);
+        return BackendUtils.getPlayerItemPacks(_gameObj.gameData, targetId, countPlayerData);
     }
 
     protected function getPlayerLevelPacks_v1 (targetId :int /* ignored */) :Array
@@ -754,8 +754,16 @@ public class ThaneAVRGameBackend
      */
     protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
     {
+        return countPlayerData(type, ident, playerId) > 0;
+    }
+
+    /**
+     * Returns the number of copies of the specified item or level pack owned by the player.
+     */
+    protected function countPlayerData (type :int, ident :String, playerId :int) :int
+    {
         var player :PlayerObject = _controller.getPlayerForUser(playerId);
-        return player.ownsGameContent(_controller.getGameId(), type, ident)
+        return player.countGameContent(_controller.getGameId(), type, ident)
     }
 
     /**
