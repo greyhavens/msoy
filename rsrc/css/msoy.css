@@ -575,9 +575,12 @@ TabNavigator, TabBar {
   image: Embed(source="../media/skins/controlbar/chatoptions.png");
 }
 
-/** TODO: different icon for config. */
-.controlBarButtonEdit, .controlBarConfig {
+.controlBarButtonEdit {
   image: Embed(source="../media/skins/controlbar/editroom.png");
+}
+
+.controlBarConfig {
+  image: Embed(source="../media/skins/controlbar/config.png");
 }
 
 .controlBarButtonZoom {

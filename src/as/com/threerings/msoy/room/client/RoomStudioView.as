@@ -48,6 +48,8 @@ public class RoomStudioView extends RoomView
     public static const MEMBER_ID :int = 1;
     public static const PET_ID :int = 2;
 
+    public static const TEST_BUTTON_PRIORITY :int = ControlBar.PLACE_PRIORITY + 50;
+
     public function RoomStudioView (ctx :StudioContext, ctrl :RoomStudioController)
     {
         super(ctx, ctrl);
@@ -243,7 +245,7 @@ public class RoomStudioView extends RoomView
         idle.styleName = "controlBarIdleButton";
         idle.toolTip = Msgs.STUDIO.get("i.idle")
         const bar :ControlBar = _ctx.getControlBar();
-        bar.addCustomButton(idle);
+        bar.addCustomButton(idle, TEST_BUTTON_PRIORITY);
 
         _saveScaling = ("true" == String(params["scaling"]));
         createSpriteScaleControls();
@@ -354,7 +356,7 @@ public class RoomStudioView extends RoomView
         talk.toolTip = Msgs.STUDIO.get("i.talk");
 
         const bar :ControlBar = _ctx.getControlBar();
-        bar.addCustomButton(talk);
+        bar.addCustomButton(talk, TEST_BUTTON_PRIORITY);
     }
 
     protected function createSpriteScaleControls () :void
@@ -364,7 +366,7 @@ public class RoomStudioView extends RoomView
         _scaleButton.toolTip = Msgs.STUDIO.get("i.sprite_scale");
         _scaleButton.enabled = false;
 
-        _ctx.getControlBar().addCustomButton(_scaleButton);
+        _ctx.getControlBar().addCustomButton(_scaleButton, TEST_BUTTON_PRIORITY);
     }
 
     protected function showSpriteScaler () :void
@@ -455,7 +457,7 @@ public class RoomStudioView extends RoomView
             var config :CommandButton = new CommandButton(null, _sctrl.showStudioConfig);
             config.styleName = "controlBarConfig";
             config.toolTip = Msgs.STUDIO.get("i.config");
-            _ctx.getControlBar().addCustomButton(config);
+            _ctx.getControlBar().addCustomButton(config, TEST_BUTTON_PRIORITY);
 
             // and tell ye olde external, so it can add a button in WWT
             try {
