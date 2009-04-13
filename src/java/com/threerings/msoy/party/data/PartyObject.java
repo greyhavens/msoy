@@ -348,7 +348,7 @@ public class PartyObject extends DObject
             return null;
 
         case PartyCodes.RECRUITMENT_GROUP:
-            if (groupRank.compare(Rank.NON_MEMBER) > 0) {
+            if (groupRank.compareTo(Rank.NON_MEMBER) > 0) {
                 return null;
             }
             return PartyCodes.E_PARTY_CLOSED;

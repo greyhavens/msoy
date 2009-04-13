@@ -297,7 +297,7 @@ public class ItemLogic
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
                 if (grec.groupId != Game.NO_GROUP) {
-                    if (_groupRepo.getRank(grec.groupId, memberId).compare(Rank.MANAGER) < 0) {
+                    if (_groupRepo.getRank(grec.groupId, memberId).compareTo(Rank.MANAGER) < 0) {
                         throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
                     }
                 }

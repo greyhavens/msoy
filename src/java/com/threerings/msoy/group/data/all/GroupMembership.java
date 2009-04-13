@@ -31,13 +31,6 @@ public class GroupMembership
         /** Rank code for a manager. */
         MANAGER((byte)2);
 
-        /** Compares this rank to another. Returns a negative number if this rank is lower, a
-         * positive number if it is higher and zero if they are equal.
-         */
-        public int compare (Rank other) {
-            return ordinal() - other.ordinal();
-        }        
-
         // from ByteEnum
         public byte toByte () {
             return _value;

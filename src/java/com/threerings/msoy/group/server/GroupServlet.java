@@ -555,7 +555,7 @@ public class GroupServlet extends MsoyServiceServlet
             memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
                 public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
                     // only groups the member manages
-                    if (info.right.rank.compare(Rank.MANAGER) < 0) {
+                    if (info.right.rank.compareTo(Rank.MANAGER) < 0) {
                         return false;
                     }
                     // exclude groups connected to other games
@@ -874,7 +874,7 @@ public class GroupServlet extends MsoyServiceServlet
     /** Compartor for sorting by manager status then population then by last post date. */
     protected static Comparator<MyGroupCard> SORT_BY_MANAGER = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
-            int cmp = c2.rank.compare(c1.rank); // highest first
+            int cmp = c2.rank.compareTo(c1.rank); // highest first
             if (cmp != 0) {
                 return cmp;
             }

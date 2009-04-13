@@ -329,7 +329,7 @@ public class PartyRegistry
         try {
             // validate that they can create the party with this group
             if ((group.partyPerms == Group.Perm.MANAGER) &&
-                    (groupInfo.rank.compare(Rank.MANAGER) < 0)) {
+                    (groupInfo.rank.compareTo(Rank.MANAGER) < 0)) {
                 jl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
                 return;
             }

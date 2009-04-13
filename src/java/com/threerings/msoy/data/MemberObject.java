@@ -280,7 +280,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public boolean isGroupRank (int groupId, Rank requiredRank)
     {
-        return getGroupRank(groupId).compare(requiredRank) >= 0;
+        return getGroupRank(groupId).compareTo(requiredRank) >= 0;
     }
 
     /**
