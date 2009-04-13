@@ -8,7 +8,7 @@ import com.threerings.util.Enum;
 /**
  * Enumeration for the ranks that a group member can hold.
  */
-public class GroupMembership_Rank extends Enum
+public final class GroupMembership_Rank extends Enum
 {
     /** Unused rank code. This is not ever stored in a GroupMembership record, but is useful
      * for methods that return a user's rank as a byte. */
@@ -19,6 +19,7 @@ public class GroupMembership_Rank extends Enum
 
     /** Rank code for a manager. */
     public static const MANAGER :GroupMembership_Rank = new GroupMembership_Rank("MANAGER");
+    finishedEnumerating(GroupMembership_Rank);
 
     /** @private this is an enum */
     public function GroupMembership_Rank (name :String)
@@ -26,14 +27,9 @@ public class GroupMembership_Rank extends Enum
         super(name);
     }
 
-    /**
-     * Compare this rank to another. Returns a negative number if this rank is lower than the
-     * other, a positive number if higher, or zero if they are the same.
-     */
-    public function compare (other :GroupMembership_Rank) :int
-    {
-        return ordinal() - other.ordinal();
-    }
+    // not done- not needed. See Enum.
+    // TODO: public static function valueOf (name :String) :GroupMembership_RANK;
+    // TODO: public static function values () :Array;
 }
 
 }

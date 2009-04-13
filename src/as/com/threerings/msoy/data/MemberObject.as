@@ -331,7 +331,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function isGroupRank (groupId :int, requiredRank :GroupMembership_Rank) :Boolean
     {
-        return getGroupRank(groupId).compare(requiredRank) >= 0;
+        return getGroupRank(groupId).compareTo(requiredRank) >= 0;
     }
 
     /**

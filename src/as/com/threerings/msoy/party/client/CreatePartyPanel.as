@@ -75,7 +75,7 @@ public class CreatePartyPanel extends FloatingPanel
         _group.dataProvider = us.groups.toArray().sort(
             function (one :GroupMembership, two :GroupMembership) :int {
                 // sort groups by your rank, then by name
-                var cmp :int = two.rank.compare(one.rank); // higher rank sorts first
+                var cmp :int = two.rank.compareTo(one.rank); // higher rank sorts first
                 if (cmp == 0) {
                     cmp = MemberName.BY_DISPLAY_NAME(one.group, two.group);
                 }
