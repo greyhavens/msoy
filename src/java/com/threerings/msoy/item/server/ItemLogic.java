@@ -40,6 +40,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
+import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -495,10 +496,12 @@ public class ItemLogic
             SubItemRecord srecord = (SubItemRecord)record;
             // see if the owner of this game is playing a game right now (this lookup is cheaper
             // than the subsequent getGameId() lookup)
-            if (_gameLogic.getPlayerWorldGameNode(record.ownerId) != null) {
+            if (_peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
                 int gameId = getGameId(srecord);
                 if (gameId != 0) {
                     // notify the game that the user has purchased some game content
+                    log.info("Notifying of content purchased", "pid", record.ownerId,
+                             "gameId", gameId, "type", srecord.getType(), "ident", srecord.ident);
                     _peerMan.invokeNodeAction(
                         new ContentPurchasedAction(
                             record.ownerId, gameId, srecord.getType(), srecord.ident));
