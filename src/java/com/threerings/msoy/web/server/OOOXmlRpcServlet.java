@@ -41,7 +41,6 @@ public class OOOXmlRpcServlet extends XmlRpcServlet
                 throw new RuntimeException("Internal error");
             }
         }
-
     }
 
     @Override // from XmlRpcServlet
