@@ -185,18 +185,26 @@
   height: 39px;
 }
 
+.remixButton-up-hovering {
+  background-image: url(/images/item/remix_over.png);
+}
+
+.remixButton-down-hovering {
+  background-image: url(/images/item/remix_down.png);
+}
+
 .configButton {
   background-image: url(/images/item/config.png);
   width: 38px;
   height: 39px;
 }
 
-.remixButton-up-hovering, .configButton-up-hovering {
-  background-image: url(/images/item/remix_over.png);
+.configButton-up-hovering {
+  background-image: url(/images/item/config_over.png);
 }
 
-.remixButton-down-hovering, .configButton-down-hovering {
-  background-image: url(/images/item/remix_down.png);
+.configButton-down-hovering {
+  background-image: url(/images/item/config_down.png);
 }
 
 /* ------------------------------------
