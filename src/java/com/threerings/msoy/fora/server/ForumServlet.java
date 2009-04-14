@@ -545,7 +545,11 @@ public class ForumServlet extends MsoyServiceServlet
         // convert the messages to runtime format
         List<ForumMessage> messages = Lists.newArrayList();
         for (ForumMessageRecord msgrec : msgrecs) {
-            messages.add(msgrec.toForumMessage(cards));
+            ForumMessage message = msgrec.toForumMessage(cards);
+            // don't display forum messages for missing cards (deleted accounts)
+            if (message.poster != null) {
+                messages.add(message);
+            }
         }
         return messages;
     }
