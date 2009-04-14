@@ -182,6 +182,16 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("receivedChat_v2", entityIdent, msg);
     }
 
+    public function processMusicStartStop (started :Boolean) :void
+    {
+        callUserCode("musicStartStop_v1", started);
+    }
+
+    public function processMusicId3 (metadata :Object) :void
+    {
+        callUserCode("musicId3_v1", metadata);
+    }
+
     override protected function handleUserCodeConnect (evt :Object) :void
     {
         super.handleUserCodeConnect(evt);
@@ -239,6 +249,7 @@ public class AVRGameBackend extends ControlBackend
         o["getAvatarInfo_v2"] = getAvatarInfo_v2;
         o["getEntityIds_v1"] = getEntityIds_v1;
         o["getEntityProperty_v1"] = getEntityProperty_v1;
+        o["getMusicId3_v1"] = getMusicId3_v1;
         // .getRoom() backwards compat
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
@@ -449,6 +460,14 @@ public class AVRGameBackend extends ControlBackend
         var ctrl :RoomController = getRoomController(
             "getEntityProperty(" + entityId + ", " + key + ")");
         return ctrl != null ? ctrl.getEntityProperty(ItemIdent.fromString(entityId), key) : null;
+    }
+
+    // RoomSubControlClient
+    protected function getMusicId3_v1 (targetId :int) :Object
+    {
+        validateRoomTargetId(targetId);
+        var view :RoomView = getRoomView("getMusicId3()");
+        return (view == null) ? null : view.getMusicId3();
     }
 
     // PlayerSubControl

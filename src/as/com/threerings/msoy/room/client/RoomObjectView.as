@@ -608,7 +608,7 @@ public class RoomObjectView extends RoomView
         super.backgroundFinishedLoading();
 
         // play any music..
-        updateBackgroundAudio(true);
+        updateBackgroundAudio();
 
         // TODO: HOWSABOUT WE ONLY USE THE DOOR THINGY WHEN WE'RE MAKING DOORS!
         // inform the "floating" door editor
@@ -648,24 +648,35 @@ public class RoomObjectView extends RoomView
     /**
      * Restart playing the background audio.
      */
-    protected function updateBackgroundAudio (firstLoad :Boolean = false) :void
+    protected function updateBackgroundAudio () :void
     {
         var audio :Audio =
             _roomObj.playlist.get(new ItemIdent(Item.AUDIO, _roomObj.currentSongId)) as Audio;
-        const dispatchStopped :Boolean = !firstLoad && (_musicPlayCount >= 0);
+        const dispatchStopped :Boolean = (_musicPlayCount >= 0);
         const dispatchStarted :Boolean = (audio != null);
-        for each (var entity :MsoySprite in _entities.values()) {
-            if (dispatchStopped) {
+        var avrg :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
+        var entity :MsoySprite;
+        if (dispatchStopped) {
+            for each (entity in _entities.values()) {
                 entity.processMusicStartStop(false);
             }
-            if (dispatchStarted) {
-                entity.processMusicStartStop(true);
+            if (avrg != null) {
+                avrg.processMusicStartStop(false);
             }
         }
-        // TODO: avrg as well
 
+        // play the new music
         _ctx.getWorldController().handlePlayMusic(audio);
         _musicPlayCount = _roomObj.playCount;
+
+        if (dispatchStarted) {
+            for each (entity in _entities.values()) {
+                entity.processMusicStartStop(true);
+            }
+            if (avrg != null) {
+                avrg.processMusicStartStop(true);
+            }
+        }
     }
 
     protected function addBody (occInfo :OccupantInfo) :void
@@ -816,8 +827,10 @@ public class RoomObjectView extends RoomView
         for each (var entity :MsoySprite in _entities.values()) {
             entity.processMusicId3(metadata);
         }
-
-        // TODO: Avrg too
+        var avrg :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
+        if (avrg != null) {
+            avrg.processMusicId3(metadata);
+        }
     }
 
     override public function getMusicId3 () :Object
@@ -837,6 +850,6 @@ public class RoomObjectView extends RoomView
     protected var _loadingWatcher :PlaceLoadingDisplay;
 
     /** The id of the current music being played from the room's playlist. */
-    protected var _musicPlayCount :int;
+    protected var _musicPlayCount :int = -1; // -1 means nothing is playing
 }
 }
