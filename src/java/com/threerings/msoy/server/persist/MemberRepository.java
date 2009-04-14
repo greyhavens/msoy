@@ -149,6 +149,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads up a member record by id. Returns null if no member exists with the specified id. The
+     * record will be fetched from the cache if possible and cached if not.
+     */
+    public MemberRecord loadMember (int memberId)
+    {
+        return load(MemberRecord.class, memberId);
+    }
+
+    /**
      * Loads up the member record associated with the specified account.  Returns null if no
      * matching record could be found.
      */
@@ -159,12 +168,13 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads up a member record by id. Returns null if no member exists with the specified id. The
-     * record will be fetched from the cache if possible and cached if not.
+     * Loads the member record with the specified permaname. Returns null if no matching record
+     * could be found.
      */
-    public MemberRecord loadMember (int memberId)
+    public MemberRecord loadMemberByPermaname (String permaName)
     {
-        return load(MemberRecord.class, memberId);
+        return load(MemberRecord.class,
+                    new Where(MemberRecord.PERMA_NAME, permaName.toLowerCase()));
     }
 
     /**
