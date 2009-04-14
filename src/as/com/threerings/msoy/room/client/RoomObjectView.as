@@ -656,10 +656,10 @@ public class RoomObjectView extends RoomView
         const dispatchStarted :Boolean = (audio != null);
         for each (var entity :MsoySprite in _entities.values()) {
             if (dispatchStopped) {
-                entity.processMusicChange(false);
+                entity.processMusicStartStop(false);
             }
             if (dispatchStarted) {
-                entity.processMusicChange(true);
+                entity.processMusicStartStop(true);
             }
         }
         // TODO: avrg as well

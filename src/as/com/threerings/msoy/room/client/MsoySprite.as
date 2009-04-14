@@ -382,9 +382,9 @@ public class MsoySprite extends DataPackMediaContainer
         }
     }
 
-    public function processMusicChange (started :Boolean) :void
+    public function processMusicStartStop (started :Boolean) :void
     {
-        callUserCode(started ? "musicStarted_v1" : "musicStopped_v1");
+        callUserCode("musicStartStop_v1", started);
     }
 
     public function processMusicId3 (metadata :Object) :void
