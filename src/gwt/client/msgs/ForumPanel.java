@@ -98,6 +98,10 @@ public class ForumPanel extends TitledListPanel
      */
     public void setPage (String query, int page)
     {
+        query = query.trim();
+        if (_searchBox != null) {
+            _searchBox.setText(query);
+        }
         switch (_mode) {
         case GROUP:
         case FRIENDS:
@@ -149,7 +153,7 @@ public class ForumPanel extends TitledListPanel
         header.setWidget(0, col++, _title, 1, "Title");
 
         if (listener != null) {
-            header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
+            header.setWidget(0, col++, _searchBox = new SearchBox(listener), 1, "Search");
         }
         header.setText(0, col++, _mmsgs.groupThreadPosts(), 1, "Posts");
         header.setText(0, col++, _mode == Mode.FRIENDS ? _mmsgs.groupThreadFriendPost() :
@@ -192,6 +196,9 @@ public class ForumPanel extends TitledListPanel
 
     /** The group we're looking at, if any. */
     protected int _groupId;
+
+    /** The search box in the header above the thread list. */
+    protected SearchBox _searchBox;
 
     /** The current list of threads, if any. */
     protected ThreadListPanel<?> _threads;
