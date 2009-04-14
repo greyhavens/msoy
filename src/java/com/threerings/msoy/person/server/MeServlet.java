@@ -24,8 +24,8 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 
+import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
@@ -53,7 +53,6 @@ import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -136,13 +135,10 @@ public class MeServlet extends MsoyServiceServlet
             _profiler.swap("forums");
         }
 
-        Set<Integer> groupIds = Sets.newHashSet();
-        for (GroupMembershipRecord gmrec : _groupRepo.getMemberships(mrec.memberId)) {
-            groupIds.add(gmrec.groupId);
-        }
-        groupIds.add(ServerConfig.getAnnounceGroupId());
+        Set<Integer> groupIds = _groupLogic.getMemberGroupIds(mrec.memberId);
         data.updatedThreads = _forumRepo.countUnreadThreads(mrec.memberId, groupIds);
-        data.unreadFriendPosts = _forumRepo.countUnreadPosts(mrec.memberId, friendIds);
+        data.unreadFriendPosts = _forumRepo.countUnreadPosts(
+            mrec.memberId, friendIds, _groupLogic.getHiddenGroupIds(mrec.memberId, groupIds));
 
         if (PROFILING_ENABLED) {
             _profiler.exit(null);
@@ -366,6 +362,8 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected ContestRepository _contestRepo;
     @Inject protected FeedLogic _feedLogic;
+    @Inject protected ForumRepository _forumRepo;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MemberManager _memberMan;
@@ -374,7 +372,6 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected RPCProfiler _profiler;
-    @Inject protected ForumRepository _forumRepo;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int MAX_GREETERS_TO_SHOW = 10;

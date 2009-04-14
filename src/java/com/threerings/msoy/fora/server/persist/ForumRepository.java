@@ -83,12 +83,12 @@ public class ForumRepository extends DepotRepository
      * Loads posts by specific people that are unread by a given member, up to a maximum.
      */
     public List<ForumMessagePosterRecord> loadUnreadPosts (
-        int memberId, Set<Integer> posterIds, int max)
+        int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds, int max)
     {
         if (posterIds.isEmpty()) {
             return Collections.emptyList();
         }
-        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds);
+        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds, hiddenGroupIds);
         clauses.add(new Limit(0, max));
         clauses.add(OrderBy.descending(ForumMessagePosterRecord.CREATED));
         return findAll(ForumMessagePosterRecord.class, clauses);
@@ -97,12 +97,12 @@ public class ForumRepository extends DepotRepository
     /**
      * Counts the number of posts by specific people that are unread by a given member.
      */
-    public int countUnreadPosts (int memberId, Set<Integer> posterIds)
+    public int countUnreadPosts (int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds)
     {
         if (posterIds.isEmpty()) {
             return 0;
         }
-        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds);
+        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds, hiddenGroupIds);
         clauses.add(new FromOverride(ForumMessageRecord.class));
         return load(CountRecord.class, clauses).count;
     }
@@ -451,22 +451,25 @@ public class ForumRepository extends DepotRepository
             new Where(where));
     }
 
-    protected List<QueryClause> getUnreadPostsClauses (int memberId, Set<Integer> posterIds)
+    protected List<QueryClause> getUnreadPostsClauses (
+        int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
-        SQLExpression join = new And(
+        SQLExpression joinRead = new And(
             new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
-            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
-        );
-        SQLExpression where = new And(
-            new In(ForumMessagePosterRecord.POSTER_ID, posterIds),
-            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
-                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
-                           new GreaterThan(ForumMessagePosterRecord.MESSAGE_ID,
-                                           ReadTrackingRecord.LAST_READ_POST_ID))));
-
+            new Equals(ReadTrackingRecord.MEMBER_ID, memberId));
+        SQLExpression joinThread = new And(
+            new Equals(ForumThreadRecord.THREAD_ID, ForumMessagePosterRecord.THREAD_ID));
+        SQLExpression byAuthors = new In(ForumMessagePosterRecord.POSTER_ID, authorIds);
+        SQLExpression unread = new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+            new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId), new GreaterThan(
+                ForumMessagePosterRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID)));
+        SQLExpression notHidden = hiddenGroupIds.size() == 0 ? null :
+            new Not(new In(ForumThreadRecord.GROUP_ID, hiddenGroupIds)); // no empty In's
         return Lists.newArrayList(
-            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
-            new Where(where));
+            new Join(ReadTrackingRecord.class, joinRead).setType(Join.Type.LEFT_OUTER),
+            new Join(ForumThreadRecord.class, joinThread).setType(Join.Type.INNER),
+            new Where(notHidden == null ? new And(byAuthors, unread) :
+                new And(byAuthors, unread, notHidden)));
     }
 
     @Override // from DepotRepository

@@ -52,6 +52,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.mail.server.MailLogic;
@@ -115,7 +116,8 @@ public class ForumServlet extends MsoyServiceServlet
 
         // load up the meta data of unread posts by friends
         List<ForumMessagePosterRecord> posters = _forumRepo.loadUnreadPosts(mrec.memberId,
-            _memberRepo.loadFriendIds(mrec.memberId), maximum);
+            _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
+                mrec.memberId, null), maximum);
 
         // load all the threads into a map, tracking required member and groups ids as we go
         Set<Integer> memberIds = Sets.newHashSet();
@@ -734,6 +736,7 @@ public class ForumServlet extends MsoyServiceServlet
     @Inject protected FeedRepository _feedRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
