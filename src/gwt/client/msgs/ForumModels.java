@@ -467,7 +467,7 @@ public class ForumModels
         }
 
         public boolean equals (int groupId, String query) {
-            return _query.equals(_query) && _groupId == groupId;
+            return _query.equals(query) && _groupId == groupId;
         }
 
         public void execute (final AsyncCallback<List<ForumThread>> callback) {
