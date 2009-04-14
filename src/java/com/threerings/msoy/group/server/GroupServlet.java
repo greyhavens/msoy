@@ -774,19 +774,26 @@ public class GroupServlet extends MsoyServiceServlet
         int groupId, List<Integer> memberIds, int offset, int count)
     {
         // load a page of member cards, sorted by last online
-        Map<Integer, MemberCardRecord> cards = Maps.newHashMap();
+        Map<Integer, MemberCardRecord> cards = Maps.newLinkedHashMap();
         for (MemberCardRecord mcr : _memberRepo.loadMemberCards(memberIds, offset, count, true)) {
             cards.put(mcr.memberId, mcr);
         }
 
-        // load memberships and convert to group cards
-        List<GroupMemberCard> result = Lists.newArrayList();
+        // load group membership information
+        Map<Integer, GroupMembershipRecord> gmrecs = Maps.newHashMap();
         for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, cards.keySet())) {
-            MemberCardRecord mcr = cards.get(gmrec.memberId);
-            if (mcr != null) {
+            gmrecs.put(gmrec.memberId, gmrec);
+        }
+
+        // finally convert everything to runtime records in last online order
+        List<GroupMemberCard> result = Lists.newArrayList();
+        for (MemberCardRecord mcr : cards.values()) {
+            GroupMembershipRecord gmrec = gmrecs.get(mcr.memberId);
+            if (gmrec != null) {
                 result.add(mcr.toMemberCard(gmrec.toGroupMemberCard()));
             }
         }
+
         return result;
     }
 
