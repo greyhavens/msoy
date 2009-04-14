@@ -25,11 +25,15 @@ import com.threerings.crowd.chat.data.ChatChannel;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MsoyAuthName;
+import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -123,29 +127,17 @@ public class StatusServlet extends HttpServlet
     {
         final ServerInfo info = new ServerInfo();
         info.name = nodeobj.nodeName;
-
         info.rooms = nodeobj.hostedScenes.size();
-        if (details == Details.ROOMS) {
-            for (HostedRoom room : nodeobj.hostedScenes) {
-                info.modeinfo.append("- ").append(room).append("\n");
-            }
-        }
-
         info.games = nodeobj.hostedGames.size();
-        if (details == Details.GAMES) {
-            for (HostedGame game : nodeobj.hostedGames) {
-                info.modeinfo.append("- ").append(game).append("\n");
-            }
-        }
-
         info.channels = nodeobj.hostedChannels.size();
-        if (details == Details.CHANNELS) {
-            for (ChatChannel channel : nodeobj.hostedChannels) {
-                info.modeinfo.append("- ").append(channel);
-            }
-        }
+        info.parties = nodeobj.hostedParties.size();
 
         info.clients += nodeobj.clients.size();
+        for (ClientInfo cinfo : nodeobj.clients) {
+            if (cinfo.username instanceof MsoyAuthName) {
+                info.members++;
+            }
+        }
 
         for (MemberLocation mloc : nodeobj.memberLocs) {
             if (mloc.sceneId != 0) {
@@ -154,38 +146,52 @@ public class StatusServlet extends HttpServlet
             if (mloc.gameId != 0) {
                 info.inGame++;
             }
-            if (details == Details.MEMBERS) {
-                info.modeinfo.append("- ").append(mloc).append("\n");
-            }
         }
 
         switch (details) {
+        case MEMBERS:
+            info.details = makeDetails(nodeobj.memberLocs);
+            break;
+        case ROOMS:
+            info.details = makeDetails(nodeobj.hostedScenes);
+            break;
+        case GAMES:
+            info.details = makeDetails(nodeobj.hostedGames);
+            break;
+        case CHANNELS:
+            info.details = makeDetails(nodeobj.hostedChannels);
+            break;
+        case PARTIES:
+            info.details = makeDetails(nodeobj.hostedParties);
+            break;
         case REPORT:
             collectReportInfo(info, client, nodeobj, ReportManager.DEFAULT_TYPE);
             break;
-
         case PROFILE:
             collectReportInfo(info, client, nodeobj, ReportManager.PROFILE_TYPE);
             break;
-
         case PANOPTICON:
             collectReportInfo(info, client, nodeobj, MsoyEventLogger.PANOPTICON_REPORT_TYPE);
             break;
-
         case NONE:
             // leave details as null in this case
-            break;
-
-        default:
-            info.details = new Callable<String>() {
-                public String call () throws Exception {
-                    return info.modeinfo.toString();
-                }
-            };
             break;
         }
 
         return info;
+    }
+
+    protected Callable<String> makeDetails (Iterable<? extends Object> data)
+    {
+        final StringBuffer buf = new StringBuffer();
+        for (Object value : data) {
+            buf.append("- ").append(value).append("\n");
+        }
+        return new Callable<String>() {
+            public String call () throws Exception {
+                return buf.toString();
+            }
+        };
     }
 
     protected void collectReportInfo (ServerInfo info, Client client, MsoyNodeObject nodeobj,
@@ -217,17 +223,19 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, PROFILE, PANOPTICON
+        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, PARTIES, REPORT, PROFILE, PANOPTICON
     };
 
     protected static class ServerInfo
     {
         public String name;
-
         public int clients;
+        public int members;
+
         public int rooms;
         public int games;
         public int channels;
+        public int parties;
 
         public int inScene;
         public int inGame;
@@ -237,8 +245,10 @@ public class StatusServlet extends HttpServlet
         public StringBuilder modeinfo = new StringBuilder();
 
         public String toString () {
-            return name + " [clients=" + clients + ", inScene=" + inScene + ", inGame=" + inGame +
-                ", rooms=" + rooms + ", games=" + games + ", channels=" + channels + "] ";
+            return name + " [clients=" + clients + ", members=" + members +
+                ", inScene=" + inScene + ", inGame=" + inGame +
+                ", rooms=" + rooms + ", games=" + games +
+                ", channels=" + channels + ", parties=" + parties + "] ";
         }
     }
 
