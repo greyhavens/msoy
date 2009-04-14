@@ -205,13 +205,13 @@ public class FeedRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
         int global = deleteAll(GlobalFeedMessageRecord.class,
-                  new Where(new Conditionals.LessThan(GlobalFeedMessageRecord.POSTED, cutoff)));
+            new Where(new Conditionals.LessThan(GlobalFeedMessageRecord.POSTED, cutoff)), null);
         int friend = deleteAll(FriendFeedMessageRecord.class,
-                  new Where(new Conditionals.LessThan(FriendFeedMessageRecord.POSTED, cutoff)));
+            new Where(new Conditionals.LessThan(FriendFeedMessageRecord.POSTED, cutoff)), null);
         int group = deleteAll(GroupFeedMessageRecord.class,
-                  new Where(new Conditionals.LessThan(GroupFeedMessageRecord.POSTED, cutoff)));
+            new Where(new Conditionals.LessThan(GroupFeedMessageRecord.POSTED, cutoff)), null);
         int self = deleteAll(SelfFeedMessageRecord.class,
-                  new Where(new Conditionals.LessThan(SelfFeedMessageRecord.POSTED, cutoff)));
+            new Where(new Conditionals.LessThan(SelfFeedMessageRecord.POSTED, cutoff)), null);
         log.info("Feeds pruned", "global", global, "friend", friend, "group", group, "self", self);
     }
 
