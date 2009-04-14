@@ -65,14 +65,11 @@ public class CommentServlet extends MsoyServiceServlet
         List<CommentRecord> records = _commentRepo.loadComments(etype, eid, offset, count, false);
 
         // resolve the member cards for all commentors
-        IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
         ArrayIntSet memIds = new ArrayIntSet();
         for (CommentRecord record : records) {
             memIds.add(record.memberId);
         }
-        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(memIds)) {
-            cards.put(mcrec.memberId, mcrec.toMemberCard());
-        }
+        IntMap<MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(memIds));
 
         // convert the comment records to runtime records
         List<Comment> comments = Lists.newArrayList();

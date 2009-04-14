@@ -68,10 +68,7 @@ public class MailServlet extends MsoyServiceServlet
         }
 
         // resolve the member cards for the other parties
-        IntMap<MemberCard> others = IntMaps.newHashIntMap();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(otherIds)) {
-            others.put(mcr.memberId, mcr.toMemberCard());
-        }
+        IntMap<MemberCard> others = MemberCardRecord.toMap(_memberRepo.loadMemberCards(otherIds));
         for (int ii = 0, ll = convos.size(); ii < ll; ii++) {
             convos.get(ii).other = others.get(conrecs.get(ii).getOtherId(memrec.memberId));
         }
@@ -132,10 +129,7 @@ public class MailServlet extends MsoyServiceServlet
         }
 
         // resolve the member cards for the participants
-        IntMap<MemberCard> authors = IntMaps.newHashIntMap();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(authorIds)) {
-            authors.put(mcr.memberId, mcr.toMemberCard());
-        }
+        IntMap<MemberCard> authors = MemberCardRecord.toMap(_memberRepo.loadMemberCards(authorIds));
         for (int ii = 0, ll = msgs.size(); ii < ll; ii++) {
             msgs.get(ii).author = authors.get(cmrecs.get(ii).authorId);
         }

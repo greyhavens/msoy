@@ -12,6 +12,8 @@ import com.google.common.collect.Lists;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
@@ -94,6 +96,18 @@ public class MemberCardRecord extends PersistentRecord
                 return record.toMemberCard();
             }
         }));
+    }
+
+    /**
+     * Converts a sequence of records into a mapping from member id to MemberCard.
+     */
+    public static IntMap<MemberCard> toMap (Iterable<MemberCardRecord> records)
+    {
+        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+        for (MemberCardRecord record : records) {
+            cards.put(record.memberId, record.toMemberCard());
+        }
+        return cards;
     }
 
     /**

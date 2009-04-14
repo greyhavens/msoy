@@ -179,18 +179,19 @@ public class IssueServlet extends MsoyServiceServlet
 
         List<Issue> issues = Lists.newArrayList();
         if (irecs.size() > 0) {
-            IntMap<MemberName> mnames = IntMaps.newHashIntMap();
             IntSet members = new ArrayIntSet();
-
             for (IssueRecord record : irecs) {
                 members.add(record.creatorId);
                 if (record.ownerId != -1) {
                     members.add(record.ownerId);
                 }
             }
+
+            IntMap<MemberName> mnames = IntMaps.newHashIntMap();
             for (MemberRecord mem : _memberRepo.loadMembers(members)) {
                 mnames.put(mem.memberId, new MemberName(mem.permaName, mem.memberId));
             }
+
             for (IssueRecord record : irecs) {
                 Issue issue = record.toIssue();
                 issue.creator = mnames.get(record.creatorId);
@@ -212,14 +213,11 @@ public class IssueServlet extends MsoyServiceServlet
     protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> records)
     {
         // enumerate the posters and create member cards for them
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
         IntSet posters = new ArrayIntSet();
         for (ForumMessageRecord msgrec : records) {
             posters.add(msgrec.posterId);
         }
-        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(posters)) {
-            cards.put(mcrec.memberId, mcrec.toMemberCard());
-        }
+        IntMap<MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
 
         // convert the messages to runtime format
         List<ForumMessage> messages = Lists.newArrayList();

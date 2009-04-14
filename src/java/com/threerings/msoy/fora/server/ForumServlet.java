@@ -533,14 +533,11 @@ public class ForumServlet extends MsoyServiceServlet
     protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)
     {
         // enumerate the posters and create member cards for them
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
         IntSet posters = new ArrayIntSet();
         for (ForumMessageRecord msgrec : msgrecs) {
             posters.add(msgrec.posterId);
         }
-        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(posters)) {
-            cards.put(mcrec.memberId, mcrec.toMemberCard());
-        }
+        IntMap<MemberCard> cards = MemberCardRecord.toMap(_memberRepo.loadMemberCards(posters));
 
         // convert the messages to runtime format
         List<ForumMessage> messages = Lists.newArrayList();
