@@ -774,31 +774,19 @@ public class GroupServlet extends MsoyServiceServlet
         int groupId, List<Integer> memberIds, int offset, int count)
     {
         // load a page of member cards, sorted by last online
-        List<MemberCardRecord> cards = _memberRepo.loadMemberCards(memberIds, offset, count, true);
-
-        // now we know the page contents, reduce the member ids
-        List<Integer> page = Lists.transform(cards, new Function<MemberCardRecord, Integer>() {
-            public Integer apply(MemberCardRecord mcr) {
-                return mcr.memberId;
-            }
-        });
+        Map<Integer, MemberCardRecord> cards = Maps.newHashMap();
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(memberIds, offset, count, true)) {
+            cards.put(mcr.memberId, mcr);
+        }
 
         // load memberships and convert to group cards
-        IntMap<GroupMemberCard> members = IntMaps.newHashIntMap();
-        for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, page)) {
-            members.put(gmrec.memberId, gmrec.toGroupMemberCard());
-        }
-
-        // populate the member card bits of the group cards
         List<GroupMemberCard> result = Lists.newArrayList();
-        for (MemberCardRecord mcr : cards) {
-            // someone could remove a member while we're in the midst of doing this
-            if (mcr == null) {
-                continue;
+        for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, cards.keySet())) {
+            MemberCardRecord mcr = cards.get(gmrec.memberId);
+            if (mcr != null) {
+                result.add(mcr.toMemberCard(gmrec.toGroupMemberCard()));
             }
-            result.add(mcr.toMemberCard(members.get(mcr.memberId)));
         }
-
         return result;
     }
 
