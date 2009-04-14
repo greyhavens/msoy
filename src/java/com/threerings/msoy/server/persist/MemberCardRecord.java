@@ -83,20 +83,17 @@ public class MemberCardRecord extends PersistentRecord
     @Computed(shadowOf=MemberRecord.class)
     public int level;
 
-    /** Converts persistent records to runtime records. */
-    public static final Function<MemberCardRecord, MemberCard> TO_MEMBER_CARD =
-        new Function<MemberCardRecord, MemberCard>() {
-            public MemberCard apply (MemberCardRecord record) {
-                return record.toMemberCard();
-            }
-        };
-
     /**
      * Converts a sequence of records into their runtime form.
      */
     public static List<MemberCard> toMemberCards (Iterable<MemberCardRecord> records)
     {
-        return Lists.newArrayList(Iterables.transform(records, TO_MEMBER_CARD));
+        return Lists.newArrayList(
+            Iterables.transform(records, new Function<MemberCardRecord, MemberCard>() {
+            public MemberCard apply (MemberCardRecord record) {
+                return record.toMemberCard();
+            }
+        }));
     }
 
     /**
