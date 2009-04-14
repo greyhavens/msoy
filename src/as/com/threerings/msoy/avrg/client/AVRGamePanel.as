@@ -60,6 +60,11 @@ public class AVRGamePanel extends UIComponent
     {
         log.info("Leaving AVRG [plobj=" + plobj + "]");
 
+        if (_mediaHolder != null) {
+            _mediaHolder.shutdown();
+            _mediaHolder = null;
+        }
+
         getMsoyCtx().getUIState().setInAVRGame(false);
 
         // null gameObj for mediaComplete to find if it should run after us
