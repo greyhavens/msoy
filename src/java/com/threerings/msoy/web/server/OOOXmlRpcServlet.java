@@ -16,6 +16,7 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
 import com.threerings.user.OOOXmlRpcService;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -36,6 +37,25 @@ public class OOOXmlRpcServlet extends XmlRpcServlet
                 return true;
             } catch (ServiceException se) {
                 return false;
+            } catch (Exception e) {
+                log.warning("Failed to auth user", "username", username, e);
+                throw new RuntimeException("Internal error");
+            }
+        }
+
+        /**
+         * To integrate with Mediawiki in some halfway decent fashion, we return a member's
+         * permaname when they authenticate which Mediawiki will use as their username. Members
+         * that don't yet have a permaname set can't log into Mediawiki.
+         */
+        public String authUserForWiki (String username, String password)
+        {
+            try {
+                // this will throw an exception if anything is wrong
+                MemberRecord mrec = _staticAuth.authenticateSession(username, password);
+                return mrec.permaName; // may be null
+            } catch (ServiceException se) {
+                return null;
             } catch (Exception e) {
                 log.warning("Failed to auth user", "username", username, e);
                 throw new RuntimeException("Internal error");
