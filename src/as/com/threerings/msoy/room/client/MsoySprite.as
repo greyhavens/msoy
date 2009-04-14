@@ -382,6 +382,16 @@ public class MsoySprite extends DataPackMediaContainer
         }
     }
 
+    public function processMusicChange (started :Boolean) :void
+    {
+        callUserCode(started ? "musicStarted_v1" : "musicStopped_v1");
+    }
+
+    public function processMusicId3 (metadata :Object) :void
+    {
+        callUserCode("musicId3_v1", metadata);
+    }
+
     /**
      * Called when an action or message to received for this sprite.
      */

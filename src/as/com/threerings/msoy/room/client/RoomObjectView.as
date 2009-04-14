@@ -11,8 +11,10 @@ import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
 import com.threerings.util.HashMap;
+import com.threerings.util.ImmutableProxyObject;
 import com.threerings.util.Name;
 import com.threerings.util.ValueEvent;
+import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -33,6 +35,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.flash.MenuUtil;
 
+import com.threerings.flash.media.AudioPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
 
 import com.threerings.whirled.data.SceneUpdate;
@@ -437,6 +440,10 @@ public class RoomObjectView extends RoomView
 
         _roomObj.addListener(this);
 
+        var player :AudioPlayer = _ctx.getWorldController().getMusicPlayer();
+        player.addEventListener(MediaPlayerCodes.STATE, handleMusicStateChanged);
+        player.addEventListener(MediaPlayerCodes.METADATA, handleMusicMetadata);
+
         addAllOccupants();
 
         // we add ourselves as a chat display so that we can trigger speak actions on avatars
@@ -487,8 +494,9 @@ public class RoomObjectView extends RoomView
 
         removeAllOccupants();
 
-        _ctx.getWorldController().getMusicPlayer().removeEventListener(
-            MediaPlayerCodes.STATE, handleMusicStateChanged);
+        var player :AudioPlayer = _ctx.getWorldController().getMusicPlayer();
+        player.removeEventListener(MediaPlayerCodes.STATE, handleMusicStateChanged);
+        player.removeEventListener(MediaPlayerCodes.METADATA, handleMusicMetadata);
         _ctx.getWorldController().handlePlayMusic(null);
 
         super.didLeavePlace(plobj);
@@ -600,7 +608,7 @@ public class RoomObjectView extends RoomView
         super.backgroundFinishedLoading();
 
         // play any music..
-        updateBackgroundAudio();
+        updateBackgroundAudio(true);
 
         // TODO: HOWSABOUT WE ONLY USE THE DOOR THINGY WHEN WE'RE MAKING DOORS!
         // inform the "floating" door editor
@@ -640,14 +648,22 @@ public class RoomObjectView extends RoomView
     /**
      * Restart playing the background audio.
      */
-    protected function updateBackgroundAudio () :void
+    protected function updateBackgroundAudio (firstLoad :Boolean = false) :void
     {
         var audio :Audio =
             _roomObj.playlist.get(new ItemIdent(Item.AUDIO, _roomObj.currentSongId)) as Audio;
+        const dispatchStopped :Boolean = !firstLoad && (_musicPlayCount >= 0);
+        const dispatchStarted :Boolean = (audio != null);
+        for each (var entity :MsoySprite in _entities.values()) {
+            if (dispatchStopped) {
+                entity.processMusicChange(false);
+            }
+            if (dispatchStarted) {
+                entity.processMusicChange(true);
+            }
+        }
+        // TODO: avrg as well
 
-        // add a listener for when the music has stopped
-        _ctx.getWorldController().getMusicPlayer().addEventListener(
-            MediaPlayerCodes.STATE, handleMusicStateChanged);
         _ctx.getWorldController().handlePlayMusic(audio);
         _musicPlayCount = _roomObj.playCount;
     }
@@ -788,6 +804,27 @@ public class RoomObjectView extends RoomView
         if (event.value == MediaPlayerCodes.STATE_STOPPED) {
             _roomObj.roomService.songEnded(_ctx.getClient(), _musicPlayCount);
         }
+    }
+
+    /**
+     * Dispatch music metadata to all entites.
+     */
+    protected function handleMusicMetadata (event :ValueEvent) :void
+    {
+        var metadata :Object = new ImmutableProxyObject(event.value);
+        log.debug("Got music metadata: Keys: " + Util.keys(metadata).join());
+        for each (var entity :MsoySprite in _entities.values()) {
+            entity.processMusicId3(metadata);
+        }
+
+        // TODO: Avrg too
+    }
+
+    override public function getMusicId3 () :Object
+    {
+        var metadata :Object = _ctx.getWorldController().getMusicPlayer().getMetadata();
+        // if non-null, wrap it up to prevent the users from fucking it up
+        return (metadata == null) ? null : new ImmutableProxyObject(metadata);
     }
 
     /** _ctrl, casted as a RoomObjectController. */
