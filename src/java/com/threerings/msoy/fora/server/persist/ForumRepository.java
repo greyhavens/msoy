@@ -5,6 +5,7 @@ package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -446,6 +447,9 @@ public class ForumRepository extends DepotRepository
 
     protected List<QueryClause> getUnreadPostsClauses (int memberId, Set<Integer> posterIds)
     {
+        if (posterIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         SQLExpression join = new And(
             new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
             new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
