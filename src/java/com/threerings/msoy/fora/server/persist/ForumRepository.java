@@ -85,6 +85,9 @@ public class ForumRepository extends DepotRepository
     public List<ForumMessagePosterRecord> loadUnreadPosts (
         int memberId, Set<Integer> posterIds, int max)
     {
+        if (posterIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds);
         clauses.add(new Limit(0, max));
         clauses.add(OrderBy.descending(ForumMessagePosterRecord.CREATED));
@@ -96,6 +99,9 @@ public class ForumRepository extends DepotRepository
      */
     public int countUnreadPosts (int memberId, Set<Integer> posterIds)
     {
+        if (posterIds.isEmpty()) {
+            return 0;
+        }
         List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds);
         clauses.add(new FromOverride(ForumMessageRecord.class));
         return load(CountRecord.class, clauses).count;
@@ -447,9 +453,6 @@ public class ForumRepository extends DepotRepository
 
     protected List<QueryClause> getUnreadPostsClauses (int memberId, Set<Integer> posterIds)
     {
-        if (posterIds.isEmpty()) {
-            return Collections.emptyList();
-        }
         SQLExpression join = new And(
             new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
             new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
