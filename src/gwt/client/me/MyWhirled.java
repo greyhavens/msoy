@@ -53,11 +53,12 @@ public class MyWhirled extends FlowPanel
                 rbits.add(MsoyUI.createLabel(
                               _msgs.populationDisplay(""+data.whirledPopulation), null));
                 rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
+                rbits.add(makeQuickLink("My Transactions", Pages.ME, "transactions"));
+                rbits.add(makeQuickLink("My Blocklist", Pages.PEOPLE, "blocklist"));
                 rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
                 rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
                 rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE,
                                         Args.compose("invites", "links")));
-                rbits.add(makeQuickLink("My Blocklist", Pages.PEOPLE, "blocklist"));
                 rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
                 String empty = data.friendCount > 0 ?
