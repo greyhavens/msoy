@@ -17,6 +17,7 @@ import com.threerings.user.OOOXmlRpcService;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -44,18 +45,23 @@ public class OOOXmlRpcServlet extends XmlRpcServlet
         }
 
         /**
-         * To integrate with Mediawiki in some halfway decent fashion, we return a member's
-         * permaname when they authenticate which Mediawiki will use as their username. Members
-         * that don't yet have a permaname set can't log into Mediawiki.
+         * To integrate with Mediawiki in some halfway decent fashion, we authenticate using
+         * permaname rather than email address. Members that don't yet have a permaname set can't
+         * log into Mediawiki.
          */
-        public String authUserForWiki (String username, String password)
+        public boolean authUserForWiki (String username, String password)
         {
             try {
                 // this will throw an exception if anything is wrong
-                MemberRecord mrec = _staticAuth.authenticateSession(username, password);
-                return mrec.permaName; // may be null
+                MemberRecord prec = _staticRepo.loadMemberByPermaname(username);
+                if (prec == null) {
+                    return false;
+                }
+                // this will throw an exception if logon fails
+                _staticAuth.authenticateSession(prec.accountName, password);
+                return true;
             } catch (ServiceException se) {
-                return null;
+                return false;
             } catch (Exception e) {
                 log.warning("Failed to auth user", "username", username, e);
                 throw new RuntimeException("Internal error");
@@ -78,6 +84,7 @@ public class OOOXmlRpcServlet extends XmlRpcServlet
 
         // copy our injected dependency into our hacky static field
         _staticAuth = _auth;
+        _staticRepo = _memberRepo;
     }
 
     protected static class OOOHandlerMapping extends PropertyHandlerMapping
@@ -88,9 +95,11 @@ public class OOOXmlRpcServlet extends XmlRpcServlet
     }
 
     @Inject protected MsoyAuthenticator _auth;
+    @Inject protected MemberRepository _memberRepo;
 
-    // this is static so that we can provide our repository to our request handlers (which Apache's
-    // XML-RPC library awesomely instantiates anew for each request and provides no
-    // non-total-backbending way to initialize)
+    // these are static so that we can provide them to our request handlers (which Apache's XML-RPC
+    // library awesomely instantiates anew for each request and provides no non-total-backbending
+    // way to initialize)
     protected static MsoyAuthenticator _staticAuth;
+    protected static MemberRepository _staticRepo;
 }

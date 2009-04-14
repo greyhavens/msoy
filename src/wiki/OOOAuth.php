@@ -92,7 +92,7 @@ class OOOAuth extends AuthPlugin {
     function authenticate ($username, $password) {
         global $wgOOOAuthServerURL;
 
-        $request = xmlrpc_encode_request("user.authUser", array($username, md5($password)));
+        $request = xmlrpc_encode_request("user.authUserForWiki", array($username, md5($password)));
         $context = stream_context_create(
             array('http' => array('method' => "POST",
                                   'header' => "Content-Type: text/xml",
@@ -102,11 +102,8 @@ class OOOAuth extends AuthPlugin {
         if (is_array($response) && xmlrpc_is_fault($response)) {
             trigger_error("xmlrpc: $response[faultString] ($response[faultCode])");
             return false;
-        } else if ($response == NULL) {
-            return false;
         } else {
-            // TODO: jam permaname somewhere?
-            return true;
+            return ($response == 1);
         }
     }
 
@@ -169,8 +166,6 @@ class OOOAuth extends AuthPlugin {
      * @public
      */
     function initUser (&$user) {
-        $user->mEmail = $user->mName;
-        $user->mName = $permanames[$user->mEmail];
         $user->mEmailAuthenticated = wfTimestampNow();
         $user->setToken();
         $user->saveSettings();
@@ -206,9 +201,5 @@ class OOOAuth extends AuthPlugin {
         $username[0] = strtoupper($username[0]);
         return $username;
     }
-
-    /** A map from email to permaname which we need because we can't return anything from
-     * authenticate() and pass it into initUser(). */
-    var $permanames = array();
 }
 ?>
