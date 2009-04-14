@@ -275,11 +275,8 @@ public class InviteServlet extends MsoyServiceServlet
         }
 
         // resolve to member cards
-        List<MemberCard> cards = Lists.newArrayList();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendIds, 0, count, true)) {
-            cards.add(mcr.toMemberCard());
-        }
-        return cards;
+        return MemberCardRecord.toMemberCards(
+            _memberRepo.loadMemberCards(friendIds, 0, count, true));
     }
 
     /**

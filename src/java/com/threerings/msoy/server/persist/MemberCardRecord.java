@@ -4,8 +4,11 @@
 package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -87,6 +90,14 @@ public class MemberCardRecord extends PersistentRecord
                 return record.toMemberCard();
             }
         };
+
+    /**
+     * Converts a sequence of records into their runtime form.
+     */
+    public static List<MemberCard> toMemberCards (Iterable<MemberCardRecord> records)
+    {
+        return Lists.newArrayList(Iterables.transform(records, TO_MEMBER_CARD));
+    }
 
     /**
      * Creates a runtime record from this persistent record.

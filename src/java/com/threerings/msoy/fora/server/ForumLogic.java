@@ -58,7 +58,7 @@ public class ForumLogic
             // include details on the original post for each thread if required
             if (needFirstPost) {
                 ForumMessageRecord fmr = _forumRepo.loadMessages(thread.threadId, 0, 1).get(0);
-                MemberCard card = _memberRepo.loadMemberCard(fmr.posterId);
+                MemberCard card = _memberRepo.loadMemberCard(fmr.posterId, false);
                 thread.firstPost = fmr.toForumMessage(Collections.singletonMap(fmr.posterId, card));
             }
             thrmap.put(ftr.threadId, thread);

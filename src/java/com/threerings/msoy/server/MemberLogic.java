@@ -155,7 +155,7 @@ public class MemberLogic
                 memberId, FeedMessageType.FRIEND_ADDED_FRIEND, data);
 
             // add them to the friends list of both parties if/wherever they are online
-            MemberCard ccard = _memberRepo.loadMemberCard(memberId);
+            MemberCard ccard = _memberRepo.loadMemberCard(memberId, true);
             _peerMan.invokeNodeAction(new AddFriend(memberId, friend));
             _peerMan.invokeNodeAction(new AddFriend(friendId, ccard));
 

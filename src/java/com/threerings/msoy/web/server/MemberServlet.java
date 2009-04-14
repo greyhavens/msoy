@@ -51,11 +51,7 @@ public class MemberServlet extends MsoyServiceServlet
     public MemberCard getMemberCard (int memberId)
         throws ServiceException
     {
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
-                 Collections.singleton(memberId))) {
-            return mcr.toMemberCard();
-        }
-        return null;
+        return _memberRepo.loadMemberCard(memberId, true);
     }
 
     // from WebMemberService
@@ -123,9 +119,8 @@ public class MemberServlet extends MsoyServiceServlet
         // However, this will choke once the mutelist is greater than Short.MAX_VALUE.
         int[] muteList = _memberRepo.loadMutelist(memberId);
         result.total = muteList.length;
-        result.page = Lists.newArrayList(Lists.transform(
-            _memberRepo.loadMemberCards(IntListUtil.asList(muteList), from, count, true),
-            MemberCardRecord.TO_MEMBER_CARD));
+        result.page = MemberCardRecord.toMemberCards(
+            _memberRepo.loadMemberCards(IntListUtil.asList(muteList), from, count, true));
         return result;
     }
 

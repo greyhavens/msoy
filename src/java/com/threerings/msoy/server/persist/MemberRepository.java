@@ -299,20 +299,28 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads up the card for the specified member. Returns null if no member exists with that id.
+     *
+     * @param filterDeleted if true, null will be returned instead of a card for members that have
+     * been marked as deleted.
      */
-    public MemberCard loadMemberCard (int memberId)
+    public MemberCard loadMemberCard (int memberId, boolean filterDeleted)
     {
+        SQLExpression where = new Equals(MemberRecord.MEMBER_ID, memberId);
+        if (filterDeleted) {
+            where = new And(where, new NotEquals(MemberRecord.ACCOUNT_NAME,
+                                                 memberId + MemberRecord.DELETED_SUFFIX));
+        }
         MemberCardRecord mcr = load(
             MemberCardRecord.class, new FromOverride(MemberRecord.class),
             new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID),
-            new Where(new And(new Equals(MemberRecord.MEMBER_ID, memberId),
-                              new NotEquals(MemberRecord.ACCOUNT_NAME,
-                                            memberId + MemberRecord.DELETED_SUFFIX))));
+            new Where(where));
         return (mcr == null) ? null : mcr.toMemberCard();
     }
 
     /**
-     * Loads up member's names and profile photos by id.
+     * Loads up member's names and profile photos by id. Note: deleted members are <em>not</em>
+     * filtered from this list.
+     *
      * TODO: investigate callers for possibility of paging
      */
     public List<MemberCardRecord> loadMemberCards (Collection<Integer> memberIds)
@@ -322,15 +330,15 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads up collection of members' names and profile photos by id, optionally paged and sorted
-     * by last time online.
+     * by last time online. Note: deleted members are <em>not</em> filtered from this list.
      *
      * @param memberIds the ids of the members whose cards to load
      * @param offset the index of the first item to return in the sorted list
      * @param limit the number of cards to load, or 0 to load all
      * @param sortByLastOnline whether to sort the results or just load some cards
      */
-    public List<MemberCardRecord> loadMemberCards (Collection<Integer> memberIds,
-        int offset, int limit, boolean sortByLastOnline)
+    public List<MemberCardRecord> loadMemberCards (
+        Collection<Integer> memberIds, int offset, int limit, boolean sortByLastOnline)
     {
         if (memberIds.size() == 0) {
             return Collections.emptyList();
@@ -347,16 +355,7 @@ public class MemberRepository extends DepotRepository
         if (limit != 0) {
             clauses.add(new Limit(offset, limit));
         }
-        List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
-
-        // filter out records for deleted accounts
-        for (Iterator<MemberCardRecord> iter = records.iterator(); iter.hasNext(); ) {
-            MemberCardRecord mcr = iter.next();
-            if (MemberRecord.isDeleted(mcr.memberId, mcr.accountName)) {
-                iter.remove();
-            }
-        }
-        return records;
+        return findAll(MemberCardRecord.class, clauses);
     }
 
     /**
@@ -1175,8 +1174,8 @@ public class MemberRepository extends DepotRepository
         // now load up member card records for these guys and convert them to friend entries
         for (MemberCardRecord crec : loadMemberCards(friends.keySet())) {
             MemberCard card = crec.toMemberCard();
-            friends.put(crec.memberId, new FriendEntry(new VizMemberName(card.name, card.photo),
-                card.headline, false));
+            friends.put(crec.memberId, new FriendEntry(
+                            new VizMemberName(card.name, card.photo), card.headline, false));
         }
 
         // we might have nulls if there are some legacy bastards with no profile record
@@ -1197,7 +1196,7 @@ public class MemberRepository extends DepotRepository
     public MemberCard noteFriendship (int memberId,  int otherId)
     {
         // first load the member record of the potential friend
-        MemberCard other = loadMemberCard(otherId);
+        MemberCard other = loadMemberCard(otherId, true);
         if (other == null) {
             log.warning("Failed to establish friends: member no longer exists " +
                         "[missingId=" + otherId + ", reqId=" + memberId + "].");

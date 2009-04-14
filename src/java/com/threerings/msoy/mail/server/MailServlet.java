@@ -180,10 +180,7 @@ public class MailServlet extends MsoyServiceServlet
 
         // convert the added message to a runtime record and return it to the caller
         ConvMessage result = cmr.toConvMessage();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
-                 Collections.singleton(memrec.memberId))) {
-            result.author = mcr.toMemberCard();
-        }
+        result.author = _memberRepo.loadMemberCard(memrec.memberId, false);
         return result;
     }
 

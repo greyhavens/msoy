@@ -637,8 +637,8 @@ public class GroupServlet extends MsoyServiceServlet
         Set<Integer> memberIds = Sets.newHashSet(
             Iterables.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID));
         Map<Integer, VizMemberName> memberNames = Maps.newHashMap();
-        for (VizMemberName vizMemberName : Lists.transform(
-                _memberRepo.loadMemberCards(memberIds), MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME)) {
+        for (VizMemberName vizMemberName :
+                 toVizMemberNames(_memberRepo.loadMemberCards(memberIds))) {
             memberNames.put(vizMemberName.getMemberId(), vizMemberName);
         }
         // now that we have each member's VizMemberName, add them to the appropriate lists and ship
@@ -686,15 +686,13 @@ public class GroupServlet extends MsoyServiceServlet
                             }
                         });
 
-                return Lists.newArrayList(Lists.transform(
-                    _memberRepo.loadMemberCards(memberIds), MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
+                return toVizMemberNames(_memberRepo.loadMemberCards(memberIds));
             }
         }
 
         Set<Integer> memberIds = Sets.newHashSet(_groupRepo.getMemberIds(groupId));
-        return Lists.newArrayList(Lists.transform(
-            _memberRepo.loadMemberCards(_memberRepo.findMembersInCollection(search, memberIds)),
-            MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
+        List<Integer> gmemberIds = _memberRepo.findMembersInCollection(search, memberIds);
+        return toVizMemberNames(_memberRepo.loadMemberCards(gmemberIds));
     }
 
     // from interface GroupService
@@ -817,7 +815,18 @@ public class GroupServlet extends MsoyServiceServlet
 
     protected boolean canManage (MemberRecord mrec, int groupId)
     {
-        return mrec.isSupport() || _groupRepo.getRank(groupId, mrec.memberId) == Rank.MANAGER;        
+        return mrec.isSupport() || _groupRepo.getRank(groupId, mrec.memberId) == Rank.MANAGER;
+    }
+
+    protected static List<VizMemberName> toVizMemberNames (Iterable<MemberCardRecord> records)
+    {
+        return Lists.newArrayList(
+            Iterables.transform(records, new Function<MemberCardRecord, VizMemberName>() {
+            public VizMemberName apply (MemberCardRecord record) {
+                MemberCard card = record.toMemberCard();
+                return new VizMemberName(card.name, card.photo);
+            }
+        }));
     }
 
     // our dependencies
@@ -902,13 +911,4 @@ public class GroupServlet extends MsoyServiceServlet
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
         }
     };
-
-    /** Function to convert from MemberCardRecords to VizMemberNames */
-    protected static Function<MemberCardRecord, VizMemberName> MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME =
-        new Function<MemberCardRecord, VizMemberName>() {
-            public VizMemberName apply (MemberCardRecord memberCardRec) {
-                MemberCard memberCard = memberCardRec.toMemberCard();
-                return new VizMemberName(memberCard.name, memberCard.photo);
-            }
-        };
 }

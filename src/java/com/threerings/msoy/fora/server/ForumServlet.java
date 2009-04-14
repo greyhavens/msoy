@@ -545,11 +545,7 @@ public class ForumServlet extends MsoyServiceServlet
         // convert the messages to runtime format
         List<ForumMessage> messages = Lists.newArrayList();
         for (ForumMessageRecord msgrec : msgrecs) {
-            ForumMessage message = msgrec.toForumMessage(cards);
-            // don't display forum messages for missing cards (deleted accounts)
-            if (message.poster != null) {
-                messages.add(message);
-            }
+            messages.add(msgrec.toForumMessage(cards));
         }
         return messages;
     }
@@ -602,9 +598,7 @@ public class ForumServlet extends MsoyServiceServlet
     protected IntMap<MemberCard> getCardsMap (int memberId)
     {
         IntMap<MemberCard> cards = IntMaps.newHashIntMap();
-        for (MemberCardRecord mrec : _memberRepo.loadMemberCards(Collections.singleton(memberId))) {
-            cards.put(mrec.memberId, mrec.toMemberCard());
-        }
+        cards.put(memberId, _memberRepo.loadMemberCard(memberId, false));
         return cards;
     }
 
