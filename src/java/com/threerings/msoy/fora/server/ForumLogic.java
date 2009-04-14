@@ -18,7 +18,6 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -56,18 +55,11 @@ public class ForumLogic
         Map<Integer,ForumThread> thrmap = Maps.newLinkedHashMap();
         for (ForumThreadRecord ftr : thrrecs) {
             ForumThread thread = ftr.toForumThread(names, groups);
-
             // include details on the original post for each thread if required
             if (needFirstPost) {
-                ForumMessageRecord messageRec =
-                    _forumRepo.loadMessages(thread.threadId, 0, 1).get(0);
-                List<MemberCardRecord> memberRecords = _memberRepo.loadMemberCards(
-                    Collections.singleton(messageRec.posterId));
-                if (memberRecords.size() > 0) {
-                    MemberCard memberCard = memberRecords.get(0).toMemberCard();
-                    thread.firstPost = messageRec.toForumMessage(Collections.singletonMap(
-                        messageRec.posterId, memberCard));
-                }
+                ForumMessageRecord fmr = _forumRepo.loadMessages(thread.threadId, 0, 1).get(0);
+                MemberCard card = _memberRepo.loadMemberCard(fmr.posterId);
+                thread.firstPost = fmr.toForumMessage(Collections.singletonMap(fmr.posterId, card));
             }
             thrmap.put(ftr.threadId, thread);
         }
