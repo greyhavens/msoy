@@ -156,6 +156,10 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // load up their member information using on their authentication (account) name
         final MemberRecord member = _memberRepo.loadMember(_username.toString());
+        if (member == null) {
+            throw new Exception("Missing member record for authenticated member? " +
+                                "[username=" + _username + "]");
+        }
 
         resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
