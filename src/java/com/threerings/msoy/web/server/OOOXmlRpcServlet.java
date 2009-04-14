@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import com.google.inject.Inject;

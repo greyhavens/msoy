@@ -21,8 +21,6 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.crowd.chat.data.ChatChannel;
-
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
@@ -32,10 +30,6 @@ import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthName;
-import com.threerings.msoy.game.data.GameAuthName;
-import com.threerings.msoy.party.data.PartyAuthName;
-import com.threerings.msoy.peer.data.HostedGame;
-import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MsoyEventLogger;

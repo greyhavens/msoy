@@ -18,16 +18,13 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 

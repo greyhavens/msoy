@@ -11,8 +11,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
-
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
@@ -66,7 +64,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.MoneyLogic;
 
