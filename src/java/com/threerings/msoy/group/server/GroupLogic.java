@@ -5,8 +5,10 @@ package com.threerings.msoy.group.server;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -18,6 +20,7 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -36,10 +39,12 @@ import com.threerings.msoy.money.server.MoneyServiceException;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.Group.Policy;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupExtras;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
@@ -202,6 +207,32 @@ public class GroupLogic
         for (SceneRecord srec : _sceneRepo.loadScenes(cmap.keySet())) {
             cmap.get(srec.sceneId).homeSnapshot = srec.getSnapshotFull();
         }
+    }
+
+    /**
+     * Gets the groups that the given member belongs to.
+     */
+    public Set<Integer> getMemberGroupIds (int memberId)
+    {
+        Set<Integer> groupIds = Sets.newHashSet();
+        for (GroupMembershipRecord gmrec : _groupRepo.getMemberships(memberId)) {
+            groupIds.add(gmrec.groupId);
+        }
+        groupIds.add(ServerConfig.getAnnounceGroupId());
+        return groupIds;
+    }
+
+    /**
+     * Gets the groups with an EXLUSIVE policy with respect to the given member id.
+     * @param groupIds the ids of the groups that the user is a member of. If null, the member's
+     *     groups will be loaded too
+     */
+    public Set<Integer> getHiddenGroupIds (int memberId, Set<Integer> groupIds)
+    {
+        Set<Integer> exclusive = Sets.newHashSet();
+        exclusive.addAll(_groupRepo.getGroupIdsWithPolicy(Policy.EXCLUSIVE));
+        exclusive.removeAll(groupIds == null ? getMemberGroupIds(memberId) : groupIds);
+        return exclusive;
     }
 
     /**

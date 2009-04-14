@@ -560,6 +560,15 @@ public class GroupRepository extends DepotRepository
         _tagRepo.purgeMembers(memberIds);
     }
 
+    /**
+     * Gets all group ids with the given policy.
+     */
+    public List<Integer> getGroupIdsWithPolicy (Group.Policy policy)
+    {
+        return Lists.transform(findAllKeys(GroupRecord.class, false, new Where(
+            GroupRecord.POLICY, policy)), GroupRecord.TO_GROUP_ID);
+    }
+
     protected GroupMembershipRecord loadMembership (int groupId, int memberId)
     {
         return load(GroupMembershipRecord.class,
