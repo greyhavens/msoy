@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
@@ -71,7 +70,7 @@ public class MyWhirled extends FlowPanel
                     feedBox.add(MsoyUI.createHTML(_msgs.myDiscussionsQuickSummary(
                         String.valueOf(data.updatedThreads)), "NewsLink"));
                 }
-                if (data.unreadFriendPosts > 0 && DeploymentConfig.devDeployment) {
+                if (data.unreadFriendPosts > 0) {
                     feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
                         String.valueOf(data.unreadFriendPosts)), "NewsLink"));
                 }
