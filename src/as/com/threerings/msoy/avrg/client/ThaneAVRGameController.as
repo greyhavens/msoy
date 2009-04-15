@@ -23,7 +23,6 @@ import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
-import com.threerings.presents.dobj.SubscriberAdapter;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ResultAdapter;
@@ -414,18 +413,13 @@ public class ThaneAVRGameController
 //        log.debug("Got room id", "binding", binding, "roomOid", oid);
 
         // subscribe to the room object
-        var subscriber :SubscriberAdapter = new SubscriberAdapter(
-            function (obj :RoomObject) :void {
-                gotRoomObject(binding, obj);
-            },
-            function (oid :int, cause :ObjectAccessError) :void {
-                log.warning(
-                    "Failed to subscribe to room", "binding", binding, "roomOid", oid, "cause",
-                    cause);
-            }
-        );
-
-        binding.subscriber = new SafeSubscriber(oid, subscriber);
+        binding.subscriber = new SafeSubscriber(oid, function (obj :RoomObject) :void {
+            gotRoomObject(binding, obj);
+        },
+        function (oid :int, cause :ObjectAccessError) :void {
+            log.warning("Failed to subscribe to room", "binding", binding, "roomOid", oid,
+                        "cause", cause);
+        });
         binding.subscriber.subscribe(binding.window.getDObjectManager());
     }
 
@@ -486,17 +480,16 @@ public class ThaneAVRGameController
 
         // subscribe to the properties object
         var subscriber :SubscriberAdapter = new SubscriberAdapter(
-            function (obj :RoomPropertiesObject) :void {
+        );
+
+        binding.propsSubscriber = new SafeSubscriber(
+            propsOid, function (obj :RoomPropertiesObject) :void {
                 gotRoomPropertiesObject(binding, obj);
             },
             function (oid :int, cause :ObjectAccessError) :void {
-                log.warning(
-                    "Failed to subscribe to room props", "binding", binding, "propsOid", propsOid,
-                    "cause", cause);
-            }
-        );
-
-        binding.propsSubscriber = new SafeSubscriber(propsOid, subscriber);
+                log.warning("Failed to subscribe to room props", "binding", binding,
+                            "propsOid", propsOid, "cause", cause);
+            });
         binding.propsSubscriber.subscribe(binding.window.getDObjectManager());
     }
 

@@ -21,7 +21,6 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.BlankPlaceView;
@@ -40,7 +39,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.presents.client.ClientEvent;
 
 public class LobbyController extends Controller
-    implements Subscriber, SeatednessObserver
+    implements SeatednessObserver
 {
     /** A command to submit a configured table configuration for creation. */
     public static const SUBMIT_TABLE :String = "SubmitTable";
@@ -88,7 +87,7 @@ public class LobbyController extends Controller
         setControlledPanel(_panel);
 
         // subscribe to the lobby object
-        _subscriber = new SafeSubscriber(lobbyOid, this);
+        _subscriber = new SafeSubscriber(lobbyOid, objectAvailable, requestFailed);
         _subscriber.subscribe(_gctx.getDObjectManager());
     }
 
@@ -345,7 +344,6 @@ public class LobbyController extends Controller
         return (haveActionableTables() || noCreate) ? MODE_MATCH : MODE_CREATE;
     }
 
-    // from Subscriber
     public function objectAvailable (obj :DObject) :void
     {
         _lobj = obj as LobbyObject;
@@ -378,7 +376,6 @@ public class LobbyController extends Controller
         });
     }
 
-    // from Subscriber
     public function requestFailed (oid :int, cause :ObjectAccessError) :void
     {
         Log.getLog(this).warning("Request for the LobbyObject failed: " + cause);

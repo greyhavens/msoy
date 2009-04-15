@@ -24,7 +24,6 @@ import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.NamedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
-import com.threerings.presents.dobj.SubscriberAdapter;
 
 import com.threerings.presents.util.SafeSubscriber;
 
@@ -339,8 +338,7 @@ public class PartyDirector extends BasicDirector
     protected function partyDidLogon (event :ClientEvent) :void
     {
         var pbd :PartyBootstrapData = (event.getClient().getBootstrapData() as PartyBootstrapData);
-        _safeSubscriber = new SafeSubscriber(pbd.partyOid,
-            new SubscriberAdapter(gotPartyObject, subscribeFailed));
+        _safeSubscriber = new SafeSubscriber(pbd.partyOid, gotPartyObject, subscribeFailed);
         _safeSubscriber.subscribe(_pctx.getDObjectManager());
     }
 
