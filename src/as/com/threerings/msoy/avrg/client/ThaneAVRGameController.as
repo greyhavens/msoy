@@ -30,6 +30,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.whirled.bureau.client.GameAgentController;
+import com.whirled.game.client.ContentListener;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -563,6 +564,9 @@ public class ThaneAVRGameController
         // Set up the player binding
         var playerBinding :PlayerBinding = new PlayerBinding(obj);
         playerBinding.netAdapter = _backend.createPlayerNetAdapter(obj);
+        playerBinding.contentListener =
+            new ContentListener(obj.getMemberId(), getGameId(), _backend);
+        obj.addListener(playerBinding.contentListener);
         _players.put(playerId, playerBinding);
 
         // Dispatch the joining of the game and entering of the room if possible
@@ -772,6 +776,9 @@ public class ThaneAVRGameController
             return;
         }
 
+        // Clear out our content listener
+        pbind.pobj.removeListener(pbind.contentListener);
+
         // Make sure we dispatch any pending room exits
         if (pbind.joined && pbind.currentSceneId != 0) {
             _backend.playerLeftRoom(playerId, pbind.currentSceneId);
@@ -810,6 +817,8 @@ import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.EventListener;
 
 import com.threerings.presents.util.SafeSubscriber;
+
+import com.whirled.game.client.ContentListener;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -869,6 +878,9 @@ class PlayerBinding
 
     /** For dispatching the property changes. */
     public var netAdapter :BackendNetAdapter;
+
+    /** Listens for content related events. */
+    public var contentListener :ContentListener;
 
     /** True if we've called <code>playerJoinedGame</code>.
      * @see com.threerings.msoy.avrg.client.ThaneAVRGameBackend#playerJoinedGame() */
