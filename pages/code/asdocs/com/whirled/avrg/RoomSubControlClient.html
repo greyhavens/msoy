@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="RoomSubControlClient,com.whirled.avrg.RoomSubControlClient,props,canManageRoom,getEntityIds,getEntityProperty,getMobSubControl,getRoomId,getRoomName" name="keywords">
+<meta content="RoomSubControlClient,com.whirled.avrg.RoomSubControlClient,props,canManageRoom,getEntityIds,getEntityProperty,getMobSubControl,getMusicId3,getRoomId" name="keywords">
 <title>com.whirled.avrg.RoomSubControlClient</title>
 </head>
 <body>
@@ -144,6 +144,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Accesses a previosly spawned MOB in this room.</div>
 </td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMusicId3()">getMusicId3</a>():Object</div>
+<div class="summaryTableDescription">
+     Get the id3 metadata of the currently playing music.</div>
+</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -184,13 +192,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Gets the id of this room.</div>
 </td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getRoomName()">getRoomName</a>():String</div>
+<a class="signatureLink" href="RoomSubControlBase.html#getRoomName()">getRoomName</a>():String</div>
 <div class="summaryTableDescription">
-     Get the name of this room.</div>
-</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+     Returns the name of this room.</div>
+</td><td class="summaryTableOwnerCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -284,6 +292,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when a message arrives with information that is not part of the shared game state.</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:musicId3">musicId3</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when id3 data is known for a song.</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="RoomSubControlBase.html#event:musicStarted">musicStarted</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when music starts playing in the room.</td><td class="summaryTableOwnerCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="RoomSubControlBase.html#event:musicStopped">musicStopped</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when music stops playing in the room.</td><td class="summaryTableOwnerCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -469,6 +501,26 @@ showHideInherited();
 <a href="RoomSubControlBase.html#event:mobControlAvailable" target="">RoomSubControlBase.mobControlAvailable</a>
 </div>
 </div>
+<a name="getMusicId3()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMusicId3</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMusicId3():Object</code><p>
+     Get the id3 metadata of the currently playing music.
+     This will be an Object roughly in the format of flash.media.Id3Info, except
+     that only the "raw" names of id3 tags are supported.
+     http://www.id3.org
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
 <a name="getRoomId()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -485,23 +537,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
-</tr>
-</table>
-</div>
-<a name="getRoomName()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getRoomName</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getRoomName():String</code><p>
-     Get the name of this room.
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>String</code></td>
 </tr>
 </table>
 </div>
@@ -545,6 +580,23 @@ showHideInherited();
 <a href="RoomSubControlServer.html#sendMessage()" target="">RoomSubControlServer.sendMessage()</a>
 </div>
 </div>
+<a name="event:musicId3"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">musicId3</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../../whirled/ControlEvent.html#MUSIC_ID3"><code>com.whirled.ControlEvent.MUSIC_ID3</code></a>
+<br><p>
+ Dispatched when id3 data is known for a song.
+  </p><p>
+     An event that may be dispatched soon after music starts playing.
+     name: unused
+     value: an Object from which id3 tags may be read.
+          </p></div>
 <br>
 <br>
 <hr>

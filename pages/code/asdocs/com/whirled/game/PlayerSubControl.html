@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PlayerSubControl,com.whirled.game.PlayerSubControl,CURRENT_USER,awardPrize,awardTrophy,getCookie,getPlayerItemPacks,getPlayerLevelPacks,holdsTrophy,setCookie" name="keywords">
+<meta content="PlayerSubControl,com.whirled.game.PlayerSubControl,CURRENT_USER,awardPrize,awardTrophy,getCookie,getPlayerItemPacks,getPlayerLevelPacks,holdsTrophy,requestConsumeItemPack,setCookie" name="keywords">
 <title>com.whirled.game.PlayerSubControl</title>
 </head>
 <body>
@@ -152,6 +152,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#requestConsumeItemPack()">requestConsumeItemPack</a>(ident:String, msg:String):Boolean</div>
+<div class="summaryTableDescription">
+     Requests to consume the specified item pack.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#setCookie()">setCookie</a>(cookie:Object, occupantId:int):Boolean</div>
 <div class="summaryTableDescription">
      Store persistent data that can later be retrieved by an instance of this game.</div>
@@ -181,6 +189,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when this player has been awarded coins.</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:PlayerContentConsumed">PlayerContentConsumed</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when this player has consumed an item pack.</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -342,6 +358,7 @@ showHideInherited();
      ident - string identifier of item pack
      name - human readable name of item pack
      mediaURL - URL for item pack content
+     count - the number of copies of this item pack owned by this player
      </pre>
           </p><p>Note: Clients may only get the item packs of the current player. Server agents do not
      have a current player and therefore must pass in a valid player id.</p>
@@ -426,6 +443,45 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="requestConsumeItemPack()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">requestConsumeItemPack</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function requestConsumeItemPack(ident:String, msg:String):Boolean</code><p>
+     Requests to consume the specified item pack. The player must currently own at least one copy
+     of the item pack. This will display a standard dialog asking the player if they wish to
+     consume the pack.
+          </p><p> If the player accepts the request to consume the item pack, a
+     GameContentEvent.PLAYER_CONTENT_CONSUMED event will be dispatched on this control.</p>
+          <p><em>Note:</em> this method may only be called on the client. It will always return false
+     on the server.</p>
+          <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the identifier of the item pack to be consumed.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">msg</span>:String</code> &mdash; a message to display in the dialog to help the player understand what's going on.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the dialog was shown, false if the dialog was not shown because the player
+     is known not to own at least one copy of the item pack.
+     </td>
+</tr>
+</table>
+</div>
 <a name="setCookie()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -480,6 +536,22 @@ showHideInherited();
      An event type dispatched at the end of a game (before GAME_ENDED) to inform the game that
      the player has earned coins.
           </p></div>
+<a name="event:PlayerContentConsumed"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PlayerContentConsumed</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../game/GameContentEvent.html"><code>com.whirled.game.GameContentEvent</code></a>
+<br>
+<span class="label">GameContentEvent.type property = </span><a href="../game/GameContentEvent.html#PLAYER_CONTENT_CONSUMED"><code>com.whirled.game.GameContentEvent.PLAYER_CONTENT_CONSUMED</code></a>
+<br><p>
+ Dispatched when this player has consumed an item pack.
+  </p><p>
+     Indicates that the a player has consumed an item pack. contentType() for this event will
+     always be ITEM_PACK.
+     </p></div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
 <a name="CURRENT_USER"></a>

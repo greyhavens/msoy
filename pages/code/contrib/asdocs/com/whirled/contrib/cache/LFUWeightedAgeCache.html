@@ -1,0 +1,369 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
+<meta content="LFUWeightedAgeCache,com.whirled.contrib.cache.LFUWeightedAgeCache,_cacheValues,_evaluator,_frequencyCount,_frequencyThreshold,_lastEvaluationTotal,_maxValue,_missSource,_stats,_timer,cacheStats,evaluateCache,getObject" name="keywords">
+<title>com.whirled.contrib.cache.LFUWeightedAgeCache</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'LFUWeightedAgeCache - Whirled "contrib" Documentation';
+				var baseRef = '../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?com/whirled/contrib/cache/LFUWeightedAgeCache.html&amp;com/whirled/contrib/cache/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;LFUWeightedAgeCache</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class LFUWeightedAgeCache"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.cache</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class LFUWeightedAgeCache</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="Cache.html">Cache</a></td>
+</tr>
+</table>
+<p></p>
+ There are a variety of Least Frequently Used replacement policies used.  A strict LFU policy
+ keeps a request count over all time, and replaces the entries with the lowest count.  Using
+ that policy, the cache becomes polluted with items that were accessed frequently a long time
+ ago but haven't been accessed recently.
+  An LFU-Aging cache periodically removes counted requests that are too old.  This still requires
+ some careful tuning because you have to decide how old "too old" is in your application.
+  This cache builds on LFU-Aging by weighting each access request in favor keeping entries with
+ recent requests.  The defaults for this cache dictate that requests that are older than 60
+ seconds are discarded, and when more than 5 requests have been recorded in the last 60 seconds,
+ only the most recent 5 are used in the cache expiration evaluation.  3 requests recorded 5
+ seconds ago are worth much more than 3 requests recorded 58 seconds ago.
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#cacheStats">cacheStats</a> : <a href="../cache/CacheStats.html">CacheStats</a>
+<div class="summaryTableDescription">[read-only]</div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_cacheValues">_cacheValues</a> : HashMap<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_evaluator">_evaluator</a> : <a href="../cache/CacheObjectEvaluator.html">CacheObjectEvaluator</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_frequencyCount">_frequencyCount</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_frequencyThreshold">_frequencyThreshold</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lastEvaluationTotal">_lastEvaluationTotal</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxValue">_maxValue</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_missSource">_missSource</a> : <a href="../cache/DataSource.html">DataSource</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_stats">_stats</a> : <a href="../cache/CacheStats.html">CacheStats</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_timer">_timer</a> : Timer<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#LFUWeightedAgeCache()">LFUWeightedAgeCache</a>(cacheMissSource:<a href="DataSource.html">DataSource</a>, maxValue:int = 1000, evaluator:<a href="CacheObjectEvaluator.html">CacheObjectEvaluator</a> = null, evaluationTime:int = 1000, frequencyThreshold:int = 60000, frequencyCount:int = 5)</div>
+<div class="summaryTableDescription">
+     </div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getObject()">getObject</a>(name:String):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#evaluateCache()">evaluateCache</a>(... ignored):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">LFUWeightedAgeCache</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="cacheStats"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">cacheStats</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>cacheStats:<a href="../cache/CacheStats.html">CacheStats</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get cacheStats():<a href="../cache/CacheStats.html">CacheStats</a></code>
+<br>
+</div>
+<a name="_cacheValues"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_cacheValues</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _cacheValues:HashMap</code>
+</div>
+<a name="_evaluator"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_evaluator</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _evaluator:<a href="../cache/CacheObjectEvaluator.html">CacheObjectEvaluator</a></code>
+</div>
+<a name="_frequencyCount"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_frequencyCount</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _frequencyCount:int</code>
+</div>
+<a name="_frequencyThreshold"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_frequencyThreshold</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _frequencyThreshold:int</code>
+</div>
+<a name="_lastEvaluationTotal"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_lastEvaluationTotal</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _lastEvaluationTotal:int</code>
+</div>
+<a name="_maxValue"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_maxValue</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _maxValue:int</code>
+</div>
+<a name="_missSource"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_missSource</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _missSource:<a href="../cache/DataSource.html">DataSource</a></code>
+</div>
+<a name="_stats"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_stats</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _stats:<a href="../cache/CacheStats.html">CacheStats</a></code>
+</div>
+<a name="_timer"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_timer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _timer:Timer</code>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="LFUWeightedAgeCache()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">LFUWeightedAgeCache</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function LFUWeightedAgeCache(cacheMissSource:<a href="DataSource.html">DataSource</a>, maxValue:int = 1000, evaluator:<a href="CacheObjectEvaluator.html">CacheObjectEvaluator</a> = null, evaluationTime:int = 1000, frequencyThreshold:int = 60000, frequencyCount:int = 5)</code><p>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">cacheMissSource</span>:<a href="DataSource.html">DataSource</a></code> &mdash; When the data is not found in the cache, it will be requested from
+                            this DataSource.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">maxValue</span>:int</code> (default = <code>1000</code>)<code></code> &mdash; This maximum value of the objects in the cache.  If this value is exceeded,
+                     the least frequently used entries are purged.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">evaluator</span>:<a href="CacheObjectEvaluator.html">CacheObjectEvaluator</a></code> (default = <code>null</code>)<code></code> &mdash; If no evaluator is provided, an ObjectCountEvaluator will be used, causing
+                      this cache to store maxValue objects before it starts to purge unused
+                      entries.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">evaluationTime</span>:int</code> (default = <code>1000</code>)<code></code> &mdash; The minimum amount of time that must pass between cache evaluations in
+                           milliseconds.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">frequencyThreshold</span>:int</code> (default = <code>60000</code>)<code></code> &mdash; Any accesses older than this amount will not be considered in the
+                               frequency calculation.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">frequencyCount</span>:int</code> (default = <code>5</code>)<code></code> &mdash; Only the last frequencyCount accesses will be considered for the
+                           frequency calculation.
+     </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="evaluateCache()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">evaluateCache</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function evaluateCache(... ignored):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+</div>
+<a name="getObject()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getObject(name:String):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->
