@@ -567,7 +567,8 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // PlayerSubControl
-    protected function requestConsumeItemPack_v1 (ident :String, msg :String) :Boolean
+    protected function requestConsumeItemPack_v1 (
+        targetId :int /* ignored */, ident :String, msg :String) :Boolean
     {
         return false; // TODO
     }
