@@ -98,7 +98,7 @@ public class ForumPanel extends TitledListPanel
      */
     public void setPage (String query, int page)
     {
-        query = query.trim();
+        query = query == null ? "" : query.trim();
         if (_searchBox != null) {
             _searchBox.setText(query);
         }
