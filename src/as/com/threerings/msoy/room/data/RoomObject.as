@@ -73,16 +73,14 @@ public class RoomObject extends SpotSceneObject
     public var roomService :RoomMarshaller;
 
     /** Contains the memories for all entities in this room. */
-    public var memories :DSet;
-    EntityMemories; MemoryChangedEvent; // references to force linkage
+    public var memories :DSet; /* of */ EntityMemories;
+    MemoryChangedEvent; // references to force linkage
 
     /** Contains mappings for all controlled entities in this room. */
-    public var controllers :DSet;
-    EntityControl; // reference to force linkage
+    public var controllers :DSet; /* of */ EntityControl;
 
     /** The property spaces associated with this room. */
-    public var propertySpaces :DSet;
-    RoomPropertiesEntry; // reference to force linkage
+    public var propertySpaces :DSet; /* of */ RoomPropertiesEntry;
 
     /** Information of the parties presently in this room. */
     public var parties :DSet; /* of */ PartySummary;
