@@ -11,6 +11,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.party.data.PeerPartyMarshaller;

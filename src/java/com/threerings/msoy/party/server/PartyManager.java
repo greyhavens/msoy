@@ -31,12 +31,12 @@ import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.data.MemberParty;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.notify.server.NotificationManager;
 
+import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;

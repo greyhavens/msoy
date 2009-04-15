@@ -18,10 +18,10 @@ import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.peer.data.MemberParty;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.ServerConfig;
 
+import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.server.PartyRegistry;
 
 /**
