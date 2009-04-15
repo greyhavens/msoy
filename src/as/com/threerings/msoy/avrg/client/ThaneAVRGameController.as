@@ -14,6 +14,8 @@ import com.threerings.presents.util.SafeObjectManager;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.presents.dobj.DSet_Entry;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -352,7 +354,7 @@ public class ThaneAVRGameController
         }
 
         // Create a binding and add it to the map
-        binding = new SceneBinding();
+        binding = new SceneBinding(this);
         binding.sceneId = scene.sceneId;
         _bindings.put(scene.sceneId, binding);
 
@@ -440,28 +442,7 @@ public class ThaneAVRGameController
         binding.room = roomObj;
         binding.avatarAdapter = _backend.createAvatarAdapter(roomObj);
         binding.avatarAdapter.setTargetId(binding.sceneId);
-
-        binding.roomChangeListener = new SetAdapter(
-            function (event :EntryAddedEvent) :void {
-                roomEntryAdded(binding, event);
-            },
-            function (event :EntryUpdatedEvent) :void {
-                roomEntryUpdated(binding, event);
-            },
-            function (event :EntryRemovedEvent) :void {
-                roomEntryRemoved(binding, event);
-            });
-        binding.room.addListener(binding.roomChangeListener);
-
-        binding.roomMessageListener = new MessageAdapter(
-            function (event :MessageEvent) :void {
-                if (event.getName() == RoomCodes.SPRITE_SIGNAL) {
-                    var args :Array = event.getArgs();
-                    _backend.signalReceived(
-                        binding.sceneId, args[0] as String, args[1] as ByteArray);
-                }
-            });
-        binding.room.addListener(binding.roomMessageListener);
+        binding.room.addListener(binding);
 
         var occIter :Iterator = binding.room.occupantInfo.iterator();
         while (occIter.hasNext()) {
@@ -561,10 +542,7 @@ public class ThaneAVRGameController
         }
 
         if (binding.room != null) {
-            binding.room.removeListener(binding.roomChangeListener);
-            binding.room.removeListener(binding.roomMessageListener);
-            binding.roomChangeListener = null;
-            binding.roomMessageListener = null;
+            binding.room.removeListener(binding);
             binding.avatarAdapter.release();
             binding.avatarAdapter = null;
             binding.room = null;
@@ -617,6 +595,37 @@ public class ThaneAVRGameController
         return mobInfo;
     }
 
+    /**
+     * Handles all events on a room object.
+     */
+    public function roomEventReceived (binding :SceneBinding, evt :DEvent) :void
+    {
+        if (evt is AttributeChangedEvent) {
+            roomAttributeChanged(binding, AttributeChangedEvent(evt));
+
+        } else if (evt is EntryAddedEvent) {
+            roomEntryAdded(binding, EntryAddedEvent(evt));
+
+        } else if (evt is EntryUpdatedEvent) {
+            roomEntryUpdated(binding, EntryUpdatedEvent(evt));
+
+        } else if (evt is EntryRemovedEvent) {
+            roomEntryRemoved(binding, EntryRemovedEvent(evt));
+
+        } else if (evt is MessageReceivedEvent) {
+            roomMessageReceived(binding, MessageReceivedEvent(evt));
+        }
+    }
+
+    protected function roomAttributeChanged (
+        binding :SceneBinding, evt :AttributeChangedEvent) :void
+    {
+        var name :String = evt.getName();
+        if (name == RoomObject.PLAY_COUNT) {
+            _backend.processMusicStartStop(evt.getValue() != -1);
+        }
+    }
+
     protected function roomEntryAdded (binding :SceneBinding, evt :EntryAddedEvent) :void
     {
         if (evt.getName() == PlaceObject.OCCUPANT_INFO) {
@@ -661,6 +670,15 @@ public class ThaneAVRGameController
                 updatePlayer(
                     MemberInfo(evt.getOldEntry()).getMemberId(), "room occupant removed", true);
             }
+        }
+    }
+
+    protected function roomMessageReceived (binding :SceneBinding, evt :MessageEvent) :void
+    {
+        if (evt.getName() == RoomCodes.SPRITE_SIGNAL) {
+            var args :Array = event.getArgs();
+            _backend.signalReceived(
+                binding.sceneId, args[0] as String, args[1] as ByteArray);
         }
     }
 
@@ -801,8 +819,8 @@ public class ThaneAVRGameController
 import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
 
-import com.threerings.presents.dobj.ChangeListener;
-import com.threerings.presents.dobj.MessageListener;
+import com.threerings.presents.dobj.DEvent;
+import com.threerings.presents.dobj.EventListener;
 
 import com.threerings.presents.util.SafeSubscriber;
 
@@ -818,23 +836,35 @@ import com.threerings.msoy.avrg.client.BackendNetAdapter;
 
 /** Binds a scene id to its window, room and players. */
 class SceneBinding
+    implements EventListener
 {
     public var sceneId :int;
     public var window :Window;
     public var subscriber :SafeSubscriber;
     public var room :RoomObject;
-    public var roomChangeListener :ChangeListener;
-    public var roomMessageListener :MessageListener;
     public var propsSubscriber :SafeSubscriber;
     public var roomProps :RoomPropertiesObject;
     public var avatarAdapter :BackendAvatarAdapter;
     public var mobs :HashMap = new HashMap();
+
+    public function SceneBinding (ctrl :ThaneAVRGameController)
+    {
+        _ctrl = ctrl;
+    }
+
+    // from interface EventListener
+    public function eventReceived (event :DEvent) :void
+    {
+        _ctrl.roomEventReceived(this, event);
+    }
 
     // from Object
     public function toString () :String
     {
         return StringUtil.simpleToString(this);
     }
+
+    protected var _ctrl :ThaneAVRGameController;
 }
 
 /** Holds the transient information about a player so that we can clean up after ourselves and

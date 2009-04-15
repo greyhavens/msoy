@@ -191,6 +191,11 @@ public class ThaneAVRGameBackend
         callUserCode("signalReceived_v1", roomId, name, ObjectMarshaller.decode(value));
     }
 
+    public function processMusicStartStop (roomId :int, started :Boolean) :void
+    {
+        callUserCode("musicStartStop_v1", started);
+    }
+
     protected function handleUserCodeConnect (evt :Object) :void
     {
         var props :Object = evt.props;
