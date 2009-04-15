@@ -1339,5 +1339,5 @@ public class MoneyLogic
     protected static final Object LIST_ITEM_KEY = new Object();
 
     /** We don't service bling cashouts at any lower frequency than this. */
-    protected static final long CASHOUT_FREQUENCY = ((long)BlingInfo.CASHOUT_DAYS)*24*60*60*1000L;
+    protected static final long CASHOUT_FREQUENCY = BlingInfo.CASHOUT_DAYS * 24 * 60 * 60 * 1000L;
 }
