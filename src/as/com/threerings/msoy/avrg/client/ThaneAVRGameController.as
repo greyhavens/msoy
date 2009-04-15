@@ -19,7 +19,6 @@ import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
@@ -600,8 +599,8 @@ public class ThaneAVRGameController
         } else if (evt is EntryRemovedEvent) {
             roomEntryRemoved(binding, EntryRemovedEvent(evt));
 
-        } else if (evt is MessageReceivedEvent) {
-            roomMessageReceived(binding, MessageReceivedEvent(evt));
+        } else if (evt is MessageEvent) {
+            roomMessageReceived(binding, MessageEvent(evt));
         }
     }
 
@@ -610,7 +609,7 @@ public class ThaneAVRGameController
     {
         var name :String = evt.getName();
         if (name == RoomObject.PLAY_COUNT) {
-            _backend.processMusicStartStop(evt.getValue() != -1);
+            _backend.processMusicStartStop(binding.sceneId, evt.getValue() != -1);
         }
     }
 
@@ -664,7 +663,7 @@ public class ThaneAVRGameController
     protected function roomMessageReceived (binding :SceneBinding, evt :MessageEvent) :void
     {
         if (evt.getName() == RoomCodes.SPRITE_SIGNAL) {
-            var args :Array = event.getArgs();
+            var args :Array = evt.getArgs();
             _backend.signalReceived(
                 binding.sceneId, args[0] as String, args[1] as ByteArray);
         }
@@ -821,6 +820,7 @@ import com.threerings.msoy.bureau.client.Window;
 
 import com.threerings.msoy.avrg.client.BackendAvatarAdapter;
 import com.threerings.msoy.avrg.client.BackendNetAdapter;
+import com.threerings.msoy.avrg.client.ThaneAVRGameController;
 
 /** Binds a scene id to its window, room and players. */
 class SceneBinding
