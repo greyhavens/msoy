@@ -9,16 +9,25 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
+import com.threerings.util.MethodQueue;
+import com.threerings.util.ObjectMarshaller;
+import com.threerings.util.StringUtil;
+
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.msoy.avrg.data.AVRGameObject;
+
+import com.threerings.whirled.data.Scene;
+
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.WhirledPlayerObject;
+
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.client.GameContext;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.party.data.PartyObject;
-import com.threerings.msoy.party.data.PartyPeep;
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
@@ -29,14 +38,15 @@ import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
-import com.threerings.util.ObjectMarshaller;
-import com.threerings.util.StringUtil;
-import com.threerings.whirled.data.Scene;
-import com.whirled.game.data.WhirledPlayerObject;
+
+import com.threerings.msoy.game.client.ConsumeItemPackDialog;
+import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartyPeep;
+
+import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGameBackend extends ControlBackend
 {
@@ -570,7 +580,11 @@ public class AVRGameBackend extends ControlBackend
     protected function requestConsumeItemPack_v1 (
         targetId :int /* ignored */, ident :String, msg :String) :Boolean
     {
-        return false; // TODO
+        if (countPlayerData(GameData.ITEM_DATA, ident, _wctx.getMyId()) < 1) {
+            return false;
+        }
+        return ConsumeItemPackDialog.show(
+            _wctx, _gctx.getClient(), _gameObj.contentService, _gameObj.gameData, ident, msg);
     }
 
     // PlayerSubControl

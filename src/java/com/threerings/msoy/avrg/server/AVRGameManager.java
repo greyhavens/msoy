@@ -51,6 +51,8 @@ import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
+import com.whirled.game.server.ContentDispatcher;
+import com.whirled.game.server.ContentProvider;
 import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
 import com.whirled.game.server.PropertySpaceDispatcher;
@@ -72,6 +74,7 @@ import com.threerings.msoy.room.server.RoomManager;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
+import com.threerings.msoy.game.server.ContentDelegate;
 import com.threerings.msoy.game.server.ContentOwnershipUnit;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 import com.threerings.msoy.game.server.GameWatcherManager;
@@ -102,7 +105,7 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class AVRGameManager extends PlaceManager
-    implements AVRGameProvider, PlayManager, AVRGameAgentProvider, PrizeProvider
+    implements AVRGameProvider, PlayManager, AVRGameAgentProvider, ContentProvider, PrizeProvider
 {
     /** The magic player id constant for the server agent used when sending private messages. */
     public static final int SERVER_AGENT = Integer.MIN_VALUE;
@@ -151,6 +154,9 @@ public class AVRGameManager extends PlaceManager
 
         if (delegate instanceof QuestDelegate) {
             _questDelegate = (QuestDelegate) delegate;
+
+        } else if (delegate instanceof ContentDelegate) {
+            _contentDelegate = (ContentDelegate) delegate;
 
         } else if (delegate instanceof TrophyDelegate) {
             _trophyDelegate = (TrophyDelegate) delegate;
@@ -236,6 +242,7 @@ public class AVRGameManager extends PlaceManager
 
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+        _gameObj.setContentService(_invmgr.registerDispatcher(new ContentDispatcher(this)));
         _gameObj.setPrizeService(_invmgr.registerDispatcher(new PrizeDispatcher(this)));
         _gameObj.setMessageService(_invmgr.registerDispatcher(new WhirledGameMessageDispatcher(
             new WhirledGameMessageHandler(_gameObj) {
@@ -327,6 +334,14 @@ public class AVRGameManager extends PlaceManager
                 }
             }
         });
+    }
+
+    // from interface ContentProvider
+    public void consumeItemPack (ClientObject caller, String ident,
+                                 InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        _contentDelegate.consumeItemPack(caller, ident, listener);
     }
 
     // from interface PrizeProvider
@@ -1080,7 +1095,10 @@ public class AVRGameManager extends PlaceManager
     /** The delegate that handles quest completion and coin payouts. */
     protected QuestDelegate _questDelegate;
 
-    /** A delegate that takes care of awarding trophies and prizes.. */
+    /** A delegate that handles game content services. */
+    protected ContentDelegate _contentDelegate;
+
+    /** A delegate that takes care of awarding trophies and prizes. */
     protected TrophyDelegate _trophyDelegate;
 
     /** A delegate that handles agent traces.. */

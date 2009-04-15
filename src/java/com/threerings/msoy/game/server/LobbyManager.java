@@ -284,6 +284,7 @@ public class LobbyManager
         delegates.add(new EventLoggingDelegate(_content));
         delegates.add(new TrackExperienceDelegate(_content));
         delegates.add(new AwardDelegate(_content));
+        delegates.add(new ContentDelegate(_content));
         delegates.add(new TrophyDelegate(_content));
         delegates.add(new AgentTraceDelegate(getGameId()));
         return (GameManager)_plreg.createPlace(config, delegates);

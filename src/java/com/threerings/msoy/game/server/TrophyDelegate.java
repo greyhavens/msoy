@@ -21,6 +21,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.server.PlayManagerDelegate;
 
+import com.whirled.game.client.WhirledGameService;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.GameDataObject;
@@ -49,17 +50,13 @@ import static com.threerings.msoy.Log.log;
  */
 public class TrophyDelegate extends PlayManagerDelegate
 {
-    /**
-     * Creates a Whirled game manager delegate with the supplied game content.
-     */
     public TrophyDelegate (GameContent content)
     {
-        // keep our game content around for later
         _content = content;
     }
 
     /**
-     * Handles WhirledGameService.awardTrophy, via MsoyGameManager
+     * Handles {@link WhirledGameService#awardTrophy}.
      */
     public void awardTrophy (ClientObject caller, String ident, int playerId,
                              final InvocationService.InvocationListener listener)
@@ -116,7 +113,9 @@ public class TrophyDelegate extends PlayManagerDelegate
         });
     }
 
-    // from interface WhirledGameProvider
+    /**
+     * Handles {@link WhirledGameService#awardPrize}.
+     */
     public void awardPrize (ClientObject caller, String ident, int playerId,
                             final InvocationService.InvocationListener listener)
         throws InvocationException

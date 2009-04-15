@@ -55,6 +55,14 @@ public class MsoyGameManager extends WhirledGameManager
         super();
     }
 
+    // from interface ContentProvider
+    public void consumeItemPack (ClientObject caller, String ident,
+                                 InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        _contentDelegate.consumeItemPack(caller, ident, listener);
+    }
+
     // from interface PrizeProvider
     public void awardTrophy (ClientObject caller, String ident, int playerId,
                              InvocationService.InvocationListener listener)
@@ -90,50 +98,6 @@ public class MsoyGameManager extends WhirledGameManager
         _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
     }
 
-    // from interface ContentProvider
-    public void consumeItemPack (ClientObject caller, final String ident,
-                                 InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final PlayerObject plobj = (PlayerObject)caller;
-        final Game game = ((MsoyGameConfig)getGameConfig()).game;
-
-        // make sure they have at least one copy of this item pack
-        GameContentOwnership gco = plobj.gameContent.get(
-            new GameContentOwnership(game.gameId, GameData.ITEM_DATA, ident));
-        if (gco == null || gco.count < 1) {
-            listener.requestFailed("e.missing_item_pack"); // checked on client, shouldn't happen
-        }
-
-        // reduce their count in the runtime by one
-        if (--gco.count == 0) {
-            plobj.removeFromGameContent(gco);
-        } else {
-            plobj.updateGameContent(gco);
-        }
-
-        // go off to the database and delete one item pack record
-        _invoker.postUnit(new PersistingUnit("consumeItemPack", listener, "who", plobj.who()) {
-            public void invokePersistent () throws Exception {
-                int deleteId = 0;
-                for (ItemPackRecord ipack : _ipackRepo.loadClonedItems(
-                         plobj.getMemberId(), game.getSuiteId())) {
-                    // pick the first item pack with a matching ident to delete; they're all
-                    // exactly the same
-                    if (ipack.ident.equals(ident)) {
-                        deleteId = ipack.itemId;
-                        break;
-                    }
-                }
-                if (deleteId == 0) { // no free lunch
-                    throw new InvocationException("e.missing_item_pack");
-                }
-                // "consume" the item
-                _ipackRepo.deleteItem(deleteId);
-            }
-        });
-    }
-
     /**
      * Returns true if the game is multiplayer, which is true if the game is not a SEATED_GAME
      * (fixed table size, player count established at game start) with exactly one player.
@@ -154,6 +118,8 @@ public class MsoyGameManager extends WhirledGameManager
             _traceDelegate = (AgentTraceDelegate) delegate;
         } else if (delegate instanceof TrophyDelegate) {
             _trophyDelegate = (TrophyDelegate) delegate;
+        } else if (delegate instanceof ContentDelegate) {
+            _contentDelegate = (ContentDelegate) delegate;
         }
     }
 
@@ -305,8 +271,11 @@ public class MsoyGameManager extends WhirledGameManager
     /** A delegate that takes care of awarding flow and ratings. */
     protected AwardDelegate _awardDelegate;
 
-    /** A delegate that takes care of awarding trophies and prizes.. */
+    /** A delegate that takes care of awarding trophies and prizes. */
     protected TrophyDelegate _trophyDelegate;
+
+    /** A delegate that takes care of content services. */
+    protected ContentDelegate _contentDelegate;
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;

@@ -76,40 +76,8 @@ public class MsoyGameBackend extends WhirledGameBackend
         if (countPlayerData(GameData.ITEM_DATA, ident, getMyId_v1()) < 1) {
             return false;
         }
-
-        // look up the metadata for the item pack
-        var pdata :GameData = null;
-        for each (var gd :GameData in _gameObj.gameData) {
-            if (gd.getType() == GameData.ITEM_DATA && gd.ident == ident) {
-                pdata = gd;
-                break;
-            }
-        }
-        if (pdata == null) { // shouldn't be possible, but better safe than sorry
-            log.warning("Missing game data for item pack consumption?", "ident", ident);
-            return false;
-        }
-
-        // if we're already displaying a consume dialog, disallow showing another
-        if (_consumeDialog != null) {
-            return false;
-        }
-
-        // this will get called if they confirm the consume dialog
-        function onAccept () :void {
-            // send the request off to the server
-            _gameObj.contentService.consumeItemPack(
-                _ctx.getClient(), ident, createLoggingConfirmListener("consumeItemPack", null));
-        }
-
-        // display the confirmation dialog
-        _consumeDialog = new ConsumeItemPackDialog(
-            (_ctx as GameContext).getMsoyContext(), pdata.name, msg, onAccept);
-        _consumeDialog.addCloseCallback(function () :void {
-            _consumeDialog = null;
-        });
-        _consumeDialog.open(true);
-        return true;
+        return ConsumeItemPackDialog.show((_ctx as GameContext).getMsoyContext(), _ctx.getClient(),
+                                          _gameObj.contentService, _gameObj.gameData, ident, msg);
     }
 
     override protected function systemMessage (bundle :String, msg :String) :void
@@ -197,7 +165,5 @@ public class MsoyGameBackend extends WhirledGameBackend
     {
         (_ctx as GameContext).showTrophies();
     }
-
-    protected var _consumeDialog :ConsumeItemPackDialog;
 }
 }

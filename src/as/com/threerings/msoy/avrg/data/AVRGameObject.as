@@ -13,6 +13,8 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 
 import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.data.ContentMarshaller;
+import com.whirled.game.data.GameData;
 import com.whirled.game.data.PrizeMarshaller;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
@@ -56,16 +58,19 @@ public class AVRGameObject extends PlaceObject
      * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
      * requests.
      */
-    public var playerLocs :DSet; /* of */ PlayerLocation; // no-op reference to force link
+    public var playerLocs :DSet; /*of*/ PlayerLocation; // no-op reference to force link
 
     /** Information on the parties presently in this room. */
-    public var parties :DSet; /* of */ PartySummary; // no-op reference to force link
+    public var parties :DSet; /*of*/ PartySummary; // no-op reference to force link
 
     /** The various game data available to this game. */
-    public var gameData :TypedArray;
+    public var gameData :TypedArray; /*of*/ GameData;
 
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
+
+    /** The service interface for handling game content. */
+    public var contentService :ContentMarshaller;
 
     /** The service interface for awarding prizes and trophies. */
     public var prizeService :PrizeMarshaller;
@@ -120,6 +125,7 @@ public class AVRGameObject extends PlaceObject
         parties = DSet(ins.readObject());
         gameData = TypedArray(ins.readObject());
         avrgService = AVRGameMarshaller(ins.readObject());
+        contentService = ContentMarshaller(ins.readObject());
         prizeService = PrizeMarshaller(ins.readObject());
         messageService = WhirledGameMessageMarshaller(ins.readObject());
         propertiesService = PropertySpaceMarshaller(ins.readObject());

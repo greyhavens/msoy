@@ -16,6 +16,8 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
+import com.whirled.game.data.ContentMarshaller;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.GameDataObject;
 import com.whirled.game.data.PrizeMarshaller;
@@ -55,6 +57,9 @@ public class AVRGameObject extends PlaceObject
     /** The field name of the <code>avrgService</code> field. */
     public static final String AVRG_SERVICE = "avrgService";
 
+    /** The field name of the <code>contentService</code> field. */
+    public static final String CONTENT_SERVICE = "contentService";
+
     /** The field name of the <code>prizeService</code> field. */
     public static final String PRIZE_SERVICE = "prizeService";
 
@@ -80,6 +85,9 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to communicate with the AVRGameManager. */
     public AVRGameMarshaller avrgService;
+
+    /** The service interface for handling game content. */
+    public ContentMarshaller contentService;
 
     /** The service interface for awarding prizes and trophies. */
     public PrizeMarshaller prizeService;
@@ -244,6 +252,22 @@ public class AVRGameObject extends PlaceObject
         requestAttributeChange(
             AVRG_SERVICE, value, ovalue);
         this.avrgService = value;
+    }
+
+    /**
+     * Requests that the <code>contentService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setContentService (ContentMarshaller value)
+    {
+        ContentMarshaller ovalue = this.contentService;
+        requestAttributeChange(
+            CONTENT_SERVICE, value, ovalue);
+        this.contentService = value;
     }
 
     /**
