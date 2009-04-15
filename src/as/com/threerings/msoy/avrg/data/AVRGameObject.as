@@ -20,6 +20,7 @@ import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 
+import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
@@ -45,9 +46,11 @@ public class AVRGameObject extends PlaceObject
     /** The field name of the <code>parties</code> field. */
     public static const PARTIES :String = "parties";
 
+    /** The field name of the <code>partyLeaders</code> field. */
+    public static const PARTY_LEADERS :String = "partyLeaders";
+
     /** The field name of the <code>avrgService</code> field. */
     public static const AVRG_SERVICE :String = "avrgService";
-
     // AUTO-GENERATED: FIELDS END
 
     // no-op reference; force linkage
@@ -62,6 +65,9 @@ public class AVRGameObject extends PlaceObject
 
     /** Information on the parties presently in this room. */
     public var parties :DSet; /*of*/ PartySummary; // no-op reference to force link
+
+    /** Current party leaders. */
+    public var partyLeaders :DSet; /* of */ PartyLeader;
 
     /** The various game data available to this game. */
     public var gameData :TypedArray; /*of*/ GameData;
@@ -123,6 +129,7 @@ public class AVRGameObject extends PlaceObject
     {
         playerLocs = DSet(ins.readObject());
         parties = DSet(ins.readObject());
+        partyLeaders = DSet(ins.readObject());
         gameData = TypedArray(ins.readObject());
         avrgService = AVRGameMarshaller(ins.readObject());
         contentService = ContentMarshaller(ins.readObject());
