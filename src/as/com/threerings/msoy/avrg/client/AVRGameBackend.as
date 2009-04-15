@@ -264,6 +264,7 @@ public class AVRGameBackend extends ControlBackend
         o["holdsTrophy_v1"] = holdsTrophy_v1;
         o["getPlayerItemPacks_v1"] = getPlayerItemPacks_v1;
         o["getPlayerLevelPacks_v1"] = getPlayerLevelPacks_v1;
+        o["requestConsumeItemPack_v1"] = requestConsumeItemPack_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["completeTask_v1"] = completeTask_v1;
         o["playAvatarAction_v1"] = playAvatarAction_v1;
@@ -563,6 +564,12 @@ public class AVRGameBackend extends ControlBackend
     {
         validatePlayerTargetId(targetId);
         return BackendUtils.getPlayerLevelPacks(_gameObj.gameData, targetId, playerOwnsData);
+    }
+
+    // PlayerSubControl
+    protected function requestConsumeItemPack_v1 (ident :String, msg :String) :Boolean
+    {
+        return false; // TODO
     }
 
     // PlayerSubControl
