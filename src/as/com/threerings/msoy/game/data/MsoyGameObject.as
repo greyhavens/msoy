@@ -9,7 +9,6 @@ import com.threerings.presents.dobj.DSet;
 
 import com.whirled.game.data.WhirledGameObject;
 
-import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
@@ -22,9 +21,6 @@ public class MsoyGameObject extends WhirledGameObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>parties</code> field. */
     public static const PARTIES :String = "parties";
-
-    /** The field name of the <code>partyLeaders</code> field. */
-    public static const PARTY_LEADERS :String = "partyLeaders";
     // AUTO-GENERATED: FIELDS END
 
     // force linkage
@@ -32,9 +28,6 @@ public class MsoyGameObject extends WhirledGameObject
 
     /** Information on the parties presently in this game. */
     public var parties :DSet; /* of */ PartySummary; // force linkage
-
-    /** Current party leaders. */
-    public var partyLeaders :DSet; /* of */ PartyLeader;
 
     // from PartyPlaceObject
     public function getParties () :DSet
@@ -53,7 +46,6 @@ public class MsoyGameObject extends WhirledGameObject
         super.readDefaultFields(ins);
 
         parties = DSet(ins.readObject());
-        partyLeaders = DSet(ins.readObject());
     }
 }
 }

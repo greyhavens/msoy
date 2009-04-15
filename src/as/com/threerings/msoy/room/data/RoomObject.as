@@ -12,7 +12,6 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.item.data.all.Audio;
 
-import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
@@ -51,9 +50,6 @@ public class RoomObject extends SpotSceneObject
     /** The field name of the <code>parties</code> field. */
     public static const PARTIES :String = "parties";
 
-    /** The field name of the <code>partyLeaders</code> field. */
-    public static const PARTY_LEADERS :String = "partyLeaders";
-
     /** The field name of the <code>playlist</code> field. */
     public static const PLAYLIST :String = "playlist";
 
@@ -77,20 +73,19 @@ public class RoomObject extends SpotSceneObject
     public var roomService :RoomMarshaller;
 
     /** Contains the memories for all entities in this room. */
-    public var memories :DSet; /* of */ EntityMemories;
-    MemoryChangedEvent; // references to force linkage
+    public var memories :DSet;
+    EntityMemories; MemoryChangedEvent; // references to force linkage
 
     /** Contains mappings for all controlled entities in this room. */
-    public var controllers :DSet; /* of */ EntityControl;
+    public var controllers :DSet;
+    EntityControl; // reference to force linkage
 
     /** The property spaces associated with this room. */
-    public var propertySpaces :DSet; /* of */ RoomPropertiesEntry;
+    public var propertySpaces :DSet;
+    RoomPropertiesEntry; // reference to force linkage
 
     /** Information of the parties presently in this room. */
     public var parties :DSet; /* of */ PartySummary;
-
-    /** Current party leaders, even if they're not in this room. */
-    public var partyLeaders :DSet; /* of */ PartyLeader;
 
     /** The set of songs in the playlist. */
     public var playlist :DSet; /* of */ Audio;
@@ -143,7 +138,6 @@ public class RoomObject extends SpotSceneObject
         controllers = DSet(ins.readObject());
         propertySpaces = DSet(ins.readObject());
         parties = DSet(ins.readObject());
-        partyLeaders = DSet(ins.readObject());
         playlist = DSet(ins.readObject());
         currentSongId = ins.readInt();
         playCount = ins.readInt();
