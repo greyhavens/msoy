@@ -31,25 +31,6 @@ public class OccupantReporter
         _ctx = ctx;
         // listen for and report enter/exit
         plobj.addListener(this);
-
-//        if (reportInitialOccupants) {
-//            // report the current room occupants
-//            var occs :String = "";
-//            for (var iter :Iterator = plobj.occupantInfo.iterator(); iter.hasNext(); ) {
-//                var info :OccupantInfo = (iter.next() as OccupantInfo);
-//                if (isSelf(info)) {
-//                    continue;
-//                }
-//                if (occs.length > 0) {
-//                    occs += ", ";
-//                }
-//                occs += info.username;
-//            }
-//            if (occs.length > 0) {
-//                _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-//                    MessageBundle.tcompose("m.in_room", occs));
-//            }
-//        }
     }
 
     public function didLeavePlace (plobj :PlaceObject) :void
@@ -62,12 +43,7 @@ public class OccupantReporter
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var info :OccupantInfo = (event.getEntry() as OccupantInfo);
-            if (isSelf(info)) {
-                return;
-            }
-            _ctx.getNotificationDirector().addGenericNotification(
-                MessageBundle.tcompose("m.entered_room", info.username),
-                Notification.LOWEST, info.username as MemberName);
+            notify("m.entered_room", info.username as MemberName);
         }
     }
 
@@ -82,19 +58,20 @@ public class OccupantReporter
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var info :OccupantInfo = (event.getOldEntry() as OccupantInfo);
-            if (isSelf(info)) {
-                return;
-            }
-            _ctx.getNotificationDirector().addGenericNotification(
-                MessageBundle.tcompose("m.left_room", info.username),
-                Notification.LOWEST, info.username as MemberName);
+            notify("m.left_room", info.username as MemberName);
         }
     }
 
-    protected function isSelf (info :OccupantInfo) :Boolean
+    /**
+     * Send the notification, as long as it's not about us.
+     */
+    protected function notify (key :String, name :MemberName) :void
     {
-        return info.username.equals(
-            (_ctx.getClient().getClientObject() as BodyObject).getVisibleName());
+        if (name != null && !name.equals(_ctx.getMyName())) {
+            _ctx.getNotificationDirector().addGenericNotification(
+                MessageBundle.tcompose(key, name, name.getMemberId()),
+                Notification.LOWEST, name);
+        }
     }
 
     protected var _ctx :MsoyContext;
