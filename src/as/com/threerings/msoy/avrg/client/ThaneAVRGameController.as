@@ -477,11 +477,6 @@ public class ThaneAVRGameController
         }
 
         log.debug("Got room props id", "binding", binding, "propsOid", propsOid);
-
-        // subscribe to the properties object
-        var subscriber :SubscriberAdapter = new SubscriberAdapter(
-        );
-
         binding.propsSubscriber = new SafeSubscriber(
             propsOid, function (obj :RoomPropertiesObject) :void {
                 gotRoomPropertiesObject(binding, obj);
