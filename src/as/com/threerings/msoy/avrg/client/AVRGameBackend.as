@@ -20,6 +20,7 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.data.Scene;
 
+import com.whirled.game.client.ContentListener;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
 
@@ -67,12 +68,17 @@ public class AVRGameBackend extends ControlBackend
 
         _playerObj = _gctx.getPlayerObject();
 
+        _contentListener = new ContentListener(_wctx.getMyId(), ctrl.getGameId(), this);
+        _playerObj.addListener(_contentListener); 
+
         _wctx.getPartyDirector().addEventListener("partyChanged", handlePartyChanged);
     }
 
     // from ControlBackend
     override public function shutdown () :void
     {
+        _wctx.getPartyDirector().removeEventListener("partyChanged", handlePartyChanged);
+
         if (_gameNetAdapter != null) {
             _gameNetAdapter.release();
         }
@@ -85,7 +91,10 @@ public class AVRGameBackend extends ControlBackend
             _roomPropsNetAdapter.release();
         }
 
-        _wctx.getPartyDirector().removeEventListener("partyChanged", handlePartyChanged);
+        if (_playerObj != null) {
+            _playerObj.removeListener(_contentListener);
+            _playerObj = null;
+        }
 
         super.shutdown();
     }
@@ -1008,5 +1017,7 @@ public class AVRGameBackend extends ControlBackend
     protected var _playerNetAdapter :BackendNetAdapter;
     protected var _roomPropsNetAdapter :BackendNetAdapter;
     protected var _avatarAdapter :BackendAvatarAdapter;
+
+    protected var _contentListener :ContentListener;
 }
 }
