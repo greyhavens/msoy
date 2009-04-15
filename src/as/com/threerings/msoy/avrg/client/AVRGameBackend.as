@@ -44,9 +44,6 @@ import com.threerings.msoy.game.client.ConsumeItemPackDialog;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.PlayerObject;
 
-import com.threerings.msoy.party.data.PartyObject;
-import com.threerings.msoy.party.data.PartyPeep;
-
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGameBackend extends ControlBackend
@@ -70,15 +67,11 @@ public class AVRGameBackend extends ControlBackend
 
         _contentListener = new ContentListener(_wctx.getMyId(), ctrl.getGameId(), this);
         _playerObj.addListener(_contentListener); 
-
-        _wctx.getPartyDirector().addEventListener("partyChanged", handlePartyChanged);
     }
 
     // from ControlBackend
     override public function shutdown () :void
     {
-        _wctx.getPartyDirector().removeEventListener("partyChanged", handlePartyChanged);
-
         if (_gameNetAdapter != null) {
             _gameNetAdapter.release();
         }
@@ -315,9 +308,6 @@ public class AVRGameBackend extends ControlBackend
         // TODO: MobControl helpers
         o["setMobDecoration_v1"] = setMobDecoration_v1;
         o["setMobHotSpot_v1"] = setMobHotSpot_v1;
-
-        // TEMP
-        o["getPartyInfo_temp"] = getPartyInfo_temp;
     }
 
     // GameSubControl
@@ -984,26 +974,6 @@ public class AVRGameBackend extends ControlBackend
     protected function countPlayerData (type :int, ident :String, playerId :int) :int
     {
         return _playerObj.countGameContent(_ctrl.getGameId(), type, ident);
-    }
-
-    protected function getPartyInfo_temp () :Object
-    {
-        var pobj :PartyObject = _wctx.getPartyDirector().getPartyObject();
-        if (pobj == null) {
-            return null;
-        }
-
-        var peeps :Array = pobj.peeps.toArray().map(function (peep :PartyPeep, ... rest) :int {
-            return peep.name.getMemberId();
-        });
-
-        return { id: pobj.id, name: pobj.name, leaderId: pobj.leaderId, players: peeps };
-    }
-
-    // TEMP
-    protected function handlePartyChanged (event :Event) :void
-    {
-        callUserCode("partyChanged_temp");
     }
 
     protected var _wctx :WorldContext;

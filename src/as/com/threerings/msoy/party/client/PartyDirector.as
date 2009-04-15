@@ -23,7 +23,6 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.NamedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.presents.util.SafeSubscriber;
 
@@ -55,9 +54,6 @@ import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
-// TEMP
-[Event(name="partyChanged", type="flash.events.Event")]
-
 /**
  * Manages party stuff on the client.
  */
@@ -76,18 +72,6 @@ public class PartyDirector extends BasicDirector
             new LocationAdapter(null, locationDidChange, null));
         _wctx.getGameDirector().addEventListener(GameDirector.GAMING_STATE_CHANGED,
             handleGamingStateChanged);
-    }
-
-    // TEMP, for Tim
-    public function getPartyObject () :PartyObject
-    {
-        return _partyObj;
-    }
-
-    // TEMP, for Tim
-    protected function partyChanged () :void
-    {
-        dispatchEvent(new Event("partyChanged"));
     }
 
     /**
@@ -247,11 +231,8 @@ public class PartyDirector extends BasicDirector
         }
         if (_partyObj != null) {
             _partyObj.removeListener(_partyListener);
-            _partyObj.removeListener(_partyListener2);
             _partyListener = null;
-            _partyListener2 = null;
             _partyObj = null;
-            partyChanged();
         }
         if (_pctx != null) {
             _pctx.getClient().logoff(false);
@@ -381,9 +362,7 @@ public class PartyDirector extends BasicDirector
     {
         _partyObj = obj;
         _partyListener = new AttributeChangeAdapter(partyAttrChanged);
-        _partyListener2 = new SetAdapter(partySetChanged, partySetChanged, partySetChanged);
         _partyObj.addListener(_partyListener);
-        _partyObj.addListener(_partyListener2);
 
         // if the party popup is up, change to the new popup...
         var btn :CommandButton = getButton();
@@ -403,8 +382,6 @@ public class PartyDirector extends BasicDirector
         } else {
             checkFollowGame();
         }
-
-        partyChanged();
     }
 
     /**
@@ -499,19 +476,7 @@ public class PartyDirector extends BasicDirector
         case PartyObject.GAME_ID:
             checkFollowGame();
             break;
-
-            // TEMP
-        case PartyObject.LEADER_ID:
-            partyChanged();
-            break;
         }
-    }
-
-    // TEMP
-    protected function partySetChanged (event :NamedEvent) :void
-    {
-        // ignore the event, the PEEPS changed
-        partyChanged();
     }
 
     // from BasicDirector
@@ -549,7 +514,6 @@ public class PartyDirector extends BasicDirector
     protected var _detailPanels :Dictionary = new Dictionary();
 
     protected var _partyListener :ChangeListener;
-    protected var _partyListener2 :ChangeListener; // TEMP
 }
 }
 
