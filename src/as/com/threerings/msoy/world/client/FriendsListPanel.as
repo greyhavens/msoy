@@ -25,6 +25,7 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.DSetList;
@@ -193,7 +194,8 @@ public class FriendsListPanel extends FlyingPanel
         _statusEdit.setSelection(0, 0);
         // delay losing focus by a frame so the selection has time to get set correctly.
         callLater(_wctx.getControlBar().giveChatFocus);
-        var newStatus :String = _statusEdit.text;
+        var newStatus :String = StringUtil.deNull(_wctx.getChatDirector().filter(
+            StringUtil.trim(_statusEdit.text), null, true));
         if (newStatus != _wctx.getMemberObject().headline) {
             var msvc :MemberService =
                 (_wctx.getClient().requireService(MemberService) as MemberService);
@@ -220,8 +222,7 @@ public class FriendsListPanel extends FlyingPanel
 
     protected function setStatus (status :String) :void
     {
-        _statusEdit.text =
-            status == "" || status == null ?  Msgs.GENERAL.get("l.emptyStatus") : status;
+        _statusEdit.text = StringUtil.isBlank(status) ? Msgs.GENERAL.get("l.emptyStatus") : status;
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);

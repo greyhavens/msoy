@@ -13,6 +13,8 @@ import mx.controls.Label;
 import mx.core.ClassFactory;
 import mx.core.IFactory;
 
+import com.threerings.util.StringUtil;
+
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
@@ -47,7 +49,9 @@ public class FriendRenderer extends PlayerRenderer
         var statusContainer :HBox = new HBox();
         statusContainer.setStyle("paddingLeft", 3);
 
-        var status :Label = FlexUtil.createLabel(friend.status, "friendStatusLabel");
+        var statusString :String = StringUtil.deNull(
+            mctx.getChatDirector().filter(friend.status, friend.name, false));
+        var status :Label = FlexUtil.createLabel(statusString, "friendStatusLabel");
         status.width = content.width;
         statusContainer.addChild(status);
 

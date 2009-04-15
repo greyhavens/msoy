@@ -5,6 +5,7 @@ package com.threerings.msoy.notify.client {
 
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.BasicDirector;
@@ -190,7 +191,7 @@ public class NotificationDirector extends BasicDirector
                 Msgs.NOTIFY.get("m.friend_visit", entry.name.getMemberId()) : "";
             var notif :String = MessageBundle.tcompose("m.friend_added",
                 entry.name, entry.name.getMemberId(), online);
-            addGenericNotification(notif, Notification.PERSONAL);
+            addGenericNotification(notif, Notification.PERSONAL, entry.name);
         }
     }
 
@@ -211,7 +212,7 @@ public class NotificationDirector extends BasicDirector
                     if (!_membersLoggingOff.remove(entry)) {
                         addGenericNotification(
                             MessageBundle.tcompose("m.friend_online", entry.name, memberId),
-                            Notification.BUTTSCRATCHING);
+                            Notification.BUTTSCRATCHING, entry.name);
                     }
 
                 } else {
@@ -224,13 +225,17 @@ public class NotificationDirector extends BasicDirector
                 addGenericNotification(
                     MessageBundle.tcompose("m.friend_name_changed", entry.name, memberId,
                         oldEntry.name),
-                    Notification.BUTTSCRATCHING);
+                    Notification.BUTTSCRATCHING, entry.name);
 
             } else if (entry.status != oldEntry.status) {
-                addGenericNotification(
-                    MessageBundle.tcompose("m.friend_status_changed", entry.name, memberId,
-                        entry.status),
-                    Notification.BUTTSCRATCHING);
+                var statusString :String =
+                    _mctx.getChatDirector().filter(entry.status, entry.name, false);
+                if (!StringUtil.isBlank(statusString)) {
+                    addGenericNotification(
+                        MessageBundle.tcompose("m.friend_status_changed", entry.name, memberId,
+                            statusString),
+                        Notification.BUTTSCRATCHING, entry.name);
+                }
             }
         }
     }
@@ -244,7 +249,7 @@ public class NotificationDirector extends BasicDirector
             addGenericNotification(
                 MessageBundle.tcompose("m.friend_removed", oldEntry.name,
                     oldEntry.name.getMemberId()),
-                Notification.PERSONAL);
+                Notification.PERSONAL, oldEntry.name);
         }
     }
 
