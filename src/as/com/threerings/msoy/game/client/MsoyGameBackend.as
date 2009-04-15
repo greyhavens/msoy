@@ -9,9 +9,6 @@ import flash.geom.Point;
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.SetAdapter;
-
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.game.client.HeadShot;
@@ -39,16 +36,6 @@ public class MsoyGameBackend extends WhirledGameBackend
         ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
-
-        _ctx.getClient().getClientObject().addListener(_contentListener);
-    }
-
-    // from WhirledGameBackend
-    override public function shutdown () :void
-    {
-        super.shutdown();
-
-        _ctx.getClient().getClientObject().removeListener(_contentListener);
     }
 
     // from WhirledGameBackend
@@ -112,10 +99,7 @@ public class MsoyGameBackend extends WhirledGameBackend
         function onAccept () :void {
             // send the request off to the server
             _gameObj.whirledGameService.consumeItemPack(
-                _ctx.getClient(), ident,
-                createLoggingConfirmListener("consumeItemPack", null, function () :void {
-                    notifyGameContentConsumed(GameData.ITEM_DATA, ident, getMyId_v1());
-                }));
+                _ctx.getClient(), ident, createLoggingConfirmListener("consumeItemPack", null));
         }
 
         // display the confirmation dialog
@@ -214,24 +198,6 @@ public class MsoyGameBackend extends WhirledGameBackend
         (_ctx as GameContext).showTrophies();
     }
 
-    protected function entryAddedOnUserObject (event :EntryAddedEvent) :void
-    {
-        var name :String = event.getName();
-        if (name == WhirledPlayerObject.GAME_CONTENT) {
-            var content :GameContentOwnership = (event.getEntry() as GameContentOwnership);
-            // it should not be possible for a player to have content dynamically added for a game
-            // other than the one they are playing, but let's be extra specially safe
-            var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
-            if (cfg.getGameId() == content.gameId &&
-                // we only want to notify on the addition of item and level pack data
-                content.type == GameData.LEVEL_DATA || content.type == GameData.ITEM_DATA) {
-                // TODO: use playerId when we switch to that from playerOid
-                notifyGameContentAdded(content.type, content.ident, event.getTargetOid());
-            }
-        }
-    }
-
-    protected var _contentListener :SetAdapter = new SetAdapter(entryAddedOnUserObject);
     protected var _consumeDialog :ConsumeItemPackDialog;
 }
 }
