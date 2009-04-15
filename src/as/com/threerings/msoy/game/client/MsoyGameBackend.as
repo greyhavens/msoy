@@ -98,7 +98,7 @@ public class MsoyGameBackend extends WhirledGameBackend
         // this will get called if they confirm the consume dialog
         function onAccept () :void {
             // send the request off to the server
-            _gameObj.whirledGameService.consumeItemPack(
+            _gameObj.contentService.consumeItemPack(
                 _ctx.getClient(), ident, createLoggingConfirmListener("consumeItemPack", null));
         }
 

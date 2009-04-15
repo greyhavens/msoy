@@ -90,9 +90,9 @@ public class MsoyGameManager extends WhirledGameManager
         _awardDelegate.endGameWithWinners(caller, winnerOids, loserOids, payoutType, listener);
     }
 
-    // from interface WhirledGameProvider
+    // from interface ContentProvider
     public void consumeItemPack (ClientObject caller, final String ident,
-                                 InvocationService.ConfirmListener listener)
+                                 InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject)caller;
@@ -130,7 +130,6 @@ public class MsoyGameManager extends WhirledGameManager
                 }
                 // "consume" the item
                 _ipackRepo.deleteItem(deleteId);
-                // returning successfully will tell the confirm listener that all went smoothly
             }
         });
     }
