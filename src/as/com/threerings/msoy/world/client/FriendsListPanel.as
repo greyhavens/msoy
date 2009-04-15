@@ -222,7 +222,8 @@ public class FriendsListPanel extends FlyingPanel
 
     protected function setStatus (status :String) :void
     {
-        _statusEdit.text = StringUtil.isBlank(status) ? Msgs.GENERAL.get("l.emptyStatus") : status;
+        _statusEdit.text = StringUtil.isBlank(status) ? Msgs.GENERAL.get("l.emptyStatus")
+            : StringUtil.deNull(_wctx.getChatDirector().filter(status, null, false));
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);
