@@ -11,9 +11,20 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
-// TODO: fix jumpy layout of LoadedAsset
 public class BuyButton extends CommandButton
 {
+    /**
+     * Large coins icon. See also Currency.getEmbedHeaderIcon.
+     */
+    [Embed(source="../../../../../../../pages/images/ui/coins_large.png")]
+    public static const COINS_LARGE_ICON :Class;
+
+    /**
+     * Large bars icon. See also Currency.getEmbedHeaderIcon.
+     */
+    [Embed(source="../../../../../../../pages/images/ui/bars_large.png")]
+    public static const BARS_LARGE_ICON :Class;
+
     /**
      * Construct a BuyButton. Arg is going to be appended to two other args: the currency
      * and approved price.
@@ -25,7 +36,7 @@ public class BuyButton extends CommandButton
         if (currency == Currency.BARS) {
             styleName = "orangeButton";
         }
-        setStyle("icon", currency.getLargeIconClass());
+        setStyle("icon", (currency == Currency.COINS) ? COINS_LARGE_ICON : BARS_LARGE_ICON);
         setStyle("fontSize", 24);
         setStyle("fontFamily", "_sans");
 
