@@ -1127,7 +1127,7 @@ public class WorldController extends MsoyController
 //            }
             CommandMenu.addTitle(menuItems, member.toString()); // icon
             var muted :Boolean = _mctx.getMuteDirector().isMuted(member);
-            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute", member),
+            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute"),
                 callback: _mctx.getMuteDirector().setMuted, arg: [ member, !muted ] });
             if (addAvatarItems && (placeCtrl is RoomObjectController)) {
                 RoomObjectController(placeCtrl).addBleepAvatar(member, menuItems);
