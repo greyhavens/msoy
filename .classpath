@@ -119,5 +119,6 @@
 	<classpathentry kind="lib" path="extlibs/java/jaxb/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/facebook-java-api-schema.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/facebook-java-api.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/xmlrpc-server.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
