@@ -454,22 +454,27 @@ public class ForumRepository extends DepotRepository
     protected List<QueryClause> getUnreadPostsClauses (
         int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
+        // don't bother with old posts (the whole point is to keep up with friends' recent posts)
+        long cutoff = System.currentTimeMillis() - UNREAD_POSTS_CUTOFF;
+        cutoff -= cutoff % 24*60*60*1000L;
         SQLExpression joinRead = new And(
             new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
             new Equals(ReadTrackingRecord.MEMBER_ID, memberId));
         SQLExpression joinThread = new And(
             new Equals(ForumThreadRecord.THREAD_ID, ForumMessagePosterRecord.THREAD_ID));
-        SQLExpression byAuthors = new In(ForumMessagePosterRecord.POSTER_ID, authorIds);
-        SQLExpression unread = new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+        List<SQLExpression> conditions = Lists.newArrayListWithCapacity(4);
+        conditions.add(new In(ForumMessagePosterRecord.POSTER_ID, authorIds));
+        conditions.add(new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
             new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId), new GreaterThan(
-                ForumMessagePosterRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID)));
-        SQLExpression notHidden = hiddenGroupIds.size() == 0 ? null :
-            new Not(new In(ForumThreadRecord.GROUP_ID, hiddenGroupIds)); // no empty In's
+                ForumMessagePosterRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID))));
+        if (hiddenGroupIds.size() > 0) { // no empty In's
+            conditions.add(new Not(new In(ForumThreadRecord.GROUP_ID, hiddenGroupIds)));
+        }
+        conditions.add(new GreaterThan(ForumMessagePosterRecord.CREATED, new Timestamp(cutoff)));
         return Lists.newArrayList(
             new Join(ReadTrackingRecord.class, joinRead).setType(Join.Type.LEFT_OUTER),
             new Join(ForumThreadRecord.class, joinThread).setType(Join.Type.INNER),
-            new Where(notHidden == null ? new And(byAuthors, unread) :
-                new And(byAuthors, unread, notHidden)));
+            new Where(new And(conditions)));
     }
 
     @Override // from DepotRepository
@@ -479,4 +484,7 @@ public class ForumRepository extends DepotRepository
         classes.add(ForumMessageRecord.class);
         classes.add(ReadTrackingRecord.class);
     }
+
+    /** We don't bother returning unread stuff older than this. */
+    protected static final long UNREAD_POSTS_CUTOFF = 30 * 24 * 60 * 60 * 1000L;
 }
