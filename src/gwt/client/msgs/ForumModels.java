@@ -424,6 +424,14 @@ public class ForumModels
             }
         }
 
+        // check for the thread in our unread friend threads model if we have one
+        if (_unreadFriendsModel != null) {
+            ForumThread thread = _unreadFriendsModel.getThread(threadId);
+            if (thread != null) {
+                return thread;
+            }
+        }
+
         // next, check for the thread in the group models
         for (GroupThreads model : _gmodels.values()) {
             ForumThread thread = model.getThread(threadId);
