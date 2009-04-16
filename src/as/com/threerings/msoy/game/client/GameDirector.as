@@ -13,6 +13,7 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.client.PlaceController;
 
 import com.threerings.flex.CommandMenu;
@@ -30,6 +31,7 @@ import com.threerings.msoy.utils.Base64Encoder;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
@@ -153,10 +155,16 @@ public class GameDirector extends BasicDirector
             return false;
         }
 
-        var config :MsoyGameConfig = getGameConfig();
+        var icon :MediaDesc;
+        var config :PlaceConfig = _liaison.gameConfig;
+        if (config is MsoyGameConfig) {
+            icon = MsoyGameConfig(config).game.getThumbnailMedia();
+        } else if (config is AVRGameConfig) {
+            icon = AVRGameConfig(config).thumbnail;
+        }
 
-        CommandMenu.addTitle(menuData, _liaison.gameName, MediaWrapper.createView(
-            config.game.getThumbnailMedia(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
+        CommandMenu.addTitle(menuData, _liaison.gameName, (icon == null) ? null :
+            MediaWrapper.createView(icon, MediaDesc.QUARTER_THUMBNAIL_SIZE));
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
             icon: StyleManager.getStyleDeclaration(".controlBarGameButton").getStyle("image")});
         if (_liaison.gameGroupId != Game.NO_GROUP) {
@@ -165,7 +173,7 @@ public class GameDirector extends BasicDirector
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
         if (_liaison is LobbyGameLiaison && config != null &&
-            config.getGameDefinition().match.getMaximumPlayers() > 1) {
+            MsoyGameConfig(config).getGameDefinition().match.getMaximumPlayers() > 1) {
             menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentLobby});
         }
         menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
