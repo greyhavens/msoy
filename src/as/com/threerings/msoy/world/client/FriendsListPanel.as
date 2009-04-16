@@ -24,7 +24,10 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 
+import com.threerings.crowd.chat.client.MuteObserver;
+
 import com.threerings.util.Log;
+import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
@@ -39,10 +42,11 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
 
 public class FriendsListPanel extends FlyingPanel
-    implements AttributeChangeListener
+    implements AttributeChangeListener, MuteObserver
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
@@ -56,6 +60,7 @@ public class FriendsListPanel extends FlyingPanel
 
         _cliObs = new ClientAdapter(null, clientDidLogon);
         _wctx.getClient().addClientObserver(_cliObs);
+        _wctx.getMuteDirector().addMuteObserver(this);
 
         open();
     }
@@ -67,9 +72,20 @@ public class FriendsListPanel extends FlyingPanel
             memObj.removeListener(this);
             _friendsList.shutdown();
         }
+        _wctx.getMuteDirector().removeMuteObserver(this);
         _wctx.getClient().removeClientObserver(_cliObs);
 
         super.close();
+    }
+
+    // from MuteObserver
+    public function muteChanged (name :Name, nowMuted :Boolean) :void
+    {
+        // if we muted or unmuted a friend, refresh the display
+        if ((name is MemberName) &&
+                _wctx.getMemberObject().friends.containsKey(MemberName(name).getMemberId())) {
+            _friendsList.refresh();
+        }
     }
 
     // from AttributeChangeListener
