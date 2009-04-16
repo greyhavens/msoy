@@ -18,6 +18,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlayerRenderer;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -49,9 +50,15 @@ public class FriendRenderer extends PlayerRenderer
         var statusContainer :HBox = new HBox();
         statusContainer.setStyle("paddingLeft", 3);
 
-        var statusString :String = StringUtil.deNull(
-            mctx.getChatDirector().filter(friend.status, friend.name, false));
-        var status :Label = FlexUtil.createLabel(statusString, "friendStatusLabel");
+        var isMuted :Boolean = mctx.getMuteDirector().isMuted(friend.name);
+        var status :Label;
+        if (isMuted) {
+            status = FlexUtil.createLabel(Msgs.GENERAL.get("l.muted"), "friendStatusLabelMuted");
+        } else {
+            var statusString :String = StringUtil.deNull(
+                mctx.getChatDirector().filter(friend.status, friend.name, false));
+            status = FlexUtil.createLabel(statusString, "friendStatusLabel");
+        }
         status.width = content.width;
         statusContainer.addChild(status);
 

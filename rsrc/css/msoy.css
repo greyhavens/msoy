@@ -1346,6 +1346,11 @@ Roster {
   fontSize: 10;
 }
 
+.friendStatusLabelMuted {
+  color: red;
+  fontSize: 10;
+}
+
 .panelBottomSeparator {
   backgroundColor: #2E7399;
   backgroundAlpha: 1;
