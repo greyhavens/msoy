@@ -1093,10 +1093,10 @@ public class WorldController extends MsoyController
 
     // from MsoyController
     override public function addMemberMenuItems (
-        member :MemberName, menuItems :Array,
+        name :MemberName, menuItems :Array,
         addPlaceItems :Boolean = false, addAvatarItems :Boolean = false) :void
     {
-        const memId :int = member.getMemberId();
+        const memId :int = name.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
         var placeCtrl :Object = null;
@@ -1121,21 +1121,21 @@ public class WorldController extends MsoyController
         } else {
             // commented out: we are normally constructed from separated names, so we lose the viz
 //            var icon :* = null;
-//            if (member is VizMemberName) {
+//            if (name is VizMemberName) {
 //                icon = MediaWrapper.createView(
-//                    VizMemberName(member).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
+//                    VizMemberName(name).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
 //            }
-            CommandMenu.addTitle(menuItems, member.toString()); // icon
-            var muted :Boolean = _mctx.getMuteDirector().isMuted(member);
+            CommandMenu.addTitle(menuItems, name.toString()); // icon
+            var muted :Boolean = _mctx.getMuteDirector().isMuted(name);
             menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute"),
-                callback: _mctx.getMuteDirector().setMuted, arg: [ member, !muted ] });
+                callback: _mctx.getMuteDirector().setMuted, arg: [ name, !muted ] });
             if (addAvatarItems && (placeCtrl is RoomObjectController)) {
-                RoomObjectController(placeCtrl).addBleepAvatar(member, menuItems);
+                RoomObjectController(placeCtrl).addBleepAvatar(name, menuItems);
             }
             CommandMenu.addSeparator(menuItems);
 
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
-                             command: OPEN_CHANNEL, arg: member, enabled: !muted });
+                             command: OPEN_CHANNEL, arg: name, enabled: !muted });
             menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                              command: VIEW_MEMBER, arg: memId });
             menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
@@ -1145,7 +1145,7 @@ public class WorldController extends MsoyController
                                  command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
-                             command: COMPLAIN_MEMBER, arg: [memId, member] });
+                             command: COMPLAIN_MEMBER, arg: [memId, name] });
 
             // possibly add a menu item for booting this user
             if ((placeCtrl is BootablePlaceController) &&
@@ -1162,7 +1162,7 @@ public class WorldController extends MsoyController
         }
 
         if (addAvatarItems && (placeCtrl is RoomObjectController)) {
-            RoomObjectController(placeCtrl).addAvatarMenuItems(member, menuItems);
+            RoomObjectController(placeCtrl).addAvatarMenuItems(name, menuItems);
         }
 
         if (isUs && _wctx.getMsoyClient().isEmbedded()) {
