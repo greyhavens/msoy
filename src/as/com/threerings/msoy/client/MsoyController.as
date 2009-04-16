@@ -329,7 +329,6 @@ public class MsoyController extends Controller
 
         var r :Rectangle = trigger.getBounds(trigger.stage);
         _goMenu = CommandMenu.createMenu(menuData, _topPanel);
-        _goMenu.variableRowHeight = true;
         _goMenu.popUpAt(r.left, r.bottom);
         _goMenu.addEventListener(MenuEvent.MENU_HIDE, function (... ignored) :void {
             _goMenu = null;

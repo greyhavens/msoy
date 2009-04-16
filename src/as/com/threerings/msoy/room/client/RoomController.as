@@ -411,7 +411,6 @@ public class RoomController extends SceneController
         // pop up the menu where the mouse is
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems, _roomView);
-            menu.variableRowHeight = true;
             menu.setBounds(_wdctx.getPlaceViewBounds());
             menu.popUpAtMouse();
 
