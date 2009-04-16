@@ -392,6 +392,11 @@ TabNavigator, TabBar {
   selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
+.menuTitle {
+  disabledColor: white;
+  fontWeight: bold;
+}
+
 .underLink {
   color: white;
   textDecoration: underline;

@@ -22,6 +22,8 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.utils.Base64Encoder;
 
@@ -153,8 +155,8 @@ public class GameDirector extends BasicDirector
 
         var config :MsoyGameConfig = getGameConfig();
 
-        menuData.push({label: _liaison.gameName});
-        CommandMenu.addSeparator(menuData);
+        CommandMenu.addTitle(menuData, _liaison.gameName, MediaWrapper.createView(
+            config.game.getThumbnailMedia(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
             icon: StyleManager.getStyleDeclaration(".controlBarGameButton").getStyle("image")});
         if (_liaison.gameGroupId != Game.NO_GROUP) {

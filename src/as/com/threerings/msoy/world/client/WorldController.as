@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+
 import flash.geom.Rectangle;
 
 import flash.external.ExternalInterface;
@@ -72,7 +74,11 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
+
+import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
@@ -1112,9 +1118,16 @@ public class WorldController extends MsoyController
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
-        } else if (!isUs) {
+        } else {
+            // commented out: we are normally constructed from separated names, so we lose the viz
+//            var icon :* = null;
+//            if (member is VizMemberName) {
+//                icon = MediaWrapper.createView(
+//                    VizMemberName(member).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
+//            }
+            CommandMenu.addTitle(menuItems, member.toString()); // icon
             var muted :Boolean = _mctx.getMuteDirector().isMuted(member);
-            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute"),
+            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute", member),
                 callback: _mctx.getMuteDirector().setMuted, arg: [ member, !muted ] });
             if (addAvatarItems && (placeCtrl is RoomObjectController)) {
                 RoomObjectController(placeCtrl).addBleepAvatar(member, menuItems);
