@@ -14,7 +14,6 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
@@ -30,7 +29,6 @@ import com.whirled.game.server.WhirledGameManager;
 import com.threerings.msoy.data.MsoyUserObject;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 

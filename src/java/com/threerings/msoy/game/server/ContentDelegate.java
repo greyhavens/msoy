@@ -18,7 +18,6 @@ import com.whirled.game.client.ContentService;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 

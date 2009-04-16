@@ -23,8 +23,6 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
 
 import com.threerings.gwt.util.PagedResult;

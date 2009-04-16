@@ -11,7 +11,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
