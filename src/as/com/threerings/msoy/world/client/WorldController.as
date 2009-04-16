@@ -1167,23 +1167,6 @@ public class WorldController extends MsoyController
         }
     }
 
-    // from MsoyController
-    override public function addFriendMenuItems (member :MemberName, menuItems :Array) :void
-    {
-        var memId :int = member.getMemberId();
-        menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
-                         command: OPEN_CHANNEL, arg: member });
-        menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
-                         command: VIEW_MEMBER, arg: memId });
-        menuItems.push({ label: Msgs.GENERAL.get("b.visit_member"),
-                         command: VISIT_MEMBER, arg: memId });
-        if (_wctx.getPartyDirector().canInviteToParty()) {
-            menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
-                command: INVITE_TO_PARTY, arg: memId,
-                enabled: !_wctx.getPartyDirector().partyContainsPlayer(memId) });
-        }
-    }
-
     /**
      * Add pet menu items.
      */

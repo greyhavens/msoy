@@ -518,15 +518,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Requests that standard menu items be added to the supplied menu which is being popped up as
-     * a result of clicking on a friend somewhere in Whirled.
-     */
-    public function addFriendMenuItems (member :MemberName, menuItems :Array) :void
-    {
-        // nothing by default
-    }
-
-    /**
      * Attempts to reconnect to the server and return to our starting location.
      */
     public function reconnectClient () :void
