@@ -197,7 +197,7 @@ public class ThaneAVRGameBackend
 
     public function processMusicStartStop (roomId :int, started :Boolean) :void
     {
-        callUserCode("musicStartStop_v1", started);
+        callUserCode("musicStartStop_v1", roomId, started);
     }
 
     /**
