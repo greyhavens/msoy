@@ -39,9 +39,6 @@ import com.threerings.msoy.data.all.VizMemberName;
  *
  * TODO: change behavior based on whether the user skipped, invited or opted out
  *
- * TODO: track the duration of other players so that someone who pops into the room or game and
- * pops back out again is not presented for friending
- *
  * TODO: vary the required visit interval for rooms during an AVRG session - currently AVRGs with
  * a fast room change dynamic will result in a low or no friend suggestions
  *
@@ -59,6 +56,9 @@ public class SocialDirector extends BasicDirector
 
     /** Time the player must be in a game before the other players are potential friends. */
     public static const GAME_PLAY_TIME :int = (DeploymentConfig.devDeployment ? 1 : 3) * 60 * 1000;
+
+    /** Time another player must be in a place before the he or she is considered a potential friend. */
+    public static const HANG_OUT_TIME :int = 1 * 60 * 1000;
 
     /**
      * Creates a new social director.
@@ -308,12 +308,14 @@ public class SocialDirector extends BasicDirector
 }
 
 import flash.utils.Dictionary;
+import flash.utils.getTimer; // function
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetAdapter;
 
@@ -355,23 +357,29 @@ class Observer
     }
 
     /**
-     * Gets the array of players seen in the current location and resets it.
+     * Gets the array of qualifying names seen in the current location and then clears the set.
      */
     public function resetSeen () :Array
     {
-        var names :Array = Util.values(_seen);
+        var names :Array = [];
+        for each (var seen :Seen in _seen) {
+            seen.didPart();
+            log.debug("Leaving seen", "name", seen.name, "qual", seen.isQualified());
+            if (seen.isQualified()) {
+                names.push(seen.name);
+            }
+        }
         _seen = new Dictionary();
         return names;
     }
 
     /**
-     * Returns a new array created by filtering all unseen names out of the given array.
+     * Returns a new array created by filtering out all unseen names. The array is assumed to
+     * already not contain unqualified names. We only remove never-mets.
      */
     public function filterUnseen (names :Array) :Array
     {
         return names.filter(function (name :VizMemberName, ...unused) :Boolean {
-            log.info("Filtering name",
-                "memberId", name.getMemberId(), "seen", _seen[name.getMemberId()]);
             return _seen[name.getMemberId()] != null;
         });
     }
@@ -394,7 +402,10 @@ class Observer
 
             // add the current members
             for each (var oinf :OccupantInfo in plobj.occupantInfo.toArray()) {
-                didSee(oinf.username);
+                updateSeen(oinf, function (seen :Seen) :void {
+                    seen.didMeet();
+                    log.debug("Met resident", "name", seen.name, "qual", seen.isQualified());
+                });
             }
         }
     }
@@ -405,7 +416,10 @@ class Observer
     protected function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            didSee(OccupantInfo(event.getEntry()).username);
+            updateSeen(OccupantInfo(event.getEntry()), function (seen :Seen) :void {
+                seen.didMeet();
+                log.debug("Met newcomer", "name", seen.name, "qual", seen.isQualified());
+            });
         }
     }
 
@@ -416,31 +430,110 @@ class Observer
     {
         // do this just in case something changes
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            didSee(OccupantInfo(event.getEntry()).username);
+            var oinf :OccupantInfo = OccupantInfo(event.getEntry());
+            updateSeen(oinf, function (seen :Seen) :void {
+                seen.name = VizMemberName(oinf.username); // in case it has changed
+                log.debug("Seen changed", "name", seen.name, "qual", seen.isQualified());
+            });
         }
     }
 
     /**
-     * Marks the given name as having been seen. Culls appropriately.
+     * Notifies us that an entry has been removed from a dset in the place object.
      */
-    protected function didSee (name :Name) :void
+    protected function entryRemoved (event :EntryRemovedEvent) :void
     {
-        if (name is VizMemberName) {
-            var vname :VizMemberName = VizMemberName(name);
+        // do this just in case something changes
+        if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+            updateSeen(OccupantInfo(event.getOldEntry()), function (seen :Seen) :void {
+                seen.didPart();
+                log.debug("Seen left", "name", seen.name, "qual", seen.isQualified());
+            });
+        }
+    }
+
+    /**
+     * Updates the Seen for the given name, with culling. The member may be entering or leaving
+     * the place, according to the parameter.
+     */
+    protected function updateSeen (occInfo :OccupantInfo, updater :Function) :void
+    {
+        if (occInfo.username is VizMemberName) {
+            var vname :VizMemberName = VizMemberName(occInfo.username);
             if (_sdir.shouldAdd(vname)) {
-                _seen[vname.getMemberId()] = name;
-                log.debug("Adding seen occupant", "name", name);
+                var seen :Seen = Seen(_seen[vname.getMemberId()]);
+                if (seen == null) {
+                    _seen[vname.getMemberId()] = seen = new Seen(vname);
+                }
+                updater(seen);
             }
         }
         // else: PetName, or something else
     }
 
     protected var _lobs :LocationAdapter = new LocationAdapter(null, locationDidChange);
-    protected var _slnr :SetAdapter = new SetAdapter(entryAdded, entryUpdated, null);
+    protected var _slnr :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
 
     protected var _sdir :SocialDirector;
     protected var _ldir :LocationDirector;
     protected var _lupdater :Function;
-    protected var _seen :Dictionary = new Dictionary();
+    protected var _seen :Dictionary = new Dictionary(); /* int -> Seen */
     protected var _plobj :PlaceObject;
+}
+
+/**
+ * Holds information about someone we've seen.
+ */
+class Seen
+{
+    /** Name of the seen party. */
+    public var name :VizMemberName;
+
+    /**
+     * Creates a Seen information for the given name.
+     */
+    public function Seen (name :VizMemberName)
+    {
+        this.name = name;
+        _timeEntered = int.MAX_VALUE;
+    }
+
+    /**
+     * Returns true if the seen member qualifies as having hung out.
+     */
+    public function isQualified () :Boolean
+    {
+        return _qualified;
+    }
+
+    /**
+     * Marks the member as having been in the same place (we came to them or they came to us).
+     */
+    public function didMeet () :void
+    {
+        // we're already qualified, nothing to do
+        if (_qualified) {
+            return;
+        }
+
+        // mark the time entered
+        _timeEntered = getTimer();
+    }
+
+    /**
+     * Marks the member as having parted company (left the room or we left the room).
+     */
+    public function didPart () :void
+    {
+        // we're already qualified, nothing to do
+        if (_qualified) {
+            return;
+        }
+
+        // anyone that hangs out for a while qualifies
+        _qualified = (getTimer() - _timeEntered) > SocialDirector.HANG_OUT_TIME;
+    }
+
+    protected var _timeEntered :int;
+    protected var _qualified :Boolean;
 }
