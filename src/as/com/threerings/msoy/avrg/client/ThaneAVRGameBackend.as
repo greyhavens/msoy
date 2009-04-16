@@ -196,6 +196,29 @@ public class ThaneAVRGameBackend
         callUserCode("musicStartStop_v1", started);
     }
 
+    /**
+     * Call an exposed function in usercode.
+     */
+    public function callUserCode (name :String, ... args) :*
+    {
+        if (_userFuncs != null) {
+            try {
+                var func :Function = (_userFuncs[name] as Function);
+                if (func == null) {
+                    // TODO: Can we detect if this is user's fault? If so, throw UserError
+
+                } else {
+                    return func.apply(null, args);
+                }
+            } catch (err :Error) {
+                _controller.outputToUserCode("An Error occurred while calling " + name, err);
+            }
+        } else {
+            log.warning("Calling user code before connection", "name", name);
+        }
+        return undefined;
+    }
+
     protected function handleUserCodeConnect (evt :Object) :void
     {
         var props :Object = evt.props;
@@ -769,29 +792,6 @@ public class ThaneAVRGameBackend
     {
         var player :PlayerObject = _controller.getPlayerForUser(playerId);
         return player.countGameContent(_controller.getGameId(), type, ident)
-    }
-
-    /**
-     * Call an exposed function in usercode.
-     */
-    protected function callUserCode (name :String, ... args) :*
-    {
-        if (_userFuncs != null) {
-            try {
-                var func :Function = (_userFuncs[name] as Function);
-                if (func == null) {
-                    // TODO: Can we detect if this is user's fault? If so, throw UserError
-
-                } else {
-                    return func.apply(null, args);
-                }
-            } catch (err :Error) {
-                _controller.outputToUserCode("An Error occurred while calling " + name, err);
-            }
-        } else {
-            log.warning("Calling user code before connection", "name", name);
-        }
-        return undefined;
     }
 
     /**
