@@ -14,7 +14,7 @@ class Server:
 
     def privateAddress (self):
         '''The internal network address of the server.'''
-        return "%s%d.luna.threerings.net" % (self._name, self._num)
+        return "%s%d.mars.threerings.net" % (self._name, self._num)
 
     def brief (self):
         '''Accesses the 2 letter string describing the server, e.g. w2 for whirled2.'''
@@ -25,13 +25,10 @@ class Server:
         return self._logstems
 
 ## World servers
-world = map(lambda x: Server("whirled", x, "w", ["world-server"]), [1, 2, 3])
-
-## Game servers
-game = map(lambda x: Server("whirled", x, "g", ["game-server"]), [1, 2, 3])
+world = map(lambda x: Server("whirled", x, "w", ["world-server"]), [1, 2, 3, 4])
 
 ## Bureau servers
-bureau = map(lambda x: Server("bureau", x, "b", 
+bureau = map(lambda x: Server("bureau", x, "b",
     ["bureau-launcher", "bureau-merged"]), [1, 2])
 
 msoyhome = "/export/msoy"

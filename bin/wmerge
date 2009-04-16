@@ -45,14 +45,14 @@ def retrieveLogs (servers, user, stem, date, force):
 
 description = '''Downloads and merges whirled log files from all whirled servers. Only downloads
 files once unless forced (see below). By default, includes only world server logs, but may include
-any combination of world, game or bureau logs. Merged output contains a short prefix on each line
+any combination of world or bureau logs. Merged output contains a short prefix on each line
 indicating the original source. The merged file is written to the console.'''
 
 parser = optparse.OptionParser(description=description)
 parser.add_option("-d", "--date", dest="date", metavar="YYYY-MM-DD",
     help="Merges the rolled logs for a given date", default=None)
-parser.add_option("-s", "--servers", dest="servers", metavar="[g][w][b]",
-    default="w", help="Servers to include in the merge, w=world, g=game, b=bureau")
+parser.add_option("-s", "--servers", dest="servers", metavar="[w][b]",
+    default="w", help="Servers to include in the merge, w=world, b=bureau")
 parser.add_option("-f", "--force", dest="force", action="store_true",
     default=False, help="Always download files, even if local copies exist")
 
