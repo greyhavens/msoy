@@ -262,6 +262,7 @@ public class AVRGameBackend extends ControlBackend
         o["getEntityIds_v1"] = getEntityIds_v1;
         o["getEntityProperty_v1"] = getEntityProperty_v1;
         o["getMusicId3_v1"] = getMusicId3_v1;
+        o["getMusicOwner_v1"] = getMusicOwner_v1;
         // .getRoom() backwards compat
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
@@ -478,6 +479,14 @@ public class AVRGameBackend extends ControlBackend
         validateRoomTargetId(targetId);
         var view :RoomView = getRoomView("getMusicId3()");
         return (view == null) ? null : view.getMusicId3();
+    }
+
+    // RoomSubControl
+    protected function getMusicOwner_v1 (targetId :int) :int
+    {
+        validateRoomTargetId(targetId);
+        var view :RoomView = getRoomView("getMusicOwner()");
+        return (view == null) ? 0 : view.getMusicOwner();
     }
 
     // PlayerSubControl

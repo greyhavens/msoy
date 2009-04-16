@@ -27,6 +27,10 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
+import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
@@ -278,6 +282,7 @@ public class ThaneAVRGameBackend
         o["moveMob_v1"] = moveMob_v1;
         o["room_sendMessage_v1"] = room_sendMessage_v1;
         o["room_sendSignal_v1"] = room_sendSignal_v1;
+        o["getMusicOwner_v1"] = getMusicOwner_v1;
         // .getRoom() backwards compat
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
@@ -537,6 +542,14 @@ public class ThaneAVRGameBackend
         var roomObj :RoomObject = _controller.getRoom(roomId);
         roomObj.roomService.sendSpriteSignal(
             ensureRoomClient(roomId), name, ObjectMarshaller.encode(value) as ByteArray);
+    }
+
+    protected function getMusicOwner_v1 (roomId :int) :int
+    {
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        var audio :Audio =
+            roomObj.playlist.get(new ItemIdent(Item.AUDIO, roomObj.currentSongId)) as Audio;
+        return (audio == null) ? 0 : audio.ownerId;
     }
 
     // -------------------- .getRoom().props --------------------

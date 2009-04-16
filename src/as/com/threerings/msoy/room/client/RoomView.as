@@ -649,6 +649,14 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Get the current music's ownerId, or 0.
+     */
+    public function getMusicOwner () :int
+    {
+        return 0; // see subclasses
+    }
+
+    /**
      * Populate the context menu for a sprite.
      */
     protected function populateSpriteContextMenu (sprite :MsoySprite, menuItems :Array) :void

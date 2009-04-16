@@ -840,6 +840,13 @@ public class RoomObjectView extends RoomView
         return (metadata == null) ? null : new ImmutableProxyObject(metadata);
     }
 
+    override public function getMusicOwner () :int
+    {
+        var audio :Audio =
+            _roomObj.playlist.get(new ItemIdent(Item.AUDIO, _roomObj.currentSongId)) as Audio;
+        return (audio == null) ? 0 : audio.ownerId;
+    }
+
     /** _ctrl, casted as a RoomObjectController. */
     protected var _octrl :RoomObjectController;
 

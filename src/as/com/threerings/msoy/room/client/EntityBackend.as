@@ -65,6 +65,7 @@ public class EntityBackend extends ControlBackend
         o["getMicrophone_v1"] = getMicrophone_v1;
         o["selfDestruct_v1"] = selfDestruct_v1;
         o["getMusicId3_v1"] = getMusicId3_v1;
+        o["getMusicOwner_v1"] = getMusicOwner_v1;
 
         o["getEntityIds_v1"] = getEntityIds_v1;
         o["getEntityProperty_v1"] = getEntityProperty_v1;
@@ -208,6 +209,11 @@ public class EntityBackend extends ControlBackend
     protected function getMusicId3_v1 () :Object
     {
         return (_sprite.parent as RoomView).getMusicId3();
+    }
+
+    protected function getMusicOwner_v1 () :int
+    {
+        return (_sprite.parent as RoomView).getMusicOwner();
     }
 
     protected function getRoomBounds_v1 () :Array
