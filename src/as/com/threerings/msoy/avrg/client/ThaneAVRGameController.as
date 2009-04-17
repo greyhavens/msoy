@@ -34,8 +34,6 @@ import com.whirled.game.client.ContentListener;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
-import com.threerings.msoy.party.client.PartyGameListener;
-
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -92,7 +90,6 @@ public class ThaneAVRGameController
         // listen for player location changes
         _gameObj.addListener(_setAdapter);
         _gameAgentObj.addListener(_setAdapter);
-        _partyListener = new PartyGameListener(_gameObj, _backend);
     }
 
     /** @inheritDoc */
@@ -116,8 +113,6 @@ public class ThaneAVRGameController
         // remove listeners
         _gameObj.removeListener(_setAdapter);
         _gameAgentObj.removeListener(_setAdapter);
-        _partyListener.shutdown();
-        _partyListener = null;
 
         // unsubscribe from all players
         _playerSubs.unsubscribeAll();
@@ -810,7 +805,6 @@ public class ThaneAVRGameController
     protected var _gameAgentObj :AVRGameAgentObject;
     protected var _bindings :HashMap = new HashMap();
     protected var _setAdapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
-    protected var _partyListener :PartyGameListener;
     protected var _playerSubs :SafeObjectManager;
     protected var _players :HashMap = new HashMap();
     protected var _transactions :Transactions = new Transactions();

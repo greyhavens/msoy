@@ -31,6 +31,8 @@ import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.party.client.PartyGameHelper;
+
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
@@ -64,6 +66,8 @@ public class ThaneAVRGameBackend
         _gameObj = gameObj;
         _gameAgentObj = gameAgentObj;
         _controller = controller;
+        _partyHelper = new PartyGameHelper(this);
+        _partyHelper.init(gameObj);
     }
 
     /**
@@ -92,6 +96,7 @@ public class ThaneAVRGameBackend
         if (_privateMessageAdapter != null) {
             _privateMessageAdapter.release();
         }
+        _partyHelper.shutdown();
     }
 
     /**
@@ -264,6 +269,7 @@ public class ThaneAVRGameBackend
         o["getItemPacks_v1"] = getItemPacks_v1;
         o["loadLevelPackData_v1"] = loadLevelPackData_v1;
         o["loadItemPackData_v1"] = loadItemPackData_v1;
+        _partyHelper.populateProperties(o);
 
         // .game.props
         o["game_getGameData_v1"] = game_getGameData_v1;
@@ -842,6 +848,7 @@ public class ThaneAVRGameBackend
     protected var _userFuncs :Object;
     protected var _ctx :MsoyBureauContext; // this is for the game server
     protected var _controller :ThaneAVRGameController;
+    protected var _partyHelper :PartyGameHelper;
     protected var _gameObj :AVRGameObject;
     protected var _gameAgentObj :AVRGameAgentObject;
 

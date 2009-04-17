@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.client {
 
+import flash.display.DisplayObject;
+
 import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -15,28 +17,42 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.party.data.PartyOccupantInfo;
+import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
 /**
  * Listens on a GameObject and calls the appropriate party-related methods
  * on the supplied backend.
  */
-public class PartyGameListener
+public class PartyGameHelper
     implements SetListener
 {
-    public function PartyGameListener (gameObj :PlaceObject, backend :Object)
+    public function PartyGameHelper (backend :Object) 
+    {
+        _backend = backend;
+    }
+
+    public function init (gameObj :PartyPlaceObject) :void
     {
         _gameObj = gameObj;
-        _backend = backend;
-
-        _gameObj.addListener(this);
+        PlaceObject(_gameObj).addListener(this);
     }
 
     public function shutdown () :void
     {
-        _gameObj.removeListener(this);
+        PlaceObject(_gameObj).removeListener(this);
         _gameObj = null;
-        _backend = null;
+    }
+
+    public function populateProperties (o :Object) :void
+    {
+        o["party_getName_v1"] = getName_v1;
+        o["party_getGroupId_v1"] = getGroupId_v1;
+        o["party_getGroupName_v1"] = getGroupName_v1;
+        o["party_getGroupLogo_v1"] = getGroupLogo_v1;
+//        o["party_getLeaderId_v1"] = getLeaderId_v1;
+        o["party_getPlayerIds_v1"] = getPlayerIds_v1;
+//        o["party_moveToRoom_v1"] = moveToRoom_v1;
     }
 
     // from SetListener
@@ -73,8 +89,54 @@ public class PartyGameListener
         }
     }
 
+    protected function getName_v1 (partyId :int) :String
+    {
+        var party :PartySummary = getSummary(partyId);
+        return (party == null) ? null : party.name;
+    }
+
+    protected function getGroupId_v1 (partyId :int) :int
+    {
+        var party :PartySummary = getSummary(partyId);
+        return (party == null) ? 0 : party.group.getGroupId();
+    }
+
+    protected function getGroupName_v1 (partyId :int) :String
+    {
+        var party :PartySummary = getSummary(partyId);
+        return (party == null) ? null : party.group.toString();
+    }
+
+    protected function getGroupLogo_v1 (partyId :int) :DisplayObject
+    {
+        return null; // TODO
+    }
+
+//    protected function getLeaderId_v1 (partyId :int) :int
+//    {
+//    }
+
+    protected function getPlayerIds_v1 (partyId :int) :Array
+    {
+        // NOTE: we could make this not O(n) by watching comings and goings and
+        // maintaining a list for each party.
+        var ids :Array = [];
+        if (partyId != 0) { // don't let people scam-up a list of all unpartied folks
+            for each (var o :Object in _gameObj.getOccupants().toArray()) {
+                if ((o is PartyOccupantInfo) && (partyId == PartyOccupantInfo(o).getPartyId())) {
+                    ids.push(getMemberId(o));
+                }
+            }
+        }
+        return ids;
+    }
+
+//    protected function moveToRoom_v1 (partyId :int, roomId :int, ... future)  :void
+//    {
+//    }
+
     /**
-     * Helper.
+     * Helper for reporting players entering and leaving parties.
      */
     protected function playerChanged (oldE :DSet_Entry, newE :DSet_Entry) :void
     {
@@ -91,11 +153,19 @@ public class PartyGameListener
     }
 
     /**
-     * Helper.
+     * Helper for getting a memberId from something we know to be an OccupantInfo.
      */
-    protected function getMemberId (occInfo :DSet_Entry) :int
+    protected function getMemberId (occInfo :Object) :int
     {
         return MemberName(OccupantInfo(occInfo).username).getMemberId();
+    }
+
+    /**
+     * Helper for extracting a party summary.
+     */
+    protected function getSummary (partyId :int) :PartySummary
+    {
+        return _gameObj.getParties().get(partyId) as PartySummary;
     }
 
     protected function callUserCode (... args) :*
@@ -104,9 +174,9 @@ public class PartyGameListener
         return _backend.callUserCode.apply(null, args);
     }
 
-    protected var _gameObj :PlaceObject;
-
     protected var _backend :Object;
+
+    protected var _gameObj :PartyPlaceObject;
 
     /** Hopefully the PartySummary set is called this. */
     protected static const PARTIES :String = "parties";

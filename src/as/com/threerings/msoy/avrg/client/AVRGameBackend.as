@@ -29,6 +29,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.party.client.PartyGameHelper;
+
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
@@ -63,6 +65,9 @@ public class AVRGameBackend extends ControlBackend
         _ctrl = ctrl;
         _gameObj = gameObj;
 
+        _partyHelper = new PartyGameHelper(this);
+        _partyHelper.init(gameObj);
+
         _playerObj = _gctx.getPlayerObject();
 
         _contentListener = new ContentListener(_wctx.getMyId(), ctrl.getGameId(), this);
@@ -89,6 +94,7 @@ public class AVRGameBackend extends ControlBackend
             _playerObj = null;
         }
 
+        _partyHelper.shutdown();
         super.shutdown();
     }
 
@@ -248,6 +254,7 @@ public class AVRGameBackend extends ControlBackend
         o["game_getOccupantName_v1"] = game_getOccupantName_v1;
         o["getLevelPacks_v2"] = getLevelPacks_v2;
         o["getItemPacks_v1"] = getItemPacks_v1;
+        _partyHelper.populateProperties(o);
 
         // RoomSubControl
         o["room_getRoomId_v1"] = room_getRoomId_v1;
@@ -988,6 +995,7 @@ public class AVRGameBackend extends ControlBackend
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
+    protected var _partyHelper :PartyGameHelper;
 
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
