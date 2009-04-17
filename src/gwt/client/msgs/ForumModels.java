@@ -288,6 +288,9 @@ public class ForumModels
         public void registerUpdate (ForumThread thread)
         {
             if (_thread.equals(thread)) {
+                if (_thread.posts != thread.posts) {
+                    reset();
+                }
                 _thread = thread;
             }
         }

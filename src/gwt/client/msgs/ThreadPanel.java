@@ -62,15 +62,7 @@ public class ThreadPanel extends TitledListPanel
 
     public void showMessages ()
     {
-        showMessages(false);
-    }
-
-    public void showMessages (boolean refresh)
-    {
         setContents(_theader, _mpanel);
-        if (refresh) {
-            _mpanel.refreshDisplay();
-        }
     }
 
     public int getThreadId ()
