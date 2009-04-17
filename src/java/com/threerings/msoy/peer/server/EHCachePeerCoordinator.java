@@ -84,7 +84,7 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
 
             final List<CachePeer> result = Lists.newArrayList();
             _peerMan.applyToNodes(new Function<NodeObject, Void>() {
-                @Override public Void apply (NodeObject node) {
+                public Void apply (NodeObject node) {
                     if (node != _peerMan.getNodeObject()) {
                         addCachesForNode(result, node.nodeName);
                     }
