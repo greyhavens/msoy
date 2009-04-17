@@ -302,38 +302,34 @@ public class ThaneAVRGameController
 
     protected function entryAdded (event :EntryAddedEvent) :void
     {
-        if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            updatePlayer(PlayerLocation(event.getEntry()).playerId, "location added");
-
-        } else if (event.getName() == AVRGameAgentObject.SCENES) {
-            bindScene(event.getEntry() as SceneInfo);
-
-        } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+        var name :String = event.getName();
+        if (name == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getEntry() as OccupantInfo;
             _playerSubs.subscribe(occInfo.bodyOid);
+
+        } else if (name  == AVRGameObject.PLAYER_LOCS) {
+            updatePlayer(PlayerLocation(event.getEntry()).playerId, "location added");
+
+        } else if (name == AVRGameAgentObject.SCENES) {
+            bindScene(event.getEntry() as SceneInfo);
         }
     }
 
     protected function entryUpdated (event :EntryUpdatedEvent) :void
     {
-        if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+        var name :String = event.getName();
+        if (name == AVRGameObject.PLAYER_LOCS) {
             updatePlayer(PlayerLocation(event.getEntry()).playerId, "location updated");
 
-        } else if (event.getName() == AVRGameAgentObject.SCENES) {
+        } else if (name == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
         }
     }
 
     protected function entryRemoved (event :EntryRemovedEvent) :void
     {
-        var pl :PlayerLocation;
-        if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            playerDidLeaveGame(PlayerLocation(event.getOldEntry()).playerId, "location removed");
-
-        } else if (event.getName() == AVRGameAgentObject.SCENES) {
-            removeBinding((event.getOldEntry() as SceneInfo).sceneId);
-
-        } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+        var name :String = event.getName();
+        if (name == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = OccupantInfo(event.getOldEntry());
             var playerObj :PlayerObject = PlayerObject(_playerSubs.getObj(occInfo.bodyOid));
             if (playerObj == null) {
@@ -342,6 +338,12 @@ public class ThaneAVRGameController
                 return;
             }
             playerDidLeaveGame(playerObj.getMemberId(), "game occupant removed");
+
+        } else if (name == AVRGameObject.PLAYER_LOCS) {
+            playerDidLeaveGame(PlayerLocation(event.getOldEntry()).playerId, "location removed");
+
+        } else if (name == AVRGameAgentObject.SCENES) {
+            removeBinding((event.getOldEntry() as SceneInfo).sceneId);
         }
     }
 
