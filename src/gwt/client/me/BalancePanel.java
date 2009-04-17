@@ -24,12 +24,12 @@ public class BalancePanel extends MoneyPanel
         String amt = entry.currency.format(Math.abs(entry.amount));
         String debit, credit;
 
-        if (entry.amount < 0) {
-            debit = amt;
-            credit = " ";
-        } else {
+        if (entry.amount > 0) {
             debit = " ";
             credit = amt;
+        } else {
+            debit = amt;
+            credit = " ";
         }
 
         row.add(MsoyUI.createLabel(debit, "Debit"));
