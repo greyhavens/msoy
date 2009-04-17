@@ -417,9 +417,6 @@ public class MsoyServer extends MsoyBaseServer
     /** Manages interactions with our peer servers. */
     @Inject protected MsoyPeerManager _peerMan;
 
-    /** Imposes Whirled's dynamic peer topology on EHCache. */
-    @Inject protected EHCachePeerCoordinator _peerCacheCoordinator;
-
     /** Manages our parties. */
     @Inject protected PartyRegistry _partyReg;
 
