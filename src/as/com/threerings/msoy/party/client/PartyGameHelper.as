@@ -41,6 +41,8 @@ public class PartyGameHelper
 
     public function populateProperties (o :Object) :void
     {
+        o["game_getPartyIds_v1"] = getPartyIds_v1;
+
         o["party_getName_v1"] = getName_v1;
         o["party_getGroupId_v1"] = getGroupId_v1;
         o["party_getGroupName_v1"] = getGroupName_v1;
@@ -81,6 +83,13 @@ public class PartyGameHelper
         } else if (name == PARTIES) {
             callUserCode("game_partyLeft_v1", event.getKey());
         }
+    }
+
+    protected function getPartyIds_v1 () :Array
+    {
+        return _gameObj.getParties().toArray().map(function (party :PartySummary, ... rest) :int {
+            return party.id;
+        });
     }
 
     protected function getName_v1 (partyId :int) :String
