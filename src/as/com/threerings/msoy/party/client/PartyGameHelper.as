@@ -41,7 +41,8 @@ public class PartyGameHelper
 
     public function populateProperties (o :Object) :void
     {
-        o["game_getPartyIds_v1"] = getPartyIds_v1;
+        o["game_getPartyIds_v1"] = game_getPartyIds_v1;
+        o["player_getPartyId_v1"] = player_getPartyId_v1;
 
         o["party_getName_v1"] = getName_v1;
         o["party_getGroupId_v1"] = getGroupId_v1;
@@ -85,11 +86,23 @@ public class PartyGameHelper
         }
     }
 
-    protected function getPartyIds_v1 () :Array
+    protected function game_getPartyIds_v1 () :Array
     {
         return _gameObj.getParties().toArray().map(function (party :PartySummary, ... rest) :int {
             return party.id;
         });
+    }
+
+    protected function player_getPartyId_v1 (playerId :int) :int
+    {
+        // Note: we could make this not O(n) by watching party changes
+        for each (var o :Object in _gameObj.getOccupants().toArray()) {
+            if (playerId == getMemberId(o)) {
+                var poi :PartyOccupantInfo = o as PartyOccupantInfo;
+                return (poi == null) ? 0 : poi.getPartyId();
+            }
+        }
+        return 0;
     }
 
     protected function getName_v1 (partyId :int) :String
@@ -155,6 +168,7 @@ public class PartyGameHelper
      */
     protected function getMemberId (occInfo :Object) :int
     {
+        // Do we need to watch out for non-MemberNames?
         return MemberName(OccupantInfo(occInfo).username).getMemberId();
     }
 
