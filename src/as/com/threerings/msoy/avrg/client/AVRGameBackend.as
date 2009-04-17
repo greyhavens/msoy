@@ -29,7 +29,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.party.client.PartyGameHelper;
+import com.threerings.msoy.party.client.PartyGameClientHelper;
 
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
@@ -994,7 +994,7 @@ public class AVRGameBackend extends ControlBackend
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
-    protected var _partyHelper :PartyGameHelper = new PartyGameHelper();
+    protected var _partyHelper :PartyGameClientHelper = new PartyGameClientHelper();
 
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;

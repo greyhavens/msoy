@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.party.client {
 
-import flash.display.DisplayObject;
-
 import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -46,7 +44,6 @@ public class PartyGameHelper
         o["party_getName_v1"] = getName_v1;
         o["party_getGroupId_v1"] = getGroupId_v1;
         o["party_getGroupName_v1"] = getGroupName_v1;
-        o["party_getGroupLogo_v1"] = getGroupLogo_v1;
 //        o["party_getLeaderId_v1"] = getLeaderId_v1;
         o["party_getPlayerIds_v1"] = getPlayerIds_v1;
 //        o["party_moveToRoom_v1"] = moveToRoom_v1;
@@ -102,11 +99,6 @@ public class PartyGameHelper
     {
         var party :PartySummary = getSummary(partyId);
         return (party == null) ? null : party.group.toString();
-    }
-
-    protected function getGroupLogo_v1 (partyId :int) :DisplayObject
-    {
-        return null; // TODO
     }
 
 //    protected function getLeaderId_v1 (partyId :int) :int
