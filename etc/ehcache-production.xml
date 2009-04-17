@@ -151,14 +151,9 @@
      property is not specified the default JGroups connection will be used.
 
     -->
-    <cacheManagerPeerProviderFactory
-            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=automatic,
-                        multicastGroupAddress=224.0.0.1,
-                        multicastGroupPort=4446, timeToLive=1"
-            propertySeparator=","
-            />
 
+    <cacheManagerPeerProviderFactory
+         class="com.threerings.msoy.peer.server.EHCachePeerCoordinator"/>
 
     <!--
     CacheManagerPeerListener
@@ -199,8 +194,9 @@
       If not specified it defaults 120000ms.
     -->
     <cacheManagerPeerListenerFactory
-            class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
-
+         class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+         properties="port=40001"
+         propertySeparator=","/>
 
     <!--
     Cache configuration

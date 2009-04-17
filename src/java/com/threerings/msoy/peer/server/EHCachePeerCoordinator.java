@@ -124,7 +124,6 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
                 return;
             }
             String rmiBase = "//" + nodeHost + ":" + RMI_PORT + "/";
-            log.info("Adding caches for node", "node", nodeName);
 
             // for the given node, acquire a RMI handle for each known Depot cache
             for (String cacheName : EHCACHES) {
@@ -145,7 +144,7 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
                 CachePeer peer = _cacheByURL.get(url);
                 if (peer == null) {
                     // do the (blocking) lookup and stow away the result
-                    log.info("RMI lookup...", "url", url);
+                    log.info("RMI lookup of remote cache", "url", url);
                     peer = (CachePeer) Naming.lookup(url);
                     _cacheByURL.put(url, peer);
                 }

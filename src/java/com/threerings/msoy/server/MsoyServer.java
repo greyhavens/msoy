@@ -74,6 +74,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
+import com.threerings.msoy.peer.server.EHCachePeerCoordinator;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.server.MsoySceneFactory;
@@ -159,7 +160,7 @@ public class MsoyServer extends MsoyBaseServer
     public void shutdown ()
     {
         super.shutdown();
-        
+
         // shut down our http server
         try {
             _httpServer.stop();
@@ -193,6 +194,9 @@ public class MsoyServer extends MsoyBaseServer
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
         _peerMan.init(injector, ServerConfig.nodeName, ServerConfig.sharedSecret,
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
+
+        // give the EHCache coordinator access to our peering guts
+        EHCachePeerCoordinator.initWithPeers(_peerMan);
 
         // intialize various services
         _adminMan.init(_invmgr, _cacheMgr);
@@ -413,6 +417,9 @@ public class MsoyServer extends MsoyBaseServer
     /** Manages interactions with our peer servers. */
     @Inject protected MsoyPeerManager _peerMan;
 
+    /** Imposes Whirled's dynamic peer topology on EHCache. */
+    @Inject protected EHCachePeerCoordinator _peerCacheCoordinator;
+
     /** Manages our parties. */
     @Inject protected PartyRegistry _partyReg;
 
@@ -470,7 +477,7 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides our peer-aware runtime configuration. */
     @Inject protected PeeredDatabaseConfigRegistry _peerConfReg;
-    
+
     /** The feed repository, so that we may prune. */
     @Inject protected FeedRepository _feedRepo;
 
@@ -479,7 +486,7 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Prune the feeds once every 3 hours. On all servers at once? @TODO Fix. */
     protected static final long FEED_PRUNING_INTERVAL = 3 * 60 * 60 * 1000;
-    
+
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
 }
