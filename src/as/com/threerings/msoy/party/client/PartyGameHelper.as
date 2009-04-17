@@ -27,21 +27,18 @@ import com.threerings.msoy.party.data.PartySummary;
 public class PartyGameHelper
     implements SetListener
 {
-    public function PartyGameHelper (backend :Object) 
-    {
-        _backend = backend;
-    }
-
-    public function init (gameObj :PartyPlaceObject) :void
+    public function init (gameObj :PartyPlaceObject, callUserCode :Function) :void
     {
         _gameObj = gameObj;
         PlaceObject(_gameObj).addListener(this);
+        _callUserCode = callUserCode;
     }
 
     public function shutdown () :void
     {
         PlaceObject(_gameObj).removeListener(this);
         _gameObj = null;
+        _callUserCode = null;
     }
 
     public function populateProperties (o :Object) :void
@@ -170,11 +167,10 @@ public class PartyGameHelper
 
     protected function callUserCode (... args) :*
     {
-        // TODO: strongly type the backend? (interface needed)
-        return _backend.callUserCode.apply(null, args);
+        return _callUserCode.apply(null, args);
     }
 
-    protected var _backend :Object;
+    protected var _callUserCode :Function;
 
     protected var _gameObj :PartyPlaceObject;
 

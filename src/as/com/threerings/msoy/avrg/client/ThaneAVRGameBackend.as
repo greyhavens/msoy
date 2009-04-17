@@ -66,8 +66,7 @@ public class ThaneAVRGameBackend
         _gameObj = gameObj;
         _gameAgentObj = gameAgentObj;
         _controller = controller;
-        _partyHelper = new PartyGameHelper(this);
-        _partyHelper.init(gameObj);
+        _partyHelper.init(gameObj, callUserCode);
     }
 
     /**
@@ -848,7 +847,7 @@ public class ThaneAVRGameBackend
     protected var _userFuncs :Object;
     protected var _ctx :MsoyBureauContext; // this is for the game server
     protected var _controller :ThaneAVRGameController;
-    protected var _partyHelper :PartyGameHelper;
+    protected var _partyHelper :PartyGameHelper = new PartyGameHelper();
     protected var _gameObj :AVRGameObject;
     protected var _gameAgentObj :AVRGameAgentObject;
 

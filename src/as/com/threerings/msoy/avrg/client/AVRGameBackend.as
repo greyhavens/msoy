@@ -65,8 +65,7 @@ public class AVRGameBackend extends ControlBackend
         _ctrl = ctrl;
         _gameObj = gameObj;
 
-        _partyHelper = new PartyGameHelper(this);
-        _partyHelper.init(gameObj);
+        _partyHelper.init(gameObj, callUserCode);
 
         _playerObj = _gctx.getPlayerObject();
 
@@ -995,7 +994,7 @@ public class AVRGameBackend extends ControlBackend
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
-    protected var _partyHelper :PartyGameHelper;
+    protected var _partyHelper :PartyGameHelper = new PartyGameHelper();
 
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
