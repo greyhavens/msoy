@@ -60,12 +60,6 @@ public class Profile implements IsSerializable
     /** The member's professed location.  A/S/L's L. */
     public String location;
 
-    /** True if this member has a blog. */
-    public boolean hasBlog;
-
-    /** True if this member has a photo gallery. */
-    public boolean hasGallery;
-
     /** The user's permaName */
     public String permaName;
 
