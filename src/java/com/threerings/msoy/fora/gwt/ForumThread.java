@@ -93,4 +93,16 @@ public class ForumThread
     {
         return (lastReadPostId < mostRecentPostId);
     }
+
+    // from Object
+    public int hashCode ()
+    {
+        return threadId;
+    }
+
+    // from Object
+    public boolean equals (Object other)
+    {
+        return (other instanceof ForumThread) && ((ForumThread)other).threadId == threadId;
+    }
 }

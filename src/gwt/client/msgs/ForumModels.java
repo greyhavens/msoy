@@ -29,8 +29,8 @@ import client.util.ServiceUtil;
 public class ForumModels
 {
     /** A data model that provides a particular group's threads. */
-    public static class GroupThreads
-        extends PagedServiceDataModel<ForumThread, ForumService.ThreadResult>
+    public class GroupThreads extends PagedServiceDataModel<ForumThread, ForumService.ThreadResult>
+        implements ThreadContainer
     {
         public GroupThreads (int groupId) {
             _groupId = groupId;
@@ -90,24 +90,21 @@ public class ForumModels
             }
         }
 
-        /**
-         * Looks up the specified thread in the set of all threads ever fetched by this model.
-         */
-        public ForumThread getThread (int threadId)
-        {
-            return _threads.get(threadId);
-        }
-
         @Override // from ServiceBackedDataModel
         public void prependItem (ForumThread thread) {
             super.prependItem(thread);
-            mapThread(thread);
+            updateThread(thread, this);
         }
 
         @Override // from ServiceBackedDataModel
         public void appendItem (ForumThread thread) {
             super.appendItem(thread);
-            mapThread(thread);
+            updateThread(thread, this);
+        }
+
+        // from ThreadContainer
+        public void registerUpdate (ForumThread thread) {
+            replaceItem(_pageItems, thread);
         }
 
         @Override // from ServiceBackedDataModel
@@ -119,7 +116,7 @@ public class ForumModels
             _isAnnounce = result.isAnnounce;
             // note all of our threads so that we can provide them later to non-PagedGrid consumers
             for (ForumThread thread : result.page) {
-                mapThread(thread);
+                updateThread(thread, this);
             }
             // grab our real group name from one of our thread records
             if (result.page.size() > 0) {
@@ -132,10 +129,6 @@ public class ForumModels
             AsyncCallback<ForumService.ThreadResult> callback)
         {
             _forumsvc.loadThreads(_groupId, start, count, needCount, callback);
-        }
-
-        protected void mapThread (ForumThread thread) {
-            _threads.put(thread.threadId, thread);
         }
 
         protected void gotGroupName (GroupName group) {
@@ -156,30 +149,15 @@ public class ForumModels
         protected boolean _canStartThread, _isManager, _isAnnounce;
 
         protected ListenerList<AsyncCallback<GroupName>> _gotNameListeners;
-        protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
     }
 
     /** A data model that provides all threads unread by the authenticated user. */
-    public static class UnreadThreads extends SimpleDataModel<ForumThread>
+    public class UnreadThreads extends SimpleDataModel<ForumThread>
+        implements ThreadContainer
     {
         public UnreadThreads ()
         {
             super(null);
-        }
-
-        /**
-         * Looks up the specified thread in the set of all threads ever fetched by this model.
-         */
-        public ForumThread getThread (int threadId)
-        {
-            return _threads.get(threadId);
-        }
-
-        // from interface DataModel
-        public void removeItem (ForumThread thread)
-        {
-            _threads.remove(thread.threadId);
-            super.removeItem(thread);
         }
 
         // from interface DataModel
@@ -196,7 +174,7 @@ public class ForumModels
                 public void onSuccess (List<ForumThread> result) {
                     _items = result;
                     for (ForumThread thread : result) {
-                        _threads.put(thread.threadId, thread);
+                        updateThread(thread, UnreadThreads.this);
                     }
                     doFetchRows(start, count, callback);
                 }
@@ -206,30 +184,20 @@ public class ForumModels
            });
         }
 
-        protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
+        // from ThreadContainer
+        public void registerUpdate (ForumThread thread)
+        {
+            ForumModels.replaceItem(_items, thread);
+        }
     }
 
     /** A data model that provides all threads with unread posts by friends.  */
-    public static class UnreadFriendsThreads extends SimpleDataModel<FriendThread>
+    public class UnreadFriendsThreads extends SimpleDataModel<FriendThread>
+        implements ThreadContainer
     {
         public UnreadFriendsThreads ()
         {
             super(null);
-        }
-
-        /**
-         * Looks up the specified thread in the set of all threads ever fetched by this model.
-         */
-        public ForumThread getThread (int threadId)
-        {
-            return _threads.get(threadId);
-        }
-
-        // from interface DataModel
-        public void removeItem (FriendThread ft)
-        {
-            _threads.remove(ft.thread.threadId);
-            super.removeItem(ft);
         }
 
         // from interface DataModel
@@ -246,7 +214,7 @@ public class ForumModels
                 public void onSuccess (List<FriendThread> result) {
                     _items = result;
                     for (FriendThread ft : result) {
-                        _threads.put(ft.thread.threadId, ft.thread);
+                        updateThread(ft.thread, UnreadFriendsThreads.this);
                     }
                     doFetchRows(start, count, callback);
                 }
@@ -256,19 +224,25 @@ public class ForumModels
            });
         }
 
-        protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
+        // from ThreadContainer
+        public void registerUpdate (ForumThread thread)
+        {
+            for (int ii = 0; ii < _items.size(); ++ii) {
+                FriendThread ft = _items.get(ii);
+                if (ft.thread.equals(thread)) {
+                    ft.thread = thread;
+                }
+            }
+        }
     }
 
     /** A data model that provides a particular thread's messages. */
-    public static class ThreadMessages
+    public class ThreadMessages
         extends ServiceBackedDataModel<ForumMessage, ForumService.MessageResult>
+        implements ThreadContainer
     {
-        public ThreadMessages (int threadId, ForumThread thread) {
+        public ThreadMessages (int threadId) {
             _threadId = threadId;
-            if (thread != null) {
-                _thread = thread;
-                _count = _thread.posts;
-            }
         }
 
         public ForumThread getThread () {
@@ -310,12 +284,21 @@ public class ForumModels
             _thread.posts--;
         }
 
+        // from ThreadContainer
+        public void registerUpdate (ForumThread thread)
+        {
+            if (_thread.equals(thread)) {
+                _thread = thread;
+            }
+        }
+
         @Override // from ServiceBackedDataModel
         protected void onSuccess (ForumService.MessageResult result,
                                   AsyncCallback<List<ForumMessage>> callback) {
             // note some bits
             if (result.thread != null) {
                 _thread = result.thread;
+                updateThread(result.thread, this);
             }
             _canPostReply = result.canPostReply;
             _isManager = result.isManager;
@@ -388,6 +371,19 @@ public class ForumModels
     }
 
     /**
+     * Returns, creating if necessary, a data model that provides all of the messages for the
+     * specified thread.
+     */
+    public ThreadMessages getThreadMessages (int threadId)
+    {
+        ThreadMessages tmodel = _tmodels.get(threadId);
+        if (tmodel == null) {
+            _tmodels.put(threadId, tmodel = new ThreadMessages(threadId));
+        }
+        return tmodel;
+    }
+
+    /**
      * Returns, creating if necessary, the data model that provides all unread threads for the
      * authenticated user.
      */
@@ -412,38 +408,6 @@ public class ForumModels
     }
 
     /**
-     * Locates the thread in question in the cache. Returns null if the thread could not be found.
-     */
-    public ForumThread findThread (int threadId)
-    {
-        // check for the thread in our unread threads model if we have one
-        if (_unreadModel != null) {
-            ForumThread thread = _unreadModel.getThread(threadId);
-            if (thread != null) {
-                return thread;
-            }
-        }
-
-        // check for the thread in our unread friend threads model if we have one
-        if (_unreadFriendsModel != null) {
-            ForumThread thread = _unreadFriendsModel.getThread(threadId);
-            if (thread != null) {
-                return thread;
-            }
-        }
-
-        // next, check for the thread in the group models
-        for (GroupThreads model : _gmodels.values()) {
-            ForumThread thread = model.getThread(threadId);
-            if (thread != null) {
-                return thread;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Searches a group's threads for a string and invokes a callback when the results are ready.
      */
     public void searchGroupThreads (int groupId, String query,
@@ -462,6 +426,53 @@ public class ForumModels
     public void searchUnreadThreads (String query, AsyncCallback<List<ForumThread>> callback)
     {
         searchGroupThreads(0, query, callback);
+    }
+
+    /**
+     * Registers an updated thread from the server with all known containers, omitting the updater.
+     */
+    protected void updateThread (ForumThread result, ThreadContainer updater)
+    {
+        registerUpdate(_unreadModel, result, updater);
+        registerUpdate(_unreadFriendsModel, result, updater);
+
+        for (GroupThreads gmodel : _gmodels.values()) {
+            registerUpdate(gmodel, result, updater);
+        }
+
+        for (ThreadMessages tmodel : _tmodels.values()) {
+            registerUpdate(tmodel, result, updater);
+        }
+    }
+
+    protected static void registerUpdate (
+        ThreadContainer target, ForumThread updated, ThreadContainer updater)
+    {
+        if (target != null && target != updater) {
+            target.registerUpdate(updated);
+        }
+    }
+
+    /**
+     * Replaces the first occurrence of the an item in a list with the given instance.
+     */
+    protected static <T> void replaceItem (List<T> items, T item)
+    {
+        int idx = items.indexOf(item);
+        if (idx != -1) {
+            items.set(idx, item);
+        }
+    }
+
+    /**
+     * Operations shared amongst all of our data models.
+     */
+    protected static interface ThreadContainer
+    {
+        /**
+         * Set all contained threads that are equivalent to refer to it directly.
+         */
+        void registerUpdate (ForumThread thread);
     }
 
     /**
@@ -508,6 +519,9 @@ public class ForumModels
 
     /** A cache of GroupThreads data models. */
     protected HashMap<Integer, GroupThreads> _gmodels = new HashMap<Integer, GroupThreads>();
+
+    /** A cache of ThreadMessages data models. */
+    protected HashMap<Integer, ThreadMessages> _tmodels = new HashMap<Integer, ThreadMessages>();
 
     /** A cached UnreadThreads data model. */
     protected UnreadThreads _unreadModel;

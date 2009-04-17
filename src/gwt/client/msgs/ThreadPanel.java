@@ -56,9 +56,7 @@ public class ThreadPanel extends TitledListPanel
     public void showThread (ForumModels fmodels, int threadId, int page, int scrollToId)
     {
         _threadId = threadId;
-        _mpanel = new MessagesPanel(
-            this, new ForumModels.ThreadMessages(threadId, fmodels.findThread(threadId)),
-            page, scrollToId);
+        _mpanel = new MessagesPanel(this, fmodels.getThreadMessages(threadId), page, scrollToId);
         showMessages();
     }
 
@@ -312,7 +310,6 @@ public class ThreadPanel extends TitledListPanel
                 }
                 @Override protected boolean gotResult (Void result) {
                     _thread.flags = _flags;
-                    // TODO: have ForumModels update all instances of this thread
                     MsoyUI.info(_mmsgs.tfepUpdated());
                     ThreadFlagsEditorPanel.this.hide();
                     // update the thread panel title
