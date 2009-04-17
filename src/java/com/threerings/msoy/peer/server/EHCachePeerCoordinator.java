@@ -70,11 +70,10 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
         }
 
         // these are internal to EHCache and I have NO clue why they're in the API
-        @Override public void registerPeer (String rmiUrl) { }
-        @Override public void unregisterPeer (String rmiUrl) { }
+        public void registerPeer (String rmiUrl) { }
+        public void unregisterPeer (String rmiUrl) { }
 
-        @Override @SuppressWarnings("unchecked")
-        public List listRemoteCachePeers (Ehcache cache)
+        public List<?> listRemoteCachePeers (Ehcache cache)
             throws CacheException
         {
             if (_peerMan == null) {
@@ -96,24 +95,21 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
             return result;
         }
 
-        @Override
         public void init ()
         {
             // do nothing
         }
 
-        @Override
         public void dispose ()
             throws CacheException
         {
             // do nothing
         }
 
-        @Override
         public long getTimeForClusterToForm ()
         {
-            // 30 seconds should be enough for anyone
-            return 30000;
+            // this is only used when bootstrapping, which we don't do, but whatever
+            return 10000;
         }
 
         protected void addCachesForNode (List<CachePeer> result, String nodeName)
