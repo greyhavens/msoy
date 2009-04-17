@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,ENV_ROOM,ENV_SHOP,ENV_VIEWER,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,_env,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getEnvironment,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMusicId3,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerCustomConfig,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPage,showPopup,triggerAction" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,ENV_ROOM,ENV_SHOP,ENV_VIEWER,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,_env,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getEnvironment,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMusicId3,getMusicOwnerId,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerCustomConfig,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPage,showPopup,triggerAction" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -206,6 +206,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getMusicId3()">getMusicId3</a>():Object</div>
 <div class="summaryTableDescription">
      Get the id3 metadata of the currently playing music.</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMusicOwnerId()">getMusicOwnerId</a>():int</div>
+<div class="summaryTableDescription">
+     Get the playerId of the owner of the currently playing music, aka the player who added it
+     to the playlist, or 0 if there is no music currently playing.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -908,6 +917,24 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="getMusicOwnerId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMusicOwnerId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMusicOwnerId():int</code><p>
+     Get the playerId of the owner of the currently playing music, aka the player who added it
+     to the playlist, or 0 if there is no music currently playing.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -1706,8 +1733,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!--Copyright © 2008 Three Rings Design, Inc.-->
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

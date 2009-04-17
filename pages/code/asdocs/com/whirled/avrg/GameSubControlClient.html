@@ -143,10 +143,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="GameSubControlBase.html#getPartyControl()">getPartyControl</a>(partyId:int):<a href="../avrg/PartySubControl.html">PartySubControl</a>
+<a class="signatureLink" href="GameSubControlBase.html#getParty()">getParty</a>(partyId:int):<a href="../avrg/PartySubControl.html">PartySubControl</a>
 </div>
 <div class="summaryTableDescription">
-     Get the party control for the specified party, or null if there is no such party.</div>
+     Get the party control for the specified party.</div>
 </td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -202,6 +202,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<div class="showHideLinks">
+<div class="hideInheritedProtectedMethod" id="hideInheritedProtectedMethod">
+<a onclick="javascript:setInheritedVisible(false,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Methods</a>
+</div>
+<div class="showInheritedProtectedMethod" id="showInheritedProtectedMethod">
+<a onclick="javascript:setInheritedVisible(true,'ProtectedMethod');" href="#protectedMethodSummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Methods</a>
+</div>
+</div>
+<table id="summaryTableProtectedMethod" class="summaryTable hideInheritedProtectedMethod" cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="GameSubControlBase.html#partyLeft_v1()">partyLeft_v1</a>(partyId:int, ... rest):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+</table>
+</div>
 <a name="eventSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Events</div>
@@ -224,6 +248,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when a message arrives with information that is not part of the shared game state.</td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="GameSubControlBase.html#event:partyEntered">partyEntered</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a party arrives in the game.</td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="GameSubControlBase.html#event:partyLeft">partyLeft</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a party leaves the game.</td><td class="summaryTableOwnerCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -269,8 +309,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!--Copyright © 2008 Three Rings Design, Inc.-->
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

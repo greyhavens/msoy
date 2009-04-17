@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getInviteToken,getInviterMemberId,getPaintableArea,getPartyInfo,getRoomBounds,locationToPaintable,locationToRoom,paintableToLocationAtDepth,paintableToLocationAtHeight,paintableToRoom,partyChanged_temp,roomToPaintable,setHitPointTester,setMobSpriteExporter,showInvitePage" name="keywords">
+<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getInviteToken,getInviterMemberId,getPaintableArea,getRoomBounds,locationToPaintable,locationToRoom,paintableToLocationAtDepth,paintableToLocationAtHeight,paintableToRoom,roomToPaintable,setHitPointTester,setMobSpriteExporter,showInvitePage" name="keywords">
 <title>com.whirled.avrg.LocalSubControl</title>
 </head>
 <body>
@@ -136,14 +136,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getPartyInfo()">getPartyInfo</a>():Object</div>
-<div class="summaryTableDescription">
-     TEMPORARY.</div>
-</td><td class="summaryTableOwnerCol">LocalSubControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#getRoomBounds()">getRoomBounds</a>():Array</div>
 <div class="summaryTableDescription">
      Get the room bounds in "room pixels".</div>
@@ -247,22 +239,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="protectedMethodSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Methods</div>
-<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#partyChanged_temp()">partyChanged_temp</a>():void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">LocalSubControl</td>
-</tr>
-</table>
-</div>
 <a name="eventSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Events</div>
@@ -277,14 +253,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#event:partyChanged">partyChanged</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- TEMPORARY.</td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -447,32 +415,6 @@ showHideInherited();
 <div class="seeAlso">
 <a href="../avrg/LocalSubControl.html#event:sizeChanged" target="">sizeChanged</a>
 </div>
-</div>
-<a name="getPartyInfo()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getPartyInfo</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getPartyInfo():Object</code><p>
-     TEMPORARY. This method will be removed soon, and <b>no backwards compatibility will be
-     provided</b>. Use at your own risk. Better yet, don't use it at all, unless you are
-     wearing Tim Conkling's underwear.
-          Get the party information of the local player, or null if they're not in a party.
-     {
-         id: <partyId> (int)
-         name: <partyName> (String)
-         leaderId: <playerId> (int)
-         players: <playerIds> (Array of ints)
-     }
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Object</code></td>
-</tr>
-</table>
 </div>
 <a name="getRoomBounds()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -722,15 +664,6 @@ showHideInherited();
 <a href="http://wiki.whirled.com/Coordinate_systems" target="mm_external">http://wiki.whirled.com/Coordinate_systems</a>
 </div>
 </div>
-<a name="partyChanged_temp()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">partyChanged_temp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function partyChanged_temp():void</code>
-</div>
 <a name="roomToPaintable()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -808,8 +741,8 @@ showHideInherited();
           <div class='listing'><pre>
         function createMobSprite (type :String) :DisplayObject;
      </pre></div>
-          </p><p>Once created, the mob will be drawn in the room until the server agent despawns it. Clients
-     should not attempt to remove the sprite. Each mob in a room has a corresponding
+          </p><p>Once created, the mob will be drawn in the room until the server agent despawns it.
+     Clients should not attempt to remove the sprite. Each mob in a room has a corresponding
      <code>MobSubControlClient</code>. Games that use mobs should call this function during
      initialization so that if the player is joining an in-progress game, all the previously
      spawned mobs will be created.</p>
@@ -859,25 +792,10 @@ showHideInherited();
 </table>
 </div>
 <div class="detailSectionHeader">Event detail</div>
-<a name="event:partyChanged"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">partyChanged</td><td class="detailHeaderType">event&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<span class="label">Event object type: </span><a href="../avrg/AVRGameControlEvent.html"><code>com.whirled.avrg.AVRGameControlEvent</code></a>
-<br>
-<p></p><p>
- TEMPORARY. This event will be removed soon, and <b>no backwards compatibility will be
- provided</b>. Use at your own risk. Better yet, don't use it at all, unless you are
- wearing Tim Conkling's underwear.
-  Dispatched when any party information has changed.
- </p></div>
 <a name="event:sizeChanged"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">sizeChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">sizeChanged</td><td class="detailHeaderType">event&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -902,8 +820,8 @@ showHideInherited();
 <hr>
 <br>
 <p></p>
-<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!--Copyright © 2008 Three Rings Design, Inc.-->
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PartySubControl,com.whirled.avrg.PartySubControl,getGroupId,getGroupName,getId,getName,getPlayerIds" name="keywords">
+<meta content="PartySubControl,com.whirled.avrg.PartySubControl,getGroupId,getGroupLogo,getGroupName,getName,getPartyId,getPlayerIds" name="keywords">
 <title>com.whirled.avrg.PartySubControl</title>
 </head>
 <body>
@@ -38,11 +38,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class PartySubControl</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">PartySubControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../AbstractSubControl.html">AbstractSubControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../AbstractControl.html">AbstractControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">PartySubControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../TargetedSubControl.html">TargetedSubControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../AbstractSubControl.html">AbstractSubControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../AbstractControl.html">AbstractControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 </table>
 <p></p>
-<p></p>
+ Provides services on a particular party.
+ <p></p>
 <br>
 <hr>
 </div>
@@ -90,17 +91,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getGroupName()">getGroupName</a>():String</div>
+<a class="signatureLink" href="#getGroupLogo()">getGroupLogo</a>():DisplayObject</div>
 <div class="summaryTableDescription">
-     Get the name of the group hosting this party.</div>
+     Get the group logo, or null if called from the server agent.</div>
 </td><td class="summaryTableOwnerCol">PartySubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getId()">getId</a>():int</div>
+<a class="signatureLink" href="#getGroupName()">getGroupName</a>():String</div>
 <div class="summaryTableDescription">
-     Get the party id.</div>
+     Get the name of the group hosting this party.</div>
 </td><td class="summaryTableOwnerCol">PartySubControl</td>
 </tr>
 <tr class="">
@@ -114,10 +115,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getPartyId()">getPartyId</a>():int</div>
+<div class="summaryTableDescription">
+     Get the party id, which is only used to identify a transient party instance.</div>
+</td><td class="summaryTableOwnerCol">PartySubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getPlayerIds()">getPlayerIds</a>():Array</div>
 <div class="summaryTableDescription">
-     Get the player ids in this party.</div>
+     Get the player ids in this party that are in this place.</div>
 </td><td class="summaryTableOwnerCol">PartySubControl</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../TargetedSubControl.html#getTargetId()">getTargetId</a>():int</div>
+<div class="summaryTableDescription">
+     Get the targetId on which this control operates.</div>
+</td><td class="summaryTableOwnerCol"><a href="../TargetedSubControl.html">TargetedSubControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -151,9 +168,25 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a onclick="javascript:setInheritedVisible(true,'Event');" href="#eventSummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Events</a>
 </div>
 </div>
-<table id="summaryTableEvent" class="summaryTable hideInheritedEvent" cellpadding="3" cellspacing="0">
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:playerEnteredParty">playerEnteredParty</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a player arrives in this party.</td><td class="summaryTableOwnerCol">PartySubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:playerLeftParty">playerLeftParty</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a player leaves this party.</td><td class="summaryTableOwnerCol">PartySubControl</td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -182,11 +215,30 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getGroupId():int</code><p>
      Get the group id of this party. Note that different parties could have the same group id.
+     If the party is no longer present, 0 will be returned.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getGroupLogo()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getGroupLogo</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getGroupLogo():DisplayObject</code><p>
+     Get the group logo, or null if called from the server agent.
+     If the party is no longer present, null will be returned.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>DisplayObject</code></td>
 </tr>
 </table>
 </div>
@@ -198,29 +250,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getGroupName():String</code><p>
-     Get the name of the group hosting this party.
+     Get the name of the group hosting this party. The name should be considered changeable
+     and non-unique and only used for display purposes. The group id can be used for
+     identification of a group.
+     If the party is no longer present, null will be returned.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>String</code></td>
-</tr>
-</table>
-</div>
-<a name="getId()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getId():int</code><p>
-     Get the party id. You should know this, or how did you get this subcontrol?
-     </p><p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -233,11 +271,31 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getName():String</code><p>
      Get the name of this party. This is not guaranteed to be unique.
+     If the party is no longer present, null will be returned.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="getPartyId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPartyId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPartyId():int</code><p>
+     Get the party id, which is only used to identify a transient party instance. Parties
+     come and go. No permanent identification should be done with this id.
+     This method is a little redundant, because you need to know the id to get this control?
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -249,7 +307,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getPlayerIds():Array</code><p>
-     Get the player ids in this party.
+     Get the player ids in this party that are in this place.
+     If the party is no longer present, an empty array will be returned.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -258,13 +317,48 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:playerEnteredParty"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playerEnteredParty</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../avrg/AVRGameControlEvent.html"><code>com.whirled.avrg.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../avrg/AVRGameControlEvent.html#PLAYER_ENTERED_PARTY"><code>com.whirled.avrg.AVRGameControlEvent.PLAYER_ENTERED_PARTY</code></a>
+<br><p>
+ Dispatched when a player arrives in this party.
+  </p><p>
+     An event type dispatched on a PartySubControl when a player joins that party.
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - the playerId
+          </p></div>
+<a name="event:playerLeftParty"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playerLeftParty</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../avrg/AVRGameControlEvent.html"><code>com.whirled.avrg.AVRGameControlEvent</code></a>
+<br>
+<span class="label">AVRGameControlEvent.type property = </span><a href="../avrg/AVRGameControlEvent.html#PLAYER_LEFT_PARTY"><code>com.whirled.avrg.AVRGameControlEvent.PLAYER_LEFT_PARTY</code></a>
+<br><p>
+ Dispatched when a player leaves this party.
+  </p><p>
+     An event type dispatched on a PartySubControl when a player leaves that party.
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - the playerId
+          </p></div>
 <br>
 <br>
 <hr>
 <br>
 <p></p>
-<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
 </div>
 </body>
 </html>
-<!--Copyright © 2008 Three Rings Design, Inc.-->
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->
