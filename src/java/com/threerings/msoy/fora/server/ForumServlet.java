@@ -277,9 +277,7 @@ public class ForumServlet extends MsoyServiceServlet
         if (needTotalCount) {
             // convert the thread record to a runtime record if needed
             result.thread = ftr.toForumThread(
-                Collections.singletonMap(ftr.mostRecentPosterId,
-                                         // we don't need their display name here
-                                         new MemberName("", ftr.mostRecentPosterId)),
+                _memberRepo.loadMemberNames(Collections.singleton(ftr.mostRecentPosterId)),
                 Collections.singletonMap(group.groupId, group.getName()));
 
             // load up our last read post information
