@@ -11,7 +11,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.whirled.game.client.HeadShot;
+import com.whirled.game.client.Thumbnail;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
@@ -47,7 +47,7 @@ public class MsoyGameBackend extends WhirledGameBackend
             var vizName :VizMemberName = info.username as VizMemberName;
             if (vizName != null) {
                 // now, we return a new one every time (in case the game wants to use two.)
-                return new HeadShot(ScalingMediaContainer.createView(vizName.getPhoto()));
+                return new Thumbnail(ScalingMediaContainer.createView(vizName.getPhoto()));
             }
         }
 
