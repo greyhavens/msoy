@@ -47,7 +47,6 @@ public class AVRGameObject extends PlaceObject
 
     /** The field name of the <code>avrgService</code> field. */
     public static const AVRG_SERVICE :String = "avrgService";
-
     // AUTO-GENERATED: FIELDS END
 
     // no-op reference; force linkage

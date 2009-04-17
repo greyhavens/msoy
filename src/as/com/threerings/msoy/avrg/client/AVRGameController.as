@@ -470,7 +470,8 @@ public class AVRGameController extends PlaceController
 
     protected function gameEntryAdded (event :EntryAddedEvent) :void
     {
-        if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
+        var name :String = event.getName();
+        if (name == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
             var gameInfo :OccupantInfo = event.getEntry() as OccupantInfo;
 
             // we look this user up by display name in the room
@@ -478,7 +479,7 @@ public class AVRGameController extends PlaceController
                 // an occupant of our current room began playing this AVRG
                 roomOccupantAdded(gameInfo.username, "game occupancy change");
             }
-        } else if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+        } else if (name == AVRGameObject.PLAYER_LOCS) {
             var ploc :PlayerLocation = event.getEntry() as PlayerLocation;
             if (ploc.playerId == _playerObj.getMemberId()) {
                 maybeDispatchEnteredRoom("location update");
@@ -488,7 +489,8 @@ public class AVRGameController extends PlaceController
 
     protected function gameEntryUpdated (event :EntryUpdatedEvent) :void
     {
-        if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+        var name :String = event.getName();
+        if (name == AVRGameObject.PLAYER_LOCS) {
             var ploc :PlayerLocation = event.getEntry() as PlayerLocation;
             if (ploc.playerId == _playerObj.getMemberId()) {
                 maybeDispatchLeftRoom("location update");
@@ -499,7 +501,8 @@ public class AVRGameController extends PlaceController
 
     protected function gameEntryRemoved (event :EntryRemovedEvent) :void
     {
-        if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
+        var name :String = event.getName();
+        if (name == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
             var gameInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
 
             // we look this user up by display name in the room
@@ -507,7 +510,7 @@ public class AVRGameController extends PlaceController
                 // an occupant of our current room stopped playing this AVRG
                 roomOccupantRemoved(gameInfo.username, "game occupancy change");
             }
-        } else if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+        } else if (name == AVRGameObject.PLAYER_LOCS) {
             var ploc :PlayerLocation = event.getOldEntry() as PlayerLocation;
             if (ploc.playerId == _playerObj.getMemberId()) {
                 maybeDispatchLeftRoom("location update");
