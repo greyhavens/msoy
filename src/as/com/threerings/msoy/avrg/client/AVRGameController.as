@@ -33,6 +33,8 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.party.client.PartyGameListener;
+
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
@@ -102,6 +104,8 @@ public class AVRGameController extends PlaceController
 
         _gctx.getClient().getClientObject().removeListener(_playerListener);
         _gameObj.removeListener(_gameListener);
+        _partyListener.shutdown();
+        _partyListener = null;
 
         _backend.shutdown();
 
@@ -241,6 +245,7 @@ public class AVRGameController extends PlaceController
 
         _playerObj = _gctx.getPlayerObject();
         _gameObj.addListener(_gameListener);
+        _partyListener = new PartyGameListener(_gameObj, _backend);
 
         _gctx.getClient().getClientObject().addListener(_playerListener);
 
@@ -570,6 +575,7 @@ public class AVRGameController extends PlaceController
 
     protected var _roomMessageListener :MessageAdapter = new MessageAdapter(roomMessage);
     protected var _playerListener :MessageAdapter = new MessageAdapter(playerMessage);
+    protected var _partyListener :PartyGameListener;
     protected var _gameListener :SetAdapter =
         new SetAdapter(gameEntryAdded, gameEntryUpdated, gameEntryRemoved);
     protected var _occupantObserver :OccupantObserver =
