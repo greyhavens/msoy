@@ -82,6 +82,7 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -100,6 +101,8 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
+
+import com.threerings.msoy.party.server.PartyRegistry;
 
 import com.threerings.msoy.room.client.RoomService;
 import com.threerings.msoy.room.data.ActorInfo;
@@ -824,6 +827,9 @@ public class RoomManager extends SpotSceneManager
             // as we arrive at a room, we entrust it with our memories for broadcast to clients
             body.getLocal(MemberLocal.class).willEnterRoom((MemberObject)body, _roomObj);
         }
+        if (body instanceof MsoyUserObject) {
+            _partyReg.userEnteringPlace((MsoyUserObject) body, _roomObj);
+        }
 
         // Note: we want to add the occupant info *after* we set up the party
         // (in MemberLocal.willEnterRoom), so we call super last.
@@ -845,6 +851,9 @@ public class RoomManager extends SpotSceneManager
             if (!isStrictlyManager(member)) {
                 removeVisitorSongs(member);
             }
+        }
+        if (body instanceof MsoyUserObject) {
+            _partyReg.userLeavingPlace((MsoyUserObject) body, _roomObj);
         }
     }
 
@@ -2004,6 +2013,7 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected PartyRegistry _partyReg;
     @Inject protected PetManager _petMan;
     @Inject protected SceneRegistry _screg;
 }

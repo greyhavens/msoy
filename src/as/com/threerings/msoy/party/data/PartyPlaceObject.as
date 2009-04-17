@@ -16,5 +16,10 @@ public interface PartyPlaceObject
      * Get the occupants in this place, which may include some non-PartyOccupantInfo occupants.
      */
     function getOccupants () :DSet;
+
+    /**
+     * Get the leaders.
+     */
+    function getPartyLeaders () :DSet;
 }
 }

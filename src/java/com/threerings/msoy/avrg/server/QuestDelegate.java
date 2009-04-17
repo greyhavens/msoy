@@ -177,7 +177,7 @@ public class QuestDelegate extends PlayManagerDelegate
                "wanted", rawPayout, "got", payout);
         }
         // possibly give the party bonus
-        int partySize = _partyReg.getPartyPopulation(plobj);
+        int partySize = _partyReg.lookupPartyPopulation(plobj);
         if (partySize > 0) {
             float partyBonus = (float) Math.pow(_runtime.money.partyGameBonusFactor,
                 Math.min(partySize, _runtime.money.partyMaxBonusPopulation) - 1);

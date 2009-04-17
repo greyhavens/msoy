@@ -428,14 +428,19 @@ public class PartyManager
      */
     protected void updatePartyInfo ()
     {
-        _lastInfo = new PartyInfo(_partyObj.id, _partyObj.leaderId, _partyObj.status,
+        PartyInfo newInfo = new PartyInfo(_partyObj.id, _partyObj.leaderId, _partyObj.status,
             _partyObj.peeps.size(), _partyObj.recruitment);
         MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
         if (nodeObj.partyInfos.containsKey(_partyObj.id)) {
-            nodeObj.updatePartyInfos(_lastInfo);
+            nodeObj.updatePartyInfos(newInfo);
         } else {
-            nodeObj.addToPartyInfos(_lastInfo);
+            nodeObj.addToPartyInfos(newInfo);
         }
+        // notify the current node (other nodes will be notified by MsoyPeerNode)
+        if (_lastInfo != null) {
+            _partyReg.partyInfoChanged(_lastInfo, newInfo);
+        }
+        _lastInfo = newInfo;
     }
 
     protected PartyObject _partyObj;

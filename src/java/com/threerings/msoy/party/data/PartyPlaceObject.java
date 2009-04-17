@@ -24,6 +24,11 @@ public interface PartyPlaceObject
     DSet<PartySummary> getParties ();
 
     /**
+     * Get the leader set.
+     */
+    DSet<PartyLeader> getPartyLeaders ();
+
+    /**
      * Add a party summary.
      */
     void addToParties (PartySummary summary);
@@ -32,4 +37,19 @@ public interface PartyPlaceObject
      * Remove a party summary.
      */
     void removeFromParties (Comparable<?> key);
+
+    /**
+     * Add a leader.
+     */
+    void addToPartyLeaders (PartyLeader leader);
+
+    /**
+     * Update a leader.
+     */
+    void updatePartyLeaders (PartyLeader leader);
+
+    /**
+     * Remove a leader.
+     */
+    void removeFromPartyLeaders (Comparable<?> key);
 }

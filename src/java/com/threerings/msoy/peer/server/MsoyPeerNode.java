@@ -22,6 +22,7 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.party.data.MemberParty;
+import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.server.PartyRegistry;
 
 /**
@@ -98,6 +99,10 @@ public class MsoyPeerNode extends PeerNode
                 MemberParty memParty = (MemberParty) event.getEntry();
                 _partyReg.updateUserParty(
                     memParty.memberId, memParty.partyId, (MsoyNodeObject)nodeobj);
+
+            } else if (MsoyNodeObject.PARTY_INFOS.equals(name)) {
+                _partyReg.partyInfoChanged(
+                    (PartyInfo)event.getOldEntry(), (PartyInfo)event.getEntry());
             }
         }
 

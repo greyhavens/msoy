@@ -14,6 +14,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
@@ -47,7 +48,7 @@ public class PartyGameHelper
         o["party_getName_v1"] = getName_v1;
         o["party_getGroupId_v1"] = getGroupId_v1;
         o["party_getGroupName_v1"] = getGroupName_v1;
-//        o["party_getLeaderId_v1"] = getLeaderId_v1;
+        o["party_getLeaderId_v1"] = getLeaderId_v1;
         o["party_getPlayerIds_v1"] = getPlayerIds_v1;
 //        o["party_moveToRoom_v1"] = moveToRoom_v1;
     }
@@ -71,6 +72,10 @@ public class PartyGameHelper
         var name :String = event.getName();
         if (name == PlaceObject.OCCUPANT_INFO) {
             playerChanged(event.getOldEntry(), event.getEntry());
+
+        } else if (name == PARTY_LEADERS) {
+            var leader :PartyLeader = event.getEntry() as PartyLeader;
+            callUserCode("party_leaderChanged_v1", leader.partyId, leader.leaderId);
         }
     }
 
@@ -123,9 +128,11 @@ public class PartyGameHelper
         return (party == null) ? null : party.group.toString();
     }
 
-//    protected function getLeaderId_v1 (partyId :int) :int
-//    {
-//    }
+    protected function getLeaderId_v1 (partyId :int) :int
+    {
+        var leader :PartyLeader = _gameObj.getPartyLeaders().get(partyId) as PartyLeader;
+        return (leader == null) ? 0 : leader.leaderId;
+    }
 
     protected function getPlayerIds_v1 (partyId :int) :Array
     {
@@ -191,5 +198,8 @@ public class PartyGameHelper
 
     /** Hopefully the PartySummary set is called this. */
     protected static const PARTIES :String = "parties";
+
+    /** Hopefully the PartyLeader set is called this. */
+    protected static const PARTY_LEADERS :String = "partyLeaders";
 }
 }

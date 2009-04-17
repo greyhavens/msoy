@@ -38,7 +38,7 @@ import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
-import com.threerings.msoy.party.server.PartyPlaceUtil;
+import com.threerings.msoy.party.server.PartyRegistry;
 
 import static com.threerings.msoy.Log.log;
 
@@ -125,7 +125,7 @@ public class MsoyGameManager extends WhirledGameManager
     public void bodyWillEnter (BodyObject body)
     {
         if (body instanceof MsoyUserObject) {
-            PartyPlaceUtil.addParty((MsoyUserObject)body, _gameObj);
+            _partyReg.userEnteringPlace((MsoyUserObject)body, _gameObj);
         }
 
         // Note: for entering parties, we want to add the PartySummary first, then the occInfo
@@ -141,7 +141,7 @@ public class MsoyGameManager extends WhirledGameManager
         // Note: for leaving parties, we want to remove the occInfo first, then the PartySummary
 
         if (body instanceof MsoyUserObject) {
-            PartyPlaceUtil.removeParty((MsoyUserObject)body, _gameObj);
+            _partyReg.userLeavingPlace((MsoyUserObject)body, _gameObj);
         }
     }
 
@@ -284,5 +284,6 @@ public class MsoyGameManager extends WhirledGameManager
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected PartyRegistry _partyReg;
     @Inject protected TrophyRepository _trophyRepo;
 }

@@ -20,7 +20,6 @@ import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.party.server.PartyPlaceUtil;
 import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
@@ -168,9 +167,6 @@ public class MemberLocal extends BodyLocal
             }
             putAvatarMemoriesIntoRoom(roomObj);
 
-            // and take care of parties
-            PartyPlaceUtil.addParty(memobj, roomObj);
-
         } finally {
             roomObj.commitTransaction();
         }
@@ -191,9 +187,6 @@ public class MemberLocal extends BodyLocal
                 log.info("AVAMEM: Took memories from room", "avatar", memobj.avatar,
                     "memories", memories, "roomOid", roomObj.getOid(), "source", "willLeave");
             }
-
-            // and take care of parties
-            PartyPlaceUtil.removeParty(memobj, roomObj);
 
         } finally {
             roomObj.commitTransaction();

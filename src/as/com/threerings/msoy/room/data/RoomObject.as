@@ -12,6 +12,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.item.data.all.Audio;
 
+import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
 import com.threerings.msoy.party.data.PartySummary;
 
@@ -50,6 +51,9 @@ public class RoomObject extends SpotSceneObject
     /** The field name of the <code>parties</code> field. */
     public static const PARTIES :String = "parties";
 
+    /** The field name of the <code>partyLeaders</code> field. */
+    public static const PARTY_LEADERS :String = "partyLeaders";
+
     /** The field name of the <code>playlist</code> field. */
     public static const PLAYLIST :String = "playlist";
 
@@ -85,6 +89,9 @@ public class RoomObject extends SpotSceneObject
     /** Information of the parties presently in this room. */
     public var parties :DSet; /* of */ PartySummary;
 
+    /** Current party leaders, even if they're not in this room. */
+    public var partyLeaders :DSet; /* of */ PartyLeader;
+
     /** The set of songs in the playlist. */
     public var playlist :DSet; /* of */ Audio;
 
@@ -105,6 +112,12 @@ public class RoomObject extends SpotSceneObject
     public function getOccupants () :DSet
     {
         return occupantInfo;
+    }
+
+    // from PartyPlaceObject
+    public function getPartyLeaders () :DSet
+    {
+        return partyLeaders;
     }
 
     /**
@@ -136,6 +149,7 @@ public class RoomObject extends SpotSceneObject
         controllers = DSet(ins.readObject());
         propertySpaces = DSet(ins.readObject());
         parties = DSet(ins.readObject());
+        partyLeaders = DSet(ins.readObject());
         playlist = DSet(ins.readObject());
         currentSongId = ins.readInt();
         playCount = ins.readInt();

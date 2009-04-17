@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -73,6 +75,7 @@ import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyCredentials;
 import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartyPlaceObject;
@@ -118,23 +121,18 @@ public class PartyRegistry
     /**
      * Return the size of the specified user's party, or 0 if they're not in a party.
      */
-    public int getPartyPopulation (MsoyUserObject user)
+    public int lookupPartyPopulation (MsoyUserObject user)
     {
         PartySummary party = user.getParty();
-        return (party == null) ? 0 : getPartyPopulation(party.id);
+        return (party == null) ? 0 : lookupPartyPopulation(party.id);
     }
 
     /**
      * Can be called to return the current size of any party, even one not hosted on this node.
      */
-    public int getPartyPopulation (int partyId)
+    public int lookupPartyPopulation (int partyId)
     {
-        final Integer partyKey = partyId;
-        PartyInfo info = _peerMgr.lookupNodeDatum(new Function<NodeObject, PartyInfo>() {
-            public PartyInfo apply (NodeObject nobj) {
-                return ((MsoyNodeObject)nobj).partyInfos.get(partyKey);
-            }
-        });
+        PartyInfo info = lookupPartyInfo(partyId);
         return (info == null) ? 0 : info.population;
     }
 
@@ -153,6 +151,28 @@ public class PartyRegistry
     public void issueInvite (MemberObject member, MemberName inviter, int partyId, String partyName)
     {
         _notifyMan.notify(member, new PartyInviteNotification(inviter, partyId, partyName));
+    }
+
+    /**
+     * Called by a PartyPlaceManager when a user enters.
+     */
+    public void userEnteringPlace (MsoyUserObject userObj, PartyPlaceObject placeObj)
+    {
+        PartySummary summary = userObj.getParty();
+        if ((summary != null) && !placeObj.getParties().containsKey(summary.id)) {
+            // look up the leader and add that
+            placeObj.addToPartyLeaders(new PartyLeader(summary.id, lookupLeaderId(summary.id)));
+            placeObj.addToParties(summary);
+            _partyPlaces.put(summary.id, placeObj);
+        }
+    }
+
+    /**
+     * Called by a PartyPlaceManager when a user enters.
+     */
+    public void userLeavingPlace (MsoyUserObject userObj, PartyPlaceObject placeObj)
+    {
+        maybeRemovePartyFromPlace(userObj.getParty(), placeObj);
     }
 
     /**
@@ -175,6 +195,24 @@ public class PartyRegistry
         }
         if (playerObj != null) {
             updateUserParty(playerObj, summary);
+        }
+    }
+
+    /**
+     * Called when a PartyInfo changes. Happens in two places:
+     * - from PartyManager, when the info is published.
+     * - from MsoyPeerNode, when it detects an info change.
+     */
+    public void partyInfoChanged (PartyInfo oldInfo, PartyInfo newInfo)
+    {
+        if (oldInfo.leaderId == newInfo.leaderId) {
+            return;
+        }
+
+        // publish a new leader id to all the places currently hosting this party
+        PartyLeader leader = new PartyLeader(newInfo.id, newInfo.leaderId);
+        for (PartyPlaceObject placeObj : _partyPlaces.get(newInfo.id)) {
+            placeObj.updatePartyLeaders(leader);
         }
     }
 
@@ -421,7 +459,7 @@ public class PartyRegistry
                 placeObj.startTransaction();
                 try {
                     // we need to add a new party BEFORE updating the occInfo
-                    PartyPlaceUtil.addParty(userObj, (PartyPlaceObject)placeObj);
+                    userEnteringPlace(userObj, (PartyPlaceObject)placeObj);
                     // update the occupant info
                     final int newPartyId = (party == null) ? 0 : party.id;
                     placeMan.updateOccupantInfo(userObj.getOid(),
@@ -431,12 +469,53 @@ public class PartyRegistry
                             }
                         });
                     // we need to remove an old party AFTER updating the occInfo
-                    PartyPlaceUtil.removeParty(oldSummary, (PartyPlaceObject)placeObj);
+                    maybeRemovePartyFromPlace(oldSummary, (PartyPlaceObject)placeObj);
                 } finally {
                     placeObj.commitTransaction();
                 }
             }
         }
+    }
+
+    /**
+     * Figure out the leaderId of the specified party.
+     */
+    protected int lookupLeaderId (int partyId)
+    {
+        PartyInfo info = lookupPartyInfo(partyId);
+        return (info == null) ? 0 : info.leaderId;
+    }
+
+    /**
+     * Look up the PartyInfo from the node objects.
+     */
+    protected PartyInfo lookupPartyInfo (int partyId)
+    {
+        final Integer partyKey = partyId;
+        return _peerMgr.lookupNodeDatum(new Function<NodeObject, PartyInfo>() {
+            public PartyInfo apply (NodeObject nobj) {
+                return ((MsoyNodeObject)nobj).partyInfos.get(partyKey);
+            }
+        });
+    }
+
+    /**
+     * Called when we should remove a party from a place.
+     */
+    protected void maybeRemovePartyFromPlace (PartySummary summary, PartyPlaceObject placeObj)
+    {
+        if ((summary == null) || !placeObj.getParties().containsKey(summary.id)) {
+            return;
+        }
+        for (OccupantInfo info : placeObj.getOccupants()) {
+            if ((info instanceof PartyOccupantInfo) &&
+                    (((PartyOccupantInfo) info).getPartyId() == summary.id)) {
+                return; // there's still a partier here!
+            }
+        }
+        placeObj.removeFromParties(summary.id);
+        placeObj.removeFromPartyLeaders(summary.id);
+        _partyPlaces.remove(summary.id, placeObj);
     }
 
     protected int getPartyCoinCost ()
@@ -445,6 +524,8 @@ public class PartyRegistry
     }
 
     protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
+
+    protected Multimap<Integer,PartyPlaceObject> _partyPlaces = Multimaps.newHashMultimap();
 
     protected static final int PARTIES_PER_BOARD = 10;
 
