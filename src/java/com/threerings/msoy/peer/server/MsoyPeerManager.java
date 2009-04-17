@@ -297,6 +297,20 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Returns the internal hostname for to use that run on our own backend network, or null
+     * if the peer is not currently connected to this server. Do not export this data to the
+     * outside world in any shape or form.
+     */
+    public String getPeerInternalHostName (String nodeName)
+    {
+        if (_nodeName.equals(nodeName)) {
+            return _self.hostName;
+        }
+        MsoyPeerNode peer = (MsoyPeerNode)_peers.get(nodeName);
+        return (peer == null) ? null : peer.getInternalHostName();
+    }
+
+    /**
      * Returns the next party id that may be assigned by this server.
      * Only called from the PartyRegistry, does not need synchronization.
      */

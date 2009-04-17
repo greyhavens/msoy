@@ -114,7 +114,7 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
 
         protected void addCachesForNode (List<CachePeer> result, String nodeName)
         {
-            String nodeHost = _peerMan.getPeerPublicHostName(nodeName);
+            String nodeHost = _peerMan.getPeerInternalHostName(nodeName);
             if (nodeHost == null) {
                 log.warning("Eek, couldn't find the public host name of peer", "node", nodeName);
                 return;
