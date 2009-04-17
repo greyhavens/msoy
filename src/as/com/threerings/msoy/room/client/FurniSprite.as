@@ -318,7 +318,7 @@ public class FurniSprite extends MsoySprite
     {
         switch (_furni.actionType) {
         case FurniData.ACTION_NONE:
-            return _hasUsercodeAction && capturesMouse();
+            return false;
 
         default:
             return true;
@@ -386,14 +386,9 @@ public class FurniSprite extends MsoySprite
 
     override protected function postClickAction () :void
     {
-        if (_furni.actionType != FurniData.ACTION_NONE) {
+        if (hasAction()) {
             CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
         }
-    }
-
-    internal function setHasUsercodeAction (action :Boolean) :void
-    {
-        _hasUsercodeAction = action;
     }
 
     /**
@@ -416,9 +411,6 @@ public class FurniSprite extends MsoySprite
 
     /** The furniture data for this piece of furni. */
     protected var _furni :FurniData;
-
-    /** Indicates that this furni has "action" provided by usercode. */
-    protected var _hasUsercodeAction :Boolean;
 
     /** The watcher for loading progress. */
     protected static var _loadingWatcher :LoadingWatcher;
