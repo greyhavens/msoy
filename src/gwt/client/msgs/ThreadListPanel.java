@@ -3,7 +3,6 @@
 
 package client.msgs;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -19,7 +18,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -36,12 +34,9 @@ import client.util.ServiceUtil;
 
 /**
  * Displays a list of threads. Subclasses determine the specifics of accessing the threads on the
- * server, performing searches and display customizations. In addition, this class does not assume
- * that the server will be returning {@link ForumThread} instances directly, but potentially a list
- * of objects that contain <code>ForumThread</code> instances.
- * @param <T> the type of item we are listing; {@link ForumThread} should be obtainable from this
+ * server, performing searches and display customizations.
  */
-public abstract class ThreadListPanel<T> extends PagedGrid<T>
+public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     implements SearchBox.Listener
 {
     /**
@@ -84,22 +79,16 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
     }
 
     /**
-     * Obtains a forum thread from one of our result items. This normally means returning the item
-     * itself or a member of the item.
-     */
-    protected abstract ForumThread getThread (T item);
-
-    /**
      * Gets the "native" model for the thread list, i.e. for when we are not viewing the results of
      * a search.
      */
-    protected abstract DataModel<T> getThreadListModel();
+    protected abstract DataModel<ForumThread> getThreadListModel();
 
     /**
      * Performs a search on the contents of this thread list using the current value of
      * {@link #_query}. This will normally involve a call to a model from {@link ForumModels}.
      */
-    protected abstract void doSearch (AsyncCallback<List<T>> callback);
+    protected abstract void doSearch (AsyncCallback<List<ForumThread>> callback);
 
     /**
      * Same as {@link #setPage(String, int)}, but optionally forces the model to be reset to that
@@ -116,9 +105,9 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
                 setModel(getThreadListModel(), page);
 
             } else {
-                doSearch(new InfoCallback<List<T>>() {
-                    public void onSuccess (List<T> threads) {
-                        setModel(new SimpleDataModel<T>(threads), 0);
+                doSearch(new InfoCallback<List<ForumThread>>() {
+                    public void onSuccess (List<ForumThread> threads) {
+                        setModel(new SimpleDataModel<ForumThread>(threads), 0);
                     }
                 });
             }
@@ -144,9 +133,9 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
     }
 
     @Override // from PagedGrid
-    protected Widget createWidget (T item)
+    protected Widget createWidget (ForumThread thread)
     {
-        return createThreadSummaryPanel(item);
+        return createThreadSummaryPanel(thread);
     }
 
     @Override // from PagedGrid
@@ -178,27 +167,9 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
      * Creates a thread summary line for a thread item. Subclasses can override to put in more
      * widgets.
      */
-    protected ThreadSummaryPanel createThreadSummaryPanel (T item)
+    protected ThreadSummaryPanel createThreadSummaryPanel (ForumThread thread)
     {
-        return new ThreadSummaryPanel(item);
-    }
-
-    /**
-     * Gets the time to display in the post column for a given item row. Returns the most recent
-     * post time by default.
-     */
-    protected Date getPostTime (T item)
-    {
-        return getThread(item).mostRecentPostTime;
-    }
-
-    /**
-     * Gets the member name to display in the post column for a given item row. Returns the most
-     * recent poster by default.
-     */
-    protected MemberName getPoster (T item)
-    {
-        return getThread(item).mostRecentPoster;
+        return new ThreadSummaryPanel(thread);
     }
 
     /**
@@ -215,10 +186,9 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
      */
     protected class ThreadSummaryPanel extends SmartTable
     {
-        public ThreadSummaryPanel (T item)
+        public ThreadSummaryPanel (ForumThread thread)
         {
             super("threadSummaryPanel", 0, 0);
-            ForumThread thread = getThread(item);
 
             int col = 0;
             Image statusImage = new Image();
@@ -239,9 +209,9 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
             setText(0, col++, String.valueOf(thread.posts), 1, "Posts");
 
             FlowPanel post = MsoyUI.createFlowPanel("LastPost");
-            post.add(new Label(MsoyUI.formatDateTime(getPostTime(item))));
+            post.add(new Label(MsoyUI.formatDateTime(thread.mostRecentPostTime)));
             Widget by = Link.create(
-                _mmsgs.tlpBy(getPoster(item).toString()),
+                _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Pages.GROUPS, threadArgs(thread.threadId, thread.posts-1, thread.mostRecentPostId));
             by.setTitle(_mmsgs.tlpLastTip());
             post.add(by);
@@ -278,6 +248,20 @@ public abstract class ThreadListPanel<T> extends PagedGrid<T>
                 toThread = Link.create(thread.subject, Pages.GROUPS, args);
             }
             bits.add(toThread);
+        }
+
+        /**
+         * Adds an ignore button. Used by the unread variants to show the ignore button inline in
+         * the thread display.
+         */
+        protected Image addIgnoreButton (final ForumThread thread)
+        {
+            Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");
+            ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
+            int col = getCellCount(0);
+            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
+            setWidget(0, col++, ignoreThread, 1, "IgnoreThread");
+            return ignoreThread;
         }
     }
 

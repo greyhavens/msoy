@@ -17,7 +17,6 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.fora.gwt.ForumService.FriendThread;
 
 import client.util.PagedServiceDataModel;
 import client.util.ServiceBackedDataModel;
@@ -192,7 +191,7 @@ public class ForumModels
     }
 
     /** A data model that provides all threads with unread posts by friends.  */
-    public class UnreadFriendsThreads extends SimpleDataModel<FriendThread>
+    public class UnreadFriendsThreads extends SimpleDataModel<ForumThread>
         implements ThreadContainer
     {
         public UnreadFriendsThreads ()
@@ -202,7 +201,7 @@ public class ForumModels
 
         // from interface DataModel
         public void doFetchRows (
-            final int start, final int count, final AsyncCallback<List<FriendThread>> callback)
+            final int start, final int count, final AsyncCallback<List<ForumThread>> callback)
         {
             if (_items != null) {
                 super.doFetchRows(start, count, callback);
@@ -210,11 +209,11 @@ public class ForumModels
             }
 
             _forumsvc.loadUnreadFriendThreads(MAX_UNREAD_THREADS,
-                                        new AsyncCallback<List<FriendThread>>()  {
-                public void onSuccess (List<FriendThread> result) {
+                                              new AsyncCallback<List<ForumThread>>()  {
+                public void onSuccess (List<ForumThread> result) {
                     _items = result;
-                    for (FriendThread ft : result) {
-                        updateThread(ft.thread, UnreadFriendsThreads.this);
+                    for (ForumThread ft : result) {
+                        updateThread(ft, UnreadFriendsThreads.this);
                     }
                     doFetchRows(start, count, callback);
                 }
@@ -227,12 +226,7 @@ public class ForumModels
         // from ThreadContainer
         public void registerUpdate (ForumThread thread)
         {
-            for (int ii = 0; ii < _items.size(); ++ii) {
-                FriendThread ft = _items.get(ii);
-                if (ft.thread.equals(thread)) {
-                    ft.thread = thread;
-                }
-            }
+            ForumModels.replaceItem(_items, thread);
         }
     }
 

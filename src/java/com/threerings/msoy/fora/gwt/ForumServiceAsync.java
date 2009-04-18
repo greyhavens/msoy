@@ -6,7 +6,6 @@ package com.threerings.msoy.fora.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.threerings.msoy.fora.gwt.ForumService.FriendThread;
 
 /**
  * The asynchronous (client-side) version of {@link ForumService}.
@@ -21,7 +20,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#loadUnreadFriendThreads}.
      */
-    void loadUnreadFriendThreads (int maximum, AsyncCallback<List<FriendThread>> callback);
+    void loadUnreadFriendThreads (int maximum, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The asynchronous version of {@link ForumService#loadThreads}.

@@ -4,7 +4,6 @@
 package com.threerings.msoy.fora.server;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +22,6 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -65,7 +63,6 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.gwt.MessageTooLongException;
-import com.threerings.msoy.fora.server.persist.ForumMessagePosterRecord;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
@@ -109,29 +106,20 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public List<FriendThread> loadUnreadFriendThreads (int maximum)
+    public List<ForumThread> loadUnreadFriendThreads (int maximum)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
 
         // load up the meta data of unread posts by friends
-        List<ForumMessagePosterRecord> posters = _forumRepo.loadUnreadPosts(mrec.memberId,
+        List<ForumThreadRecord> threads = _forumRepo.loadUnreadFriendThreads(mrec.memberId,
             _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
                 mrec.memberId, null), maximum);
 
-        // load all the threads into a map, tracking required member and groups ids as we go
-        Set<Integer> memberIds = Sets.newHashSet();
-        Map<Integer, ForumThreadRecord> threadRecMap = Maps.newHashMap();
-        Set<Integer> threadIds = Sets.newHashSet();
+        // build the group names so these can be displayed on the client
         Set<Integer> groupIds = Sets.newHashSet();
-        for (ForumMessagePosterRecord poster : posters) {
-            threadIds.add(poster.threadId);
-            memberIds.add(poster.posterId);
-        }
-        for (ForumThreadRecord threc : _forumRepo.loadThreads(threadIds)) {
-            threadRecMap.put(threc.threadId, threc);
-            memberIds.add(threc.mostRecentPosterId);
-            groupIds.add(threc.groupId);
+        for (ForumThreadRecord ftr : threads) {
+            groupIds.add(ftr.groupId);
         }
 
         // load group names
@@ -140,26 +128,7 @@ public class ForumServlet extends MsoyServiceServlet
             groupNames.put(name.getGroupId(), name);
         }
 
-        // load member names
-        IntMap<MemberName> names = _memberRepo.loadMemberNames(memberIds);
-
-        // build result
-        Map<Integer, ForumThread> threadMap = Maps.newHashMap();
-        List<FriendThread> result = Lists.newArrayListWithCapacity(posters.size());
-        for (ForumMessagePosterRecord poster : posters) {
-            ForumThread thread = threadMap.get(poster.threadId);
-            if (thread == null) {
-                thread = threadRecMap.get(poster.threadId).toForumThread(names, groupNames);
-                threadMap.put(poster.threadId, thread);
-            }
-            FriendThread th = new FriendThread();
-            th.thread = thread;
-            th.friendName = names.get(poster.posterId);
-            th.friendPostTime = new Date(poster.created.getTime());
-            result.add(th);
-        }
-
-        return result;
+        return _forumLogic.resolveThreads(mrec, threads, groupNames, true, false);
     }
 
     // from interface ForumService

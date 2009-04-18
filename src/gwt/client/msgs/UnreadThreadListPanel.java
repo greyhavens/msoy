@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.DataModel;
@@ -24,17 +22,11 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 /**
  * Overrides and adds functionality to the threads list for displaying unread threads.
  */
-public class UnreadThreadListPanel extends ThreadListPanel<ForumThread>
+public class UnreadThreadListPanel extends ThreadListPanel
 {
     public UnreadThreadListPanel (ForumPanel parent, ForumModels fmodels)
     {
         super(parent, fmodels, new String[] {"unread"});
-    }
-
-    @Override // from ThreadListPanel
-    protected ForumThread getThread (ForumThread item)
-    {
-        return item;
     }
 
     @Override // from ThreadListPanel
@@ -83,10 +75,8 @@ public class UnreadThreadListPanel extends ThreadListPanel<ForumThread>
         {
             super(thread);
 
-            // add an ignore button
-            Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");
-            ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
-            new ClickCallback<Void>(ignoreThread) {
+            // add the ignore button, refresh our threads afterwards
+            new ClickCallback<Void>(addIgnoreButton(thread)) {
                 @Override protected boolean callService () {
                     _forumsvc.ignoreThread(thread.threadId, this);
                     return true;
@@ -97,10 +87,6 @@ public class UnreadThreadListPanel extends ThreadListPanel<ForumThread>
                     return false;
                 }
             };
-
-            int col = getCellCount(0);
-            getFlexCellFormatter().setHorizontalAlignment(0, col, HasAlignment.ALIGN_RIGHT);
-            setWidget(0, col++, ignoreThread, 1, "IgnoreThread");
         }
 
         @Override

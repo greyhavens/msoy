@@ -156,12 +156,8 @@ public class ForumPanel extends TitledListPanel
             header.setWidget(0, col++, _searchBox = new SearchBox(listener), 1, "Search");
         }
         header.setText(0, col++, _mmsgs.groupThreadPosts(), 1, "Posts");
-        header.setText(0, col++, _mode == Mode.FRIENDS ? _mmsgs.groupThreadFriendPost() :
-            _mmsgs.groupThreadLastPost(), 1, "LastPost");
-        // TODO: enable ignore thread for FRIENDS mode too
-        if (_mode == Mode.UNREAD) {
-            header.setText(0, col++, "", 1, "IgnoreThread");
-        }
+        header.setText(0, col++, _mmsgs.groupThreadLastPost(), 1, "LastPost");
+        header.setText(0, col++, "", 1, "IgnoreThread");
         return header;
     }
 
@@ -201,7 +197,7 @@ public class ForumPanel extends TitledListPanel
     protected SearchBox _searchBox;
 
     /** The current list of threads, if any. */
-    protected ThreadListPanel<?> _threads;
+    protected ThreadListPanel _threads;
 
     /** Title for the page, set to group name after data load */
     protected SimplePanel _title;

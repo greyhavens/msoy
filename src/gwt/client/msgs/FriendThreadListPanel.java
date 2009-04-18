@@ -3,7 +3,6 @@
 
 package client.msgs;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -15,17 +14,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.DataModel;
 
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.fora.gwt.ForumService.FriendThread;
 
 import client.ui.MsoyUI;
+import client.util.ClickCallback;
 
 /**
  * Thread list panel for showing a list of friend threads.
  */
-public class FriendThreadListPanel extends ThreadListPanel<FriendThread>
+public class FriendThreadListPanel extends ThreadListPanel
 {
     public FriendThreadListPanel (ForumPanel parent, ForumModels fmodels)
     {
@@ -33,33 +30,15 @@ public class FriendThreadListPanel extends ThreadListPanel<FriendThread>
     }
 
     @Override // from ThreadListPanel
-    protected void doSearch (AsyncCallback<List<FriendThread>> callback)
+    protected void doSearch (AsyncCallback<List<ForumThread>> callback)
     {
         // TODO: this is not called because the search box is disabled in ForumPanel
     }
 
     @Override // from ThreadListPanel
-    protected ForumThread getThread (FriendThread item)
-    {
-        return item.thread;
-    }
-
-    @Override // from ThreadListPanel
-    protected DataModel<FriendThread> getThreadListModel ()
+    protected DataModel<ForumThread> getThreadListModel ()
     {
         return _fmodels.getUnreadFriendsThreads(false);
-    }
-
-    @Override // from ThreadListPanel
-    protected MemberName getPoster (FriendThread item)
-    {
-        return item.friendName;
-    }
-
-    @Override // from ThreadListPanel
-    protected Date getPostTime (FriendThread item)
-    {
-        return item.friendPostTime;
     }
 
     @Override // from PagedGrid
@@ -85,16 +64,29 @@ public class FriendThreadListPanel extends ThreadListPanel<FriendThread>
     }
 
     @Override
-    protected ThreadSummaryPanel createThreadSummaryPanel (FriendThread item)
+    protected ThreadSummaryPanel createThreadSummaryPanel (ForumThread thread)
     {
-        return new UnreadFriendThreadSummaryPanel(item);
+        return new UnreadFriendThreadSummaryPanel(thread);
     }
 
     protected class UnreadFriendThreadSummaryPanel extends ThreadSummaryPanel
     {
-        protected UnreadFriendThreadSummaryPanel (FriendThread ft)
+        protected UnreadFriendThreadSummaryPanel (final ForumThread thread)
         {
-            super(ft);
+            super(thread);
+
+            // add the ignore button, refresh our threads afterwards
+            new ClickCallback<Void>(addIgnoreButton(thread)) {
+                @Override protected boolean callService () {
+                    _forumsvc.ignoreThread(thread.threadId, this);
+                    return true;
+                }
+                @Override protected boolean gotResult (Void result) {
+                    MsoyUI.info(_mmsgs.threadIgnored());
+                    setModel(_fmodels.getUnreadFriendsThreads(true), getPage());
+                    return false;
+                }
+            };
         }
 
         @Override

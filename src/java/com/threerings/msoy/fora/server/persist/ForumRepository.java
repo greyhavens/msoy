@@ -82,16 +82,17 @@ public class ForumRepository extends DepotRepository
     /**
      * Loads posts by specific people that are unread by a given member, up to a maximum.
      */
-    public List<ForumMessagePosterRecord> loadUnreadPosts (
+    public List<ForumThreadRecord> loadUnreadFriendThreads (
         int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds, int max)
     {
         if (posterIds.isEmpty()) {
             return Collections.emptyList();
         }
-        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds, hiddenGroupIds);
+        List<QueryClause> clauses = getUnreadFriendThreadsClauses(
+            memberId, posterIds, hiddenGroupIds);
         clauses.add(new Limit(0, max));
-        clauses.add(OrderBy.descending(ForumMessagePosterRecord.CREATED));
-        return findAll(ForumMessagePosterRecord.class, clauses);
+        clauses.add(OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID));
+        return findAll(ForumThreadRecord.class, clauses);
     }
 
     /**
@@ -102,8 +103,9 @@ public class ForumRepository extends DepotRepository
         if (posterIds.isEmpty()) {
             return 0;
         }
-        List<QueryClause> clauses = getUnreadPostsClauses(memberId, posterIds, hiddenGroupIds);
-        clauses.add(new FromOverride(ForumMessageRecord.class));
+        List<QueryClause> clauses = getUnreadFriendThreadsClauses(
+            memberId, posterIds, hiddenGroupIds);
+        clauses.add(new FromOverride(ForumThreadRecord.class));
         return load(CountRecord.class, clauses).count;
     }
 
@@ -451,29 +453,29 @@ public class ForumRepository extends DepotRepository
             new Where(where));
     }
 
-    protected List<QueryClause> getUnreadPostsClauses (
+    protected List<QueryClause> getUnreadFriendThreadsClauses (
         int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
         // don't bother with old posts (the whole point is to keep up with friends' recent posts)
         long cutoff = System.currentTimeMillis() - UNREAD_POSTS_CUTOFF;
         cutoff -= cutoff % 24*60*60*1000L;
         SQLExpression joinRead = new And(
-            new Equals(ForumMessagePosterRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
+            new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
             new Equals(ReadTrackingRecord.MEMBER_ID, memberId));
         SQLExpression joinThread = new And(
-            new Equals(ForumThreadRecord.THREAD_ID, ForumMessagePosterRecord.THREAD_ID));
+            new Equals(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID));
         List<SQLExpression> conditions = Lists.newArrayListWithCapacity(4);
-        conditions.add(new In(ForumMessagePosterRecord.POSTER_ID, authorIds));
+        conditions.add(new In(ForumMessageRecord.POSTER_ID, authorIds));
         conditions.add(new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
             new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId), new GreaterThan(
-                ForumMessagePosterRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID))));
+                ForumMessageRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID))));
         if (hiddenGroupIds.size() > 0) { // no empty In's
             conditions.add(new Not(new In(ForumThreadRecord.GROUP_ID, hiddenGroupIds)));
         }
-        conditions.add(new GreaterThan(ForumMessagePosterRecord.CREATED, new Timestamp(cutoff)));
+        conditions.add(new GreaterThan(ForumMessageRecord.CREATED, new Timestamp(cutoff)));
         return Lists.newArrayList(
             new Join(ReadTrackingRecord.class, joinRead).setType(Join.Type.LEFT_OUTER),
-            new Join(ForumThreadRecord.class, joinThread).setType(Join.Type.INNER),
+            new Join(ForumMessageRecord.class, joinThread).setType(Join.Type.INNER),
             new Where(new And(conditions)));
     }
 

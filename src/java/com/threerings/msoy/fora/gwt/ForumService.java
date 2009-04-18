@@ -3,14 +3,12 @@
 
 package com.threerings.msoy.fora.gwt;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.gwt.util.PagedResult;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -29,21 +27,6 @@ public interface ForumService extends RemoteService
 
         /** True if this is the global announcements forum, false otherwise. */
         public boolean isAnnounce;
-    }
-
-    /**
-     * A forum thread with some extra information about a friend's post within the thread.
-     */
-    public static class FriendThread implements IsSerializable
-    {
-        /** The thread. */
-        public ForumThread thread;
-
-        /** The name of the friend who posted to this thread. */
-        public MemberName friendName;
-
-        /** The time the friend's post was created. */
-        public Date friendPostTime;
     }
 
     /** Provides results for {@link #loadMessages}. */
@@ -75,10 +58,8 @@ public interface ForumService extends RemoteService
 
     /**
      * Loads up to <code>maximum</code> threads which contain unread posts by the caller's friends.
-     * A thread may occur multiple times in the result, once for each post from a friend that it
-     * contains.
      */
-    List<FriendThread> loadUnreadFriendThreads (int maximum)
+    List<ForumThread> loadUnreadFriendThreads (int maximum)
         throws ServiceException;
 
     /**
