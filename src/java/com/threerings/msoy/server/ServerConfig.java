@@ -126,6 +126,9 @@ public class ServerConfig
     /** True if the server should restart when code changes. */
     public static boolean autoRestart;
 
+    /** The secret used to authenticate account deletions. */
+    public static String accountDeletionSecret;
+
     /**
      * Returns a provider of JDBC connections.
      */
@@ -420,5 +423,6 @@ public class ServerConfig
         localBureaus = config.getValue("local_bureaus", true);
         windowSharedSecret = config.getValue("window_secret", "");
         autoRestart = config.getValue("auto_restart", false);
+        accountDeletionSecret = config.getValue("account_deletion_secret", "");
     }
 }

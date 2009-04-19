@@ -110,7 +110,12 @@ public interface WebUserServiceAsync
     void validateEmail (int memberId, String code, AsyncCallback<Boolean> callback);
 
     /**
+     * The asynchronous version of {@link WebUserService#requestAccountDeletion}.
+     */
+    void requestAccountDeletion (AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link WebUserService#deleteAccount}.
      */
-    void deleteAccount (String password, AsyncCallback<Void> callback);
+    void deleteAccount (String password, String code, AsyncCallback<Void> callback);
 }

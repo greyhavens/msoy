@@ -6,7 +6,10 @@ package client.account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 
+import com.threerings.gwt.util.CookieUtil;
+
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
@@ -28,7 +31,7 @@ public class AccountPage extends Page
     {
         String action = args.get(0, "");
         if (action.equals("deleted")) {
-            setContent(null, MsoyUI.createLabel(_msgs.deleteDone(), "infoLabel"));
+            setContent(null, MsoyUI.createLabel(_msgs.confirmDeleteDone(), "infoLabel"));
             CShell.frame.closeClient();
             if (!CShell.isGuest()) {
                 CShell.frame.logoff();
@@ -49,6 +52,19 @@ public class AccountPage extends Page
                 setContent(_msgs.editTitle(), new EditAccountPanel());
             } else {
                 Link.go(Pages.ACCOUNT, "create"); // guests/permaguests have to register first
+            }
+
+        } else if (action.equals("delete")) {
+            boolean isLoggedIn = !CShell.isGuest();
+            // TODO: WTF? isGuest only seems to work if we change Page and return here, but we
+            // don't want to do that. We want them to log in, then return directly to the delete
+            // page. So just use the creds cookie for now.
+            isLoggedIn = isLoggedIn || CookieUtil.get(WebCreds.credsCookie()) != null;
+            if (isLoggedIn) {
+                setContent(_msgs.confirmDeleteTitle(), new ConfirmDeletePanel(args.get(1, "")));
+            } else {
+                // redirect guests so logging on will brink them back here
+                Link.go(Pages.ACCOUNT, "create");
             }
 
         } else if (action.equals("config")) {

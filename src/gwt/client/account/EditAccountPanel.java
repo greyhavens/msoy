@@ -30,7 +30,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
-import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
@@ -40,7 +39,6 @@ import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
-import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
@@ -80,7 +78,7 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
-        add(new TongueBox(_msgs.deleteHeader(), makeDeleteSection()));
+        add(new TongueBox(_msgs.deleteRequestHeader(), makeDeleteSection()));
         add(new TongueBox(_msgs.charitiesHeader(), makeCharitySection()));
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
     }
@@ -241,36 +239,21 @@ public class EditAccountPanel extends FlowPanel
     protected Widget makeDeleteSection ()
     {
         SmartTable table = new SmartTable(0, 10);
-        table.setText(0, 0, _msgs.deleteTip(), 3, "Info");
+        table.setText(0, 0, _msgs.deleteRequestTip(), 3, "Info");
 
-        table.setWidget(1, 0, _delconf = new CheckBox(), 1, "rightLabel");
-        table.setText(1, 1, _msgs.deleteConfirm(), 2, null);
-
-        table.setText(2, 0, _msgs.deletePassword(), 1, "rightLabel");
-        table.setWidget(2, 1, _delpass = new PasswordTextBox());
-        table.getFlexCellFormatter().setWidth(2, 1, "10px");
-        final Button delgo = new Button(_msgs.deleteDelete());
-        table.setWidget(2, 2, delgo);
-        TextBoxUtil.addTypingListener(_delpass, new Command() {
-            public void execute () {
-                delgo.setEnabled(_delpass.getText().trim().length() > 0);
-            }
-        });
-        new ClickCallback<Void>(delgo) {
+        final Button send = new Button(_msgs.deleteRequestSend());
+        table.setWidget(1, 0, send);
+        new ClickCallback<Void>(send) {
             protected boolean callService () {
-                if (!_delconf.isChecked()) {
-                    MsoyUI.errorNear(_msgs.deleteMustCheck(), delgo);
-                    return false;
-                }
-                _usersvc.deleteAccount(CShell.frame.md5hex(_delpass.getText().trim()), this);
+                _usersvc.requestAccountDeletion(this);
+                MsoyUI.info(_msgs.deleteRequestSent());
                 return true;
             }
             protected boolean gotResult (Void result) {
-                Link.go(Pages.ACCOUNT, "deleted");
+                // leave the button disable, no reason to send multiple delete requests
                 return false;
             }
         };
-        delgo.setEnabled(false);
 
         return table;
     }

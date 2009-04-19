@@ -150,9 +150,17 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
+     * Requests to delete the calling user's account. This will email a link to the user's account,
+     * which when followed will present the user with warnings and require their password.
+     */
+    void requestAccountDeletion ()
+        throws ServiceException;
+
+    /**
      * Requests to delete the calling user's account. The supplied MD5-encoded password must match
-     * the one on file for the account.
-    */
-    void deleteAccount (String password)
+     * the one on file for the account. The supplied code must match the one sent via email using
+     * {@link #requestAccountDeletion()}.
+     */
+    void deleteAccount (String password, String code)
         throws ServiceException;
 }

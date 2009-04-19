@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -31,6 +32,7 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CharityInfo;
@@ -53,6 +55,7 @@ import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.server.util.MailSender.By;
 
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.MailLogic;
@@ -517,10 +520,24 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void deleteAccount (String password)
+    public void requestAccountDeletion ()
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
+        _mailer.sendTemplateEmail(By.HUMAN, mrec.accountName, ServerConfig.getFromAddress(),
+            "deleteAccount", "name", mrec.name, "code", generateDeleteSecret(mrec),
+            "server_url", DeploymentConfig.serverURL);
+    }
+
+    // from interface WebUserService
+    public void deleteAccount (String password, String code)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        if (!ObjectUtil.equals(code, generateDeleteSecret(mrec))) {
+            throw new ServiceException(ServiceCodes.E_ACCOUNT_DELETE_HASH_MISMATCH);
+        }
 
         // this will throw an exception if the password is invalid (it should not be possible for
         // the account not to exist)
@@ -649,6 +666,16 @@ public class WebUserServlet extends MsoyServiceServlet
         } catch (Exception e) {
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", e);
         }
+    }
+
+    protected static String generateDeleteSecret (MemberRecord mrec)
+        throws ServiceException
+    {
+        String serverSecret = ServerConfig.accountDeletionSecret;
+        if (StringUtil.isBlank(serverSecret)) {
+            throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+        }
+        return StringUtil.md5hex(mrec.accountName + mrec.memberId + serverSecret);
     }
 
     // our dependencies

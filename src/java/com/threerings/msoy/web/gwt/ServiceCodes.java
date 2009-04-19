@@ -19,4 +19,7 @@ public interface ServiceCodes
 
     /** An error code returned by {@link WebMemberService}. */
     public static final String E_OPT_OUT_HASH_MISMATCH = "e.opt_out_hash_mismatch";
+
+    /** An error code returned by {@link WebUserService}. */
+    public static final String E_ACCOUNT_DELETE_HASH_MISMATCH = "e.account_delete_hash_mismatch";
 }
