@@ -939,7 +939,8 @@ public class AVRGameManager extends PlaceManager
 
         agent.agentService = addDispatcher(new AVRGameAgentDispatcher(this));
 
-        agent.propertiesService = addDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
+        agent.propertiesService =
+            addDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
             @Override protected void validateUser (ClientObject caller)
                 throws InvocationException {
                 if (!isAgent(caller)) {
