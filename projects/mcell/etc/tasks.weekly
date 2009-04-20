@@ -1,0 +1,7 @@
+# Tasks that we currently run once a week, but which should probably run every night, giving us an
+# accumulating result in the most recent row
+
+WeeklyClientAction1
+WeeklyCohortReturn
+WeeklyGameExits
+WeeklyGames

@@ -1,0 +1,32 @@
+# Tasks that should run daily, as soon as all data from the night before is safely in S3.
+
+com.threerings.msoy.aggregators.AccountsWithVectors
+com.threerings.msoy.aggregators.RetentionEmail
+
+DailyBatchFriendRequests
+DailyChainedActionResults
+DailyExchangeRate
+DailyForumPosts
+DailyFriendships
+DailyIdleActive
+DailyListings
+DailyLoginCount
+DailyMail
+DailyPlayers
+DailyProfileUpdates
+DailyPurchases
+DailyPurchases2
+DailyRoomUpdates
+DailySessions
+DailyTimeAllocation
+DailyTimeInGames
+DailyTransactions
+DailyTrophies
+DailyVisitorInfoCreation
+LastMonthGameAffinity
+LastMonthGamePlayers
+LastMonthPurchases
+PreProcessInvites
+
+# Wait until last to run this relatively unimportant and very time-consuming task
+DailyExperience1

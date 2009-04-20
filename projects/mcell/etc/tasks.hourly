@@ -1,0 +1,5 @@
+# Tasks with an hourly resolution; suitable for running more frequently than the daily ones,
+# potentially even once every hour
+
+HourlyBroadcasts
+HourlyMemberStats
