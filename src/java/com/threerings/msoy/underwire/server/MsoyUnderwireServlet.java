@@ -137,12 +137,6 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     }
 
     @Override // from UnderwireServlet
-    protected boolean allowEmailUpdate ()
-    {
-        return false;
-    }
-
-    @Override // from UnderwireServlet
     protected String getUsername (OOOUser user)
         throws UnderwireException
     {
@@ -211,6 +205,14 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override protected Account createAccount ()
     {
         return new MsoyAccount();
+    }
+
+    @Override protected void setUserEmail (OOOUser user, String email)
+    {
+        if (user.username.equals(user.email)) {
+            user.username = email;
+        }
+        user.email = email;
     }
 
     @Singleton
