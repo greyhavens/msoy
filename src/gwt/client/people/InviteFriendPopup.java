@@ -48,6 +48,12 @@ public class InviteFriendPopup extends BorderedDialog
 
         setContents(contents);
 
+        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
+            public void onClick (Widget sender) {
+                hide();
+            }
+        }));
+
         Button send = new Button(_msgs.ifriendSend());
         new StartConvoCallback(send, _subject, _body) {
             public boolean gotResult (Void result) {
@@ -66,12 +72,6 @@ public class InviteFriendPopup extends BorderedDialog
             }
         };
         addButton(send);
-
-        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget sender) {
-                hide();
-            }
-        }));
     }
 
     @Override // from Widget
