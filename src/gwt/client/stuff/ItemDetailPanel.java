@@ -35,6 +35,7 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
+import client.util.ArrayUtil;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
@@ -159,6 +160,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         boolean canEditAndList = userCreatedItem() || CShell.isSupport();
         boolean remixable = isRemixable();
         boolean used = (_item.used != Item.UNUSED);
+        boolean isRoomType = (-1 != ArrayUtil.indexOf(Item.ROOM_TYPES, _item.getType()));
 
         // add a button for deleting this item
         RowPanel buttons = new RowPanel();
@@ -189,7 +191,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // add an activator for this item (and tuck it up next to the in-use message if we have one)
-        if (userOwnsItem() && FlashClients.clientExists()) {
+        if (isRoomType && userOwnsItem() && FlashClients.clientExists()) {
             if (!used) {
                 // if we don't already have a usage message, add a not-in-use message because that
                 // nicely explains the button we're about to add

@@ -143,4 +143,18 @@ public class ArrayUtil
         System.arraycopy(v2, 0, values, v1.length, v2.length);
         return values;
     }
+
+    /**
+     * Return the index of the specified byte, or -1 if not found.
+     */
+    public static int indexOf (byte[] haystack, byte needle)
+    {
+        int count = (haystack == null) ? 0 : haystack.length;
+        for (int ii = 0; ii < count; ii++) {
+            if (haystack[ii] == needle) {
+                return ii;
+            }
+        }
+        return -1;
+    }
 }
