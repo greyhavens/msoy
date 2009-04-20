@@ -4,6 +4,7 @@
 package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -80,7 +82,8 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Loads posts by specific people that are unread by a given member, up to a maximum.
+     * Loads recent threads containing posts by the given posters that are unread by the given
+     * member, up to a maximum. Threads for the given hidden groups are not returned.
      */
     public List<ForumThreadRecord> loadUnreadFriendThreads (
         int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds, int max)
@@ -96,9 +99,11 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Counts the number of posts by specific people that are unread by a given member.
+     * Counts the number of recent threads containing posts by the given posters that are unread by
+     * the given member. Threads for the given hidden groups are not counted.
      */
-    public int countUnreadPosts (int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds)
+    public int countUnreadFriendThreads (
+        int memberId, Set<Integer> posterIds, Set<Integer> hiddenGroupIds)
     {
         if (posterIds.isEmpty()) {
             return 0;
@@ -106,7 +111,10 @@ public class ForumRepository extends DepotRepository
         List<QueryClause> clauses = getUnreadFriendThreadsClauses(
             memberId, posterIds, hiddenGroupIds);
         clauses.add(new FromOverride(ForumThreadRecord.class));
-        return load(CountRecord.class, clauses).count;
+        // This will count the number of unread friends posts in each thread. Since we only care
+        // about the number of threads, return only the number of grouped counts returned.
+        // TODO: there must be a more efficient SQL-native way to do this, maybe count(count(*))?
+        return findAll(CountRecord.class, clauses).size();
     }
 
     /**
@@ -456,14 +464,23 @@ public class ForumRepository extends DepotRepository
     protected List<QueryClause> getUnreadFriendThreadsClauses (
         int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
-        // don't bother with old posts (the whole point is to keep up with friends' recent posts)
-        long cutoff = System.currentTimeMillis() - UNREAD_POSTS_CUTOFF;
-        cutoff -= cutoff % 24*60*60*1000L;
+        // calculate midnight, 30 days ago
+        Calendar cutoff = Calendar.getInstance();
+        cutoff.setTimeInMillis(System.currentTimeMillis());
+        cutoff.add(Calendar.DATE, -UNREAD_POSTS_CUTOFF);
+        cutoff.set(Calendar.HOUR_OF_DAY, 0);
+        cutoff.set(Calendar.MINUTE, 0);
+        cutoff.set(Calendar.SECOND, 0);
+        cutoff.set(Calendar.MILLISECOND, 0);
+
+        // join expressions
         SQLExpression joinRead = new And(
             new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
             new Equals(ReadTrackingRecord.MEMBER_ID, memberId));
         SQLExpression joinThread = new And(
             new Equals(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID));
+
+        // filtering expressions
         List<SQLExpression> conditions = Lists.newArrayListWithCapacity(4);
         conditions.add(new In(ForumMessageRecord.POSTER_ID, authorIds));
         conditions.add(new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
@@ -472,10 +489,14 @@ public class ForumRepository extends DepotRepository
         if (hiddenGroupIds.size() > 0) { // no empty In's
             conditions.add(new Not(new In(ForumThreadRecord.GROUP_ID, hiddenGroupIds)));
         }
-        conditions.add(new GreaterThan(ForumMessageRecord.CREATED, new Timestamp(cutoff)));
+        conditions.add(new GreaterThan(ForumMessageRecord.CREATED,
+            new Timestamp(cutoff.getTimeInMillis())));
+
+        // joins + group + filter
         return Lists.newArrayList(
             new Join(ReadTrackingRecord.class, joinRead).setType(Join.Type.LEFT_OUTER),
             new Join(ForumMessageRecord.class, joinThread).setType(Join.Type.INNER),
+            new GroupBy(ForumThreadRecord.THREAD_ID, ForumThreadRecord.MOST_RECENT_POST_ID),
             new Where(new And(conditions)));
     }
 
@@ -487,6 +508,6 @@ public class ForumRepository extends DepotRepository
         classes.add(ReadTrackingRecord.class);
     }
 
-    /** We don't bother returning unread stuff older than this. */
-    protected static final long UNREAD_POSTS_CUTOFF = 30 * 24 * 60 * 60 * 1000L;
+    /** We don't consider unread friend posts older than this many days. */
+    protected static final int UNREAD_POSTS_CUTOFF = 30;
 }
