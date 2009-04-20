@@ -4,6 +4,7 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.TextBox;
@@ -26,7 +27,7 @@ import client.ui.MsoyUI;
  */
 public class InviteFriendPopup extends BorderedDialog
 {
-    public InviteFriendPopup (final MemberName target)
+    public InviteFriendPopup (final MemberName target, final Command success)
     {
         setHeaderTitle(_msgs.ifriendTitle(""+target));
 
@@ -52,6 +53,9 @@ public class InviteFriendPopup extends BorderedDialog
             public boolean gotResult (Void result) {
                 MsoyUI.info(_msgs.ifriendSent());
                 hide();
+                if (success != null) {
+                    success.execute();
+                }
                 return false;
             }
             protected int getRecipientId () {

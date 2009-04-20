@@ -9,6 +9,7 @@ import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,8 +37,18 @@ public class FriendInviter
      */
     public FriendInviter (MemberName target, String callerId)
     {
+        this(target, callerId, null);
+    }
+
+    /**
+     * Creates a new inviter that will add the supplied target as a friend or dispatch an email
+     * request to do so. The caller id is used to track the event.
+     */
+    public FriendInviter (MemberName target, String callerId, Command success)
+    {
         _target = target;
         _callerId = callerId;
+        _success = success;
     }
 
     // from ClickListener
@@ -65,7 +76,7 @@ public class FriendInviter
                 if (automatic) {
                     doAutomaticFriending();
                 } else {
-                    new InviteFriendPopup(_target).show();
+                    new InviteFriendPopup(_target, _success).show();
                 }
             }
         });
@@ -82,6 +93,9 @@ public class FriendInviter
                 _membersvc.trackClientAction(
                     CShell.frame.getVisitorInfo(), "autoFriended" + _callerId, null,
                     new NoopAsyncCallback());
+                if (_success != null) {
+                    _success.execute();
+                }
             }
         });
     }
@@ -89,6 +103,7 @@ public class FriendInviter
     protected boolean _clicked;
     protected MemberName _target;
     protected String _callerId;
+    protected Command _success;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)

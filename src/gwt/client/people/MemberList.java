@@ -4,8 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -65,20 +65,6 @@ public class MemberList extends PagedGrid<MemberCard>
         return true;
     }
 
-    protected Command removeFriend (final MemberCard card)
-    {
-        return new Command() {
-            public void execute () {
-                _membersvc.removeFriend(card.name.getMemberId(), new InfoCallback<Void>() {
-                    public void onSuccess (Void result) {
-                        MsoyUI.info(_msgs.mlRemoved(card.name.toString()));
-                        removeItem(card);
-                    }
-                });
-            }
-        };
-    }
-
     protected class StandardMemberWidget extends MemberWidget
     {
         public StandardMemberWidget (MemberCard card)
@@ -87,7 +73,7 @@ public class MemberList extends PagedGrid<MemberCard>
         }
 
         @Override
-        protected void addExtras (SmartTable extras, MemberCard card)
+        protected void addExtras (SmartTable extras, final MemberCard card)
         {
             super.addExtras(extras, card);
 
@@ -122,8 +108,11 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // if they are our friend, show the remove friend button
             if (isNotMe && card.isFriend) {
-                onClick = new PromptPopup(
-                    _msgs.mlRemoveConfirm(""+card.name), removeFriend(card));
+                onClick = new FriendRemover(card.name, new Command() {
+                    public void execute () {
+                        removeItem(card);
+                    }
+                });
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/remove.png", onClick));
                 extras.setWidget(row++, 1,

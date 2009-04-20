@@ -6,6 +6,7 @@ package client.people;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -177,23 +178,33 @@ public class ProfileBlurb extends Blurb
         details.add(dbits);
 
         // create our action buttons
-        FlowPanel buttons = MsoyUI.createFlowPanel("Buttons");
-        if (!_pdata.isOurFriend && !isMe) {
-            addButton(buttons, "/images/profile/addfriend.png", _msgs.inviteFriend(),
-                      new FriendInviter(_name, "Profile"));
+        _buttons = MsoyUI.createFlowPanel("Buttons");
+        if (!isMe) {
+            Command removeFriendBtn = new Command() {
+                public void execute () {
+                    _buttons.remove(_friendBtn);
+                }
+            };
+            if (_pdata.isOurFriend) {
+                _friendBtn = addButton(_buttons, "/images/profile/remove.png",
+                    _msgs.removeFriend(), new FriendRemover(_pdata.name, removeFriendBtn));
+            } else {
+                _friendBtn = addButton(_buttons, "/images/profile/addfriend.png",
+                    _msgs.inviteFriend(), new FriendInviter(_name, "Profile", removeFriendBtn));
+            }
+            if (!CShell.isGuest()) {
+                addButton(_buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
+                    Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
+            }
         }
-        if (!CShell.isGuest() && !isMe) {
-            addButton(buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
-                      Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
-        }
-        addButton(buttons, "/images/profile/visithome.png", _msgs.visitHome(),
+        addButton(_buttons, "/images/profile/visithome.png", _msgs.visitHome(),
                   Pages.WORLD, "m" + _name.getMemberId());
-        addButton(buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
+        addButton(_buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
                   Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
-        addButton(buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
+        addButton(_buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
         if (CShell.isAdmin()) {
-            buttons.add(new Button ("Admin: Send feed", new ClickListener() {
+            _buttons.add(new Button("Admin: Send feed", new ClickListener() {
                 public void onClick (Widget sender) {
                     _profilesvc.sendRetentionEmail(_name.getMemberId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
@@ -212,7 +223,7 @@ public class ProfileBlurb extends Blurb
         content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         content.setWidget(0, 2, details);
         content.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        content.setWidget(1, 1, buttons, 2, null);
+        content.setWidget(1, 1, _buttons, 2, null);
         setContent(content);
 
         // display the edit button if this is our profile
@@ -233,10 +244,13 @@ public class ProfileBlurb extends Blurb
         buttons.add(link);
     }
 
-    protected void addButton (FlowPanel buttons, String path, String text, ClickListener listener)
+    protected Widget addButton (FlowPanel buttons, String path, String text, ClickListener listener)
     {
-        buttons.add(MsoyUI.createActionImage(path, text, listener));
-        buttons.add(MsoyUI.createActionLabel(text, "Link", listener));
+        Widget pair = MsoyUI.createButtonPair(
+            MsoyUI.createActionImage(path, text, listener),
+            MsoyUI.createActionLabel(text, "Link", listener));
+        buttons.add(pair);
+        return pair;
     }
 
     protected void addDetail (SmartTable details, String label, String text)
@@ -416,6 +430,10 @@ public class ProfileBlurb extends Blurb
     protected CheckBox _eshowAge, _egreeter;
     protected ListBox _esex;
     protected DateFields _ebirthday;
+
+    protected FlowPanel _buttons;
+    /** The widgetry for adding or removing this person as a friend. */
+    protected Widget _friendBtn;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
