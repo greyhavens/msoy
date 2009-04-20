@@ -1004,7 +1004,7 @@ public class RoomManager extends SpotSceneManager
 
         // set up our room object
         _roomObj = (RoomObject) _plobj;
-        _roomObj.setRoomService(_invmgr.registerDispatcher(new RoomDispatcher(this)));
+        _roomObj.setRoomService(addDispatcher(new RoomDispatcher(this)));
         _roomObj.addListener(_roomListener);
 
         // register ourselves in our peer object
@@ -1148,7 +1148,6 @@ public class RoomManager extends SpotSceneManager
     protected void didShutdown ()
     {
         _roomObj.removeListener(_roomListener);
-        _invmgr.clearDispatcher(_roomObj.roomService);
 
         super.didShutdown();
 

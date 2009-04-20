@@ -241,10 +241,10 @@ public class AVRGameManager extends PlaceManager
         _gameId = cfg.getGameId();
 
         _gameObj = (AVRGameObject)_plobj;
-        _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
-        _gameObj.setContentService(_invmgr.registerDispatcher(new ContentDispatcher(this)));
-        _gameObj.setPrizeService(_invmgr.registerDispatcher(new PrizeDispatcher(this)));
-        _gameObj.setMessageService(_invmgr.registerDispatcher(new WhirledGameMessageDispatcher(
+        _gameObj.setAvrgService(addDispatcher(new AVRGameDispatcher(this)));
+        _gameObj.setContentService(addDispatcher(new ContentDispatcher(this)));
+        _gameObj.setPrizeService(addDispatcher(new PrizeDispatcher(this)));
+        _gameObj.setMessageService(addDispatcher(new WhirledGameMessageDispatcher(
             new WhirledGameMessageHandler(_gameObj) {
                 @Override protected ClientObject getAudienceMember (int id)
                     throws InvocationException {
@@ -276,7 +276,7 @@ public class AVRGameManager extends PlaceManager
                 }
             })));
         
-        _gameObj.setPropertiesService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(
+        _gameObj.setPropertiesService(addDispatcher(new PropertySpaceDispatcher(
             new PropertySpaceHandler(_gameObj) {
                 @Override protected void validateUser (ClientObject caller)
                     throws InvocationException {
@@ -732,8 +732,6 @@ public class AVRGameManager extends PlaceManager
     protected void didShutdown ()
     {
         if (_gameAgentObj != null) {
-            _invmgr.clearDispatcher(_gameAgentObj.agentService);
-            _invmgr.clearDispatcher(_gameAgentObj.propertiesService);
             if (_gameAgentObj.isActive()) {
                 _breg.destroyAgent(_gameAgentObj);
             }
@@ -743,12 +741,6 @@ public class AVRGameManager extends PlaceManager
         if (_lifecycleObserver != null) {
             _lifecycleObserver.avrGameDidShutdown(this);
         }
-
-        _invmgr.clearDispatcher(_gameObj.avrgService);
-        _invmgr.clearDispatcher(_gameObj.contentService);
-        _invmgr.clearDispatcher(_gameObj.prizeService);
-        _invmgr.clearDispatcher(_gameObj.messageService);
-        _invmgr.clearDispatcher(_gameObj.propertiesService);
 
         _sceneCheck.cancel();
 
@@ -945,9 +937,9 @@ public class AVRGameManager extends PlaceManager
         agent.gameId = gameId;
         agent.code = code;
 
-        agent.agentService = _invmgr.registerDispatcher(new AVRGameAgentDispatcher(this));
+        agent.agentService = addDispatcher(new AVRGameAgentDispatcher(this));
 
-        agent.propertiesService = _invmgr.registerDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
+        agent.propertiesService = addDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
             @Override protected void validateUser (ClientObject caller)
                 throws InvocationException {
                 if (!isAgent(caller)) {
