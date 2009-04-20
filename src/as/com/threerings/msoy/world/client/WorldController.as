@@ -1092,7 +1092,7 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function addMemberMenuItems (
         name :MemberName, menuItems :Array, addPlaceItems :Boolean = false,
-        addAvatarItems :Boolean = false, addVisitItems :Boolean = false) :void
+        addAvatarItems :Boolean = false) :void
     {
         const memId :int = name.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
@@ -1117,6 +1117,8 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
         } else {
+            const isFriend :Boolean = us.friends.containsKey(memId);
+
             // commented out: we are normally constructed from separated names, so we lose the viz
 //            var icon :* = null;
 //            if (name is VizMemberName) {
@@ -1134,15 +1136,15 @@ public class WorldController extends MsoyController
 
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                              command: OPEN_CHANNEL, arg: name, enabled: !muted });
-            menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
-                             command: VIEW_MEMBER, arg: memId });
-            if (addVisitItems) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.visit_member"),
+            if (isFriend) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.visit_friend"),
                                  command: VISIT_MEMBER, arg: memId });
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
                              command: GO_MEMBER_HOME, arg: memId });
-            if (!us.friends.containsKey(memId)) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
+                             command: VIEW_MEMBER, arg: memId });
+            if (!isFriend) {
                 menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
                                  command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }

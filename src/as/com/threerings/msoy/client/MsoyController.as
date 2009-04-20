@@ -511,7 +511,7 @@ public class MsoyController extends Controller
      */
     public function addMemberMenuItems (
         member :MemberName, menuItems :Array, addPlaceItems :Boolean = false,
-        addAvatarItems :Boolean = false, addVisitItems :Boolean = false) :void
+        addAvatarItems :Boolean = false) :void
     {
         // nothing by default
     }
