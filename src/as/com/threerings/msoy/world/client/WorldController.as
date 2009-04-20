@@ -1117,7 +1117,7 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
         } else {
-            const isFriend :Boolean = us.friends.containsKey(memId);
+            const friend :FriendEntry = us.friends.get(memId) as FriendEntry;
 
             // commented out: we are normally constructed from separated names, so we lose the viz
 //            var icon :* = null;
@@ -1136,7 +1136,7 @@ public class WorldController extends MsoyController
 
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                              command: OPEN_CHANNEL, arg: name, enabled: !muted });
-            if (isFriend) {
+            if ((friend != null) && friend.online) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.visit_friend"),
                                  command: VISIT_MEMBER, arg: memId });
             }
@@ -1144,7 +1144,7 @@ public class WorldController extends MsoyController
                              command: GO_MEMBER_HOME, arg: memId });
             menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                              command: VIEW_MEMBER, arg: memId });
-            if (!isFriend) {
+            if (friend == null) {
                 menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
                                  command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
