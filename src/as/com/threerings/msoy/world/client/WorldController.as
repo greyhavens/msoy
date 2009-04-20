@@ -1091,8 +1091,8 @@ public class WorldController extends MsoyController
 
     // from MsoyController
     override public function addMemberMenuItems (
-        name :MemberName, menuItems :Array,
-        addPlaceItems :Boolean = false, addAvatarItems :Boolean = false) :void
+        name :MemberName, menuItems :Array, addPlaceItems :Boolean = false,
+        addAvatarItems :Boolean = false, addVisitItems :Boolean = false) :void
     {
         const memId :int = name.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
@@ -1136,6 +1136,10 @@ public class WorldController extends MsoyController
                              command: OPEN_CHANNEL, arg: name, enabled: !muted });
             menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                              command: VIEW_MEMBER, arg: memId });
+            if (addVisitItems) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.visit_member"),
+                                 command: VISIT_MEMBER, arg: memId });
+            }
             menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
                              command: GO_MEMBER_HOME, arg: memId });
             if (!us.friends.containsKey(memId)) {
