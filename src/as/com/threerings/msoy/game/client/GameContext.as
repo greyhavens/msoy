@@ -47,15 +47,15 @@ public interface GameContext extends ParlorContext
     function showGameInstructions () :void;
 
     /**
-     * Requests that we display the game's lobby. 
+     * Requests that we display the game's lobby.
      */
     function showGameLobby () :void;
-    
+
     /**
      * Requests that we open the appropriate area of the game's shop.
      */
     function showGameShop (itemType :int, catalogId :int = 0) :void;
-    
+
     /**
      * Requests that we open the game invite page.
      */
@@ -70,12 +70,12 @@ public interface GameContext extends ParlorContext
      * Returns an array of FriendEntry records for this player's online friends.
      */
     function getOnlineFriends () :Array;
-    
+
     /**
      * Retrieves the invite token that was passed to the game.
      */
     function getInviteToken () :String;
-    
+
     /**
      * Retrieves the ID of the member who invited the current player to this game.
      */

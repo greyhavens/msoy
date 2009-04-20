@@ -25,6 +25,7 @@ import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
@@ -70,7 +71,7 @@ public class AVRGameBackend extends ControlBackend
         _playerObj = _gctx.getPlayerObject();
 
         _contentListener = new ContentListener(_wctx.getMyId(), ctrl.getGameId(), this);
-        _playerObj.addListener(_contentListener); 
+        _playerObj.addListener(_contentListener);
     }
 
     // from ControlBackend
@@ -191,7 +192,7 @@ public class AVRGameBackend extends ControlBackend
 
     public function signalReceived (name :String, value :ByteArray) :void
     {
-        callUserCode("signalReceived_v1", name, ObjectMarshaller.decode(value));        
+        callUserCode("signalReceived_v1", name, ObjectMarshaller.decode(value));
     }
 
     public function processChatMessage (entityIdent :String, msg :String) :void
@@ -304,6 +305,7 @@ public class AVRGameBackend extends ControlBackend
         o["stageToLocationAtHeight_v1"] = stageToLocationAtHeight_v1;
         o["roomToLocationAtDepth_v1"] = stageToLocationAtDepth_v1; // backwards compat.
         o["roomToLocationAtHeight_v1"] = stageToLocationAtHeight_v1; // backwards compat.
+        o["showPage_v1"] = showPage_v1;
         o["showInvitePage_v1"] = showInvitePage_v1;
         o["getInviteToken_v1"] = getInviteToken_v1;
         o["getInviterMemberId_v1"] = getInviterMemberId_v1;
@@ -785,19 +787,26 @@ public class AVRGameBackend extends ControlBackend
 
         return null;
     }
-    
+
+    protected function showPage_v1 (token :String) :Boolean
+    {
+        // handleViewUrl will do the "right thing"
+        _wctx.getMsoyController().handleViewUrl(DeploymentConfig.serverURL + "#" + token);
+        return true;
+    }
+
     // LocalSubControl
     protected function showInvitePage_v1 (defmsg :String, token :String = "") :void
     {
         _gctx.showInvitePage(defmsg, token, getRoomId());
     }
-    
+
     // LocalSubControl
     protected function getInviteToken_v1 () :String
     {
         return _gctx.getInviteToken();
     }
-    
+
     // LocalSubControl
     protected function getInviterMemberId_v1 () :int
     {

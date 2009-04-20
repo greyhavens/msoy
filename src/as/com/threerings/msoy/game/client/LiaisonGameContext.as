@@ -66,7 +66,7 @@ public class LiaisonGameContext
             _chatDtr.addChatFilter(filter);
         }
     }
-    
+
     // from PresentsContext
     public function getClient () :Client
     {
@@ -147,16 +147,16 @@ public class LiaisonGameContext
         _wctx.getGameDirector().backToWhirled(showLobby);
     }
 
-    // from GameContext 
-    public function showGameLobby () :void
-    {
-        _wctx.getGameDirector().displayCurrentLobby();
-    }
-    
     // from GameContext
     public function showGameInstructions () :void
     {
         _wctx.getGameDirector().viewGameInstructions();
+    }
+
+    // from GameContext
+    public function showGameLobby () :void
+    {
+        _wctx.getGameDirector().displayCurrentLobby();
     }
 
     // from GameContext
@@ -182,13 +182,13 @@ public class LiaisonGameContext
     {
         return _wctx.getMemberObject().getSortedOnlineFriends();
     }
-    
+
     // from GameContext
     public function getInviteToken () :String
     {
     	return _wctx.getGameDirector().getInviteToken();
     }
-    
+
     // from GameContext
     public function getInviterMemberId () :int
     {

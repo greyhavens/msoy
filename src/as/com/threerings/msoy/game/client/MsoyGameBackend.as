@@ -17,6 +17,7 @@ import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
@@ -93,6 +94,15 @@ public class MsoyGameBackend extends WhirledGameBackend
         reportGameError((_ctx as GameContext).getMsoyContext().getMessageManager().
             getBundle(MsoyGameCodes.GAME_BUNDLE).
             xlate(MessageBundle.compose("e.game_error", cause)));
+    }
+
+    // from WhirledGameBackend
+    override protected function showPage_v1 (token :String) :Boolean
+    {
+        // handleViewUrl will do the "right thing"
+        (_ctx as GameContext).getMsoyContext().getMsoyController().handleViewUrl(
+            DeploymentConfig.serverURL + "#" + token);
+        return true;
     }
 
     // from WhirledGameBackend
