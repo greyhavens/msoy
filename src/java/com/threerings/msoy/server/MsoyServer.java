@@ -47,6 +47,7 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
+import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
 
@@ -214,7 +215,7 @@ public class MsoyServer extends MsoyBaseServer
         _dictMan.init("data/dictionary");
 
         // tell GameManager how to identify our users
-        GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
+        GameManager.setUserIdentifier(new UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
                 return ((PlayerObject) bodyObj).getMemberId();
             }
