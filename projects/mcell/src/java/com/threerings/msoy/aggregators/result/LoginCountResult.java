@@ -23,8 +23,13 @@ public class LoginCountResult implements AggregatedResult<LoginCountResult>
     {
         EventName name = eventData.getEventName();
 
-        // register trackers both from LOGIN and VISITOR_INFO_CREATED events 
-        _uniqueVisitors.add((String)eventData.get("tracker"));
+        // register trackers both from LOGIN and VISITOR_INFO_CREATED events, coping with 
+        // old events where tracker was called sessionToken
+        if (eventData.containsKey("tracker")) {
+            _uniqueVisitors.add((String)eventData.get("tracker"));
+        } else if (eventData.containsKey("sessionToken")) {
+            _uniqueVisitors.add((String)eventData.get("sessionToken"));
+        }
 
         // the real juice is in the LOGIN event though
         if (LOGIN.equals(name)) {
