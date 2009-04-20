@@ -48,17 +48,15 @@ public class AVRGamePanel extends UIComponent
     // from PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
+        log.info("Entering AVRG", "plobj", plobj);
         _gameObj = (plobj as AVRGameObject);
-
-        log.info("Entering AVRG [plobj=" + plobj + "]");
-
         getMsoyCtx().getUIState().setInAVRGame(true);
     }
 
     // from PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
-        log.info("Leaving AVRG [plobj=" + plobj + "]");
+        log.info("Leaving AVRG", "plobj", plobj);
 
         if (_mediaHolder != null) {
             _mediaHolder.shutdown();
