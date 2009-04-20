@@ -437,9 +437,10 @@ public class MediaControls extends Sprite
         if (isNaN(time)) {
             return UNKNOWN_TIME;
         }
+        time = Math.round(time);
         const mins :int = int(time / 60);
         time -= mins * 60;
-        var secString :String = String(Math.round(time));
+        var secString :String = String(time);
         if (secString.length == 1) {
             secString = "0" + secString;
         }
