@@ -20,6 +20,7 @@ import com.threerings.underwire.web.client.UnderwireServiceAsync;
 import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.data.AccountName;
 
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -89,6 +90,12 @@ public class SupportPage extends Page
             @Override public AccountPopup createAccountPanel (
                 WebContext ctx, Account account, boolean autoShowRelated) {
                 return new MsoyAccountPopup(ctx, account, autoShowRelated);
+            }
+        };
+
+        _webctx.frame = new WebContext.Frame () {
+            public String md5hex (String text) {
+                return CShell.frame.md5hex(text);
             }
         };
 
