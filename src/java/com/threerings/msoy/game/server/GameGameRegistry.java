@@ -107,7 +107,7 @@ import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -274,8 +274,8 @@ public class GameGameRegistry
 
         // make sure they're actually playing the right game
         PlaceManager plmgr = _placeReg.getPlaceManager(plobj.getPlaceOid());
-        if (plmgr == null || !(plmgr.getConfig() instanceof MsoyGameConfig) ||
-            ((MsoyGameConfig)plmgr.getConfig()).getGameId() != gameId) {
+        if (plmgr == null || !(plmgr.getConfig() instanceof ParlorGameConfig) ||
+            ((ParlorGameConfig)plmgr.getConfig()).getGameId() != gameId) {
             return;
         }
 
@@ -1039,14 +1039,14 @@ public class GameGameRegistry
         }
 
         // if this is an AVRG, we should be doing something different on the client
-        if (!(plman instanceof MsoyGameManager)) {
+        if (!(plman instanceof ParlorGameManager)) {
             log.warning("Requested to join player that's probably in an AVRG ", "pid", playerId,
                         "mgr", plman.getClass().getName());
             return 0;
         }
 
         // check to make sure the game that they're in is watchable
-        MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
+        ParlorGameConfig gameConfig = (ParlorGameConfig) plman.getConfig();
         MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
         if (matchConfig.unwatchable) {
             return 0;

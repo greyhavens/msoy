@@ -68,7 +68,7 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
     }
 
     /**
-     * Called by {@link MsoyGameManager} when it receives a trace request.
+     * Called by {@link ParlorGameManager} when it receives a trace request.
      */
     public void recordAgentTrace (String trace)
     {

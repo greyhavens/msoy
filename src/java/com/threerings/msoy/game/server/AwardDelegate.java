@@ -359,7 +359,7 @@ public class AwardDelegate extends RatingDelegate
             /*_gameReg.addToSetStat(
                 memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
 
-            if (isMultiplayer() && ((MsoyGameManager) _gmgr).getPlayerCount() > 1) {
+            if (isMultiplayer() && ((ParlorGameManager) _gmgr).getPlayerCount() > 1) {
                 // track multiplayer game wins
                 if (player.score == winningScore) {
                     _gameReg.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
@@ -543,7 +543,7 @@ public class AwardDelegate extends RatingDelegate
             // report to the game that this player earned some flow
             DObject user = _omgr.getObject(player.playerOid);
             if (user != null) {
-                boolean hasCookie = (_plmgr instanceof MsoyGameManager) &&
+                boolean hasCookie = (_plmgr instanceof ParlorGameManager) &&
                     ((WhirledGameObject)_plmgr.getPlaceObject()).userCookies.containsKey(
                     user.getOid());
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
@@ -585,7 +585,7 @@ public class AwardDelegate extends RatingDelegate
 
     protected boolean isMultiplayer ()
     {
-        return ((MsoyGameManager) _gmgr).isMultiplayer();
+        return ((ParlorGameManager) _gmgr).isMultiplayer();
     }
 
     protected Percentiler getScoreDistribution (int gameMode)

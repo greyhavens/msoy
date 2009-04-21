@@ -24,7 +24,7 @@ import com.threerings.parlor.server.TableManager;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -50,7 +50,7 @@ public class MsoyTableManager extends TableManager
     @Override
     protected GameConfig createConfig (Table table)
     {
-        MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
+        ParlorGameConfig config = (ParlorGameConfig)super.createConfig(table);
         _lmgr.initConfig(config);
         return config;
     }

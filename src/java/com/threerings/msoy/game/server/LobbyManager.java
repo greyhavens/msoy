@@ -41,7 +41,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTableConfig;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -149,7 +149,7 @@ public class LobbyManager
      * Initialize the specified config.
      * Exposed to allow MsoyTableManager to call it.
      */
-    public void initConfig (MsoyGameConfig config)
+    public void initConfig (ParlorGameConfig config)
     {
         config.init(_lobj.game, _lobj.gameDef, ServerConfig.getGameGroupId(_lobj.game.groupId));
     }
@@ -186,7 +186,7 @@ public class LobbyManager
         }
 
         // start up a single player game
-        MsoyGameConfig config = new MsoyGameConfig();
+        ParlorGameConfig config = new ParlorGameConfig();
         initConfig(config);
         if (_lobj.gameDef.params != null) {
             for (Parameter param : _lobj.gameDef.params) {
@@ -207,7 +207,7 @@ public class LobbyManager
 
         // if this is a party or seated continuous game, we need to tell the player to head
         // into the game because the game manager ain't oging to do it for us
-        if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
+        if (_lobj.gameDef.match.getMatchType() != ParlorGameConfig.SEATED_GAME) {
             ParlorSender.gameIsReady(player, table.gameOid);
         }
         return true;
@@ -219,7 +219,7 @@ public class LobbyManager
     public boolean playNowMulti (PlayerObject player)
     {
         // if this is a party game (or seated continuous); send them into an existing game
-        if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
+        if (_lobj.gameDef.match.getMatchType() != ParlorGameConfig.SEATED_GAME) {
             // TODO: order the tables most occupants to least?
             for (Table table : _lobj.tables) {
                 if (table.gameOid > 0 && shouldJoinGame(player, table)) {

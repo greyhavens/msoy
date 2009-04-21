@@ -33,8 +33,8 @@ import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
-import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
@@ -46,9 +46,9 @@ import static com.threerings.msoy.Log.log;
  * Manages a MetaSOY game.
  */
 @EventThread
-public class MsoyGameManager extends WhirledGameManager
+public class ParlorGameManager extends WhirledGameManager
 {
-    public MsoyGameManager ()
+    public ParlorGameManager ()
     {
         super();
     }
@@ -172,7 +172,7 @@ public class MsoyGameManager extends WhirledGameManager
         if (_config == null) {
             return super.where();
         }
-        MsoyGameConfig cfg = (MsoyGameConfig)_config;
+        ParlorGameConfig cfg = (ParlorGameConfig)_config;
         StringBuilder sbuf = new StringBuilder();
         sbuf.append("[");
         sbuf.append(cfg.game.name).append(":").append(cfg.getGameId());
@@ -187,7 +187,7 @@ public class MsoyGameManager extends WhirledGameManager
     @Override // from PlaceManager
     protected PlaceObject createPlaceObject ()
     {
-        return new MsoyGameObject();
+        return new ParlorGameObject();
     }
 
     @Override // from PlaceManager
@@ -195,7 +195,7 @@ public class MsoyGameManager extends WhirledGameManager
     {
         super.didStartup();
 
-        _gameObj = (MsoyGameObject) _plobj;
+        _gameObj = (ParlorGameObject) _plobj;
     }
 
     @Override // from PlaceManager
@@ -215,7 +215,7 @@ public class MsoyGameManager extends WhirledGameManager
     protected void resolveContentOwnership (BodyObject body, final ResultListener<Void> listener)
     {
         final PlayerObject plobj = (PlayerObject)body;
-        final Game game = ((MsoyGameConfig)getGameConfig()).game;
+        final Game game = ((ParlorGameConfig)getGameConfig()).game;
         if (plobj.isContentResolved(game.gameId) || plobj.isContentResolving(game.gameId)) {
             listener.requestCompleted(null);
             return;
@@ -264,7 +264,7 @@ public class MsoyGameManager extends WhirledGameManager
     }
 
     /** A casted reference to the GameObject. */
-    protected MsoyGameObject _gameObj;
+    protected ParlorGameObject _gameObj;
 
     /** A delegate that takes care of awarding flow and ratings. */
     protected AwardDelegate _awardDelegate;

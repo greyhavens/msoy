@@ -163,7 +163,7 @@ public class PlayerObject extends WhirledPlayerObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plObj)
     {
-        if (plObj instanceof MsoyGameObject) {
+        if (plObj instanceof ParlorGameObject) {
             return new MsoyGameOccupantInfo(this);
 
         } else if (plObj instanceof AVRGameObject)  {

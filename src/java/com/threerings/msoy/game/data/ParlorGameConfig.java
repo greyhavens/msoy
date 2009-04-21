@@ -11,7 +11,7 @@ import com.threerings.msoy.item.data.all.Game;
 /**
  * A game config for a metasoy game.
  */
-public class MsoyGameConfig extends ToyBoxGameConfig
+public class ParlorGameConfig extends ToyBoxGameConfig
 {
     /** The game item. */
     public Game game;
@@ -34,6 +34,6 @@ public class MsoyGameConfig extends ToyBoxGameConfig
     public String getManagerClassName ()
     {
         String manager = getGameDefinition().manager;
-        return (manager != null) ? manager : "com.threerings.msoy.game.server.MsoyGameManager";
+        return (manager != null) ? manager : "com.threerings.msoy.game.server.ParlorGameManager";
     }
 }

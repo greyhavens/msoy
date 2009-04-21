@@ -13,7 +13,7 @@ import com.google.inject.Singleton;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.crowd.data.PlaceConfig;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -29,11 +29,11 @@ public class HostedGameManager
     public ClassLoader getClassLoader (PlaceConfig config)
     {
         // if this is not a game config, we need not do anything fancy
-        if (!(config instanceof MsoyGameConfig)) {
+        if (!(config instanceof ParlorGameConfig)) {
             return null;
         }
 
-        MsoyGameConfig gconfig = (MsoyGameConfig)config;
+        ParlorGameConfig gconfig = (ParlorGameConfig)config;
         String manager = gconfig.getGameDefinition().manager;
         if (manager == null) {
             return null; // if no custom manager is specified, we're groovy

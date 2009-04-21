@@ -23,7 +23,7 @@ import com.threerings.msoy.bureau.server.ThaneWorldProvider;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.presents.client.InvocationService.ResultListener;
@@ -88,7 +88,7 @@ public class RoomRegistry extends PlaceRegistry
     @Override // from PlaceRegistry
     protected BodyLocator selectLocator (PlaceConfig config)
     {
-        if (config instanceof MsoyGameConfig) { // TODO: avrgs?
+        if (config instanceof ParlorGameConfig) { // TODO: avrgs?
             return _plocator;
         } else {
             return super.selectLocator(config);
