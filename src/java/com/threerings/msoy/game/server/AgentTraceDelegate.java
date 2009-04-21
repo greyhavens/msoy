@@ -51,8 +51,9 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
      */
     public AgentTraceDelegate (int gameId, int minInterval, int maxInterval)
     {
-        Preconditions.checkArgument(minInterval >= 0 && maxInterval >= minInterval,
-            "Bad intervals, must have 0 <= min <= max");
+        Preconditions.checkArgument((minInterval == 0 && maxInterval == 0) ||
+                                    (minInterval >= 0 && maxInterval >= minInterval),
+                                    "Bad intervals, must have 0 == min == max or 0 <= min <= max");
 
         _gameId = gameId;
 
