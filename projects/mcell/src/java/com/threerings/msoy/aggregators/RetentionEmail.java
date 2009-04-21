@@ -67,25 +67,31 @@ public class RetentionEmail
         throws IOException
     {
         // count up how many people who were sent an email logged back in, group by subject line
-        int totalSent = 0;
+        CountHashMap<String> sent = new CountHashMap<String>();
         CountHashMap<String> respondents = new CountHashMap<String>();
         for (Map.Entry<String, Set<Integer>> entry : mailings.sent.entrySet()) {
+            sent.incrementCount(entry.getKey(), entry.getValue().size());
             for (int memberId : entry.getValue()) {
                 int count = logins.logins.contains(memberId) ? 1 : 0;
                 respondents.incrementCount(entry.getKey(), count);
             }
-            totalSent += entry.getValue().size();
         }
 
         // create our standard output columns
         Map<String, Object> eventData = Maps.newHashMap();
         eventData.put("totalRespondents", respondents.getTotalCount());
-        eventData.put("mailings", totalSent);
+        eventData.put("mailings", sent.getTotalCount());
         eventData.put("date", new Date(key.get()));
 
-        // and one output column per subject line
+        // and 3 output columns per subject line
         for (String subjLine : _subjectLines) {
-            eventData.put(subjLine, respondents.getCount(subjLine));
+            // number of responses by subject line
+            eventData.put(subjLine + "Rsp", respondents.getCount(subjLine));
+            // number sent by subject line
+            eventData.put(subjLine + "Sent", sent.getCount(subjLine));
+            // response rate (%) by subject line
+            float rate = (float)(respondents.getCount(subjLine)) / sent.getCount(subjLine);
+            eventData.put(subjLine + "Pct", (int)(rate * 100));
         }
 
         // write the event
