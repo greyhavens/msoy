@@ -6,7 +6,7 @@ package com.threerings.msoy.game.client {
 import com.whirled.game.client.ThaneGameBackend;
 import com.whirled.game.client.ThaneGameController;
 
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameObject;
 
 /** Msoy-specific game controller. */
 public class MsoyThaneGameController extends ThaneGameController
@@ -21,7 +21,7 @@ public class MsoyThaneGameController extends ThaneGameController
     override protected function createBackend () :ThaneGameBackend
     {
         // create the msoy-specific subclass
-        return new MsoyThaneGameBackend(_ctx, _gameObj as MsoyGameObject, this);
+        return new MsoyThaneGameBackend(_ctx, _gameObj as ParlorGameObject, this);
     }
 }
 

@@ -15,7 +15,6 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.client.LobbyService;
-import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
  * Customizes the MsoyController for operation in the standalone game client.

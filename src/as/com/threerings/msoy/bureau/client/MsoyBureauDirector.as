@@ -5,10 +5,12 @@ package com.threerings.msoy.bureau.client {
 
 import com.threerings.bureau.client.Agent;
 import com.threerings.bureau.data.AgentObject;
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
+
 import com.whirled.bureau.client.WhirledBureauDirector;
 import com.whirled.bureau.data.GameAgentObject;
+
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
 /** Msoy-specific bureau director. */
 public class MsoyBureauDirector extends WhirledBureauDirector
@@ -24,15 +26,12 @@ public class MsoyBureauDirector extends WhirledBureauDirector
     protected override function createAgent (agentObj :AgentObject) :Agent
     {
         if (agentObj is GameAgentObject) {
-            // Create the msoy subclass
-            return new MsoyGameAgent(_ctx as MsoyBureauContext);
-
+            return new ParlorGameAgent(_ctx as MsoyBureauContext);
         } else if (agentObj is AVRGameAgentObject) {
-            // Create the AVR agent
             return new AVRGameAgent(_ctx as MsoyBureauContext);
+        } else {
+            throw new Error("Unknown type " + agentObj);
         }
-
-        throw new Error("Unknown type");
     }
 }
 

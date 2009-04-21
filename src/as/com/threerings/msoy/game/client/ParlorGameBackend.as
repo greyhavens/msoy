@@ -25,16 +25,16 @@ import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.item.data.all.ItemTypes;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.game.data.ParlorGameObject;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
  */
-public class MsoyGameBackend extends WhirledGameBackend
+public class ParlorGameBackend extends WhirledGameBackend
 {
-    public function MsoyGameBackend (
-        ctx :GameContext, gameObj :MsoyGameObject, ctrl :MsoyGameController)
+    public function ParlorGameBackend (
+        ctx :GameContext, gameObj :ParlorGameObject, ctrl :ParlorGameController)
     {
         super(ctx, gameObj, ctrl);
     }

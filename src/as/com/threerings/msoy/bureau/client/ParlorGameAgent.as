@@ -8,13 +8,13 @@ import com.whirled.bureau.client.GameAgentController;
 import com.whirled.bureau.util.WhirledBureauContext;
 
 import com.threerings.msoy.game.client.MsoyThaneGameController;
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameObject;
 
 /** Msoy-specific game agent. */
-public class MsoyGameAgent extends WhirledGameAgent
+public class ParlorGameAgent extends WhirledGameAgent
 {
     /** Creates a new agent */
-    public function MsoyGameAgent (ctx :WhirledBureauContext)
+    public function ParlorGameAgent (ctx :WhirledBureauContext)
     {
         super(ctx);
     }
@@ -25,7 +25,7 @@ public class MsoyGameAgent extends WhirledGameAgent
     {
         // create the msoy subclass
         var ctrl :MsoyThaneGameController = new MsoyThaneGameController();
-        ctrl.init(_ctx, _gameObj as MsoyGameObject, this, gameAgentObj.config);
+        ctrl.init(_ctx, _gameObj as ParlorGameObject, this, gameAgentObj.config);
         return ctrl;
     }
 }

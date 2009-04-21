@@ -16,10 +16,10 @@ import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.OccupantReporter;
 import com.threerings.msoy.client.TopPanel;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.game.data.ParlorGameObject;
 
-public class MsoyGameController extends WhirledGameController
+public class ParlorGameController extends WhirledGameController
     implements BootablePlaceController
 {
     // from PlaceController
@@ -33,7 +33,7 @@ public class MsoyGameController extends WhirledGameController
         // dispatch an event with our current location and (lack of) owner info
         var top :TopPanel = (_pctx as GameContext).getMsoyContext().getTopPanel();
         top.dispatchEvent(new ValueEvent(TopPanel.LOCATION_NAME_CHANGED,
-                                         (_gconfig as MsoyGameConfig).game.name));
+                                         (_gconfig as ParlorGameConfig).game.name));
         top.dispatchEvent(new ValueEvent(TopPanel.LOCATION_OWNER_CHANGED, null));
     }
 
@@ -56,12 +56,12 @@ public class MsoyGameController extends WhirledGameController
     // from BaseGameController
     override protected function createBackend () :BaseGameBackend
     {
-        return new MsoyGameBackend(_ctx as GameContext, _gameObj as MsoyGameObject, this);
+        return new ParlorGameBackend(_ctx as GameContext, _gameObj as ParlorGameObject, this);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        return new MsoyGamePanel((ctx as GameContext), this);
+        return new ParlorGamePanel((ctx as GameContext), this);
     }
 
     /** Reports occupant entry and exit. */

@@ -36,7 +36,7 @@ import com.threerings.msoy.ui.SimpleGrid;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 /**
@@ -137,7 +137,7 @@ public class TableCreationPanel extends VBox
             new MsoyTableConfigurator(plparam, wparam, pvparam, tableName);
         tconfigger.init(_ctx, gconf);
 
-        var config :MsoyGameConfig = new MsoyGameConfig();
+        var config :ParlorGameConfig = new ParlorGameConfig();
         config.init(_game, _gameDef, _game.groupId); // groupId might be 0 instead of the fallback
         gconf.setGameConfig(config);
 

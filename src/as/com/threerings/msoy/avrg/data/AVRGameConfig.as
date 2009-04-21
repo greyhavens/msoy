@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
- * Configuration for an AVR game. This is basically BaseGameConfig + MsoyGameConfig,
+ * Configuration for an AVR game. This is basically BaseGameConfig + ParlorGameConfig,
  * but without the GameConfig dependency.
  */
 public class AVRGameConfig extends PlaceConfig

@@ -7,7 +7,7 @@ import com.threerings.presents.util.PresentsContext;
 
 import com.whirled.game.client.ThaneGameBackend;
 
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameObject;
 
 /** Msoy-specific thane game backend. */
 public class MsoyThaneGameBackend extends ThaneGameBackend
@@ -15,7 +15,7 @@ public class MsoyThaneGameBackend extends ThaneGameBackend
     /** Creates a new thane game backend. */
     public function MsoyThaneGameBackend (
         ctx :PresentsContext,
-        gameObj :MsoyGameObject,
+        gameObj :ParlorGameObject,
         ctrl :MsoyThaneGameController)
     {
         super(ctx, gameObj, ctrl);

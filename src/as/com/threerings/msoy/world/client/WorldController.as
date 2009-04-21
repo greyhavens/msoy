@@ -48,8 +48,8 @@ import com.threerings.msoy.avrg.client.AVRGamePanel;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.game.client.GameGameService;
-import com.threerings.msoy.game.client.MsoyGamePanel;
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.client.ParlorGamePanel;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
@@ -268,13 +268,13 @@ public class WorldController extends MsoyController
         CommandMenu.addSeparator(menuData);
 
         const place :PlaceView = _wctx.getPlaceView();
-        const allowHistoryToggle :Boolean = !(place is MsoyGamePanel) ||
-            (place as MsoyGamePanel).shouldUseChatOverlay();
+        const allowHistoryToggle :Boolean = !(place is ParlorGamePanel) ||
+            (place as ParlorGamePanel).shouldUseChatOverlay();
         if (allowHistoryToggle) {
             menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
                     Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
         }
-        if (!(place is MsoyGamePanel)) {
+        if (!(place is ParlorGamePanel)) {
             menuData.push({ command: TOGGLE_CHAT_SIDEBAR, label: Msgs.GENERAL.get(
                     Prefs.getSidebarChat() ? "b.overlay_chat" : "b.sidebar_chat") });
             menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
@@ -1081,7 +1081,7 @@ public class WorldController extends MsoyController
         if (view is RoomView) {
             return RoomView(view).getRoomController().canManageRoom();
         }
-        const gameCfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
+        const gameCfg :ParlorGameConfig = _wctx.getGameDirector().getGameConfig();
         if (gameCfg != null) {
             // in games, we can "manage" if we're the owner
             return gameCfg.game.creatorId == _wctx.getMyId();
@@ -1208,7 +1208,7 @@ public class WorldController extends MsoyController
         if (!sanctionClosePlaceView()) {
             return;
         }
-        if (_wctx.getPlaceView() is MsoyGamePanel) {
+        if (_wctx.getPlaceView() is ParlorGamePanel) {
             // if we're in a game, closing means closing the game and going back to our place
             handleMoveBack(true);
         } else {

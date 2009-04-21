@@ -103,7 +103,7 @@ public class GameLiaison
      */
     public function get gameName () :String
     {
-        // Subclasses have to do this because AVRGameConfig does not share with MsoyGameConfig
+        // Subclasses have to do this because AVRGameConfig does not share with ParlorGameConfig
         return null;
     }
 
@@ -312,10 +312,10 @@ public class GameLiaison
             const coins :int = int(args[0]);
             const forReal :Boolean = Boolean(args[2]);
             const hasCookie :Boolean = Boolean(args[3]);
-            const gamePanel :MsoyGamePanel = getMsoyGamePanel();
+            const gamePanel :ParlorGamePanel = getParlorGamePanel();
 // TODO: reenable with an A/B test
 //             if (forReal && _gctx.getPlayerObject().isPermaguest() &&
-//                 (!MsoyGamePanel.USE_GAMEOVER_POPUP || gamePanel.getController().isParty())) {
+//                 (!ParlorGamePanel.USE_GAMEOVER_POPUP || gamePanel.getController().isParty())) {
 //                 // if a guest earns flow, we want to show them the "please register" dialog
 //                 displayGuestFlowEarnage(coins, hasCookie);
 //             }
@@ -328,9 +328,9 @@ public class GameLiaison
         }
     }
 
-    protected function getMsoyGamePanel () :MsoyGamePanel
+    protected function getParlorGamePanel () :ParlorGamePanel
     {
-        return (_wctx.getPlaceView() as MsoyGamePanel);
+        return (_wctx.getPlaceView() as ParlorGamePanel);
     }
 
     /**

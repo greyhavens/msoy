@@ -16,7 +16,7 @@ import com.threerings.msoy.party.data.PartySummary;
 /**
  * Extends Whirled game stuff with party awareness.
  */
-public class MsoyGameObject extends WhirledGameObject
+public class ParlorGameObject extends WhirledGameObject
     implements PartyPlaceObject
 {
     // AUTO-GENERATED: FIELDS START

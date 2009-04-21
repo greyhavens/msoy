@@ -12,12 +12,12 @@ import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.WhirledGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.game.client.MsoyGameController;
+import com.threerings.msoy.game.client.ParlorGameController;
 
 /**
  * A game config for a simple multiplayer metasoy flash game.
  */
-public class MsoyGameConfig extends WhirledGameConfig
+public class ParlorGameConfig extends WhirledGameConfig
 {
     /** The game item. */
     public var game :Game;
@@ -25,7 +25,7 @@ public class MsoyGameConfig extends WhirledGameConfig
     /** The game's groupId, or 0 for none. */
     public var groupId :int;
 
-    public function MsoyGameConfig ()
+    public function ParlorGameConfig ()
     {
         // used for unserialization
     }
@@ -60,7 +60,7 @@ public class MsoyGameConfig extends WhirledGameConfig
     // from BaseGameConfig
     override protected function createDefaultController () :PlaceController
     {
-        return new MsoyGameController();
+        return new ParlorGameController();
     }
 }
 }

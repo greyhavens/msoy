@@ -21,7 +21,7 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.presents.client.ClientAdapter;
 
 /**
@@ -164,14 +164,14 @@ public class LobbyGameLiaison extends GameLiaison
     // from GameLiaison
     override public function get gameName () :String
     {
-        var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
+        var config :ParlorGameConfig = gameConfig as ParlorGameConfig;
         return (config != null) ? config.game.name : super.gameName;
     }
 
     // from GameLiaison
     override public function get gameGroupId () :int
     {
-        var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
+        var config :ParlorGameConfig = gameConfig as ParlorGameConfig;
         return (config != null) ? config.groupId : super.gameGroupId;
     }
 

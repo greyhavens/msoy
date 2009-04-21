@@ -36,13 +36,13 @@ import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 import com.threerings.msoy.item.data.all.Game;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.game.data.ParlorGameObject;
 
 /**
  * Coordinates the view for MSOY games.
  */
-public class MsoyGamePanel extends WhirledGamePanel
+public class ParlorGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
 {
     // TEMP
@@ -51,12 +51,12 @@ public class MsoyGamePanel extends WhirledGamePanel
     // TEMP
     public static const USE_GAMEOVER_POPUP :Boolean = false;
 
-    public function MsoyGamePanel (gctx :GameContext, ctrl :MsoyGameController)
+    public function ParlorGamePanel (gctx :GameContext, ctrl :ParlorGameController)
     {
         super(gctx, ctrl);
         _gctx = gctx;
 
-        const cfg :MsoyGameConfig = ctrl.getPlaceConfig() as MsoyGameConfig;
+        const cfg :ParlorGameConfig = ctrl.getPlaceConfig() as ParlorGameConfig;
         if (cfg.groupId != Game.NO_GROUP) {
             _goBtn = new CommandButton(Msgs.GAME.get("b.game_whirled"),
                 MsoyController.GO_GROUP_HOME, cfg.groupId);
@@ -92,13 +92,13 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function getPlaceName () :String
     {
-        return (_ctrl.getPlaceConfig() as MsoyGameConfig).game.name;
+        return (_ctrl.getPlaceConfig() as ParlorGameConfig).game.name;
     }
 
     // from MsoyPlaceView
     public function getPlaceLogo () :MediaDesc
     {
-        return (_ctrl.getPlaceConfig() as MsoyGameConfig).game.getThumbnailMedia();
+        return (_ctrl.getPlaceConfig() as ParlorGameConfig).game.getThumbnailMedia();
     }
 
     /**
@@ -117,7 +117,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
-        var config :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+        var config :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
 
         _spinner = new GameLoadingDisplay(
             _gctx.getMsoyContext().getTopPanel().getPlaceContainer(),
@@ -229,7 +229,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override protected function getRematchLabel (plobj :PlaceObject) :String
     {
-        const gameObj :MsoyGameObject = plobj as MsoyGameObject;
+        const gameObj :ParlorGameObject = plobj as ParlorGameObject;
         return Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch");
     }
 
@@ -238,7 +238,7 @@ public class MsoyGamePanel extends WhirledGamePanel
      */
     protected function populateGoMenu () :Array
     {
-        const cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+        const cfg :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
 
         const menuData :Array = [];
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
@@ -267,7 +267,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         }
 
         if (gameOver) {
-            const config :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+            const config :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
             const multiplayer :Boolean =
                 config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
             if (!multiplayer) {

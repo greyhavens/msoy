@@ -38,7 +38,7 @@ import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
 import com.threerings.msoy.game.data.GameGameMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 
@@ -127,10 +127,10 @@ public class GameDirector extends BasicDirector
      * Returns the configuration of the (non-world) game we currently occupy if we're in a game.
      * Returns null otherwise.
      */
-    public function getGameConfig () :MsoyGameConfig
+    public function getGameConfig () :ParlorGameConfig
     {
         if (_liaison != null) {
-            return _liaison.gameConfig as MsoyGameConfig;
+            return _liaison.gameConfig as ParlorGameConfig;
         }
         return null;
     }
@@ -157,8 +157,8 @@ public class GameDirector extends BasicDirector
 
         var icon :MediaDesc;
         var config :PlaceConfig = _liaison.gameConfig;
-        if (config is MsoyGameConfig) {
-            icon = MsoyGameConfig(config).game.getThumbnailMedia();
+        if (config is ParlorGameConfig) {
+            icon = ParlorGameConfig(config).game.getThumbnailMedia();
         } else if (config is AVRGameConfig) {
             icon = AVRGameConfig(config).thumbnail;
         }
@@ -173,7 +173,7 @@ public class GameDirector extends BasicDirector
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
         if (_liaison is LobbyGameLiaison && config != null &&
-            MsoyGameConfig(config).getGameDefinition().match.getMaximumPlayers() > 1) {
+            ParlorGameConfig(config).getGameDefinition().match.getMaximumPlayers() > 1) {
             menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentLobby});
         }
         menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
