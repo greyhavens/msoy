@@ -372,7 +372,7 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Returns the rank of the specified member in the specified group or {@link
-     * GroupMembership#RANK_NON_MEMBER} if they are a non-member.
+     * GroupMembership.Rank#NON_MEMBER} if they are a non-member.
      */
     public Rank getRank (int groupId, int memberId)
     {

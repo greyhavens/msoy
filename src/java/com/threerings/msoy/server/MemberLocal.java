@@ -129,11 +129,11 @@ public class MemberLocal extends BodyLocal
     }
 
     /**
-     * Called when a player has just switched from one avatar to a new one or by {@link #willEnter}
-     * below. In either case, {@link #memories} is expected to contain the memories for the avatar;
-     * either because it was put there (and possibly serialized in the case of a peer move) when
-     * the player left a previous room, or because we put them there manually as part of avatar
-     * resolution (see {@link MemberManager#finishSetAvatar}).
+     * Called when a player has just switched from one avatar to a new one or by {@link
+     * #willEnterRoom} below. In either case, {@link #memories} is expected to contain the memories
+     * for the avatar; either because it was put there (and possibly serialized in the case of a
+     * peer move) when the player left a previous room, or because we put them there manually as
+     * part of avatar resolution (see {@link MemberManager#finishSetAvatar}).
      */
     public void putAvatarMemoriesIntoRoom (RoomObject roomObj)
     {

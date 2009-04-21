@@ -53,8 +53,7 @@ public interface MsoyService extends InvocationService
     /**
      * Requests a quote for sending a global broadcast. On success, the listener will receive an
      * a {@link PriceQuote} indicating the secured price of sending a broadcast.
-     * @see com.threerings.msoy.chat.MsoyChatCodes#PAID_BROADCAST_MODE
-     * @see com.threerings.msoy.money.server.MoneyLogic#getBroadcastCost
+     * @see com.threerings.msoy.chat.data.MsoyChatCodes#PAID_BROADCAST_MODE
      */
     void secureBroadcastQuote (Client client, ResultListener listener);
 

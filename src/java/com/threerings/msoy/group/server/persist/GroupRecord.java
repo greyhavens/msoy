@@ -77,7 +77,7 @@ public class GroupRecord extends PersistentRecord
     };
 
     /** Converts a group key to a group id. NOTE: this must be co-maintained with the auto-
-     * generated {@link #getKey()}. */
+     * generated {@link #getKey}. */
     public static final Function <Key<GroupRecord>, Integer> TO_GROUP_ID =
         new Function <Key<GroupRecord>, Integer>() {
         public Integer apply (Key<GroupRecord> key) {
@@ -129,7 +129,7 @@ public class GroupRecord extends PersistentRecord
     @Index(name="ixPolicy")
     public Group.Policy policy;
 
-    /** This group's forum permissions, see {@link Group#makeForumPerms()}. */
+    /** This group's forum permissions, see {@link Group#getForumPerms}. */
     // TODO: split this into two Group.Perm instances? would requite a migration
     public byte forumPerms;
 

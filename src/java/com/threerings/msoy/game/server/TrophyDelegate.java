@@ -21,7 +21,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.server.PlayManagerDelegate;
 
-import com.whirled.game.client.WhirledGameService;
+import com.whirled.game.client.PrizeService;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.GameDataObject;
@@ -56,7 +56,7 @@ public class TrophyDelegate extends PlayManagerDelegate
     }
 
     /**
-     * Handles {@link WhirledGameService#awardTrophy}.
+     * Handles {@link PrizeService#awardTrophy}.
      */
     public void awardTrophy (ClientObject caller, String ident, int playerId,
                              final InvocationService.InvocationListener listener)
@@ -114,7 +114,7 @@ public class TrophyDelegate extends PlayManagerDelegate
     }
 
     /**
-     * Handles {@link WhirledGameService#awardPrize}.
+     * Handles {@link PrizeService#awardPrize}.
      */
     public void awardPrize (ClientObject caller, String ident, int playerId,
                             final InvocationService.InvocationListener listener)

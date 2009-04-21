@@ -21,9 +21,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import client.shell.CShell;
 
 import client.ui.MsoyUI;
-import client.ui.PromptPopup;
 import client.util.Link;
-import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**
