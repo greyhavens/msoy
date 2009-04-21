@@ -46,12 +46,11 @@ public class RetentionEmail
                 getDayOfEvent(eventData).getTimeInMillis()));
 
         } else if (RetentionEmailLoginsResult.checkInputs(eventData)) {
-            final int daysToConsider = 14;
-            final long cutoff = System.currentTimeMillis() - daysToConsider * 24 * 60 * 60 * 1000L;
+            final long daysToConsider = 21;
             Calendar calendar = getDayOfEvent(eventData);
             List<Keys.LongKey> keys = Lists.newArrayList();
             for (int day = 0; day < daysToConsider; ++day) {
-                if (calendar.getTimeInMillis() < cutoff) {
+                if (calendar.getTimeInMillis() < _inceptionTime) {
                     break;
                 }
                 keys.add(new Keys.LongKey(calendar.getTimeInMillis()));
@@ -67,24 +66,26 @@ public class RetentionEmail
     public void write (EventWriter writer, EventDataBuilder builder, Keys.LongKey key)
         throws IOException
     {
-        // count up how many people who received an email logged back in, group by subject line
+        // count up how many people who were sent an email logged back in, group by subject line
+        int totalSent = 0;
         CountHashMap<String> respondents = new CountHashMap<String>();
         for (Map.Entry<String, Set<Integer>> entry : mailings.sent.entrySet()) {
             for (int memberId : entry.getValue()) {
                 int count = logins.logins.contains(memberId) ? 1 : 0;
                 respondents.incrementCount(entry.getKey(), count);
             }
+            totalSent += entry.getValue().size();
         }
 
         // create our standard output columns
         Map<String, Object> eventData = Maps.newHashMap();
         eventData.put("totalRespondents", respondents.getTotalCount());
-        eventData.put("mailings", mailings.sent.size());
+        eventData.put("mailings", totalSent);
         eventData.put("date", new Date(key.get()));
 
         // and one output column per subject line
-        for (CountHashMap.Entry<String> subjCount : respondents.countEntrySet()) {
-            eventData.put(subjCount.getKey(), subjCount.getCount());
+        for (String subjLine : _subjectLines) {
+            eventData.put(subjLine, respondents.getCount(subjLine));
         }
 
         // write the event
@@ -102,5 +103,20 @@ public class RetentionEmail
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
+    }
+
+    /** Lower bound for earliest retention mailing event. */
+    protected static final long _inceptionTime;
+
+    // ideally, we would not need to hardwire these, but every instance of the output event needs
+    // to have the same data fields
+    protected static final String[] _subjectLines = {
+        "nameNewThings", "nameBusyFriends", "whirledFeedAndNewThings", "default"};
+
+    static
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.set(2009, 3, 1);
+        _inceptionTime = cal.getTimeInMillis();
     }
 }
