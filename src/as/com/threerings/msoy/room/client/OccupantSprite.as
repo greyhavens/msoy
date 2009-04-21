@@ -246,12 +246,12 @@ public class OccupantSprite extends MsoySprite
             arrangeDecorations();
         }
 
+        // TODO: I added this code, but can't for the life of me figure out why it's necessary
+        // and it booches the remixer
         // check to see if we're blocked
-        // TODO: this shouldn't be necessary, right? I don't have time to look right now,
-        // I'm prepping a release, but I should come back...
-        if (_desc != null) {
-            checkBlocked();
-        }
+//        if (_desc != null) {
+//            checkBlocked();
+//        }
     }
 
     override public function snapshot (
