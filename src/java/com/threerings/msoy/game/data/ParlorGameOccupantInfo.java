@@ -8,15 +8,15 @@ import com.whirled.game.data.WhirledGameOccupantInfo;
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartySummary;
 
-public class MsoyGameOccupantInfo extends WhirledGameOccupantInfo
+public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
     implements PartyOccupantInfo
 {
     /** Suitable for unserializing. */
-    public MsoyGameOccupantInfo ()
+    public ParlorGameOccupantInfo ()
     {
     }
 
-    public MsoyGameOccupantInfo (PlayerObject plObj)
+    public ParlorGameOccupantInfo (PlayerObject plObj)
     {
         super(plObj);
         PartySummary party = plObj.getParty();

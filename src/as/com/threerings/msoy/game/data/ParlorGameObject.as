@@ -28,7 +28,7 @@ public class ParlorGameObject extends WhirledGameObject
     // AUTO-GENERATED: FIELDS END
 
     // force linkage
-    MsoyGameOccupantInfo;
+    ParlorGameOccupantInfo;
 
     /** Information on the parties presently in this game. */
     public var parties :DSet; /* of */ PartySummary; // force linkage

@@ -164,7 +164,7 @@ public class PlayerObject extends WhirledPlayerObject
     public OccupantInfo createOccupantInfo (PlaceObject plObj)
     {
         if (plObj instanceof ParlorGameObject) {
-            return new MsoyGameOccupantInfo(this);
+            return new ParlorGameOccupantInfo(this);
 
         } else if (plObj instanceof AVRGameObject)  {
             return new AVRGameOccupantInfo(this);

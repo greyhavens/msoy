@@ -11,7 +11,7 @@ import com.whirled.game.data.WhirledGameOccupantInfo;
 
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 
-public class MsoyGameOccupantInfo extends WhirledGameOccupantInfo
+public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
     implements PartyOccupantInfo
 {
     // from PartyOccupantInfo
@@ -22,7 +22,7 @@ public class MsoyGameOccupantInfo extends WhirledGameOccupantInfo
 
     override public function clone () :Object
     {
-        var that :MsoyGameOccupantInfo = super.clone() as MsoyGameOccupantInfo;
+        var that :ParlorGameOccupantInfo = super.clone() as ParlorGameOccupantInfo;
         that._partyId = this._partyId;
         return that;
     }
