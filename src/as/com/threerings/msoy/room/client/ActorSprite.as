@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.utils.ByteArray;
-
 import com.threerings.util.Log;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.Util;
@@ -64,13 +62,6 @@ public class ActorSprite extends OccupantSprite
     override public function getDesc () :String
     {
         return "m.actor";
-    }
-
-    // from DataPackMediaContainer
-    override public function setZippedMediaBytes (zippedBytes :ByteArray) :void
-    {
-        _inRemixer = true;
-        super.setZippedMediaBytes(zippedBytes);
     }
 
     // from OccupantSprite
@@ -159,10 +150,6 @@ public class ActorSprite extends OccupantSprite
             return false; // nothing changed, bail
         }
         if (!mediaChanged) {
-            if (_inRemixer) {
-                // in the remixer, we don't overwrite the media, because we use bytes provided us
-                return false;
-            }
             // if the media didn't change, but the ident did, we still need to reload the media
             // so force a change
             setMediaDesc(null);
@@ -187,7 +174,5 @@ public class ActorSprite extends OccupantSprite
     {
         return new ActorBackend();
     }
-
-    protected var _inRemixer :Boolean;
 }
 }
