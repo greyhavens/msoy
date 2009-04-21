@@ -192,14 +192,15 @@ public class GameGameRegistry
         if (config instanceof ParlorGameConfig) {
             delegates.add(new AwardDelegate(content));
             delegates.add(new EventLoggingDelegate(content));
-        } else {
-            // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
-//                delegates.add(new EventLoggingDelegate(content));
-        }
 
-        if (config instanceof AVRGameConfig) {
-            delegates.add(new QuestDelegate(content));
+        } else if (config instanceof AVRGameConfig) {
             // TODO: Refactor the bits of AwardDelegate that we want
+            delegates.add(new QuestDelegate(content));
+            // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
+            // delegates.add(new EventLoggingDelegate(content));
+
+        } else {
+            throw new IllegalArgumentException("Unknown game configuration type: " + config);
         }
 
         int minLogInterval, maxLogInterval;
