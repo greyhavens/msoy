@@ -36,6 +36,11 @@ public class StudioMediaDesc extends MediaDesc
             (getMediaPath() == StudioMediaDesc(other).getMediaPath());
     }
 
+    override public function toString () :String
+    {
+        return "[StudioMediaDesc:" + _url + "]";
+    }
+
     protected var _url :String;
 }
 }
