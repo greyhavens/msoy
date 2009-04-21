@@ -172,7 +172,7 @@ public class GameDirector extends BasicDirector
                            command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
-        if (_liaison is LobbyGameLiaison && config != null &&
+        if (_liaison is ParlorGameLiaison && config != null &&
             ParlorGameConfig(config).getGameDefinition().match.getMaximumPlayers() > 1) {
             menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentLobby});
         }
@@ -199,7 +199,7 @@ public class GameDirector extends BasicDirector
     public function enterLobby (gameId :int, ghost :String, gport :int) :void
     {
         resolveLobbyLiaison(gameId, ghost, gport);
-        LobbyGameLiaison(_liaison).showLobby();
+        ParlorGameLiaison(_liaison).showLobby();
     }
 
     /**
@@ -209,8 +209,8 @@ public class GameDirector extends BasicDirector
      */
     public function displayCurrentLobby () :Boolean
     {
-        if (_liaison is LobbyGameLiaison) {
-            LobbyGameLiaison(_liaison).showLobby();
+        if (_liaison is ParlorGameLiaison) {
+            ParlorGameLiaison(_liaison).showLobby();
             return true;
         }
         return false;
@@ -311,7 +311,7 @@ public class GameDirector extends BasicDirector
 //         log.debug("Setting invite data", "token", inviteToken, "invId", inviterId);
         _liaison.setInviteData(inviteToken, inviterId);
         log.debug("Playing now", "gameId", gameId, "playerId", playerId);
-        LobbyGameLiaison(_liaison).playNow(playerId);
+        ParlorGameLiaison(_liaison).playNow(playerId);
     }
 
     /** Forwards idleness status updates to any AVRG we may be playing. */
@@ -365,7 +365,7 @@ public class GameDirector extends BasicDirector
         log.debug("Activating AVR game", "token", inviteToken, "inviter", inviterMemberId);
 
         if (_liaison != null) {
-            if (_liaison is LobbyGameLiaison) {
+            if (_liaison is ParlorGameLiaison) {
                 log.warning("Eek, asked to join an AVRG while in a lobbied game.");
                 return;
             }
@@ -408,11 +408,11 @@ public class GameDirector extends BasicDirector
             // back into a new game
             _wctx.getWorldController().handlePlayGame(gameId);
 
-        } else if (!(_liaison is LobbyGameLiaison)) {
+        } else if (!(_liaison is ParlorGameLiaison)) {
             log.warning("Requested to enter game but have AVRG liaison?! [oid=" + gameOid + "].");
 
         } else {
-            LobbyGameLiaison(_liaison).enterGame(gameOid);
+            ParlorGameLiaison(_liaison).enterGame(gameOid);
         }
     }
 
@@ -422,7 +422,7 @@ public class GameDirector extends BasicDirector
     public function backToWhirled (showLobby :Boolean) :void
     {
         if (showLobby) {
-            LobbyGameLiaison(_liaison).clearGame();
+            ParlorGameLiaison(_liaison).clearGame();
             _wctx.getWorldController().handlePlayGame(getGameId());
         } else {
             // go back to our previous location
@@ -441,7 +441,7 @@ public class GameDirector extends BasicDirector
             _liaison = null;
             dispatchGamingStateChanged();
             // if this was a lobbied game, see about restarting the AVRG
-            if (liaison is LobbyGameLiaison) {
+            if (liaison is ParlorGameLiaison) {
                 checkMemberAVRGame();
             }
         }
@@ -503,13 +503,13 @@ public class GameDirector extends BasicDirector
      */
     protected function resolveLobbyLiaison (gameId :int, ghost :String = null, gport :int = 0) :void
     {
-        if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
+        if (_liaison is ParlorGameLiaison && _liaison.gameId == gameId) {
             return;
         }
         if (_liaison != null) {
             _liaison.shutdown();
         }
-        _liaison = new LobbyGameLiaison(_wctx, gameId);
+        _liaison = new ParlorGameLiaison(_wctx, gameId);
         _liaison.start(ghost, gport);
         dispatchGamingStateChanged();
     }

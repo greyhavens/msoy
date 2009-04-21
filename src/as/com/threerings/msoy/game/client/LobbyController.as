@@ -391,7 +391,7 @@ public class LobbyController extends Controller
         _panel.setMode(nowSeated ? MODE_SEATED : MODE_MATCH);
     }
 
-    /** Called by the LobbyGameLiaison upon login to the world server. */
+    /** Called by the ParlorGameLiaison upon login to the world server. */
     public function worldClientDidLogon (event :ClientEvent) :void
     {
         // run anything that's been waiting on the member object

@@ -27,12 +27,12 @@ import com.threerings.presents.client.ClientAdapter;
 /**
  * Handles the lobby-specific aspects of the game server connection.
  */
-public class LobbyGameLiaison extends GameLiaison
+public class ParlorGameLiaison extends GameLiaison
     implements GameReadyObserver
 {
-    public static const log :Log = Log.getLog(LobbyGameLiaison);
+    public static const log :Log = Log.getLog(ParlorGameLiaison);
 
-    public function LobbyGameLiaison (ctx :WorldContext, gameId :int)
+    public function ParlorGameLiaison (ctx :WorldContext, gameId :int)
     {
         super(ctx, gameId);
 

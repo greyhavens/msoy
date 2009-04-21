@@ -54,9 +54,9 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**
- * Handles all the fiddly bits relating to connecting to a separate server to match-make and
- * play a game. This class is subclassed by LobbyGameLiaison, which handles lobbied games
- * that take over the view, and AVRGameLiaison, which handles in-world games.
+ * Handles all the fiddly bits relating to connecting to a separate server to match-make and play a
+ * game. This class is subclassed by ParlorGameLiaison, which handles parlor games, and
+ * AVRGameLiaison, which handles in-world games.
  */
 public class GameLiaison
     implements WorldGameService_LocationListener, ClientObserver, MessageListener
