@@ -107,9 +107,10 @@ import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.ParlorGameConfig;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.GameDetailRecord;
@@ -274,8 +275,8 @@ public class GameGameRegistry
 
         // make sure they're actually playing the right game
         PlaceManager plmgr = _placeReg.getPlaceManager(plobj.getPlaceOid());
-        if (plmgr == null || !(plmgr.getConfig() instanceof ParlorGameConfig) ||
-            ((ParlorGameConfig)plmgr.getConfig()).getGameId() != gameId) {
+        if (plmgr == null || !(plmgr.getConfig() instanceof MsoyGameConfig) ||
+            ((MsoyGameConfig)plmgr.getConfig()).getGameId() != gameId) {
             return;
         }
 
