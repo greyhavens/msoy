@@ -9,7 +9,8 @@ import com.whirled.game.data.GameDefinition;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
- * A game config for a metasoy game.
+ * Configuration for a Parlor game. Parlor games take over the entire display and don't leverage
+ * any of the Whirled virtual world stuff.
  */
 public class ParlorGameConfig extends ToyBoxGameConfig
 {
