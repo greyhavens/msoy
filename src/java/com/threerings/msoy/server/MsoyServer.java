@@ -62,13 +62,13 @@ import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowSessionFactory;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
@@ -216,8 +216,8 @@ public class MsoyServer extends MsoyBaseServer
 
         // tell GameManager how to identify our users
         GameManager.setUserIdentifier(new UserIdentifier() {
-            public int getUserId (BodyObject bodyObj) {
-                return ((PlayerObject) bodyObj).getMemberId();
+            public int getUserId (Name name) {
+                return ((MemberName) name).getMemberId();
             }
         });
 
