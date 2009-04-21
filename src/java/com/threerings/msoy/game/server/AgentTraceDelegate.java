@@ -39,21 +39,15 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
         GameTraceLogRecord.getMaximumLogLength() - TRACE_CAP.length();
 
     /**
-     * Creates a new delegate that stores once on shutdown.
-     * @param gameId the id of the game we are storing agent traces for
-     */
-    public AgentTraceDelegate (int gameId)
-    {
-        this(gameId, 0, 0);
-    }
-
-    /**
      * Creates a new delegate that stores traces periodically. The given intervals control when the
      * trace contents are recorded to the database and when truncation occurs. In no instance will
      * the size limit {@link #MAX_USER_LENGTH} be exceeded.
-     * @param gameId the id of the game we are storing agent traces for
-     * @param minInterval allow at least this many minutes between storing traces
-     * @param maxInterval never allow more than this many minutes betweens storing traces
+     *
+     * @param gameId the id of the game for which we are storing agent traces.
+     * @param minInterval allow at least this many minutes between storing traces or zero to store
+     * only on shutdown.
+     * @param maxInterval never allow more than this many minutes betweens storing traces or zero
+     * to store only on shutdown.
      */
     public AgentTraceDelegate (int gameId, int minInterval, int maxInterval)
     {
