@@ -82,7 +82,7 @@ public class MsoyTableManager extends TableManager
     protected GameManager createGameManager (GameConfig config)
         throws InstantiationException, InvocationException
     {
-        return _lmgr.createGameManager(config);
+        return _lmgr.createGameManager((ParlorGameConfig)config);
     }
 
     @Override

@@ -277,17 +277,11 @@ public class LobbyManager
     /**
      * Called by {@link MsoyTableManager} when it wants to create a game.
      */
-    protected GameManager createGameManager (GameConfig config)
+    protected GameManager createGameManager (ParlorGameConfig config)
         throws InstantiationException, InvocationException
     {
-        List<PlaceManagerDelegate> delegates = Lists.newArrayList();
-        delegates.add(new EventLoggingDelegate(_content));
-        delegates.add(new TrackExperienceDelegate(_content));
-        delegates.add(new AwardDelegate(_content));
-        delegates.add(new ContentDelegate(_content));
-        delegates.add(new TrophyDelegate(_content));
-        delegates.add(new AgentTraceDelegate(getGameId()));
-        return (GameManager)_plreg.createPlace(config, delegates);
+        return (GameManager)_plreg.createPlace(
+            config, _ggreg.createGameDelegates(config, _content));
     }
 
     /**
@@ -358,6 +352,7 @@ public class LobbyManager
     @Inject protected GameRepository _gameRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _plreg;
+    @Inject protected GameGameRegistry _ggreg;
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RootDObjectManager _omgr;
 

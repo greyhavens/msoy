@@ -176,6 +176,51 @@ public class GameGameRegistry
     }
 
     /**
+     * Creates the delegates needed by the AVRGameManager or ParlorGameManager that will be created
+     * from the supplied configuration.
+     */
+    public List<PlaceManagerDelegate> createGameDelegates (
+        MsoyGameConfig config, GameContent content)
+    {
+        List<PlaceManagerDelegate> delegates = Lists.newArrayList();
+
+        // these are used by both AVR and Parlor games
+        delegates.add(new ContentDelegate(content));
+        delegates.add(new TrophyDelegate(content));
+        delegates.add(new TrackExperienceDelegate(content));
+
+        if (config instanceof ParlorGameConfig) {
+            delegates.add(new AwardDelegate(content));
+            delegates.add(new EventLoggingDelegate(content));
+        } else {
+            // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
+//                delegates.add(new EventLoggingDelegate(content));
+        }
+
+        if (config instanceof AVRGameConfig) {
+            delegates.add(new QuestDelegate(content));
+            // TODO: Refactor the bits of AwardDelegate that we want
+        }
+
+        int minLogInterval, maxLogInterval;
+        if (config instanceof ParlorGameConfig) {
+            // parlor games only flush logs when the game ends
+            minLogInterval = maxLogInterval = 0;
+        } else if (Game.isDevelopmentVersion(config.getGameId())) {
+            // write dev logs at least every two minutes but at most one per minute
+            minLogInterval = 1;
+            maxLogInterval = 2;
+        } else {
+            // write listed logs at least every 2 hours, but at most one per 20 minutes
+            minLogInterval = 20;
+            maxLogInterval = 120;
+        }
+        delegates.add(new AgentTraceDelegate(config.getGameId(), minLogInterval, maxLogInterval));
+
+        return delegates;
+    }
+
+    /**
      * Returns the percentiler for the specified game and score distribution. The percentiler may
      * be modified and when the lobby for the game in question is finally unloaded, the percentiler
      * will be written back out to the database.
@@ -648,27 +693,10 @@ public class GameGameRegistry
 
                 log.info("Setting up AVRG manager", "game", _content.game);
 
-                List<PlaceManagerDelegate> delegates = Lists.newArrayList();
-                // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
-//                delegates.add(new EventLoggingDelegate(_content));
-                // TODO: Refactor the bits of AwardDelegate that we want
-//                delegates.add(new AwardDelegate(_content));
-                delegates.add(new TrophyDelegate(_content));
-                delegates.add(new QuestDelegate(_content));
-                delegates.add(new TrackExperienceDelegate(_content));
+                AVRGameConfig config = new AVRGameConfig();
+                config.init(_content.game, def);
 
-                int minLogInterval, maxLogInterval;
-                if (Game.isDevelopmentVersion(gameId)) {
-                    // write dev logs at least every two minutes but at most one per minute
-                    minLogInterval = 1;
-                    maxLogInterval = 2;
-                } else {
-                    // write listed logs at least every 2 hours, but at most one per 20 minutes
-                    minLogInterval = 20;
-                    maxLogInterval = 120;
-                }
-
-                delegates.add(new AgentTraceDelegate(gameId, minLogInterval, maxLogInterval));
+                List<PlaceManagerDelegate> delegates = createGameDelegates(config, _content);
 
                 // set up the global property space
                 final Map<String, byte[]> initialGameState = new HashMap<String, byte[]>();
@@ -717,9 +745,6 @@ public class GameGameRegistry
                         });
                     }
                 });
-
-                AVRGameConfig config = new AVRGameConfig();
-                config.init(_content.game, def);
 
                 AVRGameManager mgr;
                 try {
