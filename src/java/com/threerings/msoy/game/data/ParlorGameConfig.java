@@ -13,6 +13,7 @@ import com.threerings.msoy.item.data.all.Game;
  * any of the Whirled virtual world stuff.
  */
 public class ParlorGameConfig extends ToyBoxGameConfig
+    implements MsoyGameConfig
 {
     /** The game item. */
     public Game game;

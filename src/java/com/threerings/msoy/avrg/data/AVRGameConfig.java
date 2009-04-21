@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.avrg.data;
 
-import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.util.ActionScript;
+
+import com.threerings.crowd.data.PlaceConfig;
+
 import com.whirled.game.data.GameDefinition;
+
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -14,6 +18,7 @@ import com.threerings.msoy.item.data.all.Game;
  * but without the GameConfig dependency.
  */
 public class AVRGameConfig extends PlaceConfig
+    implements MsoyGameConfig
 {
     /** The creator provided name of this game. */
     public String name;
@@ -40,20 +45,16 @@ public class AVRGameConfig extends PlaceConfig
         return (manager != null) ? manager : "com.threerings.msoy.avrg.server.AVRGameManager";
     }
 
-    /**
-     * Returns the non-changing metadata that defines this game.
-     */
-    public GameDefinition getGameDefinition ()
-    {
-        return _gameDef;
-    }
-
-    /**
-     * Returns the gameId of this game.
-     */
+    // from MsoyGameConfig
     public int getGameId ()
     {
         return _gameId;
+    }
+
+    // from MsoyGameConfig
+    public GameDefinition getGameDefinition ()
+    {
+        return _gameDef;
     }
 
     /**
