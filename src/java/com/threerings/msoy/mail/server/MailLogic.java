@@ -335,8 +335,9 @@ public class MailLogic
     protected void sendMailEmail (MemberRecord sender, MemberRecord recip,
                                   String subject, String body)
     {
-        // if they don't want to hear about it, stop now
-        if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL)) {
+        // if they don't want to hear about it or are spanked, stop now
+        if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL) ||
+            recip.isSet(MemberRecord.Flag.SPANKED)) {
             return;
         }
         _mailer.sendTemplateEmail(

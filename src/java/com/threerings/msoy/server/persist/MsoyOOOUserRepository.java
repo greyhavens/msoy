@@ -174,6 +174,11 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         if (!mrec.accountName.equals(user.email)) {
             _memberRepo.configureAccountName(user.userId, user.email);
         }
+
+        if (mrec.updateFlag(MemberRecord.Flag.SPANKED,
+            ((OOOUser)user).isBanned(OOOUser.METASOY_SITE_ID))) {
+            _memberRepo.storeFlags(mrec);
+        }
         return true;
     }
 

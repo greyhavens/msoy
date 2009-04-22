@@ -61,8 +61,21 @@ public class MemberRecord extends PersistentRecord
         /** Indicates that the user has validated their email address. */
         VALIDATED(1 << 8),
 
+        /**
+         * Indicates that the user is currently banned, temp banned or has an unacknowledged
+         * warning. This should be true if and only if this user's tokens contain the msoy ban code
+         * or there is a warning for this user. The flag is recorded here so that batch processes
+         * like announcement and retention mailings do not have to check 3 records per user.
+         * Instead we do one extra write when bans or warnings are updated, a relatively rare
+         * activity.
+         * @see com.threerings.user.OOOUser#tokens
+         * @see com.threerings.user.OOOUser#MSOY_BANNED
+         * @see MemberWarningRecord
+         */
+        SPANKED(1<<9),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 9);
+        UNUSED(1 << 10);
 
         public int getBit () {
             return _bit;
@@ -392,6 +405,18 @@ public class MemberRecord extends PersistentRecord
     public void setFlag (final Flag flag, final boolean value)
     {
         flags = (value ? (flags | flag.getBit()) : (flags & ~flag.getBit()));
+    }
+
+    /**
+     * Updates a given flag to on or off and returns true if the value changed.
+     */
+    public boolean updateFlag (final Flag flag, final boolean value)
+    {
+        if (isSet(flag) == value) {
+            return false;
+        }
+        setFlag(flag, value);
+        return true;
     }
 
     /**

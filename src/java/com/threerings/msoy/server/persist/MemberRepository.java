@@ -282,14 +282,14 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads the member ids and addresses of all members that have not opted out of announcement
-     * emails.
+     * emails and are not currently spanked.
      */
     public List<Tuple<Integer, String>> loadMemberEmailsForAnnouncement ()
     {
-        SQLExpression annFlag = new Arithmetic.BitAnd(
-            MemberRecord.FLAGS, MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit());
+        SQLExpression annFlags = new Arithmetic.BitAnd(MemberRecord.FLAGS,
+            MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit() | MemberRecord.Flag.SPANKED.getBit());
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
-        Where where = new Where(new Equals(annFlag, 0));
+        Where where = new Where(new Equals(annFlags, 0));
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
             emails.add(Tuple.newTuple(record.memberId, record.accountName));
         }
@@ -429,7 +429,7 @@ public class MemberRepository extends DepotRepository
             new GreaterThan(lastSess, new ValueExp(earliestLastSession)),
             new LessThanEquals(lastSess, new ValueExp(latestLastSession)),
             new Equals(new Arithmetic.BitAnd(
-                MemberRecord.FLAGS, Flag.NO_ANNOUNCE_EMAIL.getBit()), 0)));
+                MemberRecord.FLAGS, Flag.NO_ANNOUNCE_EMAIL.getBit() | Flag.SPANKED.getBit()), 0)));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                RecordFunctions.<MemberRecord>getIntKey());
     }
@@ -1303,6 +1303,7 @@ public class MemberRepository extends DepotRepository
         record.banExpires = expires;
         record.warning = warning;
         store(record);
+        updateBanned(memberId, true);
     }
 
     /**
@@ -1316,6 +1317,7 @@ public class MemberRepository extends DepotRepository
             record.memberId = memberId;
             record.warning = warning;
             insert(record);
+            updateBanned(memberId, true);
         }
     }
 
@@ -1325,6 +1327,7 @@ public class MemberRepository extends DepotRepository
     public void clearMemberWarning (int memberId)
     {
         delete(MemberWarningRecord.class, memberId);
+        updateBanned(memberId, false);
     }
 
     /**
@@ -1464,6 +1467,18 @@ public class MemberRepository extends DepotRepository
         }
 
         return session;
+    }
+
+    /**
+     * Updates the BANNED flag for a given member. Used by the member warning methods in this
+     * class.
+     */
+    protected void updateBanned (int memberId, boolean value)
+    {
+        MemberRecord mrec = loadMember(memberId);
+        if (mrec.updateFlag(MemberRecord.Flag.SPANKED, value)) {
+            storeFlags(mrec);
+        }
     }
 
     @Override // from DepotRepository
