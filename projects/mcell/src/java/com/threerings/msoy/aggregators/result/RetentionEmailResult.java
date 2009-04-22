@@ -13,8 +13,6 @@ import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-
-
 /**
  * Counts up all the members who were sent a retention email and outputs a map of the member id
  * to the date the email was sent.
@@ -33,10 +31,8 @@ public class RetentionEmailResult extends FieldAggregatedResult
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
-        String subj = eventData.getString("subjectLine");
-        if (subj == null) {
-            subj = "default";
-        }
+        String subj = eventData.containsKey("subjectLine") ?
+            eventData.getString("subjectLine") : "default";
         Set<Integer> memberIds = sent.get(subj);
         if (memberIds == null) {
             sent.put(subj, memberIds = Sets.newHashSet());
