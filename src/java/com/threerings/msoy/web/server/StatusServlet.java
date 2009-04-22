@@ -32,6 +32,8 @@ import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthName;
+import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -135,6 +137,12 @@ public class StatusServlet extends HttpServlet
         for (ClientInfo cinfo : nodeobj.clients) {
             if (cinfo.username instanceof MsoyAuthName) {
                 info.members++;
+            } else if (cinfo.username instanceof GameAuthName) {
+                info.gamers++;
+            } else if (cinfo.username instanceof PartyAuthName) {
+                info.partiers++;
+            } else {
+                info.others++;
             }
         }
 
@@ -241,6 +249,9 @@ public class StatusServlet extends HttpServlet
         public String name;
         public int clients;
         public int members;
+        public int gamers;
+        public int partiers;
+        public int others;
 
         public int rooms;
         public int games;
@@ -255,10 +266,11 @@ public class StatusServlet extends HttpServlet
         public StringBuilder modeinfo = new StringBuilder();
 
         public String toString () {
-            return name + " [clients=" + clients + ", members=" + members +
+            return name + " [clients=" + clients + ", members=" + members + ", gamers=" + gamers +
+                ", partiers=" + partiers + ", others=" + others +
                 ", inScene=" + inScene + ", inGame=" + inGame +
-                ", rooms=" + rooms + ", games=" + games +
-                ", channels=" + channels + ", parties=" + parties + "] ";
+                ", rooms=" + rooms + ", games=" + games + ", channels=" + channels +
+                ", parties=" + parties + "] ";
         }
     }
 
