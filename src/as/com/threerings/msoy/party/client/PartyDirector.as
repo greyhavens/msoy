@@ -331,16 +331,21 @@ public class PartyDirector extends BasicDirector
 
     protected function partyConnectFailed (event :ClientEvent) :void
     {
-        log.warning("Lost connection to party server", event.getCause());
+        var cause :Error = event.getCause();
+        log.warning("Lost connection to party server", cause);
 
         // we need to clear out our party stuff manually since everything was dropped
         _safeSubscriber = null;
+        _partyListener = null;
         _partyObj = null;
         _pctx = null;
+        clearParty(); // clear the rest
 
         // report via world chat that we lost our party connection
-        var msg :String = MessageBundle.tcompose("e.lost_party", event.getCause().message);
-        _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, msg);
+        if (cause != null) {
+            _wctx.displayFeedback(MsoyCodes.PARTY_MSGS,
+                MessageBundle.tcompose("e.lost_party", cause.message));
+        }
     }
 
     protected function connectParty (partyId :int, hostname :String, port :int) :void
