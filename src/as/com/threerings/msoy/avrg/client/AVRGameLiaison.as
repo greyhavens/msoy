@@ -135,13 +135,6 @@ public class AVRGameLiaison extends GameLiaison
         return (ctrl != null) ? (ctrl as AVRGameController) : null;
     }
 
-    // from GameLiaison
-    override public function get gameName () :String
-    {
-        var config :AVRGameConfig = gameConfig as AVRGameConfig;
-        return (config == null) ? super.gameName : config.name;
-    }
-
     // from interface MessageListener
     override public function messageReceived (event :MessageEvent) :void
     {

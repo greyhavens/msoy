@@ -11,6 +11,7 @@ import com.threerings.crowd.client.PlaceController;
 import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.WhirledGameConfig;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.ParlorGameController;
 
@@ -18,6 +19,7 @@ import com.threerings.msoy.game.client.ParlorGameController;
  * A game config for a simple multiplayer metasoy flash game.
  */
 public class ParlorGameConfig extends WhirledGameConfig
+    implements MsoyGameConfig
 {
     /** The game item. */
     public var game :Game;
@@ -39,6 +41,18 @@ public class ParlorGameConfig extends WhirledGameConfig
         this.groupId = groupId;
         _gameId = game.gameId;
         _gameDef = gameDef;
+    }
+
+    // from interface MsoyGameConfig
+    public function getName () :String
+    {
+        return game.name;
+    }
+
+    // from interface MsoyGameConfig
+    public function getThumbnail () :MediaDesc
+    {
+        return game.getThumbnailMedia();
     }
 
     // from interface Streamable

@@ -38,6 +38,7 @@ import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
 import com.threerings.msoy.game.data.GameGameMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
@@ -155,14 +156,8 @@ public class GameDirector extends BasicDirector
             return false;
         }
 
-        var icon :MediaDesc;
-        var config :PlaceConfig = _liaison.gameConfig;
-        if (config is ParlorGameConfig) {
-            icon = ParlorGameConfig(config).game.getThumbnailMedia();
-        } else if (config is AVRGameConfig) {
-            icon = AVRGameConfig(config).thumbnail;
-        }
-
+        var config :MsoyGameConfig = _liaison.gameConfig;
+        var icon :MediaDesc = (config == null) ? null : config.getThumbnail();
         CommandMenu.addTitle(menuData, _liaison.gameName, (icon == null) ? null :
             MediaWrapper.createView(icon, MediaDesc.QUARTER_THUMBNAIL_SIZE));
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
@@ -172,8 +167,8 @@ public class GameDirector extends BasicDirector
                            command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
-        if (_liaison is ParlorGameLiaison && config != null &&
-            ParlorGameConfig(config).getGameDefinition().match.getMaximumPlayers() > 1) {
+        if ((config is ParlorGameConfig) &&
+                (ParlorGameConfig(config).getGameDefinition().match.getMaximumPlayers() > 1)) {
             menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentLobby});
         }
         menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,

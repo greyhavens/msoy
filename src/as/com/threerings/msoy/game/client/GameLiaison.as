@@ -50,6 +50,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 
@@ -84,10 +85,10 @@ public class GameLiaison
     /**
      * Returns the config of our active game if we're in an active game.
      */
-    public function get gameConfig () :PlaceConfig
+    public function get gameConfig () :MsoyGameConfig
     {
         var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
-        return (ctrl == null) ? null : ctrl.getPlaceConfig();
+        return (ctrl == null) ? null : ctrl.getPlaceConfig() as MsoyGameConfig;
     }
 
     /**
@@ -103,8 +104,8 @@ public class GameLiaison
      */
     public function get gameName () :String
     {
-        // Subclasses have to do this because AVRGameConfig does not share with ParlorGameConfig
-        return null;
+        var cfg :MsoyGameConfig = gameConfig as MsoyGameConfig;
+        return (cfg == null) ? null : cfg.getName();
     }
 
     /**

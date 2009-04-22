@@ -10,6 +10,7 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.whirled.game.data.GameDefinition;
 import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -17,6 +18,7 @@ import com.threerings.msoy.item.data.all.Game;
  * but without the GameConfig dependency.
  */
 public class AVRGameConfig extends PlaceConfig
+    implements MsoyGameConfig
 {
     /** The creator provided name of this game. */
     public var name :String;
@@ -42,20 +44,30 @@ public class AVRGameConfig extends PlaceConfig
         return new AVRGameController();
     }
 
+    // from MsoyGameConfig
+    public function getGameId () :int
+    {
+        return _gameId;
+    }
+
+    // from MsoyGameConfig
+    public function getName () :String
+    {
+        return name;
+    }
+
+    // from MsoyGameConfig
+    public function getThumbnail () :MediaDesc
+    {
+        return thumbnail;
+    }
+
     /**
      * Returns the non-changing metadata that defines this game.
      */
     public function getGameDefinition () :GameDefinition
     {
         return _gameDef;
-    }
-
-    /**
-     * Returns the gameId of this game.
-     */
-    public function getGameId () :int
-    {
-        return _gameId;
     }
 
     // from interface Streamable

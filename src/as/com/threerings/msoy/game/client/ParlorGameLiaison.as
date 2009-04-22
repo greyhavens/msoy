@@ -162,13 +162,6 @@ public class ParlorGameLiaison extends GameLiaison
     }
 
     // from GameLiaison
-    override public function get gameName () :String
-    {
-        var config :ParlorGameConfig = gameConfig as ParlorGameConfig;
-        return (config != null) ? config.game.name : super.gameName;
-    }
-
-    // from GameLiaison
     override public function get gameGroupId () :int
     {
         var config :ParlorGameConfig = gameConfig as ParlorGameConfig;
