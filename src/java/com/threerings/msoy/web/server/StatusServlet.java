@@ -19,9 +19,11 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.util.Callables;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
@@ -33,6 +35,9 @@ import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MsoyEventLogger;
+
+import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PartySummary;
 
 import static com.threerings.msoy.Log.log;
 
@@ -156,7 +161,7 @@ public class StatusServlet extends HttpServlet
             info.details = makeDetails(nodeobj.hostedChannels);
             break;
         case PARTIES:
-            info.details = makeDetails(nodeobj.hostedParties);
+            info.details = makePartyDetails(nodeobj.hostedParties, nodeobj.partyInfos);
             break;
         case REPORT:
             collectReportInfo(info, client, nodeobj, ReportManager.DEFAULT_TYPE);
@@ -177,15 +182,26 @@ public class StatusServlet extends HttpServlet
 
     protected Callable<String> makeDetails (Iterable<? extends Object> data)
     {
-        final StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Object value : data) {
             buf.append("- ").append(value).append("\n");
         }
-        return new Callable<String>() {
-            public String call () throws Exception {
-                return buf.toString();
-            }
-        };
+        return Callables.asCallable(buf.toString());
+    }
+
+    protected Callable<String> makePartyDetails (
+        DSet<PartySummary> summaries, DSet<PartyInfo> infos)
+    {
+        StringBuilder buf = new StringBuilder();
+        for (PartySummary summary : summaries) {
+            PartyInfo info = infos.get(summary.getKey());
+            buf.append("size=").append(info.population).append(" ")
+                .append("name=\"").append(summary.name).append("\" ")
+                .append("group=\"").append(summary.group).append("\" ")
+                .append("groupId=").append(summary.group.getGroupId()).append(" ")
+                .append("status=\"").append(info.status).append("\"\n");
+        }
+        return Callables.asCallable(buf.toString());
     }
 
     protected void collectReportInfo (ServerInfo info, Client client, MsoyNodeObject nodeobj,
