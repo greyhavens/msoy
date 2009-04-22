@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.samskivert.util.StringUtil;
-import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.result.StringInputNameResult;
@@ -17,8 +16,7 @@ import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 
-@Aggregator(output="AccountsWithVectors", schedule=Schedule.NIGHTLY,
-    nexts=DailyAccountsCreated.class)
+@Aggregator(output="AccountsWithVectors", nexts=DailyAccountsCreated.class)
 public class AccountsWithVectors
     implements JavaAggregator<AccountsWithVectors.TrackerKey>
 {

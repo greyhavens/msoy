@@ -17,6 +17,7 @@ import org.apache.hadoop.io.WritableComparable;
 
 import com.threerings.panopticon.aggregator.key.PropertiesAggregatorKey;
 import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.shared.util.DateFactory;
 import com.threerings.panopticon.shared.util.PartialDateType;
 import com.threerings.panopticon.shared.util.TimeRange;
 
@@ -114,7 +115,7 @@ public class CohortKey
     }
 
     static {
-        final Calendar start = Calendar.getInstance();
+        final Calendar start = DateFactory.newCalendar();
         start.clear();
         start.set(2008, Calendar.JANUARY, 1);
         startDate = TimeRange.roundDownWeekly(start).getTime();

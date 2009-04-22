@@ -27,6 +27,7 @@ import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
+import com.threerings.panopticon.shared.util.DateFactory;
 
 /**
  * Extracts a guest behavior table, including the time they first show up, the time they register
@@ -320,7 +321,7 @@ public class GuestBehaviorResult
                 }
 
                 // only return entries between conversion and conversion + 7 days
-                final Calendar retention = Calendar.getInstance();
+                final Calendar retention = DateFactory.newCalendar();
                 retention.clear();
                 retention.setTime(cc);
                 retention.add(Calendar.DATE, 7);

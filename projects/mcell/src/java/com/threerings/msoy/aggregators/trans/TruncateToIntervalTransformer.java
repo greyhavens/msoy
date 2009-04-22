@@ -14,6 +14,7 @@ import org.apache.commons.configuration.ConfigurationException;
 
 import com.threerings.panopticon.aggregator.PropertiesResultTransformer;
 import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.shared.util.DateFactory;
 import com.threerings.panopticon.shared.util.PartialDateType;
 import com.threerings.panopticon.shared.util.TimeRange;
 
@@ -69,14 +70,14 @@ public class TruncateToIntervalTransformer
     public void configure (final Configuration config)
         throws ConfigurationException
     {
-        _interval = PartialDateType.valueOf(config.getString("interval",
-            PartialDateType.DAY.name()));
-        _intervalCheck = IntervalCheck.valueOf(config.getString("test",
-            IntervalCheck.BEFORE.name()));
+        _interval = PartialDateType.valueOf(
+                config.getString("interval", PartialDateType.DAY.name()));
+        _intervalCheck = IntervalCheck.valueOf(
+                config.getString("test", IntervalCheck.BEFORE.name()));
         _dateField = config.getString("field", "date");
 
         String formatString = config.getString("format");
-        _format = (formatString != null) ? new SimpleDateFormat(formatString) : null;
+        _format = (formatString != null) ? DateFactory.newSimpleDateFormat(formatString) : null;
     }
 
     public boolean transform (EventData data)

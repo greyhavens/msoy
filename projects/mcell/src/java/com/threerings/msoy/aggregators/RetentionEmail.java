@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.samskivert.util.CountHashMap;
 import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
 import com.threerings.msoy.aggregators.result.RetentionEmailResult;
-import com.threerings.panopticon.aggregator.Schedule;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
@@ -27,8 +26,9 @@ import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
+import com.threerings.panopticon.shared.util.DateFactory;
 
-@Aggregator(output = RetentionEmail.OUTPUT, schedule = Schedule.DAILY)
+@Aggregator(output = RetentionEmail.OUTPUT)
 public class RetentionEmail
     implements JavaAggregator<Keys.LongKey>, KeyFactory<Keys.LongKey>
 {
@@ -100,7 +100,7 @@ public class RetentionEmail
 
     protected static Calendar getDayOfEvent (EventData eventData)
     {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = DateFactory.newCalendar();
         Object timestamp = eventData.get("timestamp");
         calendar.setTimeInMillis(timestamp instanceof Date ?
             ((Date)timestamp).getTime() : (Long)timestamp);
@@ -121,7 +121,7 @@ public class RetentionEmail
 
     static
     {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = DateFactory.newCalendar();
         cal.set(2009, 3, 1);
         _inceptionTime = cal.getTimeInMillis();
     }
