@@ -251,7 +251,8 @@ public class GameRecord extends ItemRecord
         return object;
     }
 
-    protected MediaDesc makeMediaDesc (byte [] mediaHash, byte mimeType) {
+    protected MediaDesc makeMediaDesc (byte[] mediaHash, byte mimeType)
+    {
         return (mediaHash == null) ? null : new MediaDesc(mediaHash, mimeType);
     }
 
