@@ -72,7 +72,7 @@ public class RetentionEmail
         for (Map.Entry<String, Set<Integer>> entry : mailings.sent.entrySet()) {
             sent.incrementCount(entry.getKey(), entry.getValue().size());
             for (int memberId : entry.getValue()) {
-                int count = logins.logins.contains(memberId) ? 1 : 0;
+                int count = logins.memberIds.contains(memberId) ? 1 : 0;
                 respondents.incrementCount(entry.getKey(), count);
             }
         }

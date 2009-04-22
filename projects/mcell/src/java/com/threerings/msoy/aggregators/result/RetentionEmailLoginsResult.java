@@ -14,7 +14,7 @@ import com.threerings.panopticon.common.event.EventData;
 public class RetentionEmailLoginsResult extends FieldAggregatedResult
 {
     /** The member ids who have logged in. */
-    public Set<Integer> logins = Sets.newHashSet();
+    public Set<Integer> memberIds = Sets.newHashSet();
 
     public static boolean checkInputs (EventData eventData)
     {
@@ -24,6 +24,6 @@ public class RetentionEmailLoginsResult extends FieldAggregatedResult
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
-        logins.add(eventData.getInt("memberId"));
+        memberIds.add(eventData.getInt("memberId"));
     }
 }
