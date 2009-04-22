@@ -195,7 +195,7 @@ public class StatusServlet extends HttpServlet
         StringBuilder buf = new StringBuilder();
         for (PartySummary summary : summaries) {
             PartyInfo info = infos.get(summary.getKey());
-            buf.append("size=").append(info.population).append(" ")
+            buf.append("- size=").append(info.population).append(" ")
                 .append("name=\"").append(summary.name).append("\" ")
                 .append("group=\"").append(summary.group).append("\" ")
                 .append("groupId=").append(summary.group.getGroupId()).append(" ")
