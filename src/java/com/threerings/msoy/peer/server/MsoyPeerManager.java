@@ -29,6 +29,7 @@ import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
+import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.ConfirmAdapter;
 
@@ -48,7 +49,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -499,12 +499,7 @@ public class MsoyPeerManager extends CrowdPeerManager
                                 final PeerService.ResultListener listener)
         throws InvocationException
     {
-        _reportMan.generateReport(type, new Function<String, Void>() {
-            public Void apply (String report) {
-                listener.requestProcessed(report);
-                return null;
-            }
-        });
+        listener.requestProcessed(_reportMan.generateReport(type));
     }
 
     @Override // from PeerManager
@@ -734,7 +729,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     // dependencies
     @Inject protected ClientManager _clmgr;
     @Inject protected InvocationManager _invmgr;
-    @Inject protected MsoyReportManager _reportMan;
+    @Inject protected ReportManager _reportMan;
     @Inject protected MsoyServer _msoyServer;
     @Inject protected SceneRegistry _screg;
 

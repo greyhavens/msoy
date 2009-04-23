@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RunQueue;
 
 import com.threerings.util.Name;
 
@@ -102,7 +103,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(Authenticator.class).to(MsoyAuthenticator.class);
             bind(PresentsServer.class).to(MsoyServer.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
-            bind(ReportManager.class).to(MsoyReportManager.class);
+            bind(ReportManager.class).to(QuietReportManager.class);
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
             bind(PlaceRegistry.class).to(RoomRegistry.class);
@@ -345,6 +346,21 @@ public class MsoyServer extends MsoyBaseServer
         return ServerConfig.serverPorts;
     }
 
+    /**
+     * Creates a connection to the AMQP server based on the configuration settings.
+     */
+    protected static MessageConnection createAMQPConnection ()
+    {
+        final DelayedMessageConnection delayedConn = new DelayedMessageConnection();
+        final AMQPMessageConfig config = ServerConfig.getAMQPMessageConfig();
+        if (config == null) {
+            log.info("No AMQP messaging server configured.");
+        } else {
+            delayedConn.init(new AMQPMessageConnection(config));
+        }
+        return delayedConn;
+    }
+
     // Note well: this interval does not run on the dobj thread
     protected class AutoRestartChecker extends Interval
     {
@@ -387,19 +403,12 @@ public class MsoyServer extends MsoyBaseServer
         protected long _codeModified;
     }
 
-    /**
-     * Creates a connection to the AMQP server based on the configuration settings.
-     */
-    protected static MessageConnection createAMQPConnection ()
+    @Singleton
+    protected static class QuietReportManager extends ReportManager
     {
-        final DelayedMessageConnection delayedConn = new DelayedMessageConnection();
-        final AMQPMessageConfig config = ServerConfig.getAMQPMessageConfig();
-        if (config == null) {
-            log.info("No AMQP messaging server configured.");
-        } else {
-            delayedConn.init(new AMQPMessageConnection(config));
+        @Override public void init (RunQueue rqueue) {
+            // disable state of the server report logging by not calling super
         }
-        return delayedConn;
     }
 
     /** A policy server used on dev deployments. */
