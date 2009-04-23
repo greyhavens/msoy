@@ -36,6 +36,7 @@ import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.party.data.PartyInfo;
@@ -177,6 +178,9 @@ public class StatusServlet extends HttpServlet
         case PROFILE:
             collectReportInfo(info, client, nodeobj, ReportManager.PROFILE_TYPE);
             break;
+        case CLIENTS:
+            collectReportInfo(info, client, nodeobj, MemberManager.CLIENTS_REPORT_TYPE);
+            break;
         case PANOPTICON:
             collectReportInfo(info, client, nodeobj, MsoyEventLogger.PANOPTICON_REPORT_TYPE);
             break;
@@ -241,7 +245,7 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, PARTIES, REPORT, PROFILE, PANOPTICON
+        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, PARTIES, REPORT, PROFILE, CLIENTS, PANOPTICON
     };
 
     protected static class ServerInfo

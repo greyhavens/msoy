@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -38,6 +39,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.chat.data.ChatMessage;
@@ -102,8 +104,11 @@ import static com.threerings.msoy.Log.log;
 public class MemberManager
     implements MemberLocator.Observer, MemberProvider
 {
-    @Inject public MemberManager (
-        InvocationManager invmgr, MsoyPeerManager peerMan, MemberLocator locator)
+    /** Identifies a report that contains a dump of client object info. */
+    public static final String CLIENTS_REPORT_TYPE = "clients";
+
+    @Inject public MemberManager (InvocationManager invmgr, MsoyPeerManager peerMan,
+                                  MemberLocator locator, ReportManager repMan)
     {
         // register our bootstrap invocation service
         invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MSOY_GROUP);
@@ -138,6 +143,30 @@ public class MemberManager
             _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii] + CoinAwards.CREATED_ACCOUNT;
         }
         calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
+
+        // register a reporter for the clients report
+        repMan.registerReporter(CLIENTS_REPORT_TYPE, new ReportManager.Reporter() {
+            public void appendReport (StringBuilder buf, long now, long sinceLast, boolean reset) {
+                for (ClientObject clobj : _clmgr.clientObjects()) {
+                    if (!(clobj instanceof BodyObject)) {
+                        buf.append("- ").append(clobj.getClass().getSimpleName()).append("\n");
+                    } else {
+                        appendBody(buf, (BodyObject)clobj);
+                    }
+                }
+            }
+            protected String appendBody (StringBuilder buf, BodyObject body) {
+                buf.append("- ").append(body.getClass().getSimpleName()).append(" [id=");
+                Name vname = body.getVisibleName();
+                if (vname instanceof MemberName) {
+                    buf.append(((MemberName)vname).getMemberId());
+                } else {
+                    buf.append(vname);
+                }
+                buf.append(", status=").append(body.status);
+                buf.append(", loc=").append(body.location).append("]\n");
+            }
+        });
     }
 
     /**
@@ -716,9 +745,7 @@ public class MemberManager
      */
     public void notifyAll (Notification note)
     {
-        Iterator<ClientObject> itr = _clmgr.enumerateClientObjects();
-        while (itr.hasNext()) {
-            ClientObject clobj = itr.next();
+        for (ClientObject clobj : _clmgr.clientObjects()) {
             if (clobj instanceof MemberObject) {
                 MemberObject mem = (MemberObject) clobj;
                 if (!mem.isViewer()) {
