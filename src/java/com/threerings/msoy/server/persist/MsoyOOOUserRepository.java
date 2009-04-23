@@ -37,6 +37,14 @@ import com.threerings.underwire.server.persist.SupportRepository;
 
 /**
  * Whirled-specific table-compatible simulation of the parts of the user repository that we want.
+ *
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ *
+ * OOOUser.userId != MemberRecord.memberId
+ *
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
  */
 @Singleton @BlockingThread
 public class MsoyOOOUserRepository extends DepotUserRepository
