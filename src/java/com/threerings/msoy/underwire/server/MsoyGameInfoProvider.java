@@ -5,15 +5,14 @@ package com.threerings.msoy.underwire.server;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -31,15 +30,9 @@ import com.threerings.underwire.web.data.Account;
 public class MsoyGameInfoProvider extends GameInfoProvider
 {
     @Override // from GameInfoProvider
-    public void init (ConnectionProvider conprov)
+    public Map<String,String> resolveGameNames (Set<String> names)
     {
-        // nothing to init
-    }
-
-    @Override // from GameInfoProvider
-    public HashMap<String,String> resolveGameNames (HashSet<String> names)
-    {
-        HashMap<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = Maps.newHashMap();
         for (MemberName name : _memberRepo.loadMemberNames(names, TO_INT).values()) {
             map.put(Integer.toString(name.getMemberId()), name.toString());
         }

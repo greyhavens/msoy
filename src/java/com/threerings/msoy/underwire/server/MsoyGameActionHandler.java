@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.MemberNodeActions;
@@ -28,12 +27,6 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class MsoyGameActionHandler extends GameActionHandler
 {
-    @Override // from GameActionHandler
-    public void init (ConnectionProvider conprov)
-    {
-        // nothing to init
-    }
-
     @Override // from GameActionHandler
     public void ban (String accountName)
     {
