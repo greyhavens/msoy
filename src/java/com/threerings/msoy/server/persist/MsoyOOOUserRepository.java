@@ -45,6 +45,9 @@ import com.threerings.underwire.server.persist.SupportRepository;
  *
  * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
  * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+ *
+ * Do not do anything with MemberRepository here. If you need to coordinate changes to MemberRecord
+ * and OOOUserRecord, you need to do it in the code that calls into this repository.
  */
 @Singleton @BlockingThread
 public class MsoyOOOUserRepository extends DepotUserRepository
@@ -151,44 +154,4 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         Date expires = new Date(cal.getTime().getTime());
         return updatePartial(SessionRecord.class, sessionKey, SessionRecord.EXPIRES, expires) == 1;
     }
-
-    @Override
-    public void changeEmail (int userId, String email)
-    {
-        MemberRecord mrec = _memberRepo.loadMember(userId);
-        if (mrec == null) {
-            throw new RuntimeException("e.member_not_found");
-        }
-
-        super.changeEmail(userId, email);
-
-        if (!mrec.accountName.equals(email)) {
-            _memberRepo.configureAccountName(userId, email);
-        }
-    }
-
-    @Override
-    public boolean updateUser (User user)
-    {
-        MemberRecord mrec = _memberRepo.loadMember(user.userId);
-        if (mrec == null) {
-            throw new RuntimeException("e.member_not_found");
-        }
-
-        if (!super.updateUser(user)) {
-            return false;
-        }
-
-        if (!mrec.accountName.equals(user.email)) {
-            _memberRepo.configureAccountName(user.userId, user.email);
-        }
-
-        if (mrec.updateFlag(MemberRecord.Flag.SPANKED,
-            ((OOOUser)user).isBanned(OOOUser.METASOY_SITE_ID))) {
-            _memberRepo.storeFlags(mrec);
-        }
-        return true;
-    }
-
-    @Inject MemberRepository _memberRepo;
 }
