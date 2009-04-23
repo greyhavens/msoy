@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.data;
 
+import com.threerings.util.Name;
+
 import com.threerings.crowd.data.BodyObject;
 
 import com.threerings.msoy.data.all.VizMemberName;
@@ -32,6 +34,12 @@ public class PartierObject extends BodyObject
     public int getMemberId ()
     {
         return memberName.getMemberId();
+    }
+
+    @Override // from BodyObject
+    public Name getVisibleName ()
+    {
+        return memberName;
     }
 
     // AUTO-GENERATED: METHODS START
