@@ -13,6 +13,7 @@ import com.threerings.util.Command;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
+import com.threerings.util.Util;
 
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableDirector;
@@ -194,12 +195,7 @@ public class LobbyController extends Controller
      */
     public function haveActionableTables () :Boolean
     {
-        for each (var table :Table in _lobj.tables.toArray()) {
-            if (isActionableTable(table)) {
-                return true;
-            }
-        }
-        return false;
+        return _lobj.tables.toArray().some(Util.adapt(isActionableTable));
     }
 
     /**
