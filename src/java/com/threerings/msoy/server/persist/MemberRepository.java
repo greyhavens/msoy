@@ -1281,7 +1281,7 @@ public class MemberRepository extends DepotRepository
         record.banExpires = expires;
         record.warning = warning;
         store(record);
-        updateBanned(memberId, true);
+        updateSpanked(memberId, true);
     }
 
     /**
@@ -1295,7 +1295,7 @@ public class MemberRepository extends DepotRepository
             record.memberId = memberId;
             record.warning = warning;
             insert(record);
-            updateBanned(memberId, true);
+            updateSpanked(memberId, true);
         }
     }
 
@@ -1305,7 +1305,7 @@ public class MemberRepository extends DepotRepository
     public void clearMemberWarning (int memberId)
     {
         delete(MemberWarningRecord.class, memberId);
-        updateBanned(memberId, false);
+        updateSpanked(memberId, false);
     }
 
     /**
@@ -1448,10 +1448,10 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Updates the BANNED flag for a given member. Used by the member warning methods in this
+     * Updates the SPANKED flag for a given member. Used by the member warning methods in this
      * class.
      */
-    protected void updateBanned (int memberId, boolean value)
+    protected void updateSpanked (int memberId, boolean value)
     {
         MemberRecord mrec = loadMember(memberId);
         if (mrec.updateFlag(MemberRecord.Flag.SPANKED, value)) {
