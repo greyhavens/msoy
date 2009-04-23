@@ -13,7 +13,6 @@ import mx.controls.TextInput;
 
 import flash.events.Event;
 
-import com.threerings.io.TypedArray;
 import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
@@ -34,6 +33,8 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.ui.SimpleGrid;
 
 import com.threerings.msoy.item.data.all.Game;
+
+import com.threerings.msoy.party.client.PartyDirector;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.ParlorGameConfig;
@@ -77,10 +78,13 @@ public class TableCreationPanel extends VBox
     override protected function createChildren () :void
     {
         super.createChildren();
-
         styleName = "tableCreationPanel";
 
-        addChild(FlexUtil.createLabel(Msgs.GAME.get("t.create_table"), "lobbyTitle"));
+        const partyDir :PartyDirector = _ctx.getWorldContext().getPartyDirector();
+        const isPartyLeader :Boolean = partyDir.isPartyLeader();
+
+        var titleKey :String = isPartyLeader ? "t.create_party_table" : "t.create_table";
+        addChild(FlexUtil.createLabel(Msgs.GAME.get(titleKey), "lobbyTitle"));
 
         // create our various game configuration bits but do not add them
         var rparam :ToggleParameter = new ToggleParameter();
@@ -109,13 +113,16 @@ public class TableCreationPanel extends VBox
         case GameConfig.PARTY:
             // plparam stays with zeros
             // wparam stays null
-            pvparam = new ToggleParameter();
-            pvparam.name = Msgs.GAME.get("l.private");
-            pvparam.tip = Msgs.GAME.get("t.private");
+            if (!isPartyLeader) {
+                pvparam = new ToggleParameter();
+                pvparam.name = Msgs.GAME.get("l.private");
+                pvparam.tip = Msgs.GAME.get("t.private");
+            }
             break;
 
         case GameConfig.SEATED_GAME:
-            plparam.minimum = match.minSeats;
+            plparam.minimum = Math.max(
+                Math.min(match.maxSeats, partyDir.getPartySize()), match.minSeats)
             plparam.maximum = match.maxSeats;
             plparam.start = match.maxSeats; // game creators don't configure start seats, so use
                                             // the max; they can always start the game early
@@ -188,7 +195,7 @@ public class TableCreationPanel extends VBox
 
     protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void
     {
-        var invIds :TypedArray = TypedArray.create(int);
+        var invIds :Array = [];
         if (_friendsGrid != null) {
             for (var ii :int = 0; ii < _friendsGrid.cellCount; ii++) {
                 var fcb :FriendCheckBox = (_friendsGrid.getCellAt(ii) as FriendCheckBox);

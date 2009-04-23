@@ -93,6 +93,11 @@ public class PartyDirector extends BasicDirector
         return _wctx.getMemberObject().partyId;
     }
 
+    public function getPartySize () :int
+    {
+        return (_partyObj == null) ? 0 : _partyObj.peeps.size();
+    }
+
     public function isInParty () :Boolean
     {
         return (0 != getPartyId());
@@ -295,14 +300,16 @@ public class PartyDirector extends BasicDirector
             return; // we don't follow! (prevent leaving a game we're in)
         }
         const gameDir :GameDirector = _wctx.getGameDirector();
-        // TODO: support for non-avrg
-        if (!_partyObj.avrGame || (_partyObj.gameId == 0)) {
+        if (_partyObj.gameId != gameDir.getGameId()) {
             gameDir.clearAnyGame();
-            return;
         }
-        if (!gameDir.isAVRGame() || (_partyObj.gameId != gameDir.getGameId())) {
-            gameDir.clearAnyGame();
-            gameDir.activateAVRGame(_partyObj.gameId);
+        if (_partyObj.gameId != 0) {
+            if (_partyObj.avrGame) {
+                gameDir.activateAVRGame(_partyObj.gameId);
+            } else {
+                // join the leader's game
+                gameDir.playNow(_partyObj.gameId, _partyObj.leaderId);
+            }
         }
     }
 
@@ -459,9 +466,6 @@ public class PartyDirector extends BasicDirector
         const gameDir :GameDirector = _wctx.getGameDirector();
         var avrGame :Boolean = gameDir.isAVRGame();
         var gameId :int = gameDir.getGameId();
-        if (!avrGame) { // TODO: add support for non-AVRGs
-            gameId = 0; // but for now, just treat it like "no game".
-        }
         if ((gameId != _partyObj.gameId) || (avrGame != _partyObj.avrGame)) {
             _partyObj.partyService.setGame(
                 _pctx.getClient(), gameId, avrGame, _wctx.listener(MsoyCodes.PARTY_MSGS));

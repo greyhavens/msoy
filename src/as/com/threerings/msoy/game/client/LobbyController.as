@@ -24,7 +24,6 @@ import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.BlankPlaceView;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -33,8 +32,11 @@ import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.MsoyTableConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.party.client.PartyDirector;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.presents.client.ClientEvent;
 
@@ -72,12 +74,12 @@ public class LobbyController extends Controller
         gctx :GameContext, lobbyOid :int, onClear :Function, displaySplash :Boolean)
     {
         _gctx = gctx;
-        _mctx = gctx.getMsoyContext();
+        _mctx = gctx.getWorldContext();
         _onClear = onClear;
         _displaySplash = displaySplash;
 
         _waitForWorldLogon = new GatedExecutor(function () :Boolean {
-            return _gctx.getMsoyContext().getClient().isLoggedOn();
+            return _gctx.getWorldContext().getClient().isLoggedOn();
         });
 
         // create our lobby panel
@@ -226,15 +228,24 @@ public class LobbyController extends Controller
      * Handles SUBMIT_TABLE.
      */
     public function handleSubmitTable (
-        tcfg :TableConfig, gcfg :GameConfig, friendIds :TypedArray) :void
+        tcfg :TableConfig, gcfg :GameConfig, friendIds :Array) :void
     {
+        var mtcfg :MsoyTableConfig = MsoyTableConfig(tcfg);
+        const partyDir :PartyDirector = _gctx.getWorldContext().getPartyDirector();
+        const isPartyLeader :Boolean = partyDir.isPartyLeader();
+        if (isPartyLeader) {
+            mtcfg.partyId = partyDir.getPartyId();
+        }
+
         _tableDir.createTable(tcfg, gcfg);
 
         // if requested, send an invitation to our friends, inviting them to this game
         if (friendIds.length > 0) {
             var gsvc :WorldGameService =
                 (_mctx.getClient().requireService(WorldGameService) as WorldGameService);
-            gsvc.inviteFriends(_mctx.getClient(), gcfg.getGameId(), friendIds);
+            // TODO: invite friends to party if partyLeader, rather than inviting to table???
+            gsvc.inviteFriends(_mctx.getClient(), gcfg.getGameId(),
+                TypedArray.create(int, friendIds));
         }
     }
 
@@ -411,7 +422,7 @@ public class LobbyController extends Controller
     }
 
     /** The provider of free cheese. */
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
 
     /** The provider of game related services. */
     protected var _gctx :GameContext;
