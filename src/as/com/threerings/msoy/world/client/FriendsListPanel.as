@@ -70,6 +70,8 @@ public class FriendsListPanel extends FlyingPanel
         var memObj :MemberObject = _wctx.getMemberObject();
         if (memObj != null) {
             memObj.removeListener(this);
+        }
+        if (_friendsList != null) {
             _friendsList.shutdown();
         }
         _wctx.getMuteDirector().removeMuteObserver(this);
