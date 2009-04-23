@@ -5,7 +5,7 @@ package com.threerings.msoy.game.client {
 
 import com.threerings.parlor.util.ParlorContext;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -19,7 +19,7 @@ public interface GameContext extends ParlorContext
     /**
      * Returns the context we use to obtain basic client services.
      */
-    function getMsoyContext () :MsoyContext;
+    function getWorldContext () :WorldContext;
 
     /**
      * Return this client's member name.

@@ -68,7 +68,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     // from WhirledGameBackend
     override protected function isEmbedded_v1 () :Boolean
     {
-        return (_ctx as GameContext).getMsoyContext().getMsoyClient().isEmbedded();
+        return (_ctx as GameContext).getWorldContext().getMsoyClient().isEmbedded();
     }
 
     // from WhirledGameBackend
@@ -77,13 +77,13 @@ public class ParlorGameBackend extends WhirledGameBackend
         if (countPlayerData(GameData.ITEM_DATA, ident, getMyId_v1()) < 1) {
             return false;
         }
-        return ConsumeItemPackDialog.show((_ctx as GameContext).getMsoyContext(), _ctx.getClient(),
+        return ConsumeItemPackDialog.show((_ctx as GameContext).getWorldContext(), _ctx.getClient(),
                                           _gameObj.contentService, _gameObj.gameData, ident, msg);
     }
 
     override protected function systemMessage (bundle :String, msg :String) :void
     {
-        (_ctx as GameContext).getMsoyContext().getNotificationDirector().addGameSystemMessage(
+        (_ctx as GameContext).getWorldContext().getNotificationDirector().addGameSystemMessage(
             bundle, msg);
     }
 
@@ -91,7 +91,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     override protected function reportServiceFailure (service :String, cause :String) :void
     {
         // translate the error message and report it using the standard mechanism
-        reportGameError((_ctx as GameContext).getMsoyContext().getMessageManager().
+        reportGameError((_ctx as GameContext).getWorldContext().getMessageManager().
             getBundle(MsoyGameCodes.GAME_BUNDLE).
             xlate(MessageBundle.compose("e.game_error", cause)));
     }
@@ -100,7 +100,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     override protected function showPage_v1 (token :String) :Boolean
     {
         // handleViewUrl will do the "right thing"
-        (_ctx as GameContext).getMsoyContext().getMsoyController().handleViewUrl(
+        (_ctx as GameContext).getWorldContext().getMsoyController().handleViewUrl(
             DeploymentConfig.serverURL + "#" + token);
         return true;
     }
@@ -149,7 +149,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     // from WhirledGameBackend
     override protected function showAllGames_v1 () :void
     {
-        (_ctx as GameContext).getMsoyContext().getMsoyController().handleViewGames();
+        (_ctx as GameContext).getWorldContext().getMsoyController().handleViewGames();
     }
 
     // from WhirledGameBackend

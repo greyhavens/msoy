@@ -28,7 +28,7 @@ public class GameOverPanel extends FloatingPanel
 {
     public function GameOverPanel (gctx :GameContext, rematch :UIComponent, goBtn :UIComponent)
     {
-        super(gctx.getMsoyContext(), Msgs.GAME.get("t.gameOver"));
+        super(gctx.getWorldContext(), Msgs.GAME.get("t.gameOver"));
         _gctx = gctx;
         _rematch = rematch;
         _goBtn = goBtn;

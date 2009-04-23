@@ -29,16 +29,16 @@ public class LobbyPanel extends FloatingPanel
      */
     public function LobbyPanel (gctx :GameContext, ctrl :LobbyController)
     {
-        super(gctx.getMsoyContext());
+        super(gctx.getWorldContext());
         _gctx = gctx;
         _ctrl = ctrl;
 
         setStyle("horizontalAlign", "left"); // override the sexy default
         width = WIDTH;
         height = HEIGHT;
-        showCloseButton = !gctx.getMsoyContext().getMsoyClient().isEmbedded() ||
+        showCloseButton = !gctx.getWorldContext().getMsoyClient().isEmbedded() ||
             (gctx.getLocationDirector().getPlaceObject() != null) ||
-            (gctx.getMsoyContext().getLocationDirector().getPlaceObject() != null);
+            (gctx.getWorldContext().getLocationDirector().getPlaceObject() != null);
     }
 
     public function init (lobbyObj :LobbyObject) :void

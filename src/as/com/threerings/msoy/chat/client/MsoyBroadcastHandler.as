@@ -44,7 +44,7 @@ public class MsoyBroadcastHandler extends BroadcastHandler
 
         var mctx :MsoyContext = ctx as MsoyContext;
         if (mctx == null) {
-            mctx = GameContext(ctx).getMsoyContext();
+            mctx = GameContext(ctx).getWorldContext();
         }
         new BroadcastPanel(mctx, msg);
     }

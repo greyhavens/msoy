@@ -32,7 +32,7 @@ public class TrophyPanel extends FloatingPanel
     public static function show (ctx :GameContext, gameId :int, gameName :String) :void
     {
         (ctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
-            ctx.getClient(), gameId, ctx.getMsoyContext().resultListener(
+            ctx.getClient(), gameId, ctx.getWorldContext().resultListener(
                 function (trophies :TypedArray) :void {
                     new TrophyPanel(ctx, trophies, gameName).open();
                 }, MsoyCodes.GAME_MSGS));
@@ -53,7 +53,7 @@ public class TrophyPanel extends FloatingPanel
 
     public function TrophyPanel (ctx :GameContext, trophies :Array, gameName :String)
     {
-        super(ctx.getMsoyContext(), Msgs.GAME.get("t.trophy"));
+        super(ctx.getWorldContext(), Msgs.GAME.get("t.trophy"));
         _gctx = ctx;
         _trophies = trophies;
         _gameName = gameName;
@@ -139,7 +139,7 @@ public class TrophyPanel extends FloatingPanel
         if (buttonId == PUBLISH_BUTTON) {
             close();
             TrophyFeederPanel.showExisting(
-                _gctx.getMsoyContext(), _gameName, filterEarned(_trophies));
+                _gctx.getWorldContext(), _gameName, filterEarned(_trophies));
 
         } else {
             super.buttonClicked(buttonId);

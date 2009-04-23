@@ -58,7 +58,7 @@ public class PartyContextImpl implements PartyContext
     }
 
     // from PartyContext
-    public function getMsoyContext () :MsoyContext
+    public function getWorldContext () :WorldContext
     {
         return _wctx;
     }

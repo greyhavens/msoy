@@ -16,7 +16,6 @@ import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.parlor.client.ParlorDirector;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.WorldCredentials;
@@ -116,7 +115,7 @@ public class LiaisonGameContext
     }
 
     // from GameContext
-    public function getMsoyContext () :MsoyContext
+    public function getWorldContext () :WorldContext
     {
         return _wctx;
     }
@@ -228,7 +227,7 @@ class GameLocationDirector extends LocationDirector
         // started, delay this move so that we continue to display our Whirled splash ad for the
         // minimum desired amount of time
         var elapsed :int = getTimer() - Preloader.preloaderStart;
-        if ((_ctx as GameContext).getMsoyContext().getMsoyClient().isEmbedded() &&
+        if ((_ctx as GameContext).getWorldContext().getMsoyClient().isEmbedded() &&
             (elapsed < MIN_EMBED_SPLASH_TIME)) {
             // TODO: there must be an easier way to do this
             var timer :Timer = new Timer(MIN_EMBED_SPLASH_TIME - elapsed, 1);

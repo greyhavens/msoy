@@ -28,10 +28,10 @@ public class ParlorGameController extends WhirledGameController
         super.willEnterPlace(plobj);
 
         // wire up our occupant reporter (don't report initial occupants)
-        _occReporter.willEnterPlace((_pctx as GameContext).getMsoyContext(), plobj);
+        _occReporter.willEnterPlace((_pctx as GameContext).getWorldContext(), plobj);
 
         // dispatch an event with our current location and (lack of) owner info
-        var top :TopPanel = (_pctx as GameContext).getMsoyContext().getTopPanel();
+        var top :TopPanel = (_pctx as GameContext).getWorldContext().getTopPanel();
         top.dispatchEvent(new ValueEvent(TopPanel.LOCATION_NAME_CHANGED,
                                          (_gconfig as ParlorGameConfig).game.name));
         top.dispatchEvent(new ValueEvent(TopPanel.LOCATION_OWNER_CHANGED, null));
@@ -50,7 +50,7 @@ public class ParlorGameController extends WhirledGameController
     public function canBoot () :Boolean
     {
         return false;
-        //return (_pctx as GameContext).getMsoyContext().getTokens().isSupport();
+        //return (_pctx as GameContext).getWorldContext().getTokens().isSupport();
     }
 
     // from BaseGameController

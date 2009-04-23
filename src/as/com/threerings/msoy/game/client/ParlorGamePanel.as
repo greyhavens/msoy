@@ -120,12 +120,12 @@ public class ParlorGamePanel extends WhirledGamePanel
         var config :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
 
         _spinner = new GameLoadingDisplay(
-            _gctx.getMsoyContext().getTopPanel().getPlaceContainer(),
+            _gctx.getWorldContext().getTopPanel().getPlaceContainer(),
             LobbyPlaceView.getLoadingMedia(config.game));
 
         super.willEnterPlace(plobj);
 
-        const mctx :MsoyContext = _gctx.getMsoyContext();
+        const mctx :MsoyContext = _gctx.getWorldContext();
         const bar :ControlBar = mctx.getControlBar();
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
         const multiplayer :Boolean =
@@ -179,7 +179,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     {
         super.didLeavePlace(plobj);
 
-        const mctx :MsoyContext = _gctx.getMsoyContext();
+        const mctx :MsoyContext = _gctx.getWorldContext();
         const bar :ControlBar = mctx.getControlBar();
         bar.setChatDirector(mctx.getMsoyChatDirector());
 
@@ -223,7 +223,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     override protected function createPlayerList () :GamePlayerList
     {
         return new MsoyGamePlayerList(
-            new MsoyNameLabelCreator((_ctx as GameContext).getMsoyContext()));
+            new MsoyNameLabelCreator((_ctx as GameContext).getWorldContext()));
     }
 
     // from WhirledGamePanel
@@ -271,7 +271,7 @@ public class ParlorGamePanel extends WhirledGamePanel
             const multiplayer :Boolean =
                 config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
             if (!multiplayer) {
-                _gctx.getMsoyContext().getUpsellDirector().noteGameOver();
+                _gctx.getWorldContext().getUpsellDirector().noteGameOver();
             }
         }
     }
@@ -301,7 +301,7 @@ public class ParlorGamePanel extends WhirledGamePanel
         // install a listener on the MediaStub to un-idle the user when they generate key events
         // therein
         Loader(_gameContainer.getMedia()).content.addEventListener(
-            KeyboardEvent.KEY_DOWN, _gctx.getMsoyContext().getMsoyController().resetIdleTracking,
+            KeyboardEvent.KEY_DOWN, _gctx.getWorldContext().getMsoyController().resetIdleTracking,
             false, int.MAX_VALUE, true);
     }
 

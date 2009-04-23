@@ -23,10 +23,11 @@ import com.threerings.util.ValueEvent;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.ui.DataPackMediaContainer;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -50,7 +51,7 @@ public class AVRGamePanel extends UIComponent
     {
         log.info("Entering AVRG", "plobj", plobj);
         _gameObj = (plobj as AVRGameObject);
-        getMsoyCtx().getUIState().setInAVRGame(true);
+        getWorldCtx().getUIState().setInAVRGame(true);
     }
 
     // from PlaceView
@@ -63,7 +64,7 @@ public class AVRGamePanel extends UIComponent
             _mediaHolder = null;
         }
 
-        getMsoyCtx().getUIState().setInAVRGame(false);
+        getWorldCtx().getUIState().setInAVRGame(false);
 
         // null gameObj for mediaComplete to find if it should run after us
         _gameObj = null;
@@ -87,7 +88,7 @@ public class AVRGamePanel extends UIComponent
         addEventListener(ResizeEvent.RESIZE, handleResize);
 
         // Give the control bar button our thumbnail
-        getMsoyCtx().getControlBar().setGameButtonIcon(cfg.thumbnail);
+        getWorldCtx().getControlBar().setGameButtonIcon(cfg.thumbnail);
     }
 
     // from PlaceLayer
@@ -155,14 +156,14 @@ public class AVRGamePanel extends UIComponent
         }
     }
 
-    protected function getMsoyCtx() :MsoyContext
+    protected function getWorldCtx() :WorldContext
     {
-        return _gctx.getMsoyContext();
+        return _gctx.getWorldContext();
     }
 
     protected function provideLoadingFeedback () :void
     {
-        const gameBtn :UIComponent = getMsoyCtx().getControlBar().gameBtn;
+        const gameBtn :UIComponent = getWorldCtx().getControlBar().gameBtn;
         const PERIOD :Number = 1.5 * 1000;
         const DELAY :Number = 3.0 * 1000;
 

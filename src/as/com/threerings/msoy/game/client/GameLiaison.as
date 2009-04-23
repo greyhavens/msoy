@@ -232,7 +232,8 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientWillLogon (event :ClientEvent) :void
     {
-        _gctx.getMsoyContext().getMsoyClient().willConnectToServer(_gctx.getClient().getHostname());
+        _gctx.getWorldContext().getMsoyClient().willConnectToServer(
+            _gctx.getClient().getHostname());
     }
 
     // from interface ClientObserver
@@ -451,7 +452,7 @@ public class GameLiaison
             return true;
         }
 
-        TrophyFeederPanel.showNew(_gctx.getMsoyContext(), gameName, _trophies, onClose);
+        TrophyFeederPanel.showNew(_gctx.getWorldContext(), gameName, _trophies, onClose);
         return false;
     }
 

@@ -20,7 +20,7 @@ public class GameChatDirector extends BaseChatDirector
 {
     public function GameChatDirector (gctx :GameContext)
     {
-        super(gctx, gctx.getMsoyContext());
+        super(gctx, gctx.getWorldContext());
         addChatDisplay(_mctx.getTopPanel().getHeaderBar().getChatTabs());
         addChatDisplay(_mctx.getMsoyChatDirector().getHistoryList());
     }

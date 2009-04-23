@@ -5,7 +5,7 @@ package com.threerings.msoy.party.client {
 
 import com.threerings.presents.util.PresentsContext;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.party.data.PartierObject;
 
@@ -17,7 +17,7 @@ public interface PartyContext extends PresentsContext
     /**
      * Returns the context we use to obtain basic client services.
      */
-    function getMsoyContext () :MsoyContext;
+    function getWorldContext () :WorldContext;
 
     /**
      * Returns our client object casted as a PartierObject.

@@ -23,7 +23,7 @@ public class GameController extends MsoyController
 {
     public function GameController (gctx :GameContext, topPanel :TopPanel)
     {
-        super(gctx.getMsoyContext(), topPanel);
+        super(gctx.getWorldContext(), topPanel);
         _gctx = gctx;
     }
 
