@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -146,16 +145,6 @@ public class MemberRepository extends DepotRepository
         // drop this superfluous index
         ctx.registerMigration(MemberExperienceRecord.class,
             new SchemaMigration.DropIndex(2, "ixDateOccurred"));
-    }
-
-    // TODO: remove
-    // TEMP: to support a migration in AvatarRepository
-    public void removeAllUsedAvatars (Set<Integer> avatarIds)
-    {
-        for (MemberRecord rec :
-                findAll(MemberRecord.class, CacheStrategy.NONE, new ArrayList<QueryClause>())) {
-            avatarIds.remove(rec.avatarId);
-        }
     }
 
     /**
