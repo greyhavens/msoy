@@ -155,7 +155,7 @@ public class MemberManager
                     }
                 }
             }
-            protected String appendBody (StringBuilder buf, BodyObject body) {
+            protected void appendBody (StringBuilder buf, BodyObject body) {
                 buf.append("- ").append(body.getClass().getSimpleName()).append(" [id=");
                 Name vname = body.getVisibleName();
                 if (vname instanceof MemberName) {
