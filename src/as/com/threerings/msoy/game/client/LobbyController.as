@@ -80,9 +80,7 @@ public class LobbyController extends Controller
         _onClear = onClear;
         _displaySplash = displaySplash;
 
-        _waitForWorldLogon = new GatedExecutor(function () :Boolean {
-            return _gctx.getWorldContext().getClient().isLoggedOn();
-        });
+        _waitForWorldLogon = new GatedExecutor(_gctx.getWorldContext().getClient().isLoggedOn);
 
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
@@ -96,10 +94,10 @@ public class LobbyController extends Controller
     }
 
     /**
-     * Returns the id of the game managed by this lobby controller. Not valid until we've
+     * Returns the item id of the game managed by this lobby controller. Not valid until we've
      * subscribed to our lobby object.
      */
-    public function get gameId () :int
+    public function get gameItemId () :int
     {
         return _lobj.game.itemId;
     }
