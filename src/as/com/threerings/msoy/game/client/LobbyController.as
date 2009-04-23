@@ -146,22 +146,19 @@ public class LobbyController extends Controller
             return;
         }
 
-        for each (var table :Table in _lobj.tables.toArray()) {
-            for each (var player :Name in table.players) {
-                if (table.inPlay()) {
-                    continue;
-                }
-                var member :MemberName = (player as MemberName);
-                if (member == null || member.getMemberId() != playerId) {
-                    continue;
-                }
-                for (var ii :int = 0; ii < table.players.length; ii++) {
-                    if (table.players[ii] == null) {
-                        handleJoinTable(table.tableId, ii);
-                        return;
-                    }
-                }
+        // find the table with the specified playerId
+        var table :Table = ArrayUtil.findIf(_lobj.tables.toArray(), function (t :Table) :Boolean {
+            return !t.inPlay() && (t.players != null) &&
+                t.players.some(function (name :*, ... rest) :Boolean {
+                    return (name is MemberName) && (MemberName(name).getMemberId() == playerId);
+                });
+        });
+        if (table != null) {
+            if (-1 == table.players.indexOf(null)) {
                 _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
+            } else {
+                // it might be full anyway once our request hits the server..
+                handleJoinTable(table.tableId, Table.ANY_POSITION);
             }
         }
     }
