@@ -40,15 +40,32 @@ public interface AuthenticationDomain
     public void uncreateAccount (String accountName);
 
     /**
-     * Notifies the authentication domain that the supplied information was modified for the
-     * specified account.
+     * Updates the authentication account name (email address) for the supplied account.
      *
-     * @param newAccountName if non-null, a new email address for this account.
-     * @param newPermaName if non-null, the permaname assigned to this account.
-     * @param newPassword if non-null, the new password to be assigned to this account.
+     * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account in
+     * question does not exist or {@link MsoyAuthCodes#DUPLICATE_EMAIL} if the account name in
+     * question is already in use.
      */
-    public void updateAccount (String accountName, String newAccountName, String newPermaName,
-                               String newPassword)
+    public void updateAccountName (String accountName, String newAccountName)
+        throws ServiceException;
+
+    /**
+     * Updates the permaname associated with the supplied account.
+     *
+     * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account in
+     * question does not exist or {@link MsoyAuthCodes#DUPLICATE_PERMANAME} if the name in question
+     * is already in use.
+     */
+    public void updatePermaName (String accountName, String newPermaName)
+        throws ServiceException;
+
+    /**
+     * Updates the password for the supplied account.
+     *
+     * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account in
+     * question does not exist.
+     */
+    public void updatePassword (String accountName, String newPassword)
         throws ServiceException;
 
     /**

@@ -39,6 +39,7 @@ import com.threerings.msoy.server.AuthenticationDomain.Account;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.MailSender;
 
 import static com.threerings.msoy.Log.log;
 
@@ -109,27 +110,13 @@ public class AccountLogic
                 "new", visitorId, "memberId", mrec.memberId);
         }
 
-        // update member data
-        try {
-            _memberRepo.updateRegistration(memberId, email, displayName);
-        } catch (DuplicateKeyException dke) {
-            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
-        }
-
-        try {
-            // update the account name and password with the domain
-            updateAccount(mrec.accountName, email, null, password);
-        } catch (ServiceException se) {
-            // we need to roll back the account name change to preserve a proper mapping between
-            // MemberRecord and the authenticator's record
-            try {
-                _memberRepo.configureAccountName(mrec.memberId, mrec.accountName);
-            } catch (Exception e) {
-                log.warning("Failed to roll back account name change", "who", mrec.who(),
-                            "newEmail", email, "oldEmail", mrec.accountName, e);
-            }
-            throw se;
-        }
+        // configure our new email address, display name and password (the first might fail if
+        // we're using an in-use email, so we have to do that first)
+        updateAccountName(mrec, email);
+        mrec.accountName = email;
+        _memberRepo.configureDisplayName(memberId, displayName);
+        mrec.name = displayName;
+        updatePassword(mrec, password);
 
         // if they have an invitation record, this overrides any cookied affiliate (that we stored
         // when they created their original permaguest account); this code path only happens if you
@@ -145,10 +132,6 @@ public class AccountLogic
         _eventLog.accountCreated(
             mrec.memberId, false, inviteId, mrec.affiliateMemberId, mrec.visitorId);
 
-        // fill in fields so we are returning up-to-date information
-        mrec.accountName = email;
-        mrec.name = displayName;
-
         // update profile
         ProfileRecord prec = _profileRepo.loadProfile(memberId);
         prec.birthday = ProfileRecord.fromDateVec(birthdayYMD);
@@ -162,8 +145,8 @@ public class AccountLogic
 
         // award coins
         try {
-            _moneyLogic.awardCoins(memberId, CoinAwards.CREATED_ACCOUNT, true,
-                UserAction.createdAccount(memberId));
+            _moneyLogic.awardCoins(
+                memberId, CoinAwards.CREATED_ACCOUNT, true, UserAction.createdAccount(memberId));
         } catch (Exception e) {
             log.warning("Failed to award coins for new account", "memberId", memberId, e);
         }
@@ -212,25 +195,95 @@ public class AccountLogic
     }
 
     /**
-     * Updates any of the supplied authentication information for the supplied account. Any of the
-     * new values may be null to indicate that they are not to be updated.
+     * Updates the authentication name (email address) for the supplied member.
      */
-    public void updateAccount (
-        String oldEmail, String newEmail, String newPermaName, String newPass)
+    public void updateAccountName (MemberRecord mrec, String newAccountName)
         throws ServiceException
     {
-        try {
-            // make sure we're dealing with lower cased email addresses
-            oldEmail = oldEmail.toLowerCase();
-            if (newEmail != null) {
-                newEmail = newEmail.toLowerCase();
-            }
-            getDomain(oldEmail).updateAccount(oldEmail, newEmail, newPermaName, newPass);
-        } catch (final RuntimeException e) {
-            log.warning("Error updating account", "for", oldEmail, "nemail", newEmail,
-                        "nperma", newPermaName, "npass", newPass, e);
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        final String oldAccountName = mrec.accountName;
+
+        // make sure we're dealing with lower cased email addresses
+        newAccountName = newAccountName.toLowerCase();
+
+        // make sure the email is valid and not too long (this is also validated on the client)
+        if (!MailUtil.isValidAddress(newAccountName) ||
+            newAccountName.length() > MemberName.MAX_EMAIL_LENGTH) {
+            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
+
+        // first update their MemberRecord and fail if they request a duplicate name
+        try {
+            _memberRepo.configureAccountName(mrec.memberId, newAccountName);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
+        }
+
+        try {
+            // let the authenticator know that we updated our account name
+            getDomain(oldAccountName).updateAccountName(oldAccountName, newAccountName);
+        } catch (ServiceException se) {
+            // if that fails, we need to roll back our repository as well
+            log.warning("Fuck a duck. The ooouser db thinks we've already got this account.",
+                        "old", oldAccountName, "new", newAccountName);
+            _memberRepo.configureAccountName(mrec.memberId, oldAccountName);
+            throw se;
+        }
+
+        // if we made it this far, mark the account as no longer validated
+        mrec.setFlag(MemberRecord.Flag.VALIDATED, false);
+        _memberRepo.storeFlags(mrec);
+
+        // and send a new validation email
+        mrec.accountName = newAccountName;
+        sendValidationEmail(mrec);
+    }
+
+    /**
+     * Configures the supplied member's permaname.
+     */
+    public void configurePermaName (MemberRecord mrec, String permaName)
+        throws ServiceException
+    {
+        if (mrec.permaName != null) {
+            log.warning("Rejecting attempt to reassign permaname", "who", mrec.accountName,
+                        "oname", mrec.permaName, "nname", permaName);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        if (permaName == null ||
+            permaName.length() < MemberName.MINIMUM_PERMANAME_LENGTH ||
+            permaName.length() > MemberName.MAXIMUM_PERMANAME_LENGTH ||
+            !permaName.matches(PERMANAME_REGEX)) {
+            throw new ServiceException("e.invalid_permaname");
+        }
+
+        // first configure it in our repository to check for duplicates
+        try {
+            _memberRepo.configurePermaName(mrec.memberId, permaName);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
+        }
+
+        try {
+            // then let the authenticator know that we updated our permaname
+            getDomain(mrec.accountName).updatePermaName(mrec.accountName, permaName);
+        } catch (ServiceException se) {
+            // if that fails, we have to roll back our repository as well
+            log.warning("Fuck a duck. The ooouser db thinks we've already got this permaname.",
+                        "who", mrec.accountName, "pname", permaName);
+            _memberRepo.configurePermaName(mrec.memberId, null);
+            throw se;
+        }
+    }
+
+    /**
+     * Updates the supplied member's password.
+     */
+    public void updatePassword (MemberRecord mrec, String newPassword)
+        throws ServiceException
+    {
+        // we just pass the buck onto our authentication domain
+        getDomain(mrec.accountName).updatePassword(mrec.accountName, newPassword);
     }
 
     /**
@@ -260,6 +313,17 @@ public class AccountLogic
         // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
         return getDomain(email).validatePasswordResetCode(email, code);
+    }
+
+    /**
+     * Sends a validation email to the supplied member.
+     */
+    public void sendValidationEmail (MemberRecord mrec)
+    {
+        _mailer.sendTemplateEmail(
+            MailSender.By.HUMAN, mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
+            "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
+            "memberId", mrec.memberId, "code", generateValidationCode(mrec));
     }
 
     /**
@@ -470,6 +534,7 @@ public class AccountLogic
     }
 
     @Inject protected AuthenticationDomain _defaultDomain;
+    @Inject protected MailSender _mailer;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
@@ -479,4 +544,7 @@ public class AccountLogic
 
     /** Prefix of permaguest display names. They have to create an account to get a real one. */
     protected static final String PERMAGUEST_DISPLAY_PREFIX = "Guest";
+
+    /** The regular expression defining valid permanames. */
+    protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
 }

@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import com.google.inject.Inject;
 
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
 
@@ -30,7 +31,7 @@ import static com.threerings.msoy.Log.log;
 public class OOOAuthenticationDomain
     implements AuthenticationDomain
 {
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public Account createAccount (String accountName, String password)
         throws ServiceException
     {
@@ -62,7 +63,7 @@ public class OOOAuthenticationDomain
         return account;
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public void uncreateAccount (String accountName)
     {
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
@@ -71,57 +72,62 @@ public class OOOAuthenticationDomain
         }
     }
 
-    // from interface MsoyAuthenticator.Domain
-    public void updateAccount (String accountName, String newAccountName, String newPermaName,
-                               String newPassword)
+    // from interface AuthenticationDomain
+    public void updateAccountName (String accountName, String newAccountName)
         throws ServiceException
     {
-        // load up their user account record
-        OOOUser user = _authrep.loadUserByEmail(accountName, false);
-        if (user == null) {
-            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
-        }
+        OOOUser user = requireUser(accountName);
 
-        // if they are changing their account name, do that first so that we can fail on dups
-        if (newPermaName != null) {
+        // if they have not yet set their permaname, change their account name to their new email
+        // address to keep things in sync
+        if (user.username.equals(accountName)) {
             try {
-                if (!_authrep.changeUsername(user.userId, newPermaName)) {
-                    log.warning("Failed to set permaname, no such user? [account=" + accountName +
-                                ", pname=" + newPermaName + "].");
-                }
+                _authrep.changeUsername(user.userId, newAccountName);
             } catch (UserExistsException uee) {
-                throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
+                throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
             }
         }
 
-        // update their bits and store the record back to the database
-        if (newAccountName != null) {
-            // if they have not yet set their permaname, change their account name to their new
-            // email address to keep things in sync
-            if (newPermaName == null && user.username.equals(user.email)) {
-                try {
-                    _authrep.changeUsername(user.userId, newAccountName);
-                } catch (UserExistsException uee) {
-                    log.warning("Requested to change email address to one in use.");
-                    throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
-                }
-            }
+        try {
             _authrep.changeEmail(user.userId, newAccountName);
-        }
-        if (newPassword != null) {
-            _authrep.changePassword(user.userId, newPassword);
+        } catch (DuplicateKeyException dke) {
+            // this should not be possible, but impossible shit happens all the goddamned time
+            // around these parts, so we'll just be extra thorough and revert our username change
+            try {
+                _authrep.changeUsername(user.userId, accountName);
+            } catch (UserExistsException uee) {
+                log.info("Someone shoot me now.", "uid", user.userId, "oname", accountName,
+                         "nname", newAccountName);
+            }
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
+    public void updatePermaName (String accountName, String newPermaName)
+        throws ServiceException
+    {
+        OOOUser user = requireUser(accountName);
+        try {
+            _authrep.changeUsername(user.userId, newPermaName);
+        } catch (UserExistsException uee) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
+        }
+    }
+
+    // from interface AuthenticationDomain
+    public void updatePassword (String accountName, String newPassword)
+        throws ServiceException
+    {
+        OOOUser user = requireUser(accountName);
+        _authrep.changePassword(user.userId, newPassword);
+    }
+
+    // from interface AuthenticationDomain
     public Account authenticateAccount (String accountName, String password)
         throws ServiceException
     {
-        // load up their user account record
-        OOOUser user = _authrep.loadUserByEmail(accountName, false);
-        if (user == null) {
-            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
-        }
+        OOOUser user = requireUser(accountName);
 
         // now check their password
         if (PASSWORD_BYPASS != password && !user.password.equals(password)) {
@@ -135,7 +141,7 @@ public class OOOAuthenticationDomain
         return account;
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public void validateAccount (
             Account account, String machIdent, boolean newIdent)
         throws ServiceException
@@ -171,7 +177,7 @@ public class OOOAuthenticationDomain
             throw new ServiceException(MsoyAuthCodes.BANNED);
         }
 
-        // don't let those bastards grief us.
+        // don't let those bastards grief us
         if (account.firstLogon && (_authrep.isTaintedIdent(machIdent)) ) {
             throw new ServiceException(MsoyAuthCodes.MACHINE_TAINTED);
         }
@@ -184,7 +190,7 @@ public class OOOAuthenticationDomain
         // you're all clear kid...
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public void validateAccount (Account account)
         throws ServiceException
     {
@@ -195,7 +201,7 @@ public class OOOAuthenticationDomain
         // TODO: do we care about other badness like DEADBEAT?
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public String generatePasswordResetCode (String accountName)
         throws ServiceException
     {
@@ -203,18 +209,28 @@ public class OOOAuthenticationDomain
         return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public boolean validatePasswordResetCode (String accountName, String code)
         throws ServiceException
     {
         return code.equals(generatePasswordResetCode(accountName));
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface AuthenticationDomain
     public boolean isUniqueIdent (String machIdent)
     {
         return _authrep.getMachineIdentCount(machIdent) == 0;
     }
+
+    protected OOOUser requireUser (String accountName)
+        throws ServiceException
+    {
+        OOOUser user = _authrep.loadUserByEmail(accountName, false);
+        if (user == null) {
+            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+        }
+        return user;
+    }        
 
     protected static class OOOAccount extends Account
     {

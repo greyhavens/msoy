@@ -323,43 +323,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        // make sure the email is valid and not too long (this is also validated on the client)
-        if (!MailUtil.isValidAddress(newEmail) ||
-            newEmail.length() > MemberName.MAX_EMAIL_LENGTH) {
-            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
-        }
-        final String oldEmail = mrec.accountName;
-
-        // first update their MemberRecord and fail if they request a duplicate name
-        try {
-            _memberRepo.configureAccountName(mrec.memberId, newEmail);
-        } catch (DuplicateKeyException dke) {
-            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
-        }
-
-        try {
-            // let the authenticator know that we updated our account name
-            _accountLogic.updateAccount(mrec.accountName, newEmail, null, null);
-        } catch (ServiceException se) {
-            // we need to roll back the account name change to preserve a proper mapping between
-            // MemberRecord and the authenticator's record
-            try {
-                _memberRepo.configureAccountName(mrec.memberId, oldEmail);
-            } catch (Exception e) {
-                log.warning("Failed to roll back account name change", "who", mrec.who(),
-                            "newEmail", newEmail, "oldEmail", oldEmail, e);
-            }
-            throw se;
-        }
-
-        // if we made it this far, mark the account as no longer validated
-        mrec.setFlag(MemberRecord.Flag.VALIDATED, false);
-        _memberRepo.storeFlags(mrec);
-
-        // and send a new validation email
-        mrec.accountName = newEmail;
-        sendValidationEmail(mrec);
+        _accountLogic.updateAccountName(mrec, newEmail);
     }
 
     // from interface WebUserService
@@ -382,7 +346,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _accountLogic.updateAccount(mrec.accountName, null, null, newPassword);
+        _accountLogic.updatePassword(mrec, newPassword);
     }
 
     // from interface WebUserService
@@ -394,15 +358,13 @@ public class WebUserServlet extends MsoyServiceServlet
             log.info("No such member for password reset " + memberId + ".");
             return false;
         }
-
         if (!_accountLogic.validatePasswordResetCode(mrec.accountName, code)) {
             String actual = _accountLogic.generatePasswordResetCode(mrec.accountName);
             log.info("Code mismatch for password reset [id=" + memberId + ", code=" + code +
                      ", actual=" + actual + "].");
             return false;
         }
-
-        _accountLogic.updateAccount(mrec.accountName, null, null, newPassword);
+        _accountLogic.updatePassword(mrec, newPassword);
         return true;
     }
 
@@ -411,27 +373,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        if (mrec.permaName != null) {
-            log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
-                        ", oname=" + mrec.permaName + ", nname=" + permaName + "].");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        if (permaName == null ||
-                permaName.length() < MemberName.MINIMUM_PERMANAME_LENGTH ||
-                permaName.length() > MemberName.MAXIMUM_PERMANAME_LENGTH ||
-                !permaName.matches(PERMANAME_REGEX)) {
-            throw new ServiceException("e.invalid_permaname");
-        }
-
-        try {
-            _memberRepo.configurePermaName(mrec.memberId, permaName);
-        } catch (DuplicateKeyException dke) {
-            throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
-        }
-
-        // let the authenticator know that we updated our permaname
-        _accountLogic.updateAccount(mrec.accountName, null, permaName, null);
+        _accountLogic.configurePermaName(mrec, permaName);
     }
 
     // from interface WebUserService
@@ -495,7 +437,7 @@ public class WebUserServlet extends MsoyServiceServlet
         if (mrec.isValidated()) {
             throw new ServiceException("e.already_validated");
         }
-        sendValidationEmail(mrec);
+        _accountLogic.sendValidationEmail(mrec);
     }
 
     // from interface WebUserService
@@ -556,14 +498,6 @@ public class WebUserServlet extends MsoyServiceServlet
                      ", svers=" + DeploymentConfig.version + "].");
             throw new ServiceException(MsoyAuthCodes.VERSION_MISMATCH);
         }
-    }
-
-    protected void sendValidationEmail (MemberRecord mrec)
-    {
-        _mailer.sendTemplateEmail(
-            MailSender.By.HUMAN, mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
-            "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
-            "memberId", mrec.memberId, "code", _accountLogic.generateValidationCode(mrec));
     }
 
     protected void verifyCaptcha (String challenge, String response)
@@ -696,7 +630,4 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected RuntimeConfig _runtime;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected StatLogic _statLogic;
-
-    /** The regular expression defining valid permanames. */
-    protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
 }

@@ -580,17 +580,6 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Updates registration fields, for when a prevsiously inserted permaguest registers.
-     */
-    public void updateRegistration (int memberId, String accountName, String displayName)
-    {
-        accountName = accountName.toLowerCase(); // account name must always be lower case
-        updatePartial(MemberRecord.class, memberId,
-                      MemberRecord.ACCOUNT_NAME, accountName,
-                      MemberRecord.NAME, displayName);
-    }
-
-    /**
      * Updates the specified member's affiliate member id. This only happens in one very rare
      * circumstance where we want your inviting member's id to trump a preexisting affiliate id.
      */
