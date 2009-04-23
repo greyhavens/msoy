@@ -125,6 +125,12 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     // from SupportRepository
     public OOOUser loadUserByAccountName (String accountName)
     {
+        // this is some hackery that we do to integerate Underwire with Whirled: we provide
+        // MemberRecord.memberId to Underwire as the account's string name, then when Underwire
+        // looks up accounts by name, we turn the string back into a memberId, look up the email
+        // address for that member and then use that to load the OOOUser record for the member in
+        // question; the only guarantee is that MemberRecord.accountName == OOOUser.email,
+        // remember: MemberRecord.memberId != OOOUser.userId
         int memberId;
         try {
             memberId = Integer.valueOf(accountName);
