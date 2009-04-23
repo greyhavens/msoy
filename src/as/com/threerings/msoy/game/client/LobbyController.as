@@ -8,6 +8,7 @@ import flash.events.Event;
 import mx.events.CloseEvent;
 
 import com.threerings.io.TypedArray;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
@@ -130,12 +131,9 @@ public class LobbyController extends Controller
 
         // otherwise look at the data
         var ourName :MemberName = _gctx.getMyName();
-        for each (var table :Table in _lobj.tables.toArray()) {
-            if (table.players != null && -1 != table.players.indexOf(ourName)) {
-                return true;
-            }
-        }
-        return false;
+        return _lobj.tables.toArray().some(function (table :Table, ... rest) :Boolean {
+            return ArrayUtil.contains(table.players, ourName);
+        });
     }
 
     /**
