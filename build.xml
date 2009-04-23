@@ -582,14 +582,6 @@
     </antcall>
   </target>
 
-  <!-- builds our Flash game client -->
-  <target name="asgclient" depends="asprepare" description="Rebuilds the Flash game client.">
-    <antcall target="ascompile">
-      <param name="aspath" value="client/game.mxml"/>
-      <param name="swfname" value="game-client"/>
-    </antcall>
-  </target>
-
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare">
     <antcall target="ascompile"><param name="flex.extra-arg" value="-compiler.debug"/></antcall>
@@ -998,7 +990,7 @@
 
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,
-          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,asgclient"
+          audioplayer,remixer,imageeditor,camerabutton,uploader,asclient"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
