@@ -392,6 +392,7 @@ public class LobbyController extends Controller
             return;
         }
         _panel.setMode(nowSeated ? MODE_SEATED : MODE_MATCH);
+        _mctx.getGameDirector().dispatchEvent(new Event(GameDirector.GAMING_STATE_CHANGED));
     }
 
     /** Called by the ParlorGameLiaison upon login to the world server. */

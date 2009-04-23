@@ -464,8 +464,17 @@ public class PartyDirector extends BasicDirector
         }
 
         const gameDir :GameDirector = _wctx.getGameDirector();
-        var avrGame :Boolean = gameDir.isAVRGame();
         var gameId :int = gameDir.getGameId();
+        var avrGame :Boolean = gameDir.isAVRGame();
+        if (gameId != 0 && !avrGame) {
+            if (gameDir.isInParlorTable()) {
+                trace("==== in forming game: " + gameId);
+            } else if (gameDir.isInParlorGame()) {
+                trace("==== is in RUNNING game: " + gameId);
+            } else {
+                gameId = 0;
+            }
+        }
         if ((gameId != _partyObj.gameId) || (avrGame != _partyObj.avrGame)) {
             _partyObj.partyService.setGame(
                 _pctx.getClient(), gameId, avrGame, _wctx.listener(MsoyCodes.PARTY_MSGS));

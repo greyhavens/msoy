@@ -56,6 +56,22 @@ public class ParlorGameLiaison extends GameLiaison
     }
 
     /**
+     * Are we presently at a table?
+     */
+    public function isInTable () :Boolean
+    {
+        return (_lobby != null) && _lobby.isSeated();
+    }
+
+    /**
+     * Are we presently in a running game?
+     */
+    public function isInGame () :Boolean
+    {
+        return (_gameOid != 0);
+    }
+
+    /**
      * Displays the lobby for the game for which we liaise, on top of the existing view. If the
      * lobby is already showing, this is a NOOP.
      */

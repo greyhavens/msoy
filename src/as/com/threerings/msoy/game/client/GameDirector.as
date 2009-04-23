@@ -44,7 +44,9 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 
 /**
- * An even dispatched when the user has entered or left any game.
+ * An even dispatched when the user has entered or left any game, or entered or left any table
+ * in a forming game, or started up their GameLiaison or shut it down. Fuck, anything to do with
+ * games.
  *
  * @eventType com.threerings.msoy.game.client.GameDirector.GAMING_STATE_CHANGED
  */
@@ -60,6 +62,12 @@ public class GameDirector extends BasicDirector
      * @eventType GamingStateChanged
      */
     public static const GAMING_STATE_CHANGED :String = "GamingStateChanged";
+
+    /** An event type dispatched when the user has entered or left any parlor table.
+     *
+     * @eventType TableStateChanged
+     */
+    public static const TABLE_STATE_CHANGED :String = "TableStateChanged";
 
     public const log :Log = Log.getLog(this);
 
@@ -88,6 +96,20 @@ public class GameDirector extends BasicDirector
     public function getGameId () :int
     {
         return (_liaison != null) ? _liaison.gameId : 0;
+    }
+
+    /**
+     */
+    public function isInParlorTable () :Boolean
+    {
+        return (_liaison is ParlorGameLiaison) && ParlorGameLiaison(_liaison).isInTable();
+    }
+
+    /**
+     */
+    public function isInParlorGame () :Boolean
+    {
+        return (_liaison is ParlorGameLiaison) && ParlorGameLiaison(_liaison).isInGame();
     }
 
     /**
