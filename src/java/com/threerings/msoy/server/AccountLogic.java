@@ -318,7 +318,6 @@ public class AccountLogic
 
             // create their main member record
             final MemberRecord mrec = new MemberRecord();
-            stalerec = mrec;
 
             // set the required fields for registration
             mrec.accountName = account.accountName;
@@ -333,6 +332,7 @@ public class AccountLogic
 
             // store their member record in the repository making them a real Whirled citizen
             _memberRepo.insertMember(mrec);
+            stalerec = mrec;
 
             // if we're coming from an external authentication source, note that
             if (data.exAuther != null) {
