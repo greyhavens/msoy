@@ -157,7 +157,7 @@ public class WorldGameRegistry
         }
     }
 
-    // from interface MsoyGameProvider
+    // from interface WorldGameProvider
     public void locateGame (ClientObject caller, final int gameId,
                             WorldGameService.LocationListener listener)
         throws InvocationException
