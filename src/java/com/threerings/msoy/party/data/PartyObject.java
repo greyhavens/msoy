@@ -46,6 +46,9 @@ public class PartyObject extends DObject
     /** The field name of the <code>gameState</code> field. */
     public static final String GAME_STATE = "gameState";
 
+    /** The field name of the <code>gameOid</code> field. */
+    public static final String GAME_OID = "gameOid";
+
     /** The field name of the <code>status</code> field. */
     public static final String STATUS = "status";
 
@@ -85,6 +88,9 @@ public class PartyObject extends DObject
 
     /** The state of the gameId. */
     public byte gameState;
+
+    /** The gameOid, or 0. */
+    public int gameOid;
 
     /** Customizable flavor text. */
     public String status;
@@ -275,6 +281,22 @@ public class PartyObject extends DObject
         requestAttributeChange(
             GAME_STATE, Byte.valueOf(value), Byte.valueOf(ovalue));
         this.gameState = value;
+    }
+
+    /**
+     * Requests that the <code>gameOid</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGameOid (int value)
+    {
+        int ovalue = this.gameOid;
+        requestAttributeChange(
+            GAME_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.gameOid = value;
     }
 
     /**

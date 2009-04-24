@@ -77,12 +77,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const SET_GAME :int = 5;
 
     // from interface PartyService
-    public function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_InvocationListener) :void
+    public function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void
     {
-        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener4.listener = arg4;
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, SET_GAME, [
-            Integer.valueOf(arg2), Byte.valueOf(arg3), listener4
+            Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4), listener5
         ]);
     }
 

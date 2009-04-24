@@ -43,6 +43,9 @@ public class PartyObject extends DObject
     /** The field name of the <code>gameState</code> field. */
     public static const GAME_STATE :String = "gameState";
 
+    /** The field name of the <code>gameOid</code> field. */
+    public static const GAME_OID :String = "gameOid";
+
     /** The field name of the <code>status</code> field. */
     public static const STATUS :String = "status";
 
@@ -86,6 +89,9 @@ public class PartyObject extends DObject
     /** The game state of the current gameId. */
     public var gameState :int;
 
+    /** The game Oid. */
+    public var gameOid :int;
+
     /** Customizable flavor text. */
     public var status :String;
 
@@ -114,6 +120,7 @@ public class PartyObject extends DObject
         sceneId = ins.readInt();
         gameId = ins.readInt();
         gameState = ins.readByte();
+        gameOid = ins.readInt();
         status = ins.readField(String) as String;
         statusType = ins.readByte();
         recruitment = ins.readByte();

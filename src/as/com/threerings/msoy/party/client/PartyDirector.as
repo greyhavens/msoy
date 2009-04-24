@@ -336,10 +336,12 @@ public class PartyDirector extends BasicDirector
             gameDir.clearAnyGame();
         }
         if (_partyObj.gameId != 0) {
+            // join the leader's table and/or game
             if (_partyObj.gameState == PartyCodes.GAME_STATE_AVRG) {
                 gameDir.activateAVRGame(_partyObj.gameId);
+            } else if (_partyObj.gameOid != 0) {
+                gameDir.enterGame(_partyObj.gameId, _partyObj.gameOid);
             } else {
-                // join the leader's table and/or game
                 gameDir.playNow(_partyObj.gameId, _partyObj.leaderId);
             }
         }
@@ -489,6 +491,7 @@ public class PartyDirector extends BasicDirector
         const gameDir :GameDirector = _wctx.getGameDirector();
         var gameId :int = gameDir.getGameId();
         var gameState :int = PartyCodes.GAME_STATE_NONE;
+        var gameOid :int = 0;
         if (gameId != 0) {
             if (gameDir.isAVRGame()) {
                 gameState = PartyCodes.GAME_STATE_AVRG;
@@ -498,6 +501,7 @@ public class PartyDirector extends BasicDirector
 
             } else if (gameDir.isInParlorGame()) {
                 gameState = PartyCodes.GAME_STATE_INGAME;
+                gameOid = gameDir.getParlorGameOid();
 
             } else {
                 gameId = 0; // we're LOOKING at the lobby for a parlor game, but nothing else
@@ -505,7 +509,8 @@ public class PartyDirector extends BasicDirector
         }
         if ((gameId != _partyObj.gameId) || (gameState != _partyObj.gameState)) {
             _partyObj.partyService.setGame(
-                _pctx.getClient(), gameId, gameState, _wctx.listener(MsoyCodes.PARTY_MSGS));
+                _pctx.getClient(), gameId, gameState, gameOid,
+                _wctx.listener(MsoyCodes.PARTY_MSGS));
         }
     }
 

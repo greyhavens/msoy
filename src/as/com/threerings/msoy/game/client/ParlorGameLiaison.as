@@ -71,6 +71,11 @@ public class ParlorGameLiaison extends GameLiaison
         return (_gameOid != 0);
     }
 
+    public function getGameOid () :int
+    {
+        return _gameOid;
+    }
+
     /**
      * Displays the lobby for the game for which we liaise, on top of the existing view. If the
      * lobby is already showing, this is a NOOP.

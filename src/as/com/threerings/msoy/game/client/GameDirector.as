@@ -110,6 +110,11 @@ public class GameDirector extends BasicDirector
         return (_liaison is ParlorGameLiaison) && ParlorGameLiaison(_liaison).isInTable();
     }
 
+    public function getParlorGameOid () :int
+    {
+        return (_liaison is ParlorGameLiaison) ? ParlorGameLiaison(_liaison).getGameOid() : 0;
+    }
+
     /**
      */
     public function isInParlorGame () :Boolean

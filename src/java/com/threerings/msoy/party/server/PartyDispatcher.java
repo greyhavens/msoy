@@ -61,7 +61,7 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
 
         case PartyMarshaller.SET_GAME:
             ((PartyProvider)provider).setGame(
-                source, ((Integer)args[0]).intValue(), ((Byte)args[1]).byteValue(), (InvocationService.InvocationListener)args[2]
+                source, ((Integer)args[0]).intValue(), ((Byte)args[1]).byteValue(), ((Integer)args[2]).intValue(), (InvocationService.InvocationListener)args[3]
             );
             return;
 

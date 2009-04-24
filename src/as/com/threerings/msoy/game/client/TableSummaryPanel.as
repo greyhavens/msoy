@@ -112,15 +112,14 @@ public class TableSummaryPanel extends HBox
 
             if (key != null) {
                 _action.label = Msgs.GAME.get(key);
-                _action.setCommand(MsoyController.GO_GAME, [ lobj.game.gameId, table.gameOid ]);
             }
             _action.visible = (key != null);
             _action.enabled = (key != null);
 
         } else {
             _action.label = Msgs.GAME.get("b.tsp_join");
-            _action.setCommand(LobbyController.JOIN_TABLE, [ table.tableId, Table.ANY_POSITION ]);
         }
+        _action.setCommand(LobbyController.JOIN_TABLE, [ table.tableId, Table.ANY_POSITION ]);
     }
 
     // from HBox

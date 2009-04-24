@@ -211,17 +211,20 @@ public class PartyManager
 
     // from interface PartyProvider
     public void setGame (
-        ClientObject caller, int gameId, byte gameState, InvocationService.InvocationListener il)
+        ClientObject caller, int gameId, byte gameState, int gameOid,
+        InvocationService.InvocationListener il)
         throws InvocationException
     {
         requireLeader(caller);
-        if ((_partyObj.gameId == gameId) && (_partyObj.gameState == gameState)) {
+        if ((_partyObj.gameId == gameId) && (_partyObj.gameState == gameState) &&
+                (_partyObj.gameOid == gameOid)) {
             return; // NOOP!
         }
 
         // update the party's game location
         _partyObj.startTransaction();
         try {
+            _partyObj.setGameOid(gameOid);
             _partyObj.setGameState(gameState);
             _partyObj.setGameId(gameId);
             updateStatus();

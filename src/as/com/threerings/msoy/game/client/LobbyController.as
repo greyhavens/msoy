@@ -245,12 +245,18 @@ public class LobbyController extends Controller
     {
         // if they're trying to join a party table, force them to join the party instead
         var table :Table = _lobj.tables.get(tableId) as Table;
-        var tablePartyId :int = (table == null) ? 0 : MsoyTableConfig(table.tconfig).partyId;
+        if (table == null) {
+            return;
+        }
+        trace("joining table : " + table.gameOid);
+        var tablePartyId :int = MsoyTableConfig(table.tconfig).partyId;
         if ((tablePartyId != 0) && (tablePartyId != _mctx.getPartyDirector().getPartyId())) {
             _mctx.getPartyDirector().joinParty(tablePartyId);
 
+        } else if (table.gameOid != -1) {
+            _mctx.getGameDirector().dispatchGameReady(_lobj.game.gameId, table.gameOid);
+
         } else {
-            // else, just join the table
             _tableDir.joinTable(tableId, position);
         }
     }

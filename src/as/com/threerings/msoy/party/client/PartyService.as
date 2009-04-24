@@ -25,7 +25,7 @@ public interface PartyService extends InvocationService
     function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_InvocationListener) :void;
+    function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
     function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
