@@ -33,9 +33,10 @@ resolutionList = resolutions.keys()
 resolutionList.sort()
 resolutionList = ", ".join(resolutionList)
 
-description = '''Reads in a ooo log file, merged or unmerged, and outputs a list of minutes from
-the first to the last log message, with a positive indicator for each minute in which a log line
-occurred.'''
+description = '''Reads in ooo log files, merged or unmerged, and outputs a list of evenly spaced
+consecutive time stamps from the first to the last that occur. Each line has a column per log
+source, or a single column for unmerged input, showing how many times that timestamp occurred in
+the row's time range.'''
 
 parser = optparse.OptionParser(description=description)
 ## TODO: maybe worth doing these, but grep works pretty well
