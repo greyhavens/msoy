@@ -78,6 +78,8 @@ public class WorldDirector extends BasicDirector
 
     /**
      * Request to move to the specified member's current location (game or scene).
+     *
+     * Note: presently the member must be a friend.
      */
     public function goToMemberLocation (memberId :int) :void
     {
