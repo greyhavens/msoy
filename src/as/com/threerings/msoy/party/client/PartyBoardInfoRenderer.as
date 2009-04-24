@@ -48,7 +48,7 @@ public class PartyBoardInfoRenderer extends HBox
 
         _name.text = party.summary.name;
         _population.text = String(party.info.population);
-        _status.text = Msgs.PARTY.xlate(party.info.status);
+        PartyDirector.formatStatus(_status, party.info.status, party.info.statusType);
 
         var us :MemberObject = wctx.getMemberObject();
         _name.setStyle("fontWeight",

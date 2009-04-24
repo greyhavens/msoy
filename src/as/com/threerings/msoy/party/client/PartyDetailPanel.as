@@ -6,6 +6,8 @@ package com.threerings.msoy.party.client {
 import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.controls.Label;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
@@ -40,8 +42,9 @@ public class PartyDetailPanel extends FloatingPanel
 
         var infoBox :VBox = new VBox();
         infoBox.addChild(FlexUtil.createLabel(_detail.summary.group.toString()));
-        infoBox.addChild(FlexUtil.createLabel(
-            Msgs.PARTY.xlate(_detail.info.status), "partyStatus"));
+        var status :Label = FlexUtil.createLabel(null, "partyStatus");
+        PartyDirector.formatStatus(status, _detail.info.status, _detail.info.statusType);
+        infoBox.addChild(status);
         infoBox.addChild(FlexUtil.createLabel(
             Msgs.PARTY.get("l.recruit_" + _detail.info.recruitment) + "  " +
                 _detail.info.population));

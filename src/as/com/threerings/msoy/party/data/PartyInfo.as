@@ -25,6 +25,9 @@ public class PartyInfo extends SimpleStreamableObject
     /** The status line indicating what this party is doing. */
     public var status :String;
 
+    /** Helps interpret status with the right translation key (or none). */
+    public var statusType :int;
+
     /** The current population of this party. */
     public var population :int;
 
@@ -38,6 +41,7 @@ public class PartyInfo extends SimpleStreamableObject
         id = ins.readInt();
         leaderId = ins.readInt();
         status = ins.readField(String) as String;
+        statusType = ins.readByte();
         population = ins.readInt();
         recruitment = ins.readByte();
     }

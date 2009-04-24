@@ -78,7 +78,7 @@ public class PartyPanel extends FloatingPanel
         _status.styleName = "partyStatus";
         _status.maxChars = PartyCodes.MAX_NAME_LENGTH;
         _status.percentWidth = 100;
-        _status.text = Msgs.PARTY.xlate(_partyObj.status);
+        updateStatus();
         _status.enabled = isLeader;
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
         box.addChild(_status);
@@ -106,11 +106,16 @@ public class PartyPanel extends FloatingPanel
         addChild(box);
     }
 
+    protected function updateStatus () :void
+    {
+        PartyDirector.formatStatus(_status, _partyObj.status, _partyObj.statusType);
+    }
+
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         switch (event.getName()) {
             case PartyObject.STATUS:
-                _status.text = Msgs.PARTY.xlate(String(event.getValue()));
+                updateStatus();
                 break;
 
             case PartyObject.LEADER_ID:

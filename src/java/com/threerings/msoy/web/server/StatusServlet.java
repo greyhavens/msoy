@@ -211,7 +211,8 @@ public class StatusServlet extends HttpServlet
                 .append("name=\"").append(summary.name).append("\" ")
                 .append("group=\"").append(summary.group).append("\" ")
                 .append("groupId=").append(summary.group.getGroupId()).append(" ")
-                .append("status=\"").append(info.status).append("\"\n");
+                .append("status=\"").append(info.statusType)
+                .append(": ").append(info.status).append("\"\n");
         }
         return Callables.asCallable(buf.toString());
     }

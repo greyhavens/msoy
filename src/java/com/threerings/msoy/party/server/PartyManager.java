@@ -9,8 +9,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.util.MessageBundle;
-
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -213,18 +211,18 @@ public class PartyManager
 
     // from interface PartyProvider
     public void setGame (
-        ClientObject caller, int gameId, boolean avrGame, InvocationService.InvocationListener il)
+        ClientObject caller, int gameId, byte gameState, InvocationService.InvocationListener il)
         throws InvocationException
     {
         requireLeader(caller);
-        if ((_partyObj.gameId == gameId) && (_partyObj.avrGame == avrGame)) {
+        if ((_partyObj.gameId == gameId) && (_partyObj.gameState == gameState)) {
             return; // NOOP!
         }
 
         // update the party's game location
         _partyObj.startTransaction();
         try {
-            _partyObj.setAvrGame(avrGame);
+            _partyObj.setGameState(gameState);
             _partyObj.setGameId(gameId);
             updateStatus();
         } finally {
@@ -267,8 +265,8 @@ public class PartyManager
         if (status == null) {
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        setStatus(MessageBundle.taint(
-            StringUtil.truncate(status, PartyCodes.MAX_NAME_LENGTH)));
+        status = StringUtil.truncate(status, PartyCodes.MAX_NAME_LENGTH);
+        setStatus(status, PartyCodes.STATUS_TYPE_USER);
     }
 
     // from interface PartyProvider
@@ -371,22 +369,31 @@ public class PartyManager
         if (_partyObj.gameId != 0) {
             Tuple<String, HostedGame> game = _peerMgr.getGameHost(_partyObj.gameId);
             if (game != null) {
-                setStatus(MessageBundle.tcompose("m.status_game", game.right.name));
+                byte statusType = (_partyObj.gameState == PartyCodes.GAME_STATE_LOBBY)
+                    ? PartyCodes.STATUS_TYPE_LOBBY : PartyCodes.STATUS_TYPE_PLAYING;
+                setStatus(game.right.name, statusType);
                 return;
             }
         }
         Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(_partyObj.sceneId);
         if (room != null) {
-            setStatus(MessageBundle.tcompose("m.status_room", room.right.name));
+            setStatus(room.right.name, PartyCodes.STATUS_TYPE_SCENE);
         } else {
-            setStatus("m.status_unknown");
+            setStatus("unknown", PartyCodes.STATUS_TYPE_USER); // we see this we can investigate
         }
     }
 
-   protected void setStatus (String status)
+    protected void setStatus (String status, byte statusType)
     {
-        if (_partyObj.status == null || !_partyObj.status.equals(status)) {
-            _partyObj.setStatus(status);
+        if (_partyObj.status == null || !_partyObj.status.equals(status) ||
+                statusType != _partyObj.statusType) {
+            _partyObj.startTransaction();
+            try {
+                _partyObj.setStatusType(statusType);
+                _partyObj.setStatus(status);
+            } finally {
+                _partyObj.commitTransaction();
+            }
             updatePartyInfo();
         }
     }
@@ -429,7 +436,7 @@ public class PartyManager
     protected void updatePartyInfo ()
     {
         PartyInfo newInfo = new PartyInfo(_partyObj.id, _partyObj.leaderId, _partyObj.status,
-            _partyObj.peeps.size(), _partyObj.recruitment);
+            _partyObj.statusType, _partyObj.peeps.size(), _partyObj.recruitment);
         MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
         if (nodeObj.partyInfos.containsKey(_partyObj.id)) {
             nodeObj.updatePartyInfos(newInfo);

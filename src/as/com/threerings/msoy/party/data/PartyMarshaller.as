@@ -10,7 +10,6 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.util.Byte;
 import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>PartyService</code> interface
@@ -78,12 +77,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const SET_GAME :int = 5;
 
     // from interface PartyService
-    public function setGame (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void
+    public function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_InvocationListener) :void
     {
         var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, SET_GAME, [
-            Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
+            Integer.valueOf(arg2), Byte.valueOf(arg3), listener4
         ]);
     }
 

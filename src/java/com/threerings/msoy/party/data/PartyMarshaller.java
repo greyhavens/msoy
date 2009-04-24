@@ -74,12 +74,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int SET_GAME = 5;
 
     // from interface PartyService
-    public void setGame (Client arg1, int arg2, boolean arg3, InvocationService.InvocationListener arg4)
+    public void setGame (Client arg1, int arg2, byte arg3, InvocationService.InvocationListener arg4)
     {
         ListenerMarshaller listener4 = new ListenerMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, SET_GAME, new Object[] {
-            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
+            Integer.valueOf(arg2), Byte.valueOf(arg3), listener4
         });
     }
 

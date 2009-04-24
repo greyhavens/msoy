@@ -40,11 +40,14 @@ public class PartyObject extends DObject
     /** The field name of the <code>gameId</code> field. */
     public static const GAME_ID :String = "gameId";
 
-    /** The field name of the <code>avrGame</code> field. */
-    public static const AVR_GAME :String = "avrGame";
+    /** The field name of the <code>gameState</code> field. */
+    public static const GAME_STATE :String = "gameState";
 
     /** The field name of the <code>status</code> field. */
     public static const STATUS :String = "status";
+
+    /** The field name of the <code>statusType</code> field. */
+    public static const STATUS_TYPE :String = "statusType";
 
     /** The field name of the <code>recruitment</code> field. */
     public static const RECRUITMENT :String = "recruitment";
@@ -80,11 +83,14 @@ public class PartyObject extends DObject
     /** The current game of the party. */
     public var gameId :int;
 
-    /** Is the game an AVR game? */
-    public var avrGame :Boolean;
+    /** The game state of the current gameId. */
+    public var gameState :int;
 
     /** Customizable flavor text. */
     public var status :String;
+
+    /** Helps interpret the status. */
+    public var statusType :int;
 
     /** This party's access control. @see PartyCodes */
     public var recruitment :int;
@@ -107,8 +113,9 @@ public class PartyObject extends DObject
         leaderId = ins.readInt();
         sceneId = ins.readInt();
         gameId = ins.readInt();
-        avrGame = ins.readBoolean();
+        gameState = ins.readByte();
         status = ins.readField(String) as String;
+        statusType = ins.readByte();
         recruitment = ins.readByte();
         partyService = PartyMarshaller(ins.readObject());
 //        speakService = SpeakMarshaller(ins.readObject());

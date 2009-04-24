@@ -6,6 +6,8 @@ package com.threerings.msoy.party.client {
 import flash.events.Event;
 import flash.utils.Dictionary;
 
+import mx.core.UIComponent;
+
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 
@@ -48,6 +50,7 @@ import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
+import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 
@@ -63,6 +66,16 @@ public class PartyDirector extends BasicDirector
     PartyBoardMarshaller;
 
     public const log :Log = Log.getLog(this);
+
+    /**
+     * Format the specified Label or TextInput to have the right status.
+     * Fucking Flex has no interface implemented by both.
+     */
+    public static function formatStatus (label :UIComponent, status :String, statusType :int) :void
+    {
+        label.setStyle("color", (statusType == PartyCodes.STATUS_TYPE_LOBBY) ? 0xAF8E56 : 0x568EAF);
+        Object(label).text = Msgs.PARTY.get("m.status_" + statusType, status);
+    }
 
     public function PartyDirector (ctx :WorldContext)
     {
@@ -305,10 +318,10 @@ public class PartyDirector extends BasicDirector
             gameDir.clearAnyGame();
         }
         if (_partyObj.gameId != 0) {
-            if (_partyObj.avrGame) {
+            if (_partyObj.gameState == PartyCodes.GAME_STATE_AVRG) {
                 gameDir.activateAVRGame(_partyObj.gameId);
             } else {
-                // join the leader's game
+                // join the leader's table and/or game
                 gameDir.playNow(_partyObj.gameId, _partyObj.leaderId);
             }
         }
@@ -457,19 +470,24 @@ public class PartyDirector extends BasicDirector
 
         const gameDir :GameDirector = _wctx.getGameDirector();
         var gameId :int = gameDir.getGameId();
-        var avrGame :Boolean = gameDir.isAVRGame();
-        if (gameId != 0 && !avrGame) {
-            if (gameDir.isInParlorTable()) {
-                trace("==== in forming game: " + gameId);
+        var gameState :int = PartyCodes.GAME_STATE_NONE;
+        if (gameId != 0) {
+            if (gameDir.isAVRGame()) {
+                gameState = PartyCodes.GAME_STATE_AVRG;
+
+            } else if (gameDir.isInParlorTable()) {
+                gameState = PartyCodes.GAME_STATE_LOBBY;
+
             } else if (gameDir.isInParlorGame()) {
-                trace("==== is in RUNNING game: " + gameId);
+                gameState = PartyCodes.GAME_STATE_INGAME;
+
             } else {
-                gameId = 0;
+                gameId = 0; // we're LOOKING at the lobby for a parlor game, but nothing else
             }
         }
-        if ((gameId != _partyObj.gameId) || (avrGame != _partyObj.avrGame)) {
+        if ((gameId != _partyObj.gameId) || (gameState != _partyObj.gameState)) {
             _partyObj.partyService.setGame(
-                _pctx.getClient(), gameId, avrGame, _wctx.listener(MsoyCodes.PARTY_MSGS));
+                _pctx.getClient(), gameId, gameState, _wctx.listener(MsoyCodes.PARTY_MSGS));
         }
     }
 

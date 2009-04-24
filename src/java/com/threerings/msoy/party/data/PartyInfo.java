@@ -26,6 +26,9 @@ public class PartyInfo extends SimpleStreamableObject
     /** The status line indicating what this party is doing. */
     public String status;
 
+    /** Helps interpret status with the right translation key (or none). */
+    public byte statusType;
+
     /** The current population of this party. */
     public int population;
 
@@ -39,11 +42,12 @@ public class PartyInfo extends SimpleStreamableObject
 
     /** Create a PartyInfo. */
     public PartyInfo (
-        int id, int leaderId, String status, int population, byte recruitment)
+        int id, int leaderId, String status, byte statusType, int population, byte recruitment)
     {
         this.id = id;
         this.leaderId = leaderId;
         this.status = status;
+        this.statusType = statusType;
         this.population = population;
         this.recruitment = recruitment;
     }
