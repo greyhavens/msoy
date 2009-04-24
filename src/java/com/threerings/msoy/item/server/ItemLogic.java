@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -521,7 +521,7 @@ public class ItemLogic
         throws ServiceException
     {
         // break the list up by item type
-        SetMultimap<Byte, Integer> typeMap = Multimaps.newHashMultimap();
+        SetMultimap<Byte, Integer> typeMap = HashMultimap.create();
         for (FavoriteItemRecord fave : faves) {
             typeMap.put(fave.itemType, fave.catalogId);
         }

@@ -13,8 +13,8 @@ import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
@@ -87,7 +87,7 @@ public class WebSessionResult
     }
 
     /** Mapping from field names to sets of trackers that match them that day. */
-    private Multimap<String, String> groups = Multimaps.newHashMultimap();
+    private Multimap<String, String> groups = HashMultimap.create();
 
     /** Set of all trackers that day. */
     private HashSet<String> all = Sets.newHashSet();

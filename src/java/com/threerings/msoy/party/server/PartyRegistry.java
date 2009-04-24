@@ -6,9 +6,9 @@ package com.threerings.msoy.party.server;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -525,7 +525,7 @@ public class PartyRegistry
 
     protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
 
-    protected Multimap<Integer,PartyPlaceObject> _partyPlaces = Multimaps.newHashMultimap();
+    protected Multimap<Integer,PartyPlaceObject> _partyPlaces = HashMultimap.create();
 
     protected static final int PARTIES_PER_BOARD = 10;
 

@@ -5,7 +5,6 @@ package com.threerings.msoy.game.server;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
@@ -183,20 +182,20 @@ public class AwardDelegate extends RatingDelegate
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
         IntMap<Player> players = IntMaps.newHashIntMap();
-        for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player pl = createPlayer(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
+        for (int winnerOid : winnerOids) {
+            Player pl = createPlayer(winnerOid, 1, getAwardableFlow(now, winnerOid));
             if (pl != null) {
                 // everyone gets ranked as a 50% performance in multiplayer and we award portions of
                 // the losers' winnings to the winners
                 pl.percentile = 49;
-                players.put(winnerOids[ii], pl);
+                players.put(winnerOid, pl);
             }
         }
-        for (int ii = 0; ii < loserOids.length; ii++) {
-            Player pl = createPlayer(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
+        for (int loserOid : loserOids) {
+            Player pl = createPlayer(loserOid, 0, getAwardableFlow(now, loserOid));
             if (pl != null) {
                 pl.percentile = 49;
-                players.put(loserOids[ii], pl);
+                players.put(loserOid, pl);
             }
         }
 
@@ -439,7 +438,7 @@ public class AwardDelegate extends RatingDelegate
             scaleAvailableFlowToPercentiles(players);
 
             // map the players by score
-            TreeMultimap<Integer,Player> rankings = Multimaps.newTreeMultimap();
+            TreeMultimap<Integer,Player> rankings = TreeMultimap.create();
             for (Player player : players.values()) {
                 rankings.put(player.score, player);
             }

@@ -12,10 +12,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
@@ -27,6 +27,7 @@ public class MultiServerAverageResult extends FieldAggregatedResult
 {
     public List<Sample> samples = Lists.newArrayList();
 
+    @Override
     public void doInit (EventData eventData)
     {
         Sample sample = new Sample();
@@ -34,9 +35,11 @@ public class MultiServerAverageResult extends FieldAggregatedResult
         samples.add(sample);
     }
 
+    @Override
     public boolean putData (final Map<String, Object> result)
     {
         // sort our samples by time
+
         List<Sample> sorted = Ordering.natural().sortedCopy(samples);
 
         // per-server time series
@@ -85,7 +88,7 @@ public class MultiServerAverageResult extends FieldAggregatedResult
 
     private static Map<String, TreeSet<Sample>> toServerTimeSeries (List<Sample> samples)
     {
-        Multimap<String, Sample> acc = Multimaps.newArrayListMultimap();
+        Multimap<String, Sample> acc = ArrayListMultimap.create();
         for (Sample sample : samples) {
             acc.put(sample.server, sample);
         }

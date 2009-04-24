@@ -7,9 +7,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -199,7 +199,7 @@ public class CronLogic
     protected JobTicker _ticker;
 
     /** A map of all jobs scheduled for a single day. */
-    protected ListMultimap<Integer, Runnable> _jobs = Multimaps.newArrayListMultimap();
+    protected ListMultimap<Integer, Runnable> _jobs = ArrayListMultimap.create();
 
     /** A map of jobs currently running on this node. */
     protected ConcurrentHashMap<Class<? extends Runnable>, NodeObject.Lock> _running =

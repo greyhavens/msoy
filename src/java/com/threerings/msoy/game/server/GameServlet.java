@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -274,7 +274,7 @@ public class GameServlet extends MsoyServiceServlet
         tcase.owner= tgtrec.getName();
 
         // load the target member's trophies
-        ListMultimap<Integer,Trophy> tmap = Multimaps.newArrayListMultimap();
+        ListMultimap<Integer,Trophy> tmap = ArrayListMultimap.create();
         for (TrophyRecord trec : _trophyRepo.loadTrophies(memberId)) {
             tmap.put(trec.gameId, trec.toTrophy());
         }

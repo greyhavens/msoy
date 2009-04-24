@@ -10,7 +10,6 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.user.OOOUser;
 
 import com.threerings.underwire.server.UnderContext;
-import com.threerings.underwire.server.UserLogic;
 import com.threerings.underwire.web.client.AuthenticationException;
 import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.server.UnderwireServlet;

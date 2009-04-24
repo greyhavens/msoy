@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.server;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -17,6 +18,7 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -154,9 +156,12 @@ public class WebRoomServlet extends MsoyServiceServlet
         OverviewResult overview = new OverviewResult();
 
         // The scene IDs of the current N most populated rooms
-        Iterable<Integer> activeIds =
-            Iterables.transform(Iterables.limit(_memberMan.getPPSnapshot().getTopScenes(), 20),
-                TO_SCENE_ID);
+        List<Place> top20Scenes = Lists.newArrayListWithCapacity(20);
+        Iterator<Place> allTopScenes = _memberMan.getPPSnapshot().getTopScenes().iterator();
+        for (int ii = 0; ii < 20 && allTopScenes.hasNext(); ii++) {
+            top20Scenes.add(allTopScenes.next());
+        }
+        Iterable<Integer> activeIds = Iterables.transform(top20Scenes, TO_SCENE_ID);
         // Load up the records for each scene ID
         List<SceneRecord> activeRooms = _sceneRepo.loadScenes(Lists.newArrayList(activeIds));
         overview.activeRooms = Lists.newArrayList(Iterables.transform(activeRooms, TO_ROOM_INFO));

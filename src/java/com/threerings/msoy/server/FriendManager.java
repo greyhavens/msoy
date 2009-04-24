@@ -15,13 +15,10 @@ import com.threerings.presents.annotation.EventThread;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VizMemberName;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -129,7 +126,7 @@ public class FriendManager
 
     /** A mapping from member id to the member objects of members on this server that are friends
      * of the member in question. */
-    protected Multimap<Integer,MemberObject> _friendMap = new HashMultimap<Integer,MemberObject>();
+    protected Multimap<Integer,MemberObject> _friendMap = HashMultimap.create();
 
     @Inject protected MsoyPeerManager _peerMan;
 }

@@ -7,9 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-
 import com.threerings.util.StreamableHashMap;
 
 import com.threerings.msoy.admin.gwt.StatsModel;
@@ -46,7 +45,7 @@ public abstract class NumVecStatCollector extends StatCollector
                 return _model;
             }
 
-            protected Multimap<String, List<Number>> _infos = Multimaps.newArrayListMultimap();
+            protected Multimap<String, List<Number>> _infos = ArrayListMultimap.create();
             protected StatsModel _model = createModel();
         };
     }

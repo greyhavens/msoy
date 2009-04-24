@@ -16,12 +16,11 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import com.google.common.base.Function;
-import com.google.common.base.Join;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-
 import com.threerings.msoy.aggregators.trans.GuestBehaviorSplitterTransformer;
 import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
@@ -87,11 +86,11 @@ public class GuestBehaviorResult
                 return false;
             }
             _entry.addEvent(action, timestamp);
-            
+
             // we use their first experience as a possible indication of creation in
             // addition to VISITOR_INFO_CREATED
             _entry.created = timestamp;
-            
+
             // fake ACCOUNT_CREATED/guest entries by looking at experiences
             if (PLAY_EXPERIENCES.contains(action)) {
                 _entry.played = timestamp;
@@ -100,7 +99,7 @@ public class GuestBehaviorResult
 
         return true;
     }
-    
+
     public void combine (final GuestBehaviorResult other)
     {
         if (_entry == null) {
@@ -116,14 +115,14 @@ public class GuestBehaviorResult
         // which will result in _entry.created being non-null, or we went straight to creating
         // a permaguest, in which case an AccountCreated with isGuest = true will have been sent
         // over the wire, which in turn will cause _entry.played to be non-null.
-        
+
         Date created;
         if (_entry.created != null) {
             created = _entry.created;
-            
+
         } else if (_entry.played != null) {
             created = _entry.played;
-            
+
         } else {
             // otherwise this is a tracker that did stuff within the past 30 days, but which
             // was created earlier than that: we simply drop it
@@ -153,7 +152,7 @@ public class GuestBehaviorResult
 
         boolean converted = (_entry.converted != null);
         result.put("conv", converted ? 1 : 0);
-        
+
         boolean played = (_entry.converted != null || _entry.played != null);
         result.put("played", played ? 1 : 0);
 
@@ -177,7 +176,7 @@ public class GuestBehaviorResult
         } else {
             result.put("conv_timestamp", new Date(0L));
         }
-        
+
         if (_entry.member != null) {
             result.put("conv_member", _entry.member);
         } else {
@@ -213,7 +212,7 @@ public class GuestBehaviorResult
 
         boolean returned = (returnDays > 0);
         result.put("returned", returned ? 1 : 0); // 1 if someone returned after 24 hours
-        
+
         // pull out conversion / retention status
         String status = "1. did not convert";
         if (converted) {
@@ -232,7 +231,7 @@ public class GuestBehaviorResult
             _entry.read(in);
         }
     }
-    
+
     public void write (final DataOutput out)
         throws IOException
     {
@@ -260,14 +259,14 @@ public class GuestBehaviorResult
         public String vector;
         public String tracker;
         public Date created;
-        
+
         public Boolean embed;
 
         public Integer member;
         public Date converted;
         public Date played;
-        
-        public Multimap<String, Date> events = Multimaps.newArrayListMultimap();
+
+        public Multimap<String, Date> events = ArrayListMultimap.create();
 
         public GuestEntry ()
         {
@@ -356,7 +355,7 @@ public class GuestBehaviorResult
 
             return results;
         }
-        
+
         /** Fills in any null fields on this instance from the other, and adds map entries. */
         public void combine (GuestEntry other)
         {
@@ -379,7 +378,7 @@ public class GuestBehaviorResult
                 }
             }
         }
-        
+
         public void write (final DataOutput out)
             throws IOException
         {
@@ -442,7 +441,7 @@ public class GuestBehaviorResult
                         : "--";
                 }
             });
-        return Join.join(" ", results);
+        return Joiner.on(" ").join(results);
     }
 
     protected static Date oldest (Date ours, Date theirs)
@@ -460,7 +459,7 @@ public class GuestBehaviorResult
     protected final static EventName EXPERIENCE = new EventName("Experience");
 
     protected final static int MAX_VECTOR_LENGTH = 40;
-    
+
     // TODO: used to fake entry.played for a while
     protected static final Set<String> PLAY_EXPERIENCES = ImmutableSet.of(
         "GS", "GM", "GA", "VW", "VR", "AL");
