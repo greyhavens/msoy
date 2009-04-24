@@ -77,19 +77,12 @@ public class WorldDirector extends BasicDirector
     }
 
     /**
-     * Request to move to the specified member's current scene.
-     *
-     * Note: presently the member must be a friend.
+     * Request to move to the specified member's current location (game or scene).
      */
-    public function goToMemberLocation (memberId :int, location :MemberLocation = null) :void
+    public function goToMemberLocation (memberId :int) :void
     {
-        if (location != null) {
-            finishGoToMemberLocation(location);
-            return;
-        }
-
-        _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId,
-            _wctx.resultListener(finishGoToMemberLocation));
+        _msvc.getCurrentMemberLocation(
+            _wctx.getClient(), memberId, _wctx.resultListener(finishGoToMemberLocation));
     }
 
     /**
