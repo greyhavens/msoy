@@ -777,7 +777,7 @@ public class MemberLogic
 
         @Override protected void execute (final MemberObject memobj) {
             VizMemberName friend = new VizMemberName(_friendName, _friendId, _friendPhoto);
-            boolean online = (_peerMan.getMemberLocation(_friendId) != null);
+            boolean online = _peerMan.isMemberOnline(_friendId);
             memobj.addToFriends(new FriendEntry(friend, _friendStatus, online));
             _friendMan.registerFriendInterest(memobj, _friendId);
         }

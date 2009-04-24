@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Set;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -47,17 +50,22 @@ public class FriendManager
     // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject memobj)
     {
-        // determine which of this member's friends are online
+        // register interest in updates for this member's friends
+        Set<Integer> friendIds = Sets.newHashSet();
+        FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
+        for (FriendEntry entry : snapshot) {
+            friendIds.add(entry.name.getMemberId());
+            registerFriendInterest(memobj, entry.name.getMemberId());
+        }
+
+        // determine which are online and update their friend status
+        Set<Integer> onlineIds = _peerMan.filterOnline(friendIds);
         memobj.startTransaction();
         try {
-            FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
-                if (_peerMan.getMemberLocation(entry.name.getMemberId()) != null) {
-                    memobj.updateFriends(new FriendEntry(
-                        new VizMemberName(entry.name, entry.name.getPhoto()),
-                        entry.status, true));
+                if (entry.online != onlineIds.contains(entry.name.getMemberId())) {
+                    memobj.updateFriends(entry.toggleOnline());
                 }
-                registerFriendInterest(memobj, entry.name.getMemberId());
             }
         } finally {
             memobj.commitTransaction();
@@ -86,7 +94,7 @@ public class FriendManager
     }
 
     // from interface MsoyPeerManager.MemberObserver
-    public void memberEnteredScene (String nodeName, MemberLocation loc)
+    public void memberEnteredScene (String nodeName, int memberId, int sceneId)
     {
         // nada
     }
@@ -106,8 +114,6 @@ public class FriendManager
 
     protected void updateOnlineStatus (int memberId, boolean online)
     {
-        // TODO: add filter to avoid off/on when member switches servers
-
         for (MemberObject watcher : _friendMap.get(memberId)) {
             FriendEntry entry = watcher.friends.get(memberId);
             if (entry == null) {
@@ -115,8 +121,9 @@ public class FriendManager
                             ", friend=" + memberId + "].");
                 continue;
             }
-            watcher.updateFriends(new FriendEntry(
-                new VizMemberName(entry.name, entry.name.getPhoto()), entry.status, online));
+            if (entry.online != online) {
+                watcher.updateFriends(entry.toggleOnline());
+            }
         }
     }
 

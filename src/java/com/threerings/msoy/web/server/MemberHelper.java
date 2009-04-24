@@ -22,16 +22,24 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.presents.peer.data.NodeObject;
 
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MemberGame;
+import com.threerings.msoy.peer.data.MemberScene;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
 import com.threerings.msoy.group.gwt.GroupMemberCard;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -186,17 +194,32 @@ public class MemberHelper
 
         // hop over to the dobj thread and figure out which of these members is online
         final IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
+
         _servletLogic.invokePeerOperation(
-            "resolveMemberCards(" + memberIds + ")", new Function<NodeObject,Void>() {
-            public Void apply (NodeObject nodeobj) {
-                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                for (int memberId : memberIds) {
-                    MemberCard.Status status = mnobj.getMemberStatus(memberId);
-                    if (status != null) {
-                        statuses.put(memberId, status);
+            "resolveMemberCards(" + memberIds + ")", new MsoyPeerManager.NodeOp() {
+            public void apply (MsoyNodeObject mnobj) {
+                for (Integer id : memberIds) {
+                    MemberCard.Status status = getStatus(mnobj, id);
+
+                    // due to fiddly business we have to merge an AVR game player's scene status
+                    // into its game status, but we don't know which one is going to show up first
+                    // so we have to do some extra awesome checking
+                    MemberCard.Status estatus = statuses.get(id);
+                    if (estatus instanceof MemberCard.InAVRGame &&
+                        status instanceof MemberCard.InScene) {
+                        ((MemberCard.InAVRGame)estatus).sceneId = ((MemberCard.InScene)status).sceneId;
+                    } else if (estatus instanceof MemberCard.InScene &&
+                               status instanceof MemberCard.InAVRGame) {
+                        ((MemberCard.InAVRGame)status).sceneId = ((MemberCard.InScene)estatus).sceneId;
+                        statuses.put(id, status); // overwrite scene status with AVRG status
+
+                    } else if (estatus instanceof MemberCard.InGame) {
+                        // hrm, don't overwrite game status
+
+                    } else {
+                        statuses.put(id, status);
                     }
                 }
-                return null;
             }
         });
 
@@ -211,16 +234,6 @@ public class MemberHelper
                 // if this member is online, fill in their online status
                 MemberCard.Status status = statuses.get(mcr.memberId);
                 if (status != null) {
-                    // game names are not filled in by MsoyNodeObject.getMemberCard so we have to
-                    // get those from the popular places snapshot. Note this also includes subclass
-                    // MemberCard.InAVRGame
-                    if (status instanceof MemberCard.InGame) {
-                        MemberCard.InGame gstatus = (MemberCard.InGame)status;
-                        PopularPlacesSnapshot.Place place = pps.getGame(gstatus.gameId);
-                        if (place != null) {
-                            gstatus.gameName = place.name;
-                        }
-                    }
                     card.status = status;
                 }
             }
@@ -236,6 +249,46 @@ public class MemberHelper
         }
 
         return cards;
+    }
+
+    protected MemberCard.Status getStatus (MsoyNodeObject mnobj, int memberId)
+    {
+        MemberGame game = mnobj.memberGames.get(memberId);
+        if (game != null) {
+            // don't show developer versions of games
+            if (game.gameId != 0 && !Game.isDevelopmentVersion(game.gameId)) {
+                MemberCard.InGame rstatus = null;
+                if (game.avrGame) {
+                    MemberCard.InAVRGame status = new MemberCard.InAVRGame();
+                    status.gameId = game.gameId;
+                    rstatus = status;
+                } else {
+                    MemberCard.InGame status = new MemberCard.InGame();
+                    status.gameId = game.gameId;
+                    rstatus = status;
+                }
+                if (rstatus != null) {
+                    HostedGame hgame = mnobj.hostedGames.get(game.gameId);
+                    if (hgame != null) {
+                        rstatus.gameName = hgame.name;
+                    }
+                    return rstatus;
+                }
+            }
+        }
+
+        MemberScene scene = mnobj.memberScenes.get(memberId);
+        if (scene != null) {
+            MemberCard.InScene status = new MemberCard.InScene();
+            status.sceneId = scene.sceneId;
+            HostedRoom room = mnobj.hostedScenes.get(scene.sceneId);
+            if (room != null) {
+                status.sceneName = room.name;
+            }
+            return status;
+        }
+
+        return null;
     }
 
     /** Contains a mapping of authenticated members. */

@@ -63,19 +63,19 @@ public class GameWatcherManager
             log.warning("Displaced existing watcher", "memberId", "observer", old);
         }
 
-        MemberLocation location = _peerMan.getMemberLocation(memberId);
-        if (location == null) {
+        int sceneId = _peerMan.getMemberScene(memberId);
+        if (sceneId == 0) {
             log.warning("Watched member has no current location", "memberId", memberId);
             return;
         }
 
-        Tuple<String, HostedRoom> room = _peerMan.getSceneHost(location.sceneId);
+        Tuple<String, HostedRoom> room = _peerMan.getSceneHost(sceneId);
         if (room == null) {
-            log.warning("Host not found for scene", "location", location);
+            log.warning("Host not found for scene", "scene", sceneId);
             return;
         }
 
-        memberEnteredScene(room.left, location);
+        memberEnteredScene(room.left, memberId, sceneId);
     }
 
     /**
@@ -104,13 +104,13 @@ public class GameWatcherManager
     }
 
     // from interface MsoyPeerManager.MemberObserver
-    public void memberEnteredScene (String node, MemberLocation loc)
+    public void memberEnteredScene (String node, int memberId, int sceneId)
     {
-        Observer observer = _observers.get(loc.memberId);
+        Observer observer = _observers.get(memberId);
         if (observer != null) {
             String host = _peerMan.getPeerPublicHostName(node);
             int port = _peerMan.getPeerPort(node);
-            observer.memberMoved(loc.memberId, loc.sceneId, host, port);
+            observer.memberMoved(memberId, sceneId, host, port);
         }
     }
 

@@ -6,7 +6,6 @@ package com.threerings.msoy.peer.data;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
@@ -22,8 +21,11 @@ import com.threerings.msoy.party.data.PeerPartyMarshaller;
 public class MsoyNodeObject extends CrowdNodeObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>memberLocs</code> field. */
-    public static final String MEMBER_LOCS = "memberLocs";
+    /** The field name of the <code>memberScenes</code> field. */
+    public static final String MEMBER_SCENES = "memberScenes";
+
+    /** The field name of the <code>memberGames</code> field. */
+    public static final String MEMBER_GAMES = "memberGames";
 
     /** The field name of the <code>hostedScenes</code> field. */
     public static final String HOSTED_SCENES = "hostedScenes";
@@ -50,8 +52,11 @@ public class MsoyNodeObject extends CrowdNodeObject
     public static final String PEER_PARTY_SERVICE = "peerPartyService";
     // AUTO-GENERATED: FIELDS END
 
-    /** Contains the current location of all members on this server. */
-    public DSet<MemberLocation> memberLocs = DSet.newDSet();
+    /** Contains info on all members in a scene on this server. */
+    public DSet<MemberScene> memberScenes = DSet.newDSet();
+
+    /** Contains info on all members in a game on this server. */
+    public DSet<MemberGame> memberGames = DSet.newDSet();
 
     /** Contains info on all scenes hosted by this server. */
     public DSet<HostedRoom> hostedScenes = DSet.newDSet();
@@ -77,78 +82,39 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** Handles party communication between peers. */
     public PeerPartyMarshaller peerPartyService;
 
-    /**
-     * If the specified member is in a room on this server, creates and populates a status card
-     * with their information. If they are in a game, the name of the game will not be filled in
-     * (we don't know it) so the caller will have to obtain that from the popular places snapshot.
-     */
-    public MemberCard.Status getMemberStatus (int memberId)
-    {
-        MemberLocation mloc = memberLocs.get(memberId);
-        if (mloc == null || (mloc.sceneId == 0 && mloc.gameId == 0)) {
-            return null;
-        }
-
-        // don't show developer versions of games
-        if (mloc.gameId != 0 && !Game.isDevelopmentVersion(mloc.gameId)) {
-            if (mloc.avrGame) {
-                MemberCard.InAVRGame status = new MemberCard.InAVRGame();
-                status.gameId = mloc.gameId;
-                status.sceneId = mloc.sceneId;
-                return status;
-            } else {
-                MemberCard.InGame status = new MemberCard.InGame();
-                status.gameId = mloc.gameId;
-                return status;
-            }
-        }
-
-        if (mloc.sceneId != 0) {
-            MemberCard.InScene status = new MemberCard.InScene();
-            status.sceneId = mloc.sceneId;
-            HostedRoom room = hostedScenes.get(mloc.sceneId);
-            if (room != null) {
-                status.sceneName = room.name;
-            }
-            return status;
-        }
-
-        return null;
-    }
-
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the specified entry be added to the
-     * <code>memberLocs</code> set. The set will not change until the event is
+     * <code>memberScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMemberLocs (MemberLocation elem)
+    public void addToMemberScenes (MemberScene elem)
     {
-        requestEntryAdd(MEMBER_LOCS, memberLocs, elem);
+        requestEntryAdd(MEMBER_SCENES, memberScenes, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>memberLocs</code> set. The set will not change until the
+     * the <code>memberScenes</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMemberLocs (Comparable<?> key)
+    public void removeFromMemberScenes (Comparable<?> key)
     {
-        requestEntryRemove(MEMBER_LOCS, memberLocs, key);
+        requestEntryRemove(MEMBER_SCENES, memberScenes, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>memberLocs</code> set. The set will not change until the event is
+     * <code>memberScenes</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMemberLocs (MemberLocation elem)
+    public void updateMemberScenes (MemberScene elem)
     {
-        requestEntryUpdate(MEMBER_LOCS, memberLocs, elem);
+        requestEntryUpdate(MEMBER_SCENES, memberScenes, elem);
     }
 
     /**
-     * Requests that the <code>memberLocs</code> field be set to the
+     * Requests that the <code>memberScenes</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -157,11 +123,58 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemberLocs (DSet<MemberLocation> value)
+    public void setMemberScenes (DSet<MemberScene> value)
     {
-        requestAttributeChange(MEMBER_LOCS, value, this.memberLocs);
-        DSet<MemberLocation> clone = (value == null) ? null : value.typedClone();
-        this.memberLocs = clone;
+        requestAttributeChange(MEMBER_SCENES, value, this.memberScenes);
+        DSet<MemberScene> clone = (value == null) ? null : value.typedClone();
+        this.memberScenes = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>memberGames</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToMemberGames (MemberGame elem)
+    {
+        requestEntryAdd(MEMBER_GAMES, memberGames, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>memberGames</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromMemberGames (Comparable<?> key)
+    {
+        requestEntryRemove(MEMBER_GAMES, memberGames, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>memberGames</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateMemberGames (MemberGame elem)
+    {
+        requestEntryUpdate(MEMBER_GAMES, memberGames, elem);
+    }
+
+    /**
+     * Requests that the <code>memberGames</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setMemberGames (DSet<MemberGame> value)
+    {
+        requestAttributeChange(MEMBER_GAMES, value, this.memberGames);
+        DSet<MemberGame> clone = (value == null) ? null : value.typedClone();
+        this.memberGames = clone;
     }
 
     /**

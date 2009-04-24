@@ -147,19 +147,14 @@ public class StatusServlet extends HttpServlet
             }
         }
 
-        for (MemberLocation mloc : nodeobj.memberLocs) {
-            if (mloc.sceneId != 0) {
-                info.inScene++;
-            }
-            if (mloc.gameId != 0) {
-                info.inGame++;
-            }
-        }
+        info.inScene = nodeobj.memberScenes.size();
+        info.inGame = nodeobj.memberGames.size();
 
         switch (details) {
-        case MEMBERS:
-            info.details = makeDetails(nodeobj.memberLocs);
-            break;
+//         case MEMBERS:
+//             info.details = makeDetails(nodeobj.memberScenes);
+//             break;
+// TODO: correlate memberScenes with hostedScenes, and memberGames with hostedGames
         case ROOMS:
             info.details = makeDetails(nodeobj.hostedScenes);
             break;
@@ -246,7 +241,7 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, PARTIES, REPORT, PROFILE, CLIENTS, PANOPTICON
+        NONE, ROOMS, GAMES, CHANNELS, PARTIES, REPORT, PROFILE, CLIENTS, PANOPTICON
     };
 
     protected static class ServerInfo

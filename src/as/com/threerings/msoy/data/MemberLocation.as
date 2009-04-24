@@ -9,13 +9,11 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.presents.dobj.DSet_Entry;
-
 /**
  * Contains information on the current location of a member.
  */
 public class MemberLocation
-    implements Streamable, DSet_Entry
+    implements Streamable
 {
     /** The id of the member represented by this location. */
     public var memberId :int;
@@ -23,22 +21,16 @@ public class MemberLocation
     /** The id of the scene occupied by this member or 0. */
     public var sceneId :int;
 
-    /** The id of the game or game lobby occupied by this member. */
+    /** The id of the game or game lobby occupied by this member or 0. */
     public var gameId :int;
 
-    /** Whether or not this is an AVRGame. */
+    /** Whether or not the member's game is AVR. */
     public var avrGame :Boolean;
-
-    // from DSet_Entry
-    public function getKey () :Object
-    {
-        return memberId;
-    }
 
     // from Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeObject(new Integer(memberId));
+        out.writeInt(memberId);
         out.writeInt(sceneId);
         out.writeInt(gameId);
         out.writeBoolean(avrGame);
@@ -47,7 +39,7 @@ public class MemberLocation
     // from Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        memberId = (ins.readField(Integer) as Integer).value;
+        memberId = ins.readInt();
         sceneId = ins.readInt();
         gameId = ins.readInt();
         avrGame = ins.readBoolean();

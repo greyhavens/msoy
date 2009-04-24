@@ -16,8 +16,8 @@ import com.threerings.presents.server.net.ServerCommunicator;
 import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -77,9 +77,10 @@ public class MsoyPeerNode extends PeerNode
         @Override public void entryAdded (EntryAddedEvent<DSet.Entry> event) {
             super.entryAdded(event);
             String name = event.getName();
-            if (MsoyNodeObject.MEMBER_LOCS.equals(name)) {
+            if (MsoyNodeObject.MEMBER_SCENES.equals(name)) {
+                MemberScene datum = (MemberScene)event.getEntry();
                 ((MsoyPeerManager)_peermgr).memberEnteredScene(
-                    getNodeName(), (MemberLocation)event.getEntry());
+                    getNodeName(), datum.memberId, datum.sceneId);
 
             } else if (MsoyNodeObject.MEMBER_PARTIES.equals(name)) {
                 MemberParty memParty = (MemberParty) event.getEntry();
@@ -91,9 +92,10 @@ public class MsoyPeerNode extends PeerNode
         @Override public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event) {
             super.entryUpdated(event);
             String name = event.getName();
-            if (MsoyNodeObject.MEMBER_LOCS.equals(name)) {
+            if (MsoyNodeObject.MEMBER_SCENES.equals(name)) {
+                MemberScene datum = (MemberScene)event.getEntry();
                 ((MsoyPeerManager)_peermgr).memberEnteredScene(
-                    getNodeName(), (MemberLocation)event.getEntry());
+                    getNodeName(), datum.memberId, datum.sceneId);
 
             } else if (MsoyNodeObject.MEMBER_PARTIES.equals(name)) {
                 MemberParty memParty = (MemberParty) event.getEntry();
@@ -109,7 +111,11 @@ public class MsoyPeerNode extends PeerNode
         @Override public void entryRemoved (EntryRemovedEvent<DSet.Entry> event) {
             super.entryRemoved(event);
             String name = event.getName();
-            if (MsoyNodeObject.MEMBER_PARTIES.equals(name)) {
+            if (MsoyNodeObject.MEMBER_SCENES.equals(name)) {
+                int memberId = (Integer)event.getKey();
+                ((MsoyPeerManager)_peermgr).memberEnteredScene(getNodeName(), memberId, 0);
+
+            } else if (MsoyNodeObject.MEMBER_PARTIES.equals(name)) {
                 _partyReg.updateUserParty((Integer)event.getKey(), 0, (MsoyNodeObject)nodeobj);
             }
         }

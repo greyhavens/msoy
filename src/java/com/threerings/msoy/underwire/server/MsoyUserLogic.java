@@ -109,7 +109,7 @@ public class MsoyUserLogic extends SupportUserLogic
     public void updateAccount (int accountId, String email, String password)
         throws UnderwireException
     {
-        OOOUser user = (OOOUser)_supportrepo.loadUser(accountId);
+        OOOUser user = _supportrepo.loadUser(accountId);
         if (user == null) {
             throw new UnderwireException("m.unknown_user");
         }

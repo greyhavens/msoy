@@ -90,8 +90,8 @@ public class WorldGameRegistry
     }
 
     /**
-     * Called to update that a player is either lobbying for, playing, or no longer playing
-     * the specified game.
+     * Called to update that a player is either lobbying for, playing, or no longer playing the
+     * specified game.
      */
     public void updatePlayerOnPeer (final MemberObject memObj, GameSummary game)
     {
@@ -139,9 +139,6 @@ public class WorldGameRegistry
                 return true;
             }
         });
-
-        // update their published location in our peer object
-        _peerMan.updateMemberLocation(memObj);
     }
 
     /**

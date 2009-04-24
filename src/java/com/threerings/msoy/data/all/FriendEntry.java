@@ -27,6 +27,14 @@ public class FriendEntry extends PlayerEntry
         this.online = online;
     }
 
+    /**
+     * Returns a new FriendEntry that differs from this one in online status.
+     */
+    public FriendEntry toggleOnline ()
+    {
+        return new FriendEntry(name, status, !online);
+    }
+
     @Override
     public String toString ()
     {

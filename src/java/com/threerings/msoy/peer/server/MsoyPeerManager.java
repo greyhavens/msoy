@@ -6,7 +6,10 @@ package com.threerings.msoy.peer.server;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -14,6 +17,7 @@ import com.samskivert.util.Tuple;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -53,6 +57,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartySummary;
@@ -60,6 +65,8 @@ import com.threerings.msoy.room.server.MsoySceneRegistry;
 
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MemberGame;
+import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
@@ -92,7 +99,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         /**
          * Notifies the observer when a member has entered a new scene.
          */
-        void memberEnteredScene (String peerName, MemberLocation loc);
+        void memberEnteredScene (String peerName, int memberId, int sceneId);
     }
 
     /**
@@ -116,6 +123,27 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         /** Called when a peer logs off of this node. */
         void disconnectedFromPeer (String node);
+    }
+
+    /** Useful with {@link #applyToNodes}. */
+    public static abstract class NodeOp implements Function<NodeObject, Void>
+    {
+        public abstract void apply (MsoyNodeObject mnobj);
+
+        public Void apply (NodeObject nodeobj) {
+            apply((MsoyNodeObject)nodeobj);
+            return null;
+        }
+    }
+
+    /** Useful with {@link #lookupNodeDatum}. */
+    public static abstract class NodeFunc<T> implements Function<NodeObject, T>
+    {
+        public abstract T apply (MsoyNodeObject mnobj);
+
+        public T apply (NodeObject nodeobj) {
+            return apply((MsoyNodeObject)nodeobj);
+        }
     }
 
     /** Our {@link MemberObserver}s. */
@@ -149,16 +177,85 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns the location of the specified member, or null if they are not online on any peer.
+     * Returns the scene occupied by the member, or 0 if they are not in a scene on any peer.
+     */
+    public int getMemberScene (int memberId)
+    {
+        final Integer memberKey = memberId;
+        return lookupNodeDatum(new NodeFunc<Integer>() {
+            public Integer apply (MsoyNodeObject nodeobj) {
+                MemberScene datum = nodeobj.memberScenes.get(memberKey);
+                return (datum == null) ? null : datum.sceneId;
+            }
+        });
+    }
+
+    /**
+     * Returns true if the supplied member is online anywhere in the network.
+     */
+    public boolean isMemberOnline (int memberId)
+    {
+        final Integer memberKey = memberId;
+        Boolean online = lookupNodeDatum(new NodeFunc<Boolean>() {
+            public Boolean apply (MsoyNodeObject mnobj) {
+                if (mnobj.memberScenes.containsKey(memberKey)) {
+                    return true;
+                }
+                if (mnobj.memberGames.containsKey(memberKey)) {
+                    return true;
+                }
+                return null;
+            }
+        });
+        return (online == null) ? false : online;
+    }
+
+    /**
+     * Returns a set containing the ids of all members in the supplied set that are online.
+     */
+    public Set<Integer> filterOnline (final Set<Integer> memberIds)
+    {
+        final Set<Integer> onlineIds = Sets.newHashSet();
+        applyToNodes(new NodeOp() {
+            public void apply (MsoyNodeObject mnobj) {
+                for (MemberScene scene : mnobj.memberScenes) {
+                    if (memberIds.contains(scene.memberId)) {
+                        onlineIds.add(scene.memberId);
+                    }
+                }
+                for (MemberGame game : mnobj.memberGames) {
+                    if (memberIds.contains(game.memberId)) {
+                        onlineIds.add(game.memberId);
+                    }
+                }
+            }
+        });
+        return onlineIds;
+    }
+
+    /**
+     * Returns MemberLocation instances for all members in the supplied set.
      */
     public MemberLocation getMemberLocation (int memberId)
     {
         final Integer memberKey = memberId;
-        return lookupNodeDatum(new Function<NodeObject,MemberLocation>() {
-            public MemberLocation apply (NodeObject nodeobj) {
-                return ((MsoyNodeObject)nodeobj).memberLocs.get(memberKey);
+        final MemberLocation loc = new MemberLocation();
+        applyToNodes(new NodeOp() {
+            public void apply (MsoyNodeObject mnobj) {
+                MemberScene scene = mnobj.memberScenes.get(memberKey);
+                if (scene != null) {
+                    loc.memberId = scene.memberId;
+                    loc.sceneId = scene.sceneId;
+                }
+                MemberGame game = mnobj.memberGames.get(memberKey);
+                if (game != null) {
+                    loc.memberId = game.memberId;
+                    loc.gameId = game.gameId;
+                    loc.avrGame = game.avrGame;
+                }
             }
         });
+        return (loc.memberId != 0) ? loc : null;
     }
 
     /**
@@ -167,47 +264,63 @@ public class MsoyPeerManager extends CrowdPeerManager
     public PartySummary getPartySummary (int memberId)
     {
         final Integer memberKey = memberId;
-        return lookupNodeDatum(new Function<NodeObject,PartySummary>() {
-            public PartySummary apply (NodeObject nodeObj) {
-                MemberParty mp = ((MsoyNodeObject)nodeObj).memberParties.get(memberKey);
+        return lookupNodeDatum(new NodeFunc<PartySummary>() {
+            public PartySummary apply (MsoyNodeObject nodeObj) {
+                MemberParty mp = nodeObj.memberParties.get(memberKey);
                 if (mp == null) {
                     return null;
                 }
-                return ((MsoyNodeObject) nodeObj).hostedParties.get(mp.partyId);
+                return nodeObj.hostedParties.get(mp.partyId);
             }
         });
     }
 
     /**
-     * Reports the new location of a member on this server.
+     * Updates the scene occupied by the specified member on this server.
      */
-    public void updateMemberLocation (MemberObject memobj)
+    public void updateMemberScene (MemberObject memobj)
     {
-        MsoyClientInfo info = (MsoyClientInfo)_nodeobj.clients.get(memobj.username);
-        if (info == null) {
+        if (_nodeobj.clients.get(memobj.username) == null) {
             return; // they're leaving or left, so no need to worry
         }
 
-        MemberLocation newloc = new MemberLocation();
-        newloc.memberId = memobj.getMemberId();
-        newloc.sceneId = Math.max(ScenePlace.getSceneId(memobj), 0); // we use 0 for no scene
-        if (memobj.game != null) {
-            newloc.gameId = memobj.game.gameId;
-            newloc.avrGame = memobj.game.avrGame;
-        } else {
-            newloc.gameId = 0;
-            newloc.avrGame = false;
+        Integer memberId = memobj.getMemberId();
+        int sceneId = Math.max(memobj.getSceneId(), 0); // we use 0 for no scene
+        MemberScene datum = _mnobj.memberScenes.get(memberId);
+        if (datum == null) {
+            if (sceneId != 0) {
+                _mnobj.addToMemberScenes(new MemberScene(memberId, sceneId));
+            } // else no problem!
+        } else if (sceneId == 0) {
+            _mnobj.removeFromMemberScenes(memberId);
+        } else if (datum.sceneId != sceneId) {
+            _mnobj.updateMemberScenes(new MemberScene(memberId, sceneId));
         }
 
-        if (_mnobj.memberLocs.contains(newloc)) {
-            // log.info("Updating member " + newloc + ".");
-            _mnobj.updateMemberLocs(newloc);
-        } else {
-            // log.info("Hosting member " + newloc + ".");
-            _mnobj.addToMemberLocs(newloc);
+        // notify our member observers
+        memberEnteredScene(_nodeName, memberId, sceneId);
+    }
+
+    /**
+     * Updates the game (or game lobby) occupied by the specified member on this server.
+     */
+    public void updateMemberGame (int memberId, GameSummary game)
+    {
+        if (_nodeobj.clients.get(GameAuthName.makeKey(memberId)) == null) {
+            return; // they're leaving or left, so no need to worry
         }
 
-        memberEnteredScene(_nodeName, newloc);
+        Integer memberKey = memberId;
+        MemberGame datum = _mnobj.memberGames.get(memberKey);
+        if (datum == null) {
+            if (game != null) {
+                _mnobj.addToMemberGames(new MemberGame(memberKey, game.gameId, game.avrGame));
+            } // else no problem!
+        } else if (game == null) {
+            _mnobj.removeFromMemberGames(memberKey);
+        } else if (datum.gameId != game.gameId) {
+            _mnobj.updateMemberGames(new MemberGame(memberKey, game.gameId, game.avrGame));
+        }
     }
 
     /**
@@ -216,9 +329,9 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public Tuple<String, HostedRoom> getSceneHost (final int sceneId)
     {
-        return lookupNodeDatum(new Function<NodeObject, Tuple<String, HostedRoom>>() {
-            public Tuple<String, HostedRoom> apply (NodeObject nodeobj) {
-                HostedRoom info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
+        return lookupNodeDatum(new NodeFunc<Tuple<String, HostedRoom>>() {
+            public Tuple<String, HostedRoom> apply (MsoyNodeObject nodeobj) {
+                HostedRoom info = nodeobj.hostedScenes.get(sceneId);
                 return (info == null) ? null : Tuple.newTuple(nodeobj.nodeName, info);
             }
         });
@@ -230,9 +343,9 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public Tuple<String, HostedGame> getGameHost (final int gameId)
     {
-        return lookupNodeDatum(new Function<NodeObject, Tuple<String, HostedGame>>() {
-            public Tuple<String, HostedGame> apply (NodeObject nodeobj) {
-                HostedGame info = ((MsoyNodeObject) nodeobj).hostedGames.get(gameId);
+        return lookupNodeDatum(new NodeFunc<Tuple<String, HostedGame>>() {
+            public Tuple<String, HostedGame> apply (MsoyNodeObject nodeobj) {
+                HostedGame info = nodeobj.hostedGames.get(gameId);
                 return (info == null) ? null : Tuple.newTuple(nodeobj.nodeName, info);
             }
         });
@@ -317,7 +430,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     public int getNextPartyId ()
     {
         if (_partyIdCounter >= Integer.MAX_VALUE / MAX_NODES) {
-            log.warning("ZOMG! We plumb run out of id space [party id=" + _partyIdCounter + "].");
+            log.warning("ZOMG! We plumb run out of id space", "partyId", _partyIdCounter);
             _partyIdCounter = 0;
         }
         return (ServerConfig.nodeId + MAX_NODES * ++_partyIdCounter);
@@ -339,9 +452,8 @@ public class MsoyPeerManager extends CrowdPeerManager
                 _lastRequestName = null;
             }
             if ((entry == null) && (username instanceof AuthName) &&
-                    (null != getMemberLocation(((AuthName) username).getMemberId()))) {
-                log.warning("Asked for forwarded member object, on another node",
-                    "name", username);
+                getMemberScene(((AuthName) username).getMemberId()) != 0) {
+                log.warning("Asked for forwarded member object, on another node", "name", username);
             }
             return (entry != null && now < entry.expireTime) ?
                 Tuple.newTuple(entry.memobj, entry.locals) : null;
@@ -371,8 +483,8 @@ public class MsoyPeerManager extends CrowdPeerManager
         // locate the peer in question
         PeerNode node = _peers.get(nodeName);
         if (node == null || node.nodeobj == null) {
-            log.warning("Unable to forward member object to unready peer",
-               "peer", nodeName, "connected", (node != null), "member", memobj.memberName);
+            log.warning("Unable to forward member object to unready peer", "peer", nodeName,
+                        "connected", (node != null), "member", memobj.memberName);
             return;
         }
 
@@ -560,11 +672,11 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called when a member enters a new scene. Notifies observers.
      */
-    protected void memberEnteredScene (final String node, final MemberLocation loc)
+    protected void memberEnteredScene (final String node, final int memberId, final int sceneId)
     {
         memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
-                observer.memberEnteredScene(node, loc);
+                observer.memberEnteredScene(node, memberId, sceneId);
                 return true;
             }
         });
@@ -603,11 +715,14 @@ public class MsoyPeerManager extends CrowdPeerManager
         super.clearClientInfo(client, info);
 
         if (info.username instanceof MsoyAuthName) {
-            // clear out their location in our node object (if they were in one)
+            // clear out their scene/game info in our node object
             Integer memberId = ((MsoyClientInfo)info).getMemberId();
-            if (_mnobj.memberLocs.containsKey(memberId)) {
-                // log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
-                _mnobj.removeFromMemberLocs(memberId);
+            if (_mnobj.memberScenes.containsKey(memberId)) {
+                _mnobj.removeFromMemberScenes(memberId);
+                // TODO: memberEnteredScene(memberId, 0)?
+            }
+            if (_mnobj.memberGames.containsKey(memberId)) {
+                _mnobj.removeFromMemberGames(memberId);
             }
 
             // notify observers that a member logged off of this node
@@ -679,7 +794,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         return (authname instanceof MsoyAuthName) || (authname instanceof GameAuthName);
     }
 
-    /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */
+    /** Used to keep {@link MsoyNodeObject#memberScenes} up to date. */
     protected class LocationTracker implements AttributeChangeListener
     {
         public void attributeChanged (AttributeChangedEvent event) {
@@ -700,7 +815,7 @@ public class MsoyPeerManager extends CrowdPeerManager
                 // In that case, the null location could mean heading to the game, and we do need
                 // to zero out the sceneId on this player's MemberLocation.
                 if (event.getValue() instanceof ScenePlace || memobj.game != null) {
-                    updateMemberLocation(memobj);
+                    updateMemberScene(memobj);
                 }
             }
         }

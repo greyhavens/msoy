@@ -24,6 +24,8 @@ import com.threerings.msoy.data.MemberLocation;
 
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.data.MemberGame;
+import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -162,56 +164,49 @@ public class PopularPlacesSnapshot
 
     protected PopularPlacesSnapshot (MsoyPeerManager peerMan, List<Integer> greeterIds)
     {
-        // any member on any world server can be playing any game on any game server, so we first
-        // need to make a first pass to collect metadata on all hosted games
-        final IntMap<HostedPlace> hostedGames = IntMaps.newHashIntMap();
-        peerMan.applyToNodes(new Function<NodeObject,Void>() {
-            public Void apply (NodeObject nodeobj) {
-                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                for (HostedPlace game : mnobj.hostedGames) {
-                    hostedGames.put(game.placeId, game);
-                }
-                return null;
-            }
-        });
-
         // intermediate greeter hash tables
         final Set<Integer> greeters = Sets.newHashSet(greeterIds);
         final Set<Integer> onlineGreeters = Sets.newHashSet();
+
+        // use to count up members online
+        final Set<Integer> seenIds = Sets.newHashSet();
 
         // now we can count up the population in all scenes and games. collect greeter online info
         // while we're at it
         peerMan.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
-                for (MemberLocation memloc : mnobj.memberLocs) {
-                    _totalPopulation++;
-                    boolean online = false;
-                    if (memloc.sceneId > 0) {
-                        HostedRoom room = mnobj.hostedScenes.get(memloc.sceneId);
-                        if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
-                            if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                                // map whirled rooms by whirled id
-                                increment(_whirleds, _whlist, room.ownerId, room);
-                            }
-                            increment(_scenes, _sclist, room.placeId, room);
-                            online = true;
+
+                for (MemberScene ms : mnobj.memberScenes) {
+                    seenIds.add(ms.memberId);
+
+                    HostedRoom room = mnobj.hostedScenes.get(ms.sceneId);
+                    if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
+                        if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                            // map whirled rooms by whirled id
+                            increment(_whirleds, _whlist, room.ownerId, room);
+                        }
+                        increment(_scenes, _sclist, room.placeId, room);
+
+                        // mark as an online greeter if appropriate
+                        if (greeters.contains(ms.memberId)) {
+                            onlineGreeters.add(ms.memberId);
                         }
                     }
-                    if (memloc.gameId != 0 && !Game.isDevelopmentVersion(memloc.gameId)) {
-                        HostedPlace game = hostedGames.get(memloc.gameId);
+                }
+
+                for (MemberGame mg : mnobj.memberGames) {
+                    seenIds.add(mg.memberId);
+
+                    if (!Game.isDevelopmentVersion(mg.gameId)) {
+                        HostedPlace game = mnobj.hostedGames.get(mg.gameId);
                         if (game != null) {
                             // map games by game id
                             increment(_games, _glist, game.placeId, game);
-                            online = true;
                         }
                     }
-
-                    // mark as an online greeter if appropriate
-                    if (online && greeters.contains(memloc.memberId)) {
-                        onlineGreeters.add(memloc.memberId);
-                    }
                 }
+
                 return null;
             }
 
@@ -228,6 +223,9 @@ public class PopularPlacesSnapshot
                 place.population++;
             }
         });
+
+        // note our total population
+        _totalPopulation = seenIds.size();
 
         // sort and prune our top places list
         sortAndPrune(_whlist);
