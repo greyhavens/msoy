@@ -71,6 +71,7 @@ import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.server.RoomManager;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
@@ -536,7 +537,7 @@ public class AVRGameManager extends PlaceManager
         _lifecycleObserver.avrGameAgentFailedToStart(this, null);
     }
 
-    // From AVRGameAgentProvider
+    // from AVRGameAgentProvider
     public void leaveGame (ClientObject caller, int playerId)
     {
         if (!isAgent(caller)) {
@@ -702,10 +703,6 @@ public class AVRGameManager extends PlaceManager
         }
 
         _locmgr.leavePlace(player);
-
-        // Make sure we notify the world server too, since we are officially deactivating this
-        // game as opposed to just leaving it tempoararily.
-        _playerActions.leaveAVRGame(playerId);
     }
 
     @Override
@@ -775,6 +772,10 @@ public class AVRGameManager extends PlaceManager
                 client.addAVRGPlayer();
             }
         }
+
+        // note that this player is playing this game
+        _playerActions.updatePlayer(
+            player.getMemberId(), new GameSummary(_contentDelegate.getContent().game));
     }
 
     @Override
@@ -783,10 +784,12 @@ public class AVRGameManager extends PlaceManager
         super.bodyLeft(bodyOid);
 
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
-
         _invmgr.clearDispatcher(player.propertyService);
 
+        // let the world know that this player is no longer playing our game
         int memberId = player.getMemberId();
+        _playerActions.updatePlayer(memberId, null);
+
         // stop watching this player's movements
         _watchmgr.clearWatch(memberId);
 

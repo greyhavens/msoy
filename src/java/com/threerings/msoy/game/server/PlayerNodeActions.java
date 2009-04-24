@@ -29,13 +29,9 @@ public class PlayerNodeActions
 {
     public void updatePlayer (int playerId, GameSummary game)
     {
-        _peerMan.updateMemberGame(playerId, game);
-        _peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
-    }
-
-    public void leaveAVRGame (int playerId)
-    {
-        _peerMan.invokeNodeAction(new LeaveAVRGameAction(playerId));
+        if (_peerMan.updateMemberGame(playerId, game)) {
+            _peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
+        }
     }
 
     public void displayNameUpdated (MemberName name)
@@ -60,22 +56,6 @@ public class PlayerNodeActions
 
         protected GameSummary _game;
         @Inject protected transient WorldGameRegistry _gameReg;
-    }
-
-    /** Handles leaving an AVR game. */
-    protected static class LeaveAVRGameAction extends MemberNodeAction
-    {
-        public LeaveAVRGameAction (int memberId) {
-            super(memberId);
-        }
-
-        public LeaveAVRGameAction () {
-        }
-
-        protected void execute (MemberObject memObj) {
-            // clear their AVRG affiliation
-            memObj.setAvrGameId(0);
-        }
     }
 
     /** Handles informing a game server that a player's display name has changed. */

@@ -1295,8 +1295,6 @@ public class WorldController extends MsoyController
             _wctx.getSceneDirector().moveTo(_postLogonScene);
             _postLogonScene = 0;
         }
-
-        _wctx.getGameDirector().checkMemberAVRGame();
     }
 
     // from ClientObserver

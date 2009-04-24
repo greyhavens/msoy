@@ -99,7 +99,6 @@ public class QuestDelegate extends PlayManagerDelegate
             return;
         }
         _players.put(bodyOid, new Player(player));
-        _playerActions.updatePlayer(player.getMemberId(), new GameSummary(_content.game));
         _eventLog.avrgEntered(player.getMemberId(), player.getVisitorId());
     }
 
@@ -273,9 +272,6 @@ public class QuestDelegate extends PlayManagerDelegate
             _eventLog.avrgLeft(memberId, _gameId, playerSecs,
                                _plmgr.getPlaceObject().occupantInfo.size(),
                                player.playerObject.getVisitorId());
-
-            // let the world know that this player is no longer playing our game
-            _playerActions.updatePlayer(memberId, null);
         }
 
         // if they accrued any coins (and are not a guest), do the actual coin awarding

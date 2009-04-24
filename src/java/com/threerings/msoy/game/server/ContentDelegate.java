@@ -33,6 +33,11 @@ public class ContentDelegate extends PlayManagerDelegate
         _content = content;
     }
 
+    public GameContent getContent ()
+    {
+        return _content;
+    }
+
     /**
      * Handles {@link ContentService#consumeItemPack}.
      */

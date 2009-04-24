@@ -814,11 +814,6 @@ public class GameGameRegistry
         AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
             _locmgr.leavePlace(player);
-
-            // Make sure we notify the world server too, since we are officially deactivating this
-            // game as opposed to just leaving it tempoararily.
-            _playerActions.leaveAVRGame(playerId);
-
         } else {
             log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");
         }
@@ -1295,7 +1290,6 @@ public class GameGameRegistry
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected PlayerLocator _locator;
-    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;

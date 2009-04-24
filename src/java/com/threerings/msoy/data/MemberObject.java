@@ -43,9 +43,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>memberName</code> field. */
     public static final String MEMBER_NAME = "memberName";
 
-    /** The field name of the <code>avrGameId</code> field. */
-    public static final String AVR_GAME_ID = "avrGameId";
-
     /** The field name of the <code>coins</code> field. */
     public static final String COINS = "coins";
 
@@ -137,13 +134,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The name and id information for this user. */
     public VizMemberName memberName;
-
-    /** The id of the currently active AVR game for this user, or 0 for none. Fun fact: this field
-     * actually records the *most recent* avrg for the user and therefore is not always equal
-     * to <code>(game != null && game.avrGame) ? game.gameId : 0</code>. The reason for this is
-     * that the client may wish to rejoin a game after an involuntary disconnect.
-     * TODO: Decide if this functionality is still needed. */
-    public int avrGameId;
 
     /** How many coins we've got jangling around on our person. */
     public int coins;
@@ -458,22 +448,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             MEMBER_NAME, value, ovalue);
         this.memberName = value;
-    }
-
-    /**
-     * Requests that the <code>avrGameId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setAvrGameId (int value)
-    {
-        int ovalue = this.avrGameId;
-        requestAttributeChange(
-            AVR_GAME_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.avrGameId = value;
     }
 
     /**

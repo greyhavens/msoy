@@ -364,24 +364,6 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * Called when we first login and then every time we leave a game or a lobby;
-     * checks to see if we have a persistent AVRG we should (re-)activate.
-     */
-    public function checkMemberAVRGame () :void
-    {
-        // Re-entering an AVRG after leaving a game lobby is a bit strange but was thought to be a
-        // cool feature at one point. TODO: get rid of this completely if it isn't needed anymore.
-        if (false && _liaison == null) {
-            var memberObj :MemberObject = _wctx.getMemberObject();
-            // we might not yet be logged onto our world server; freak not out if so
-            if (memberObj != null && memberObj.avrGameId != 0) {
-                _liaison = new AVRGameLiaison(_wctx, memberObj.avrGameId);
-                _liaison.start();
-            }
-        }
-    }
-
-    /**
      * Activates the specified AVR game, connecting to the appropriate game server and clearing any
      * existing game server connection.
      */
@@ -466,10 +448,6 @@ public class GameDirector extends BasicDirector
         if (_liaison == liaison) {
             _liaison = null;
             dispatchGamingStateChanged();
-            // if this was a lobbied game, see about restarting the AVRG
-            if (liaison is ParlorGameLiaison) {
-                checkMemberAVRGame();
-            }
         }
     }
 
