@@ -54,13 +54,12 @@ public class StatusServlet extends HttpServlet
         throws IOException
     {
         final Details details = parseDetails(req.getPathInfo());
-        Callable<Map<String, ServerInfo>> collector = new Callable<Map<String, ServerInfo>>() {
+        FutureTask<Map<String, ServerInfo>> task =
+            new FutureTask<Map<String, ServerInfo>>(new Callable<Map<String, ServerInfo>>() {
             public Map<String, ServerInfo> call () throws Exception {
                 return collectInfo(details);
             }
-        };
-        FutureTask<Map<String, ServerInfo>> task =
-            new FutureTask<Map<String, ServerInfo>>(collector);
+        });
         _omgr.postRunnable(task);
 
         try {
