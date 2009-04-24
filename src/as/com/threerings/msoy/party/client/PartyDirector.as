@@ -288,10 +288,11 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    protected function checkFollowParty () :void
+    protected function checkFollowScene () :void
     {
-        /* TODO: if (_partyObj.partyFollowsLeader) */
-        visitPartyScene(_partyObj.sceneId);
+        if (_partyObj.sceneId != 0) {
+            _wctx.getSceneDirector().moveTo(_partyObj.sceneId);
+        }
     }
 
     protected function checkFollowGame () :void
@@ -310,16 +311,6 @@ public class PartyDirector extends BasicDirector
                 // join the leader's game
                 gameDir.playNow(_partyObj.gameId, _partyObj.leaderId);
             }
-        }
-    }
-
-    /**
-     * A success handler for creating and joining parties.
-     */
-    protected function visitPartyScene (sceneId :int) :void
-    {
-        if (sceneId != 0) {
-            _wctx.getSceneDirector().moveTo(sceneId);
         }
     }
 
@@ -388,7 +379,7 @@ public class PartyDirector extends BasicDirector
         }
 
         // we might need to warp to the party location
-        checkFollowParty();
+        checkFollowScene();
         if (isPartyLeader()) {
             handleGamingStateChanged();
         } else {
@@ -447,9 +438,10 @@ public class PartyDirector extends BasicDirector
         // if we're the leader of the party, change the party's location when we move
         if (isPartyLeader()) {
             var scene :Scene = _wctx.getSceneDirector().getScene();
-            if ((scene != null) && (scene.getId() != _partyObj.sceneId)) {
+            var sceneId :int = (scene == null) ? 0 : scene.getId();
+            if (sceneId != _partyObj.sceneId) {
                 _partyObj.partyService.moveParty(
-                    _pctx.getClient(), scene.getId(), _wctx.listener(MsoyCodes.PARTY_MSGS));
+                    _pctx.getClient(), sceneId, _wctx.listener(MsoyCodes.PARTY_MSGS));
             }
         }
     }
@@ -488,7 +480,7 @@ public class PartyDirector extends BasicDirector
     {
         switch (event.getName()) {
         case PartyObject.SCENE_ID:
-            checkFollowParty();
+            checkFollowScene();
             break;
 
         case PartyObject.GAME_ID:
