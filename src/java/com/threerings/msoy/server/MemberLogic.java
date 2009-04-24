@@ -32,7 +32,6 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
-import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
@@ -247,14 +246,13 @@ public class MemberLogic
             return -1;
         }
 
-        ABTest test = null;
+        ABTestRecord test = null;
         try {
-            ABTestRecord record = _testRepo.loadTestByName(testName);
-            if (record == null) {
+            test = _testRepo.loadTestByName(testName);
+            if (test == null) {
                 log.warning("Unknown A/B Test in getABTestGroup", "name", testName);
                 return -1;
             }
-            test = record.toABTest();
         } catch (Exception e) {
             log.warning("Failed to load A/B Test", "name", testName, e);
             return -1;
@@ -574,7 +572,7 @@ public class MemberLogic
     /**
      * Return true if the visitor's attributes match those required by the given a/b test
      */
-    protected boolean eligibleForABTest (ABTest test, VisitorInfo info)
+    protected boolean eligibleForABTest (ABTestRecord test, VisitorInfo info)
     {
         // test runs only on new users and visitor is returning
         // (visitor may have been in a group during a previous session!)
