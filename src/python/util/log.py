@@ -31,13 +31,19 @@ def getLogDate (line):
         if bpos >= 1: date = getDate(line[bpos+2:])
     return date
 
-def getMergedLogDate (line):
+def getMergedLogDateAndServer (line):
     d = getDate(line)
+    server = None
     if d == None:
         merged = reMergedLine.match(line)
         if merged != None:
+            server = merged.group().rstrip()
             line = line[len(merged.group()):]
             d = getDate(line)
+    return (d, line, server)
+
+def getMergedLogDate (line):
+    d, line, server = getMergedLogDateAndServer(line)
     return (d, line)
 
 def collectInvokerWarnings (log):
