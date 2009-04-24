@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -201,11 +203,13 @@ public class StatusServlet extends HttpServlet
     {
         StringBuilder buf = new StringBuilder();
         for (Object value : data) {
+            if (buf.length() > 0) {
+                buf.append("\n");
+            }
             buf.append("- ").append(value);
             if (pops != null) {
                 buf.append(": ").append(Math.max(0, pops.get(((HostedPlace)value).placeId)));
             }
-            buf.append("\n");
         }
         return Callables.asCallable(buf.toString());
     }
@@ -215,13 +219,16 @@ public class StatusServlet extends HttpServlet
     {
         StringBuilder buf = new StringBuilder();
         for (PartySummary summary : summaries) {
+            if (buf.length() > 0) {
+                buf.append("\n");
+            }
             PartyInfo info = infos.get(summary.getKey());
             buf.append("- size=").append(info.population).append(" ")
                 .append("name=\"").append(summary.name).append("\" ")
                 .append("group=\"").append(summary.group).append("\" ")
                 .append("groupId=").append(summary.group.getGroupId()).append(" ")
                 .append("status=\"").append(info.statusType)
-                .append(": ").append(info.status).append("\"\n");
+                .append(": ").append(info.status).append("\"");
         }
         return Callables.asCallable(buf.toString());
     }
@@ -248,7 +255,11 @@ public class StatusServlet extends HttpServlet
             nodeobj.peerService.generateReport(client, type, report);
             info.details = new Callable<String>() {
                 public String call () throws Exception {
-                    return report.get();
+                    try {
+                        return report.get(5, TimeUnit.SECONDS);
+                    } catch (TimeoutException te) {
+                        return "timeout!";
+                    }
                 }
             };
         }
