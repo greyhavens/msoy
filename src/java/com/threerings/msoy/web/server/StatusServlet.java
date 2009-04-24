@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.Callables;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.Client;
@@ -34,6 +35,9 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.party.data.PartyAuthName;
+import com.threerings.msoy.peer.data.HostedPlace;
+import com.threerings.msoy.peer.data.MemberGame;
+import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.MemberManager;
@@ -155,14 +159,24 @@ public class StatusServlet extends HttpServlet
 //             info.details = makeDetails(nodeobj.memberScenes);
 //             break;
 // TODO: correlate memberScenes with hostedScenes, and memberGames with hostedGames
-        case ROOMS:
-            info.details = makeDetails(nodeobj.hostedScenes);
+        case ROOMS: {
+            IntIntMap pops = new IntIntMap();
+            for (MemberScene scene : nodeobj.memberScenes) {
+                pops.increment(scene.sceneId, 1);
+            }
+            info.details = makeDetails(nodeobj.hostedScenes, pops);
             break;
-        case GAMES:
-            info.details = makeDetails(nodeobj.hostedGames);
+        }
+        case GAMES: {
+            IntIntMap pops = new IntIntMap();
+            for (MemberGame game : nodeobj.memberGames) {
+                pops.increment(game.gameId, 1);
+            }
+            info.details = makeDetails(nodeobj.hostedGames, pops);
             break;
+        }
         case CHANNELS:
-            info.details = makeDetails(nodeobj.hostedChannels);
+            info.details = makeDetails(nodeobj.hostedChannels, null);
             break;
         case PARTIES:
             info.details = makePartyDetails(nodeobj.hostedParties, nodeobj.partyInfos);
@@ -187,11 +201,15 @@ public class StatusServlet extends HttpServlet
         return info;
     }
 
-    protected Callable<String> makeDetails (Iterable<? extends Object> data)
+    protected Callable<String> makeDetails (Iterable<? extends Object> data, IntIntMap pops)
     {
         StringBuilder buf = new StringBuilder();
         for (Object value : data) {
-            buf.append("- ").append(value).append("\n");
+            buf.append("- ").append(value);
+            if (pops != null) {
+                buf.append(": ").append(Math.max(0, pops.get(((HostedPlace)value).placeId)));
+            }
+            buf.append("\n");
         }
         return Callables.asCallable(buf.toString());
     }
