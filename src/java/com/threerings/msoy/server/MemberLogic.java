@@ -28,6 +28,7 @@ import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.web.gwt.ABTestUtil;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -269,8 +270,7 @@ public class MemberLogic
         }
 
         // generate the group number based on trackingID + testName
-        final int seed = Math.abs((info.id + testName).hashCode());
-        final int group = (seed % test.numGroups) + 1;
+        int group = ABTestUtil.getGroup(info.id, testName, test.numGroups);
 
         // optionally log an event to say the group was assigned
         if (logEvent && group >= 0) {
