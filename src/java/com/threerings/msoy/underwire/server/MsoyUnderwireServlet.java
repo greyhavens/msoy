@@ -94,14 +94,13 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected UnderContext createContext ()
     {
-        return new UnderContext(new IndiscriminateSiteIdentifier(),
-                                _infoProv, _actionHandler, _underRepo);
+        return _underCtx;
     }
 
     @Override // from UnderwireServlet
     protected UserLogic createUserLogic (UnderContext ctx)
     {
-        return new MsoyUserLogic(ctx, _authRepo, _memberRepo, _author);
+        return _userLogic;
     }
 
     @Override // from UnderwireServlet
@@ -110,21 +109,10 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         return OOOUser.METASOY_SITE_ID;
     }
 
-    @Singleton
-    protected static class MsoyUnderwireRepository extends UnderwireRepository
-    {
-        @Inject public MsoyUnderwireRepository (PersistenceContext perCtx) {
-            super(perCtx);
-        }
-    }
-
     // our dependencies
     @Inject protected MemberHelper _memberHelper;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyAuthenticator _author;
-    @Inject protected MsoyGameActionHandler _actionHandler;
-    @Inject protected MsoyGameInfoProvider _infoProv;
-    @Inject protected MsoyOOOUserRepository _authRepo;
-    @Inject protected MsoyUnderwireRepository _underRepo;
+    @Inject protected MsoyUnderContext _underCtx;
+    @Inject protected MsoyUserLogic _userLogic;
     @Inject protected PersistenceContext _perCtx;
 }

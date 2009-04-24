@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.underwire.server;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import com.samskivert.servlet.user.AuthenticationFailedException;
 import com.samskivert.servlet.user.InvalidPasswordException;
 import com.samskivert.servlet.user.NoSuchUserException;
@@ -29,14 +32,12 @@ import static com.threerings.msoy.Log.log;
 /**
  * Customizes the {@link SupportUserLogic} with some MSOY bits.
  */
+@Singleton
 public class MsoyUserLogic extends SupportUserLogic
 {
-    public MsoyUserLogic (UnderContext ctx, MsoyOOOUserRepository authRepo,
-                          MemberRepository memberRepo, MsoyAuthenticator author)
+    @Inject public MsoyUserLogic (MsoyUnderContext ctx, MsoyOOOUserRepository authRepo)
     {
         super(ctx, authRepo);
-        _memberRepo = memberRepo;
-        _author = author;
     }
 
     @Override // from SupportUserLogic
@@ -129,6 +130,6 @@ public class MsoyUserLogic extends SupportUserLogic
         user.email = email;
     }
 
-    protected MemberRepository _memberRepo;
-    protected MsoyAuthenticator _author;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyAuthenticator _author;
 }
