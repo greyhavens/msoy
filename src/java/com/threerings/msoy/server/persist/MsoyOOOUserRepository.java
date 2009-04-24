@@ -21,7 +21,6 @@ import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.SQLOperator;
 
-import com.samskivert.servlet.user.User;
 import com.samskivert.servlet.user.UserUtil;
 
 import com.threerings.msoy.server.persist.RecordFunctions;
@@ -77,7 +76,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
      *
      * @param expireDays the number of days in which the session token should expire.
      */
-    public String registerSession (User user, int expireDays)
+    public String registerSession (OOOUser user, int expireDays)
     {
         // see if we have a pre-existing session for this user
         SessionRecord session = load(SessionRecord.class,
@@ -144,7 +143,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     }
 
     // from SupportRepository
-    public User loadUserBySession (String sessionKey)
+    public OOOUser loadUserBySession (String sessionKey)
     {
         SQLOperator joinCondition = new And(
                 new Equals(OOOUserRecord.USER_ID, SessionRecord.MEMBER_ID),
