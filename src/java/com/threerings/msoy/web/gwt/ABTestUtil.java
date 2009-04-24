@@ -16,7 +16,16 @@ public class ABTestUtil
     public static int getGroup (String visitorId, String testName, int numGroups)
     {
         // generate the group number based on trackingID + testName
-        int seed = Math.abs((visitorId + testName).hashCode());
-        return (seed % numGroups) + 1;
+        String hashing = visitorId + testName;
+
+        // this would ideally just use String.hashCode, but that is not cross-platform and we need
+        // the number to match on the client and server as well as match old code that used
+        // java.lang.String.hashCode
+        long seed = 0;
+        for (int ii = 0, ll = hashing.length(); ii < ll; ii++) {
+            seed = (31 * seed + hashing.charAt(ii)) & 0x0ffffffff;
+        }
+
+        return (Math.abs((int)seed) % numGroups) + 1;
     }
 }
