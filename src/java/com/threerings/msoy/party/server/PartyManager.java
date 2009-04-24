@@ -372,8 +372,8 @@ public class PartyManager
                 byte statusType = (_partyObj.gameState == PartyCodes.GAME_STATE_LOBBY)
                     ? PartyCodes.STATUS_TYPE_LOBBY : PartyCodes.STATUS_TYPE_PLAYING;
                 setStatus(game.right.name, statusType);
-                return;
             }
+            return;
         }
         Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(_partyObj.sceneId);
         if (room != null) {

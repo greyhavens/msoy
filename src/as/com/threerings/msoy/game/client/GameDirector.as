@@ -372,7 +372,6 @@ public class GameDirector extends BasicDirector
             if (memberObj != null && memberObj.avrGameId != 0) {
                 _liaison = new AVRGameLiaison(_wctx, memberObj.avrGameId);
                 _liaison.start();
-                dispatchGamingStateChanged();
             }
         }
     }
@@ -533,7 +532,6 @@ public class GameDirector extends BasicDirector
         }
         _liaison = new ParlorGameLiaison(_wctx, gameId);
         _liaison.start(ghost, gport);
-        dispatchGamingStateChanged();
     }
 
     protected function showCoordinateDebugPanel () :void

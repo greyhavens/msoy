@@ -95,6 +95,8 @@ public class AVRGameLiaison extends GameLiaison
 
         // handle deactivations to offer the user to share earned trophies
         getAVRGameController().addDeactivateHandler(onUserDeactivate);
+
+        _wctx.getGameDirector().dispatchGamingStateChanged();
     }
 
     override public function shutdown () :void
@@ -140,7 +142,7 @@ public class AVRGameLiaison extends GameLiaison
     {
         super.messageReceived(event);
 
-        if  (event.getName() == AVRGameObject.TASK_COMPLETED_MESSAGE) {
+        if (event.getName() == AVRGameObject.TASK_COMPLETED_MESSAGE) {
             var coins :int = int(event.getArgs()[1]);
             const forReal :Boolean = Boolean(event.getArgs()[2]);
             const hasCookie :Boolean = true; // we always assume AVRGs have saved state
