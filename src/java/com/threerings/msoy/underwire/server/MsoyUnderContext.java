@@ -21,9 +21,9 @@ import com.threerings.underwire.server.persist.UnderwireRepository;
 public class MsoyUnderContext extends UnderContext
 {
     @Inject public MsoyUnderContext (MsoyGameInfoProvider info, MsoyGameActionHandler action,
-                                     MsoyUnderwireRepository urepo)
+                                     MsoyUserLogic user, MsoyUnderwireRepository urepo)
     {
-        super(new IndiscriminateSiteIdentifier(), info, action, urepo);
+        super(new IndiscriminateSiteIdentifier(), info, action, user, urepo);
     }
 
     @Singleton

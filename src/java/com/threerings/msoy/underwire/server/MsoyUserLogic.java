@@ -34,9 +34,9 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class MsoyUserLogic extends SupportUserLogic
 {
-    @Inject public MsoyUserLogic (MsoyUnderContext ctx, MsoyOOOUserRepository authRepo)
+    @Inject public MsoyUserLogic (MsoyOOOUserRepository authRepo)
     {
-        super(ctx, authRepo);
+        super(authRepo);
     }
 
     @Override // from SupportUserLogic

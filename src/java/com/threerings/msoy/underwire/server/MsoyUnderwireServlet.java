@@ -78,12 +78,6 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     }
 
     @Override // from UnderwireServlet
-    protected UserLogic createUserLogic (UnderContext ctx)
-    {
-        return _userLogic;
-    }
-
-    @Override // from UnderwireServlet
     protected int getSiteId ()
     {
         return OOOUser.METASOY_SITE_ID;
@@ -93,5 +87,4 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Inject protected MemberHelper _memberHelper;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyUnderContext _underCtx;
-    @Inject protected MsoyUserLogic _userLogic;
 }
