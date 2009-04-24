@@ -155,10 +155,6 @@ public class StatusServlet extends HttpServlet
         info.inGame = nodeobj.memberGames.size();
 
         switch (details) {
-//         case MEMBERS:
-//             info.details = makeDetails(nodeobj.memberScenes);
-//             break;
-// TODO: correlate memberScenes with hostedScenes, and memberGames with hostedGames
         case ROOMS: {
             IntIntMap pops = new IntIntMap();
             for (MemberScene scene : nodeobj.memberScenes) {
