@@ -18,6 +18,7 @@ import com.threerings.underwire.web.data.Account;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.AccountLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -89,6 +90,47 @@ public class MsoyUserLogic extends SupportUserLogic
         }
     }
 
+    // from interface UserLogic
+    public void updateEmail (Caller caller, String email)
+        throws UnderwireException
+    {
+        try {
+            MemberRecord mrec = _memberRepo.loadMember(caller.email);
+            if (mrec == null) {
+                throw new UnderwireException("m.unknown_user");
+            }
+            _accountLogic.updateAccountName(mrec, email);
+        } catch (ServiceException se) {
+            throw new UnderwireException(se.getMessage());
+        }
+    }
+
+    // from interface UserLogic
+    public void updateAccount (int accountId, String email, String password)
+        throws UnderwireException
+    {
+        OOOUser user = (OOOUser)_supportrepo.loadUser(accountId);
+        if (user == null) {
+            throw new UnderwireException("m.unknown_user");
+        }
+
+        try {
+            MemberRecord mrec = _memberRepo.loadMember(user.email);
+            if (mrec == null) {
+                throw new UnderwireException("m.unknown_user");
+            }
+            if (!email.equals(user.email)) {
+                _accountLogic.updateAccountName(mrec, email);
+                mrec.accountName = email;
+            }
+            if (!password.equals(user.password)) {
+                _accountLogic.updatePassword(mrec, password);
+            }
+        } catch (ServiceException se) {
+            throw new UnderwireException(se.getMessage());
+        }
+    }
+
     @Override // from SupportUserLogic
     protected String getUsername (OOOUser user)
         throws UnderwireException
@@ -131,4 +173,5 @@ public class MsoyUserLogic extends SupportUserLogic
 
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _author;
+    @Inject protected AccountLogic _accountLogic;
 }
