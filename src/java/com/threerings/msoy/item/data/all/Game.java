@@ -187,6 +187,14 @@ public class Game extends Item
         return detectIsInWorld(config);
     }
 
+    /**
+     * TEMP: hack to allow us to only run the agent for multiplayer games.
+     */
+    public boolean isAgentMPOnly ()
+    {
+        return (config != null) && (config.indexOf("<agentmponly/>") >= 0);
+    }
+
     @Override
     public boolean isConsistent ()
     {

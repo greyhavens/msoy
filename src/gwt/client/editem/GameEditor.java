@@ -152,6 +152,7 @@ public class GameEditor extends ItemEditor
                 ((TextBox)bits[ii+1]).setText(elem.getFirstChild().toString());
             }
         }
+        _serverMPOnly.setChecked(xml.getElementsByTagName("agentmponly").getLength() > 0);
     }
 
     @Override // from ItemEditor
@@ -247,6 +248,7 @@ public class GameEditor extends ItemEditor
         addRow(_emsgs.gameServerClass(), _serverClass = new TextBox());
         addTip(_emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
+        addRow(_emsgs.gameServerMPOnly(), _serverMPOnly = new CheckBox());
 
         addSpacer();
 
@@ -397,6 +399,9 @@ public class GameEditor extends ItemEditor
         if (_noprogress.isChecked()) {
             xml.getFirstChild().appendChild(xml.createElement("noprogress"));
         }
+        if (_serverMPOnly.isChecked()) {
+            xml.getFirstChild().appendChild(xml.createElement("agentmponly"));
+        }
 
         // show a notice that a new Whirled will be created
         _game.groupId = new Integer(_whirled.getValue(_whirled.getSelectedIndex()));
@@ -503,6 +508,7 @@ public class GameEditor extends ItemEditor
     protected CheckBox _watchable;
     protected CheckBox _noprogress;
     protected TextBox _serverClass;
+    protected CheckBox _serverMPOnly;
     protected TextArea _extras;
     protected ListBox _whirled;
     protected TextBox _shopTag;

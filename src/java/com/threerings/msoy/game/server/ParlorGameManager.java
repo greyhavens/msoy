@@ -21,6 +21,7 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.whirled.bureau.data.GameAgentObject;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
@@ -209,6 +210,15 @@ public class ParlorGameManager extends WhirledGameManager
                 client.agentRemoved();
             }
         }
+    }
+
+    @Override // from WhirledGameManager
+    protected GameAgentObject createAgent ()
+    {
+        // TEMP: hack to prevent agent creation if we're a single player game and this game is
+        // configured to use its agent only for multiplayer games
+        return (((ParlorGameConfig)getGameConfig()).game.isAgentMPOnly() && !isMultiplayer()) ?
+            null : super.createAgent();
     }
 
     @Override // from WhirledGameManager
