@@ -182,12 +182,13 @@ public class MsoyPeerManager extends CrowdPeerManager
     public int getMemberScene (int memberId)
     {
         final Integer memberKey = memberId;
-        return lookupNodeDatum(new NodeFunc<Integer>() {
+        Integer sceneId = lookupNodeDatum(new NodeFunc<Integer>() {
             public Integer apply (MsoyNodeObject nodeobj) {
                 MemberScene datum = nodeobj.memberScenes.get(memberKey);
                 return (datum == null) ? null : datum.sceneId;
             }
         });
+        return (sceneId == null) ? 0 : sceneId;
     }
 
     /**
