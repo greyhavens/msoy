@@ -22,8 +22,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.net.MailUtil;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
 
@@ -39,7 +37,6 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.AccountLogic;

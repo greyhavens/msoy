@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.Interval;
@@ -21,12 +18,10 @@ import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
-import com.threerings.crowd.server.PlaceManagerDelegate;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
-import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
 

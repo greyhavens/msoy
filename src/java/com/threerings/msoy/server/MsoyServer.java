@@ -40,7 +40,6 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.SessionFactory;
 
 import com.threerings.crowd.chat.server.ChatChannelManager;
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;

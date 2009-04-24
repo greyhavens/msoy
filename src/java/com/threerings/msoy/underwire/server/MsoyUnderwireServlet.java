@@ -4,40 +4,20 @@
 package com.threerings.msoy.underwire.server;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-import com.samskivert.depot.PersistenceContext;
-
-import com.samskivert.servlet.IndiscriminateSiteIdentifier;
-import com.samskivert.servlet.SiteIdentifier;
-import com.samskivert.servlet.user.AuthenticationFailedException;
-import com.samskivert.servlet.user.InvalidPasswordException;
-import com.samskivert.servlet.user.NoSuchUserException;
 import com.samskivert.servlet.util.CookieUtil;
-
-import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.user.OOOUser;
 
-import com.threerings.underwire.server.GameActionHandler;
-import com.threerings.underwire.server.GameInfoProvider;
 import com.threerings.underwire.server.UnderContext;
 import com.threerings.underwire.server.UserLogic;
-import com.threerings.underwire.server.persist.SupportRepository;
-import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.client.AuthenticationException;
 import com.threerings.underwire.web.client.UnderwireException;
-import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.server.UnderwireServlet;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
-
-import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -114,5 +94,4 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyUnderContext _underCtx;
     @Inject protected MsoyUserLogic _userLogic;
-    @Inject protected PersistenceContext _perCtx;
 }

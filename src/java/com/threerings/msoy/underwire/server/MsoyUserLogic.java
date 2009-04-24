@@ -13,7 +13,6 @@ import com.samskivert.servlet.user.NoSuchUserException;
 import com.threerings.user.OOOUser;
 
 import com.threerings.underwire.server.SupportUserLogic;
-import com.threerings.underwire.server.UnderContext;
 import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.data.Account;
 
