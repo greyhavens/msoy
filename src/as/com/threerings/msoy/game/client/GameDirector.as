@@ -82,6 +82,11 @@ public class GameDirector extends BasicDirector
         _wctx = ctx;
     }
 
+    public function dispatchGamingStateChanged () :void
+    {
+        dispatchEvent(new Event(GAMING_STATE_CHANGED));
+    }
+
     /**
      * Returns true if we're in a lobby or in a game.
      */
@@ -535,11 +540,6 @@ public class GameDirector extends BasicDirector
     {
         var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
         ctrl.showCoordinateDebugPanel();
-    }
-
-    protected function dispatchGamingStateChanged () :void
-    {
-        dispatchEvent(new Event(GAMING_STATE_CHANGED));
     }
 
     protected static function encodeBase64 (str :String) :String

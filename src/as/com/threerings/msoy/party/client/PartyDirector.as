@@ -73,7 +73,22 @@ public class PartyDirector extends BasicDirector
      */
     public static function formatStatus (label :UIComponent, status :String, statusType :int) :void
     {
-        label.setStyle("color", (statusType == PartyCodes.STATUS_TYPE_LOBBY) ? 0xAF8E56 : 0x568EAF);
+        var color :uint;
+        switch (statusType) {
+        default:
+            color = 0x568EAF;
+            break;
+
+        case PartyCodes.STATUS_TYPE_LOBBY:
+            color = 0xAF8E56;
+            break;
+
+        case PartyCodes.STATUS_TYPE_USER:
+            color = 0x999999;
+            break;
+        }
+        label.setStyle("color", color);
+        label.setStyle("disabledColor", color);
         Object(label).text = Msgs.PARTY.get("m.status_" + statusType, status);
     }
 

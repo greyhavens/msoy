@@ -130,6 +130,7 @@ public class ParlorGameLiaison extends GameLiaison
                         "[movePending=" + _wctx.getLocationDirector().movePending() + "].");
         }
 
+        _wctx.getGameDirector().dispatchGamingStateChanged();
         return true;
     }
 
@@ -141,6 +142,7 @@ public class ParlorGameLiaison extends GameLiaison
         if (_gameOid != 0) {
             _gctx.getLocationDirector().leavePlace();
             _gameOid = 0;
+            _wctx.getGameDirector().dispatchGamingStateChanged();
         }
     }
 
