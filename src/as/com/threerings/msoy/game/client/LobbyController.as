@@ -243,7 +243,16 @@ public class LobbyController extends Controller
      */
     public function handleJoinTable (tableId :int, position :int) :void
     {
-        _tableDir.joinTable(tableId, position);
+        // if they're trying to join a party table, force them to join the party instead
+        var table :Table = _lobj.tables.get(tableId) as Table;
+        var tablePartyId :int = (table == null) ? 0 : MsoyTableConfig(table.tconfig).partyId;
+        if ((tablePartyId != 0) && (tablePartyId != _mctx.getPartyDirector().getPartyId())) {
+            _mctx.getPartyDirector().joinParty(tablePartyId);
+
+        } else {
+            // else, just join the table
+            _tableDir.joinTable(tableId, position);
+        }
     }
 
     /**

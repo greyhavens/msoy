@@ -91,6 +91,12 @@ public class ParlorGameLiaison extends GameLiaison
      */
     public function playNow (playerId :int) :void
     {
+        if (_lobby != null) {
+            if (playerId != 0) {
+                _lobby.joinPlayerTable(playerId);
+            }
+            return;
+        }
         withLobbyService(function (lsvc :LobbyService) :void {
             // the playNow() call will attempt to send us into the appropriate game (that of our
             // requested player or one for ourselves); if it succeeds, it sends back a zero result

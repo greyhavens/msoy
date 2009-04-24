@@ -118,6 +118,9 @@ public class PartyDirector extends BasicDirector
 
     public function getPartyId () :int
     {
+        if (_partyObj != null) {
+            return _partyObj.id;
+        }
         return _wctx.getMemberObject().partyId;
     }
 
