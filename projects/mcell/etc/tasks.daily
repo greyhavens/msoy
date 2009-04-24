@@ -28,5 +28,6 @@ LastMonthGamePlayers
 LastMonthPurchases
 PreProcessInvites
 
-# Wait until last to run this relatively unimportant and very time-consuming task
+# Wait until last to run this relatively unimportant and very time-consuming task quadruplet
 DailyExperience1
+DailyExperience3
