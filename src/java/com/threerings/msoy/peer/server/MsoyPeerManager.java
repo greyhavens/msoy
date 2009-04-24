@@ -278,11 +278,13 @@ public class MsoyPeerManager extends CrowdPeerManager
 
     /**
      * Updates the scene occupied by the specified member on this server.
+     *
+     * @return true if the member's status changed, false if not.
      */
-    public void updateMemberScene (MemberObject memobj)
+    public boolean updateMemberScene (MemberObject memobj)
     {
         if (_nodeobj.clients.get(memobj.username) == null) {
-            return; // they're leaving or left, so no need to worry
+            return false; // they're leaving or left, so no need to worry
         }
 
         Integer memberId = memobj.getMemberId();
@@ -291,24 +293,31 @@ public class MsoyPeerManager extends CrowdPeerManager
         if (datum == null) {
             if (sceneId != 0) {
                 _mnobj.addToMemberScenes(new MemberScene(memberId, sceneId));
-            } // else no problem!
+            } else {
+                return false;
+            }
         } else if (sceneId == 0) {
             _mnobj.removeFromMemberScenes(memberId);
         } else if (datum.sceneId != sceneId) {
             _mnobj.updateMemberScenes(new MemberScene(memberId, sceneId));
+        } else {
+            return false;
         }
 
         // notify our member observers
         memberEnteredScene(_nodeName, memberId, sceneId);
+        return true;
     }
 
     /**
      * Updates the game (or game lobby) occupied by the specified member on this server.
+     *
+     * @return true if the member's status changed, false if not.
      */
-    public void updateMemberGame (int memberId, GameSummary game)
+    public boolean updateMemberGame (int memberId, GameSummary game)
     {
         if (_nodeobj.clients.get(GameAuthName.makeKey(memberId)) == null) {
-            return; // they're leaving or left, so no need to worry
+            return false; // they're leaving or left, so no need to worry
         }
 
         Integer memberKey = memberId;
@@ -316,12 +325,17 @@ public class MsoyPeerManager extends CrowdPeerManager
         if (datum == null) {
             if (game != null) {
                 _mnobj.addToMemberGames(new MemberGame(memberKey, game.gameId, game.avrGame));
-            } // else no problem!
+            } else {
+                return false;
+            }
         } else if (game == null) {
             _mnobj.removeFromMemberGames(memberKey);
         } else if (datum.gameId != game.gameId) {
             _mnobj.updateMemberGames(new MemberGame(memberKey, game.gameId, game.avrGame));
+        } else {
+            return false;
         }
+        return true;
     }
 
     /**
