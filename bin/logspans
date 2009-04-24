@@ -1,0 +1,91 @@
+#!/usr/bin/python
+
+##
+## $Id$
+
+## Executable for extracting the time spans for a listing of log messages
+
+import os.path, sys
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), "../src/python"))
+
+import optparse, fileinput, util.log, datetime
+
+def highestSecond (t):
+    return datetime.datetime(t.year, t.month, t.day, t.hour, t.minute, t.second)
+
+def highestMinutePart (t, part):
+    return datetime.datetime(t.year, t.month, t.day, t.hour, t.minute, t.second - t.second % part)
+
+def highestHourPart (t, part):
+    return datetime.datetime(t.year, t.month, t.day, t.hour, t.minute - t.minute % part)
+
+resolutions = {
+    "SEC": (highestSecond, datetime.timedelta(0, 1)),
+    "QMIN": (lambda t: highestMinutePart(t, 15), datetime.timedelta(0, 15)),
+    "HMIN": (lambda t: highestMinutePart(t, 30), datetime.timedelta(0, 30)),
+    "MIN": (lambda t: highestMinutePart(t, 60), datetime.timedelta(0, 60)),
+    "QHR": (lambda t: highestHourPart(t, 15), datetime.timedelta(0, 15 * 60)),
+    "HHR": (lambda t: highestHourPart(t, 30), datetime.timedelta(0, 30 * 60)),
+    "HR": (lambda t: highestHourPart(t, 60), datetime.timedelta(0, 60 * 60)),
+}
+
+resolutionList = resolutions.keys()
+resolutionList.sort()
+resolutionList = ", ".join(resolutionList)
+
+description = '''Reads in a ooo log file, merged or unmerged, and outputs a list of minutes from
+the first to the last log message, with a positive indicator for each minute in which a log line
+occurred.'''
+
+parser = optparse.OptionParser(description=description)
+## TODO: maybe worth doing these, but grep works pretty well
+#parser.add_option("-m", "--matching", dest="incPatterns", metavar="REGEX", action="append",
+#    help="Include only lines whose key match a regular expression.", default=None)
+#parser.add_option("-n", "--not-matching", dest="excPatterns", metavar="REGEX", action="append",
+#    help="Exclude lines that match a regular expression", default=None)
+parser.add_option("-r", "--resolution", dest="resolution", metavar="UNIT",
+    help="Use a different time resolution, one of " + resolutionList, default="MINUTE")
+
+(opts, args) = parser.parse_args()
+
+if not resolutions.has_key(opts.resolution):
+    print "Expected resolutions to be one of " + resolutionList
+    opts.help()
+    sys.exit(255)
+
+def processFiles (files, floorFn):
+    spans = {}
+    for line in fileinput.input(files):
+        timestamp, content, server = util.log.getMergedLogDateAndServer(line)
+        if server == None: server = "def"
+        entry = spans.get(server)
+        if entry == None:
+            entry = dict()
+            spans[server] = entry
+        timestamp = floorFn(timestamp)
+        entry[timestamp] = entry.get(timestamp, 0) + 1
+    return spans
+
+def printResult (result, delta):
+    def _getCountStr (server):
+        count = result.get(server).get(t, 0)
+        if count == 0: return ""
+        if (count >= 1000): return str(count / 1000) + "k"
+        return str(count)
+    servers = result.keys()
+    servers.sort()
+    t, last = (None, None)
+    for entry in result.values():
+        for time in entry.keys():
+            if t == None or time < t: t = time
+            if last == None or time > last: last = time
+    fmt = "%19s" + "".join([" %4s"] * len(servers))
+    print fmt % tuple(["time"] + servers)
+    while t <= last:
+        row = [t] + map(_getCountStr, servers)
+        print fmt % tuple(row)
+        t += delta
+
+result = processFiles(args, resolutions.get(opts.resolution)[0])
+printResult(result, resolutions.get(opts.resolution)[1])
+
