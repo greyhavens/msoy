@@ -72,6 +72,7 @@ public class StatusServlet extends HttpServlet
                     if (sinfo.details != null) {
                         try {
                             out.println(sinfo.details.call());
+                            out.flush();
                         } catch (Exception e) {
                             out.println("Failed to get details: " + e.getMessage());
                             e.printStackTrace(out);
@@ -106,7 +107,7 @@ public class StatusServlet extends HttpServlet
 
     protected Map<String, ServerInfo> collectInfo (final Details details)
     {
-        final Map<String,ServerInfo> info = Maps.newHashMap();
+        final Map<String,ServerInfo> info = Maps.newLinkedHashMap();
 
         // collect info on this server
         MsoyNodeObject nodeobj = (MsoyNodeObject)_peerMan.getNodeObject();
