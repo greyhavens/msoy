@@ -54,6 +54,9 @@ public class DecorEditor extends ItemEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
+            public void clearMedia () {
+                _item.setFurniMedia(null);
+            }
         }), _emsgs.decorTip());
 
         addSpacer();

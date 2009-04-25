@@ -67,6 +67,9 @@ public class TrophySourceEditor extends SubItemEditor
                 _item.setThumbnailMedia(desc);
                 return null;
             }
+            public void clearMedia () {
+                _item.setThumbnailMedia(null);
+            }
         }));
     }
 

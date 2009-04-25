@@ -37,6 +37,9 @@ public class DocumentEditor extends ItemEditor
                 _doc.docMedia = desc;
                 return null;
             }
+            public void clearMedia () {
+                _doc.docMedia = null;
+            }
         }));
         addTip(_emsgs.documentTip());
 

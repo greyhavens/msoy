@@ -321,12 +321,16 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             thumbMediaHash = media.hash;
             thumbMimeType = media.mimeType;
             thumbConstraint = media.constraint;
+        } else {
+            thumbMediaHash = null;
         }
         media = item.getRawFurniMedia();
         if (media != null) {
             furniMediaHash = media.hash;
             furniMimeType = media.mimeType;
             furniConstraint = media.constraint;
+        } else {
+            furniMediaHash = null;
         }
     }
 

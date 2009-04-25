@@ -70,6 +70,9 @@ public class VideoEditor extends BulkMediaEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
+            public void clearMedia () {
+                _video.videoMedia = null;
+            }
         }), _emsgs.videoTip());
     }
 

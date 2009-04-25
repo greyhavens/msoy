@@ -53,6 +53,9 @@ public class AvatarEditor extends ItemEditor
                     maybeSetNameFromFilename(name);
                     return null;
                 }
+                public void clearMedia () {
+                    _avatar.avatarMedia = null;
+                }
             }), _emsgs.avatarTip());
 
         super.addExtras();

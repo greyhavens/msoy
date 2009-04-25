@@ -51,6 +51,9 @@ public class LevelPackEditor extends SubItemEditor
                 _item.setFurniMedia(desc);
                 return null;
             }
+            public void clearMedia () {
+                _item.setFurniMedia(null);
+            }
         });
         addRow(_emsgs.lpackLabel(), upper, _emsgs.lpackTip());
     }

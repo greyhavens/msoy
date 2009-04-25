@@ -41,6 +41,11 @@ public class PhotoEditor extends BulkMediaEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
+            public void clearMedia () {
+                _photo.photoMedia = null;
+                _photo.photoWidth = 0;
+                _photo.photoHeight = 0;
+            }
         }), _emsgs.photoTip());
     }
 

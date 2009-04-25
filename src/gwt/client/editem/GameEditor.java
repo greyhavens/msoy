@@ -230,6 +230,9 @@ public class GameEditor extends ItemEditor
                 _game.gameMedia = desc;
                 return null;
             }
+            public void clearMedia () {
+                _game.gameMedia = null;
+            }
         }), _emsgs.gameTip());
 
         addSpacer();
@@ -240,6 +243,9 @@ public class GameEditor extends ItemEditor
                 }
                 _game.serverMedia = desc;
                 return null;
+            }
+            public void clearMedia () {
+                _game.serverMedia = null;
             }
         };
         ItemMediaUploader serverMediaUploader = createUploader(
@@ -316,6 +322,9 @@ public class GameEditor extends ItemEditor
                     }
                     setterFn.set(desc);
                     return null;
+                }
+                public void clearMedia () {
+                    setterFn.set(null);
                 }
             });
         fuploader[0] = uploader;

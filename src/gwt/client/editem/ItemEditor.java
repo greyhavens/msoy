@@ -118,6 +118,11 @@ public abstract class ItemEditor extends FlowPanel
          * image, otherwise zero.
          */
         String updateMedia (String name, MediaDesc desc, int width, int height);
+
+        /**
+         * Clears out the media configured for this slot.
+         */
+        void clearMedia ();
     }
 
     /**
@@ -339,6 +344,9 @@ public abstract class ItemEditor extends FlowPanel
                     _item.setFurniMedia(desc);
                     return null;
                 }
+                public void clearMedia () {
+                    _item.setFurniMedia(null);
+                }
             }), getFurniTitleText());
     }
 
@@ -372,6 +380,9 @@ public abstract class ItemEditor extends FlowPanel
                 }
                 _item.setThumbnailMedia(desc);
                 return null;
+            }
+            public void clearMedia () {
+                _item.setThumbnailMedia(null);
             }
         }), _emsgs.editorThumbTitle());
     }

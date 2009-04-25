@@ -70,6 +70,8 @@ public class DocumentRecord extends ItemRecord
         if (document.docMedia != null) {
             docMediaHash = document.docMedia.hash;
             docMimeType = document.docMedia.mimeType;
+        } else {
+            docMediaHash = null;
         }
     }
 

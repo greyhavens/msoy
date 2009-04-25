@@ -40,6 +40,9 @@ public class AudioEditor extends BulkMediaEditor
                 maybeSetNameFromFilename(name);
                 return null;
             }
+            public void clearMedia () {
+                _audio.audioMedia = null;
+            }
         }), _emsgs.audioTip());
     }
 

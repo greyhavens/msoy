@@ -48,6 +48,9 @@ public class PetEditor extends ItemEditor
                     maybeSetNameFromFilename(name);
                     return null;
                 }
+                public void clearMedia () {
+                    _item.setFurniMedia(null);
+                }
             }), getFurniTitleText());
     }
 

@@ -70,6 +70,8 @@ public class VideoRecord extends ItemRecord
         if (video.videoMedia != null) {
             videoMediaHash = video.videoMedia.hash;
             videoMimeType = video.videoMedia.mimeType;
+        } else {
+            videoMediaHash = null;
         }
     }
 

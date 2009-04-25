@@ -84,6 +84,8 @@ public class PhotoRecord extends ItemRecord
             photoMediaHash = photo.photoMedia.hash;
             photoMimeType = photo.photoMedia.mimeType;
             photoConstraint = photo.photoMedia.constraint;
+        } else {
+            photoMediaHash = null;
         }
         photoWidth = photo.photoWidth;
         photoHeight = photo.photoHeight;

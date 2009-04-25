@@ -57,14 +57,12 @@ public class ItemMediaUploader extends FlexTable
 
         FlexCellFormatter fmt = getFlexCellFormatter();
 
-        fmt.setRowSpan(0, 0, 4);
         fmt.setStyleName(0, 0, "ItemPreview");
         fmt.setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
         fmt.setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
         setText(0, 0, "");
 
         fmt.setWidth(0, 1, "5px");
-        fmt.setRowSpan(0, 1, 4);
 
         setWidget(0, 2, _hint = MsoyUI.createLabel("", "Tip"));
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
@@ -73,12 +71,23 @@ public class ItemMediaUploader extends FlexTable
         setText(1, 0, "");
         fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
         setText(2, 0, "");
-        fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
-        setWidget(3, 0, FlashClients.createUploader(mediaIds, type));
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
+        setWidget(3, 0, FlashClients.createUploader(mediaIds, type));
+        fmt.setVerticalAlignment(3, 0, HorizontalPanel.ALIGN_BOTTOM);
+
+        setWidget(4, 0, _clearMedia = new Button(_emsgs.clear(), new ClickListener() {
+            public void onClick (Widget sender) {
+                _updater.clearMedia();
+                setMedia(null);
+            }
+        }));
+        fmt.setVerticalAlignment(4, 0, HorizontalPanel.ALIGN_BOTTOM);
 
         // sweet sweet debugging
-        //setText(4, 0, type + " : " + mediaIds + " : " + mode);
+        //setText(5, 0, type + " : " + mediaIds + " : " + mode);
+
+        fmt.setRowSpan(0, 0, getRowCount());
+        fmt.setRowSpan(0, 1, getRowCount());
     }
 
     /**
@@ -229,6 +238,7 @@ public class ItemMediaUploader extends FlexTable
 
     protected Label _hint;
     protected HorizontalPanel _panel;
+    protected Button _clearMedia;
 
     protected ItemEditor _itemEditor;
     protected String _mediaIds;
