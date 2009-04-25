@@ -15,6 +15,7 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.Logic;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.gwt.ABTest;
@@ -49,11 +50,12 @@ public class ABTestRepository extends DepotRepository
     }
 
     /**
-     * Loads all tests that are currently enabled
+     * Loads up all tests that are enabled and require a cookie to be assigned on landing.
      */
-    public List<ABTestRecord> loadRunningTests ()
+    public List<ABTestRecord> loadTestsWithLandingCookies ()
     {
-        return findAll(ABTestRecord.class, new Where(ABTestRecord.ENABLED, true));
+        return findAll(ABTestRecord.class, new Where(new Logic.And(
+            ABTestRecord.ENABLED, ABTestRecord.LANDING_COOKIE)));
     }
 
     /**

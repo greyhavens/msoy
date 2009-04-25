@@ -127,6 +127,15 @@ public class ABTestEditorDialog extends BorderedDialog
             }
         });
 
+        final CheckBox landingCookie = new CheckBox();
+        contents.add(new FormElement(_msgs.abTestLandingCookieLabel(), landingCookie));
+        landingCookie.setChecked(_test.landingCookie);
+        landingCookie.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _test.landingCookie = landingCookie.isChecked();
+            }
+        });
+
         Button submit = MsoyUI.createCrUpdateButton(_isNewTest, new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();

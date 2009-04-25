@@ -36,6 +36,9 @@ public class ABTest implements IsSerializable
     /** The calculated date on which this test was last disabled. */
     public Date ended;
 
+    /** True if the test group should be assigned to new users when they land. */
+    public boolean landingCookie;
+
     /** The maximum length for Name strings. */
     public static final int MAX_NAME_LENGTH = 50;
     public static final int MAX_DESCRIPTION_LENGTH = 200;

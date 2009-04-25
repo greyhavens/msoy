@@ -35,6 +35,7 @@ public class ABTestRecord extends PersistentRecord
     public static final ColumnExp ENABLED = colexp(_R, "enabled");
     public static final ColumnExp STARTED = colexp(_R, "started");
     public static final ColumnExp ENDED = colexp(_R, "ended");
+    public static final ColumnExp LANDING_COOKIE = colexp(_R, "landingCookie");
     // AUTO-GENERATED: FIELDS END
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -69,9 +70,12 @@ public class ABTestRecord extends PersistentRecord
     @Column(nullable=true)
     public Timestamp ended;
 
+    /** True if the test group should be assigned to new users when they land. */
+    public boolean landingCookie;
+
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 8;
 
     /**
      * Build a POJO version of this Record, for use outside the persistence system.
@@ -87,6 +91,7 @@ public class ABTestRecord extends PersistentRecord
         test.started = (started != null) ? new Date(started.getTime()) : null;
         test.ended = (ended != null) ? new Date(ended.getTime()) : null;
         test.enabled = enabled;
+        test.landingCookie = landingCookie;
         return test;
     }
 
@@ -104,6 +109,7 @@ public class ABTestRecord extends PersistentRecord
         started = (test.started != null) ? new Timestamp(test.started.getTime()) : null;
         ended = (test.ended != null) ? new Timestamp(test.ended.getTime()) : null;
         enabled = test.enabled;
+        landingCookie = test.landingCookie;
     }
 
     // AUTO-GENERATED: METHODS START
