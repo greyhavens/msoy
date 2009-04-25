@@ -60,22 +60,8 @@ public class MsoyTableManager extends TableManager
     {
         super.notePlayerAdded(table, body);
 
-        // mark this player as "in" this game
-        PlayerObject plobj = (PlayerObject) body;
-        _playerActions.updatePlayer(plobj.getMemberId(), new GameSummary(_lobj.game));
-    }
-
-    @Override
-    protected Table notePlayerRemoved (int playerOid, BodyObject body)
-    {
-        // mark this player as no longer "in" this game, unless this method is being called because
-        // the game itself started.
-        PlayerObject plobj = (PlayerObject) body;
-        if (plobj != null && !_membersPlaying.contains(plobj.getMemberId())) {
-            _playerActions.updatePlayer(plobj.getMemberId(), null);
-        }
-
-        return super.notePlayerRemoved(playerOid, body);
+        // mark this player as "in" this game if they're not already
+        _playerActions.updatePlayerGame((PlayerObject) body, new GameSummary(_lobj.game));
     }
 
     @Override
@@ -85,61 +71,7 @@ public class MsoyTableManager extends TableManager
         return _lmgr.createGameManager((ParlorGameConfig)config);
     }
 
-    @Override
-    protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
-    {
-        if (table.players != null) {
-            for (int ii = 0, nn = table.players.length; ii < nn; ii++) {
-                MemberName member = (MemberName) table.players[ii];
-                if (member != null) {
-                    _membersPlaying.add(member.getMemberId());
-                }
-            }
-        }
-
-        super.gameCreated(table, gameobj, gmgr);
-        gameobj.addListener(_playerUpdater);
-    }
-
-    @Override
-    protected void purgeTable (Table table)
-    {
-        // check for players in local map - this is the last time we'll hear about this game, so
-        // make sure the players really are cleared out.
-        for (int ii = 0; table.players != null && ii < table.players.length; ii++) {
-            if (table.players[ii] == null) {
-                continue;
-            }
-
-            MemberName member = (MemberName) table.players[ii];
-            if (_membersPlaying.remove(member.getMemberId())) {
-                _playerActions.updatePlayer(member.getMemberId(), null);
-            }
-        }
-
-        super.purgeTable(table);
-    }
-
-    protected OidListListener _playerUpdater = new OidListListener() {
-        public void objectAdded (ObjectAddedEvent event) {
-            PlayerObject plobj = (PlayerObject) _omgr.getObject(event.getOid());
-            int memberId = plobj.getMemberId();
-            if (!_membersPlaying.contains(memberId)) {
-                _playerActions.updatePlayer(memberId, new GameSummary(_lobj.game));
-            }
-            _membersPlaying.add(memberId);
-        }
-
-        public void objectRemoved (ObjectRemovedEvent event) {
-            PlayerObject plobj = (PlayerObject) _omgr.getObject(event.getOid());
-            int memberId = plobj.getMemberId();
-            _playerActions.updatePlayer(memberId, null);
-            _membersPlaying.remove(memberId);
-        }
-    };
-
     protected LobbyManager _lmgr;
     protected LobbyObject _lobj;
-    protected ArrayIntSet _membersPlaying = new ArrayIntSet();
     protected PlayerNodeActions _playerActions;
 }

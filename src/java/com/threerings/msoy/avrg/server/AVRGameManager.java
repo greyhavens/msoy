@@ -758,12 +758,10 @@ public class AVRGameManager extends PlaceManager
         _watchmgr.addWatch(player.getMemberId(), _observer);
 
         PropertySpaceHandler handler = new PropertySpaceHandler(player) {
-            @Override protected void validateUser (ClientObject caller)
-                throws InvocationException {
+            @Override protected void validateUser (ClientObject caller) throws InvocationException {
                 AVRGameManager.this.validateUser(caller);
             }
         };
-
         player.setPropertyService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(handler)));
 
         if (_gameAgentObj != null) {
@@ -773,9 +771,10 @@ public class AVRGameManager extends PlaceManager
             }
         }
 
-        // note that this player is playing this game
-        _playerActions.updatePlayer(
-            player.getMemberId(), new GameSummary(_contentDelegate.getContent().game));
+        // note that this player is playing this game (note that we don't have to clear the player
+        // game because that is done automatically when the player logs off of the game server)
+        _playerActions.updatePlayerGame(
+            player, new GameSummary(_contentDelegate.getContent().game));
     }
 
     @Override
@@ -786,11 +785,8 @@ public class AVRGameManager extends PlaceManager
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
         _invmgr.clearDispatcher(player.propertyService);
 
-        // let the world know that this player is no longer playing our game
-        int memberId = player.getMemberId();
-        _playerActions.updatePlayer(memberId, null);
-
         // stop watching this player's movements
+        int memberId = player.getMemberId();
         _watchmgr.clearWatch(memberId);
 
         // clear out from our internal record

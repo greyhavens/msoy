@@ -27,11 +27,20 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class PlayerNodeActions
 {
-    public void updatePlayer (int playerId, GameSummary game)
+    public void updatePlayerGame (PlayerObject plobj, GameSummary game)
     {
-        if (_peerMan.updateMemberGame(playerId, game)) {
-            _peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
+        if (plobj.game == null || plobj.game.gameId != game.gameId) {
+            plobj.setGame(game);
+            if (_peerMan.updateMemberGame(plobj.getMemberId(), game)) {
+                _peerMan.invokeNodeAction(new UpdatePlayerAction(plobj.getMemberId(), game));
+            }
         }
+    }
+
+    public void clearPlayerGame (int playerId)
+    {
+        _peerMan.updateMemberGame(playerId, null);
+        _peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, null));
     }
 
     public void displayNameUpdated (MemberName name)

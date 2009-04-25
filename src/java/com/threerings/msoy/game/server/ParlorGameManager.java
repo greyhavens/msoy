@@ -34,6 +34,7 @@ import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -213,19 +214,31 @@ public class ParlorGameManager extends WhirledGameManager
     }
 
     @Override // from WhirledGameManager
+    protected void bodyEntered (final int bodyOid)
+    {
+        super.bodyEntered(bodyOid);
+
+        // note that this player is playing this game (note that we don't have to clear the player
+        // game because that is done automatically when the player logs off of the game server)
+        PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
+        if (plobj != null) {
+            _playerActions.updatePlayerGame(plobj, new GameSummary(getGame()));
+        }
+    }
+
+    @Override // from WhirledGameManager
     protected GameAgentObject createAgent ()
     {
         // TEMP: hack to prevent agent creation if we're a single player game and this game is
         // configured to use its agent only for multiplayer games
-        return (((ParlorGameConfig)getGameConfig()).game.isAgentMPOnly() && !isMultiplayer()) ?
-            null : super.createAgent();
+        return (getGame().isAgentMPOnly() && !isMultiplayer()) ? null : super.createAgent();
     }
 
     @Override // from WhirledGameManager
     protected void resolveContentOwnership (BodyObject body, final ResultListener<Void> listener)
     {
         final PlayerObject plobj = (PlayerObject)body;
-        final Game game = ((ParlorGameConfig)getGameConfig()).game;
+        final Game game = getGame();
         if (plobj.isContentResolved(game.gameId) || plobj.isContentResolving(game.gameId)) {
             listener.requestCompleted(null);
             return;
@@ -236,41 +249,47 @@ public class ParlorGameManager extends WhirledGameManager
         plobj.addToGameContent(resolving);
         _invoker.postUnit(
             new ContentOwnershipUnit(game.gameId, game.getSuiteId(), plobj.getMemberId()) {
-                @Override public void handleSuccess() {
-                    if (!plobj.isActive()) {
-                        listener.requestCompleted(null);
-                        return; // the player has logged off, nevermind
-                    }
-                    plobj.startTransaction();
-                    try {
-                        for (GameContentOwnership ownership : _content) {
-                            plobj.addToGameContent(ownership);
-                        }
-                    } finally {
-                        plobj.removeFromGameContent(resolving);
-                        plobj.addToGameContent(new GameContentOwnership(game.gameId,
-                            GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVED));
-                        plobj.commitTransaction();
-                    }
-
+            @Override public void handleSuccess() {
+                if (!plobj.isActive()) {
                     listener.requestCompleted(null);
+                    return; // the player has logged off, nevermind
+                }
+                plobj.startTransaction();
+                try {
+                    for (GameContentOwnership ownership : _content) {
+                        plobj.addToGameContent(ownership);
+                    }
+                } finally {
+                    plobj.removeFromGameContent(resolving);
+                    plobj.addToGameContent(
+                        new GameContentOwnership(game.gameId, GameData.RESOLUTION_MARKER,
+                                                 WhirledPlayerObject.RESOLVED));
+                    plobj.commitTransaction();
                 }
 
-                @Override protected ItemPackRepository getIpackRepo() {
-                    return _ipackRepo;
-                }
-                @Override protected LevelPackRepository getLpackRepo() {
-                    return _lpackRepo;
-                }
-                @Override protected TrophyRepository getTrophyRepo() {
-                    return _trophyRepo;
-                }
+                listener.requestCompleted(null);
+            }
 
-                @Override protected String getFailureMessage () {
-                    return "Failed to resolve content [game=" + _gameconfig.getGameId() +
-                        ", who=" + plobj.who() + "].";
-                }
-            });
+            @Override protected ItemPackRepository getIpackRepo() {
+                return _ipackRepo;
+            }
+            @Override protected LevelPackRepository getLpackRepo() {
+                return _lpackRepo;
+            }
+            @Override protected TrophyRepository getTrophyRepo() {
+                return _trophyRepo;
+            }
+
+            @Override protected String getFailureMessage () {
+                return "Failed to resolve content [game=" + _gameconfig.getGameId() +
+                    ", who=" + plobj.who() + "].";
+            }
+        });
+    }
+
+    protected Game getGame ()
+    {
+        return ((ParlorGameConfig)getGameConfig()).game;
     }
 
     /** A casted reference to the GameObject. */
@@ -296,4 +315,5 @@ public class ParlorGameManager extends WhirledGameManager
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected PartyRegistry _partyReg;
     @Inject protected TrophyRepository _trophyRepo;
+    @Inject protected PlayerNodeActions _playerActions;
 }

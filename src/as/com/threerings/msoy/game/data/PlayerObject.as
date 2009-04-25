@@ -37,6 +37,9 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>photo</code> field. */
     public static const PHOTO :String = "photo";
 
+    /** The field name of the <code>game</code> field. */
+    public static const GAME :String = "game";
+
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
 
@@ -49,6 +52,9 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
+
+    /* The game summary for the game that the player is lobbying for or currently playing. */
+    public var game :GameSummary;
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
@@ -134,6 +140,7 @@ public class PlayerObject extends WhirledPlayerObject
     {
         memberName = VizMemberName(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
+        game = GameSummary(ins.readObject());
         humanity = ins.readInt();
         visitorInfo = VisitorInfo(ins.readObject());
         propertyService = PropertySpaceMarshaller(ins.readObject());

@@ -76,6 +76,9 @@ public class GameSession extends CrowdSession
         // let our various server entities know that this member logged off
         _locator.playerLoggedOff(_plobj);
 
+        // clear out this player's association with this game
+        _playerActions.clearPlayerGame(_plobj.getMemberId());
+
         // clear out our player object reference
         _plobj = null;
     }
@@ -85,4 +88,5 @@ public class GameSession extends CrowdSession
 
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlayerLocator _locator;
+    @Inject protected PlayerNodeActions _playerActions;
 }

@@ -51,6 +51,9 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
+    /** The field name of the <code>game</code> field. */
+    public static final String GAME = "game";
+
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
@@ -66,6 +69,9 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
+
+    /** The game summary for the game that the player is lobbying for or currently playing. */
+    public GameSummary game;
 
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
@@ -205,6 +211,22 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             TOKENS, value, ovalue);
         this.tokens = value;
+    }
+
+    /**
+     * Requests that the <code>game</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGame (GameSummary value)
+    {
+        GameSummary ovalue = this.game;
+        requestAttributeChange(
+            GAME, value, ovalue);
+        this.game = value;
     }
 
     /**
