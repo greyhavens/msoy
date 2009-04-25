@@ -53,15 +53,10 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
     -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
     -Djcd.tmpl=javalang -javaagent:$MSOY_HOME/dist/lib/collectd.jar \
-    -Dehcache.disk.store.dir=world"
-
-# If we're running on dev1, add some JMX configuration
-if [ "$PROCID" = "dev1" ]; then
-    JAVA_ARGS="$JAVA_ARGS \
-        -Dcom.sun.management.jmxremote.port=9988 \
-        -Dcom.sun.management.jmxremote.authenticate=false \
-        -Dcom.sun.management.jmxremote.ssl=false"
-fi
+    -Dehcache.disk.store.dir=world \
+    -Dcom.sun.management.jmxremote.port=9988 \
+    -Dcom.sun.management.jmxremote.authenticate=false \
+    -Dcom.sun.management.jmxremote.ssl=false"
 
 # Make sure we have a JVM and set up our classpath and bits
 . $MSOY_HOME/bin/runcommon
