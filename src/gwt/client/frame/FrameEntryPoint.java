@@ -204,7 +204,7 @@ public class FrameEntryPoint
 
         // if we have no "who" cookie (which means we've seen someone on this computer before),
         // force the creation of our visitor info because we're very probably a real new user
-        if (!StringUtil.isBlank(CookieUtil.get("who"))) {
+        if (StringUtil.isBlank(CookieUtil.get("who"))) {
             VisitorInfo info = getVisitorInfo(); // creates a visitorId and reports it
 
             // if this is a guest, and we have a referrer cookie from them, record it
