@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,10 +36,14 @@ import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.resource.Resource;
 
+import com.samskivert.servlet.util.CookieUtil;
+
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -156,6 +161,22 @@ public class MsoyHttpServer extends Server
             if (req.getRequestURI().equals("/clients/world-client.swf")) {
                 rsp.setContentLength(0);
                 rsp.sendRedirect("/clients/" + DeploymentConfig.version + "/world-client.swf");
+
+            } else if (DeploymentConfig.devDeployment && req.getRequestURI().equals("/") &&
+                CookieUtil.getCookie(req, "who") == null) {
+                // Give new users all the names and number of groups for tests designated as
+                // occurring on landing. The client will compute the group that the user is
+                // assigned to when the visitor id is calculated.
+                // TODO: encapsulate this encoding to be nearer to LandingTestCookie code
+                // TODO: consolidate cookie names that are shared between client and server
+                StringBuilder cookieValue = new StringBuilder();
+                for (ABTestRecord test : _abTestRepo.loadTestsWithLandingCookies()) {
+                    cookieValue.append(cookieValue.length() > 0 ? ";" : "");
+                    cookieValue.append(test.name).append(":").append(test.numGroups);
+                }
+                rsp.addCookie(new Cookie("lt", cookieValue.toString()));
+                super.doGet(req, rsp);
+
             } else {
                 super.doGet(req, rsp);
             }
@@ -184,6 +205,9 @@ public class MsoyHttpServer extends Server
             // handle it once it's ready.
             HttpReferrerCookie.check(req, rsp);
         }
+
+        // dependencies
+        @Inject protected ABTestRepository _abTestRepo;
     } // end: MsoyDefaultServlet
 
     /**
