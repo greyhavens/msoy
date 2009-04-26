@@ -12,7 +12,6 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventThread;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;

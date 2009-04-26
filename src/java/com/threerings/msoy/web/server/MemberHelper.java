@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -20,13 +19,9 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
-import com.threerings.presents.peer.data.NodeObject;
-
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -224,7 +219,6 @@ public class MemberHelper
         });
 
         // now load up the rest of their member card information
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         try {
             Collection<Integer> keys = onlineOnly ? statuses.keySet() : memberIds;
             for (MemberCardRecord mcr : _memberRepo.loadMemberCards(keys)) {
@@ -267,13 +261,11 @@ public class MemberHelper
                     status.gameId = game.gameId;
                     rstatus = status;
                 }
-                if (rstatus != null) {
-                    HostedGame hgame = mnobj.hostedGames.get(game.gameId);
-                    if (hgame != null) {
-                        rstatus.gameName = hgame.name;
-                    }
-                    return rstatus;
+                HostedGame hgame = mnobj.hostedGames.get(game.gameId);
+                if (hgame != null) {
+                	rstatus.gameName = hgame.name;
                 }
+                return rstatus;
             }
         }
 

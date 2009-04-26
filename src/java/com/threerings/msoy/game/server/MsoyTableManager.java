@@ -3,12 +3,7 @@
 
 package com.threerings.msoy.game.server;
 
-import com.samskivert.util.ArrayIntSet;
-
 import com.threerings.presents.annotation.EventThread;
-import com.threerings.presents.dobj.ObjectAddedEvent;
-import com.threerings.presents.dobj.ObjectRemovedEvent;
-import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -18,7 +13,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 
@@ -26,8 +20,6 @@ import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Customizes the basic table manager with MSOY specific bits.

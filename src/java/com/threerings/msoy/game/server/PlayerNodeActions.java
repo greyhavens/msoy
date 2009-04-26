@@ -19,8 +19,6 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.PlayerObject;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Provides a simple interface for dispatching node actions for players.
  */

@@ -20,8 +20,6 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.peer.data.NodeObject;
 
-import com.threerings.msoy.data.MemberLocation;
-
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MemberGame;

@@ -33,7 +33,6 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.FutureResult;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.party.data.PartyAuthName;
