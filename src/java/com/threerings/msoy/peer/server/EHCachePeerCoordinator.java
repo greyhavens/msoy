@@ -36,7 +36,6 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
         EHCacheAdapter.EHCACHE_RESULT_CACHE
     };
 
-
     public static void initWithPeers (MsoyPeerManager peerMan)
     {
         if (_instance == null) {
