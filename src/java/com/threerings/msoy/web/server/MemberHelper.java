@@ -255,16 +255,16 @@ public class MemberHelper
         if (game != null) {
             // don't show developer versions of games
             if (game.gameId != 0 && !Game.isDevelopmentVersion(game.gameId)) {
+                HostedGame hgame = mnobj.hostedGames.get(game.gameId);
+                String gameName = hgame != null ? hgame.name : null;
                 if (game.avrGame) {
                     inAVRGame = new MemberCard.InAVRGame();
                     inAVRGame.gameId = game.gameId;
+                    inAVRGame.gameName = gameName;
                 } else {
                     inGame = new MemberCard.InGame();
                     inGame.gameId = game.gameId;
-                }
-                HostedGame hgame = mnobj.hostedGames.get(game.gameId);
-                if (hgame != null) {
-                    inGame.gameName = hgame.name;
+                    inGame.gameName = gameName;
                 }
             }
         }
