@@ -49,9 +49,9 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int MOVE_PLAYER_TO_ROOM = 3;
 
     // from interface AVRGameService
-    public void movePlayerToRoom (Client arg1, int arg2, int arg3, MsoyLocation arg4, InvocationService.ConfirmListener arg5)
+    public void movePlayerToRoom (Client arg1, int arg2, int arg3, MsoyLocation arg4, InvocationService.InvocationListener arg5)
     {
-        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        ListenerMarshaller listener5 = new ListenerMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, MOVE_PLAYER_TO_ROOM, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5

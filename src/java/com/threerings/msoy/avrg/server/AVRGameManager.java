@@ -493,7 +493,7 @@ public class AVRGameManager extends PlaceManager
 
     // from AVRGameProvider
     public void movePlayerToRoom (ClientObject caller, int playerId, int roomId, MsoyLocation exit,
-                                  ConfirmListener listener)
+                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
         if (!isAgent(caller)) {

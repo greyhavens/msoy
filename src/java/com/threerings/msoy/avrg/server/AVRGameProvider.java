@@ -30,7 +30,7 @@ public interface AVRGameProvider extends InvocationProvider
     /**
      * Handles a {@link AVRGameService#movePlayerToRoom} request.
      */
-    void movePlayerToRoom (ClientObject caller, int arg1, int arg2, MsoyLocation arg3, InvocationService.ConfirmListener arg4)
+    void movePlayerToRoom (ClientObject caller, int arg1, int arg2, MsoyLocation arg3, InvocationService.InvocationListener arg4)
         throws InvocationException;
 
     /**

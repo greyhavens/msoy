@@ -50,7 +50,7 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
 
         case AVRGameMarshaller.MOVE_PLAYER_TO_ROOM:
             ((AVRGameProvider)provider).movePlayerToRoom(
-                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (MsoyLocation)args[2], (InvocationService.ConfirmListener)args[3]
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (MsoyLocation)args[2], (InvocationService.InvocationListener)args[3]
             );
             return;
 

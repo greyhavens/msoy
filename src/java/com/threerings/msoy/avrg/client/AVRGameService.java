@@ -44,5 +44,5 @@ public interface AVRGameService extends InvocationService
      * Requests that the specified player be moved to the specified room.
      */
     void movePlayerToRoom (Client caller, int playerId, int roomId, MsoyLocation exit,
-                           ConfirmListener listener);
+                           InvocationListener listener);
 }

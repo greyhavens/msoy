@@ -7,9 +7,11 @@ import com.threerings.msoy.avrg.client.AVRGameService;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Float;
 import com.threerings.util.Integer;
@@ -55,9 +57,9 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static const MOVE_PLAYER_TO_ROOM :int = 3;
 
     // from interface AVRGameService
-    public function movePlayerToRoom (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :InvocationService_ConfirmListener) :void
+    public function movePlayerToRoom (arg1 :Client, arg2 :int, arg3 :int, arg4 :MsoyLocation, arg5 :InvocationService_InvocationListener) :void
     {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, MOVE_PLAYER_TO_ROOM, [
             Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, listener5
