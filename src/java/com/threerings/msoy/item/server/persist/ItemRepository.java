@@ -760,7 +760,6 @@ public abstract class ItemRepository<T extends ItemRecord>
                 "This algorithm should only be used for cached collection queries.");
         }
         
-        log.info("Query request at (" + queryIx + ", " + toRead + ") for: " + clauses);
         List<V> results = Lists.newArrayList();
         Limit limit = null;
 
@@ -784,9 +783,6 @@ public abstract class ItemRepository<T extends ItemRecord>
             // figure out how much of the data we read is going to be included in our original
             // request, taking into account that we did not necessarily get a full chunk back
             int relevantInChunk = Math.min(Math.max(0, chunk.size() - queryIxInChunk), toRead);
-            
-            log.info("DB returned " + (chunk.size()) + " results for (" +
-                chunkOffset + ", " + FIND_ALL_CHUNK + "); taking " + relevantInChunk);
 
             if (relevantInChunk > 0) {
                 // if any of it is relevant, append it and update our iteration variables
