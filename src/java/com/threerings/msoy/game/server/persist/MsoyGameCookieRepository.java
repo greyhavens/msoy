@@ -47,6 +47,10 @@ public class MsoyGameCookieRepository extends GameCookieRepository
      */
     public Set<Integer> getCookiedPlayers (int gameId, Set<Integer> playerIds)
     {
+        if (playerIds.isEmpty()) {
+            return playerIds;
+        }
+
         List<QueryClause> clauses = Lists.newArrayList(
             new Where(new Logic.And(
                 new Conditionals.Equals(GameCookieRecord.GAME_ID, gameId),
