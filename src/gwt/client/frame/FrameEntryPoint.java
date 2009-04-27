@@ -31,6 +31,7 @@ import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -202,9 +203,9 @@ public class FrameEntryPoint
             });
         }
 
-        // if we have no "who" cookie (which means we've seen someone on this computer before),
+        // if we have no account cookie (which means we've seen someone on this computer before),
         // force the creation of our visitor info because we're very probably a real new user
-        if (StringUtil.isBlank(CookieUtil.get("who"))) {
+        if (StringUtil.isBlank(CookieUtil.get(CookieNames.ACCOUNT))) {
             VisitorInfo info = getVisitorInfo(); // creates a visitorId and reports it
 
             // if this is a guest, and we have a referrer cookie from them, record it

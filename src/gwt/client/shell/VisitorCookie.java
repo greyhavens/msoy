@@ -6,6 +6,7 @@ package client.shell;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
  * Wrapper that stores and loads up visitor information.
@@ -15,15 +16,12 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public class VisitorCookie
 {
-    /** Cookie name. */
-    public static final String VISITOR = "vis";
-
     /**
      * Is the visitor information stored anywhere?
      */
     public static boolean exists ()
     {
-        return CookieUtil.get(VISITOR) != null;
+        return CookieUtil.get(CookieNames.VISITOR) != null;
     }
 
     /**
@@ -35,7 +33,7 @@ public class VisitorCookie
             return null;
         }
 
-        VisitorInfo info = new VisitorInfo(CookieUtil.get(VISITOR), false);
+        VisitorInfo info = new VisitorInfo(CookieUtil.get(CookieNames.VISITOR), false);
         CShell.log("Loaded " + info);
         return info;
     }
@@ -47,7 +45,7 @@ public class VisitorCookie
     public static void save (VisitorInfo info, boolean overwrite)
     {
         if (!exists() || overwrite) {
-            CookieUtil.set("/", 365, VISITOR, info.id);
+            CookieUtil.set("/", 365, CookieNames.VISITOR, info.id);
             CShell.log("Saved " + info);
         }
     }
@@ -57,7 +55,7 @@ public class VisitorCookie
      */
     public static void clear ()
     {
-        CookieUtil.clear("/", VISITOR);
+        CookieUtil.clear("/", CookieNames.VISITOR);
         CShell.log("Cleared visitor info.");
     }
 }

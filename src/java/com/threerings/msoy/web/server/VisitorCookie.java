@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
  * Wrapper for visitor information.
@@ -18,15 +19,12 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public class VisitorCookie
 {
-    /** Cookie name. */
-    public static final String VISITOR = "vis";
-
     /**
      * Is the visitor information stored anywhere?
      */
     public static boolean exists (HttpServletRequest req)
     {
-        return CookieUtil.getCookie(req, VISITOR) != null;
+        return CookieUtil.getCookie(req, CookieNames.VISITOR) != null;
     }
 
     /**
@@ -34,7 +32,7 @@ public class VisitorCookie
      */
     public static void clear (HttpServletResponse rsp)
     {
-        CookieUtil.clearCookie(rsp, VISITOR);
+        CookieUtil.clearCookie(rsp, CookieNames.VISITOR);
     }
 
     /**
@@ -46,7 +44,8 @@ public class VisitorCookie
             return null;
         }
 
-        VisitorInfo info = new VisitorInfo(CookieUtil.getCookieValue(req, VISITOR), false);
+        VisitorInfo info = new VisitorInfo(
+            CookieUtil.getCookieValue(req, CookieNames.VISITOR), false);
         return info;
     }
 }

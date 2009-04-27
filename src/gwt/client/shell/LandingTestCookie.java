@@ -2,6 +2,7 @@ package client.shell;
 
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.web.gwt.ABTestUtil;
+import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
  * Utility methods related to parsing landing tests given to us by the server in a cookie when we
@@ -9,9 +10,6 @@ import com.threerings.msoy.web.gwt.ABTestUtil;
  */
 public class LandingTestCookie
 {
-    /** The name of the landing test cookie. */
-    public static final String NAME = "lt";
-
     /**
      * Gets the group assigned to the given visitor id for the given test name. Note that this
      * should only be called by new users, i.e. when the landing page is being accessed and there
@@ -29,7 +27,7 @@ public class LandingTestCookie
      */
     public static String get ()
     {
-        String value = CookieUtil.get(NAME);
+        String value = CookieUtil.get(CookieNames.LANDING_TEST);
         return value == null ? "" : value;
     }
 }

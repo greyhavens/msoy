@@ -86,6 +86,7 @@ import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.room.server.WebRoomServlet;
 
 import com.threerings.msoy.web.gwt.ABTestUtil;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebUserService;
 
@@ -166,16 +167,15 @@ public class MsoyHttpServer extends Server
                 rsp.sendRedirect("/clients/" + DeploymentConfig.version + "/world-client.swf");
 
             } else if (DeploymentConfig.devDeployment && req.getRequestURI().equals("/") &&
-                CookieUtil.getCookie(req, "who") == null) {
+                CookieUtil.getCookie(req, CookieNames.ACCOUNT) == null) {
                 // Give new users all the names and number of groups for tests designated as
                 // occurring on landing. The client will compute the group that the user is
                 // assigned to when the visitor id is calculated.
-                // TODO: consolidate cookie names that are shared between client and server
                 StringBuilder cookieValue = new StringBuilder();
                 for (ABTestRecord test : _abTestRepo.loadTestsWithLandingCookies()) {
                     ABTestUtil.encodeTest(cookieValue, test.name, test.numGroups);
                 }
-                rsp.addCookie(new Cookie("lt", cookieValue.toString()));
+                rsp.addCookie(new Cookie(CookieNames.LANDING_TEST, cookieValue.toString()));
                 log.info("Sending landing cookie", "value", cookieValue);
                 super.doGet(req, rsp);
 
