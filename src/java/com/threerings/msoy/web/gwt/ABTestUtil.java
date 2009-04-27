@@ -29,6 +29,10 @@ public class ABTestUtil
         return (Math.abs((int)seed) % numGroups) + 1;
     }
 
+    /**
+     * When called consecutively for different A/B tests, builds an encoded sequence of tests
+     * suitable for use in a cookie to be sent to the web client.
+     */
     public static void encodeTest (StringBuilder builder, String testName, int numGroups)
     {
         if (builder.length() > 0) {
