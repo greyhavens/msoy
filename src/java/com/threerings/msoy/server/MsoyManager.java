@@ -126,10 +126,10 @@ public class MsoyManager
     public void getABTestGroup (final ClientObject caller, final String testName,
         final boolean logEvent, final InvocationService.ResultListener listener)
     {
-        final MemberObject memObj = (MemberObject) caller;
+        final VisitorInfo vinfo = ((MemberObject)caller).visitorInfo;
         _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
             @Override public void invokePersistent () throws Exception {
-                _testGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, logEvent);
+                _testGroup = _memberLogic.getABTestGroup(testName, vinfo, logEvent);
             }
             @Override public void handleSuccess () {
                 reportRequestProcessed(_testGroup);
@@ -155,8 +155,9 @@ public class MsoyManager
     public void trackTestAction (final ClientObject caller, final String actionName,
         final String testName)
     {
-        final MemberObject memObj = (MemberObject) caller;
-        if (memObj.visitorInfo == null) {
+        final VisitorInfo vinfo = ((MemberObject) caller).visitorInfo;
+        final String visitorId =  ((MemberObject) caller).getVisitorId();
+        if (vinfo == null) {
             log.warning("Failed to log test action with null visitorInfo", "caller", caller.who(),
                         "actionName", actionName);
             return;
@@ -168,13 +169,12 @@ public class MsoyManager
                 String actualTestName;
                 if (testName != null) {
                     // grab the group without logging a tracking event about it
-                    abTestGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, false);
+                    abTestGroup = _memberLogic.getABTestGroup(testName, vinfo, false);
                     actualTestName = testName;
                 } else {
                     actualTestName = "";
                 }
-                _eventLog.testAction(memObj.getVisitorId(), actionName, actualTestName,
-                    abTestGroup);
+                _eventLog.testAction(visitorId, actionName, actualTestName, abTestGroup);
                 return false;
             }
         });
