@@ -113,7 +113,6 @@ public class AccountLogic
         // configure our new email address, display name and password (the first might fail if
         // we're using an in-use email, so we have to do that first)
         updateAccountName(mrec, email);
-        mrec.accountName = email;
         _memberRepo.configureDisplayName(memberId, displayName);
         mrec.name = displayName;
         updatePassword(mrec, password);
@@ -150,6 +149,8 @@ public class AccountLogic
         } catch (Exception e) {
             log.warning("Failed to award coins for new account", "memberId", memberId, e);
         }
+
+        log.info("Saved permaguest account", "memberId", mrec.memberId);
 
         return mrec;
     }
