@@ -281,7 +281,7 @@ public class MemberRepository extends DepotRepository
         Where where = new Where(new Equals(annFlags, 0));
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
             if (!MemberMailUtil.isPlaceholderAddress(record.accountName) &&
-                !record.accountName.equals(record.memberId + MemberRecord.DELETED_SUFFIX)) {
+                !MemberRecord.isDeleted(record.memberId, record.accountName)) {
                 emails.add(Tuple.newTuple(record.memberId, record.accountName));
             }
         }
