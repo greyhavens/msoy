@@ -248,36 +248,44 @@ public class MemberHelper
     protected MemberCard.Status getStatus (MsoyNodeObject mnobj, int memberId)
     {
         MemberGame game = mnobj.memberGames.get(memberId);
+
+        MemberCard.InGame inGame = null;
+        MemberCard.InAVRGame inAVRGame = null;
+
         if (game != null) {
             // don't show developer versions of games
             if (game.gameId != 0 && !Game.isDevelopmentVersion(game.gameId)) {
-                MemberCard.InGame rstatus = null;
                 if (game.avrGame) {
-                    MemberCard.InAVRGame status = new MemberCard.InAVRGame();
-                    status.gameId = game.gameId;
-                    rstatus = status;
+                    inAVRGame = new MemberCard.InAVRGame();
+                    inAVRGame.gameId = game.gameId;
                 } else {
-                    MemberCard.InGame status = new MemberCard.InGame();
-                    status.gameId = game.gameId;
-                    rstatus = status;
+                    inGame = new MemberCard.InGame();
+                    inGame.gameId = game.gameId;
                 }
                 HostedGame hgame = mnobj.hostedGames.get(game.gameId);
                 if (hgame != null) {
-                	rstatus.gameName = hgame.name;
+                    inGame.gameName = hgame.name;
                 }
-                return rstatus;
             }
         }
 
-        MemberScene scene = mnobj.memberScenes.get(memberId);
-        if (scene != null) {
-            MemberCard.InScene status = new MemberCard.InScene();
-            status.sceneId = scene.sceneId;
-            HostedRoom room = mnobj.hostedScenes.get(scene.sceneId);
-            if (room != null) {
-                status.sceneName = room.name;
+        if (inGame == null) {
+            MemberScene scene = mnobj.memberScenes.get(memberId);
+            if (scene != null) {
+                if (inAVRGame != null) {
+                    inAVRGame.sceneId = scene.sceneId;
+                    return inAVRGame;
+                }
+                MemberCard.InScene inScene = new MemberCard.InScene();
+                inScene.sceneId = scene.sceneId;
+                HostedRoom room = mnobj.hostedScenes.get(scene.sceneId);
+                if (room != null) {
+                    inScene.sceneName = room.name;
+                }
+                return inScene;
             }
-            return status;
+        } else {
+            return inGame;
         }
 
         return null;
