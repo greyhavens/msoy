@@ -241,7 +241,7 @@ public class MsoyAuthenticator extends Authenticator
             } catch (ServiceException se) {
                 // it's possible that the permaguest account requested has been purged, so instead
                 // of failing the logon, just fall through and create a new permaguest account
-                if (!isPurgedPermaguest(se, creds)) {
+                if (!fixPurgedPermaguest(se, creds)) {
                     throw se;
                 }
             }
@@ -435,11 +435,11 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Checks whether this authentication failure is due to a purged permaguest account.
-     * <em>NOTE:</em> if true, it also magicks up a new visitorId for the authenticator because
-     * they're going to need it when we subsequently create them a new permaguest account.
+     * Checks whether this authentication failure is due to a purged permaguest account. If true,
+     * magicks up a new visitorId for the authenticator because they're going to need it when we
+     * subsequently create them a new permaguest account.
      */
-    protected static boolean isPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
+    protected static boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
     {
         final String aname = creds.getUsername().toString().toLowerCase();
         if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
@@ -452,7 +452,7 @@ public class MsoyAuthenticator extends Authenticator
             return true;
         }
         return false;
-    }        
+    }
 
     // our dependencies
     @Inject protected AccountLogic _accountLogic;

@@ -81,7 +81,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                         guest = _memberRepo.loadMember(accountName);
                     } catch (ServiceException se) {
                         // purged permaguests fall through and get a new permaguest account
-                        if (!MsoyAuthenticator.isPurgedPermaguest(se, creds)) {
+                        if (!MsoyAuthenticator.fixPurgedPermaguest(se, creds)) {
                             throw se;
                         }
                     }
