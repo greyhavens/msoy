@@ -54,6 +54,8 @@ public class ABTestEditorDialog extends BorderedDialog
             _test = test;
         }
 
+        _started = _test.started != null;
+
         FlowPanel contents = MsoyUI.createFlowPanel("abTestEditorDialog");
         setContents(contents);
 
@@ -103,7 +105,7 @@ public class ABTestEditorDialog extends BorderedDialog
         numGroups.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 try {
-                    if (_test.started != null) {
+                    if (_started) {
                         numGroups.setText(_test.numGroups+"");
                         MsoyUI.error(_msgs.abTestNumGroupsDisabled());
                     } else {
@@ -210,6 +212,9 @@ public class ABTestEditorDialog extends BorderedDialog
 
     /** Data for the test */
     protected final ABTest _test;
+
+    /** Whether the most recently saved version of this test is started. */
+    protected final boolean _started;
 
     /** Parent panel needs to have data refreshed after create/update */
     protected final ABTestListPanel _parent;
