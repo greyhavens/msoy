@@ -38,10 +38,10 @@ public class MemberName extends Name
     public static final int MAX_DISPLAY_NAME_LENGTH = 30;
 
     /** Characters (above ' ') that are illegal in display names.
-     * \u007F - renders as invisible in flash
-     * \uFFFC & \uFFFD - used to delinate links in chat.
      */
-    public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F\uFFFC\uFFFD";
+    public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F" + // renders invisible in flash
+        "\uFFFC\uFFFD" + // used by whirled for delimiting links in chat
+        "\u202A\u202B\u202C\u202D\u202E"; // control text direction
 
     /** The maximum length for an account name (email address). */
     public static final int MAX_EMAIL_LENGTH = 128;
