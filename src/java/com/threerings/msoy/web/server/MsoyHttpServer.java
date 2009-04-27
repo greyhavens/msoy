@@ -85,8 +85,11 @@ import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.room.server.WebRoomServlet;
 
+import com.threerings.msoy.web.gwt.ABTestUtil;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebUserService;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
@@ -167,14 +170,13 @@ public class MsoyHttpServer extends Server
                 // Give new users all the names and number of groups for tests designated as
                 // occurring on landing. The client will compute the group that the user is
                 // assigned to when the visitor id is calculated.
-                // TODO: encapsulate this encoding to be nearer to LandingTestCookie code
                 // TODO: consolidate cookie names that are shared between client and server
                 StringBuilder cookieValue = new StringBuilder();
                 for (ABTestRecord test : _abTestRepo.loadTestsWithLandingCookies()) {
-                    cookieValue.append(cookieValue.length() > 0 ? ";" : "");
-                    cookieValue.append(test.name).append(":").append(test.numGroups);
+                    ABTestUtil.encodeTest(cookieValue, test.name, test.numGroups);
                 }
                 rsp.addCookie(new Cookie("lt", cookieValue.toString()));
+                log.info("Sending landing cookie", "value", cookieValue);
                 super.doGet(req, rsp);
 
             } else {

@@ -20,23 +20,8 @@ public class LandingTestCookie
      */
     public static int getGroup (String testName, String visitorId)
     {
-        int numGroups = getNumGroups(testName);
+        int numGroups = ABTestUtil.getNumGroups(get(), testName);
         return numGroups == 0 ? -1 : ABTestUtil.getGroup(visitorId, testName, numGroups);
-    }
-
-    /**
-     * Gets the number of groups in the test of the given name, or 0 if the server did not tell us
-     * about the test.
-     */
-    public static int getNumGroups (String testName)
-    {
-        for (String item : get().split(";")) {
-            String[] parts = item.split(":");
-            if (parts[0].equals(testName)) {
-                return Integer.parseInt(parts[1]);
-            }
-        }
-        return 0;
     }
 
     /**

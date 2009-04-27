@@ -28,4 +28,34 @@ public class ABTestUtil
 
         return (Math.abs((int)seed) % numGroups) + 1;
     }
+
+    public static void encodeTest (StringBuilder builder, String testName, int numGroups)
+    {
+        if (builder.length() > 0) {
+            builder.append(COOKIE_RECORD_SEPARATOR);
+        }
+        builder.append(testName).append(COOKIE_FIELD_SEPARATOR).append(numGroups);
+    }
+
+    /**
+     * Extracts the number of groups in the test of the given name from the given encoded cookie,
+     * or 0 if the name is not in the cookie.
+     */
+    public static int getNumGroups (String cookie, String testName)
+    {
+        // this does not need to be more efficient
+        for (String item : cookie.split("" + COOKIE_RECORD_SEPARATOR)) {
+            String[] parts = item.split("" + COOKIE_FIELD_SEPARATOR);
+            if (parts[0].equals(testName)) {
+                return Integer.parseInt(parts[1]);
+            }
+        }
+        return 0;
+    }
+
+    /** Separates A/B test records in a cookie. */
+    protected static final char COOKIE_RECORD_SEPARATOR = ',';
+
+    /** Separates A/B test fields in a cookie. */
+    protected static final char COOKIE_FIELD_SEPARATOR = ':';
 }
