@@ -280,7 +280,10 @@ public class MemberRepository extends DepotRepository
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
         Where where = new Where(new Equals(annFlags, 0));
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
-            emails.add(Tuple.newTuple(record.memberId, record.accountName));
+            if (!MemberMailUtil.isPlaceholderAddress(record.accountName) &&
+                !record.accountName.equals(record.memberId + MemberRecord.DELETED_SUFFIX)) {
+                emails.add(Tuple.newTuple(record.memberId, record.accountName));
+            }
         }
         return emails;
     }
