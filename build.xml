@@ -89,7 +89,7 @@
     <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mina-filter-ssl.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
-    <file name="${extlibs.dir}/postgresql-jdbc.jar"/>
+    <file name="${extlibs.dir}/postgresql-jdbc4.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
     <file name="${extlibs.dir}/quartz.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
