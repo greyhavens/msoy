@@ -187,36 +187,42 @@ public class MemberHelper
     {
         List<MemberCard> cards = Lists.newArrayList();
 
-        // hop over to the dobj thread and figure out which of these members is online
-        final IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
-
+        // first collect room and game info for all online members (which may be scattered across
+        // our node objects in any order so we have to wait to merge until after this collecting)
+        final IntMap<MemberCard.InScene> rstatuses = IntMaps.newHashIntMap();
+        final IntMap<MemberCard.InGame> gstatuses = IntMaps.newHashIntMap();
         _servletLogic.invokePeerOperation(
             "resolveMemberCards(" + memberIds + ")", new MsoyPeerManager.NodeOp() {
             public void apply (MsoyNodeObject mnobj) {
                 for (Integer id : memberIds) {
-                    MemberCard.Status status = getStatus(mnobj, id);
-
-                    // due to fiddly business we have to merge an AVR game player's scene status
-                    // into its game status, but we don't know which one is going to show up first
-                    // so we have to do some extra awesome checking
-                    MemberCard.Status estatus = statuses.get(id);
-                    if (estatus instanceof MemberCard.InAVRGame &&
-                        status instanceof MemberCard.InScene) {
-                        ((MemberCard.InAVRGame)estatus).sceneId = ((MemberCard.InScene)status).sceneId;
-                    } else if (estatus instanceof MemberCard.InScene &&
-                               status instanceof MemberCard.InAVRGame) {
-                        ((MemberCard.InAVRGame)status).sceneId = ((MemberCard.InScene)estatus).sceneId;
-                        statuses.put(id, status); // overwrite scene status with AVRG status
-
-                    } else if (estatus instanceof MemberCard.InGame) {
-                        // hrm, don't overwrite game status
-
-                    } else {
-                        statuses.put(id, status);
+                    MemberCard.InGame gstatus = getGameStatus(mnobj, id);
+                    if (gstatus != null) {
+                        gstatuses.put(id, gstatus);
+                    }
+                    MemberCard.InScene rstatus = getRoomStatus(mnobj, id);
+                    if (rstatus != null) {
+                        rstatuses.put(id, rstatus);
                     }
                 }
             }
         });
+
+        // merge the game and room info, if they are in an AVRG we use some of both
+        IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
+        for (Integer id : memberIds) {
+            MemberCard.InScene rstatus = rstatuses.get(id);
+            MemberCard.InGame gstatus = gstatuses.get(id);
+            if (gstatus != null) {
+                if (gstatus instanceof MemberCard.InAVRGame) {
+                    if (rstatus != null) {
+                        ((MemberCard.InAVRGame)gstatus).sceneId = rstatus.sceneId;
+                    }
+                }
+                statuses.put(id, gstatus);
+            } else if (rstatus != null) {
+                statuses.put(id, rstatus);
+            }
+        }
 
         // now load up the rest of their member card information
         try {
@@ -245,50 +251,33 @@ public class MemberHelper
         return cards;
     }
 
-    protected MemberCard.Status getStatus (MsoyNodeObject mnobj, int memberId)
+    protected MemberCard.InGame getGameStatus (MsoyNodeObject mnobj, int memberId)
     {
         MemberGame game = mnobj.memberGames.get(memberId);
-
-        MemberCard.InGame inGame = null;
-        MemberCard.InAVRGame inAVRGame = null;
-
-        if (game != null) {
-            // don't show developer versions of games
-            if (game.gameId != 0 && !Game.isDevelopmentVersion(game.gameId)) {
-                HostedGame hgame = mnobj.hostedGames.get(game.gameId);
-                String gameName = hgame != null ? hgame.name : null;
-                if (game.avrGame) {
-                    inAVRGame = new MemberCard.InAVRGame();
-                    inAVRGame.gameId = game.gameId;
-                    inAVRGame.gameName = gameName;
-                } else {
-                    inGame = new MemberCard.InGame();
-                    inGame.gameId = game.gameId;
-                    inGame.gameName = gameName;
-                }
-            }
+        if (game == null || Game.isDevelopmentVersion(game.gameId)) {
+            return null; // don't show developer versions of games
         }
+        MemberCard.InGame status = game.avrGame ?
+            new MemberCard.InAVRGame() : new MemberCard.InGame();
+        status.gameId = game.gameId;
+        HostedGame hgame = mnobj.hostedGames.get(game.gameId);
+        status.gameName = (hgame == null) ? null : hgame.name;
+        return status;
+    }
 
-        if (inGame == null) {
-            MemberScene scene = mnobj.memberScenes.get(memberId);
-            if (scene != null) {
-                if (inAVRGame != null) {
-                    inAVRGame.sceneId = scene.sceneId;
-                    return inAVRGame;
-                }
-                MemberCard.InScene inScene = new MemberCard.InScene();
-                inScene.sceneId = scene.sceneId;
-                HostedRoom room = mnobj.hostedScenes.get(scene.sceneId);
-                if (room != null) {
-                    inScene.sceneName = room.name;
-                }
-                return inScene;
-            }
-        } else {
-            return inGame;
+    protected MemberCard.InScene getRoomStatus (MsoyNodeObject mnobj, int memberId)
+    {
+        MemberScene scene = mnobj.memberScenes.get(memberId);
+        if (scene == null) {
+            return null;
         }
-
-        return null;
+        MemberCard.InScene status = new MemberCard.InScene();
+        status.sceneId = scene.sceneId;
+        HostedRoom room = mnobj.hostedScenes.get(scene.sceneId);
+        if (room != null) {
+            status.sceneName = room.name;
+        }
+        return status;
     }
 
     /** Contains a mapping of authenticated members. */
