@@ -1,0 +1,55 @@
+#!/usr/bin/python
+
+##
+## $Id$
+
+## Executable for downloading and merging all msoy logs in a given date range to a directory
+
+import os.path, sys
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), "../src/python"))
+
+#import msoy.servers, msoy.logs, util.process as procutil, 
+#import sys, os.path, optparse
+import datetime, optparse
+import msoy.logs, util.log as logutil
+
+description = '''Downloads and merges whirled log files from a range of dates and saves the
+results in the directory argument. By default, logs from 7 days ago up until 1 day ago are
+downloaded. Existing merged files are not replaced.'''
+
+parser = optparse.OptionParser(description=description)
+parser.add_option("-d", "--days", dest="days", metavar="DAYS",
+    help="Number of days back from the current day to use as first download", default="7")
+parser.add_option("-s", "--skip", dest="skip", metavar="SKIP-DAYS",
+    help="Number of days back from the current day to skip", default="1")
+
+(opts, args) = parser.parse_args()
+
+def downloadAndMerge (datestr, output):
+    logs, tags = ([], [])
+    for server in msoy.servers.world:
+        for stem in server.logstems():
+            for localFile in msoy.logs.retrieveLogs([server], stem, datestr, False):
+                logs.append(localFile)
+                tags.append(server.brief())
+
+    opened = []
+    try:
+        for log in logs: opened.append(open(log))
+        logutil.mergeLogs(opened, tags, output)
+
+    finally:
+        for file in opened: file.close()
+
+target = args[0]
+for day in range(int(opts.skip), int(opts.days)):
+    datestr = (datetime.date.today() - datetime.timedelta(day)).strftime("%Y-%m-%d")
+    output = os.path.join(target, "world-servers-merged.%s.log" % datestr)
+    if os.path.exists(output):
+        print "Already exists: %s, skipping" % output
+        continue
+    print "Downloading and merging %s" % output
+    output = open(output, "w")
+    try: downloadAndMerge(datestr, output)
+    finally: output.close()
+
