@@ -209,7 +209,7 @@ public class Args
     @Override // from Object
     public String toString ()
     {
-        return _args.toString();
+        return "" + _args.size() + ": " + _args.toString();
     }
 
     // Since we're using _ for our own purposes, encode it as %- and thus also % as %%
