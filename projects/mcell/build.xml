@@ -1,107 +1,30 @@
 <!-- project build configuration -->
-<project name="Whirled panopticon aggregations" default="compile" basedir="." xmlns:artifact="urn:maven-artifact-ant">
-  <property file="ant.properties"/>  
+<project name="Whirled panopticon aggregations" default="dist" basedir="."
+         xmlns:artifact="urn:maven-artifact-ant">
+  <property name="src.dir"      value="src/java"/>
+  <property name="app.name"     value="mcell"/>
+  <property name="src.pkg.name" value="com.threerings.msoy"/>
 
-  <!-- the base directory from which we get our bundles and jar files -->
-  <property name="base.dir" value="../.."/>
+  <property name="cell.configdir" value="${basedir}/etc"/>
+  <fileset id="cell.files" dir="${basedir}/etc">
+      <include name="tasks.*"/>
+  </fileset>
 
-  <property name="src.dir"       value="src/java"/>
-  <property name="app.name"        value="mcell"/>
-  <property name="src.pkg.name"    value="com.threerings.msoy"/>
-  <property name="deploy.dir" value="dist"/>
-  <property name="classes.dir"   value="${deploy.dir}/classes"/>
+  <fileset id="cell.tasks" dir="${basedir}/tasks">
+      <include name="*.properties"/>
+  </fileset>
 
-  <!-- classpath available to the aggregators in hadoop -->
-  <path id="runtime.classpath">
-<!--    <pathelement location="${deploy.dir}/yohoho"/> -->
-    <pathelement location="${deploy.dir}/classes"/>
-    <fileset dir="${base.dir}/extlibs/java"
-        includes="hadoop/hadoop-core.jar,log4j.jar,commons-httpclient.jar"/>
-    <fileset dir="${deploy.dir}/lib" includes="*.jar,*.zip"/>
-  </path>
+  <property name="cell.srcdir" value="${basedir}/src/java"/>
 
-  <!-- import common build targets -->
-  <import file="${base.dir}/build/etc/build-support.xml"/>
-
-  <target name="prepare">
-    <mkdir dir="${deploy.dir}/classes"/>
-
-    <!-- Fetch maven dependencies -->
-    <artifact:dependencies filesetId="dependency.fileset">
-      <remoteRepository refid="ooo.maven.depends.repo"/>
-      <dependency groupId="com.threerings.panopticon" artifactId="panopticon-hadoop-mr"
-          version="0.0-SNAPSHOT"/>
-    </artifact:dependencies>
-    <copy todir="${deploy.dir}/lib">
-      <fileset refid="dependency.fileset"/>
-      <mapper type="flatten"/>
-    </copy>
-    <copy todir="${deploy.dir}/lib">
-        <fileset dir="libs" includes="*.zip"/>
-    </copy>
-
-    <!-- Explicitly include used data classes from yohoho -->
-<!--
-    <copy todir="${deploy.dir}/yohoho">
-        <fileset dir="${base.dir}/dist/classes" includesfile="yohoho.includes"/>
-    </copy>
--->
+  <target name="dist">
+      <ant dir="cell" target="dist" inheritRefs="true"/>
   </target>
 
-  <target name="compile" depends="prepare">
-    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
-           debug="on" optimize="off" deprecation="on" target="1.5">
-      <classpath refid="runtime.classpath"/>
-      <compilerarg value="-Xlint"/>
-      <compilerarg value="-Xlint:-serial"/>
-    </javac>
-  </target>
-
-  <target name="dist" depends="prepare,compile">
-      <jar destfile="${deploy.dir}/msoy-hadoop-mr.jar" update="yes">
-          <zipgroupfileset dir="${deploy.dir}/lib" includes="*.jar"/>
-<!--          <fileset dir="${deploy.dir}/yohoho" includes="**/*"/> -->
-          <fileset dir="${deploy.dir}/classes" includes="**/*"/>
-      </jar>
-      <copy todir="cell">
-        <fileset dir="etc">
-          <include name="cell.conf"/>
-          <include name="cell.properties"/>
-          <include name="aggregator_classes"/>
-        </fileset>
-        <fileset dir="${deploy.dir}">
-          <include name="msoy-hadoop-mr.jar"/>
-        </fileset>
-      </copy>
-      <copy todir="cell/tasks">
-        <fileset dir="tasks">
-          <include name="*.properties"/>
-        </fileset>
-      </copy>
-  </target>
   <target name="package" depends="dist">
-      <fileset dir="cell" id="external.files">
-        <include name="msoy-hadoop-mr.jar"/>
-        <include name="tasks/*.properties"/>
-      </fileset>
-      <ant dir="cell" inheritRefs="true"/>
-  </target>
-
-  <target name="clean">
-    <delete dir="${deploy.dir}/classes"/>
-    <delete>
-        <fileset dir="cell">
-          <include name="cell.conf"/>
-          <include name="cell.properties"/>
-          <include name="aggregator_classes"/>
-          <include name="msoy-hadoop-mr.jar"/>
-        </fileset>
-    </delete>
-    <delete dir="cell/tasks"/>
+      <ant dir="cell" target="just-package" inheritRefs="true"/>
   </target>
 
   <target name="distclean">
-    <delete dir="${deploy.dir}"/>
-    <ant dir="cell" target="distclean" inheritRefs="true"/>
+      <ant dir="cell" target="distclean" inheritRefs="true"/>
   </target>
 </project>
