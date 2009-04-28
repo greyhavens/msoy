@@ -39,6 +39,7 @@ import org.mortbay.resource.Resource;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.pulse.web.server.PulseServlet;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
@@ -353,6 +354,7 @@ public class MsoyHttpServer extends Server
         .put(SurveyService.ENTRY_POINT, SurveyServlet.class)
         .put("/facebook", FacebookServlet.class)
         .put("/ooo", OOOXmlRpcServlet.class)
+        .put("/pulse", PulseServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
         .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)
         .put("/snapshotsvc", SnapshotItemUploadServlet.class)
