@@ -1006,8 +1006,7 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients">
-  </target>
+  <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
   <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclient"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
