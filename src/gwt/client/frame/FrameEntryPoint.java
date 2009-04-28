@@ -46,6 +46,7 @@ import client.images.frame.FrameImages;
 import client.shell.BrowserTest;
 import client.shell.CShell;
 import client.shell.HttpReferrerCookie;
+import client.shell.LandingTestCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
@@ -164,7 +165,7 @@ public class FrameEntryPoint
             }
         }
 
-        CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
+        CShell.log("Displaying page", "page", page, "args", args);
 
         // do some special processing if this is an invitation link
         if (page == Pages.ME && args.get(0, "").equals("i") && CShell.isGuest()) {
@@ -195,7 +196,7 @@ public class FrameEntryPoint
         if (vector != null) {
             _membersvc.trackVectorAssociation(getVisitorInfo(), vector, new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
-                    CShell.log("Saved vector association for " + getVisitorInfo());
+                    CShell.log("Saved vector association", "visInfo", getVisitorInfo());
                 }
                 public void onFailure (Throwable caught) {
                     CShell.log("Failed to send vector creation to server.", caught);
@@ -205,7 +206,8 @@ public class FrameEntryPoint
 
         // if we have no account cookie (which means we've seen someone on this computer before),
         // force the creation of our visitor info because we're very probably a real new user
-        if (StringUtil.isBlank(CookieUtil.get(CookieNames.ACCOUNT))) {
+        boolean newUser = StringUtil.isBlank(CookieUtil.get(CookieNames.ACCOUNT));
+        if (newUser) {
             VisitorInfo info = getVisitorInfo(); // creates a visitorId and reports it
 
             // if this is a guest, and we have a referrer cookie from them, record it
@@ -213,6 +215,29 @@ public class FrameEntryPoint
                 String ref = HttpReferrerCookie.get();
                 _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
                 HttpReferrerCookie.disable();
+            }
+        }
+
+        // do different things for new users on landing
+        if (page == Pages.LANDING && args.get(0, "").equals("") && newUser) {
+            String testName = "2009 04 landing";
+            int landingGroup = LandingTestCookie.getGroup(testName, getVisitorInfo().id);
+            switch (landingGroup) {
+            case 1:  // group A: go home
+                page = Pages.WORLD;
+                args = Args.fromToken("places");
+                break;
+            case 2:  // group B: register NOW
+                page = Pages.ACCOUNT;
+                args = Args.fromToken("create");
+                break;
+            }
+            // log the result to the server
+            if (landingGroup > 0) {
+                _membersvc.logLandingABTestGroup(getVisitorInfo(), testName, landingGroup,
+                    new NoopAsyncCallback());
+                CShell.log("Displaying alternate page", "page", page, "args", args,
+                    "group", landingGroup);
             }
         }
 
