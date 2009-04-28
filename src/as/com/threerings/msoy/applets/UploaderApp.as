@@ -141,7 +141,11 @@ public class UploaderApp extends Sprite
     protected function handleUploadError (event :ErrorEvent) :void
     {
         trace("Full upload error: " + event.text);
-        setStatus("Error uploading: " + event.text);
+        if (-1 != event.text.indexOf("2038")) { // super common error
+            setStatus("Upload error: file too big, or server unavailable.");
+        } else {
+            setStatus("Error uploading: " + event.text);
+        }
         showUploadButton();
     }
 
