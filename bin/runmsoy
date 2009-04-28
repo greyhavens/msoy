@@ -52,17 +52,7 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dlog4j.configuration=log4j.properties \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
     -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
-    -Dehcache.disk.store.dir=world \
-    -Dcom.sun.management.jmxremote.port=9988 \
-    -Dcom.sun.management.jmxremote.authenticate=false \
-    -Dcom.sun.management.jmxremote.ssl=false"
-
-JCD_CONF=/etc/collectd/collectd.conf
-if [ -f $JCD_CONF ]; then
-    JCD_HOST=`grep Hostname $JCD_CONF | awk '{ print $2 }' | sed 's:"::g' `
-    JAVA_ARGS="$JAVA_ARGS -Djcd.tmpl=javalang -Djcd.host=$JCD_HOST \
-                          -javaagent:$MSOY_HOME/dist/lib/collectd.jar"
-fi
+    -Dehcache.disk.store.dir=world"
 
 # Make sure we have a JVM and set up our classpath and bits
 . $MSOY_HOME/bin/runcommon
