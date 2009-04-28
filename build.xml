@@ -1043,6 +1043,7 @@
     <delete dir="${deploy.dir}"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
+    <ant dir="projects/mcell" target="distclean" inheritAll="false"/>
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
