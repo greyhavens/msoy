@@ -61,8 +61,12 @@ public class PercentageTransformer
         float underNumber = new Float(data.get(_denominator).toString());
         for (int ii = 0; ii < _numerators.length; ii++)
         {
-            Object over = data.get(_numerators[ii]);
-            float overNumber = over == null ? 0f : new Float(over.toString());
+            float overNumber;
+            if (data.containsKey(_numerators[ii])) {
+                overNumber = new Float(data.get(_numerators[ii]).toString());
+            } else {
+                overNumber = 0f;
+            }
             String outputField = (_outputs == null) ? "percentage" : _outputs[ii];
 
             if (underNumber == 0) {
