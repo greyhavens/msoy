@@ -142,7 +142,7 @@ public class MsoyChatChannel extends ChatChannel
     // from ChatChannel
     override public function compareTo (other :Object) :int
     {
-        return toString().localeCompare(other.toString());
+        return StringUtil.compare(toString(), other.toString());
     }
 
     // from ChatChannel
