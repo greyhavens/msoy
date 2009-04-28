@@ -984,10 +984,12 @@
     <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
 
     <!-- build the Panopticon cell -->
+    <!--
     <ant dir="projects/mcell" target="dist" inheritRefs="false" inheritAll="false">
         <reference refid="ooo.oooconfig.source"/>
         <reference refid="ooo.maven.depends.repo"/>
     </ant>
+-->
 
   </target>
 
