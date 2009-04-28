@@ -47,6 +47,10 @@ public class ABTestUtil
      */
     public static int getNumGroups (String cookie, String testName)
     {
+        // the browser does not unquote the cookie value... but then again, maybe it will so just
+        // get rid of all quotes; we don't need them
+        cookie = cookie.replace("\"", "");
+
         // this does not need to be more efficient
         for (String item : cookie.split("" + COOKIE_RECORD_SEPARATOR)) {
             String[] parts = item.split("" + COOKIE_FIELD_SEPARATOR);
