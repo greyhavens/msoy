@@ -743,6 +743,12 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
     }
 
+    @Override // from CrowdPeerManager
+    protected Name authFromViz (Name vizname)
+    {
+        return MsoyAuthName.makeKey(((MemberName)vizname).getMemberId());
+    }
+
     @Override // from PeerManager
     protected Class<? extends PeerNode> getPeerNodeClass ()
     {
