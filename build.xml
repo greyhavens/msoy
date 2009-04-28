@@ -982,6 +982,13 @@
     <jar file="${deploy.dir}/${app.name}-media.jar" basedir="${classes.dir}" includes="rsrc/**"/>
     <!-- and our server-only data in yet another -->
     <jar file="${deploy.dir}/${app.name}-data.jar" basedir="." includes="data/dictionary/**"/>
+
+    <!-- build the Panopticon cell -->
+    <ant dir="projects/mcell" target="dist" inheritRefs="false" inheritAll="false">
+        <reference refid="ooo.oooconfig.source"/>
+        <reference refid="ooo.maven.depends.repo"/>
+    </ant>
+
   </target>
 
   <!-- builds top-level flash applications. -->
@@ -999,7 +1006,8 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
+  <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients">
+  </target>
   <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclient"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
@@ -1324,6 +1332,14 @@
     <move todir="${package.output}">
       <fileset dir="${pkgroot.root}" includes="*.dpkg"/>
     </move>
+  </target>
+
+  <target name="package-cell" depends="dist">
+    <ant dir="projects/mcell" target="just-package" inheritAll="false">
+        <property name="ooo.architecture" value="${ooo.architecture}"/>
+        <reference refid="ooo.oooconfig.source"/>
+        <reference refid="ooo.maven.depends.repo"/>
+    </ant>
   </target>
 
   <!-- builds our javadocs and packages them up -->

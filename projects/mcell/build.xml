@@ -1,29 +1,47 @@
 <!-- project build configuration -->
-<project name="Whirled panopticon aggregations" default="dist" basedir="."
+<project name="Whirled panopticon aggregations" default="dist" 
          xmlns:artifact="urn:maven-artifact-ant">
-  <property name="src.dir"      value="src/java"/>
+  <property name="src.dir"      value="${basedir}/src/java"/>
+  <property name="msoy"         value="${basedir}/../.."/>
+  <!-- TODO: I am not sure this is the way libs.dir is meant to be used -->
+  <property name="libs.dir"     value="${msoy}/extlibs/java"/>
+  <!-- TODO: and this is not very elegant, but enough fucking around -->
+  <property name="msoy.classes" value="${msoy}/dist/classes"/>
   <property name="app.name"     value="mcell"/>
   <property name="src.pkg.name" value="com.threerings.msoy"/>
 
+  <!-- tell the cell where to find dev copies of cell.conf & cell.propertoes -->
   <property name="cell.configdir" value="${basedir}/etc"/>
+  <!-- tell the cell to copy our task lists -->
   <fileset id="cell.files" dir="${basedir}/etc">
       <include name="tasks.*"/>
   </fileset>
-
+  <!-- tell the cell to include our property-based aggregators in the map/reduce jar -->
   <fileset id="cell.tasks" dir="${basedir}/tasks">
       <include name="*.properties"/>
   </fileset>
 
+  <!-- tell the cell where external classes are to be found -->
+  <property name="cell.classpath" value="${msoy.classes}"/>
+  <!-- tell the cell where our aggregator sources are -->
   <property name="cell.srcdir" value="${basedir}/src/java"/>
 
+  <!-- forward 'dist' to the cell -->
   <target name="dist">
       <ant dir="cell" target="dist" inheritRefs="true"/>
   </target>
 
+  <!-- forward 'package' to the cell, building first -->
   <target name="package" depends="dist">
       <ant dir="cell" target="just-package" inheritRefs="true"/>
   </target>
 
+  <!-- forward package' to the cell, to be used only if 'dist' has already been executed -->
+  <target name="just-package">
+      <ant dir="cell" target="just-package" inheritRefs="true"/>
+  </target>
+
+  <!-- forward 'dist' to the cell -->
   <target name="distclean">
       <ant dir="cell" target="distclean" inheritRefs="true"/>
   </target>
