@@ -56,14 +56,14 @@ public class PercentageTransformer
         _format = config.getBoolean("outputAsFraction", false) ? FRACTION_FORMAT : PERCENT_FORMAT;
     }
 
-    public boolean transform(EventData data)
+    public boolean transform (EventData data)
     {
-        float underNumber = new Float(data.get(_denominator).toString());
+        float underNumber = Float.parseFloat(data.get(_denominator).toString());
         for (int ii = 0; ii < _numerators.length; ii++)
         {
             float overNumber;
             if (data.containsKey(_numerators[ii])) {
-                overNumber = new Float(data.get(_numerators[ii]).toString());
+                overNumber = Float.parseFloat(data.get(_numerators[ii]).toString());
             } else {
                 overNumber = 0f;
             }
