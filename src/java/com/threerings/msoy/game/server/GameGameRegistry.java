@@ -460,7 +460,8 @@ public class GameGameRegistry
         final boolean isMultiplayer = type != MetricType.SINGLE_PLAYER;
         final int newFlowToNextRecalc;
         if (detail.flowToNextRecalc <= 0) {
-            newFlowToNextRecalc = _runtime.money.payoutFactorReassessment * hourlyRate +
+            newFlowToNextRecalc =
+                Math.round(hourlyRat * _runtime.money.payoutFactorReassessment/60f) +
                 detail.flowToNextRecalc;
             detail.flowToNextRecalc = newFlowToNextRecalc;
         } else {
