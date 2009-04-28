@@ -25,7 +25,7 @@ class Server:
         return self._logstems
 
 ## World servers
-world = map(lambda x: Server("whirled", x, "w", ["world-server"]), [1, 2, 3, 4])
+world = map(lambda x: Server("whirled", x, "w", ["world-server"]), [1, 2, 3])
 
 ## Bureau servers
 bureau = map(lambda x: Server("bureau", x, "b",
@@ -33,3 +33,4 @@ bureau = map(lambda x: Server("bureau", x, "b",
 
 msoyhome = "/export/msoy"
 msoylogs = os.path.join(msoyhome, "log")
+
