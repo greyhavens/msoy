@@ -718,12 +718,6 @@
     </antcall>
   </target>
 
-  <!-- builds our neighborhood visualization client -->
-  <target name="neighborhood">
-    <ant dir="projects/neighborhood" target="dist" inheritAll="false"/>
-    <copy file="${deploy.dir}/neighborhood.swf" todir="pages/clients/${version}"/>
-  </target>
-
   <!-- builds our tutorial game -->
   <target name="tutorial" depends="prepare">
     <ant dir="projects/games/tutorial" target="dist" inheritAll="false"/>
@@ -1040,7 +1034,6 @@
   <!-- fully cleans out all build results -->
   <target name="distclean" depends="clean,asclean,gclean,postclean">
     <delete dir="${deploy.dir}"/>
-    <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
   </target>
