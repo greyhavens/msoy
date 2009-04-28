@@ -120,5 +120,6 @@
 	<classpathentry kind="lib" path="extlibs/java/facebook-java-api-schema.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/facebook-java-api.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/xmlrpc-server.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pulse"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
