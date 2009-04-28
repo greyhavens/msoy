@@ -23,6 +23,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.pulse.server.PulseManager;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -54,6 +55,7 @@ import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.gwt.StatsModel;
+import com.threerings.msoy.admin.server.persist.MsoyPulseRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -64,6 +66,12 @@ import static com.threerings.msoy.Log.log;
 public class MsoyAdminManager
     implements PeerAdminProvider
 {
+    @Inject public MsoyAdminManager (PulseManager pulseMan)
+    {
+        // we need to register our records before the server gets around to initing the repos
+        pulseMan.registerRecorder(MsoyPulseRecord.class, MsoyPulseRecorder.class);
+    }
+
     /**
      * Prepares the admin manager for operation.
      */
@@ -88,6 +96,9 @@ public class MsoyAdminManager
         _collectors.put(StatsModel.Type.DEPOT_QUERIES, new DepotQueriesStatCollector(_perCtx));
         _collectors.put(StatsModel.Type.CACHE, new CacheStatCollector(cacheMgr));
         _collectors.put(StatsModel.Type.RPC, new RPCStatCollector(_rpcProfiler));
+
+        // start up the pulse recorder
+        _pulseMan.init(ServerConfig.nodeName);
     }
 
     /**
@@ -301,6 +312,7 @@ public class MsoyAdminManager
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected PersistenceContext _perCtx;
+    @Inject protected PulseManager _pulseMan;
     @Inject protected RPCProfiler _rpcProfiler;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected RuntimeConfig _runtime;
