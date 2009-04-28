@@ -51,7 +51,7 @@ import client.util.ServiceUtil;
  */
 public class CreateAccountPanel extends FlowPanel
 {
-    public CreateAccountPanel ()
+    public CreateAccountPanel (boolean saveProgress, boolean showLogon)
     {
         setStyleName("createAccount");
 
@@ -62,13 +62,15 @@ public class CreateAccountPanel extends FlowPanel
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
 
-        if (CShell.isPermaguest()) {
+        if (saveProgress) {
             content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
             content.add(MsoyUI.createLabel(_msgs.createSaveModeIntro(), "Coins"));
 
         } else {
-            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
-            content.add(new FullLogonPanel());
+            if (showLogon) {
+                content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+                content.add(new FullLogonPanel());
+            }
 
             content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
             content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
@@ -196,7 +198,7 @@ public class CreateAccountPanel extends FlowPanel
             }
         };
 
-        if (CShell.isPermaguest()) {
+        if (saveProgress && showLogon) {
             content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
             content.add(new FullLogonPanel());
         }

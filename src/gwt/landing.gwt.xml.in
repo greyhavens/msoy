@@ -1,4 +1,8 @@
 <module>
+
+  <!-- TODO TODO TODO: the landing page is too big, we need to remove or at least narrow some of
+       these inherits and/or source tags. -->
+
   <inherits name="item"/>
   <inherits name="room"/>
 
@@ -19,10 +23,12 @@
   <source path="client/trophy"/>
   <source path="client/games"/>
   <source path="client/msgs"/>
+  <source path="client/account"/>
   <source path="client/landing"/>
 
   <public path="public/landing"/>
   <stylesheet src="../games/games.css"/>
+  <stylesheet src="../account/account.css"/>
   <stylesheet src="landing.css"/>
 
   <entry-point class="client.landing.LandingPage"/>

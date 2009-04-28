@@ -228,8 +228,8 @@ public class FrameEntryPoint
                 args = Args.fromToken("places");
                 break;
             case 2:  // group B: register NOW
-                page = Pages.ACCOUNT;
-                args = Args.fromToken("create");
+                page = Pages.LANDING;
+                args = Args.fromToken("register");
                 break;
             }
             // log the result to the server

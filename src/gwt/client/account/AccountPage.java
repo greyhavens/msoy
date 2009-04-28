@@ -45,7 +45,7 @@ public class AccountPage extends Page
             }.schedule(2000);
 
         } else if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
-            setContent(_msgs.createTitle(), new CreateAccountPanel());
+            setContent(_msgs.createTitle(), new CreateAccountPanel(CShell.isPermaguest(), true));
 
         } else if (action.equals("edit")) {
             if (CShell.isMember()) {
