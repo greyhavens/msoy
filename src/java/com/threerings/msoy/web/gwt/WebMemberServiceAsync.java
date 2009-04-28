@@ -97,6 +97,12 @@ public interface WebMemberServiceAsync
                          AsyncCallback<Integer> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#logLandingABTestGroup}.
+     */
+    void logLandingABTestGroup (VisitorInfo info, String testName, int group,
+        AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#trackClientAction}.
      */
     void trackClientAction (VisitorInfo info, String actionName, String details,

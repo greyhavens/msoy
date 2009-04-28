@@ -139,6 +139,12 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Log the visitor's a/b test group, usually chosen using LandingTestCookie.
+     */
+    void logLandingABTestGroup (VisitorInfo info, String testName, int group)
+        throws ServiceException;
+
+    /**
      * Generic method for tracking a client-side action such as clicking a button.
      */
     void trackClientAction (VisitorInfo info, String actionName, String details)

@@ -280,6 +280,16 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    public void logLandingABTestGroup (VisitorInfo info, String testName, int group)
+    {
+        int realGroup = _memberLogic.getABTestGroup(testName, info, true);
+        if (realGroup != group) {
+            log.warning("Funky, the client landing group is different from the server",
+                "test", testName, "client", group, "server", realGroup);
+        }
+    }
+
+    // from WebMemberService
     public void trackClientAction (VisitorInfo info, String actionName, String details)
     {
         if (info == null) {
