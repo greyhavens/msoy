@@ -47,8 +47,9 @@ public class TrophyFeederPanel extends FloatingPanel
      * @return true if the popup was shown, false if it was not shown because no valid trophies
      * were supplied.
      */
-    public static function showNew (ctx :MsoyContext, gameName :String,
-        trophies :Array /* of Trophy */, onClose :Function) :void
+    public static function showNew (
+        ctx :MsoyContext, gameName :String, trophies :Array /* of Trophy */, onClose :Function)
+        :void
     {
         // these trophies will always be earned 
         var tfp :TrophyFeederPanel;

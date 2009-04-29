@@ -40,20 +40,23 @@ public class ParlorGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
-    override protected function getHeadShot_v2 (occupant :int) :DisplayObject
+    override protected function getHeadShot_v2 (occupantId :int) :DisplayObject
     {
         validateConnected();
-        var info :OccupantInfo = _gameObj.occupantInfo.get(occupant) as OccupantInfo;
-        if (info != null) {
-            var vizName :VizMemberName = info.username as VizMemberName;
-            if (vizName != null) {
-                // now, we return a new one every time (in case the game wants to use two.)
-                return new Thumbnail(ScalingMediaContainer.createView(vizName.getPhoto()));
+        for (OccupantInfo info : _gameObj.occupantInfo) {
+            if (getPlayerPersistentId(info) == occupantId) {
+                var vizName :VizMemberName = info.username as VizMemberName;
+                if (vizName != null) {
+                    // now, we return a new one every time (in case the game wants to use two.)
+                    return new Thumbnail(ScalingMediaContainer.createView(vizName.getPhoto()));
+                }
+                break;
             }
         }
 
-        log.warning("Unable to find occupant, or username is not a VizMemberName: " + occupant);
-        return super.getHeadShot_v2(occupant); // return something that works anyway
+        log.warning("Unable to find occupant, or username is not a VizMemberName",
+            "occId", occupantId);
+        return super.getHeadShot_v2(occupantId); // return something that works anyway
     }
 
     // from WhirledGameBackend

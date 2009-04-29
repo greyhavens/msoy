@@ -28,7 +28,7 @@ public class GameController extends MsoyController
     }
 
     // from MsoyController
-    override public function handleClosePlaceView () : void
+    override public function handleClosePlaceView () :void
     {
         // give the handlers a chance to popup
         if (!sanctionClosePlaceView()) {
@@ -47,11 +47,11 @@ public class GameController extends MsoyController
         var params :Object = MsoyParameters.get();
         if (null != params["gameLocation"]) {
             var gameOid :int = int(params["gameLocation"]);
-            log.info("Entering game [oid=" + gameOid + "].");
+            log.info("Entering game", "oid", gameOid);
             _gctx.getLocationDirector().moveTo(gameOid);
         } else if (null != params["gameId"]) {
             var gameId :int = int(params["gameId"]);
-            log.info("Entering lobby [oid=" + gameOid + "].");
+            log.info("Entering lobby", "oid", gameOid);
             joinGameLobby(gameId); // TODO: handle mode=(m|a|s)
         }
     }
