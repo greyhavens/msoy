@@ -167,7 +167,7 @@ public class MsoyHttpServer extends Server
                 rsp.setContentLength(0);
                 rsp.sendRedirect("/clients/" + DeploymentConfig.version + "/world-client.swf");
 
-            } else if (DeploymentConfig.devDeployment && req.getRequestURI().equals("/") &&
+            } else if (req.getRequestURI().equals("/") &&
                 CookieUtil.getCookie(req, CookieNames.ACCOUNT) == null) {
                 // Give new users all the names and number of groups for tests designated as
                 // occurring on landing. The client will compute the group that the user is
