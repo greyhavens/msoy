@@ -6,9 +6,10 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.samskivert.util.StringUtil;
+import com.threerings.msoy.server.MsoyEvents;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
-import com.threerings.panopticon.aggregator.result.StringInputNameResult;
+import com.threerings.panopticon.aggregator.result.Result;
 import com.threerings.panopticon.aggregator.result.field.FieldKey;
 import com.threerings.panopticon.aggregator.result.field.FieldResult;
 import com.threerings.panopticon.aggregator.result.field.FieldWritable;
@@ -31,7 +32,7 @@ public class AccountsWithVectors
         }
     }
 
-    @StringInputNameResult(inputs="VectorAssociated")
+    @Result(inputs=MsoyEvents.VectorAssociated.class)
     public static class VectorMap extends FieldResult<VectorMap>
     {
         public Map<String, String> trackerToVector = Maps.newHashMap();
@@ -63,7 +64,7 @@ public class AccountsWithVectors
         }
     }
 
-    @StringInputNameResult(inputs="AccountCreated")
+    @Result(inputs=MsoyEvents.AccountCreated.class)
     public static class AccountMap extends FieldResult<AccountMap>
     {
         public Map<String, Account> trackerToAccount = Maps.newHashMap();
