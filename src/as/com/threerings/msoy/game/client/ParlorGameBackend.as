@@ -43,8 +43,8 @@ public class ParlorGameBackend extends WhirledGameBackend
     override protected function getHeadShot_v2 (occupantId :int) :DisplayObject
     {
         validateConnected();
-        for (OccupantInfo info : _gameObj.occupantInfo) {
-            if (getPlayerPersistentId(info) == occupantId) {
+        for each (var info :OccupantInfo in _gameObj.occupantInfo.toArray()) {
+            if (infoToId(info) == occupantId) {
                 var vizName :VizMemberName = info.username as VizMemberName;
                 if (vizName != null) {
                     // now, we return a new one every time (in case the game wants to use two.)

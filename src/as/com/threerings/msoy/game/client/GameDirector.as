@@ -16,7 +16,7 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.parlor.client.GameController;
+import com.threerings.parlor.game.client.GameController;
 
 import com.threerings.flex.CommandMenu;
 
@@ -41,6 +41,7 @@ import com.threerings.msoy.avrg.client.AVRGameLiaison;
 import com.threerings.msoy.game.data.GameGameMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;

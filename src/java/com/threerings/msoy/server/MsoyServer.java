@@ -47,7 +47,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
-import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
 
@@ -70,6 +69,7 @@ import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowSessionFactory;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
+import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
@@ -216,13 +216,7 @@ public class MsoyServer extends MsoyBaseServer
         _dictMan.init("data/dictionary");
 
         // tell GameManager how to identify our users
-        UserIdentifer msoyIder = new UserIdentifier() {
-            public int getUserId (Name name) {
-                return ((MemberName) name).getMemberId();
-            }
-        };
-        GameManager.setUserIdentifier(msoyIder);
-        AVRGameManager.setUserIdentifier(msoyIder);
+        GameManager.setUserIdentifier(MsoyUserIdentifier.SINGLETON);
 
         // TEMP: give a peer manager reference to MemberNodeActions
         MemberNodeActions.init(_peerMan);
