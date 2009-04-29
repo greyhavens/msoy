@@ -33,6 +33,9 @@ public class MsoyThaneGameBackend extends ThaneGameBackend
     override protected function populateProperties (o :Object) :void
     {
         super.populateProperties(o);
+
+        // Be sure to do the party stuff after super(), because ThaneGameBackend sets up
+        // some test party stuff. There is presently no TestThaneGameBackend
         _partyHelper.populateProperties(o);
     }
 
