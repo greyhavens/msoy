@@ -21,8 +21,8 @@ public class DailyExperienceJoinResult extends JoinResult
 {
     public boolean putData (final Map<String, Object> result)
     {
-        final EventData totalEvent = get(new EventName("DailyExperienceUniqueTrackerCounts"));
-        final EventData pivotEvent = get(new EventName("DailyExperienceTrackerPivot"));
+        EventData totalEvent = get(new EventName("DailyExperienceUniqueTrackerCounts"));
+        EventData pivotEvent = get(new EventName("DailyExperienceTrackerPivot"));
 
         if (totalEvent == null || pivotEvent == null) {
             return false; // something's not right!
