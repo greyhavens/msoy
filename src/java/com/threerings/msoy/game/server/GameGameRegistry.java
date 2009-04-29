@@ -454,10 +454,9 @@ public class GameGameRegistry
         detail.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
-        final int hourlyRate = type == MetricType.AVRG ?
-            _runtime.money.hourlyAVRGameFlowRate :
-            _runtime.money.hourlyGameFlowRate;
-        final boolean isMultiplayer = type != MetricType.SINGLE_PLAYER;
+        final int hourlyRate = (type == MetricType.AVRG) ? _runtime.money.hourlyAVRGameFlowRate
+                                                         : _runtime.money.hourlyGameFlowRate;
+        final boolean isMultiplayer = (type != MetricType.SINGLE_PLAYER);
         final int newFlowToNextRecalc;
         if (detail.flowToNextRecalc <= 0) {
             newFlowToNextRecalc =
