@@ -13,7 +13,6 @@ import com.threerings.pulse.server.persist.PulseRecord;
 import com.threerings.msoy.admin.server.persist.MsoyPulseRecord;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.game.data.GameAuthName;
-import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -37,10 +36,9 @@ public class MsoyPulseRecorder implements PulseManager.Recorder
                 record.members++;
             } else if (cinfo.username instanceof GameAuthName) {
                 record.gamers++;
-            } else if (cinfo.username instanceof PartyAuthName) {
-                record.partiers++;
             }
         }
+        record.partiers = nodeobj.memberParties.size();
 
         return record;
     }
