@@ -65,6 +65,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
+import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowSessionFactory;
 import com.threerings.msoy.chat.server.JabberManager;
@@ -215,11 +216,13 @@ public class MsoyServer extends MsoyBaseServer
         _dictMan.init("data/dictionary");
 
         // tell GameManager how to identify our users
-        GameManager.setUserIdentifier(new UserIdentifier() {
+        UserIdentifer msoyIder = new UserIdentifier() {
             public int getUserId (Name name) {
                 return ((MemberName) name).getMemberId();
             }
-        });
+        };
+        GameManager.setUserIdentifier(msoyIder);
+        AVRGameManager.setUserIdentifier(msoyIder);
 
         // TEMP: give a peer manager reference to MemberNodeActions
         MemberNodeActions.init(_peerMan);

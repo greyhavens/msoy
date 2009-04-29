@@ -128,6 +128,11 @@ public class AVRGameManager extends PlaceManager
         void avrGameAgentDestroyed (AVRGameManager mgr);
     }
 
+    public static void setUserIdentifier (UserIdentifer userIder)
+    {
+        _userIder = userIder;
+    }
+
     public void setLifecycleObserver (LifecycleObserver obs)
     {
         _lifecycleObserver = obs;
@@ -246,7 +251,7 @@ public class AVRGameManager extends PlaceManager
         _gameObj.setContentService(addDispatcher(new ContentDispatcher(this)));
         _gameObj.setPrizeService(addDispatcher(new PrizeDispatcher(this)));
         _gameObj.setMessageService(addDispatcher(new WhirledGameMessageDispatcher(
-            new WhirledGameMessageHandler(_gameObj) {
+            new WhirledGameMessageHandler(_gameObj, _userIder) {
                 @Override protected ClientObject getAudienceMember (int id)
                     throws InvocationException {
                     ClientObject target = null;
@@ -270,10 +275,6 @@ public class AVRGameManager extends PlaceManager
 
                 @Override protected boolean isAgent (ClientObject caller) {
                     return AVRGameManager.this.isAgent(caller);
-                }
-
-                @Override protected int resolvePlayerId (ClientObject caller) {
-                    return ((PlayerObject)caller).getMemberId();
                 }
             })));
         
@@ -1113,6 +1114,8 @@ public class AVRGameManager extends PlaceManager
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected TrophyRepository _trophyRepo;
+
+    protected static UserIdentifier _userIder;
 
     /** idle time before shutting down the manager. */
     protected static final long IDLE_UNLOAD_PERIOD = 5*60*1000L; // in ms
