@@ -454,6 +454,11 @@
           <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
           <path refid="gwt.classpath"/>
         </classpath>
+        <!-- temporary workaround to crashing problem on build server's BSD java -->
+        <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/core/internal/dtree/DataTreeNode,forwardDeltaWith"/>
+        <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
+        <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
+        <!-- end temp -->
         <jvmarg value="-Djava.awt.headless=true"/>
         <arg value="-style"/><arg value="${gwt_style}"/>
         <arg value="-out"/>
