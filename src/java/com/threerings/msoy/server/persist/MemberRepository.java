@@ -1015,16 +1015,11 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the names of the members invited by the specified member.
      */
-    public List<MemberName> loadMembersInvitedBy (int memberId)
+    public List<MemberName> loadMembersAffiliatedTo (int memberId)
     {
-        // TODO: this needs fixing: your affiliate is not necessarily your inviter
-        // (I mean, if you have an inviter, they will be your affiliate, and you can't have
-        // both, but we can't just look at an affiliate id and know that that's your inviter)
-        Join join = new Join(MemberRecord.MEMBER_ID,
-                             InviterRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER);
         Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID, memberId);
         List<MemberName> names = Lists.newArrayList();
-        for (MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
+        for (MemberNameRecord name : findAll(MemberNameRecord.class, where)) {
             names.add(name.toMemberName());
         }
         return names;
