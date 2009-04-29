@@ -461,7 +461,7 @@ public class GameGameRegistry
         final int newFlowToNextRecalc;
         if (detail.flowToNextRecalc <= 0) {
             newFlowToNextRecalc =
-                Math.round(hourlyRat * _runtime.money.payoutFactorReassessment/60f) +
+                Math.round(hourlyRate * _runtime.money.payoutFactorReassessment/60f) +
                 detail.flowToNextRecalc;
             detail.flowToNextRecalc = newFlowToNextRecalc;
         } else {
