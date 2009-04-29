@@ -10,12 +10,20 @@ import mx.core.UIComponent;
 
 import mx.states.State;
 
+import mx.styles.StyleManager;
+
 import com.threerings.msoy.client.DeploymentConfig;
 
 import com.threerings.flex.LoadedAsset;
 
 /** The image used to be the buttons skin. Is automatically lightened/darkened/offset. */
 [Style(name="image")]
+
+/** A color with which to highlight the button. Color names may be used. */
+[Style(name="highlight")]
+
+/** The highlight alpha, a Number between 0 and 1. */
+[Style(name="highlightAlpha")]
 
 /**
  * A stateful button skin. Uses one image and modifies colors and offsets to indicate state.
@@ -25,16 +33,27 @@ public class ImageButtonSkin extends UIComponent
     public function ImageButtonSkin ()
     {
         // register our states
-        states = [ addState("up"), addState("over"), addState("down"), addState("disabled"),
-            addState("selectedUp"), addState("selectedOver"), addState("selectedDown"),
-            addState("selectedDisabled") ];
+        states = [ "up", "over", "down", "disabled", "selectedUp", "selectedOver", "selectedDown",
+            "selectedDisabled" ].map(
+            function (stName :String, ... rest) :State {
+                var s :State = new State();
+                s.name = stName;
+                return s;
+            });
     }
 
     override public function styleChanged (styleProp :String) :void
     {
         super.styleChanged(styleProp);
-        if (styleProp == "image") {
+        switch (styleProp) {
+        case "image":
             readImageFromStyle();
+            break;
+
+        case "highlight":
+        case "highlightAlpha":
+            readHightlightFromStyle();
+            break;
         }
     }
 
@@ -42,6 +61,7 @@ public class ImageButtonSkin extends UIComponent
     {
         super.stylesInitialized();
         readImageFromStyle();
+        readHightlightFromStyle();
     }
 
     override public function set currentState (newState :String) :void
@@ -57,6 +77,21 @@ public class ImageButtonSkin extends UIComponent
         if (_image is LoadedAsset && parent != null) {
             parent.width = LoadedAsset(_image).measuredWidth;
             parent.height = LoadedAsset(_image).measuredHeight;
+        }
+    }
+
+    /**
+     * Re-read the highlight out of our style specification.
+     */
+    protected function readHightlightFromStyle () :void
+    {
+        graphics.clear();
+        var color :uint = StyleManager.getColorName(getStyle("highlight"));
+        if (color != StyleManager.NOT_A_COLOR) {
+            var alpha :Number = getStyle("highlightAlpha") || 1;
+            graphics.beginFill(color, alpha);
+            graphics.drawRoundRect(0, 0, width, height, 4, 4);
+            graphics.endFill();
         }
     }
 
@@ -121,14 +156,6 @@ public class ImageButtonSkin extends UIComponent
         } else {
             _image.y = 0;
         }
-    }
-
-    /** Convenience to create a State. */
-    protected function addState (name :String) :State
-    {
-        var s :State = new State();
-        s.name = name;
-        return s;
     }
 
     override protected function measure () :void
