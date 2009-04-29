@@ -152,7 +152,7 @@ public class FeedLogic
             }
 
             FeedCategory feedCategory = new FeedCategory();
-            feedCategory.category = category.ordinal();
+            feedCategory.category = category;
             feedCategory.messages = typeMessages.toArray(new FeedMessage[typeMessages.size()]);
             feed.add(feedCategory);
         }

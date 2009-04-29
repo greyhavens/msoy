@@ -16,7 +16,7 @@ import com.threerings.msoy.web.gwt.Promotion;
 public class MyWhirledData
     implements IsSerializable
 {
-    /** Contains summary information on a particular game genre. */
+    /** Hold a list of feed messages of a particular category. */
     public static class FeedCategory
         implements IsSerializable
     {
@@ -26,8 +26,8 @@ public class MyWhirledData
         /** How many feed messages to list in a category when "show more" is clicked */
         public static final int FULL_COUNT = 50;
 
-        /** The category of feed item - see FeedMessageType.Category. */
-        public int category;
+        /** The category of the feed messages. */
+        public FeedMessageType.Category category;
 
         /** The highlighted games in this genre. */
         public FeedMessage[] messages;

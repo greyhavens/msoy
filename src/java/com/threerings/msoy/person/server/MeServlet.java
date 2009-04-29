@@ -48,6 +48,7 @@ import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -148,14 +149,13 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public FeedCategory loadFeedCategory (int category, boolean fullSize)
+    public FeedCategory loadFeedCategory (FeedMessageType.Category category, boolean fullSize)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         int itemsPerCategory = fullSize ? FeedCategory.FULL_COUNT : FeedCategory.DEFAULT_COUNT;
         List<FeedCategory> categories = _feedLogic.loadFeedCategories(
-            mrec, _memberRepo.loadFriendIds(mrec.memberId), itemsPerCategory,
-            Category.values()[category]);
+            mrec, _memberRepo.loadFriendIds(mrec.memberId), itemsPerCategory, category);
         return (categories.size() > 0) ? categories.get(0) : null;
     }
 

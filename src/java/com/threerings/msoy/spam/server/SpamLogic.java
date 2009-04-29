@@ -461,8 +461,7 @@ public class SpamLogic
                 if (eitems.isEmpty()) {
                     continue;
                 }
-                EmailFeedCategory ecat = new EmailFeedCategory(
-                    Category.values()[category.category], eitems);
+                EmailFeedCategory ecat = new EmailFeedCategory(category.category, eitems);
                 ecats.add(ecat);
             }
     
