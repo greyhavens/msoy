@@ -84,7 +84,8 @@ public class GameDirector extends BasicDirector
         super(ctx);
         _wctx = ctx;
 
-        GameController.setUserIdentifier(new MsoyUserIdentifier());
+        com.threerings.parlor.game.client.GameController.setUserIdentifier(
+            new MsoyUserIdentifier());
     }
 
     public function dispatchGamingStateChanged () :void
