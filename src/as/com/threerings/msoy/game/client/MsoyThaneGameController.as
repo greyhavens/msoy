@@ -6,6 +6,7 @@ package com.threerings.msoy.game.client {
 import com.whirled.game.client.ThaneGameBackend;
 import com.whirled.game.client.ThaneGameController;
 
+import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.data.ParlorGameObject;
 
 /** Msoy-specific game controller. */
