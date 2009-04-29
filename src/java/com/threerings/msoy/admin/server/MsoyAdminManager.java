@@ -36,6 +36,7 @@ import com.threerings.presents.server.RebootManager;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.pulse.server.JVMPulseRecorder;
+import com.threerings.pulse.server.PeerPulseRecorder;
 import com.threerings.pulse.server.PresentsPulseRecorder;
 import com.threerings.pulse.server.PulseManager;
 
@@ -73,6 +74,7 @@ public class MsoyAdminManager
         // we need to register our records before the server gets around to initing the repos
         pulseMan.registerRecorder(JVMPulseRecorder.class);
         pulseMan.registerRecorder(PresentsPulseRecorder.class);
+        pulseMan.registerRecorder(PeerPulseRecorder.class);
         pulseMan.registerRecorder(MsoyPulseRecorder.class);
     }
 
