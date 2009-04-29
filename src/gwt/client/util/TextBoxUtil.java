@@ -3,16 +3,14 @@
 
 package client.util;
 
+import com.google.gwt.event.dom.client.HasKeyPressHandlers;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.TextBoxBase;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
- * {@link TextBox} and {@link TextArea} related utility methods.
+ * Utility methods for widgets that allow text to be edited.
  */
 public class TextBoxUtil
 {
@@ -20,16 +18,16 @@ public class TextBoxUtil
      * Registers the supplied command to be called when the contents of the supplied text box
      * change due to typing.
      *
-     * <p> You can't just add a KeyboardListener because onKeyPress is called *before* the key in
+     * <p> You can't just add a KeyPressListener because onKeyPress is called *before* the key in
      * question is committed to the text box. You might think that ChangeListener was your awesome
      * friend in this case, but no, that's only triggered when someone presses return in the text
      * box. Someone needs to be punched for all of this bullshit. If anyone finds out who, please
      * let MDB know.
      */
-    public static void addTypingListener (TextBoxBase box, final Command onUpdate)
+    public static void addTypingListener (HasKeyPressHandlers box, final Command onUpdate)
     {
-        box.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char charCode, int modifiers) {
+        box.addKeyPressHandler(new KeyPressHandler() {
+            public void onKeyPress (KeyPressEvent event) {
                 DeferredCommand.addCommand(onUpdate);
             }
         });

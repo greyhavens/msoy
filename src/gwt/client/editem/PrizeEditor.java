@@ -85,7 +85,7 @@ public class PrizeEditor extends SubItemEditor
             throw new Exception(_emsgs.prizePleaseSelectType());
         }
 
-        _prize.targetCatalogId = _targetCatalogId.getValue().intValue();
+        _prize.targetCatalogId = _targetCatalogId.getNumber().intValue();
         if (_prize.targetCatalogId <= 0) {
             throw new Exception(_emsgs.prizePleaseSelectTarget());
         }

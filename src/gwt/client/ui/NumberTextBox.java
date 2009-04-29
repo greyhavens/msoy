@@ -3,7 +3,8 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,10 +34,10 @@ public class NumberTextBox extends TextBox
     {
         _allowFloatingPoint = allowFloatingPoint;
 
-        addKeyboardListener(new KeyboardListener() {
-            public void onKeyUp (Widget sender, char keyCode, int modifiers) {
-                if ((modifiers & KeyboardListener.MODIFIER_SHIFT) != 0 || keyCode > '9' ||
-                    keyCode < '0') {
+        addKeyUpHandler(new KeyUpHandler() {
+            public void onKeyUp (KeyUpEvent event) {
+                if (event.isShiftKeyDown() ||
+                    event.getNativeKeyCode() > '9' || event.getNativeKeyCode() < '0') {
                     String text = getText();
                     boolean foundDecimal = !allowFloatingPoint;
                     for (int ii = 0; ii < text.length(); ii++) {
@@ -52,8 +53,6 @@ public class NumberTextBox extends TextBox
                     setText(text);
                 }
             }
-            public void onKeyPress (Widget sender, char keyCode, int modifiers) { }
-            public void onKeyDown (Widget sender, char keyCode, int modifiers) { }
         });
 
         if (maxLength != 0) {
@@ -65,9 +64,17 @@ public class NumberTextBox extends TextBox
     }
 
     /**
-     * Get the number value for the contents of this box. Returns 0 if the box is empty.
+     * Sets the numeric contents of this text box. Passing null will clear the box.
      */
-    public Number getValue ()
+    public void setNumber (Number value)
+    {
+        setText(value == null ? "" : value.toString());
+    }
+
+    /**
+     * Get the numberic value of this box. Returns 0 if the box is empty.
+     */
+    public Number getNumber ()
     {
         String valstr = getText().length() == 0 ? "0" : getText();
         return _allowFloatingPoint ? (Number)(new Double(valstr)) : (Number)(new Integer(valstr));

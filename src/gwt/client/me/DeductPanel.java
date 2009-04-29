@@ -30,13 +30,13 @@ public class DeductPanel extends HorizontalPanel
         add(new Button(_msgs.deductButton(), new ClickListener() {
             public void onClick (Widget sender) {
                 // We don't want to allow deducting a *negative* amount, now do we?
-                if (text.getValue().floatValue() <= 0.0f) {
+                if (text.getNumber().floatValue() <= 0.0f) {
                     MsoyUI.error(_msgs.deductMustBePositive());
                     return;
                 }
                 deduct(memberId, currency, (currency == Currency.BLING ?
-                    (int)(text.getValue().floatValue() * 100.0) : // convert to centibling
-                    text.getValue().intValue()));
+                    (int)(text.getNumber().floatValue() * 100.0) : // convert to centibling
+                    text.getNumber().intValue()));
             }
         }));
     }

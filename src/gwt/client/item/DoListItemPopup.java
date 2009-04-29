@@ -147,7 +147,7 @@ public class DoListItemPopup extends VerticalPanel
             row = pricing.addWidget(_salesTargetLabel, 1, "rightLabel");
             pricing.setWidget(row, 1, _salesTarget = new NumberTextBox(false, 5, 5), 1, null);
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
-            _salesTarget.setText(String.valueOf(salesTarget));
+            _salesTarget.setNumber(salesTarget);
 
             pricing.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
 
@@ -167,7 +167,7 @@ public class DoListItemPopup extends VerticalPanel
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
             int cost = (listing == null) ? DEFAULT_COIN_COST : listing.quote.getListedAmount();
-            _cost.setText(String.valueOf(cost));
+            _cost.setNumber(cost);
 
             add(MsoyUI.createLabel(_imsgs.doListPricingHeader(), "Header"));
             add(pricing);
@@ -278,7 +278,7 @@ public class DoListItemPopup extends VerticalPanel
     protected int getSalesTarget ()
     {
         // non-salable items have no pricing interface and a default sales target
-        return (_salesTarget == null) ? 100 : _salesTarget.getValue().intValue();
+        return (_salesTarget == null) ? 100 : _salesTarget.getNumber().intValue();
     }
 
     protected Currency getCurrency ()
@@ -290,7 +290,7 @@ public class DoListItemPopup extends VerticalPanel
     protected int getCost ()
     {
         // non-salable items have no pricing interface and a default flow cost
-        return (_cost == null) ? ItemPrices.DEFAULT_MIN_PRICE : _cost.getValue().intValue();
+        return (_cost == null) ? ItemPrices.DEFAULT_MIN_PRICE : _cost.getNumber().intValue();
     }
 
     protected int getMinimumPrice (Currency currency)

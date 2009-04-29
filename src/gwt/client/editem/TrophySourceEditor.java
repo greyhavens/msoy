@@ -84,7 +84,7 @@ public class TrophySourceEditor extends SubItemEditor
         throws Exception
     {
         super.prepareItem();
-        _tsource.sortOrder = _order.getValue().intValue();
+        _tsource.sortOrder = _order.getNumber().intValue();
         _tsource.secret = _secret.isChecked();
     }
 

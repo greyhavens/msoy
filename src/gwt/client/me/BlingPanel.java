@@ -64,7 +64,7 @@ public class BlingPanel extends FlowPanel
         new ClickCallback<BlingExchangeResult>(_exchangeBtn) {
             protected void takeAction (boolean confirmed) {
                 // validate the bling amount before we trigger our confirm popup
-                _blingAmount = _exchangeBox.getValue().intValue();
+                _blingAmount = _exchangeBox.getNumber().intValue();
                 if (_blingAmount < 1) {
                     MsoyUI.errorNear(_msgs.blingInvalidAmount(), _exchangeBox);
                     return;
@@ -78,7 +78,7 @@ public class BlingPanel extends FlowPanel
             }
             @Override protected boolean gotResult (BlingExchangeResult result) {
                 MsoyUI.info(_msgs.blingExchangeSuccessful());
-                _exchangeBox.setText("");
+                _exchangeBox.setNumber(null);
                 update(result.blingInfo);
                 CShell.frame.dispatchEvent(
                     new StatusChangeEvent(StatusChangeEvent.BARS, result.barBalance, 0));
@@ -192,7 +192,7 @@ public class BlingPanel extends FlowPanel
             TextBoxUtil.addTypingListener(_cashOutBox, new Command() {
                 public void execute () {
                     worthLabel.setText(_msgs.cashOutAmountWorth(
-                        formatUSD((int)(_cashOutBox.getValue().floatValue() * worthPerBling))));
+                        formatUSD((int)(_cashOutBox.getNumber().floatValue() * worthPerBling))));
                 }
             });
             setWidget(row++, 1, MsoyUI.createButtonPair(_cashOutBox, worthLabel), 2, null);
@@ -208,7 +208,7 @@ public class BlingPanel extends FlowPanel
             new ClickCallback<BlingInfo>(_cashOutBtn) {
                 @Override protected boolean callService () {
                     // validate the data
-                    int blingAmount = _cashOutBox.getValue().intValue();
+                    int blingAmount = _cashOutBox.getNumber().intValue();
                     if (blingAmount < 1) {
                         MsoyUI.errorNear(_msgs.blingInvalidAmount(), _cashOutBox);
                         return false;
@@ -234,7 +234,7 @@ public class BlingPanel extends FlowPanel
                 }
                 @Override protected boolean gotResult (BlingInfo result) {
                     MsoyUI.info(_msgs.cashOutRequestSuccessful());
-                    _cashOutBox.setText("");
+                    _cashOutBox.setNumber(null);
                     update(result);
                     return true;
                 }

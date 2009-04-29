@@ -94,9 +94,9 @@ public class GameEditor extends ItemEditor
                 if (option.getNodeType() == Node.ELEMENT_NODE) {
                     final String name = option.getNodeName();
                     if ("min_seats".equals(name)) {
-                        _minPlayers.setText(option.getFirstChild().toString());
+                        _minPlayers.setNumber(Integer.valueOf(option.getFirstChild().toString()));
                     } else if ("max_seats".equals(name)) {
-                        _maxPlayers.setText(option.getFirstChild().toString());
+                        _maxPlayers.setNumber(Integer.valueOf(option.getFirstChild().toString()));
                     } else if ("unwatchable".equals(name)) {
                         _watchable.setChecked(false);
                     }
@@ -183,15 +183,15 @@ public class GameEditor extends ItemEditor
                     return; // don't re-overwrite the stored values
                 }
                 if (!isSeated) {
-                    _oldMin = _minPlayers.getText();
-                    _minPlayers.setText("1");
-                    _oldMax = _maxPlayers.getText();
-                    _maxPlayers.setText("99");
+                    _oldMin = _minPlayers.getNumber().intValue();
+                    _minPlayers.setNumber(1);
+                    _oldMax = _maxPlayers.getNumber().intValue();
+                    _maxPlayers.setNumber(99);
                     _oldWatch = _watchable.isChecked();
                     _watchable.setChecked(true);
                 } else {
-                    _minPlayers.setText(_oldMin);
-                    _maxPlayers.setText(_oldMax);
+                    _minPlayers.setNumber(_oldMin);
+                    _maxPlayers.setNumber(_oldMax);
                     _watchable.setChecked(_oldWatch);
                 }
                 // TODO: it would be nicer to just hide these
@@ -199,7 +199,7 @@ public class GameEditor extends ItemEditor
                 _maxPlayers.setEnabled(isSeated);
                 _watchable.setEnabled(isSeated);
             }
-            protected String _oldMin = "1", _oldMax = "1";
+            protected int _oldMin = 1, _oldMax = 1;
             protected boolean _oldWatch;
         }));
 
@@ -208,9 +208,9 @@ public class GameEditor extends ItemEditor
         }
 
         addRow(_emsgs.gameMinPlayers(), _minPlayers = new NumberTextBox(false, 5));
-        _minPlayers.setText("1");
+        _minPlayers.setNumber(1);
         addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new NumberTextBox(false, 5));
-        _maxPlayers.setText("1");
+        _maxPlayers.setNumber(1);
         addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
 
@@ -381,10 +381,10 @@ public class GameEditor extends ItemEditor
         xml.getFirstChild().appendChild(match);
 
         Element minSeats = xml.createElement("min_seats");
-        minSeats.appendChild(xml.createTextNode(_minPlayers.getText()));
+        minSeats.appendChild(xml.createTextNode(_minPlayers.getNumber().toString()));
         match.appendChild(minSeats);
         Element maxSeats = xml.createElement("max_seats");
-        maxSeats.appendChild(xml.createTextNode(_maxPlayers.getText()));
+        maxSeats.appendChild(xml.createTextNode(_maxPlayers.getNumber().toString()));
         match.appendChild(maxSeats);
         if (!_watchable.isChecked()) {
             match.appendChild(xml.createElement("unwatchable"));

@@ -208,14 +208,14 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 new ClickCallback<Void>(grantInvites) {
                     @Override protected boolean callService () {
                         _adminsvc.grantInvitations(
-                            numInvites.getValue().intValue(), _result.memberId, this);
+                            numInvites.getNumber().intValue(), _result.memberId, this);
                         return true;
                     }
                     @Override protected boolean gotResult (Void result) {
-                        MsoyUI.info(_msgs.browserAddInvites("" + numInvites.getValue(),
+                        MsoyUI.info(_msgs.browserAddInvites("" + numInvites.getNumber(),
                                     _result.name));
                         PlayerBrowserPanel.this.addToAvailable(
-                            _result.memberId, numInvites.getValue().intValue());
+                            _result.memberId, numInvites.getNumber().intValue());
                         return true;
                     }
                 };
