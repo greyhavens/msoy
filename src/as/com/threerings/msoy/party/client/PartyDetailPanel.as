@@ -48,8 +48,10 @@ public class PartyDetailPanel extends FloatingPanel
         infoBox.addChild(FlexUtil.createLabel(
             Msgs.PARTY.get("l.recruit_" + _detail.info.recruitment) + "  " +
                 _detail.info.population));
-        infoBox.addChild(new CommandButton(Msgs.PARTY.get("b.join"),
-            WorldController.JOIN_PARTY, _detail.info.id));
+        if (WorldContext(_ctx).getPartyDirector().getPartyId() != _detail.info.id) {
+            infoBox.addChild(new CommandButton(Msgs.PARTY.get("b.join"),
+                WorldController.JOIN_PARTY, _detail.info.id));
+        }
         topBox.addChild(infoBox);
         addChild(topBox);
 

@@ -46,6 +46,8 @@ import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
+import com.threerings.msoy.notify.data.Notification;
+
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -240,6 +242,9 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         if (isInParty()) {
+            if (getPartyId() == id) {
+                return; // nuffin' doin'
+            }
             clearParty();
         }
 
@@ -260,6 +265,8 @@ public class PartyDirector extends BasicDirector
         if (btn.selected) {
             btn.activate();
         }
+        btn.clearStyle("highlight");
+        btn.clearStyle("highlightAlpha");
 
         if (_safeSubscriber != null) {
             _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
@@ -410,6 +417,8 @@ public class PartyDirector extends BasicDirector
         } else {
             btn.activate();
         }
+        btn.setStyle("highlight", "red");
+        btn.setStyle("highlightAlpha", .5);
 
         // we might need to warp to the party location
         checkFollowScene();
@@ -526,6 +535,15 @@ public class PartyDirector extends BasicDirector
 
         case PartyObject.GAME_ID:
             checkFollowGame();
+            break;
+
+        case PartyObject.LEADER_ID:
+            var newLeader :PartyPeep = _partyObj.peeps.get(event.getValue()) as PartyPeep;
+            if (newLeader != null) {
+                _wctx.getNotificationDirector().addGenericNotification(
+                    MessageBundle.tcompose("m.party_leader", newLeader.name.toString()),
+                    Notification.PERSONAL);
+            }
             break;
         }
     }
