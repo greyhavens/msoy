@@ -36,8 +36,8 @@ import com.threerings.presents.server.RebootManager;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.pulse.server.JVMPulseRecorder;
+import com.threerings.pulse.server.PresentsPulseRecorder;
 import com.threerings.pulse.server.PulseManager;
-import com.threerings.pulse.server.persist.JVMPulseRecord;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -58,7 +58,6 @@ import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.gwt.StatsModel;
-import com.threerings.msoy.admin.server.persist.MsoyPulseRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -72,8 +71,9 @@ public class MsoyAdminManager
     @Inject public MsoyAdminManager (PulseManager pulseMan)
     {
         // we need to register our records before the server gets around to initing the repos
-        pulseMan.registerRecorder(JVMPulseRecord.class, JVMPulseRecorder.class);
-        pulseMan.registerRecorder(MsoyPulseRecord.class, MsoyPulseRecorder.class);
+        pulseMan.registerRecorder(JVMPulseRecorder.class);
+        pulseMan.registerRecorder(PresentsPulseRecorder.class);
+        pulseMan.registerRecorder(MsoyPulseRecorder.class);
     }
 
     /**

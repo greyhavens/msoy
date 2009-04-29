@@ -22,6 +22,12 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 public class MsoyPulseRecorder implements PulseManager.Recorder
 {
     // from interface PulseManager.Recorder
+    public Class<? extends PulseRecord> getRecordClass ()
+    {
+        return MsoyPulseRecord.class;
+    }
+
+    // from interface PulseManager.Recorder
     public PulseRecord takePulse (long now)
     {
         MsoyPulseRecord record = new MsoyPulseRecord();
