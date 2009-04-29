@@ -244,23 +244,18 @@ public class BureauLauncher
         shutdown();
     }
 
-    // from BureauLauncherReceiver
-    public void requestInfo (String hostname, int port)
+    public BureauLauncherInfo getInfo ()
     {
         BureauLauncherInfo info = new BureauLauncherInfo();
         info.hostname = BureauLauncherConfig.serverHost;
         info.bureaus = new BureauLauncherInfo.BureauInfo[_bureaus.size()];
-        info.connections = new String[0]; // TODO
+        info.connections = _connections.getActive();
+
         int idx = 0;
         for (Bureau bureau : _bureaus.values()) {
             info.bureaus[idx++] = bureau.getInfo();
         }
-        Connections.Entry entry = _connections._clients.get(hostname + ":" + port);
-        if (entry != null) {
-            entry._client._service.setBureauLauncherInfo(entry._client, info);
-        } else {
-            log.info("Client not found", "hostname", hostname);
-        }
+        return info;
     }
 
     // from ShutdownManager.Shutdowner

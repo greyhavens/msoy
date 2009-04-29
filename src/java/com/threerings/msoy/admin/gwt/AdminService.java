@@ -156,12 +156,6 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Triggers a refresh of bureau launcher information.
-     */
-    void refreshBureauLauncherInfo ()
-        throws ServiceException;
-
-    /**
      * Gets the current info for all connected bureau launchers.
      */
     BureauLauncherInfo[] getBureauLauncherInfo ()

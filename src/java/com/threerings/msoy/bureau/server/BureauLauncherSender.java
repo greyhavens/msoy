@@ -31,11 +31,11 @@ public class BureauLauncherSender extends InvocationSender
      * BureauLauncherReceiver#requestInfo} on a client.
      */
     public static void requestInfo (
-        ClientObject target, String arg1, int arg2)
+        ClientObject target)
     {
         sendNotification(
             target, BureauLauncherDecoder.RECEIVER_CODE, BureauLauncherDecoder.REQUEST_INFO,
-            new Object[] { arg1, Integer.valueOf(arg2) });
+            new Object[] {  });
     }
 
     /**

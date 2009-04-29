@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.bureau.client;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.samskivert.util.Interval;
 import com.threerings.presents.client.Client;
@@ -83,6 +86,17 @@ class Connections
                 }
             }
         }
+    }
+
+    public String[] getActive ()
+    {
+        List<String> connections = Lists.newArrayList();
+        for (Entry entry : _clients.values()) {
+            if (entry.getState() == State.CONNECTED) {
+                connections.add(entry._client.getHostname());
+            }
+        }
+        return connections.toArray(new String[connections.size()]);
     }
 
     /**

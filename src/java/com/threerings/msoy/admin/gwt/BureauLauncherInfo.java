@@ -54,8 +54,8 @@ public class BureauLauncherInfo
     /** The servers the launcher is connected to. */
     public String[] connections;
 
-    /** Changes each time this data is updated. */
-    public int version;
+    /** Error with this launcher, if any. */
+    public String error;
 
     public String toString ()
     {
@@ -76,7 +76,6 @@ public class BureauLauncherInfo
             }
             buff.append(connections[ii].toString());
         }
-        buff.append("), version=").append(version);
         buff.append(")");
         return buff.toString();
     }

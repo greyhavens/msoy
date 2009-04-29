@@ -442,29 +442,19 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void refreshBureauLauncherInfo ()
-        throws ServiceException
-    {
-        // Post the request to the event thread and wait for result
-        ServletWaiter.queueAndWait(_omgr, "refreshBureauLauncherInfo", new Callable<Void>() {
-            public Void call () {
-                _bureauMgr.refreshBureauLauncherInfo();
-                return null;
-            }
-        });
-    }
-
-    // from interface AdminService
     public BureauLauncherInfo[] getBureauLauncherInfo ()
         throws ServiceException
     {
-        // Post the request to the event thread and wait for result
-        return ServletWaiter.queueAndWait(
-            _omgr, "getBureauLauncherInfo", new Callable<BureauLauncherInfo[]>() {
-                public BureauLauncherInfo[] call () {
-                    return _bureauMgr.getBureauLauncherInfo();
-                }
-            });
+        final ServletWaiter<BureauLauncherInfo[]> waiter =
+            new ServletWaiter<BureauLauncherInfo[]>("getBureauLauncherInfo");
+
+        _omgr.postRunnable(new Runnable() {
+            public void run () {
+                _bureauMgr.getBureauLauncherInfo(waiter);
+            }
+        });
+
+        return waiter.waitForResult();
     }
 
     // from interface AdminService

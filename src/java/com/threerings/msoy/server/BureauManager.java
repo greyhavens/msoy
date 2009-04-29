@@ -10,6 +10,8 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.Interval;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.bureau.server.BureauAuthenticator;
@@ -32,6 +34,7 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
 
@@ -88,8 +91,9 @@ public class BureauManager
                 public void launcherInitialized (ClientObject caller) {
                     BureauManager.this.launcherInitialized(caller);
                 }
-                public void setBureauLauncherInfo (ClientObject caller, BureauLauncherInfo arg1) {
-                    BureauManager.this.setBureauLauncherInfo(caller, arg1);
+                public void setBureauLauncherInfo (
+                    ClientObject caller, BureauLauncherInfo info) {
+                    BureauManager.this.setBureauLauncherInfo(caller, info);
                 }
             }), BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
 
@@ -122,26 +126,53 @@ public class BureauManager
     }
 
     /**
-     * Sends out a request to all bureau launchers to resend their information.
-     */
-    public void refreshBureauLauncherInfo()
-    {
-        for (BureauLauncherClientObject clobj : _launcherClients.values()) {
-            BureauLauncherSender.requestInfo(clobj, ServerConfig.serverHost, _listenPort);
-        }
-    }
-
-    /**
      * Retrieves the current information on all bureau launchers.
      */
-    public BureauLauncherInfo[] getBureauLauncherInfo()
+    public void getBureauLauncherInfo(final ResultListener<BureauLauncherInfo[]> listener)
     {
-        BureauLauncherInfo[] infos = new BureauLauncherInfo[_launcherInfo.size()];
-        int idx = 0;
-        for (BureauLauncherInfo info : _launcherInfo.values()) {
-            infos[idx++] = info;
+        // only handle one request at a time on this server
+        if (_launcherInfo != null) {
+            listener.requestFailed(new Exception("e.request_already_pending"));
         }
-        return infos;
+
+        // reset the results buffer and wait for it to fill up, up to 5 seconds
+        _launcherInfo = IntMaps.newHashIntMap();
+        new Interval(_omgr) {
+            public void expired () {
+                if (_launcherInfo.size() == _launcherClients.size()) {
+                    finish();
+                }
+                else if (++_count > 10) {
+                    finish();
+                }
+            }
+
+            public void finish () {
+                cancel();
+                BureauLauncherInfo[] infos = new BureauLauncherInfo[_launcherClients.size()];
+                int idx = 0;
+                for (BureauLauncherClientObject clobj : _launcherClients.values()) {
+                    // fill in with an error message if the launcher didn't respond
+                    BureauLauncherInfo info = _launcherInfo.get(clobj.getOid());
+                    if (info == null) {
+                        info = new BureauLauncherInfo();
+                        info.bureaus = new BureauLauncherInfo.BureauInfo[0];
+                        info.connections = new String[0];
+                        info.error = "e.not_responding";
+                        info.hostname = clobj.hostname;
+                    }
+                    infos[idx++] = info;
+                }
+                _launcherInfo = null;
+                listener.requestCompleted(infos);
+            }
+            protected int _count;
+        }.schedule(500, true);
+
+        // request that the info be sent
+        for (BureauLauncherClientObject clobj : _launcherClients.values()) {
+            BureauLauncherSender.requestInfo(clobj);
+        }
     }
 
     protected void launcherInitialized (final ClientObject launcher)
@@ -158,8 +189,15 @@ public class BureauManager
 
     protected void setBureauLauncherInfo (ClientObject caller, BureauLauncherInfo info)
     {
+        if (_launcherInfo == null) {
+            log.warning("Launcher responding late", "caller", caller.username, "info", info);
+            return;
+        }
+
         BureauLauncherInfo previous = _launcherInfo.get(caller.getOid());
-        info.version = previous == null ? 1 : previous.version + 1;
+        if (previous != null) {
+            log.warning("Launcher responding twice", "caller", caller.username, "info", info);
+        }
         _launcherInfo.put(caller.getOid(), info);
     }
 
@@ -187,8 +225,10 @@ public class BureauManager
     protected void launcherDestroyed (final int oid)
     {
         log.info("Launcher destroyed", "oid", oid);
-        _launcherInfo.remove(oid);
         _launcherClients.remove(oid);
+        if (_launcherInfo != null) {
+            _launcherInfo.remove(oid);
+        }
     }
 
     /**
@@ -233,22 +273,15 @@ public class BureauManager
     /** Currently logged in bureau launchers. */
     protected IntMap<BureauLauncherClientObject> _launcherClients = IntMaps.newHashIntMap();
 
-    /** Summary information about each bureau launcher. */
-    protected IntMap<BureauLauncherInfo> _launcherInfo = IntMaps.newHashIntMap();
+    /** Summary information about each bureau launcher. This is only set during an info request. */
+    protected IntMap<BureauLauncherInfo> _launcherInfo;
 
-    /** The container for our bureaus (server-side processes for user code). */
+    // dependencies
     @Inject protected BureauRegistry _bureauReg;
-
-    /** The manager of network connections. */
-    @Inject protected ConnectionManager _conmgr;
-
-    /** The manager of clients. */
     @Inject protected ClientManager _clmgr;
-
-    /** The manager of invocation services. */
+    @Inject protected ConnectionManager _conmgr;
     @Inject protected InvocationManager _invmgr;
-
-    /** Handles orderly shutdown of our managers, etc. */
+    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ShutdownManager _shutmgr;
 
     /** Time to wait for bureaus to connect back. */

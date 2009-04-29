@@ -83,11 +83,6 @@ public interface AdminServiceAsync
                           AsyncCallback<ItemDeletionResult> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#refreshBureauLauncherInfo}.
-     */
-    void refreshBureauLauncherInfo (AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link AdminService#getBureauLauncherInfo}.
      */
     void getBureauLauncherInfo (AsyncCallback<BureauLauncherInfo[]> callback);

@@ -52,13 +52,13 @@ public class BureauLauncherDecoder extends InvocationDecoder
 
         case REQUEST_INFO:
             ((BureauLauncherReceiver)receiver).requestInfo(
-                (String)args[0], ((Integer)args[1]).intValue()
+                
             );
             return;
 
         case SHUTDOWN_LAUNCHER:
             ((BureauLauncherReceiver)receiver).shutdownLauncher(
-
+                
             );
             return;
 
