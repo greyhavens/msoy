@@ -24,6 +24,8 @@ import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.all.ItemTypes;
 
+import com.threerings.msoy.party.client.PartyGameClientHelper;
+
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
@@ -37,6 +39,20 @@ public class ParlorGameBackend extends WhirledGameBackend
         ctx :GameContext, gameObj :ParlorGameObject, ctrl :ParlorGameController)
     {
         super(ctx, gameObj, ctrl);
+
+        _partyHelper.init(gameObj, callUserCode);
+    }
+
+    override public function shutdown () :void
+    {
+        _partyHelper.shutdown();
+        super.shutdown();
+    }
+
+    override protected function populateProperties (o :Object) :void
+    {
+        super.populateProperties(o);
+        _partyHelper.populateProperties(o);
     }
 
     // from WhirledGameBackend
@@ -178,5 +194,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     {
         (_ctx as GameContext).showTrophies();
     }
+
+    protected var _partyHelper :PartyGameClientHelper = new PartyGameClientHelper();
 }
 }
