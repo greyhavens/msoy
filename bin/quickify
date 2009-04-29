@@ -1,10 +1,18 @@
-#!/bin/sh
+#!/usr/bin/perl -w
 
-if [ -z "$1" -o ! -f "$1.in" -o -z "$2" ]; then
-    echo "Usage: $0 src/gwt/module.gwt.xml user_agent[,user_agent]"
-    exit 255
-fi
+my $usage = "Usage: $0 src/gwt/module.gwt.xml user_agent[,user_agent]\n";
+my $modfile = shift or die $usage;
+my $agent = shift or die $usage;
 
-head -2 $1.in > $1
-echo "  <set-property name=\"user.agent\" value=\"$2\"/>" >> $1
-tail -n +3 $1.in >> $1
+open(SRC, "$modfile.in") or die "Can't read $modfile.in: $!\n";
+open(DEST, ">$modfile") or die "Can't write to $modfile: $!\n";
+my $wroteprop = 0;
+while (<SRC>) {
+    if (m/<source/ && !$wroteprop) {
+        print DEST "  <set-property name=\"user.agent\" value=\"$agent\"/>\n";
+        $wroteprop = 1;
+    }
+    print DEST $_;
+}
+close(DEST);
+close(SRC);
