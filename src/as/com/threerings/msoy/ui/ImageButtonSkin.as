@@ -86,12 +86,15 @@ public class ImageButtonSkin extends UIComponent
     protected function readHightlightFromStyle () :void
     {
         graphics.clear();
-        var color :uint = StyleManager.getColorName(getStyle("highlight"));
-        if (color != StyleManager.NOT_A_COLOR) {
-            var alpha :Number = getStyle("highlightAlpha") || 1;
-            graphics.beginFill(color, alpha);
-            graphics.drawRoundRect(0, 0, width, height, 4, 4);
-            graphics.endFill();
+        var rsrc :* = getStyle("highlight");
+        if (rsrc !== undefined) {
+            var color :uint = StyleManager.getColorName(rsrc);
+            if (color != StyleManager.NOT_A_COLOR) {
+                var alpha :Number = getStyle("highlightAlpha") || 1;
+                graphics.beginFill(color, alpha);
+                graphics.drawRoundRect(0, 0, width, height, 4, 4);
+                graphics.endFill();
+            }
         }
     }
 
