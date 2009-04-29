@@ -50,13 +50,11 @@ public class MemberAdminInfo
     /** This member's humanity rating. */
     public int humanity;
 
-    /** The member that invited this player, if any. */
-    public MemberName inviter;
+    /** The member that is this player's affiliate, if any. */
+    public MemberName affiliate;
 
-    /**
-     * The names of members that this member invited.
-     */
-    public List<MemberName> invitees;
+    /** The names of members that are affiliates of this member. */
+    public List<MemberName> affiliateOf;
 
     /** True if this member is a charity. */
     public boolean charity;

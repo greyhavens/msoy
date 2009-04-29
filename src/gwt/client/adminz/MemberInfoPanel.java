@@ -145,22 +145,22 @@ public class MemberInfoPanel extends SmartTable
         row = addText("Humanity:", 1, "Label");
         setText(row, 1, ""+info.humanity);
 
-        row = addText("Inviter:", 1, "Label");
-        if (info.inviter != null) {
-            setWidget(row, 1, infoLink(info.inviter));
+        row = addText("Affiliate:", 1, "Label");
+        if (info.affiliate != null) {
+            setWidget(row, 1, infoLink(info.affiliate));
         } else {
             setText(row, 1, "none");
         }
 
-        row = addText("Invited:", 1, "Label");
-        FlowPanel invited = new FlowPanel();
-        for (int ii = 0; ii < info.invitees.size(); ii++) {
+        row = addText("Affiliate of:", 1, "Label");
+        FlowPanel affiliateOf = new FlowPanel();
+        for (int ii = 0; ii < info.affiliateOf.size(); ii++) {
             if (ii > 0) {
-                invited.add(MsoyUI.createHTML(", ", "inline"));
+                affiliateOf.add(MsoyUI.createHTML(", ", "inline"));
             }
-            invited.add(infoLink(info.invitees.get(ii)));
+            affiliateOf.add(infoLink(info.affiliateOf.get(ii)));
         }
-        setWidget(row, 1, invited);
+        setWidget(row, 1, affiliateOf);
 
         final CheckBox charity = new CheckBox();
         charity.setChecked(info.charity);

@@ -139,9 +139,10 @@ public class AdminServlet extends MsoyServiceServlet
         }
         info.humanity = tgtrec.humanity;
         if (tgtrec.affiliateMemberId != 0) {
-            info.inviter = _memberRepo.loadMemberName(tgtrec.affiliateMemberId);
+            info.affiliate = _memberRepo.loadMemberName(tgtrec.affiliateMemberId);
         }
-        info.invitees = _memberRepo.loadMembersInvitedBy(memberId);
+        // TODO: this isn't quite right.
+        info.affiliateOf = _memberRepo.loadMembersInvitedBy(memberId);
 
         // Check if this member is set as a charity.
         CharityRecord charity = _memberRepo.getCharityRecord(memberId);
