@@ -20,7 +20,7 @@ public class GatedExecutor
      */
     public function GatedExecutor (predicate :Function) 
     {
-        this._predicate = predicate;
+        _predicate = predicate;
     }
     
     /**
