@@ -4,56 +4,71 @@
 
 package com.threerings.msoy.aggregators.result;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.configuration.Configuration;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
-import com.threerings.panopticon.aggregator.result.PropertiesAggregatedResult;
+import com.threerings.panopticon.aggregator.result.StringInputNameResult;
+import com.threerings.panopticon.aggregator.result.field.FieldResult;
 import com.threerings.panopticon.common.event.EventData;
+import com.threerings.panopticon.shared.util.DateFactory;
 
 /**
  * Extracts a table of guest experiences before conversion, per entry vector / conversion status.
- *
- * <ul>
- *      <li><b>events_field</b>: Input field that contains an event vector
- * </ul>
- *
- * @author Robert Zubek <robert@threerings.net>
  */
-public class GuestExperienceResult
-    implements PropertiesAggregatedResult<GuestExperienceResult>
+@StringInputNameResult(inputs="AllGuestBehavior")
+public abstract class GuestExperienceResult extends FieldResult<GuestExperienceResult>
 {
-    public void configure (Configuration config)
+    public static class Conversion extends GuestExperienceResult {
+        @Override protected String getEventsField () {
+            return "events_till_conversion";
+        }
+    };
+
+    public static class Retention extends GuestExperienceResult {
+        @Override protected String getEventsField () {
+            return "events_till_retention";
+        }
+    };
+
+    public String vector;
+    public String status;
+
+    /** Map from experience name to the number of people who participated in it. */
+    public Map<String, Integer> participation = Maps.newHashMap();
+
+    /** Set of all trackers that belong to this group. */
+    public Set<String> trackers = Sets.newHashSet();
+
+    public GuestExperienceResult ()
     {
-        eventsField = config.getString("eventsField");
-        Preconditions.checkNotNull(eventsField, "Missing configuration parameter: eventsField");
+        Calendar c = DateFactory.newCalendar();
+        c.add(Calendar.MONTH, -1);
+        _oneMonthAgo = c.getTime();
     }
 
-    public boolean init (final EventData eventData)
+    @Override
+    public boolean init (EventData eventData)
     {
+        if (eventData.getDate("acct_start").before(_oneMonthAgo)) {
+            return false;
+        }
 
-        final Map<String, Object> data = eventData.getData();
+        this.vector = eventData.getString("acct_vector");
+        this.status = eventData.getString("conv_status");
 
-        this.vector = (String) data.get("acct_vector");
-        this.status = (String) data.get("conv_status");
-
-        this.trackers.add((String) data.get("acct_tracker"));
-        splitAndPopulate(this.participation, (String) data.get(eventsField));
+        this.trackers.add(eventData.getString("acct_tracker"));
+        splitAndPopulate(this.participation, eventData.getString(getEventsField()));
 
         return true;
     }
 
-    public void combine (final GuestExperienceResult other)
+    public void combine (GuestExperienceResult other)
     {
         if (this.vector == null) {
             this.vector = other.vector;
@@ -69,51 +84,18 @@ public class GuestExperienceResult
 
         this.trackers.addAll(other.trackers);
         for (String experience : other.participation.keySet()) {
-            final int thisCount = this.participation.containsKey(experience) ? this.participation.get(experience) : 0;
-            final int otherCount = other.participation.containsKey(experience) ? other.participation.get(experience) : 0;
+            int thisCount = this.participation.containsKey(experience) ?
+                this.participation.get(experience) : 0;
+            int otherCount = other.participation.containsKey(experience) ?
+                other.participation.get(experience) : 0;
             this.participation.put(experience, thisCount + otherCount);
         }
     }
 
-    public boolean putData (Map<String, Object> result)
-    {
-        result.put("acct_vector", this.vector);
-        result.put("conv_status", this.status);
-
-        final int total = this.trackers.size();
-        result.put("count", total);
-
-        for (Map.Entry<String, Integer> entry : this.participation.entrySet()) {
-            result.put(entry.getKey(), entry.getValue());
-            final double percentage = (total == 0) ? 0.0 : ((double) entry.getValue()) / total;
-            final String pstr = format.format(percentage);
-            result.put("p_" + entry.getKey(), pstr);
-        }
-
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void readFields (final DataInput in)
-        throws IOException
-    {
-        this.vector = (String) HadoopSerializationUtil.readObject(in);
-        this.status = (String) HadoopSerializationUtil.readObject(in);
-        this.trackers = (Set<String>)HadoopSerializationUtil.readObject(in);
-        this.participation = (Map<String, Integer>)HadoopSerializationUtil.readObject(in);
-    }
-
-    public void write (final DataOutput out)
-        throws IOException
-    {
-        HadoopSerializationUtil.writeObject(out, this.vector);
-        HadoopSerializationUtil.writeObject(out, this.status);
-        HadoopSerializationUtil.writeObject(out, this.trackers);
-        HadoopSerializationUtil.writeObject(out, this.participation);
-    }
+    protected abstract String getEventsField ();
 
     /** Splits up the field, and populates the data map with the results. */
-    private static void splitAndPopulate (final Map<String, Integer> data, String field)
+    private static void splitAndPopulate (Map<String, Integer> data, String field)
     {
         // split me up
         String[] entries = field.split(" ");
@@ -130,17 +112,5 @@ public class GuestExperienceResult
         }
     }
 
-    private static final DecimalFormat format = new DecimalFormat("#,##0.00%");
-
-    private String vector;
-    private String status;
-
-    /** Map from experience name to the number of people who participated in it. */
-    private Map<String, Integer> participation = Maps.newHashMap();
-
-    /** Set of all trackers that belong to this group. */
-    private Set<String> trackers = Sets.newHashSet();
-
-    private String eventsField;
-
+    protected Date _oneMonthAgo;
 }
