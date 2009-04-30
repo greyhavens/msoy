@@ -432,6 +432,25 @@
     </copy>
   </target>
 
+  <!-- compiles our GWT sources with javac; handy for smoke testing -->
+  <target name="gcompile">
+    <echo>Compiling GWT classes...</echo>
+    <mkdir dir="${deploy.dir}/gclasses"/>
+    <javac srcdir="${gsrc.dir}" destdir="${deploy.dir}/gclasses" includeAntRuntime="false"
+           debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
+      <classpath>
+        <fileset dir="${deploy.dir}/lib">
+          <include name="*.jar"/>
+        </fileset>
+        <path refid="gwt.classpath"/>
+        <pathelement path="${classes.dir}"/>
+      </classpath>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
+    <delete dir="${deploy.dir}/gclasses"/>
+  </target>
+
   <!-- builds our numerous GWT web clients -->
   <property name="pages" value="${gpages.list}"/>
   <target name="gclient" depends="jprepare,gmsgs"
@@ -455,7 +474,6 @@
           <path refid="gwt.classpath"/>
         </classpath>
         <!-- temporary workaround to crashing problem on build server's BSD java -->
-        <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/core/internal/dtree/DataTreeNode,forwardDeltaWith"/>
         <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
         <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
         <!-- end temp -->
@@ -924,8 +942,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="jprepare,qcompile"
-    description="Builds java class files."/>
+  <target name="compile" depends="jprepare,qcompile" description="Builds java class files."/>
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
   <target name="qcompile">
