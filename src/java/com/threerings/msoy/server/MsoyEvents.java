@@ -124,17 +124,17 @@ public class MsoyEvents
         @Field final public String visitorId;
         @Field final public String lapseStatus;
         @Field final public String subjectLine;
-        @Field final public boolean feedIncluded;
+        @Field final public String bucket;
 
         public RetentionMailSent (int recipientId, String visitorId, String lapseStatus,
-            String subjectLine, boolean feedIncluded)
+            String subjectLine, String bucket)
         {
             this.timestamp = new Date();
             this.recipientId = recipientId;
             this.visitorId = visitorId;
             this.lapseStatus = lapseStatus;
             this.subjectLine = subjectLine;
-            this.feedIncluded = feedIncluded;
+            this.bucket = bucket;
         }
     }
 

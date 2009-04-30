@@ -4,15 +4,12 @@
 package com.threerings.msoy.spam.server;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -412,7 +409,7 @@ public class SpamLogic
         // log an event for successes. the result is the lapse status
         if (status.success) {
             _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, status.name(),
-                content.subjectLine, content.feed);
+                content.subjectLine, content.bucket.name);
         }
 
         return status;
@@ -430,19 +427,44 @@ public class SpamLogic
 
         // load up friends and feed categories
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        List<FeedCategory> categories = friendIds.size() > 0 ? _feedLogic.loadFeedCategories(
-            mrec, friendIds, ITEMS_PER_CATEGORY, null) : new ArrayList<FeedCategory>();
+        List<FeedCategory> categories = _feedLogic.loadFeedCategories(
+            mrec, friendIds, ITEMS_PER_CATEGORY, null);
 
-        // count up all messages
+        // count up all messages and ones that are personal
         int count = 0;
+        int personalMessages = 0;
         for (FeedCategory cat : categories) {
             count += cat.messages.length;
+            switch (cat.category) {
+            case ANNOUNCEMENTS:
+                for (FeedMessage fm : cat.messages) {
+                    if (fm.type != FeedMessageType.GLOBAL_ANNOUNCEMENT) {
+                        personalMessages++;
+                    }
+                }
+                break;
+            default:
+                personalMessages += cat.messages.length;
+                break;
+            }
         }
 
-        // generate the feed if we have at least a couple of items
+        // assign the user a bucket
+        Bucket bucket;
+        if (friendIds.size() == 0) {
+            bucket = Bucket.HAS_NO_FRIENDS;
+
+        } else if (personalMessages == 0) {
+            bucket = Bucket.HAS_INACTIVE_FRIENDS;
+
+        } else {
+            bucket = Bucket.HAS_PERSONAL_EVENTS;
+        }
+
+        // generate the feed if we have at least a couple of items (this will always be true on
+        // production until we stop posting announcements frequently)
         Parameters params = new Parameters();
-        boolean sufficientFeed = count >= MIN_NEWS_ITEM_COUNT;
-        if (sufficientFeed) {
+        if (count >= MIN_NEWS_ITEM_COUNT) {
             // prepare the generators!
             final Generator generators[] = {
                 new Generator(memberId, new PlainTextBuilder(), _messages),
@@ -475,14 +497,15 @@ public class SpamLogic
             params.set("feed", null);
         }
 
-        String subjectLine = RandomUtil.pickRandom(
-            sufficientFeed ? _subjectLinesWithFeed : _subjectLinesGeneric);
+        // pick a random subject line based on the bucket
+        String subjectLine = RandomUtil.pickRandom(bucket.subjectLines);
 
         // fire off the email, the template will take care of looping over categories and items
         // TODO: it would be great if we could somehow get the final result of actually sending the
         // mail. A lot of users have emails like 123@myass.com and we are currently counting them
         // as sent. I also like my pie at 30,000 feet please.
         // only generate the feed if we have at least a few items
+        // TODO: maybe change the template based on the bucket too
         params.set("server_url", DeploymentConfig.serverURL);
         params.set("name", mrec.name);
         params.set("member_id", mrec.memberId);
@@ -492,7 +515,7 @@ public class SpamLogic
         String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
             address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
-        return new MailContent(subjectLine, sufficientFeed);
+        return new MailContent(subjectLine, bucket);
     }
 
     /**
@@ -751,6 +774,34 @@ public class SpamLogic
     }
 
     /**
+     * Retention bucket a user can get assigned to.
+     */
+    protected enum Bucket
+    {
+        /** User has some friend or group activity. */
+        HAS_PERSONAL_EVENTS("activeFriends", "nameBusyFriends", "friendFeedAndNewThings"),
+
+        /** Has no friend or group activity, but has at least 1 friend. */
+        HAS_INACTIVE_FRIENDS("inactiveFriends", "nameNewThings", "newsFeedAndNewThings"),
+
+        /** Has no friends and hence no personal events. */
+        HAS_NO_FRIENDS("noFriends", "nameNewThings", "newsFeedAndNewThings");
+
+        /** Name of the bucket. Used for logging and presenting results. */
+        public final String name;
+
+        /** Choices of subject line for retention mailings. NOTE: the values here are for logging;
+         * they are translated to full subject lines by the velocity template feed.tmpl. */
+        public final String[] subjectLines;
+
+        Bucket (String name, String... subjectLines)
+        {
+            this.name = name;
+            this.subjectLines = subjectLines;
+        }
+    }
+
+    /**
      * Relevant information on the content of a sent retention mailing.
      */
     protected static class MailContent
@@ -758,14 +809,14 @@ public class SpamLogic
         /** Which subject line was sent. */
         public String subjectLine;
 
-        /** Whether the feed was included in the mailing. */
-        public boolean feed;
+        /** The bucket this user was assigned to. */
+        public Bucket bucket;
 
         /** Creates a new content summary. */
-        public MailContent (String subjectLine, boolean feed)
+        public MailContent (String subjectLine, Bucket bucket)
         {
             this.subjectLine = subjectLine;
-            this.feed = feed;
+            this.bucket = bucket;
         }
 
         public String toString ()
@@ -958,16 +1009,6 @@ public class SpamLogic
         "vertical-align: middle;";
     protected static final String A_STYLE = "text-decoration: none;";
 
-    /** Choices of subject line for retention mailings, mapped to whether or not a feed is required.
-     * NOTE: the values here are for logging; they are translated to full subject lines by the
-     * velocity template feed.tmpl. */
-    protected static final Map<String, Boolean> _allSubjectLines = ImmutableMap.of(
-        "nameNewThings", false,
-        "nameBusyFriends", true,
-        "whirledFeedAndNewThings", false);
-    protected static final List<String> _subjectLinesWithFeed = Lists.newArrayList();
-    protected static final List<String> _subjectLinesGeneric = Lists.newArrayList();
-
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
         Category.ROOMS, Category.TROPHIES, Category.FRIENDINGS};
@@ -977,14 +1018,6 @@ public class SpamLogic
         // set up the static lookup table for result codes
         for (Status result : Status.values()) {
             _lookup.put(result.value, result);
-        }
-
-        // set up our two lists of subject lines
-        for (Map.Entry<String, Boolean> subj : _allSubjectLines.entrySet()) {
-            _subjectLinesWithFeed.add(subj.getKey());
-            if (!subj.getValue()) {
-                _subjectLinesGeneric.add(subj.getKey());
-            }
         }
     }
 }
