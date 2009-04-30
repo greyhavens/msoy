@@ -125,9 +125,13 @@ public class MsoyEvents
         @Field final public String lapseStatus;
         @Field final public String subjectLine;
         @Field final public String bucket;
+        @Field final public int numFriends;
+        @Field final public int numPersonalMessages;
+        @Field final public boolean validated;
 
         public RetentionMailSent (int recipientId, String visitorId, String lapseStatus,
-            String subjectLine, String bucket)
+            String subjectLine, String bucket, int numFriends, int numPersonalMessages,
+            boolean validated)
         {
             this.timestamp = new Date();
             this.recipientId = recipientId;
@@ -135,6 +139,9 @@ public class MsoyEvents
             this.lapseStatus = lapseStatus;
             this.subjectLine = subjectLine;
             this.bucket = bucket;
+            this.numFriends = numFriends;
+            this.numPersonalMessages = numPersonalMessages;
+            this.validated = validated;
         }
     }
 

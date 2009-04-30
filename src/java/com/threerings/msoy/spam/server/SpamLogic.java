@@ -409,7 +409,8 @@ public class SpamLogic
         // log an event for successes. the result is the lapse status
         if (status.success) {
             _eventLog.retentionMailSent(mrec.memberId, mrec.visitorId, status.name(),
-                content.subjectLine, content.bucket.name);
+                content.subjectLine, content.bucket.name, content.numFriends,
+                content.numPersonalMessages, mrec.isValidated());
         }
 
         return status;
@@ -515,7 +516,7 @@ public class SpamLogic
         String address = addressOverride != null ? addressOverride : mrec.accountName;
         _mailSender.sendTemplateEmail(realDeal ? MailSender.By.COMPUTER : MailSender.By.HUMAN,
             address, ServerConfig.getFromAddress(), MAIL_TEMPLATE, params);
-        return new MailContent(subjectLine, bucket);
+        return new MailContent(subjectLine, bucket, friendIds.size(), personalMessages);
     }
 
     /**
@@ -812,11 +813,20 @@ public class SpamLogic
         /** The bucket this user was assigned to. */
         public Bucket bucket;
 
+        /** The number of friends this user has. */
+        public int numFriends;
+
+        /** The number of non-global messages in the user's feed. */
+        public int numPersonalMessages;
+
         /** Creates a new content summary. */
-        public MailContent (String subjectLine, Bucket bucket)
+        public MailContent (
+            String subjectLine, Bucket bucket, int numFriends, int numPersonalMessages)
         {
             this.subjectLine = subjectLine;
             this.bucket = bucket;
+            this.numFriends = numFriends;
+            this.numPersonalMessages = numPersonalMessages;
         }
 
         public String toString ()
