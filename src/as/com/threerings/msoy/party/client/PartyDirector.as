@@ -461,11 +461,7 @@ public class PartyDirector extends BasicDirector
 
     protected function closeAllDetailPanels () :void
     {
-        var panels :Array = [];
-        for each (var o :Object in _detailPanels) {
-            panels.push(o);
-        }
-        for each (var panel :PartyDetailPanel in panels) {
+        for each (var panel :PartyDetailPanel in Util.values(_detailPanels)) {
             panel.close();
         }
     }
