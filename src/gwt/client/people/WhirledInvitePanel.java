@@ -3,15 +3,19 @@
 
 package client.people;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
+import client.util.FlashClients;
 import client.util.Link;
 
 /**
@@ -36,9 +40,20 @@ public class WhirledInvitePanel extends InvitePanel
             done.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
             done.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             done.setWidth("100%");
-            done.add(MsoyUI.createLabel(_msgs.inviteDoneTip(), null));
-            done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteNext(),
-                                         Link.createListener(Pages.WORLD, "h")));
+            String tip, button;
+            if (FlashClients.clientExists()) {
+                done.add(MsoyUI.createLabel(_msgs.inviteCloseTip(), null));
+                done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteClose(),
+                                             new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CShell.frame.closeContent();
+                    }
+                }));
+            } else {
+                done.add(MsoyUI.createLabel(_msgs.inviteDoneTip(), null));
+                done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteNext(),
+                                             Link.createListener(Pages.WORLD, "h")));
+            }
             add(WidgetUtil.makeShim(20, 20));
             add(new TongueBox(_msgs.inviteDone(), done));
         }
