@@ -13,7 +13,7 @@ public class CookieNames
     public static final String LANDING_TEST = "lt";
 
     /** Holds the account name of the recently logged in user. */
-    public static final String ACCOUNT = "who";
+    public static final String WHO = "who";
 
     /** Holds the id of the visitor. */
     public static final String VISITOR = "vis";

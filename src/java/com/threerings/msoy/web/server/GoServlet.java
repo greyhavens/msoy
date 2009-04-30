@@ -21,8 +21,11 @@ import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -40,9 +43,9 @@ import com.threerings.msoy.room.server.persist.SceneRecord;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Handles a simple request to redirect:
- * /go/[page_tokens_and_args]
- * Or a request to redirect with an optional assignment of affiliate:
+ * Handles a simple request to redirect: /go/[page_tokens_and_args]
+ *
+ * <p> Or a request to redirect with an optional assignment of affiliate:
  * /welcome/[affiliate]/[page_tokens_and_args]
  */
 public class GoServlet extends HttpServlet
@@ -73,6 +76,59 @@ public class GoServlet extends HttpServlet
         // after sorting out the actual page, see if we want to serve up something tricky
         if (serveCloakedPage(req, rsp, path, StringUtil.deNull(req.getHeader("User-Agent")))) {
             return;
+        }
+
+        // if this user appears to be brand new, create a visitor info for them
+        VisitorInfo info = null;
+        if (VisitorCookie.shouldCreate(req)) {
+            VisitorCookie.set(rsp, info = new VisitorInfo());
+            _eventLog.visitorInfoCreated(info, true);
+        }
+
+        // if the URL contains an entry vector, we extract it, obtain/assign the visitor id for the
+        // requester and record all of the above
+        if (path.indexOf(VEC_ARG) != -1) {
+            try {
+                Pages page = Pages.fromHistory(path);
+                Args args = Args.fromHistory(path);
+
+                String vec = null;
+                for (int ii = 0; ii < args.getArgCount(); ii++) {
+                    if (args.get(ii, "").equals(VEC_ARG)) {
+                        vec = args.get(ii+1, (String)null);
+                        path = Pages.makeToken(page, args.recomposeWithout(ii, 2));
+                    }
+                }
+
+                log.info("Extracted vector", "vec", vec, "path", path);
+
+                // only note this entry if they have no cookies (or have only 
+                // if we have a 'who' or session cookie, ignore this entry as 
+
+//         // pull out the vector id from the URL; it will be of the form: "vec_VECTOR"
+//         String vector = null;
+//         ExtractedParam afterVector = extractParams("vec", page, token, args);
+//         if (afterVector != null) {
+//             vector = afterVector.value;
+//             token = afterVector.newToken;
+//             args = afterVector.newArgs;
+//         }
+
+//         // if we got a new vector from the URL, tell the server to associate it with our visitor id
+//         if (vector != null) {
+//             _membersvc.trackVectorAssociation(getVisitorInfo(), vector, new AsyncCallback<Void>() {
+//                 public void onSuccess (Void result) {
+//                     CShell.log("Saved vector association", "visInfo", getVisitorInfo());
+//                 }
+//                 public void onFailure (Throwable caught) {
+//                     CShell.log("Failed to send vector creation to server.", caught);
+//                 }
+//             });
+//         }
+
+            } catch (Exception e) {
+                log.info("Failure looking for entry vector", "path", path, "error", e);
+            }
         }
 
         // set their affiliate cookie if appropriate
@@ -315,7 +371,10 @@ public class GoServlet extends HttpServlet
     protected static final String SHARE_GAME_PREFIX = GAME_DETAIL_PREFIX;
     protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
 
+    protected static final String VEC_ARG = "vec";
+
     // our dependencies
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected GameRepository _gameRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyGameRepository _mgameRepo;
