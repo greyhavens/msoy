@@ -81,7 +81,7 @@ public class TrophyPanel extends FloatingPanel
         addChild(title);
 
         var grid :Grid = new Grid();
-        grid.maxHeight = 400;
+        grid.maxHeight = 380;
         grid.horizontalScrollPolicy = ScrollPolicy.OFF;
         grid.verticalScrollPolicy = ScrollPolicy.ON;
         addChild(grid);
