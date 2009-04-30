@@ -354,3 +354,30 @@
   font-size: 10px;
   vertical-align: center;
 }
+
+/* ------------------------------------
+   BureauInfoPanel
+-------------------------------------*/
+
+.bureauInfoPanel .title {
+  background: #D0D0D0;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.bureauInfoPanel .info {
+  font-size: 11px;
+  padding: 0px;
+}
+
+.bureauInfoPanel .info .header {
+  color: white;
+  background: #ff992b;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.bureauInfoPanel .info .row1 {
+  background: #dbeffc;
+}

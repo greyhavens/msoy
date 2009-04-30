@@ -49,7 +49,10 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -57,6 +60,8 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -79,6 +84,7 @@ import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.msoy.admin.gwt.StatsModel;
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.CharityInfo;
@@ -86,6 +92,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager.NodeAction;
+import com.whirled.bureau.data.BureauTypes;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -454,7 +461,18 @@ public class AdminServlet extends MsoyServiceServlet
             }
         });
 
-        return waiter.waitForResult();
+        BureauLauncherInfo[] infos = waiter.waitForResult();
+
+        Map<String, Game> games = Maps.newHashMap();
+        for (BureauLauncherInfo linfo : infos) {
+            for (BureauInfo binfo : linfo.bureaus) {
+                binfo.game = games.get(binfo.bureauId);
+                if (binfo.game == null) {
+                    games.put(binfo.bureauId, binfo.game = resolveBureauGame(binfo.bureauId));
+                }
+            }
+        }
+        return infos;
     }
 
     // from interface AdminService
@@ -645,6 +663,36 @@ public class AdminServlet extends MsoyServiceServlet
         _mailRepo.startConversation(recipientId, senderId, subject, body, null, true, true);
     }
 
+    protected Game resolveBureauGame (String bureauId)
+    {
+        final String prefix = BureauTypes.GAME_BUREAU_ID_PREFIX;
+        if (!bureauId.startsWith(prefix)) {
+            return null;
+        }
+
+        int gameId = Integer.parseInt(bureauId.substring(prefix.length()));
+        GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
+        if (gdr == null) {
+            return null;
+        }
+
+        GameRecord item = null;
+        boolean isDevVersion = Game.isDevelopmentVersion(gameId);
+        if (isDevVersion) {
+            if (gdr.sourceItemId != 0) {
+                item = _gameRepo.loadItem(gdr.sourceItemId);
+            }
+        } else if (gdr.listedItemId != 0) {
+            item = _gameRepo.loadItem(gdr.listedItemId);
+        }
+
+        if (item == null) {
+            return null;
+        }
+
+        return (Game)item.toItem();
+    }
+
     protected static class RestartPanopticonAction extends NodeAction
     {
         public RestartPanopticonAction () {}
@@ -796,6 +844,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ABTestRepository _testRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected ContestRepository _contestRepo;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
@@ -805,6 +854,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyAdminManager _adminMgr;
     @Inject protected MsoyEventLogger _eventLogger;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected MsoySceneRegistry _sceneReg;
     @Inject protected PromotionRepository _promoRepo;

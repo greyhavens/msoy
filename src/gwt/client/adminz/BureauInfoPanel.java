@@ -13,6 +13,7 @@ import java.util.Map;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -26,6 +27,8 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * Widget to display information about bureaus.
@@ -66,11 +69,17 @@ public class BureauInfoPanel extends VerticalPanel
         // TODO: show the running time or time since shutdown
         // TODO: show a table of contents and link to specific bureau info
         // TODO: show a kill button for each bureau
-        // TODO: have the server also resolve the names of the games
+
         _infoPanel.clear();
-        _infoPanel.add(new Label(_msgs.bureauLaunchersTitle()));
+
+        Label launchers = new Label(_msgs.bureauLaunchersTitle());
+        launchers.setStyleName("title");
+        _infoPanel.add(launchers);
         _infoPanel.add(makeLaunchersPanel(infos));
-        _infoPanel.add(new Label(_msgs.bureauBureausTitle()));
+
+        Label bureaus = new Label(_msgs.bureauBureausTitle());
+        bureaus.setStyleName("title");
+        _infoPanel.add(bureaus);
         _infoPanel.add(makeBureausPanel(infos));
     }
 
@@ -80,22 +89,23 @@ public class BureauInfoPanel extends VerticalPanel
             return new Label(_msgs.bureauNoLaunchers());
         }
 
-        SmartTable table = new SmartTable();
+        SmartTable table = new SmartTable(5, 1);
         table.setStyleName("info");
         int row = 0;
 
         table.setText(row, 0, _msgs.bureauHostname());
         table.setText(row, 1, _msgs.bureauError());
-        table.setText(row++, 2, _msgs.bureauConnections());
+        table.setText(row, 2, _msgs.bureauConnections());
+        table.getRowFormatter().addStyleName(row++, "header");
 
         for (int ii = 0; ii < infos.length; ++ii) {
             BureauLauncherInfo info = infos[ii];
-            table.setText(row, 0, info.hostname);
+            table.setText(row, 0, getShortHostName(info.hostname));
             table.setText(row, 1, info.error==null ? "" : info.error);
             StringBuilder connections = new StringBuilder();
             for (String connection : info.connections) {
                 connections.append(connections.length() > 0 ? ", " : "");
-                connections.append(connection);
+                connections.append(getShortHostName(connection));
             }
             table.setText(row++, 2, connections.toString());
         }
@@ -125,22 +135,32 @@ public class BureauInfoPanel extends VerticalPanel
             }
         });
 
-        SmartTable table = new SmartTable();
+        SmartTable table = new SmartTable(5, 1);
         table.setStyleName("info");
 
         int row = 0, col = 0;
         table.setText(row, col++, _msgs.bureauId());
+        table.setText(row, col++, _msgs.bureauGame());
+        table.setText(row, col++, _msgs.bureauStatus());
         table.setText(row, col++, _msgs.bureauHost());
-        table.setText(row, col++, _msgs.bureauLaunchTime());
-        table.setText(row, col++, _msgs.bureauShutdownTime());
-        table.setText(row, col++, _msgs.bureauLogSpaceUsed());
-        table.setText(row, col++, _msgs.bureauLogSpaceRemaining());
-        table.setText(row++, col++, _msgs.bureauMessage());
+        table.setText(row, col++, _msgs.bureauTimes(), 2, null);
+        table.setText(row, col++, _msgs.bureauLogSpace(), 2, null);
+        //table.setText(row, col++, _msgs.bureauMessage());
+        table.getRowFormatter().addStyleName(row++, "header");
 
         for (BureauInfo binfo : binfos) {
             col = 0;
             table.setText(row, col++, binfo.bureauId);
-            table.setText(row, col++, launchers.get(binfo).hostname);
+            if (binfo.game != null) {
+                String args = Args.compose("d", binfo.game.gameId);
+                Widget link = Link.create(binfo.game.name, "Name", Pages.GAMES, args, false);
+                table.setWidget(row, col++, link);
+            } else {
+                table.setText(row, col++, "");
+            }
+            table.setText(row, col++,
+                binfo.launchTime > binfo.shutdownTime ? _msgs.bureauRunning() : _msgs.bureauStopped());
+            table.setText(row, col++, getShortHostName(launchers.get(binfo).hostname));
             String launchTime = "";
             if (binfo.launchTime != 0) {
                 launchTime = MsoyUI.formatDateTime(new Date(binfo.launchTime));
@@ -152,13 +172,18 @@ public class BureauInfoPanel extends VerticalPanel
             }
             table.setText(row, col++, shutdownTime);
             table.setText(row, col++, String.valueOf(binfo.logSpaceUsed / 1024) + "kB");
-            table.setText(row, col++, String.valueOf(binfo.logSpaceRemaining / 1024) + "kB");
-            table.setText(row, col++, binfo.message);
-            table.getRowFormatter().setStyleName(row++, binfo.launchTime > binfo.shutdownTime ?
-                "running" : "stopped");
+            table.setText(row++, col++, String.valueOf(binfo.logSpaceRemaining / 1024) + "kB");
+            //table.setText(row++, col++, binfo.message);
+            table.getRowFormatter().setStyleName(table.getRowCount()-1, "row" + (row%2));
         }
 
         return table;
+    }
+
+    protected static String getShortHostName (String host)
+    {
+        int didx = host.indexOf(".");
+        return (didx == -1) ? host : host.substring(0, didx);
     }
 
     protected Button _refreshPage;
