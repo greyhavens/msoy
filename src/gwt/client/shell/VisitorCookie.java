@@ -11,8 +11,7 @@ import com.threerings.msoy.web.gwt.CookieNames;
 /**
  * Wrapper that stores and loads up visitor information.
  *
- * <p>
- * Client-side version of {@link com.threerings.msoy.web.server.VisitorCookie}.
+ * <p> Client-side version of {@link com.threerings.msoy.web.server.VisitorCookie}.
  */
 public class VisitorCookie
 {
@@ -36,18 +35,6 @@ public class VisitorCookie
         VisitorInfo info = new VisitorInfo(CookieUtil.get(CookieNames.VISITOR), false);
         CShell.log("Loaded " + info);
         return info;
-    }
-
-    /**
-     * Saves visitor information in the cookie, if the cookie doesn't already exist, or if the
-     * /overwrite/ flag is set.
-     */
-    public static void save (VisitorInfo info, boolean overwrite)
-    {
-        if (!exists() || overwrite) {
-            CookieUtil.set("/", 365, CookieNames.VISITOR, info.id);
-            CShell.log("Saved " + info);
-        }
     }
 
     /**

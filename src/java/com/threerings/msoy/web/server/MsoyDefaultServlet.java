@@ -19,8 +19,11 @@ import org.mortbay.resource.Resource;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.web.gwt.ABTestUtil;
 import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.server.VisitorCookie;
 
 import static com.threerings.msoy.Log.log;
 
@@ -66,6 +69,13 @@ public class MsoyDefaultServlet extends DefaultServlet
 
     protected void doPreMainPageGet (HttpServletRequest req, HttpServletResponse rsp)
     {
+        // if this user appears to be brand new, create a visitor info for them
+        VisitorInfo info = null;
+        if (VisitorCookie.shouldCreate(req)) {
+            VisitorCookie.set(rsp, info = new VisitorInfo());
+            _eventLog.visitorInfoCreated(info, true);
+        }
+
         if (CookieUtil.getCookie(req, CookieNames.WHO) == null) {
             // Give new users all the names and number of groups for tests designated as
             // occurring on landing. The client will compute the group that the user is
@@ -89,5 +99,6 @@ public class MsoyDefaultServlet extends DefaultServlet
     }
 
     // dependencies
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ABTestRepository _abTestRepo;
 }

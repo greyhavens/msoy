@@ -22,6 +22,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 
@@ -99,32 +100,17 @@ public class GoServlet extends HttpServlet
                         path = Pages.makeToken(page, args.recomposeWithout(ii, 2));
                     }
                 }
+                if (vec == null) {
+                    log.warning("Thought we had an entry vector but didn't!?", "path", path);
 
-                log.info("Extracted vector", "vec", vec, "path", path);
+                } else if (info != null) {
+                    // if we assigned this user a visitor info on this request, that means they are
+                    // brand spanking new; in that case we note their entry vector
+                    _memberLogic.trackVectorAssociation(info, vec);
 
-                // only note this entry if they have no cookies (or have only 
-                // if we have a 'who' or session cookie, ignore this entry as 
-
-//         // pull out the vector id from the URL; it will be of the form: "vec_VECTOR"
-//         String vector = null;
-//         ExtractedParam afterVector = extractParams("vec", page, token, args);
-//         if (afterVector != null) {
-//             vector = afterVector.value;
-//             token = afterVector.newToken;
-//             args = afterVector.newArgs;
-//         }
-
-//         // if we got a new vector from the URL, tell the server to associate it with our visitor id
-//         if (vector != null) {
-//             _membersvc.trackVectorAssociation(getVisitorInfo(), vector, new AsyncCallback<Void>() {
-//                 public void onSuccess (Void result) {
-//                     CShell.log("Saved vector association", "visInfo", getVisitorInfo());
-//                 }
-//                 public void onFailure (Throwable caught) {
-//                     CShell.log("Failed to send vector creation to server.", caught);
-//                 }
-//             });
-//         }
+                } else { // otherwise we don't
+                    log.info("Ignoring entry by existing user", "path", path);
+                }
 
             } catch (Exception e) {
                 log.info("Failure looking for entry vector", "path", path, "error", e);
@@ -375,8 +361,9 @@ public class GoServlet extends HttpServlet
 
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected ServerMessages _serverMsgs;
