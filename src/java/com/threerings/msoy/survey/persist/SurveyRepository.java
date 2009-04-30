@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -16,9 +17,12 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Logic;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -206,12 +210,42 @@ public class SurveyRepository extends DepotRepository
     }
 
     /**
+     * Count the number of responses to a specific question.
+     */
+    public int countResponses (int surveyId, int questionIndex)
+    {
+        List<QueryClause> clauses = getResponseClauses(surveyId, questionIndex);
+        clauses.add(new FromOverride(SurveyResponseRecord.class));
+        return load(CountRecord.class, clauses).count;
+    }
+
+    /**
+     * Loads all the responses to a given survey.
+     */
+    public List<SurveyResponseRecord> loadResponses (
+        int surveyId, int questionIndex, int start, int count)
+    {
+        List<QueryClause> clauses = getResponseClauses(surveyId, questionIndex);
+        clauses.add(new Limit(start, count));
+        return findAll(SurveyResponseRecord.class, clauses);
+    }
+
+    /**
      * Utility method to update only the index column of a question.
      */
     protected void updateQuestionIndex (int surveyId, int index, int newIndex)
     {
         updatePartial(SurveyQuestionRecord.getKey(surveyId, index),
             SurveyQuestionRecord.QUESTION_INDEX, newIndex);
+    }
+
+    protected List<QueryClause> getResponseClauses (int surveyId, int questionIndex)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(new Logic.And(
+            new Conditionals.Equals(SurveyResponseRecord.SURVEY_ID, surveyId),
+            new Conditionals.Equals(SurveyResponseRecord.QUESTION_INDEX, questionIndex))));
+        return clauses;
     }
 
     @Override // from DepotRepository

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /** Provides operations for viewing, modifying and submitting surveys. */
@@ -88,5 +89,10 @@ public interface SurveyService
 
     /** Aggregates and returns the results of a survey. */
     SubmissionSummary getSubmissionSummary (int surveyId)
+        throws ServiceException;
+
+    /** Returns the reponses to text entry questions. */
+    PagedResult<String> getFreeFormResponses (
+        int surveyId, int index, boolean needCount, int start, int count)
         throws ServiceException;
 }

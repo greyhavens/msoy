@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
 
+import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 
@@ -214,6 +215,7 @@ public class SurveyServlet extends MsoyServiceServlet
         }
     }
 
+    // from StatusService
     public SubmissionSummary getSubmissionSummary (int surveyId)
         throws ServiceException
     {
@@ -259,6 +261,29 @@ public class SurveyServlet extends MsoyServiceServlet
         }
 
         return summary;
+    }
+
+    // from StatusService
+    public PagedResult<String> getFreeFormResponses (
+        int surveyId, int index, boolean needCount, int start, int count)
+        throws ServiceException
+    {
+        requireAdminUser();
+
+        // get the total if requested
+        PagedResult<String> result = new PagedResult<String>();
+        if (needCount) {
+            result.total = _surveyRepo.countResponses(surveyId, index);
+        }
+
+        // get one page of results
+        result.page = Lists.newArrayListWithExpectedSize(count);
+        for (SurveyResponseRecord response :
+            _surveyRepo.loadResponses(surveyId, index, start, count)) {
+            result.page.add(response.response);
+        }
+
+        return result;
     }
 
     protected void deactivatePromotion (SurveyRecord survey)
