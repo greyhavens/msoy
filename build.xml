@@ -448,7 +448,7 @@
 
       <!-- invoke the GWT compiler and grindy grindy grindy -->
       <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
-            classname="com.google.gwt.dev.GWTCompiler">
+            classname="com.google.gwt.dev.Compiler">
         <classpath>
           <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
           <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
@@ -461,7 +461,7 @@
         <!-- end temp -->
         <jvmarg value="-Djava.awt.headless=true"/>
         <arg value="-style"/><arg value="${gwt_style}"/>
-        <arg value="-out"/>
+        <arg value="-war"/>
         <arg value="${pageout.dir}"/>
         <arg value="@{page}"/>
         <!-- gather all the compiler output into a property -->
