@@ -102,7 +102,7 @@ public class StatusServlet extends HttpServlet
     {
         try {
             if (pathinfo != null && pathinfo.startsWith("/")) {
-                return Enum.valueOf(Details.class, pathinfo.substring(1).toUpperCase());
+                return Details.valueOf(pathinfo.substring(1).toUpperCase());
             }
         } catch (Exception e) {
             log.info("Ignoring invalid status details", "pinfo", pathinfo);

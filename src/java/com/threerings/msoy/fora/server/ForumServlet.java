@@ -606,7 +606,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         Pages page;
         try {
-            page = Enum.valueOf(Pages.class, token.substring(0, didx).toUpperCase());
+            page = Pages.valueOf(token.substring(0, didx).toUpperCase());
         } catch (Exception e) {
             return original; // hrm, bogosity
         }

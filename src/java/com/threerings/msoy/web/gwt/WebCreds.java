@@ -51,7 +51,7 @@ public class WebCreds implements IsSerializable
         }
         return new WebCreds(
             data.next(), data.next(), new MemberName(data.next(), Integer.valueOf(data.next())),
-            data.next(), Enum.valueOf(Role.class, data.next()));
+            data.next(), Role.valueOf(data.next()));
     }
 
     /**

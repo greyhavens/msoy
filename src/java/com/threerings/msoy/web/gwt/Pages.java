@@ -36,7 +36,7 @@ public enum Pages
     {
         int didx = historyToken.indexOf("-");
         String pstr = (didx == -1) ? historyToken : historyToken.substring(0, didx);
-        return Enum.valueOf(Pages.class, pstr.toUpperCase());
+        return valueOf(pstr.toUpperCase());
     }
 
     /**
