@@ -97,6 +97,7 @@ public class TrophyPanel extends FloatingPanel
             var bits :VBox = new VBox();
             bits.setStyle("verticalGap", 0);
             var name :Label = FlexUtil.createLabel(trophy.name, "trophyPanelName");
+            name.maxWidth = 200;
             bits.addChild(name);
             var descrip :Text = FlexUtil.createText(
                (trophy.description == null) ? Msgs.GAME.get("m.tp_secret") : trophy.description,
