@@ -15,15 +15,15 @@ import client.util.Link;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -227,48 +227,48 @@ public class EditSurveyPanel extends VerticalPanel
             table.setStyleName("fields");
             int row = 0;
 
-            final TextBox name = MsoyUI.createTextBox(_result.survey.name, 80, 40);
+            _name = MsoyUI.createTextBox(_result.survey.name, 80, 40);
             table.setText(row, 0, _msgs.nameLabel(), 1, "label");
-            table.setWidget(row++, 1, name);
+            table.setWidget(row++, 1, _name);
 
-            final TextBox coinAward = MsoyUI.createTextBox(
+            _coinAward = MsoyUI.createTextBox(
                 String.valueOf(_result.survey.coinAward), 6, 6);
             table.setText(row, 0, _msgs.coinAwardLabel(), 1, "label");
-            table.setWidget(row++, 1, coinAward);
+            table.setWidget(row++, 1, _coinAward);
 
-            final TextBox maxSubmissions = MsoyUI.createTextBox(
+            _maxSubmissions = MsoyUI.createTextBox(
                 String.valueOf(_result.survey.maxSubmissions), 6, 6);
             table.setText(row, 0, _msgs.maxSubmissionsLabel(), 1, "label");
-            table.setWidget(row++, 1, maxSubmissions);
+            table.setWidget(row++, 1, _maxSubmissions);
 
-            final CheckBox enabled = new CheckBox();
-            enabled.setValue(_result.survey.enabled);
+            _enabled = new CheckBox();
+            _enabled.setValue(_result.survey.enabled);
             table.setText(row, 0, _msgs.enabledLabel(), 1, "label");
-            table.setWidget(row++, 1, enabled);
+            table.setWidget(row++, 1, _enabled);
 
-            final OptionalDate start = new OptionalDate(_result.survey.startDate);
+            _start = new OptionalDate(_result.survey.startDate);
             table.setText(row, 0, _msgs.startLabel(), 1, "label");
-            table.setWidget(row++, 1, start);
+            table.setWidget(row++, 1, _start);
 
-            final OptionalDate finish = new OptionalDate(_result.survey.finishDate);
+            _finish = new OptionalDate(_result.survey.finishDate);
             table.setText(row, 0, _msgs.finishLabel(), 1, "label");
-            table.setWidget(row++, 1, finish);
+            table.setWidget(row++, 1, _finish);
 
-            final TextBox promoId = MsoyUI.createTextBox(_result.survey.linkedPromoId, 20, 20);
+            _promoId = MsoyUI.createTextBox(_result.survey.linkedPromoId, 20, 20);
             table.setText(row, 0, _msgs.promoIdLabel(), 1, "label");
-            table.setWidget(row++, 1, promoId);
+            table.setWidget(row++, 1, _promoId);
 
             Button save = new Button(_msgs.save());
             new ClickCallback<SurveyMetaData>(save) {
                 @Override // from ClickCallback
                 protected boolean callService () {
-                    _result.survey.name = name.getText();
-                    _result.survey.enabled = enabled.getValue();
-                    _result.survey.startDate = start.getDate();
-                    _result.survey.finishDate = finish.getDate();
-                    _result.survey.maxSubmissions = Integer.parseInt(maxSubmissions.getText());
-                    _result.survey.coinAward = Integer.parseInt(coinAward.getText());
-                    _result.survey.linkedPromoId = promoId.getText();
+                    _result.survey.name = _name.getText();
+                    _result.survey.enabled = _enabled.getValue();
+                    _result.survey.startDate = _start.getDate();
+                    _result.survey.finishDate = _finish.getDate();
+                    _result.survey.maxSubmissions = Integer.parseInt(_maxSubmissions.getText());
+                    _result.survey.coinAward = Integer.parseInt(_coinAward.getText());
+                    _result.survey.linkedPromoId = _promoId.getText();
                     _surveySvc.updateSurvey(_result.survey, this);
                     return true;
                 }
@@ -277,7 +277,12 @@ public class EditSurveyPanel extends VerticalPanel
                     MsoyUI.info(_msgs.surveySaveComplete());
                     // let the cache know something changed
                     _cache.surveyUpdated(result);
-                    _result.survey = result;
+                    // reload if this is a brand new survey. otherwise just set it
+                    if (_result.survey.surveyId == 0) {
+                        Link.replace(Pages.ADMINZ, Args.compose("survey", "e", result.surveyId));
+                    } else {
+                        _result.survey = result;
+                    }
                     return true;
                 }
             };
@@ -285,91 +290,87 @@ public class EditSurveyPanel extends VerticalPanel
             table.setWidget(row++, 1, save);
             add(table);
 
-            // list of questions
-            add(MsoyUI.createLabel(_msgs.questionsTitle(), null));
-            _questions = new PagedTable<SurveyQuestion>(10) {
-                @Override protected List<Widget> createHeader () {
-                    List<Widget> header = new ArrayList<Widget>();
-                    header.add(MsoyUI.createLabel(_msgs.questionTextHeader(), null));
-                    header.add(MsoyUI.createLabel(_msgs.questionTypeHeader(), null));
-                    header.add(MsoyUI.createLabel("", null));
-                    header.add(MsoyUI.createLabel("", null));
-                    return header;
-                }
+            if (_result.survey.surveyId != 0) {
+                // list of questions
+                add(MsoyUI.createLabel(_msgs.questionsTitle(), null));
+                _questions = new QuestionsSummary(_result);
+                _questions.setWidth("100%");
+                _questions.addStyleName("questions");
+                add(_questions);
 
-                @Override protected List<Widget> createRow (SurveyQuestion item) {
-                    // informational columns
-                    List<Widget> row = new ArrayList<Widget>();
-                    row.add(MsoyUI.createLabel(item.text, null));
-                    row.add(MsoyUI.createLabel(getQuestionTypeName(item.type), null));
-
-                    // edit link
-                    int index = _result.getQuestionIndex(item);
-                    row.add(Link.create(_msgs.edit(), Pages.ADMINZ, Args.compose("survey", "e",
-                        _result.survey.surveyId, index)));
-
-                    // last column is controls to rearrange or delete questions
-                    HorizontalPanel alterBox = new HorizontalPanel();
-                    alterBox.setSpacing(2);
-                    Button button;
-                    alterBox.add(button = new Button(_msgs.moveUp(), new AlterQuestion(index, -1)));
-                    button.setEnabled(index > 0);
-                    alterBox.add(button = new Button(_msgs.moveDown(), new AlterQuestion(index, 1)));
-                    button.setEnabled(index < _result.questions.size() - 1);
-                    alterBox.add(new Button(_msgs.delete(), new AlterQuestion(index, 0)));
-                    row.add(alterBox);
-                    return row;
-                }
-
-                @Override protected String getEmptyMessage () {
-                    return _msgs.noQuestions();
-                }
-
-                @Override protected SmartTable createContents (
-                    int start, int count, List<SurveyQuestion> list) {
-                    SmartTable table = super.createContents(start, count, list);
-                    table.setCellPadding(3);
-                    table.setCellSpacing(1);
-                    return table;
-                }
-            };
-            _questions.setModel(new SimpleDataModel<SurveyQuestion>(_result.questions), 0);
-            _questions.setWidth("100%");
-            _questions.addStyleName("questions");
-            add(_questions);
-
-            // link to create a new question
-            add(Link.create(_msgs.addNewQuestion(), "addNew", Pages.ADMINZ,
-                Args.compose("survey", "e", _result.survey.surveyId, -1)));
+                // link to create a new question
+                add(Link.create(_msgs.addNewQuestion(), "addNew", Pages.ADMINZ,
+                    Args.compose("survey", "e", _result.survey.surveyId, -1)));
+            }
         }
 
-        public class OptionalDate extends HorizontalPanel
+        protected SurveyWithQuestions _result;
+        protected PagedTable<SurveyQuestion> _questions;
+
+        protected TextBox _name, _coinAward, _maxSubmissions, _promoId;
+        protected CheckBox _enabled;
+        protected OptionalDate _start, _finish;
+    }
+
+    /**
+     * Table to show a summary of the questions in the survey being edited.
+     */
+    protected class QuestionsSummary extends PagedTable<SurveyQuestion>
+    {
+        public QuestionsSummary (SurveyWithQuestions result)
         {
-            public OptionalDate (Date initialValue)
-            {
-                CheckBox set = new CheckBox();
-                add(set);
-                set.addClickHandler(new ClickHandler() {
-                    public void onClick (ClickEvent e) {
-                        _date.setVisible(((CheckBox)e.getSource()).getValue());
-                    }
-                });
-                add(_date = new DateFields(-50, 1));
-                set.setValue(initialValue != null);
-                _date.setVisible(initialValue != null);
-                _date.setDate(DateUtil.toDateVec(
-                    initialValue != null ? initialValue : new Date()));
-            }
+            super(10);
+            _result = result;
+            setModel(new SimpleDataModel<SurveyQuestion>(_result.questions), 0);
+        }
 
-            public Date getDate ()
-            {
-                if (_date.isVisible()) {
-                    return DateUtil.toDate(_date.getDate());
-                }
-                return null;
-            }
+        @Override protected List<Widget> createHeader ()
+        {
+            List<Widget> header = new ArrayList<Widget>();
+            header.add(MsoyUI.createLabel(_msgs.questionTextHeader(), null));
+            header.add(MsoyUI.createLabel(_msgs.questionTypeHeader(), null));
+            header.add(MsoyUI.createLabel("", null));
+            header.add(MsoyUI.createLabel("", null));
+            return header;
+        }
 
-            protected DateFields _date;
+        @Override protected List<Widget> createRow (SurveyQuestion item)
+        {
+            // informational columns
+            List<Widget> row = new ArrayList<Widget>();
+            row.add(MsoyUI.createLabel(item.text, null));
+            row.add(MsoyUI.createLabel(getQuestionTypeName(item.type), null));
+
+            // edit link
+            int index = _result.getQuestionIndex(item);
+            row.add(Link.create(_msgs.edit(), Pages.ADMINZ, Args.compose("survey", "e",
+                _result.survey.surveyId, index)));
+
+            // last column is controls to rearrange or delete questions
+            HorizontalPanel alterBox = new HorizontalPanel();
+            alterBox.setSpacing(2);
+            Button button;
+            alterBox.add(button = new Button(_msgs.moveUp(), new AlterQuestion(index, -1)));
+            button.setEnabled(index > 0);
+            alterBox.add(button = new Button(_msgs.moveDown(), new AlterQuestion(index, 1)));
+            button.setEnabled(index < _result.questions.size() - 1);
+            alterBox.add(new Button(_msgs.delete(), new AlterQuestion(index, 0)));
+            row.add(alterBox);
+            return row;
+        }
+
+        @Override protected String getEmptyMessage ()
+        {
+            return _msgs.noQuestions();
+        }
+
+        @Override protected SmartTable createContents (
+            int start, int count, List<SurveyQuestion> list)
+        {
+            SmartTable table = super.createContents(start, count, list);
+            table.setCellPadding(3);
+            table.setCellSpacing(1);
+            return table;
         }
 
         /**
@@ -422,7 +423,7 @@ public class EditSurveyPanel extends VerticalPanel
                 } else {
                     _result.questions.remove(_index);
                 }
-                _questions.displayPage(_questions.getPage(), true);
+                displayPage(getPage(), true);
             }
 
             protected int _index;
@@ -430,7 +431,6 @@ public class EditSurveyPanel extends VerticalPanel
         }
 
         protected SurveyWithQuestions _result;
-        protected PagedTable<SurveyQuestion> _questions;
         protected boolean _altering;
     }
 
@@ -543,6 +543,7 @@ public class EditSurveyPanel extends VerticalPanel
                     public void onClick (ClickEvent e) {
                         _choices = ArrayUtil.append(
                             _choices, choice.getText(), ArrayUtil.STRING_TYPE);
+                        choice.setText("");
                         refreshChoices();
                     }
                 }));
@@ -573,8 +574,7 @@ public class EditSurveyPanel extends VerticalPanel
                 protected boolean gotResult (SurveyQuestion result) {
                     // let the cache know we've changed things
                     _cache.questionUpdated(_survey, _questionIndex, result);
-                    clear();
-                    init(_survey, result);
+                    Link.replace(Pages.ADMINZ, Args.compose("survey", "e", _survey.surveyId));
                     return true;
                 }
             };
@@ -654,6 +654,35 @@ public class EditSurveyPanel extends VerticalPanel
         int getQuestionIndex (SurveyQuestion question) {
             return questions.indexOf(question);
         }
+    }
+
+    protected static class OptionalDate extends HorizontalPanel
+    {
+        public OptionalDate (Date initialValue)
+        {
+            CheckBox set = new CheckBox();
+            add(set);
+            set.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent e) {
+                    _date.setVisible(((CheckBox)e.getSource()).getValue());
+                }
+            });
+            add(_date = new DateFields(-50, 1));
+            set.setValue(initialValue != null);
+            _date.setVisible(initialValue != null);
+            _date.setDate(DateUtil.toDateVec(
+                initialValue != null ? initialValue : new Date()));
+        }
+
+        public Date getDate ()
+        {
+            if (_date.isVisible()) {
+                return DateUtil.toDate(_date.getDate());
+            }
+            return null;
+        }
+
+        protected DateFields _date;
     }
 
     /**
