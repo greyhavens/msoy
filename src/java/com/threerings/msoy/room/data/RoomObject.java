@@ -12,6 +12,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.item.data.all.Audio;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
@@ -516,6 +517,9 @@ public class RoomObject extends SpotSceneObject
             postEvent(mce);
 
         } else {
+            if (ident.type == Item.AVATAR) {
+                log.info("AVAMEM: Created new memory entry", "room", getOid(), "ident", ident);
+            }
             // We do not have an entry and we're adding a new value.
             // This form of the constructor marks the memories modified immediately.
             addToMemories(new EntityMemories(ident, key, value));
