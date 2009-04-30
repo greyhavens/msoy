@@ -6,7 +6,8 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -46,8 +47,8 @@ public class BuyRemixDialog extends BorderedDialog
             }
         }));
         setContents(panel);
-        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget sender) {
+        addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 hide();
                 _callback.onSuccess(null);
             }

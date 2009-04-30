@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -46,8 +47,8 @@ public class FeedMessagePanel extends FocusPanel
     {
         Builder builder = new Builder() {
             public Media createMedia (MediaDesc md, final Pages page, final String args) {
-                ClickListener clicker = new ClickListener() {
-                    public void onClick (Widget sender) {
+                ClickHandler clicker = new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         Link.go(page, args);
                     }
                 };

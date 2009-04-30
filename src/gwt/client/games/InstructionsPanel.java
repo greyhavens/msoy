@@ -6,7 +6,8 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -59,8 +60,8 @@ public class InstructionsPanel extends VerticalPanel
         // if this is the owner of the game, add an edit button below the instructions
         if (_detail.isCreator(CShell.getMemberId()) || CShell.isAdmin()) {
             setHorizontalAlignment(ALIGN_RIGHT);
-            add(new Button("Edit", new ClickListener() {
-                public void onClick (Widget source) {
+            add(new Button("Edit", new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     editInstructions();
                 }
             }));
@@ -104,13 +105,13 @@ public class InstructionsPanel extends VerticalPanel
         }
 
         setHorizontalAlignment(ALIGN_RIGHT);
-        Button cancel = new Button("Cancel", new ClickListener() {
-            public void onClick (Widget source) {
+        Button cancel = new Button("Cancel", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 showInstructions();
             }
         });
-        Button update = new Button("Update", new ClickListener() {
-            public void onClick (Widget source) {
+        Button update = new Button("Update", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 String instructions = editor.getHTML();
                 String bgcolor = toolbar.getBackgroundColor();
                 if (bgcolor != null && bgcolor.matches("#......")) {

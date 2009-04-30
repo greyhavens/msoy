@@ -5,7 +5,8 @@ package client.person;
 
 import java.util.List;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -55,8 +56,8 @@ public class FriendsFeedPanel extends FlowPanel
         }
 
         String categoryTitle = _dmsgs.xlate("feedCategory" + category.category.ordinal());
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _mesvc.loadFeedCategory(
                     category.category, !fullSize, new InfoCallback<FeedCategory>() {
                     public void onSuccess (FeedCategory data) {

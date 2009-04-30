@@ -6,7 +6,8 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -89,8 +90,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
                     _item.getType(), _item.itemId, _listing.catalogId))));
         }
-        extras.add(_configBtn = new ConfigButton(true, _msgs.listingConfig(), new ClickListener() {
-            public void onClick (Widget sender) {
+        extras.add(_configBtn = new ConfigButton(true, _msgs.listingConfig(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ItemUtil.showViewerConfig();
             }
         }));
@@ -117,8 +118,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
             Label reprice = new Label(_msgs.listingReprice());
             reprice.addStyleName("actionLabel");
-            reprice.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            reprice.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
                         public void itemListed (Item item, boolean updated) {
                             Link.replace(Pages.SHOP, Args.compose(
@@ -190,8 +191,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // we need to create our share info lazily because _listing is null right now as we're
         // being called down to from our superclass constructor
-        row.add(MsoyUI.makeShareButton(new ClickListener() {
-            public void onClick (Widget sender) {
+        row.add(MsoyUI.makeShareButton(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ShareDialog.Info info = new ShareDialog.Info();
                 info.page = Pages.SHOP;
                 info.args = Args.compose("l", _item.getType(), _listing.catalogId);

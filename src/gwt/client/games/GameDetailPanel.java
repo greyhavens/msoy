@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -135,11 +136,11 @@ public class GameDetailPanel extends SmartTable
         // add "Discussions" (if appropriate) and "Shop" button
         Widget buttons = null;
         if (game.groupId > 0) {
-            ClickListener onClick = Link.createListener(
+            ClickHandler onClick = Link.createListener(
                 Pages.GROUPS, Args.compose("f", game.groupId));
             buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
         }
-        ClickListener onClick = Link.createListener(
+        ClickHandler onClick = Link.createListener(
             Pages.SHOP, Args.compose("s", Game.GAME, game.catalogId));
         PushButton shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
         shop.setEnabled(game.catalogId != 0);

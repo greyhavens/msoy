@@ -7,7 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.user.client.Random;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -51,8 +52,8 @@ public class PromotionBox extends RoundBox
         hbox.setCellWidth(blurb, "100%");
         if (_promos.size() > 1) {
             hbox.add(WidgetUtil.makeShim(5, 5));
-            hbox.add(MsoyUI.createActionImage("/images/ui/promo_arrow.png", new ClickListener() {
-                public void onClick (Widget sender) {
+            hbox.add(MsoyUI.createActionImage("/images/ui/promo_arrow.png", new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showPromotion((index + _promos.size()-1) % _promos.size());
                 }
             }));

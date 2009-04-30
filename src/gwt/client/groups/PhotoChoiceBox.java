@@ -3,7 +3,8 @@
 
 package client.groups;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,8 +33,8 @@ public class PhotoChoiceBox extends FlexTable
 
         setMedia(media);
 
-        setWidget(0, 1, MsoyUI.createTinyButton("Choose...", new ClickListener() {
-            public void onClick (Widget source) {
+        setWidget(0, 1, MsoyUI.createTinyButton("Choose...", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ImageChooserPopup.displayImageChooser(thumbnail, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc media) {
                         if (media != null) {
@@ -44,8 +45,8 @@ public class PhotoChoiceBox extends FlexTable
             }
         }));
 
-        setWidget(1, 0, MsoyUI.createTinyButton("Clear", new ClickListener() {
-            public void onClick (Widget source) {
+        setWidget(1, 0, MsoyUI.createTinyButton("Clear", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 setMedia(null);
             }
         }));

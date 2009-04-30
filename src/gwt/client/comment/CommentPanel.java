@@ -7,7 +7,8 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
@@ -60,7 +61,7 @@ public class CommentPanel extends MessagePanel
 
         if (_parent.canDelete(_comment)) {
             InlineLabel delete = new InlineLabel(_cmsgs.deletePost(), false, true, false);
-            delete.addClickListener(new PromptPopup(_cmsgs.deletePostConfirm(),
+            delete.addClickHandler(new PromptPopup(_cmsgs.deletePostConfirm(),
                                                     _parent.deleteComment(_comment)).
                                     setContext("\"" + _comment.text + "\""));
             delete.addStyleName("Posted");
@@ -70,8 +71,8 @@ public class CommentPanel extends MessagePanel
 
         if (_parent.canComplain(_comment)) {
             InlineLabel complain = new InlineLabel(_cmsgs.complainPost(), false, true, false);
-            complain.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            complain.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _parent.complainComment(_comment);
                 }
             });
@@ -105,8 +106,8 @@ public class CommentPanel extends MessagePanel
             InlineLabel showComment = new InlineLabel(_cmsgs.showComment(), false, true, false);
             showComment.addStyleName("Posted");
             showComment.addStyleName("actionLabel");
-            showComment.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            showComment.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _displayed = true;
                     _rated = false;
                     updateComment();
@@ -122,16 +123,16 @@ public class CommentPanel extends MessagePanel
         }
 
         _upRate = makeThumbButton(_images.thumb_up_default(), _images.thumb_up_over(),
-            _cmsgs.upComment(), new ClickListener() {
-                public void onClick (Widget sender) {
+            _cmsgs.upComment(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     rateComment(true);
                 }
             });
         tools.add(_upRate);
 
         _downRate = makeThumbButton(_images.thumb_down_default(), _images.thumb_down_over(),
-            _cmsgs.downComment(), new ClickListener() {
-                public void onClick (Widget sender) {
+            _cmsgs.downComment(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     rateComment(false);
                 }
             });
@@ -184,7 +185,7 @@ public class CommentPanel extends MessagePanel
     }
 
     protected static PushButton makeThumbButton (
-        AbstractImagePrototype def, AbstractImagePrototype over, String tip, ClickListener onClick)
+        AbstractImagePrototype def, AbstractImagePrototype over, String tip, ClickHandler onClick)
     {
         Image defImg = def.createImage();
         defImg.addStyleName("inline");

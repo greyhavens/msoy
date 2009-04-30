@@ -18,7 +18,8 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
@@ -43,8 +44,8 @@ public class PanopticonStatusPanel extends SmartTable
         addWidget(_nodeList, 1, null);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         setText(0, 1, _msgs.panRestartDescription());
-        setWidget(1, 0, new Button(_msgs.panRestart(), new ClickListener() {
-            public void onClick (Widget sender) {
+        setWidget(1, 0, new Button(_msgs.panRestart(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 Set<String> nodes = new HashSet<String>();
                 for (int i = 0; i < _nodeList.getItemCount(); i++) {
                     if (_nodeList.isItemSelected(i)) {

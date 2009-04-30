@@ -7,7 +7,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -87,8 +88,8 @@ public class IssueListPanel extends PagedGrid<Issue>
         super.addCustomControls(controls);
 
         // add a button for refreshing the issue list
-        _refresh = new Button(_msgs.ilpRefresh(), new ClickListener() {
-            public void onClick (Widget sender) {
+        _refresh = new Button(_msgs.ilpRefresh(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 refreshModel();
             }
         });

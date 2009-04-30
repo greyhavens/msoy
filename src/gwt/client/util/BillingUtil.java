@@ -6,7 +6,8 @@ package client.util;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -51,10 +52,10 @@ public class BillingUtil
     /**
      * When clicked, popup up a window to billing to buy bars.
      */
-    public static ClickListener onBuyBars ()
+    public static ClickHandler onBuyBars ()
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 goBuyBars();
             }
         };

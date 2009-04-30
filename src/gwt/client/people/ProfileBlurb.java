@@ -9,7 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -80,7 +81,7 @@ public class ProfileBlurb extends Blurb
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
         String mepics = Args.compose("pgallery", _name.getMemberId());
-        ClickListener onClick = null;
+        ClickHandler onClick = null;
         onClick = Link.createListener(Pages.PEOPLE, mepics);
         photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
         photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, mepics));
@@ -124,7 +125,7 @@ public class ProfileBlurb extends Blurb
             info.addWidget(awardBox, 1, null);
 
             String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
-            ClickListener clicker =
+            ClickHandler clicker =
                 Link.createListener(Pages.ME, Args.compose(page, _name.getMemberId()));
 
             if (award.type == AwardType.BADGE) {
@@ -204,8 +205,8 @@ public class ProfileBlurb extends Blurb
         addButton(_buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
         if (CShell.isAdmin()) {
-            _buttons.add(new Button("Admin: Send feed", new ClickListener() {
-                public void onClick (Widget sender) {
+            _buttons.add(new Button("Admin: Send feed", new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _profilesvc.sendRetentionEmail(_name.getMemberId(), new InfoCallback<Void>() {
                         public void onSuccess (Void result) {
                             MsoyUI.info("Sent");
@@ -228,8 +229,8 @@ public class ProfileBlurb extends Blurb
 
         // display the edit button if this is our profile
         if (_name.getMemberId() == CShell.getMemberId()) {
-            setFooterLabel(_msgs.profileEdit(), new ClickListener() {
-                public void onClick (Widget source) {
+            setFooterLabel(_msgs.profileEdit(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     startEdit();
                 }
             });
@@ -244,7 +245,7 @@ public class ProfileBlurb extends Blurb
         buttons.add(link);
     }
 
-    protected Widget addButton (FlowPanel buttons, String path, String text, ClickListener listener)
+    protected Widget addButton (FlowPanel buttons, String path, String text, ClickHandler listener)
     {
         Widget pair = MsoyUI.createButtonPair(
             MsoyUI.createActionImage(path, text, listener),
@@ -283,8 +284,8 @@ public class ProfileBlurb extends Blurb
         panel.add(_ephoto = new SimplePanel());
         _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
 
-        panel.add(new Button("Select New...", new ClickListener() {
-            public void onClick (Widget source) {
+        panel.add(new Button("Select New...", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
@@ -344,13 +345,13 @@ public class ProfileBlurb extends Blurb
         awardPanel.add(new Label(_msgs.eawardTip()));
         econtent.setWidget(row++, 1, awardPanel);
 
-        Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget source) {
+        Button cancel = new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 displayProfile();
             }
         });
-        Button commit = new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget source) {
+        Button commit = new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 commitEdit();
             }
         });

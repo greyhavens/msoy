@@ -3,7 +3,8 @@
 
 package client.item;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
 import client.ui.MsoyUI;
@@ -14,7 +15,7 @@ import client.ui.RowPanel;
  */
 public class ConfigButton extends RowPanel
 {
-    public ConfigButton (boolean isConfig, String label, ClickListener onClick)
+    public ConfigButton (boolean isConfig, String label, ClickHandler onClick)
     {
         setCellSpacing(6);
 

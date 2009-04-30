@@ -6,7 +6,8 @@ package client.people;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -88,7 +89,7 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
             if (ec.friend) {
                 contents.setText(row++, 2, _msgs.mlAlreadyFriend());
             } else {
-                ClickListener onClick = new FriendInviter(ec.mname, "InvitePanel");
+                ClickHandler onClick = new FriendInviter(ec.mname, "InvitePanel");
                 contents.setWidget(
                     row, 1, MsoyUI.createActionImage("/images/profile/addfriend.png", onClick));
                 contents.setWidget(

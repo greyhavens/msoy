@@ -4,7 +4,8 @@
 package client.landing;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.web.gwt.Pages;
@@ -25,10 +26,10 @@ public class CreatorsPanel extends SimplePanel
         content.setStyleName("Content");
         setWidget(content);
 
-        ClickListener onStart = Link.createListener(Pages.ACCOUNT, "create");
+        ClickHandler onStart = Link.createListener(Pages.ACCOUNT, "create");
         content.add(MsoyUI.createImageButton("GetStartedButton", onStart), 342, 381);
 
-        ClickListener onInfo = Link.createListener(Pages.ACCOUNT, "create");
+        ClickHandler onInfo = Link.createListener(Pages.ACCOUNT, "create");
         content.add(MsoyUI.createActionImage("/images/landing/creators_info.jpg", onInfo), 15, 504);
 
         content.add(new LandingCopyright(), 0, 1085);

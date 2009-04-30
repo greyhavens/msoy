@@ -4,7 +4,7 @@
 package client.msgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.MessageTooLongException;
@@ -16,7 +16,7 @@ import client.util.ClickCallback;
  */
 public abstract class ForumCallback<T> extends ClickCallback<T>
 {
-    public ForumCallback (SourcesClickEvents trigger)
+    public ForumCallback (HasClickHandlers trigger)
     {
         super(trigger);
     }

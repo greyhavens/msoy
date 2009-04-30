@@ -6,7 +6,8 @@ package client.groups;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
@@ -52,8 +53,8 @@ public class GalaxyPanel extends FlowPanel
         FloatPanel search = new FloatPanel("Search");
         search.add(MsoyUI.createLabel(_msgs.galaxySearchTitle(), "SearchTitle"));
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
-        ClickListener doSearch = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler doSearch = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (_searchInput.getText().equals("")) {
                     Link.go(Pages.GROUPS, "");
                 } else {

@@ -25,7 +25,8 @@ import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
@@ -104,9 +105,9 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // add "save" and "cancel" buttons
         PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
             _pmsgs.gallerySaveButton(),
-            new ClickListener() {
-                public void onClick (Widget sender) {
-                    final PushButton button = (PushButton) sender;
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    final PushButton button = (PushButton) event.getSource();
                     button.setEnabled(false);
                     saveGallery(true, button);
                 }
@@ -115,8 +116,8 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         saveButton.addStyleName("Save");
         add(saveButton, 575, 45);
 
-        Button cancelButton = new Button("Cancel", new ClickListener() {
-            public void onClick (Widget sender) {
+        Button cancelButton = new Button("Cancel", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (_newGallery) {
                     Link.go(Pages.PEOPLE, Args.compose(GalleryActions.GALLERIES,
                         CShell.getMemberId()));
@@ -206,8 +207,8 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
         // button link to photo upload panel goes over photo list
         add(MsoyUI.createActionLabel(_pmsgs.galleryUploadPhotos(), "UploadPhotos",
-            new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     // save the gallery before leaving this page
                     saveGallery(false, null);
                     Link.go(Pages.STUFF, Args.compose("c", "" + Item.PHOTO));
@@ -273,13 +274,13 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             _count = count;
             addStyleName("PhotoList");
             _prevNext = MsoyUI.createPrevNextButtons(
-                new ClickListener() {
-                    public void onClick (Widget sender) {
+                new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         prev();
                     }
                 },
-                new ClickListener() {
-                    public void onClick (Widget sender) {
+                new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         next();
                     }
                 });

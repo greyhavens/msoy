@@ -6,7 +6,8 @@ package client.support;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -61,7 +62,7 @@ public class ContactPanel extends FlowPanel
         /*
         _submitNew = new Label(_ctx.cmsgs.submitNewPetition());
         _submitNew.setStyleName("uLinkLabel");
-        _submitNew.addClickListener(_popper);
+        _submitNew.addClickHandler(_popper);
         _contents.add(_submitNew);
         */
     }
@@ -77,8 +78,8 @@ public class ContactPanel extends FlowPanel
         add(contents);
     }
 
-    protected ClickListener _popper = new ClickListener() {
-        public void onClick (Widget source) {
+    protected ClickHandler _popper = new ClickHandler() {
+        public void onClick (ClickEvent event) {
             _ctx.page.pushContents(new NewPetitionPopup(_ctx, _petitions));
         }
     };

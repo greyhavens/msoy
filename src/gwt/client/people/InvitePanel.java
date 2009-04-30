@@ -4,7 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -47,8 +48,8 @@ public abstract class InvitePanel extends FlowPanel
 
     protected void addMethodButton (String label, final InviteMethodCreator creator)
     {
-        _buttons.add(MsoyUI.createButton(MsoyUI.LONG_THICK, label, new ClickListener() {
-            public void onClick (Widget sender) {
+        _buttons.add(MsoyUI.createButton(MsoyUI.LONG_THICK, label, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 setMethod(creator.create()); //new SendURLPanel();
             }
         }));

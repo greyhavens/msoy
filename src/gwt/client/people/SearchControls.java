@@ -6,7 +6,8 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,7 +28,7 @@ import client.util.TextBoxUtil;
  * Displays controls that can be used to search for people in Whirled.
  */
 public class SearchControls extends SmartTable
-    implements ClickListener
+    implements ClickHandler
 {
     public SearchControls ()
     {
@@ -69,8 +70,8 @@ public class SearchControls extends SmartTable
         _search.setText(query);
     }
 
-    // from interface ClickListener
-    public void onClick (Widget sender)
+    // from interface ClickHandler
+    public void onClick (ClickEvent event)
     {
         Link.go(Pages.PEOPLE, Args.compose("search", "0", getQuery()));
     }

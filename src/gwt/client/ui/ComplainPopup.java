@@ -6,7 +6,8 @@ package client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,16 +34,16 @@ public abstract class ComplainPopup extends BorderedDialog
         vbox.add(_description = MsoyUI.createTextBox("", 512, 50));
         setContents(vbox);
 
-        ClickListener sendComplain = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler sendComplain = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 sendComplain();
             }
         };
         _description.addKeyboardListener(new EnterClickAdapter(sendComplain));
 
         addButton(new Button(_cmsgs.send(), sendComplain));
-        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget sender) {
+        addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 hide();
             }
         }));

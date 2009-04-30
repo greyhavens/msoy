@@ -6,7 +6,8 @@ package client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FocusListenerAdapter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
@@ -47,8 +48,8 @@ public class SearchBox extends HorizontalPanel
                 }
             }
         });
-        _close = MsoyUI.createCloseButton(new ClickListener() {
-            public void onClick (Widget sender) {
+        _close = MsoyUI.createCloseButton(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 clearSearch(true);
             }
         });
@@ -58,9 +59,9 @@ public class SearchBox extends HorizontalPanel
     /**
      * Creates a click listener that can be added to a "search" button to go along with this box.
      */
-    public ClickListener makeSearchListener () {
-        return new ClickListener() {
-            public void onClick (Widget widget) {
+    public ClickHandler makeSearchListener () {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 doSearch();
             }
         };

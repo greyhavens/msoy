@@ -4,7 +4,8 @@
 package client.item;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -93,7 +94,7 @@ public class ItemActivator extends FlowPanel
         String suff = isUsed ? "used.png" : "unused.png";
         String tip = null;
         String path;
-        ClickListener onClick = null;
+        ClickHandler onClick = null;
 
         if (!hasClient) {
             tip = isUsed ? _imsgs.inUse() : _imsgs.notInUse();
@@ -104,8 +105,8 @@ public class ItemActivator extends FlowPanel
         if (type == Item.AVATAR) {
             if (hasClient) {
                 tip = usedHere ? _imsgs.removeAvatar() : _imsgs.wearAvatar();
-                onClick = new ClickListener () {
-                    public void onClick (Widget sender) {
+                onClick = new ClickHandler () {
+                    public void onClick (ClickEvent event) {
                         if (fUsedHere) {
                             FlashClients.useAvatar(0);
                         } else {
@@ -126,8 +127,8 @@ public class ItemActivator extends FlowPanel
                 } else {
                     tip = _imsgs.addToRoom();
                 }
-                onClick = new ClickListener () {
-                    public void onClick (Widget sender) {
+                onClick = new ClickHandler () {
+                    public void onClick (ClickEvent event) {
                         if (fUsedHere) {
                             FlashClients.clearItem(_item.getType(), _item.itemId);
                         } else {

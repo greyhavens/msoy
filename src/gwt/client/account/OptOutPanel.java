@@ -6,7 +6,8 @@ package client.account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -81,8 +82,8 @@ public class OptOutPanel extends SmartTable
         setText(row++, 0, _msgs.optOutBody1());
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(new Button(_msgs.optOutAccept(), new ClickListener() {
-            public void onClick (Widget widget) {
+        footer.add(new Button(_msgs.optOutAccept(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _membersvc.optOut(game, invite.inviteId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         clear();
@@ -92,8 +93,8 @@ public class OptOutPanel extends SmartTable
             }
         }));
         footer.add(WidgetUtil.makeShim(10, 10));
-        footer.add(new Button(_msgs.optOutReject(), new ClickListener() {
-            public void onClick (Widget widget) {
+        footer.add(new Button(_msgs.optOutReject(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 Link.go(Pages.ME, "");
             }
         }));

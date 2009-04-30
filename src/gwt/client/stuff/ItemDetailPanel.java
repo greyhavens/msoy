@@ -5,12 +5,13 @@ package client.stuff;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -207,8 +208,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(WidgetUtil.makeShim(10, 10));
 
             // this handles both creating and updating of listings
-            ClickListener onDoList = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler onDoList = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     DoListItemPopup.show(_item, null, ItemDetailPanel.this);
                 }
             };
@@ -325,7 +326,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     /**
      * Create a click callback for deleting the item.
      */
-    protected void createDeleteCallback (SourcesClickEvents trigger)
+    protected void createDeleteCallback (HasClickHandlers trigger)
     {
         new ClickCallback<Void>(trigger, _msgs.detailConfirmDelete()) {
             @Override protected boolean callService () {
@@ -346,7 +347,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     /**
      * Create a click callback for reverting the item.
      */
-    protected void createRevertCallback (SourcesClickEvents trigger)
+    protected void createRevertCallback (HasClickHandlers trigger)
     {
         new ClickCallback<Item>(trigger, _msgs.detailConfirmRevert()) {
             @Override protected boolean callService () {
@@ -368,7 +369,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     /**
      * Creates a line of text followed inline by a link.
      */
-    protected FlowPanel createTipLink (String tip, String link, ClickListener onClick)
+    protected FlowPanel createTipLink (String tip, String link, ClickHandler onClick)
     {
         FlowPanel row = new FlowPanel();
         row.add(new InlineLabel(tip, true, false, true));

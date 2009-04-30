@@ -5,7 +5,8 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -43,12 +44,12 @@ public class FeaturedGamePanel extends AbsolutePanel
         }
 
         // prev and next buttons are positioned in css
-        add(MsoyUI.createPrevNextButtons(new ClickListener() {
-            public void onClick (Widget sender) {
+        add(MsoyUI.createPrevNextButtons(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 selectGame((index+_games.length-1)%_games.length);
             }
-        }, new ClickListener() {
-            public void onClick (Widget sender) {
+        }, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 selectGame((index+1)%_games.length);
             }
         }));

@@ -3,11 +3,13 @@
 
 package client.util;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
@@ -26,7 +28,7 @@ public abstract class ClickCallback<T>
      * Creates a callback for the supplied trigger (the constructor will automatically add this
      * callback to the trigger as a click listener). Failure will automatically be reported.
      */
-    public ClickCallback (SourcesClickEvents trigger)
+    public ClickCallback (HasClickHandlers trigger)
     {
         this(trigger, null);
     }
@@ -38,10 +40,10 @@ public abstract class ClickCallback<T>
      * @param confirmMessage if non-null, a confirm dialog will be popped up when the button is
      * clicked and the service call wil only be made if the user confirms the dialog.
      */
-    public ClickCallback (SourcesClickEvents trigger, String confirmMessage)
+    public ClickCallback (HasClickHandlers trigger, String confirmMessage)
     {
         _trigger = trigger;
-        _trigger.addClickListener(_onClick);
+        _clickreg = _trigger.addClickHandler(_onClick);
         if (_trigger instanceof Label) {
             // make sure to add our style, but don't doubly add it if it's already added
             ((Label)_trigger).removeStyleName("actionLabel");
@@ -159,9 +161,12 @@ public abstract class ClickCallback<T>
         }
 
         // always remove first so that if we do end up adding, we don't doubly add
-        _trigger.removeClickListener(_onClick);
+        if (_clickreg != null) {
+            _clickreg.removeHandler();
+            _clickreg = null;
+        }
         if (enabled) {
-            _trigger.addClickListener(_onClick);
+            _clickreg = _trigger.addClickHandler(_onClick);
         }
     }
 
@@ -170,12 +175,13 @@ public abstract class ClickCallback<T>
         return null;
     }
 
-    protected ClickListener _onClick = new ClickListener() {
-        public void onClick (Widget sender) {
+    protected ClickHandler _onClick = new ClickHandler() {
+        public void onClick (ClickEvent event) {
             takeAction(false);
         }
     };
 
-    protected SourcesClickEvents _trigger;
+    protected HasClickHandlers _trigger;
+    protected HandlerRegistration _clickreg;
     protected String _confirmMessage;
 }

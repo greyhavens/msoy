@@ -6,7 +6,8 @@ package client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -18,11 +19,11 @@ import client.shell.ShellMessages;
 /**
  * A class that will prompt the user, and take action on affirmative or negative response. A
  * command can be provided for the affirmative action, or {@link #onAffirmative} and {@link
- * #onNegative} can be overridden. PromptPopup implements {@link ClickListener} and {@link Command}
+ * #onNegative} can be overridden. PromptPopup implements {@link ClickHandler} and {@link Command}
  * so you can have your popup directly {@link #prompt} when the target is clicked.
  */
 public class PromptPopup extends BorderedPopup
-    implements ClickListener, Command
+    implements ClickHandler, Command
 {
     /**
      * Create a PromptPopup that uses "Yes" and "No" for the buttons.
@@ -77,9 +78,9 @@ public class PromptPopup extends BorderedPopup
 
         Button noButton = new Button(_negative);
         final Button yesButton = new Button(_affirmative);
-        ClickListener listener = new ClickListener() {
-            public void onClick (Widget sender) {
-                if (sender == yesButton) {
+        ClickHandler listener = new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                if (event.getSource() == yesButton) {
                     onAffirmative();
                 } else {
                     onNegative();
@@ -87,8 +88,8 @@ public class PromptPopup extends BorderedPopup
                 hide();
             }
         };
-        noButton.addClickListener(listener);
-        yesButton.addClickListener(listener);
+        noButton.addClickHandler(listener);
+        yesButton.addClickHandler(listener);
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(10);
         buttons.add(noButton);
@@ -117,8 +118,8 @@ public class PromptPopup extends BorderedPopup
         // default to doing nothing, just go away
     }
 
-    // from interface ClickListener
-    public void onClick (Widget sender)
+    // from interface ClickHandler
+    public void onClick (ClickEvent event)
     {
         prompt();
     }

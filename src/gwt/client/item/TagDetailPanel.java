@@ -11,7 +11,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -273,7 +274,7 @@ public class TagDetailPanel extends VerticalPanel
     }
 
     protected class NewTagBox extends TextBox
-        implements ClickListener
+        implements ClickHandler
     {
         public NewTagBox () {
             setMaxLength(20);
@@ -281,7 +282,7 @@ public class TagDetailPanel extends VerticalPanel
             addKeyboardListener(new EnterClickAdapter(this));
         }
 
-        public void onClick (Widget sender) {
+        public void onClick (ClickEvent event) {
             final String tagName = getText().trim().toLowerCase();
             if (tagName.length() == 0) {
                 return;

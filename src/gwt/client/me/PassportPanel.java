@@ -11,12 +11,12 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
@@ -90,15 +90,15 @@ public class PassportPanel extends FlowPanel
                 MsoyUI.createLabel(_msgs.passportSelectionInstructions(), "Instructions"));
         }
         sectionLinks.add(MsoyUI.createActionLabel(_msgs.passportStampsLink(), "SectionLink",
-            new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     displayBadges();
                 }
             }));
         sectionLinks.add(MsoyUI.createLabel(" | ", "SectionLink"));
         sectionLinks.add(MsoyUI.createActionLabel(_msgs.passportMedalsLink(), "SectionLink",
-            new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     displayMedals();
                 }
             }));
@@ -169,8 +169,8 @@ public class PassportPanel extends FlowPanel
         });
         for (final GroupName group : groups) {
             FlowPanel medals = new FlowPanel();
-            _contents.add(new TongueBox(null, group.toString(), medals, new ClickListener() {
-                public void onClick (Widget sender) {
+            _contents.add(new TongueBox(null, group.toString(), medals, new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     Link.go(Pages.GROUPS, Args.compose("d", group.getGroupId()));
                 }
             }));
@@ -179,8 +179,8 @@ public class PassportPanel extends FlowPanel
                     null : new AwardSelectionListener(AwardType.MEDAL, award.awardId);
                 AwardDisplay display = new AwardDisplay(award, selectionListener);
                 if (CShell.isSupport()) {
-                    ClickListener clicker = new ClickListener() {
-                        public void onClick (Widget sender) {
+                    ClickHandler clicker = new ClickHandler() {
+                        public void onClick (ClickEvent event) {
                             (new DeleteConfirmationPopup(
                                 award.awardId, award.name, group.toString())).show();
                         }
@@ -195,7 +195,7 @@ public class PassportPanel extends FlowPanel
     }
 
     protected class AwardSelectionListener
-        implements ClickListener
+        implements ClickHandler
     {
         public AwardSelectionListener (AwardType type, int awardId)
         {
@@ -203,7 +203,7 @@ public class PassportPanel extends FlowPanel
             _awardId = awardId;
         }
 
-        public void onClick (Widget sender)
+        public void onClick (ClickEvent event)
         {
             (new SelectionConfirmationPopup(_type, _awardId)).show();
         }
@@ -214,7 +214,7 @@ public class PassportPanel extends FlowPanel
 
     // TODO: Factor these two confirmation dialogs into a generic confirmation dialog class
     protected class SelectionConfirmationPopup extends BorderedPopup
-        implements ClickListener
+        implements ClickHandler
     {
         public SelectionConfirmationPopup (AwardType type, int awardId)
         {
@@ -231,11 +231,11 @@ public class PassportPanel extends FlowPanel
             setWidget(contents);
         }
 
-        public void onClick (Widget sender)
+        public void onClick (ClickEvent event)
         {
             hide();
 
-            if (sender == _yesButton) {
+            if (event.getSource() == _yesButton) {
                 _mesvc.selectProfileAward(_awardType, _awardId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(_msgs.passportSelectSuccessful());
@@ -250,7 +250,7 @@ public class PassportPanel extends FlowPanel
     }
 
     protected class DeleteConfirmationPopup extends BorderedPopup
-        implements ClickListener
+        implements ClickHandler
     {
         public DeleteConfirmationPopup (int medalId, String medalName, String groupName)
         {
@@ -265,11 +265,11 @@ public class PassportPanel extends FlowPanel
             setWidget(contents);
         }
 
-        public void onClick (Widget sender)
+        public void onClick (ClickEvent event)
         {
             hide();
 
-            if (sender == _yesButton) {
+            if (event.getSource() == _yesButton) {
                 _mesvc.deleteEarnedMedal(_memberId, _medalId, new InfoCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(_msgs.passportDeleteSuccessful());
@@ -314,8 +314,8 @@ public class PassportPanel extends FlowPanel
             headerContent.add(label);
             headerContent.setCellWidth(label, "100%");
             headerContent.add(MsoyUI.createActionImage(
-                "/images/me/passport_shuffle.png", new ClickListener () {
-                    public void onClick (Widget sender) {
+                "/images/me/passport_shuffle.png", new ClickHandler () {
+                    public void onClick (ClickEvent event) {
                         shuffle();
                     }
                 }));

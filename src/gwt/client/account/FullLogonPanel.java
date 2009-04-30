@@ -4,7 +4,8 @@
 package client.account;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,8 +35,8 @@ public class FullLogonPanel extends LogonPanel
         // add the interface for logging in via Facebook connect
         setText(1, 0, _msgs.logonFacebook(), 1, null);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
-        setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickListener() {
-            public void onClick (Widget sender) {
+        setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // TODO: display a little circular "pending" icon; turn off clickability
                 initiateFacebookLogon();
             }

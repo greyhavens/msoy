@@ -47,7 +47,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
 
         _detail = detail;
         String args = Args.compose("w", "g", ""+_detail.group.groupId);
-        _invite.addClickListener(Link.createListener(Pages.MAIL, args));
+        _invite.addClickHandler(Link.createListener(Pages.MAIL, args));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
         setModel(new PagedServiceDataModel<GroupMemberCard, PagedResult<GroupMemberCard>>(){

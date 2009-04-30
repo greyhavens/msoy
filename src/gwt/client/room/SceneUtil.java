@@ -3,7 +3,8 @@
 
 package client.room;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
@@ -51,8 +52,8 @@ public class SceneUtil
         panel.addStyleName("sceneView");
         panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, null));
 
-        PushButton liveButton = MsoyUI.createImageButton("liveButton", new ClickListener() {
-            public void onClick (Widget widget) {
+        PushButton liveButton = MsoyUI.createImageButton("liveButton", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 container.clear();
                 FeaturedPlaceUtil.displayFeaturedPlace(sceneId, container);
             }
@@ -74,14 +75,14 @@ public class SceneUtil
      *
      * @param onClick a click listener to be added to the thumbnail view, or null.
      */
-    public static Widget createSceneThumbView (MediaDesc thumb, ClickListener onClick)
+    public static Widget createSceneThumbView (MediaDesc thumb, ClickHandler onClick)
     {
         if (thumb != null) {
             return MediaUtil.createMediaView(thumb, MediaDesc.SNAPSHOT_THUMB_SIZE, onClick);
         } else {
             Image image = new Image();
             if (onClick != null) {
-                image.addClickListener(onClick);
+                image.addClickHandler(onClick);
             }
             image.setUrl(DEFAULT_HALFSIZE);
             return image;

@@ -10,7 +10,8 @@ import client.util.ClickCallback;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -54,8 +55,8 @@ public class UnreadThreadListPanel extends ThreadListPanel
         super.addCustomControls(controls);
 
         // add a button for refreshing our unread thread list
-        _refresh = new Button(_mmsgs.tlpRefresh(), new ClickListener() {
-            public void onClick (Widget sender) {
+        _refresh = new Button(_mmsgs.tlpRefresh(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _fmodels.getUnreadThreads(true); // refresh
                 refresh();
             }

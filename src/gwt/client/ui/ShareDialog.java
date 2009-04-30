@@ -9,7 +9,8 @@ import com.google.gwt.http.client.URL;
 
 import com.google.gwt.user.client.Window;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -57,8 +58,8 @@ public class ShareDialog extends BorderedDialog
         // facebook
         final String facebookURL = "http://www.facebook.com/sharer.php" +
             "?u=" + welcURL + "&t=" + eTitle;
-        ClickListener facebookListener = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler facebookListener = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 Window.open(facebookURL, "Whirled", "width=620,height=440");
             }
         };
@@ -71,8 +72,8 @@ public class ShareDialog extends BorderedDialog
             "&u=" + welcURL + "&t=" + eTitle + "&l=1" +
             // TODO: change this to the embed, and not the snapshot?
             "&c=" + URL.encodeComponent("<img src='" + info.image.getMediaPath() + "'>");
-        ClickListener myspaceListener = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler myspaceListener = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 Window.open(myspaceURL, "Whirled", "width=1024,height=650");
             }
         };

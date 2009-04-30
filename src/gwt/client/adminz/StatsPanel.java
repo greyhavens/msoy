@@ -9,7 +9,8 @@ import java.util.Comparator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
@@ -51,8 +52,8 @@ public class StatsPanel extends FlowPanel
                 refresh();
             }
         });
-        _controls.add(new Button(_msgs.statsRefresh(), new ClickListener() {
-            public void onClick (Widget sender) {
+        _controls.add(new Button(_msgs.statsRefresh(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 refresh();
             }
         }));

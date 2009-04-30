@@ -5,7 +5,8 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -81,8 +82,8 @@ public class SplitLandingPanel extends FlowPanel
 
         // intro video with click-to-play button
         final SimplePanel video = MsoyUI.createSimplePanel(null, "Video");
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // controls skin hardcoded in the swf as /images/landing/landing_movie_skin.swf
                 video.setWidget(WidgetUtil.createFlashContainer("preview",
                     "/images/landing/landing_movie.swf", 208, 154, null));
@@ -111,8 +112,8 @@ public class SplitLandingPanel extends FlowPanel
             final int otherIndex = (randomIndex + i) % GAME_IDS.length;
             FocusPanel otherItem = new FocusPanel();
             otherItem.setStyleName("OtherItem");
-            otherItem.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            otherItem.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     selectGame(otherIndex);
                 }
             });
@@ -120,8 +121,8 @@ public class SplitLandingPanel extends FlowPanel
             otherItems.add(otherItem);
 
 //            otherItems.add(MsoyUI.createActionLabel(GAME_NAMES[otherIndex], "OtherItem",
-//                new ClickListener() {
-//                    public void onClick (Widget sender) {
+//                new ClickHandler() {
+//                    public void onClick (ClickEvent event) {
 //                        selectGame(otherIndex);
 //                    }
 //                }));
@@ -148,8 +149,8 @@ public class SplitLandingPanel extends FlowPanel
             final int otherIndex = (randomIndex + 1 + i) % ROOM_IDS.length;
             FocusPanel otherItem = new FocusPanel();
             otherItem.setStyleName("OtherItem");
-            otherItem.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            otherItem.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     selectRoom(otherIndex);
                 }
             });

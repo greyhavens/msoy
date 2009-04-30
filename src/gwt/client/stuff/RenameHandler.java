@@ -4,9 +4,9 @@
 package client.stuff;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -27,7 +27,7 @@ import client.util.ServiceUtil;
  */
 public class RenameHandler extends ClickCallback<String>
 {
-    public RenameHandler (SourcesClickEvents trigger, Item item, InventoryModels models)
+    public RenameHandler (HasClickHandlers trigger, Item item, InventoryModels models)
     {
         super(trigger, "");
 

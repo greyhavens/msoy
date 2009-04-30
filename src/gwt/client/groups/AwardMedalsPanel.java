@@ -12,7 +12,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -69,8 +70,8 @@ public class AwardMedalsPanel extends FlowPanel
 
     protected void init ()
     {
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 search();
             }
         };
@@ -111,8 +112,8 @@ public class AwardMedalsPanel extends FlowPanel
             // UI should contain only one drop down if at all possible.
             final ListBox awardDrop = createDropDown();
             row.add(awardDrop);
-            row.add(new Button(_msgs.awardMedalsAward(), new ClickListener() {
-                public void onClick (Widget sender) {
+            row.add(new Button(_msgs.awardMedalsAward(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     int selected = Math.max(0, awardDrop.getSelectedIndex());
                     Medal medal = awardDrop.getItemCount() < 0 ?
                         null : _medalMap.get(awardDrop.getValue(selected));

@@ -9,7 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
@@ -81,8 +82,8 @@ public class ABTestEditorDialog extends BorderedDialog
         final CheckBox enabled = new CheckBox();
         contents.add(new FormElement(_msgs.abTestEnabledLabel(), enabled));
         enabled.setChecked(_test.enabled);
-        enabled.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        enabled.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (!_test.enabled && enabled.isChecked()) {
                     if (_test.started != null) {
                         MsoyUI.info(_msgs.abTestEnabledWarning());
@@ -123,8 +124,8 @@ public class ABTestEditorDialog extends BorderedDialog
         final CheckBox onlyNewVisitors = new CheckBox();
         contents.add(new FormElement(_msgs.abTestOnlyNewVisitorsLabel(), onlyNewVisitors));
         onlyNewVisitors.setChecked(_test.onlyNewVisitors);
-        onlyNewVisitors.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        onlyNewVisitors.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _test.onlyNewVisitors = onlyNewVisitors.isChecked();
             }
         });
@@ -132,21 +133,21 @@ public class ABTestEditorDialog extends BorderedDialog
         final CheckBox landingCookie = new CheckBox();
         contents.add(new FormElement(_msgs.abTestLandingCookieLabel(), landingCookie));
         landingCookie.setChecked(_test.landingCookie);
-        landingCookie.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        landingCookie.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _test.landingCookie = landingCookie.isChecked();
             }
         });
 
-        Button submit = MsoyUI.createCrUpdateButton(_isNewTest, new ClickListener() {
-            public void onClick (Widget widget) {
+        Button submit = MsoyUI.createCrUpdateButton(_isNewTest, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 commitEdit();
             }
         });
 
         Button cancel = new Button(_cmsgs.cancel());
-        cancel.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
+        cancel.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ABTestEditorDialog.this.hide();
             }
         });

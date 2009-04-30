@@ -7,7 +7,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -109,7 +110,7 @@ public class StatusPanel extends SmartTable
     public void didLogon (SessionData data)
     {
         _creds = data.creds;
-        CookieUtil.set("/", WebUserService.SESSION_DAYS, CookieNames.ACCOUNT, _creds.accountName);
+        CookieUtil.set("/", WebUserService.SESSION_DAYS, CookieNames.WHO, _creds.accountName);
 
         boolean permaguest = MemberMailUtil.isPermaguest(_creds.accountName);
 
@@ -130,8 +131,8 @@ public class StatusPanel extends SmartTable
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogon(),
                                                Link.createListener(Pages.ACCOUNT, "logon")));
         } else {
-            links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
-                public void onClick (Widget sender) {
+            links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     CShell.frame.logoff();
                 }
             }));
@@ -214,14 +215,14 @@ public class StatusPanel extends SmartTable
             coins.add(new Image(Currency.COINS.getSmallIcon()));
             coins.add(_coinsLabel = new Label("0"));
             FocusPanel coinsFocus = new FocusPanel(coins);
-            coinsFocus.addClickListener(NaviUtil.onViewTransactions(ReportType.COINS));
+            coinsFocus.addClickHandler(NaviUtil.onViewTransactions(ReportType.COINS));
             setWidget(0, idx++, coinsFocus);
 
             FloatPanel bars = new FloatPanel("Bars");
             bars.add(new Image(Currency.BARS.getSmallIcon()));
             bars.add(_barsLabel = new Label("0"));
             FocusPanel barsFocus = new FocusPanel(bars);
-            barsFocus.addClickListener(NaviUtil.onViewTransactions(ReportType.BARS));
+            barsFocus.addClickHandler(NaviUtil.onViewTransactions(ReportType.BARS));
             setWidget(0, idx++, barsFocus);
             setWidget(0, idx++, MsoyUI.createActionLabel(
                           _cmsgs.statusBuyBars(), "BuyBars", BillingUtil.onBuyBars()));
@@ -230,7 +231,7 @@ public class StatusPanel extends SmartTable
             level.add(new Image("/images/header/symbol_level.png"));
             level.add(_levelLabel = new Label("0"));
             FocusPanel levelFocus = new FocusPanel(level);
-            levelFocus.addClickListener(Link.createListener(Pages.ME, "passport"));
+            levelFocus.addClickHandler(Link.createListener(Pages.ME, "passport"));
             setWidget(0, idx++, levelFocus);
 
             getFlexCellFormatter().setWidth(0, idx++, "12px"); // gap!

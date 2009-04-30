@@ -7,7 +7,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -175,8 +176,8 @@ public class GameGenrePanel extends FlowPanel
                 setStyleName("GameInfoPanel");
                 int col = 0;
 
-                ClickListener gameClick = new ClickListener() {
-                    public void onClick (Widget widget) {
+                ClickHandler gameClick = new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         Link.go(Pages.GAMES, Args.compose("d", game.gameId));
                     }
                 };

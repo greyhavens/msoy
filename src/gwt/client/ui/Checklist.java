@@ -14,7 +14,8 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -43,8 +44,8 @@ public abstract class Checklist<T> extends SmartTable
         // Select all checkbox
         final CheckBox selectAll = new CheckBox();
         selectAll.setChecked(true);
-        selectAll.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        selectAll.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 selectAll(selectAll.isChecked());
             }
         });
@@ -64,8 +65,8 @@ public abstract class Checklist<T> extends SmartTable
         for (final T item : items) {
             final CheckBox check = new CheckBox();
             check.setChecked(true);
-            check.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            check.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     setItemSelected(item, check.isChecked());
                 }
             });

@@ -4,7 +4,8 @@
 package client.rooms;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,8 +40,8 @@ public class RoomsPanel extends FlowPanel
         header.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         header.setText(1, 0, _msgs.roomsIntro(), 1, "Intro");
 
-        Widget button = MsoyUI.createImageButton("TourButton", new ClickListener () {
-            public void onClick (Widget sender) {
+        Widget button = MsoyUI.createImageButton("TourButton", new ClickHandler () {
+            public void onClick (ClickEvent event) {
                 if (FlashClients.clientExists()) {
                     FlashClients.startTour();
                 } else {

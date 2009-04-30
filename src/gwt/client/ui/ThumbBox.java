@@ -4,7 +4,8 @@
 package client.ui;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -39,7 +40,7 @@ public class ThumbBox extends SimplePanel
              Link.createListener(page, args));
     }
 
-    public ThumbBox (MediaDesc desc, int width, int height, ClickListener onClick)
+    public ThumbBox (MediaDesc desc, int width, int height, ClickHandler onClick)
     {
         addStyleName("thumbBox");
         setWidth(width + "px");

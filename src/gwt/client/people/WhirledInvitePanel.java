@@ -3,7 +3,8 @@
 
 package client.people;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,8 +45,8 @@ public class WhirledInvitePanel extends InvitePanel
             if (FlashClients.clientExists()) {
                 done.add(MsoyUI.createLabel(_msgs.inviteCloseTip(), null));
                 done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteClose(),
-                                             new ClickListener() {
-                    public void onClick (Widget sender) {
+                                             new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         CShell.frame.closeContent();
                     }
                 }));

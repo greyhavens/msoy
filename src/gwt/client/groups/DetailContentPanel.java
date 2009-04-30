@@ -5,7 +5,8 @@ package client.groups;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -40,12 +41,12 @@ public class DetailContentPanel extends FlowPanel
         _backButton.setVisible(false);
         _backButton.addStyleName("actionLabel");
         _backButton.addStyleName("ContentBackButton");
-        ClickListener backClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler backClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 showDiscussions();
             }
         };
-        _backButton.addClickListener(backClick);
+        _backButton.addClickHandler(backClick);
     }
 
     public void showDiscussions () {

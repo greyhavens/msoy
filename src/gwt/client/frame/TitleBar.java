@@ -4,7 +4,8 @@
 package client.frame;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -28,12 +29,12 @@ public class TitleBar extends SmartTable
     /**
      * Creates a title bar for the specified page.
      */
-    public static TitleBar create (Tabs tab, ClickListener onClose)
+    public static TitleBar create (Tabs tab, ClickHandler onClose)
     {
         return new TitleBar(tab, Page.getDefaultTitle(tab), new SubNaviPanel(tab), onClose);
     }
 
-    public TitleBar (Tabs tab, String title, SubNaviPanel subnavi, ClickListener onClose)
+    public TitleBar (Tabs tab, String title, SubNaviPanel subnavi, ClickHandler onClose)
     {
         super("pageTitle", 0, 0);
 
@@ -43,8 +44,8 @@ public class TitleBar extends SmartTable
         _titleLabel = new Label(title);
         _titleLabel.setStyleName("Title");
 
-        Widget back = MsoyUI.createImageButton("backButton", new ClickListener() {
-            public void onClick (Widget sender) {
+        Widget back = MsoyUI.createImageButton("backButton", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 History.back();
             }
         });

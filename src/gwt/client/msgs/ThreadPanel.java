@@ -11,7 +11,8 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -173,8 +174,8 @@ public class ThreadPanel extends TitledListPanel
                 setWidget(row++, 0, reply);
             }
 
-            addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (Widget sender) {
+            addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showMessages();
                 }
             }));
@@ -219,8 +220,8 @@ public class ThreadPanel extends TitledListPanel
             _content.setWidget(0, 0, _editor = new MessageEditor());
             _editor.setHTML(message.message);
 
-            addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (Widget sender) {
+            addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showMessages();
                 }
             }));
@@ -287,8 +288,8 @@ public class ThreadPanel extends TitledListPanel
             _locked.setChecked(_thread.isLocked());
             setContents(main);
 
-            addButton(new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (Widget widget) {
+            addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     ThreadFlagsEditorPanel.this.hide();
                 }
             }));

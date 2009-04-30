@@ -10,10 +10,11 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -65,7 +66,7 @@ public class MeFriendsPanel extends FlowPanel
         Widget imageLink = Link.createImage(
             "/images/me/me_invite_friends.png", _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
         imageLink.addStyleName("Invite");
-        MsoyUI.addTrackingListener(((SourcesClickEvents)imageLink), "meInviteFriends", null);
+        MsoyUI.addTrackingHandler(((HasClickHandlers)imageLink), "meInviteFriends", null);
         add(imageLink);
 
         add(MsoyUI.createLabel(_msgs.nextOr(), "Or"));
@@ -76,8 +77,8 @@ public class MeFriendsPanel extends FlowPanel
         search.setWidth("120px");
         searchControls.add(search);
         add(searchControls);
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 String query = search.getText().trim();
                 if (query.length() > 0) {
                     Link.go(Pages.PEOPLE, Args.compose("search", "0", query));

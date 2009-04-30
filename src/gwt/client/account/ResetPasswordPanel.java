@@ -6,7 +6,8 @@ package client.account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -60,15 +61,15 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, _msgs.resetPassword());
         setWidget(row++, 1, _password = new PasswordTextBox());
-        _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
+        _password.addKeyboardListener(new EnterClickAdapter(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }
         }));
         TextBoxUtil.addTypingListener(_password, _validator);
 
-        ClickListener submit = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler submit = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 sendResetRequest();
             }
         };

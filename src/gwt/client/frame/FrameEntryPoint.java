@@ -15,7 +15,8 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Label;
@@ -104,8 +105,8 @@ public class FrameEntryPoint
         Session.validate();
 
         // create our header, dialog and popup
-        _header = new FrameHeader(new ClickListener() {
-            public void onClick (Widget sender) {
+        _header = new FrameHeader(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (_closeToken != null) {
                     closeContent();
                 } else if (CShell.isGuest()) {
@@ -122,8 +123,8 @@ public class FrameEntryPoint
         DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
 
         // If the browser is unsupported, hide the page (still being built) and show a warning.
-        ClickListener continueClicked = new ClickListener() {
-            public void onClick (Widget widget) {
+        ClickHandler continueClicked = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // close the warning and show the page if the visitor choose to continue
                 RootPanel.get(LOADING).clear();
                 RootPanel.get(LOADING).setVisible(false);
@@ -178,30 +179,9 @@ public class FrameEntryPoint
             return;
         }
 
-        // pull out the vector id from the URL; it will be of the form: "vec_VECTOR"
-        String vector = null;
-        ExtractedParam afterVector = extractParams("vec", page, token, args);
-        if (afterVector != null) {
-            vector = afterVector.value;
-            token = afterVector.newToken;
-            args = afterVector.newArgs;
-        }
-
-        // if we got a new vector from the URL, tell the server to associate it with our visitor id
-        if (vector != null) {
-            _membersvc.trackVectorAssociation(getVisitorInfo(), vector, new AsyncCallback<Void>() {
-                public void onSuccess (Void result) {
-                    CShell.log("Saved vector association", "visInfo", getVisitorInfo());
-                }
-                public void onFailure (Throwable caught) {
-                    CShell.log("Failed to send vector creation to server.", caught);
-                }
-            });
-        }
-
         // if we have no account cookie (which means we've seen someone on this computer before),
         // force the creation of our visitor info because we're very probably a real new user
-        boolean newUser = StringUtil.isBlank(CookieUtil.get(CookieNames.ACCOUNT));
+        boolean newUser = StringUtil.isBlank(CookieUtil.get(CookieNames.WHO));
         if (newUser) {
             VisitorInfo info = getVisitorInfo(); // creates a visitorId and reports it
 
@@ -459,29 +439,6 @@ public class FrameEntryPoint
         }
     }
 
-    public static class ExtractedParam
-    {
-        public String value;
-        public String newToken;
-        public Args newArgs;
-    }
-
-    protected ExtractedParam extractParams (String key, Pages page, String token, Args args)
-    {
-        int idx = args.indexOf(key);
-        if (idx == -1 || args.getArgCount() < idx + 2) {
-            return null; // we have no key, or no value
-        }
-
-        ExtractedParam result = new ExtractedParam();
-        result.value = args.get(idx + 1, null);
-        // remove the key tag and its value from the URL
-        String shortened = args.recomposeWithout(idx, 2);
-        result.newToken = Pages.makeToken(page, shortened);
-        result.newArgs = Args.fromToken(shortened);
-        return result;
-    }
-
     protected void setPage (Pages page)
     {
         // clear out any old content
@@ -577,8 +534,8 @@ public class FrameEntryPoint
             // add a titlebar to the top of the content
             FlowPanel content = new FlowPanel();
             if (page.getTab() != null) {
-                content.add(_bar = TitleBar.create(page.getTab(), new ClickListener() {
-                    public void onClick (Widget sender) {
+                content.add(_bar = TitleBar.create(page.getTab(), new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         closeContent();
                     }
                 }));
@@ -665,8 +622,8 @@ public class FrameEntryPoint
             return; // no quick-home link for guests
         }
 
-        ClickListener goHome = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler goHome = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
                 _closeToken = Link.createToken(Pages.WORLD, "h");

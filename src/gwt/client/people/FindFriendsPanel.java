@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 
@@ -88,7 +89,7 @@ public class FindFriendsPanel extends InvitePanel
                 if (ec.friend) {
                     _results.setText(row++, 3, _msgs.mlAlreadyFriend());
                 } else {
-                    ClickListener onClick = new FriendInviter(ec.mname, "InvitePanel");
+                    ClickHandler onClick = new FriendInviter(ec.mname, "InvitePanel");
                     _results.setWidget(row, 2, MsoyUI.createActionImage(ADD_IMAGE, onClick));
                     _results.setWidget(row++, 3, MsoyUI.createActionLabel(
                                            _msgs.mlAddFriend(), onClick));

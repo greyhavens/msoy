@@ -8,7 +8,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.TextBox;
@@ -69,8 +70,8 @@ public class InterestsBlurb extends Blurb
 
         // display the edit button if this is our profile
         if (_name.getMemberId() == CShell.getMemberId()) {
-            setFooterLabel(_msgs.interestsEdit(), new ClickListener() {
-                public void onClick (Widget source) {
+            setFooterLabel(_msgs.interestsEdit(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     startEdit();
                 }
             });
@@ -95,8 +96,8 @@ public class InterestsBlurb extends Blurb
             editor.setWidget(row++, 1, _iEditors[ii]);
         }
 
-        Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget source) {
+        Button cancel = new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 displayInterests();
             }
         });

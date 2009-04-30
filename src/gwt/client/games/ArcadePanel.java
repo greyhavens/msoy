@@ -4,7 +4,7 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -81,7 +81,7 @@ public class ArcadePanel extends FlowPanel
         public GenreBox (ArcadeData.Genre genre) {
             setStyleName("GenreBox");
 
-            ClickListener onClick = Link.createListener(
+            ClickHandler onClick = Link.createListener(
                 Pages.GAMES, Args.compose("g", genre.genre));
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);

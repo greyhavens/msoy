@@ -11,7 +11,8 @@ import client.util.ServiceUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -29,7 +30,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
  * or maybe leaving it disabled would work
  */
 public class FriendInviter
-    implements ClickListener
+    implements ClickHandler
 {
     /**
      * Creates a new inviter that will add the supplied target as a friend or dispatch an email
@@ -51,8 +52,8 @@ public class FriendInviter
         _success = success;
     }
 
-    // from ClickListener
-    public void onClick (Widget sender)
+    // from ClickHandler
+    public void onClick (ClickEvent event)
     {
         if (!MsoyUI.requireRegistered()) {
             return; // permaguests can't make friends

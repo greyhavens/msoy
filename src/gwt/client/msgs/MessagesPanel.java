@@ -10,7 +10,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -87,8 +88,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         super.addCustomControls(controls);
 
         // add a button for starting a new message that will optionally be enabled later
-        _postReply = new Button(_mmsgs.postReply(), new ClickListener() {
-            public void onClick (Widget sender) {
+        _postReply = new Button(_mmsgs.postReply(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _parent.postReply(null, false);
             }
         });
@@ -111,8 +112,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         controls.setWidget(0, 1, _ignoreThread);
 
         // add a button for editing this thread's flags
-        _editFlags = new Button(_mmsgs.editFlags(), new ClickListener() {
-            public void onClick (Widget sender) {
+        _editFlags = new Button(_mmsgs.editFlags(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _parent.editFlags();
             }
         });
@@ -184,17 +185,17 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     }
 
     protected static Widget makeInfoImage (
-        AbstractImagePrototype iproto, String tip, ClickListener onClick)
+        AbstractImagePrototype iproto, String tip, ClickHandler onClick)
     {
         Widget image = MsoyUI.makeActionImage(iproto.createImage(), tip, onClick);
         image.addStyleName("ActionIcon");
         return image;
     }
 
-    protected static InlineLabel makeInfoLabel (String text, ClickListener listener)
+    protected static InlineLabel makeInfoLabel (String text, ClickHandler listener)
     {
         InlineLabel label = new InlineLabel(text, false, true, false);
-        label.addClickListener(listener);
+        label.addClickHandler(listener);
         label.addStyleName("Posted");
         label.addStyleName("actionLabel");
         return label;
@@ -220,14 +221,14 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             messageFooter.add(actionButtons);
             if (_postReply.isEnabled()) {
                 actionButtons.add(makeInfoImage(
-                    _images.reply_post_quote(), _mmsgs.inlineQReply(), new ClickListener() {
-                        public void onClick (Widget sender) {
+                    _images.reply_post_quote(), _mmsgs.inlineQReply(), new ClickHandler() {
+                        public void onClick (ClickEvent event) {
                             _parent.postReply(_message, true);
                         }
                     }));
                 actionButtons.add(makeInfoImage(
-                    _images.reply_post(), _mmsgs.inlineReply(), new ClickListener() {
-                        public void onClick (Widget sender) {
+                    _images.reply_post(), _mmsgs.inlineReply(), new ClickHandler() {
+                        public void onClick (ClickEvent event) {
                             _parent.postReply(_message, false);
                         }
                     }));
@@ -269,8 +270,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             if (isPoster || CShell.isSupport()) {
                 toolBar.add(makeInfoImage(_images.edit_post(), _mmsgs.inlineEdit(),
-                                          new ClickListener() {
-                    public void onClick (Widget sender) {
+                                          new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         _parent.editPost(_message, new InfoCallback<ForumMessage>() {
                             public void onSuccess (ForumMessage message) {
                                 setMessage(message);
@@ -282,8 +283,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             if (!isPoster) {
                 toolBar.add(makeInfoImage(_images.complain_post(), _mmsgs.inlineComplain(),
-                    new ClickListener() {
-                        public void onClick (Widget sender) {
+                    new ClickHandler() {
+                        public void onClick (ClickEvent event) {
                             if (MsoyUI.requireValidated()) {
                                 new ForumMessageComplainPopup(_message).show();
                             }
@@ -298,12 +299,12 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             }
 
             if (_message.issueId > 0) {
-                ClickListener viewClick = Link.createListener(
+                ClickHandler viewClick = Link.createListener(
                     Pages.ISSUES, Args.compose("i", _message.issueId));
                 toolBar.add(makeInfoImage(_images.view_issue(), _mmsgs.inlineIssue(), viewClick));
 
             } else if (CShell.isSupport()) {
-                ClickListener newClick = Link.createListener(
+                ClickHandler newClick = Link.createListener(
                     Pages.ISSUES, Args.compose("create", _message.messageId));
                 toolBar.add(makeInfoImage(_images.new_issue(), _mmsgs.inlineNewIssue(), newClick));
                 String aargs = Args.compose("assign", _message.messageId, _page);

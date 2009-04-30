@@ -9,7 +9,8 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ButtonBase;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -56,16 +57,16 @@ public class LogonPanel extends SmartTable
         }
 
         // make our logon button initiate a logon
-        ClickListener onLogon = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onLogon = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 doLogon();
             }
         };
-        logon.addClickListener(onLogon);
+        logon.addClickHandler(onLogon);
 
         // create the email entry widget
         _email = new TextBox();
-        String who = CookieUtil.get(CookieNames.ACCOUNT);
+        String who = CookieUtil.get(CookieNames.WHO);
         if (who != null && !MemberMailUtil.isPermaguest(who)) {
             _email.setText(who);
             // since our email is already filled in, we can focus the password field; note: we
@@ -79,8 +80,8 @@ public class LogonPanel extends SmartTable
         } else {
             DefaultTextListener.configure(_email, _cmsgs.logonEmailDefault());
         }
-        _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
+        _email.addKeyboardListener(new EnterClickAdapter(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _password.setFocus(true);
             }
         }));
@@ -91,8 +92,8 @@ public class LogonPanel extends SmartTable
 
         // create the forgot password tip link
         String lbl = _cmsgs.forgotPassword();
-        Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickListener() {
-            public void onClick (Widget widget) {
+        Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 String forgottenTitle = "Forgot your password?";
                 ForgotPasswordDialog forgottenDialog =
                     new ForgotPasswordDialog(_email.getText().trim());
@@ -165,7 +166,7 @@ public class LogonPanel extends SmartTable
             super(0, 10);
 
             if (oemail.length() == 0) {
-                oemail = CookieUtil.get(CookieNames.ACCOUNT);
+                oemail = CookieUtil.get(CookieNames.WHO);
             }
 
             int col = 0;

@@ -7,7 +7,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -78,8 +79,8 @@ public class ItemUtil
     public static void addItemSpecificButtons (final Item item, HorizontalPanel panel)
     {
         if (item instanceof Game) {
-            panel.add(new Button(_cmsgs.detailPlay(), new ClickListener() {
-                public void onClick (Widget sender) {
+            panel.add(new Button(_cmsgs.detailPlay(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     Link.go(Pages.GAMES, Args.compose("d" , ((Game)item).gameId));
                 }
             }));

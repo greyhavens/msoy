@@ -6,14 +6,14 @@ package client.money;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
@@ -81,10 +81,10 @@ public abstract class BuyPanel<T> extends SmartTable
         getFlexCellFormatter().setColSpan(0, 0, 2);
         setWidget(0, 0, _barPanel);
 
-        ClickListener onBuy = BillingUtil.onBuyBars();
+        ClickHandler onBuy = BillingUtil.onBuyBars();
         // ABTEST: 2009 03 buypanel
         if (_abTestGroup > 0) {
-            onBuy = MsoyUI.makeTestTrackingListener("2009 03 buypanel", "buy_bars", onBuy);
+            onBuy = MsoyUI.makeTestTrackingHandler("2009 03 buypanel", "buy_bars", onBuy);
         }
         // END ABTEST
         _getBars = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.getBars(), onBuy);
@@ -199,7 +199,7 @@ public abstract class BuyPanel<T> extends SmartTable
 
     protected class BuyCallback extends ClickCallback<PurchaseResult<T>>
     {
-        public BuyCallback (SourcesClickEvents button, Currency currency) {
+        public BuyCallback (HasClickHandlers button, Currency currency) {
             super(button);
             _currency = currency;
         }

@@ -8,7 +8,8 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -35,7 +36,7 @@ class BadgeDisplay extends AwardDisplay
         this(badge, null);
     }
 
-    public BadgeDisplay (Badge badge, ClickListener clicker)
+    public BadgeDisplay (Badge badge, ClickHandler clicker)
     {
         super(clicker);
         addIcon(badge.imageUrl());
@@ -73,13 +74,13 @@ class BadgeDisplay extends AwardDisplay
             add(MsoyUI.createImage("/images/me/passport_progress.png", "ProgressLabel"));
         }
 
-        ClickListener goListener = getGoListener(badge);
+        ClickHandler goListener = getGoListener(badge);
         if (goListener != null) {
             add(MsoyUI.createImageButton("GoButton", goListener));
         }
     }
 
-    protected ClickListener getGoListener (Badge badge)
+    protected ClickHandler getGoListener (Badge badge)
     {
         // TODO: this method of determining where to go for each badge is disappointing... this
         // is the only piece of badge UI code that needs changing when a new badge is added.

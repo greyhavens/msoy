@@ -10,7 +10,8 @@ import client.util.Link;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,8 +50,8 @@ public class GroupThreadListPanel extends ThreadListPanel
         super.addCustomControls(controls);
 
         // add a button for starting a new thread that will optionally be enabled later
-        _startThread = new Button(_mmsgs.tlpStartNewThread(), new ClickListener() {
-            public void onClick (Widget sender) {
+        _startThread = new Button(_mmsgs.tlpStartNewThread(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (MsoyUI.requireValidated()) {
                     Link.go(Pages.GROUPS, Args.compose("p", _groupId));
                 }

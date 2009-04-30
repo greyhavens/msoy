@@ -5,7 +5,8 @@ package client.account;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -70,8 +71,8 @@ public class ConfigAccountPanel extends FlowPanel
         table.setText(row++, 0, _msgs.configAuthTip(), 3, null);
 
         table.setWidget(row++, 2, _submit = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, _msgs.configSubmit(), new ClickListener() {
-            public void onClick (Widget widget) {
+            MsoyUI.MEDIUM_THIN, _msgs.configSubmit(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 updateAccount();
             }
         }));

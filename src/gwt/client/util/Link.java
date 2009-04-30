@@ -3,14 +3,15 @@
 
 package client.util;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.ClickListenerCollection;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -134,10 +135,10 @@ public class Link
     /**
      * Creates a click listener that navigates to the supplied page when activated.
      */
-    public static ClickListener createListener (final Pages page, final String args)
+    public static ClickHandler createListener (final Pages page, final String args)
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 go(page, args);
             }
         };
@@ -196,7 +197,7 @@ public class Link
      * have to reimplement everything. Yay!
      */
     protected static class ReroutedHyperlink extends Widget
-        implements SourcesClickEvents
+        implements HasClickHandlers
     {
         public ReroutedHyperlink (String text, boolean asHTML, String targetHistoryToken) {
             _targetHistoryToken = targetHistoryToken;
@@ -216,33 +217,23 @@ public class Link
             }
         }
 
-        // from interface SourcesClickEvents
-        public void addClickListener (ClickListener listener) {
-            if (_clickListeners == null) {
-                _clickListeners = new ClickListenerCollection();
-            }
-            _clickListeners.add(listener);
+        // from interface HasClickHandlers
+        public HandlerRegistration addClickHandler (ClickHandler handler)
+        {
+            return addDomHandler(handler, ClickEvent.getType());
         }
 
-        // from interface SourcesClickEvents
-        public void removeClickListener (ClickListener listener) {
-            if (_clickListeners != null) {
-                _clickListeners.remove(listener);
-            }
-        }
-
-        @Override // from Widget
-        public void onBrowserEvent (Event event) {
-            if (DOM.eventGetType(event) == Event.ONCLICK) {
-                if (_clickListeners != null) {
-                    _clickListeners.fireClick(this);
-                }
-                CShell.frame.navigateTo(_targetHistoryToken);
-                DOM.eventPreventDefault(event);
-            }
-        }
+//         @Override // from Widget
+//         public void onBrowserEvent (Event event) {
+//             if (DOM.eventGetType(event) == Event.ONCLICK) {
+//                 if (_clickListeners != null) {
+//                     _clickListeners.fireClick(this);
+//                 }
+//                 CShell.frame.navigateTo(_targetHistoryToken);
+//                 DOM.eventPreventDefault(event);
+//             }
+//         }
 
         protected String _targetHistoryToken;
-        protected ClickListenerCollection _clickListeners;
     }
 }

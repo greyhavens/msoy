@@ -9,7 +9,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -93,8 +94,8 @@ public class PromotionEditor extends FlowPanel
         _ends.setTimeVisible(true);
         _ends.display(); // can't anyone write a sane library?
         create.setText(row, 0, _msgs.promoIcon());
-        create.setWidget(row++, 1, new Button(_msgs.promoChange(), new ClickListener() {
-            public void onClick (Widget source) {
+        create.setWidget(row++, 1, new Button(_msgs.promoChange(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
@@ -118,8 +119,8 @@ public class PromotionEditor extends FlowPanel
         create.setText(row, 0, _msgs.promoPreview());
         create.setWidget(_previewRow = row++, 1, new PromotionBox(createPromotion()));
 
-        create.setWidget(row, 0, new Button(_msgs.promoAdd(), new ClickListener() {
-            public void onClick (Widget sender) {
+        create.setWidget(row, 0, new Button(_msgs.promoAdd(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 publishPromotion(createPromotion());
             }
         }), 2, null);
@@ -146,8 +147,8 @@ public class PromotionEditor extends FlowPanel
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
         buttons.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        Button edit = new Button(_msgs.promoEdit(), new ClickListener () {
-            public void onClick (Widget sender) {
+        Button edit = new Button(_msgs.promoEdit(), new ClickHandler () {
+            public void onClick (ClickEvent event) {
                 editPromotion(_edit, promo);
             }
         });

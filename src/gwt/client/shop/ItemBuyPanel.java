@@ -5,7 +5,8 @@ package client.shop;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -76,8 +77,8 @@ public class ItemBuyPanel extends BuyPanel<Item>
             if (item instanceof SubItem) {
                 boughtPanel.add(WidgetUtil.makeShim(10, 10));
                 boughtPanel.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(),
-                    new ClickListener() {
-                    public void onClick (Widget sender) {
+                    new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         CShell.frame.closeContent();
                     }
                 }));

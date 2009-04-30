@@ -3,7 +3,8 @@
 
 package client.trophy;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -35,8 +36,8 @@ public class TrophyGrid extends FlexTable
             int col = ii % COLUMNS;
 
             final Trophy trophy = trophies[ii];
-            ClickListener trophyClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler trophyClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     Link.go(Pages.GAMES, NaviUtil.gameDetail(
                                 trophy.gameId, NaviUtil.GameDetails.TROPHIES));
                 }

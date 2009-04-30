@@ -4,7 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextArea;
@@ -107,8 +108,8 @@ public class LinkToWhirledPanel extends VerticalPanel
 
             final String embed = "<a href=\"" + logos[ii].getUrl() + "\"><img src=\"" +
                 DeploymentConfig.serverURL + imagePath.substring(1) + "\"></a>";
-            image.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            image.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _htmlCode.setText(embed);
                     _htmlCode.setFocus(true);
                 }

@@ -6,7 +6,8 @@ package client.groups;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -140,12 +141,12 @@ public class GroupDetailPanel extends FlowPanel
         InlineLabel members = new InlineLabel(_msgs.detailMembers());
         titleBox.add(members);
         members.addStyleName("actionLabel");
-        ClickListener membersClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler membersClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _contentPanel.showMembers();
             }
         };
-        members.addClickListener(membersClick);
+        members.addClickHandler(membersClick);
 
         // enter, discussions and medals buttons
         FloatPanel buttons = new FloatPanel("Buttons");
@@ -219,8 +220,8 @@ public class GroupDetailPanel extends FlowPanel
         }
 
         // read charter
-        actions.add(MsoyUI.createActionLabel(_msgs.detailReadCharter(), new ClickListener() {
-            public void onClick (Widget sender) {
+        actions.add(MsoyUI.createActionLabel(_msgs.detailReadCharter(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _contentPanel.showCharter();
             }
         }));
@@ -236,16 +237,16 @@ public class GroupDetailPanel extends FlowPanel
 
             managerActions.add(new InlineLabel(" | "));
             managerActions.add(MsoyUI.createActionLabel(
-                _msgs.detailManageRooms(), "inline", new ClickListener() {
-                    public void onClick (Widget sender) {
+                _msgs.detailManageRooms(), "inline", new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         _contentPanel.showRooms();
                     }
                 }));
 
             managerActions.add(new InlineLabel(" | "));
             managerActions.add(MsoyUI.createActionLabel(
-                _msgs.detailAwardMedals(), "inline", new ClickListener() {
-                    public void onClick (Widget sender) {
+                _msgs.detailAwardMedals(), "inline", new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         _contentPanel.showAwardMedals();
                     }
                 }));
@@ -332,12 +333,12 @@ public class GroupDetailPanel extends FlowPanel
             content.add(seeAllLink);
             seeAllLink.addStyleName("SeeAll");
             seeAllLink.addStyleName("actionLabel");
-            ClickListener membersClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler membersClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _contentPanel.showMembers();
                 }
             };
-            seeAllLink.addClickListener(membersClick);
+            seeAllLink.addClickHandler(membersClick);
         }
     }
 

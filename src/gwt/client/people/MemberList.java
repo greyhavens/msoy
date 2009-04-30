@@ -6,7 +6,8 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -77,7 +78,7 @@ public class MemberList extends PagedGrid<MemberCard>
 
             int row = extras.getRowCount();
             boolean isNotMe = CShell.getMemberId() != card.name.getMemberId();
-            ClickListener onClick;
+            ClickHandler onClick;
 
             // potentially show the add friend button
             if (isNotMe && !card.isFriend) {

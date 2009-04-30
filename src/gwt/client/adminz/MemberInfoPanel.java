@@ -9,7 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -195,8 +196,8 @@ public class MemberInfoPanel extends SmartTable
         charityDescription.setStylePrimaryName("CharityDescription");
         setWidget(row, 1, charityDescription);
 
-        charity.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        charity.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (charity.isChecked()) {
                     coreCharity.setEnabled(true);
                     charityDescription.setEnabled(true);
@@ -209,8 +210,8 @@ public class MemberInfoPanel extends SmartTable
             }
         });
 
-        setWidget(++row, 1, new Button("Update Charity Info",  new ClickListener() {
-            public void onClick (Widget sender) {
+        setWidget(++row, 1, new Button("Update Charity Info",  new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 final boolean isCharity = charity.isChecked();
                 final boolean isCoreCharity = coreCharity.isChecked();
                 final String description = charityDescription.getText();

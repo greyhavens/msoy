@@ -33,7 +33,7 @@ public class SubItemPanel extends PagedGrid<Item>
         _parent = parent;
 
         // we can't add this in addCustomControls as that happens in our superclass constructor
-        _create.addClickListener(NaviUtil.onCreateItem(_type, _parent.getType(), _parent.itemId));
+        _create.addClickHandler(NaviUtil.onCreateItem(_type, _parent.getType(), _parent.itemId));
 
         // if our parent is an original item, allow creation of subitems
         _create.setVisible(_parent.sourceId == 0);
@@ -75,7 +75,7 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
-        _create = new Button(_msgs.panelCreateNew()); // ClickListener added later
+        _create = new Button(_msgs.panelCreateNew()); // ClickHandler added later
         controls.setWidget(0, 0, _create);
     }
 

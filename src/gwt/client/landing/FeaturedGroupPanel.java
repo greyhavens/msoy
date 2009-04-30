@@ -4,7 +4,8 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -37,13 +38,13 @@ public class FeaturedGroupPanel extends FlowPanel
 
         // prev & next buttons are re-positioned in the css
         add(MsoyUI.createPrevNextButtons(
-            new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showWhirled((_selidx+_whirleds.length-1) % _whirleds.length);
                 }
             },
-            new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showWhirled((_selidx+1) % _whirleds.length);
                 }
             }));
@@ -101,8 +102,8 @@ public class FeaturedGroupPanel extends FlowPanel
     {
         public IconPanel (final GroupCard card, final int index) {
             setStyleName("Icon");
-            ClickListener groupClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler groupClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showWhirled(index);
                 }
             };

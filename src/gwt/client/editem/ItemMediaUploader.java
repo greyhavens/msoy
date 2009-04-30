@@ -6,11 +6,11 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
@@ -75,8 +75,8 @@ public class ItemMediaUploader extends FlexTable
         setWidget(3, 0, FlashClients.createUploader(mediaIds, type));
         fmt.setVerticalAlignment(3, 0, HorizontalPanel.ALIGN_BOTTOM);
 
-        setWidget(4, 0, _clearMedia = new Button(_emsgs.clear(), new ClickListener() {
-            public void onClick (Widget sender) {
+        setWidget(4, 0, _clearMedia = new Button(_emsgs.clear(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _updater.clearMedia();
                 setMedia(null);
             }
@@ -118,12 +118,12 @@ public class ItemMediaUploader extends FlexTable
     {
         final Button createBtn = new Button(_emsgs.createImage());
 
-        ClickListener listener = new ClickListener() {
-            public void onClick (Widget sender) {
-                openImageEditor((sender == createBtn) ? null : desc, false);
+        ClickHandler listener = new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                openImageEditor((event.getSource() == createBtn) ? null : desc, false);
             }
         };
-        createBtn.addClickListener(listener);
+        createBtn.addClickHandler(listener);
 
         HorizontalPanel hpan = new HorizontalPanel();
         hpan.add(createBtn);
@@ -133,7 +133,7 @@ public class ItemMediaUploader extends FlexTable
 
         if (desc != null && desc.isImage()) {
             Button editBtn = new Button(_emsgs.editImage());
-            editBtn.addClickListener(listener);
+            editBtn.addClickHandler(listener);
             setWidget(1, 0, editBtn);
 
         } else {

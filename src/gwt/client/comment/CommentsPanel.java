@@ -8,7 +8,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -101,8 +102,8 @@ public class CommentsPanel extends PagedGrid<Comment>
 
         // if we're a validated member, display a button for posting a comment
         if (CShell.isRegistered()) {
-            _post = new Button(_cmsgs.postComment(), new ClickListener() {
-                public void onClick (Widget sender) {
+            _post = new Button(_cmsgs.postComment(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showPostPopup();
                 }
             });
@@ -246,8 +247,8 @@ public class CommentsPanel extends PagedGrid<Comment>
             setContents(contents);
 
             addButton(new Button(_cmsgs.cancel(), onCancel()));
-            addButton(new Button(_cmsgs.send(), new ClickListener() {
-                public void onClick (Widget sender) {
+            addButton(new Button(_cmsgs.send(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     if (!_agree.isChecked()) {
                         MsoyUI.errorNear(_cmsgs.commentMustNotBeAsshole(), _agree);
                         return;

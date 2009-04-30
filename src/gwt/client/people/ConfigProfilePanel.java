@@ -8,7 +8,8 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
@@ -98,8 +99,8 @@ public class ConfigProfilePanel extends FlowPanel
         config.setWidget(row++, 1, _name);
 
         config.setText(row, 0, _msgs.cpUploadPhoto());
-        config.setWidget(row++, 1, new Button(_msgs.cpSelect(), new ClickListener() {
-            public void onClick (Widget source) {
+        config.setWidget(row++, 1, new Button(_msgs.cpSelect(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {

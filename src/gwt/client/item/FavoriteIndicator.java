@@ -4,11 +4,11 @@
 package client.item;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
@@ -33,9 +33,9 @@ public class FavoriteIndicator extends FlowPanel
                                                _mimgs.favorite().createImage());
         toggle.addStyleName("actionLabel");
         toggle.setDown(memberItemInfo.favorite);
-        toggle.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                final boolean favorite = ((ToggleButton) sender).isDown();
+        toggle.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                final boolean favorite = ((ToggleButton) event.getSource()).isDown();
                 _itemsvc.setFavorite(_item.getType(), _item.catalogId, favorite,
                     new InfoCallback<Void>() {
                     public void onSuccess (Void result) {

@@ -6,7 +6,8 @@ package client.adminz;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
@@ -118,8 +119,8 @@ public class ReviewItem extends FlowPanel
         if (_item != null) {
             _delete = new Button(_item.ownerId != 0 ?
                                  _msgs.reviewDelete() : _msgs.reviewDeleteAll());
-            _delete.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            _delete.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     if (_item == null) {
                         // should not happen, but let's be careful
                         return;
@@ -170,16 +171,16 @@ public class ReviewItem extends FlowPanel
             _area.addKeyboardListener(this);
             setContents(contents);
 
-            addButton(_yesButton = new Button(_msgs.reviewDeletionDo(), new ClickListener () {
-                public void onClick (Widget sender) {
+            addButton(_yesButton = new Button(_msgs.reviewDeletionDo(), new ClickHandler () {
+                public void onClick (ClickEvent event) {
                     doDelete();
                     hide();
                 }
             }));
             _yesButton.setEnabled(false);
 
-            addButton(new Button(_msgs.reviewDeletionDont(), new ClickListener () {
-                public void onClick (Widget sender) {
+            addButton(new Button(_msgs.reviewDeletionDont(), new ClickHandler () {
+                public void onClick (ClickEvent event) {
                     hide();
                 }
             }));

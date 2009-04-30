@@ -9,7 +9,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -96,9 +97,9 @@ public class MailPanel extends FlowPanel
             footer.setWidth("100%");
             footer.setHTML(0, col++, "&nbsp;", 1, "BottomLeft");
             CheckBox selall = new CheckBox(_cmsgs.selectAll());
-            selall.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    boolean select = ((CheckBox)sender).isChecked();
+            selall.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    boolean select = ((CheckBox)event.getSource()).isChecked();
                     for (ConvoWidget cw : _convos) {
                         cw.setSelected(select);
                     }
@@ -156,8 +157,8 @@ public class MailPanel extends FlowPanel
             super.addCustomControls(controls);
 
             FloatPanel customControls = new FloatPanel(null);
-            customControls.add(new Button(_msgs.mailCheck(), new ClickListener() {
-                public void onClick (Widget sender) {
+            customControls.add(new Button(_msgs.mailCheck(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     if (_page == 0) {
                         ((ConvosModel)_model).reset();
                         displayPage(0, true);

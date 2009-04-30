@@ -13,7 +13,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
@@ -184,20 +185,20 @@ public class GameInvitePanel extends InvitePanel
 
             // buttons to select and deselect all friends
             SmartTable selectors = new SmartTable();
-            selectors.setWidget(0, 0, new Button(_cmsgs.selectAll(), new ClickListener () {
-                public void onClick (Widget source) {
+            selectors.setWidget(0, 0, new Button(_cmsgs.selectAll(), new ClickHandler () {
+                public void onClick (ClickEvent event) {
                     selectAll(true);
                 }
             }));
-            selectors.setWidget(0, 1, new Button(_cmsgs.deselectAll(), new ClickListener () {
-                public void onClick (Widget source) {
+            selectors.setWidget(0, 1, new Button(_cmsgs.deselectAll(), new ClickHandler () {
+                public void onClick (ClickEvent event) {
                     selectAll(false);
                 }
             }));
             _showAll = new CheckBox(_msgs.gameInviteWhirledShowAll());
             selectors.setWidget(0, 2, _showAll);
-            _showAll.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            _showAll.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     downloadFriends();
                 }
             });
@@ -315,8 +316,8 @@ public class GameInvitePanel extends InvitePanel
             _send.setEnabled(enable);
         }
 
-        protected ClickListener _updateSendButton = new ClickListener() {
-            public void onClick (Widget sender) {
+        protected ClickHandler _updateSendButton = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 updateSendButton();
             }
         };
@@ -336,7 +337,7 @@ public class GameInvitePanel extends InvitePanel
      */
     protected static class SelectaFriend extends SmartTable
     {
-        public SelectaFriend (MemberCard card, ClickListener listener)
+        public SelectaFriend (MemberCard card, ClickHandler listener)
         {
             super(0, 1);
             _card = card;
@@ -344,7 +345,7 @@ public class GameInvitePanel extends InvitePanel
             setWidget(0, 1, new ThumbBox(card.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE));
             setWidget(0, 2, MsoyUI.createLabel(card.name.toString(), "memberName"));
             getFlexCellFormatter().setWidth(0, 2, "100%");
-            _check.addClickListener(listener);
+            _check.addClickHandler(listener);
         }
 
         public int getMemberId ()

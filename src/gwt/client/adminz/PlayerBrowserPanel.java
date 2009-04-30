@@ -13,7 +13,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -47,8 +48,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
         setStyleName("playerBrowser");
         setSpacing(10);
 
-        add(_backButton = new Button("<--", new ClickListener() {
-            public void onClick (Widget sender) {
+        add(_backButton = new Button("<--", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (_childList == null) {
                     // nothing to do
                     return;
@@ -63,8 +64,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
         }));
         _backButton.setEnabled(false);
-        add(_forwardButton = new Button("-->", new ClickListener() {
-            public void onClick (Widget sender) {
+        add(_forwardButton = new Button("-->", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (_childList == null) {
                     // nothing to do
                     return;
@@ -194,8 +195,8 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 // the element, so I can't override it in the css file.  Thanks a ton, GWT team.
                 buttons.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
                 buttons.addStyleName("Buttons");
-                buttons.add(new Button("View Profile", new ClickListener() {
-                    public void onClick (Widget sender) {
+                buttons.add(new Button("View Profile", new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         Link.go(Pages.PEOPLE, "" + _result.memberId);
                     }
                 }));
@@ -246,14 +247,15 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 final int column = ii;
                 final int type = sortType[ii];
                 final int order = sortOrder[ii];
-                headerLabel.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
+                headerLabel.addClickHandler(new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         sort(column, type, _sortOrder);
                         _sortOrder *= -1;
                         if (_activeHeader != null) {
                             _activeHeader.removeStyleName("HighlightedHeader");
                         }
-                        (_activeHeader = (Label) sender).addStyleName("HighlightedHeader");
+                        (_activeHeader = (Label) event.getSource())
+                            .addStyleName("HighlightedHeader");
                     }
                     protected int _sortOrder = order;
                 });
@@ -269,7 +271,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             for (MemberInviteStatus member : _result.invitees) {
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
-                nameLabel.addClickListener(
+                nameLabel.addClickHandler(
                     Link.createListener(Pages.ADMINZ, Args.compose("browser", member.memberId)));
                 nameLabel.addStyleName("Clickable");
                 _memberIds.put(member.memberId, nameLabel);

@@ -4,7 +4,8 @@
 package client.rooms;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
@@ -84,8 +85,8 @@ public class RoomDetailPanel extends SmartTable
         // maybe add the gifting option
         if ((detail.owner instanceof MemberName) &&
                 CShell.getMemberId() == ((MemberName) detail.owner).getMemberId()) {
-            obits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickListener() {
-                public void onClick (Widget sender) {
+            obits.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gift(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _roomsvc.canGiftRoom(detail.info.sceneId, new InfoCallback<Void>() {
                         public void onSuccess (Void nada) {
                             Link.go(Pages.MAIL, Args.compose("w", "r", detail.info.sceneId));

@@ -3,7 +3,8 @@
 
 package client.frame;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -112,7 +113,7 @@ public class SubNaviPanel extends FlowPanel
         }
     }
 
-    public void addExternalLink (String label, ClickListener listener, boolean sep)
+    public void addExternalLink (String label, ClickHandler listener, boolean sep)
     {
         addSeparator(sep);
         add(MsoyUI.createActionLabel(label, "external", listener));

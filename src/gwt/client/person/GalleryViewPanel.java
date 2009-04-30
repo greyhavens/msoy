@@ -12,7 +12,8 @@ import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -121,7 +122,7 @@ public class GalleryViewPanel extends FlowPanel
                     error.add(new HTML(_pmsgs.galleryProfileNoPhotosSelf()));
                     final String args = Args.compose(GalleryActions.CREATE_PROFILE,
                         _profileMemberId);
-                    final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
+                    final ClickHandler listener = Link.createListener(Pages.PEOPLE, args);
                     error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
                 } else {
                     error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
@@ -135,7 +136,7 @@ public class GalleryViewPanel extends FlowPanel
                 error.add(new HTML(_pmsgs.galleryNoPhotosSelf()));
                 final String args = Args.compose(GalleryActions.EDIT,
                     galleryData.gallery.galleryId);
-                final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
+                final ClickHandler listener = Link.createListener(Pages.PEOPLE, args);
                 error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
             } else {
                 error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
@@ -158,8 +159,8 @@ public class GalleryViewPanel extends FlowPanel
         // slieshow | view all galleries | edit | delete actions
         InlinePanel actions = new InlinePanel("Actions");
         actions.add(MsoyUI.createActionLabel(_pmsgs.gallerySlideshowStart(),
-                new ClickListener() {
-                    public void onClick (Widget sender) {
+                new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         _currentPhoto.startSlideshow();
                     }
             }));
@@ -173,7 +174,7 @@ public class GalleryViewPanel extends FlowPanel
             actions.add(new Label("|"));
             final String args = Args.compose(GalleryActions.EDIT,
                 _galleryData.gallery.galleryId);
-            final ClickListener editListener = Link.createListener(Pages.PEOPLE, args);
+            final ClickHandler editListener = Link.createListener(Pages.PEOPLE, args);
             actions.add(MsoyUI.createActionLabel(_pmsgs.galleryEditButton(), editListener));
             actions.add(new Label("|"));
 
@@ -202,15 +203,15 @@ public class GalleryViewPanel extends FlowPanel
             Photo photo = galleryData.photos.get(ii);
 
             // clicking on an image will bring up the full view of it
-            ClickListener thumbClickListener = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler thumbClickHandler = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _currentPhoto.gotoPhotoIndex(photoIndex);
                 }
             };
 
             // add thumbnail and image name to a box
             Widget image = MediaUtil.createMediaView(
-                photo.getPreviewMedia(), MediaDesc.PREVIEW_SIZE, thumbClickListener);
+                photo.getPreviewMedia(), MediaDesc.PREVIEW_SIZE, thumbClickHandler);
             FlowPanel thumbnail = MsoyUI.createFlowPanel("Thumbnail");
             // size the containing box here, include space for 1px border
             thumbnail.add(new CenteredBox(image, "Image",

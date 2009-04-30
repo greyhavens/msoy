@@ -5,7 +5,8 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -50,7 +51,7 @@ public class LandingPanel extends SimplePanel
         content.add(titleAnimation, -23, 10);
 
         // join now
-        ClickListener onJoin = Link.createListener(Pages.ACCOUNT, "create");
+        ClickHandler onJoin = Link.createListener(Pages.ACCOUNT, "create");
         content.add(MsoyUI.createImageButton("JoinButton", onJoin), 475, 0);
 
         // logon box
@@ -64,8 +65,8 @@ public class LandingPanel extends SimplePanel
         // intro video with click-to-play button
         final AbsolutePanel video = new AbsolutePanel();
         video.setStyleName("Video");
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 video.remove(0);
                 // controls skin hardcoded in the swf as /images/landing/landing_movie_skin.swf
                 video.add(WidgetUtil.createFlashContainer(

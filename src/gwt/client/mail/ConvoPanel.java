@@ -7,7 +7,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.TextArea;
@@ -131,8 +132,8 @@ public class ConvoPanel extends FlowPanel
         };
         table.setWidget(0, col++, delete, 1, "Control");
 
-        table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickListener() {
-            public void onClick (Widget sender) {
+        table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 History.back();
             }
         }), 1, "Control");
@@ -206,8 +207,8 @@ public class ConvoPanel extends FlowPanel
                 _contents.add(WidgetUtil.makeShim(10, 10));
                 String action = _msg.author.name.getMemberId() == CShell.getMemberId() ?
                     _msgs.convoFollowUp() : _msgs.convoReply();
-                _contents.add(_reply = new Button(action, new ClickListener() {
-                    public void onClick (Widget sender) {
+                _contents.add(_reply = new Button(action, new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         showReply();
                     }
                 }));
@@ -223,8 +224,8 @@ public class ConvoPanel extends FlowPanel
             _repmsg.setVisibleLines(4);
             _repmsg.setWidth("350px");
 
-            reply.setWidget(1, 0, new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (Widget sender) {
+            reply.setWidget(1, 0, new Button(_cmsgs.cancel(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _contents.remove(reply);
                     _contents.add(_reply);
                 }

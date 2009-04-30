@@ -9,7 +9,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -44,8 +45,8 @@ public class ReviewPanel extends FlowPanel
 
         RowPanel buttons = new RowPanel();
         Button reloadButton = new Button(_msgs.reviewReload());
-        reloadButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        reloadButton.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 refresh();
             }
         });

@@ -7,7 +7,8 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.data.all.Award;
@@ -21,7 +22,7 @@ public class AwardDisplay extends FlowPanel
      *
      * @param clicker If non-null, will be attached to the name and icon of the award.
      */
-    public AwardDisplay (ClickListener clicker)
+    public AwardDisplay (ClickHandler clicker)
     {
         setStyleName("awardDisplay");
         _clicker = clicker;
@@ -32,7 +33,7 @@ public class AwardDisplay extends FlowPanel
         this(award, null);
     }
 
-    public AwardDisplay (Award award, ClickListener clicker)
+    public AwardDisplay (Award award, ClickHandler clicker)
     {
         this(clicker);
 
@@ -65,7 +66,7 @@ public class AwardDisplay extends FlowPanel
         add(MsoyUI.createLabel(whenEarned, "WhenEarned"));
     }
 
-    protected ClickListener _clicker;
+    protected ClickHandler _clicker;
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 }

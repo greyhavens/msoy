@@ -6,7 +6,8 @@ package client.people;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -79,8 +80,8 @@ public class RatingsBlurb extends Blurb
             getFlexCellFormatter().setStyleName(0, 0, "GameThumb");
             getFlexCellFormatter().setStyleName(0, 1, "GameName");
 
-            ClickListener gameClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler gameClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     Link.go(Pages.GAMES, NaviUtil.gameDetail(
                                 entry.gameId, NaviUtil.GameDetails.MYRANKINGS));
                 }

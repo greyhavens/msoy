@@ -9,7 +9,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -150,8 +151,8 @@ public class ImageChooserPopup extends VerticalPanel
         protected Widget createWidget (final Photo photo) {
             final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
             Widget image = MediaUtil.createMediaView(
-                photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
-                    public void onClick (Widget sender) {
+                photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         imageChosen(media, photo.photoWidth, photo.photoHeight);
                     }
                 });
@@ -201,8 +202,8 @@ public class ImageChooserPopup extends VerticalPanel
                     _preview.setWidget(MediaUtil.createMediaView(_media, size));
                 }
             }));
-            setWidget(1, 1, _upload = new Button(_cmsgs.icUploadGo(), new ClickListener() {
-                public void onClick (Widget sender) {
+            setWidget(1, 1, _upload = new Button(_cmsgs.icUploadGo(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     imageChosen(_media, _width, _height);
                 }
             }));

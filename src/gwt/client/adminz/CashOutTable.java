@@ -13,7 +13,8 @@ import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Panel;
@@ -104,21 +105,21 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             SmartTable extras = new SmartTable("Extras", 0, 5);
             Button btn = new Button(_msgs.coEntryTransactionsButton());
             btn.addStyleName("sideButton");
-            btn.addClickListener(Link.createListener(Pages.ME, Args.compose("transactions", "3",
+            btn.addClickHandler(Link.createListener(Pages.ME, Args.compose("transactions", "3",
                 String.valueOf(item.memberId))));
             extras.addWidget(btn, 0, null);
             btn = new Button(_msgs.coEntryCashOutButton());
             btn.addStyleName("sideButton");
-            btn.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            btn.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showPanel(new CashOutPanel(item.cashOutInfo.blingAmount));
                 }
             });
             extras.addWidget(btn, 0, null);
             btn = new Button(_msgs.coEntryCancelButton());
             btn.addStyleName("sideButton");
-            btn.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            btn.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     showPanel(new CancelRequestPanel());
                 }
             });
@@ -145,8 +146,8 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
 
                 Button btn = new Button(_msgs.coEntryCancelButton());
                 btn.addStyleName("PopupButton");
-                btn.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
+                btn.addClickHandler(new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         doCancel();
                     }
                 });
@@ -186,8 +187,8 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
 
                 Button btn = new Button(_msgs.coEntryCashOutPanelButton());
                 btn.addStyleName("PopupButton");
-                btn.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
+                btn.addClickHandler(new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         doCashOut();
                     }
                 });

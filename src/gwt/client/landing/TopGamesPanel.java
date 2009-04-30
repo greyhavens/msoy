@@ -5,7 +5,8 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -94,12 +95,12 @@ public class TopGamesPanel extends AbsolutePanel
         // Outer panel with onclick - change the game
         FocusPanel gamePanel = new FocusPanel();
         gamePanel.setStyleName("GameListItem");
-        ClickListener gameClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler gameClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 showGame(index);
             }
         };
-        gamePanel.addClickListener(gameClick);
+        gamePanel.addClickHandler(gameClick);
 
         // Inner flow panel with thumbnail and name
         SmartTable gamePanelInner = new SmartTable(0, 0);
@@ -161,12 +162,12 @@ public class TopGamesPanel extends AbsolutePanel
 
         // left and right arrows
         left.add(WidgetUtil.makeShim(10, 10));
-        left.add(MsoyUI.createPrevNextButtons(new ClickListener() {
-            public void onClick (Widget sender) {
+        left.add(MsoyUI.createPrevNextButtons(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 showGame((index+_games.length-1)%_games.length);
             }
-        }, new ClickListener() {
-            public void onClick (Widget sender) {
+        }, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 showGame((index+1)%_games.length);
             }
         }));

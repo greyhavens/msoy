@@ -4,7 +4,7 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -21,7 +21,7 @@ import client.util.ServiceUtil;
  */
 public abstract class StartConvoCallback extends ClickCallback<Void>
 {
-    public StartConvoCallback (SourcesClickEvents trigger, TextBox subject, TextArea body)
+    public StartConvoCallback (HasClickHandlers trigger, TextBox subject, TextArea body)
     {
         super(trigger);
         _subject = subject;

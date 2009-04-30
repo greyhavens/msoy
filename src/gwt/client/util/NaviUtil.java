@@ -4,7 +4,8 @@
 package client.util;
 
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.money.data.all.ReportType;
@@ -21,11 +22,11 @@ import client.ui.MsoyUI;
  */
 public class NaviUtil extends SharedNaviUtil
 {
-    public static ClickListener onCreateItem (byte type, byte ptype, int pitemId)
+    public static ClickHandler onCreateItem (byte type, byte ptype, int pitemId)
     {
         final String args = Args.compose("c", type, ptype, pitemId);
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (MsoyUI.requireRegistered()) {
                     Link.go(Pages.STUFF, args);
                 }
@@ -33,25 +34,25 @@ public class NaviUtil extends SharedNaviUtil
         };
     }
 
-    public static ClickListener onEditItem (byte type, int itemId)
+    public static ClickHandler onEditItem (byte type, int itemId)
     {
         return Link.createListener(Pages.STUFF, Args.compose("e", type, itemId));
     }
 
-    public static ClickListener onRemixItem (byte type, int itemId)
+    public static ClickHandler onRemixItem (byte type, int itemId)
     {
         return Link.createListener(Pages.STUFF, Args.compose("r", type, itemId));
     }
 
-    public static ClickListener onViewTransactions (ReportType report)
+    public static ClickHandler onViewTransactions (ReportType report)
     {
         return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
     }
 
-    public static ClickListener onGoBack ()
+    public static ClickHandler onGoBack ()
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 History.back();
             }
         };

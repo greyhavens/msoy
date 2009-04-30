@@ -7,7 +7,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -67,8 +68,8 @@ public class GroupRoomsPanel extends VerticalPanel
             _roomsListBox.addItem(callerRoom.name);
         }
         Button transferButton = new Button(_msgs.detailTransferRoom(_detail.group.name),
-            new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     transferCurrentRoom();
                 }
             });

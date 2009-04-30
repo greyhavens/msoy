@@ -6,7 +6,8 @@ package client.msgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -79,8 +80,8 @@ public class NewThreadPanel extends TableFooterPanel
                     }
                 };
 
-                _spam.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
+                _spam.addClickHandler(new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         for (Button b : spambuts) {
                             b.setEnabled(_spam.isChecked());
                         }
@@ -98,8 +99,8 @@ public class NewThreadPanel extends TableFooterPanel
         addRow(_mmsgs.ntpFirstMessage());
         addRow(_message = new MessageEditor());
 
-        addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget sender) {
+        addFooterButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
         }));

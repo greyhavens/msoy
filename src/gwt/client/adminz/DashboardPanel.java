@@ -5,10 +5,12 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -48,13 +50,14 @@ public class DashboardPanel extends SmartTable
         if (CShell.isAdmin()) {
             FlowPanel admin = new FlowPanel();
             admin.add(MsoyUI.createLabel(_msgs.adminControls(), "Title"));
-            admin.add(MsoyUI.createActionLabel(_msgs.displayDashboard(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    ((Label)sender).removeClickListener(this);
-                    sender.removeStyleName("actionLabel");
+            final SimplePanel ddash = new SimplePanel();
+            ddash.setWidget(MsoyUI.createActionLabel(_msgs.displayDashboard(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    ddash.setWidget(new Label(_msgs.displayDashboard()));
                     displayDashboard();
                 }
             }));
+            admin.add(ddash);
             admin.add(makeLink(_msgs.viewExchange(), "exchange"));
             admin.add(makeLink(_msgs.cashOutButton(), "cashout"));
             admin.add(makeLink(_msgs.statsButton(), "stats"));

@@ -16,7 +16,8 @@ import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -61,8 +62,8 @@ public class InviteUtils
             scroll.setStyleName("ScrollPanel");
             setContents(scroll);
     
-            addButton(new Button(_cmsgs.close(), new ClickListener() {
-                public void onClick (Widget widget) {
+            addButton(new Button(_cmsgs.close(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     hide();
                 }
             }));
@@ -155,7 +156,7 @@ public class InviteUtils
                     members = true;
                 }
                 contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-                ClickListener onClick = new FriendInviter(invRes.names[ii], "InvitePanel");
+                ClickHandler onClick = new FriendInviter(invRes.names[ii], "InvitePanel");
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
                 contents.setWidget(row++, 2, MsoyUI.createActionLabel(

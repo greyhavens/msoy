@@ -12,7 +12,8 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -102,8 +103,8 @@ public class EditAccountPanel extends FlowPanel
                     validatePermaName();
                 }
             });
-            _uppname = new Button(_cmsgs.set(), new ClickListener() {
-                public void onClick (Widget widget) {
+            _uppname = new Button(_cmsgs.set(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     configurePermaName();
                 }
             });
@@ -132,8 +133,8 @@ public class EditAccountPanel extends FlowPanel
                 validateEmail();
             }
         });
-        table.setWidget(0, 2, _upemail = new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget widget) {
+        table.setWidget(0, 2, _upemail = new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 updateEmail();
             }
         }));
@@ -174,8 +175,8 @@ public class EditAccountPanel extends FlowPanel
         _announceEmail.addStyleName("tipLabel");
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
-        _upeprefs = new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget widget) {
+        _upeprefs = new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 updateEmailPrefs();
             }
         });
@@ -196,8 +197,8 @@ public class EditAccountPanel extends FlowPanel
                 validateRealName();
             }
         });
-        _uprname = new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget widget) {
+        _uprname = new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 updateRealName();
             }
         });
@@ -217,16 +218,16 @@ public class EditAccountPanel extends FlowPanel
                 _uppass.setEnabled(_password.getText().trim().length() > 0);
             }
         });
-        _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
+        _password.addKeyboardListener(new EnterClickAdapter(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }
         }));
 
         table.setText(1, 0, _msgs.editConfirm(), 1, "rightLabel");
         table.setWidget(1, 1, _confirm = new PasswordTextBox());
-        _uppass = new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget widget) {
+        _uppass = new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 updatePassword();
             }
         });
@@ -299,8 +300,8 @@ public class EditAccountPanel extends FlowPanel
         }
 
         charityTable.setWidget(row, 1,
-            _upcharity = new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget sender) {
+            _upcharity = new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // The index of the selected radio button in the list will be the index in the list
                 // of charity names + 1 (the +1 for the random charity).
                 int memberId = 0;
@@ -325,8 +326,8 @@ public class EditAccountPanel extends FlowPanel
         }
         table.setWidget(0, 0, MsoyUI.createHTML(_msgs.fbconnectWhy(), "Info"), 2, null);
         table.setText(1, 0, _msgs.fbconnectLink(), 1, "rightLabel");
-        table.setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickListener() {
-            public void onClick (Widget sender) {
+        table.setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // TODO: display a little circular "pending" icon; turn off clickability
                 _fbconnect.requireSession(new InfoCallback<String>() {
                     public void onSuccess (String uid) {

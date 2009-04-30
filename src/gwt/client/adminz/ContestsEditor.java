@@ -9,7 +9,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
@@ -72,8 +73,8 @@ public class ContestsEditor extends FlowPanel
         create.setWidget(row++, 1, _endsContainer = new SimplePanel());
 
         create.setText(row, 0, _msgs.contestsIcon());
-        create.setWidget(row++, 1, new Button(_msgs.contestsChange(), new ClickListener() {
-            public void onClick (Widget source) {
+        create.setWidget(row++, 1, new Button(_msgs.contestsChange(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ImageChooserPopup.displayImageChooser(true, new InfoCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         if (photo != null) {
@@ -116,13 +117,13 @@ public class ContestsEditor extends FlowPanel
         create.setText(row++, 0, _msgs.promoPreview());
         create.setWidget(row++, 0, _previewContainer = new SimplePanel(), 2, null);
 
-        Button editButton = new Button(_msgs.contestsClearButton(), new ClickListener() {
-            public void onClick (Widget sender) {
+        Button editButton = new Button(_msgs.contestsClearButton(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 setFormDefaults();
             }
         });
-        _saveButton = new Button("", new ClickListener() {
-            public void onClick (Widget sender) {
+        _saveButton = new Button("", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 publishContest(createContest());
             }
         });
@@ -193,8 +194,8 @@ public class ContestsEditor extends FlowPanel
         ptable.setText(row, col++, MsoyUI.formatDateTime(contest.starts));
         ptable.setText(row, col++, MsoyUI.formatDateTime(contest.ends));
 
-        Button edit = MsoyUI.createTinyButton("E", new ClickListener() {
-            public void onClick (Widget sender) {
+        Button edit = MsoyUI.createTinyButton("E", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _editingRow = row;
                 editContest(contest);
             }

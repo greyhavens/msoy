@@ -4,7 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.comment.gwt.Comment;
@@ -32,8 +33,8 @@ public class CommentsBlurb extends Blurb
 
         setHeader(_msgs.commentsTitle());
         setContent(_wall = new WallPanel(pdata.name.getMemberId()));
-        setFooterLabel(_cmsgs.postComment(), new ClickListener() {
-            public void onClick (Widget sender) {
+        setFooterLabel(_cmsgs.postComment(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _wall.showPostPopup();
             }
         });

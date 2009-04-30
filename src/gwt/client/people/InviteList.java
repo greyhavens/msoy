@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -100,8 +101,8 @@ public class InviteList extends FlexTable
     protected void setRemove (final int row)
     {
         _listTable.setWidget(row, 1, MsoyUI.createActionImage(
-                    "/images/profile/remove.png", new ClickListener() {
-            public void onClick (Widget widget) {
+                    "/images/profile/remove.png", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 removeItem(row);
             }
         }));

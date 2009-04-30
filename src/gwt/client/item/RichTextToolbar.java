@@ -29,7 +29,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -164,8 +165,8 @@ public class RichTextToolbar extends Composite
             bottomPanel.add(blockFormats = createBlockFormats());
 
             if (allowPanelEdit) {
-                bottomPanel.add(new Button("Panel Colors", new ClickListener() {
-                    public void onClick (Widget sender) {
+                bottomPanel.add(new Button("Panel Colors", new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         showPanelColorsPopup();
                     }
                 }), HasAlignment.ALIGN_MIDDLE);
@@ -174,7 +175,7 @@ public class RichTextToolbar extends Composite
             // we only use these listeners for updating status, so don't hook them up unless at
             // least basic editing is supported.
             richText.addKeyboardListener(listener);
-            richText.addClickListener(listener);
+            richText.addClickHandler(listener);
         }
     }
 
@@ -292,7 +293,7 @@ public class RichTextToolbar extends Composite
     protected PushButton createPushButton (AbstractImagePrototype img, String tip)
     {
         PushButton pb = new PushButton(img.createImage());
-        pb.addClickListener(listener);
+        pb.addClickHandler(listener);
         pb.setTitle(tip);
         return pb;
     }
@@ -300,7 +301,7 @@ public class RichTextToolbar extends Composite
     protected ToggleButton createToggleButton (AbstractImagePrototype img, String tip)
     {
         ToggleButton tb = new ToggleButton(img.createImage());
-        tb.addClickListener(listener);
+        tb.addClickHandler(listener);
         tb.setTitle(tip);
         return tb;
     }
@@ -341,14 +342,14 @@ public class RichTextToolbar extends Composite
         contents.setWidget(2, 1, bgcolor);
 
         HorizontalPanel buttons = new HorizontalPanel();
-        buttons.add(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget sender) {
+        buttons.add(new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 popup.hide();
             }
         }));
         buttons.add(WidgetUtil.makeShim(5, 5));
-        buttons.add(new Button(_cmsgs.update(), new ClickListener() {
-            public void onClick (Widget sender) {
+        buttons.add(new Button(_cmsgs.update(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 setPanelColors(tcolor.getText().trim().toLowerCase(),
                                bgcolor.getText().trim().toLowerCase());
                 popup.hide();
@@ -391,7 +392,7 @@ public class RichTextToolbar extends Composite
      * We use an inner EventListener class to avoid exposing event methods on the
      * RichTextToolbar itself.
      */
-    protected class EventListener implements ClickListener, ChangeListener, KeyboardListener
+    protected class EventListener implements ClickHandler, ChangeListener, KeyboardListener
     {
         public void onChange (Widget sender) {
             if (sender == foreColors) {
@@ -409,7 +410,8 @@ public class RichTextToolbar extends Composite
             }
         }
 
-        public void onClick (Widget sender) {
+        public void onClick (ClickEvent event) {
+            Widget sender = (Widget)event.getSource();
             if (sender == bold) {
                 basic.toggleBold();
             } else if (sender == italic) {

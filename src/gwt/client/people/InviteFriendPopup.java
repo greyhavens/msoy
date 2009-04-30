@@ -6,7 +6,8 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -48,8 +49,8 @@ public class InviteFriendPopup extends BorderedDialog
 
         setContents(contents);
 
-        addButton(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget sender) {
+        addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 hide();
             }
         }));

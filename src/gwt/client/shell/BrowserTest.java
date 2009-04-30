@@ -7,7 +7,8 @@ import client.ui.MsoyUI;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.CookieUtil;
@@ -22,7 +23,7 @@ public class BrowserTest
      * If the visitor's browser is not supported, return a warning message widget.
      * If the browser is supported, return null.
      */
-    public static Widget getWarningDialog (ClickListener continueClicked)
+    public static Widget getWarningDialog (ClickHandler continueClicked)
     {
         // if they already have a cookie, don't show a message
         String cookie = CookieUtil.get(TEST_SEEN_COOKIE);
@@ -61,8 +62,8 @@ public class BrowserTest
             messageBox.add(MsoyUI.createLabel(_cmsgs.browserTitle(), "Title"));
             messageBox.add(MsoyUI.createHTML(message, null));
 
-            ClickListener getFF = new ClickListener() {
-                public void onClick (Widget widget) {
+            ClickHandler getFF = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     Window.open("http://getfirefox.com", "_blank", "");
                 }
             };

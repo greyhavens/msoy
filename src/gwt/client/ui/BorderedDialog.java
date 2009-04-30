@@ -6,7 +6,8 @@ package client.ui;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -43,8 +44,8 @@ public abstract class BorderedDialog extends BorderedPopup
         _main = new SmartTable("borderedDialog", 0, 0);
         _main.setText(0, 0, "");
         if (!omitCloseBox) {
-            _main.setWidget(0, 1, MsoyUI.createCloseButton(new ClickListener() {
-                public void onClick (Widget sender) {
+            _main.setWidget(0, 1, MsoyUI.createCloseButton(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     hide();
                 }
             }), 1, "CloseCell");
@@ -80,10 +81,10 @@ public abstract class BorderedDialog extends BorderedPopup
     /**
      * Creates a click listener that executes the supplied command and then hides this dialog.
      */
-    public ClickListener onAction (final Command command)
+    public ClickHandler onAction (final Command command)
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 if (command != null) {
                     command.execute();
                 }
@@ -95,7 +96,7 @@ public abstract class BorderedDialog extends BorderedPopup
     /**
      * Creates a click listener that simply hides this dialog. Useful for cancel buttons.
      */
-    public ClickListener onCancel ()
+    public ClickHandler onCancel ()
     {
         return onAction(null);
     }

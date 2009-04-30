@@ -8,7 +8,8 @@ import client.util.Link;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -27,8 +28,8 @@ public class GameInviteDisplay extends MailPayloadDisplay
     {
         SmartTable widget = new SmartTable(0, 0);
         widget.setText(0, 0, _msgs.gameInvitation(), 0, "rowPanelCell");
-        widget.setWidget(0, 1, new Button(_msgs.gameBtnPlay(), new ClickListener () {
-            public void onClick (Widget sender) {
+        widget.setWidget(0, 1, new Button(_msgs.gameBtnPlay(), new ClickHandler () {
+            public void onClick (ClickEvent event) {
                 Link.go(Pages.WORLD, _payload.args);
             }
         }));

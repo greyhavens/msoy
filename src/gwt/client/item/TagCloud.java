@@ -8,7 +8,8 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,8 +54,8 @@ public class TagCloud extends FlowPanel
 
         for (int ii = 0; ii < sortedTags.length; ii++) {
             final String tag = (String)sortedTags[ii];
-            add(MsoyUI.createActionLabel(tag, "Link", new ClickListener() {
-                public void onClick (Widget widget) {
+            add(MsoyUI.createActionLabel(tag, "Link", new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _listener.tagClicked(tag);
                 }
             }));

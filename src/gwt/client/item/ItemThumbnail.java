@@ -6,7 +6,8 @@ package client.item;
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -17,7 +18,7 @@ import com.threerings.msoy.item.data.all.Item;
  */
 public class ItemThumbnail extends FlexTable
 {
-    public ItemThumbnail (Item item, ClickListener listener)
+    public ItemThumbnail (Item item, ClickHandler listener)
     {
         _item = item;
 

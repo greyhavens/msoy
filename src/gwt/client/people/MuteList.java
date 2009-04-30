@@ -4,7 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -55,8 +56,8 @@ public class MuteList extends MemberList
             int row = extras.getRowCount();
 
             // add a way to have them removed
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler onClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     removeMute(card);
                 }
             };

@@ -11,7 +11,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -69,8 +70,8 @@ public class GameHeaderPanel extends FlowPanel
         if (query != null) {
             searchBox.setText(query);
         }
-        ClickListener searchListener = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler searchListener = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 String newQuery = searchBox.getText().trim();
                 Link.go(Pages.GAMES, Args.compose("g", genre, sortMethod, newQuery));
             }

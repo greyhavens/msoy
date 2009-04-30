@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -56,15 +57,15 @@ public abstract class EmailListPanel extends FlowPanel
         add(_method = webmail);
 
         // method toggle
-        add(MsoyUI.createActionLabel(_msgs.emailManualTip(), "Toggle", new ClickListener () {
-            public void onClick (Widget sender) {
+        add(MsoyUI.createActionLabel(_msgs.emailManualTip(), "Toggle", new ClickHandler () {
+            public void onClick (ClickEvent event) {
                 remove(_method);
                 if (_method == webmail) {
                     insert(_method = manual, 0);
-                    ((Label)sender).setText(_msgs.emailImportTip());
+                    ((Label)event.getSource()).setText(_msgs.emailImportTip());
                 } else {
                     insert(_method = webmail, 0);
-                    ((Label)sender).setText(_msgs.emailManualTip());
+                    ((Label)event.getSource()).setText(_msgs.emailManualTip());
                 }
             }
         }));
@@ -79,8 +80,8 @@ public abstract class EmailListPanel extends FlowPanel
         _msgbox.addWidget(_message = MsoyUI.createTextArea("", 80, 4), 2, null);
         DefaultTextListener.configure(_message, _msgs.emailMessage());
         int row = _msgbox.addWidget(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailSend(),
-                                                        new ClickListener() {
-            public void onClick (Widget sender) {
+                                                        new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 validateAndSend();
             }
         }), 2, null);
@@ -169,8 +170,8 @@ public abstract class EmailListPanel extends FlowPanel
             DefaultTextListener.configure(_address, _msgs.emailFriendEmail());
             row.setWidget(0, col++, _address);
             row.setWidget(0, col++, MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.emailAdd(),
-                                                        new ClickListener() {
-                public void onClick (Widget sender) {
+                                                        new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     InviteUtils.addEmailIfValid(_name, _address, _addressList);
                     _addressList.setVisible(true);
                     _msgbox.setVisible(true);

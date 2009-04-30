@@ -6,7 +6,8 @@ package client.person;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,8 +65,8 @@ public class GalleryPhotoPanel extends FlowPanel
         InlinePanel nameAndCreator = new InlinePanel("");
         nameAndCreator.addStyleName("NameAndCreator");
         String gname = GalleryPanel.getGalleryLabel(_galleryData.gallery, _galleryData.owner);
-        nameAndCreator.add(MsoyUI.createActionLabel(gname, "GalleryName", new ClickListener() {
-            public void onClick (Widget sender) {
+        nameAndCreator.add(MsoyUI.createActionLabel(gname, "GalleryName", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 stopSlideshow();
                 gotoPhotoIndex(-1);
             }
@@ -97,8 +98,8 @@ public class GalleryPhotoPanel extends FlowPanel
         photo.photoMedia.constraint = constraint;
 
         // clear the photo onclick
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 stopSlideshow();
                 gotoPhotoIndex((photoIndex + 1) % _galleryData.photos.size());
             }
@@ -115,8 +116,8 @@ public class GalleryPhotoPanel extends FlowPanel
 
         // start slideshow button and text
         if (_slideshowTimer == null) {
-            ClickListener slideshowClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler slideshowClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     startSlideshow();
                 }
             };
@@ -129,13 +130,13 @@ public class GalleryPhotoPanel extends FlowPanel
         }
 
         // prev and next buttons
-        ClickListener onPrev = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onPrev = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 gotoPhotoIndex(photoIndex == 0 ? _galleryData.photos.size() - 1 : photoIndex - 1);
             }
         };
-        ClickListener onNext = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler onNext = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 gotoPhotoIndex((photoIndex + 1) % _galleryData.photos.size());
             }
         };
@@ -149,8 +150,8 @@ public class GalleryPhotoPanel extends FlowPanel
             _playButton = MsoyUI.createPushButton(
                 _slideshowImages.play_default().createImage(),
                 _slideshowImages.play_over().createImage(),
-                _slideshowImages.play_down().createImage(), new ClickListener() {
-                    public void onClick (Widget sender) {
+                _slideshowImages.play_down().createImage(), new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         _slideshowPaused = false;
                         _slideshowTimer.schedule(1);
                         controls.remove(_playButton);
@@ -160,8 +161,8 @@ public class GalleryPhotoPanel extends FlowPanel
             _pauseButton = MsoyUI.createPushButton(
                 _slideshowImages.pause_default().createImage(),
                 _slideshowImages.pause_over().createImage(),
-                _slideshowImages.pause_down().createImage(), new ClickListener() {
-                    public void onClick (Widget sender) {
+                _slideshowImages.pause_down().createImage(), new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         _slideshowPaused = true;
                         controls.remove(_pauseButton);
                         controls.add(_playButton, leftOffset, 0);
@@ -176,8 +177,8 @@ public class GalleryPhotoPanel extends FlowPanel
             controls.add(MsoyUI.createPushButton(
                 _slideshowImages.close_default().createImage(),
                 _slideshowImages.close_over().createImage(),
-                _slideshowImages.close_down().createImage(), new ClickListener() {
-                    public void onClick (Widget sender) {
+                _slideshowImages.close_down().createImage(), new ClickHandler() {
+                    public void onClick (ClickEvent event) {
                         stopSlideshow();
                         gotoPhotoIndex(-1);
                     }

@@ -8,7 +8,8 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -116,10 +117,10 @@ public class BlingPanel extends FlowPanel
             row.add(MsoyUI.createLabel(_msgs.cashedOutBling(
                 Currency.BLING.format(result.cashOut.blingAmount),
                 formatUSD(result.cashOut.blingWorth)), "Success"));
-            row.add(new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (Widget sender) {
+            row.add(new Button(_cmsgs.cancel(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _moneysvc.cancelCashOut(_model.memberId, "m.user_cancelled",
-                                            new InfoCallback<Void>(sender) {
+                                            new InfoCallback<Void>((Button)event.getSource()) {
                         public void onSuccess (Void v) {
                             MsoyUI.info(_msgs.cancelCashOutSuccess());
                             // Show the cash out form

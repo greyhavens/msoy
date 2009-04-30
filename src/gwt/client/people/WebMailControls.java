@@ -6,7 +6,8 @@ package client.people;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -46,8 +47,8 @@ public abstract class WebMailControls extends FlowPanel
         row.setText(0, col++, title, 1, "Bold");
         row.setWidget(0, col++, new Image(PROVIDERS_IMG));
         Widget showSupported = MsoyUI.createActionLabel(
-            _msgs.emailSupported(), null, new ClickListener() {
-            public void onClick (Widget widget) {
+            _msgs.emailSupported(), null, new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 new BorderedPopup(true) { /*constructor*/ {
                     setWidget(MsoyUI.createHTML(_msgs.emailWebmails(), "emailSupported"));
                 }}.show();

@@ -14,7 +14,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -192,14 +193,14 @@ public abstract class ItemEditor extends FlowPanel
         buttons.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         buttons.add(_econfirm = new CheckBox(_emsgs.copyrightConfirm()));
         buttons.add(WidgetUtil.makeShim(5, 5));
-        buttons.add(new Button(_cmsgs.cancel(), new ClickListener() {
-            public void onClick (Widget widget) {
+        buttons.add(new Button(_cmsgs.cancel(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 _parent.editComplete(null);
             }
         }));
         buttons.add(WidgetUtil.makeShim(5, 5));
-        buttons.add(_esubmit = new Button("submit", new ClickListener() {
-            public void onClick (Widget widget) {
+        buttons.add(_esubmit = new Button("submit", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 commitEdit();
             }
         }));

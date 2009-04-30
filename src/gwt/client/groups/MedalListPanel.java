@@ -9,7 +9,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -94,7 +95,7 @@ public class MedalListPanel extends FlowPanel
     }
 
     protected class MedalOwnerWidget extends HorizontalPanel
-        implements ClickListener
+        implements ClickHandler
     {
         public MedalOwnerWidget (MedalOwners owners)
         {
@@ -130,7 +131,7 @@ public class MedalListPanel extends FlowPanel
             }
         }
 
-        public void onClick (Widget sender)
+        public void onClick (ClickEvent event)
         {
             int ownerCount = _ownerWidgets.getWidgetCount();
             if (_hidden) {
@@ -148,7 +149,7 @@ public class MedalListPanel extends FlowPanel
             }
 
             _hidden = !_hidden;
-            ((Label)sender).setText(
+            ((Label)event.getSource()).setText(
                 _hidden ? _msgs.medalListSeeAll(""+(ownerCount - 1)) : _msgs.medalListHide());
         }
 

@@ -11,7 +11,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,8 +41,8 @@ public class PlayerFeedPanel extends FlowPanel
         add(_feeds = new FeedList());
         _emptyMessage = emptyMessage;
 
-        add(_moreLabel = MsoyUI.createActionLabel("", "FeedShowMore", new ClickListener() {
-            public void onClick (Widget sender) {
+        add(_moreLabel = MsoyUI.createActionLabel("", "FeedShowMore", new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 loadFeed(!_fullPage);
             }
         }));

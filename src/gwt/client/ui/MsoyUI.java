@@ -8,6 +8,9 @@ import java.util.Date;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -16,7 +19,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
@@ -26,7 +28,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
@@ -198,60 +199,24 @@ public class MsoyUI
     }
 
     /**
-     * Creates a label that triggers an action using the supplied text and listener.
-     * @deprecated Use {@link #createActionLabel(String, ClickHandler)} instead
-     */
-    public static Label createActionLabel (String text, ClickListener listener)
-    {
-        return createActionLabel(text, null, listener);
-    }
-
-    /**
      * Creates a label that triggers an action using the supplied text and handler.
      */
-    public static Label createActionLabel (String text, ClickHandler handler)
+    public static Label createActionLabel (String text, ClickHandler onClick)
     {
-        return createActionLabel(text, null, handler);
+        return createActionLabel(text, null, onClick);
     }
 
     /**
-     * Creates a label that triggers an action using the supplied text and listener. The label will
-     * be styled as specified with an additional style that configures the mouse pointer and adds
-     * underline to the text.
-     * @deprecated Use {@link #createActionLabel(String, String, ClickHandler)}
-     */
-    public static Label createActionLabel (String text, String style, ClickListener listener)
-    {
-        Label label = createCustomActionLabel(text, style, listener);
-        if (listener != null) {
-            label.addStyleName("actionLabel");
-        }
-        return label;
-    }
-
-    /**
-     * Creates a label that triggers an action using the supplied text and listener. The label will
+     * Creates a label that triggers an action using the supplied text and handler. The label will
      * be styled as specified with an additional style that configures the mouse pointer and adds
      * underline to the text.
      */
-    public static Label createActionLabel (String text, String style, ClickHandler handler)
+    public static Label createActionLabel (String text, String style, ClickHandler onClick)
     {
-        Label label = createCustomActionLabel(text, style, handler);
-        if (handler != null) {
+        Label label = createCustomActionLabel(text, style, onClick);
+        if (onClick != null) {
             label.addStyleName("actionLabel");
         }
-        return label;
-    }
-
-    /**
-     * Creates a label that triggers an action using the supplied text and listener. The label will
-     * only be styled with the specified style.
-     * @deprecated Use {@link #createCustomActionLabel(String, String, ClickHandler)}.
-     */
-    public static Label createCustomActionLabel (String text, String style, ClickListener listener)
-    {
-        Label label = createLabel(text, style);
-        maybeAddClickListener(label, listener);
         return label;
     }
 
@@ -262,7 +227,7 @@ public class MsoyUI
     public static Label createCustomActionLabel (String text, String style, ClickHandler handler)
     {
         Label label = createLabel(text, style);
-        maybeAddClickListener(label, handler);
+        maybeAddClickHandler(label, handler);
         return label;
     }
 
@@ -357,9 +322,9 @@ public class MsoyUI
      * Creates a PushButton with default(up), mouseover and mousedown states.
      */
     public static PushButton createPushButton (Image defaultImage, Image overImage,
-        Image downImage, ClickListener listener)
+        Image downImage, ClickHandler onClick)
     {
-        PushButton button = new PushButton(defaultImage, downImage, listener);
+        PushButton button = new PushButton(defaultImage, downImage, onClick);
         button.getUpHoveringFace().setImage(overImage);
         return button;
     }
@@ -367,10 +332,10 @@ public class MsoyUI
     /**
      * Creates an orange button of the specified size with the supplied text.
      */
-    public static PushButton createButton (String size, String label, ClickListener listener)
+    public static PushButton createButton (String size, String label, ClickHandler onClick)
     {
         PushButton button = new PushButton(label);
-        maybeAddClickListener(button, listener);
+        maybeAddClickHandler(button, onClick);
         button.setStyleName(size + "OrangeButton");
         button.addStyleName("orangeButton");
         return button;
@@ -379,14 +344,14 @@ public class MsoyUI
     /**
      * Creates an orange button of the specified size with the supplied text.
      */
-    public static PushButton createBlueButton (String size, String label, ClickListener listener)
+    public static PushButton createBlueButton (String size, String label, ClickHandler onClick)
     {
         if (!MEDIUM_THIN.equals(size) && !LONG_THIN.equals(size)) {
             throw new IllegalArgumentException(
                 "Blue buttons only come in MEDIUM_THIN and LONG_THIN.");
         }
         PushButton button = new PushButton(label);
-        maybeAddClickListener(button, listener);
+        maybeAddClickHandler(button, onClick);
         button.setStyleName(size + "BlueButton");
         button.addStyleName("blueButton");
         return button;
@@ -395,10 +360,10 @@ public class MsoyUI
     /**
      * Creates a button with tiny text.
      */
-    public static Button createTinyButton (String label, ClickListener listener)
+    public static Button createTinyButton (String label, ClickHandler onClick)
     {
         Button button = new Button(label);
-        maybeAddClickListener(button, listener);
+        maybeAddClickHandler(button, onClick);
         button.addStyleName("tinyButton");
         return button;
     }
@@ -406,40 +371,40 @@ public class MsoyUI
     /**
      * Creates an image button that changes appearance when you click and hover over it.
      */
-    public static PushButton createImageButton (String style, ClickListener listener)
+    public static PushButton createImageButton (String style, ClickHandler onClick)
     {
         PushButton button = new PushButton();
         button.setStyleName(style);
         button.addStyleName("actionLabel");
-        maybeAddClickListener(button, listener);
+        maybeAddClickHandler(button, onClick);
         return button;
     }
 
     /**
      * Creates a button for closing things (a square with an x in it).
      */
-    public static PushButton createCloseButton (ClickListener listener)
+    public static PushButton createCloseButton (ClickHandler onClick)
     {
-        return createImageButton("closeButton", listener);
+        return createImageButton("closeButton", onClick);
     }
 
     /**
      * Creates a pair of previous and next buttons in a horizontal panel.
      */
-    public static Widget createPrevNextButtons (ClickListener onPrev, ClickListener onNext)
+    public static Widget createPrevNextButtons (ClickHandler onPrev, ClickHandler onNext)
     {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setStyleName("pagedGrid"); // hijack PagedGrid styles
         Button prev = new Button(_cmsgs.prev());
         prev.setStyleName("Button");
         prev.addStyleName("PrevButton");
-        maybeAddClickListener(prev, onPrev);
+        maybeAddClickHandler(prev, onPrev);
         panel.add(prev);
         panel.add(WidgetUtil.makeShim(5, 5));
         Button next = new Button(_cmsgs.next());
         next.setStyleName("Button");
         next.addStyleName("NextButton");
-        maybeAddClickListener(next, onNext);
+        maybeAddClickHandler(next, onNext);
         panel.add(next);
         return panel;
     }
@@ -448,10 +413,10 @@ public class MsoyUI
      * Creates a basic text button whose text changes depending on whether we are
      * creating or updating something.
      */
-    public static Button createCrUpdateButton (boolean creating, ClickListener listener)
+    public static Button createCrUpdateButton (boolean creating, ClickHandler onClick)
     {
         Button button = new Button(creating ? _cmsgs.create() : _cmsgs.update());
-        maybeAddClickListener(button, listener);
+        maybeAddClickHandler(button, onClick);
         return button;
     }
 
@@ -480,7 +445,7 @@ public class MsoyUI
     /**
      * Creates an arrow that invokes the specified callback.
      */
-    public static Image createBackArrow (ClickListener callback)
+    public static Image createBackArrow (ClickHandler callback)
     {
         return createActionImage("/images/ui/back_arrow.png", callback);
     }
@@ -500,7 +465,7 @@ public class MsoyUI
     /**
      * Creates an image that responds to clicking.
      */
-    public static Image createActionImage (String path, ClickListener onClick)
+    public static Image createActionImage (String path, ClickHandler onClick)
     {
         return createActionImage(path, null, onClick);
     }
@@ -508,7 +473,7 @@ public class MsoyUI
     /**
      * Creates an image that responds to clicking.
      */
-    public static Image createActionImage (String path, String tip, ClickListener onClick)
+    public static Image createActionImage (String path, String tip, ClickHandler onClick)
     {
         return makeActionImage(new Image(path), tip, onClick);
     }
@@ -516,11 +481,11 @@ public class MsoyUI
     /**
      * Makes an image into one that responds to clicking.
      */
-    public static Image makeActionImage (Image image, String tip, ClickListener onClick)
+    public static Image makeActionImage (Image image, String tip, ClickHandler onClick)
     {
         if (onClick != null) {
             image.addStyleName("actionLabel");
-            image.addClickListener(onClick);
+            image.addClickHandler(onClick);
         }
         if (tip != null) {
             image.setTitle(tip);
@@ -539,53 +504,53 @@ public class MsoyUI
     }
 
     /**
-     * Wraps the supplied ClickListener into a new ClickListener that first reports a tracking
+     * Wraps the supplied ClickHandler into a new ClickHandler that first reports a tracking
      * action to our server-side event tracking system and then takes the desired action.
      *
      * @param action String identifier for the action to be logged eg "landingPlayButtonClicked"
      * @param details Optional additional info about the action performed eg game or whirled id
-     * @param target the click listener to call once we've sent off our tracking action
+     * @param target the click handler to call once we've sent off our tracking action
      */
-    public static ClickListener makeTrackingListener (
-        final String action, final String details, final ClickListener target)
+    public static ClickHandler makeTrackingHandler (
+        final String action, final String details, final ClickHandler target)
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 CShell.frame.reportClientAction(null, action, details);
                 if (target != null) {
-                    target.onClick(sender);
+                    target.onClick(event);
                 }
             }
         };
     }
 
     /**
-     * Adds a tracking click listener to the supplied click target. NOTE: do not use this on a
+     * Adds a tracking click handler to the supplied click target. NOTE: do not use this on a
      * click target that will take the user to a new page. In that case you have to wrap the click
-     * listener that changes the page with a tracking listener using {@link #makeTrackingListener}.
+     * handler that changes the page with a tracking handler using {@link #makeTrackingHandler}.
      */
-    public static void addTrackingListener (
-        SourcesClickEvents target, String action, String details)
+    public static void addTrackingHandler (
+        HasClickHandlers target, String action, String details)
     {
-        target.addClickListener(makeTrackingListener(action, details, null));
+        target.addClickHandler(makeTrackingHandler(action, details, null));
     }
 
     /**
-     * Wraps the supplied ClickListener into a new ClickListener that will track an arbitrary click
+     * Wraps the supplied ClickHandler into a new ClickHandler that will track an arbitrary click
      * on any widget during an a/b test and then take the desired action.
      *
      * @param testName Optional string identifier for the a/b test if associated with one
      * @param action String identifier for the action to be logged
-     * @param target the click listener to call once we've sent off our tracking action
+     * @param target the click handler to call once we've sent off our tracking action
      */
-    public static ClickListener makeTestTrackingListener (
-        final String testName, final String action, final ClickListener target)
+    public static ClickHandler makeTestTrackingHandler (
+        final String testName, final String action, final ClickHandler target)
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
+        return new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 CShell.frame.reportClientAction(testName, action, null);
                 if (target != null) {
-                    target.onClick(sender);
+                    target.onClick(event);
                 }
             }
         };
@@ -604,9 +569,9 @@ public class MsoyUI
     /**
      * Return an invisible area of a given size with a given click event, used for imagemaps.
      */
-    public static Image createInvisiLink (ClickListener listener, int width, int height)
+    public static Image createInvisiLink (ClickHandler onClick, int width, int height)
     {
-        Image image = MsoyUI.createActionImage("/images/whirled/blank.png", listener);
+        Image image = MsoyUI.createActionImage("/images/whirled/blank.png", onClick);
         image.setWidth(width + "px");
         image.setHeight(height + "px");
         return image;
@@ -633,12 +598,12 @@ public class MsoyUI
      * Displays informational feedback along with an action button which will dismiss the info
      * display and take an action.
      */
-    public static void infoAction (String message, String actionLabel, ClickListener action)
+    public static void infoAction (String message, String actionLabel, ClickHandler action)
     {
         HorizontalPanel panel = new HorizontalPanel();
         final InfoPopup popup = new InfoPopup(panel);
-        ClickListener hider = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler hider = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 popup.hide();
             }
         };
@@ -646,8 +611,8 @@ public class MsoyUI
         panel.add(WidgetUtil.makeShim(20, 10));
         if (actionLabel != null) {
             Button button = new Button(actionLabel);
-            maybeAddClickListener(button, action);
-            button.addClickListener(hider);
+            maybeAddClickHandler(button, action);
+            button.addClickHandler(hider);
             panel.add(button);
             panel.add(WidgetUtil.makeShim(5, 10));
         }
@@ -723,27 +688,16 @@ public class MsoyUI
         // flashes, disappearing when the cursor appears
         TextBoxSelector listener = new TextBoxSelector();
         textBox.addFocusListener(listener);
-        textBox.addClickListener(listener);
-    }
-
-    /**
-     * Adds the supplied click listener to the supplied target iff the listener is non-null.
-     * @deprecated Use {@link maybeAddClickListener(HasClickHandlers, ClickHandler).
-     */
-    public static void maybeAddClickListener (SourcesClickEvents target, ClickListener listener)
-    {
-        if (listener != null) {
-            target.addClickListener(listener);
-        }
+        textBox.addClickHandler(listener);
     }
 
     /**
      * Adds the supplied click listener to the supplied target iff the listener is non-null.
      */
-    public static void maybeAddClickListener (HasClickHandlers target, ClickHandler handler)
+    public static void maybeAddClickHandler (HasClickHandlers target, ClickHandler onClick)
     {
-        if (handler != null) {
-            target.addClickHandler(handler);
+        if (onClick != null) {
+            target.addClickHandler(onClick);
         }
     }
 
@@ -781,8 +735,8 @@ public class MsoyUI
         info.title = title;
         info.descrip = descrip;
         info.image = image;
-        return makeShareButton(new ClickListener() {
-            public void onClick (Widget sender) {
+        return makeShareButton(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 new ShareDialog(info).show();
             }
         });
@@ -791,15 +745,15 @@ public class MsoyUI
     /**
      * Creates a button that allows a piece of Whirled content to be shared on Digg, Facebook,
      * MySpace and potentially other handy places. The caller is responsible for providing a click
-     * listener that creates the share info and calls <code>new ShareDialog(info).show()</code> to
+     * handler that creates the share info and calls <code>new ShareDialog(info).show()</code> to
      * display the share dialog.
      */
-    public static Widget makeShareButton (final ClickListener onShare)
+    public static Widget makeShareButton (final ClickHandler onShare)
     {
         FlowPanel bits = createFlowPanel("shareBox");
         bits.add(createLabel(_cmsgs.share(), null));
         Image share = _mimgs.share().createImage();
-        share.addClickListener(onShare);
+        share.addClickHandler(onShare);
         share.addStyleName("actionLabel");
         bits.add(share);
         return bits;
@@ -850,7 +804,7 @@ public class MsoyUI
     }
 
     protected static class TextBoxSelector
-        implements FocusListener, ClickListener
+        implements FocusListener, ClickHandler
     {
         public void onFocus (Widget sender) {
             _focus = true;
@@ -862,10 +816,10 @@ public class MsoyUI
             _focus = false;
             _click = false;
         }
-        public void onClick (Widget sender) {
+        public void onClick (ClickEvent event) {
             if (!_click) {
                 _click = true;
-                TextBoxBase text = ((TextBoxBase)sender);
+                TextBoxBase text = ((TextBoxBase)event.getSource());
                 text.setSelectionRange(0, text.getText().length());
             }
         }

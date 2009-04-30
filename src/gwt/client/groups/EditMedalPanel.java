@@ -7,7 +7,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -61,14 +62,14 @@ public class EditMedalPanel extends FlexTable
         addDescription();
 
         Button esubmit = new Button(_msgs.editMedalSubmit());
-        esubmit.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
+        esubmit.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 commitEdit();
             }
         });
         Button ecancel = new Button(_msgs.editMedalCancel());
-        ecancel.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
+        ecancel.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 Link.go(Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_medal.groupId));
             }
         });
@@ -141,8 +142,8 @@ public class EditMedalPanel extends FlexTable
             setIconImage(_medal.icon);
         }
         Button pickImage = new Button(_msgs.editMedalChooseIconImage());
-        pickImage.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
+        pickImage.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 ImageChooserPopup.displayRestrictedImageChooser(
                     Medal.MEDAL_WIDTH, Medal.MEDAL_HEIGHT, new InfoCallback<MediaDesc>() {
                         public void onSuccess(MediaDesc media) {

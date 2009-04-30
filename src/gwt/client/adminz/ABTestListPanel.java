@@ -7,11 +7,11 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -45,8 +45,8 @@ public class ABTestListPanel extends FlowPanel
     {
         clear();
         Button createButton = new Button(_msgs.abTestCreateNew());
-        createButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
+        createButton.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 new ABTestEditorDialog(null, ABTestListPanel.this).show();
             }
         });
@@ -91,14 +91,14 @@ public class ABTestListPanel extends FlowPanel
                                     test.ended != null ? MsoyUI.formatDate(test.ended) : ""));
 
             Button editButton = new Button(_cmsgs.edit());
-            editButton.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
+            editButton.addClickHandler(new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     new ABTestEditorDialog(test, ABTestListPanel.this).show();
                 }
             });
 
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler onClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(), test.name, true,
                                               new InfoCallback<Integer>() {
                             public void onSuccess (Integer group) {
@@ -107,7 +107,7 @@ public class ABTestListPanel extends FlowPanel
                     });
                 }
             };
-            onClick = MsoyUI.makeTestTrackingListener(
+            onClick = MsoyUI.makeTestTrackingHandler(
                 test.name, "ClickedTestButton_"+test.name, onClick);
             _contents.setWidget(
                 row, col++, MsoyUI.createButtonPair(editButton, new Button("Test", onClick)));

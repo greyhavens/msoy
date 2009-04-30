@@ -8,7 +8,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
@@ -36,7 +37,7 @@ import client.util.Link;
 public class FrameHeader extends SmartTable
     implements Session.Observer
 {
-    public FrameHeader (ClickListener onLogoClick)
+    public FrameHeader (ClickHandler onLogoClick)
     {
         super("frameHeader", 0, 0);
         setWidth("100%");
@@ -115,8 +116,8 @@ public class FrameHeader extends SmartTable
                     setWidget(_upImage);
                 }
             });
-            ClickListener go = new ClickListener() {
-                public void onClick (Widget sender) {
+            ClickHandler go = new ClickHandler() {
+                public void onClick (ClickEvent event) {
                     // if a guest clicks on "me", send them to create account
                     if (NaviButton.this.page == Pages.ME && CShell.isGuest()) {
                         Link.go(Pages.ACCOUNT, "create");
@@ -125,11 +126,11 @@ public class FrameHeader extends SmartTable
                     }
                 }
             };
-            _overImage.addClickListener(go);
+            _overImage.addClickHandler(go);
 
             _downImage = down.createImage();
             _downImage.addStyleName("actionLabel");
-            _downImage.addClickListener(go);
+            _downImage.addClickHandler(go);
 
             setWidget(_upImage);
         }

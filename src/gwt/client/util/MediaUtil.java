@@ -3,7 +3,8 @@
 
 package client.util;
 
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,7 +34,7 @@ public class MediaUtil extends SharedMediaUtil
     /**
      * Create a widget to display the supplied media.
      */
-    public static Widget createMediaView (MediaDesc desc, int size, ClickListener click)
+    public static Widget createMediaView (MediaDesc desc, int size, ClickHandler click)
     {
         return createMediaView(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size), click);
     }
@@ -45,7 +46,7 @@ public class MediaUtil extends SharedMediaUtil
      * MediaDesc#THUMBNAIL_HEIGHT}.
      */
     public static Widget createMediaView (
-        MediaDesc desc, int width, int height, ClickListener click)
+        MediaDesc desc, int width, int height, ClickHandler click)
     {
         String path = desc.getMediaPath();
         Widget view;
@@ -72,7 +73,7 @@ public class MediaUtil extends SharedMediaUtil
 
         // add the click listener if one was provided
         if (click != null && view instanceof Image) {
-            ((Image)view).addClickListener(click);
+            ((Image)view).addClickHandler(click);
             view.addStyleName("actionLabel");
         }
 

@@ -6,7 +6,8 @@ package client.me;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -27,8 +28,8 @@ public class DeductPanel extends HorizontalPanel
         final NumberTextBox text = new NumberTextBox(currency == Currency.BLING);
         add(MsoyUI.createLabel(_msgs.deductTip(_dmsgs.xlate(currency.getKey())), null));
         add(text);
-        add(new Button(_msgs.deductButton(), new ClickListener() {
-            public void onClick (Widget sender) {
+        add(new Button(_msgs.deductButton(), new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 // We don't want to allow deducting a *negative* amount, now do we?
                 if (text.getNumber().floatValue() <= 0.0f) {
                     MsoyUI.error(_msgs.deductMustBePositive());

@@ -5,7 +5,8 @@ package client.groups;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -38,8 +39,8 @@ public class GroupDiscussionsPanel extends FlowPanel
 
         FlowPanel rss = new FlowPanel();
         rss.setStyleName("RSS");
-        ClickListener rssClick = new ClickListener() {
-            public void onClick (Widget sender) {
+        ClickHandler rssClick = new ClickHandler() {
+            public void onClick (ClickEvent event) {
                 Window.open("/rss/" + _detail.group.groupId, "_blank", "");
             }
         };
@@ -89,7 +90,7 @@ public class GroupDiscussionsPanel extends FlowPanel
 
             add(MsoyUI.createHTML(MessageUtil.expandMessage(thread.firstPost.message), "Text"));
 
-            ClickListener posterClick = Link.createListener(
+            ClickHandler posterClick = Link.createListener(
                 Pages.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());
             Widget posterIcon = MediaUtil.createMediaView(
                 thread.firstPost.poster.photo, MediaDesc.HALF_THUMBNAIL_SIZE, posterClick);
@@ -101,7 +102,7 @@ public class GroupDiscussionsPanel extends FlowPanel
             postedBy.addStyleName("PostedBy");
             postedBy.add(new InlineLabel(_msgs.discussionPostedBy() + " "));
             InlineLabel author = new InlineLabel(thread.firstPost.poster.name.toString());
-            author.addClickListener(posterClick);
+            author.addClickHandler(posterClick);
             author.addStyleName("actionLabel");
             postedBy.add(author);
             postedBy.add (new InlineLabel(
