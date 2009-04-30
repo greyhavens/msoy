@@ -220,13 +220,12 @@ public class Link
         }
 
         // from interface HasClickHandlers
-        public HandlerRegistration addClickHandler (ClickHandler handler)
-        {
+        public HandlerRegistration addClickHandler (ClickHandler handler) {
             return addDomHandler(handler, ClickEvent.getType());
         }
 
         @Override // from Widget
-        public void onBrowserEvent(Event event) {
+        public void onBrowserEvent (Event event) {
             super.onBrowserEvent(event);
             if (DOM.eventGetType(event) == Event.ONCLICK && impl.handleAsClick(event)) {
                 CShell.frame.navigateTo(_targetHistoryToken);
