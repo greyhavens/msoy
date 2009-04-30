@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
@@ -223,17 +225,17 @@ public class Link
             return addDomHandler(handler, ClickEvent.getType());
         }
 
-//         @Override // from Widget
-//         public void onBrowserEvent (Event event) {
-//             if (DOM.eventGetType(event) == Event.ONCLICK) {
-//                 if (_clickListeners != null) {
-//                     _clickListeners.fireClick(this);
-//                 }
-//                 CShell.frame.navigateTo(_targetHistoryToken);
-//                 DOM.eventPreventDefault(event);
-//             }
-//         }
+        @Override // from Widget
+        public void onBrowserEvent(Event event) {
+            super.onBrowserEvent(event);
+            if (DOM.eventGetType(event) == Event.ONCLICK && impl.handleAsClick(event)) {
+                CShell.frame.navigateTo(_targetHistoryToken);
+                DOM.eventPreventDefault(event);
+            }
+        }
 
         protected String _targetHistoryToken;
+
+        protected static HyperlinkImpl impl = GWT.create(HyperlinkImpl.class);
     }
 }
