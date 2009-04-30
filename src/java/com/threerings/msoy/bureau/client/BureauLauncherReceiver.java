@@ -16,7 +16,7 @@ public interface BureauLauncherReceiver extends InvocationReceiver
 
     /**
      * Requests an update of the launcher info be sent to the server.
-     * @see BureauLauncherService#setBureauLauncherInfo()
+     * @see BureauLauncherService#setBureauLauncherInfo
      */
     void requestInfo ();
 }
