@@ -13,11 +13,13 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -61,6 +63,18 @@ public class MsoyTableManager extends TableManager
         throws InstantiationException, InvocationException
     {
         return _lmgr.createGameManager((ParlorGameConfig)config);
+    }
+
+    @Override
+    protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
+    {
+        super.gameCreated(table, gameobj, gmgr);
+        // Remove unactionable tables from the lobby since the player won't see them
+        ParlorGameConfig config = (ParlorGameConfig)table.config;
+        MsoyMatchConfig matchConfig = (MsoyMatchConfig)config.getGameDefinition().match;
+        if (config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable) {
+            _lobj.removeFromTables(table.tableId);
+        }
     }
 
     protected LobbyManager _lmgr;
