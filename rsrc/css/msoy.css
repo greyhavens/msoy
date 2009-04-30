@@ -646,6 +646,7 @@ TabNavigator, TabBar {
 
 .controlBarPartyButton {
   image: Embed(source="../media/skins/controlbar/party.png");
+  highlightAlpha: .5;
 }
 
 .tickButton {

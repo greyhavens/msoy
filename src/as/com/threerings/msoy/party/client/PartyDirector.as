@@ -266,7 +266,6 @@ public class PartyDirector extends BasicDirector
             btn.activate();
         }
         btn.clearStyle("highlight");
-        btn.clearStyle("highlightAlpha");
 
         if (_safeSubscriber != null) {
             _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
@@ -426,8 +425,7 @@ public class PartyDirector extends BasicDirector
         } else {
             btn.activate();
         }
-        btn.setStyle("highlight", "red");
-        btn.setStyle("highlightAlpha", .5);
+        btn.setStyle("highlight", 0x3fa3cc);
 
         // we might need to warp to the party location
         checkFollowScene();
