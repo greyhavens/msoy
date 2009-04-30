@@ -38,6 +38,18 @@ public class VisitorCookie
     }
 
     /**
+     * Saves visitor information in the cookie, if the cookie doesn't already exist, or if the
+     * /overwrite/ flag is set.
+     */
+    public static void save (VisitorInfo info, boolean overwrite)
+    {
+        if (!exists() || overwrite) {
+            CookieUtil.set("/", 365, CookieNames.VISITOR, info.id);
+            CShell.log("Saved " + info);
+        }
+    }
+
+    /**
      * Completely clears the browser cookie. Used when a player is registered.
      */
     public static void clear ()
