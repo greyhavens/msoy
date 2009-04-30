@@ -863,7 +863,7 @@ public class MsoyController extends Controller
     protected static const COMMAND_URL :String = "command://";
 
     /** The duration after which we log off idle guests. */
-    protected static const MAX_GUEST_IDLE_TIME :int = 4*60*1000;
+    protected static const MAX_GUEST_IDLE_TIME :int = 60*60*1000;
 
     private static const log :Log = Log.getLog(MsoyController);
 }
