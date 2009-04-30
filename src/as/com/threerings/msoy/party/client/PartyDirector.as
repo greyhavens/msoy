@@ -10,6 +10,7 @@ import mx.core.UIComponent;
 
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.Util;
 
 import com.threerings.flex.CommandButton;
@@ -120,10 +121,7 @@ public class PartyDirector extends BasicDirector
 
     public function getPartyId () :int
     {
-        if (_partyObj != null) {
-            return _partyObj.id;
-        }
-        return _wctx.getMemberObject().partyId;
+        return (_partyObj == null) ? 0 : _partyObj.id;
     }
 
     public function getPartySize () :int
@@ -560,6 +558,18 @@ public class PartyDirector extends BasicDirector
         case PartyObject.NOTIFICATION:
             _wctx.getNotificationDirector().addNotification(Notification(event.getArgs()[0]));
             break;
+        }
+    }
+
+    // from BasicDirector
+    override protected function clientObjectUpdated (client :Client) :void
+    {
+        super.clientObjectUpdated(client);
+
+        var assignedPartyId :int = _wctx.getMemberObject().partyId;
+        if (assignedPartyId != 0) {
+            // join it!
+            MethodQueue.callLater(joinParty, [ assignedPartyId ]);
         }
     }
 

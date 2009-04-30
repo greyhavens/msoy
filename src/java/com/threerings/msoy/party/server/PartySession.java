@@ -22,6 +22,12 @@ import static com.threerings.msoy.Log.log;
 public class PartySession extends PresentsSession
 {
     @Override // from PresentsSession
+    public boolean checkExpired (long now)
+    {
+        return (getConnection() == null && (now - _networkStamp > PARTIER_FLUSH_TIME));
+    }
+
+    @Override // from PresentsSession
     protected void sessionWillStart ()
     {
         super.sessionWillStart();
@@ -30,16 +36,6 @@ public class PartySession extends PresentsSession
         _partierObj = (PartierObject) _clobj;
         _partierObj.setAccessController(MsoyObjectAccess.USER);
         _partierObj.setPartyId(((PartyCredentials)_areq.getCredentials()).partyId);
-    }
-
-    @Override // from PresentsSession
-    protected void sessionConnectionClosed ()
-    {
-        super.sessionConnectionClosed();
-
-        if (_partierObj != null) {
-            safeEndSession(); // no need to keep disconnected party sessions around
-        }
     }
 
     @Override // from PresentsSession
@@ -77,4 +73,6 @@ public class PartySession extends PresentsSession
     protected PartierObject _partierObj;
 
     @Inject protected PartyRegistry _partyReg;
+
+    protected static final long PARTIER_FLUSH_TIME = 10 * 1000L; // 10 seconds, quick flush!
 }
