@@ -268,10 +268,10 @@ public class FrameEntryPoint
         // just told us to do so)
         WorldClient.didLogon(data.creds);
 
-        // TODO: preserve their current world location and log them into their new account; this
-        // will require fixing a whole bunch of shit
+        // reboot the flash client (which will put them back where they are but logged in as their
+        // newly registered self)
         if (FlashClients.clientExists() && data.justCreated) {
-            closeClient(false);
+            rebootFlashClient();
         }
 
         // now that we know we're a member, we can add our "open home in minimized mode" icon
@@ -456,7 +456,8 @@ public class FrameEntryPoint
     {
         if (test == null) {
             CShell.log("Reporting tracking action", "action", action, "details", details);
-            _membersvc.trackClientAction(getVisitorInfo(), action, details, new NoopAsyncCallback());
+            _membersvc.trackClientAction(
+                getVisitorInfo(), action, details, new NoopAsyncCallback());
         } else {
             CShell.log("Reporting test action", "test", test, "action", action);
             _membersvc.trackTestAction(getVisitorInfo(), action, test, new NoopAsyncCallback());
@@ -679,17 +680,7 @@ public class FrameEntryPoint
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
                 _closeToken = Link.createToken(Pages.WORLD, "h");
                 _bar.setCloseVisible(true);
-                WorldClient.displayFlash(args, new WorldClient.PanelProvider() {
-                    public Panel get () {
-                        _noclient = removeFromPage(_noclient);
-                        Panel client = makeClientPanel();
-                        client.setWidth(computeClientWidth());
-                        RootPanel.get(PAGE).add(client);
-                        RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
-                        _client = client;
-                        return client;
-                    }
-                });
+                WorldClient.displayFlash(args, _miniPanelProvider);
             }
         };
         FlowPanel bits = MsoyUI.createFlowPanel("Bits");
@@ -1018,7 +1009,7 @@ public class FrameEntryPoint
 
     protected void rebootFlashClient ()
     {
-        WorldClient.rebootFlash(_flashPanelProvider);
+        WorldClient.rebootFlash(_closeToken == null ? _flashPanelProvider : _miniPanelProvider);
     }
 
     /**
@@ -1117,6 +1108,18 @@ public class FrameEntryPoint
             RootPanel.get(PAGE).add(client);
             RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
 
+            _client = client;
+            return client;
+        }
+    };
+
+    protected WorldClient.PanelProvider _miniPanelProvider = new WorldClient.PanelProvider() {
+        public Panel get () {
+            _noclient = removeFromPage(_noclient);
+            Panel client = makeClientPanel();
+            client.setWidth(computeClientWidth());
+            RootPanel.get(PAGE).add(client);
+            RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
             _client = client;
             return client;
         }
