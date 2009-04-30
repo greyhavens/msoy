@@ -11,9 +11,6 @@ import com.threerings.presents.client.InvocationService;
  */
 public interface PartyService extends InvocationService
 {
-    /** Requests to kill the party. */
-    void disbandParty (Client client, InvocationListener il);
-
     /** Requests to boot a player from the party. */
     void bootMember (Client client, int memberId, InvocationListener il);
 
@@ -25,6 +22,9 @@ public interface PartyService extends InvocationService
 
     /** Requests to change the party access control. */
     void updateRecruitment (Client client, byte recruitment, InvocationListener il);
+
+    /** Requests to change the disband setting. */
+    void updateDisband (Client client, boolean disband, InvocationListener il);
 
     /** Invites a specific player to this party. */
     void inviteMember (Client client, int memberId, InvocationListener il);

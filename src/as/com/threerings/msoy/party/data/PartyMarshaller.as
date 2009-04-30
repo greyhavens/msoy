@@ -10,6 +10,7 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.util.Byte;
 import com.threerings.util.Integer;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>PartyService</code> interface
@@ -47,21 +48,8 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>disbandParty</code> requests. */
-    public static const DISBAND_PARTY :int = 3;
-
-    // from interface PartyService
-    public function disbandParty (arg1 :Client, arg2 :InvocationService_InvocationListener) :void
-    {
-        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, DISBAND_PARTY, [
-            listener2
-        ]);
-    }
-
     /** The method id used to dispatch <code>inviteMember</code> requests. */
-    public static const INVITE_MEMBER :int = 4;
+    public static const INVITE_MEMBER :int = 3;
 
     // from interface PartyService
     public function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -74,7 +62,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>moveParty</code> requests. */
-    public static const MOVE_PARTY :int = 5;
+    public static const MOVE_PARTY :int = 4;
 
     // from interface PartyService
     public function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -87,7 +75,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setGame</code> requests. */
-    public static const SET_GAME :int = 6;
+    public static const SET_GAME :int = 5;
 
     // from interface PartyService
     public function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void
@@ -96,6 +84,19 @@ public class PartyMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, SET_GAME, [
             Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4), listener5
+        ]);
+    }
+
+    /** The method id used to dispatch <code>updateDisband</code> requests. */
+    public static const UPDATE_DISBAND :int = 6;
+
+    // from interface PartyService
+    public function updateDisband (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_InvocationListener) :void
+    {
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_DISBAND, [
+            langBoolean.valueOf(arg2), listener3
         ]);
     }
 

@@ -5,7 +5,6 @@ package com.threerings.msoy.party.client {
 
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.controls.CheckBox;
 import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
@@ -14,6 +13,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 
@@ -61,6 +61,7 @@ public class PartyPanel extends FloatingPanel
         super.createChildren();
 
         var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyId());
+        var partyDir :PartyDirector = _wctx.getPartyDirector();
 
         _roster = new PlayerList(
             PeepRenderer.createFactory(_wctx, _partyObj), PartyPeep.createSortByOrder(_partyObj));
@@ -92,7 +93,7 @@ public class PartyPanel extends FloatingPanel
         for (var ii :int = 0; ii < PartyCodes.RECRUITMENT_COUNT; ii++) {
             options.push({ label: Msgs.PARTY.get("l.recruit_" + ii), data: ii });
         }
-        _recruit = new CommandComboBox(_wctx.getPartyDirector().updateRecruitment);
+        _recruit = new CommandComboBox(partyDir.updateRecruitment);
         _recruit.dataProvider = options;
         _recruit.selectedData = _partyObj.recruitment;
         _recruit.enabled = isLeader;
@@ -102,13 +103,12 @@ public class PartyPanel extends FloatingPanel
         spacer.percentWidth = 100;
         hbox.addChild(spacer);
 
-        hbox.addChild(new CommandButton(Msgs.PARTY.get("b.leave"), doLeaveParty));
+        hbox.addChild(new CommandButton(Msgs.PARTY.get("b.leave"), partyDir.clearParty));
         box.addChild(hbox);
 
-        _disband = new CheckBox();
-        _disband.label = Msgs.PARTY.get("b.disband");
-        _disband.selected = true;
-        FlexUtil.setVisible(_disband, (_partyObj.leaderId == _ctx.getMyId()));
+        _disband = new CommandCheckBox(Msgs.PARTY.get("b.disband"), partyDir.updateDisband);
+        _disband.selected = _partyObj.disband;
+        _disband.enabled = isLeader;
         box.addChild(_disband);
 
         addChild(box);
@@ -130,11 +130,15 @@ public class PartyPanel extends FloatingPanel
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyId());
                 _status.enabled = isLeader;
                 _recruit.enabled = isLeader;
-                FlexUtil.setVisible(_disband, isLeader);
+                _disband.enabled = isLeader;
                 break;
 
             case PartyObject.RECRUITMENT:
                 _recruit.selectedData = int(event.getValue());
+                break;
+
+            case PartyObject.DISBAND:
+                _disband.selected = Boolean(event.getValue());
                 break;
         }
     }
@@ -145,18 +149,6 @@ public class PartyPanel extends FloatingPanel
         _wctx.getControlBar().giveChatFocus();
     }
 
-    /**
-     * Enact leaving the party.
-     */
-    protected function doLeaveParty () :void
-    {
-        if (_disband.selected && (_partyObj.leaderId == _ctx.getMyId())) {
-            _wctx.getPartyDirector().disbandParty();
-        } else {
-            _wctx.getPartyDirector().clearParty();
-        }
-    }
-
     protected var _wctx :WorldContext;
 
     protected var _partyObj :PartyObject;
@@ -164,7 +156,6 @@ public class PartyPanel extends FloatingPanel
     protected var _roster :PlayerList;
     protected var _status :TextInput;
     protected var _recruit :CommandComboBox;
-
-    protected var _disband :CheckBox;
+    protected var _disband :CommandCheckBox;
 }
 }

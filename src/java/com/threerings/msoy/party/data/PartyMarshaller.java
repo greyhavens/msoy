@@ -44,21 +44,8 @@ public class PartyMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #disbandParty} requests. */
-    public static final int DISBAND_PARTY = 3;
-
-    // from interface PartyService
-    public void disbandParty (Client arg1, InvocationService.InvocationListener arg2)
-    {
-        ListenerMarshaller listener2 = new ListenerMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, DISBAND_PARTY, new Object[] {
-            listener2
-        });
-    }
-
     /** The method id used to dispatch {@link #inviteMember} requests. */
-    public static final int INVITE_MEMBER = 4;
+    public static final int INVITE_MEMBER = 3;
 
     // from interface PartyService
     public void inviteMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -71,7 +58,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #moveParty} requests. */
-    public static final int MOVE_PARTY = 5;
+    public static final int MOVE_PARTY = 4;
 
     // from interface PartyService
     public void moveParty (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -84,7 +71,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setGame} requests. */
-    public static final int SET_GAME = 6;
+    public static final int SET_GAME = 5;
 
     // from interface PartyService
     public void setGame (Client arg1, int arg2, byte arg3, int arg4, InvocationService.InvocationListener arg5)
@@ -93,6 +80,19 @@ public class PartyMarshaller extends InvocationMarshaller
         listener5.listener = arg5;
         sendRequest(arg1, SET_GAME, new Object[] {
             Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4), listener5
+        });
+    }
+
+    /** The method id used to dispatch {@link #updateDisband} requests. */
+    public static final int UPDATE_DISBAND = 6;
+
+    // from interface PartyService
+    public void updateDisband (Client arg1, boolean arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_DISBAND, new Object[] {
+            Boolean.valueOf(arg2), listener3
         });
     }
 

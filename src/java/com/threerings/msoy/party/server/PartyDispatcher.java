@@ -47,12 +47,6 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
-        case PartyMarshaller.DISBAND_PARTY:
-            ((PartyProvider)provider).disbandParty(
-                source, (InvocationService.InvocationListener)args[0]
-            );
-            return;
-
         case PartyMarshaller.INVITE_MEMBER:
             ((PartyProvider)provider).inviteMember(
                 source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
@@ -68,6 +62,12 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
         case PartyMarshaller.SET_GAME:
             ((PartyProvider)provider).setGame(
                 source, ((Integer)args[0]).intValue(), ((Byte)args[1]).byteValue(), ((Integer)args[2]).intValue(), (InvocationService.InvocationListener)args[3]
+            );
+            return;
+
+        case PartyMarshaller.UPDATE_DISBAND:
+            ((PartyProvider)provider).updateDisband(
+                source, ((Boolean)args[0]).booleanValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 

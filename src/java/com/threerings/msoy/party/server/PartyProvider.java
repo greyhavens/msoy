@@ -27,12 +27,6 @@ public interface PartyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link PartyService#disbandParty} request.
-     */
-    void disbandParty (ClientObject caller, InvocationService.InvocationListener arg1)
-        throws InvocationException;
-
-    /**
      * Handles a {@link PartyService#inviteMember} request.
      */
     void inviteMember (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
@@ -48,6 +42,12 @@ public interface PartyProvider extends InvocationProvider
      * Handles a {@link PartyService#setGame} request.
      */
     void setGame (ClientObject caller, int arg1, byte arg2, int arg3, InvocationService.InvocationListener arg4)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link PartyService#updateDisband} request.
+     */
+    void updateDisband (ClientObject caller, boolean arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 
     /**

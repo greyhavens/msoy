@@ -404,6 +404,7 @@ public class PartyRegistry
             pobj.group = groupInfo.group;
             pobj.icon = group.toLogo();
             pobj.leaderId = member.getMemberId();
+            pobj.disband = true;
             if (member.location instanceof ScenePlace) {
                 pobj.sceneId = ((ScenePlace) member.location).sceneId;
             }

@@ -19,9 +19,6 @@ public interface PartyService extends InvocationService
     function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function disbandParty (arg1 :Client, arg2 :InvocationService_InvocationListener) :void;
-
-    // from Java interface PartyService
     function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
@@ -29,6 +26,9 @@ public interface PartyService extends InvocationService
 
     // from Java interface PartyService
     function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void;
+
+    // from Java interface PartyService
+    function updateDisband (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
     function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;

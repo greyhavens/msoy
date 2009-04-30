@@ -183,16 +183,6 @@ public class PartyManager
     }
 
     // from interface PartyProvider
-    public void disbandParty (ClientObject caller, InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        requireLeader(caller);
-        _partyObj.postMessage(PartyObject.NOTIFICATION,
-            new GenericNotification("m.party_disbanded", Notification.PERSONAL));
-        shutdown();
-    }
-
-    // from interface PartyProvider
     public void bootMember (
         ClientObject caller, int playerId, InvocationService.InvocationListener listener)
         throws InvocationException
@@ -298,6 +288,15 @@ public class PartyManager
     }
 
     // from interface PartyProvider
+    public void updateDisband (
+        ClientObject caller, boolean disband, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        requireLeader(caller);
+        _partyObj.setDisband(disband);
+    }
+
+    // from interface PartyProvider
     public void inviteMember (
         ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
@@ -338,6 +337,13 @@ public class PartyManager
 
         // if they're the last one, just kill the party
         if (_partyObj.peeps.size() == 1) {
+            shutdown();
+            return true;
+        }
+
+        if ((_partyObj.leaderId == memberId) && _partyObj.disband) {
+            _partyObj.postMessage(PartyObject.NOTIFICATION,
+                new GenericNotification("m.party_disbanded", Notification.PERSONAL));
             shutdown();
             return true;
         }

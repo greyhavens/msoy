@@ -301,9 +301,10 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
-    public function disbandParty () :void
+    public function updateDisband (disband :Boolean) :void
     {
-        _partyObj.partyService.disbandParty(_pctx.getClient(), _wctx.listener());
+        _partyObj.partyService.updateDisband(_pctx.getClient(), disband,
+            _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     /**

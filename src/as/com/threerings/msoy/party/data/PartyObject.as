@@ -55,6 +55,9 @@ public class PartyObject extends DObject
     /** The field name of the <code>recruitment</code> field. */
     public static const RECRUITMENT :String = "recruitment";
 
+    /** The field name of the <code>disband</code> field. */
+    public static const DISBAND :String = "disband";
+
     /** The field name of the <code>partyService</code> field. */
     public static const PARTY_SERVICE :String = "partyService";
 //
@@ -105,6 +108,9 @@ public class PartyObject extends DObject
     /** This party's access control. @see PartyCodes */
     public var recruitment :int;
 
+    /** Do we disband when the leader leaves? */
+    public var disband :Boolean;
+
     /** The service for doing things on this party. */
     public var partyService :PartyMarshaller;
 
@@ -128,6 +134,7 @@ public class PartyObject extends DObject
         status = ins.readField(String) as String;
         statusType = ins.readByte();
         recruitment = ins.readByte();
+        disband = ins.readBoolean();
         partyService = PartyMarshaller(ins.readObject());
 //        speakService = SpeakMarshaller(ins.readObject());
     }
