@@ -37,7 +37,8 @@ public enum FeedMessageType
 
     UNUSED(999, null);
 
-    /** Types are grouped together into categories */
+    /** Types are grouped together into categories. NOTE: Don't change the ordinals; they are used
+     * for translation on the client. */
     public static enum Category {
         ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, FORUMS, TROPHIES, ROOMS, BADGES,
         MEDALS, LEVELS;
