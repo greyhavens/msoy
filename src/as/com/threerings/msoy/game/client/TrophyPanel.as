@@ -64,8 +64,10 @@ public class TrophyPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
-        setStyle("backgroundAlpha", 1);
+
         showCloseButton = true;
+        // make this window completely opaque, so that the dimmed-out trophies look good
+        setStyle("backgroundAlpha", 1);
 
         if (_trophies.length == 0) {
             addChild(FlexUtil.createLabel(Msgs.GAME.get("m.tp_title_none", _gameName)));
@@ -97,15 +99,14 @@ public class TrophyPanel extends FloatingPanel
             var bits :VBox = new VBox();
             bits.setStyle("verticalGap", 0);
             var name :Label = FlexUtil.createLabel(trophy.name, "trophyPanelName");
-            name.maxWidth = 200;
+            name.maxWidth = CELL_WIDTH;
             bits.addChild(name);
             var descrip :Text = FlexUtil.createText(
                (trophy.description == null) ? Msgs.GAME.get("m.tp_secret") : trophy.description,
-               200, (trophy.description == null) ? "trophyPanelHidden" : null);
+               CELL_WIDTH, (trophy.description == null) ? "trophyPanelHidden" : null);
             bits.addChild(descrip);
             tbox.addChild(bits);
             if (trophy.whenEarned == null) {
-                // TODO: this is a non-starter; it looks like ass.
                 tbox.alpha = 0.35;
                 name.setStyle("color", 0xAAAAAA);
                 descrip.setStyle("color", 0xAAAAAA);
@@ -133,6 +134,6 @@ public class TrophyPanel extends FloatingPanel
     protected var _trophies :Array /*of Trophy*/;
     protected var _gameName :String;
 
-    protected static const PUBLISH_BUTTON :int = 100;
+    protected static const CELL_WIDTH :int = 200;
 }
 }
