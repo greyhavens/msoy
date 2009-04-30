@@ -64,12 +64,12 @@ public class TrophyPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
+        setStyle("backgroundAlpha", 1);
+        showCloseButton = true;
 
         if (_trophies.length == 0) {
-            var none :Label = new Label();
-            none.text = Msgs.GAME.get("m.tp_title_none", _gameName);
-            addChild(none);
-            addButtons(CANCEL_BUTTON);
+            addChild(FlexUtil.createLabel(Msgs.GAME.get("m.tp_title_none", _gameName)));
+            addButtons(OK_BUTTON);
             return;
         }
 
@@ -115,12 +115,10 @@ public class TrophyPanel extends FloatingPanel
             }
         }
 
-        showCloseButton = true;
         var buttons :Array = [ OK_BUTTON ];
         if (filterEarned(_trophies).length > 0) {
             buttons.push(new CommandButton(Msgs.GAME.get("b.tp_publish"), publishTrophies));
         }
-
         addButtons.apply(this, buttons);
     }
 
