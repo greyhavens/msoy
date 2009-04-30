@@ -9,6 +9,9 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -196,6 +199,7 @@ public class MsoyUI
 
     /**
      * Creates a label that triggers an action using the supplied text and listener.
+     * @deprecated Use {@link #createActionLabel(String, ClickHandler)} instead
      */
     public static Label createActionLabel (String text, ClickListener listener)
     {
@@ -203,9 +207,18 @@ public class MsoyUI
     }
 
     /**
+     * Creates a label that triggers an action using the supplied text and handler.
+     */
+    public static Label createActionLabel (String text, ClickHandler handler)
+    {
+        return createActionLabel(text, null, handler);
+    }
+
+    /**
      * Creates a label that triggers an action using the supplied text and listener. The label will
      * be styled as specified with an additional style that configures the mouse pointer and adds
      * underline to the text.
+     * @deprecated Use {@link #createActionLabel(String, String, ClickHandler)}
      */
     public static Label createActionLabel (String text, String style, ClickListener listener)
     {
@@ -218,12 +231,38 @@ public class MsoyUI
 
     /**
      * Creates a label that triggers an action using the supplied text and listener. The label will
+     * be styled as specified with an additional style that configures the mouse pointer and adds
+     * underline to the text.
+     */
+    public static Label createActionLabel (String text, String style, ClickHandler handler)
+    {
+        Label label = createCustomActionLabel(text, style, handler);
+        if (handler != null) {
+            label.addStyleName("actionLabel");
+        }
+        return label;
+    }
+
+    /**
+     * Creates a label that triggers an action using the supplied text and listener. The label will
      * only be styled with the specified style.
+     * @deprecated Use {@link #createCustomActionLabel(String, String, ClickHandler)}.
      */
     public static Label createCustomActionLabel (String text, String style, ClickListener listener)
     {
         Label label = createLabel(text, style);
         maybeAddClickListener(label, listener);
+        return label;
+    }
+
+    /**
+     * Creates a label that triggers an action using the supplied text and listener. The label will
+     * only be styled with the specified style.
+     */
+    public static Label createCustomActionLabel (String text, String style, ClickHandler handler)
+    {
+        Label label = createLabel(text, style);
+        maybeAddClickListener(label, handler);
         return label;
     }
 
@@ -689,11 +728,22 @@ public class MsoyUI
 
     /**
      * Adds the supplied click listener to the supplied target iff the listener is non-null.
+     * @deprecated Use {@link maybeAddClickListener(HasClickHandlers, ClickHandler).
      */
     public static void maybeAddClickListener (SourcesClickEvents target, ClickListener listener)
     {
         if (listener != null) {
             target.addClickListener(listener);
+        }
+    }
+
+    /**
+     * Adds the supplied click listener to the supplied target iff the listener is non-null.
+     */
+    public static void maybeAddClickListener (HasClickHandlers target, ClickHandler handler)
+    {
+        if (handler != null) {
+            target.addClickHandler(handler);
         }
     }
 

@@ -171,10 +171,10 @@ public class TakeSurveyPanel extends VerticalPanel
 
         protected String getResponse ()
         {
-            if (trueButton.isChecked()) {
+            if (trueButton.getValue()) {
                 return _responseChoices[1];
             }
-            if (falseButton.isChecked()) {
+            if (falseButton.getValue()) {
                 return _responseChoices[0];
             }
             return null;
@@ -202,7 +202,7 @@ public class TakeSurveyPanel extends VerticalPanel
         protected String getResponse ()
         {
             for (int ii = 0; ii < buttons.length; ++ii) {
-                if (buttons[ii].isChecked()) {
+                if (buttons[ii].getValue()) {
                     return _responseChoices[ii];
                 }
             }
@@ -232,7 +232,7 @@ public class TakeSurveyPanel extends VerticalPanel
         {
             StringBuilder response = new StringBuilder();
             for (int ii = 0; ii < buttons.length; ++ii) {
-                if (buttons[ii].isChecked()) {
+                if (buttons[ii].getValue()) {
                     if (response.length() > 0) {
                         response.append(",");
                     }
@@ -270,7 +270,7 @@ public class TakeSurveyPanel extends VerticalPanel
         protected String getResponse ()
         {
             for (int ii = 0; ii < buttons.length; ++ii) {
-                if (buttons[ii].isChecked()) {
+                if (buttons[ii].getValue()) {
                     return _responseChoices[ii];
                 }
             }

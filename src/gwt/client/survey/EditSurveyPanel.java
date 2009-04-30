@@ -15,11 +15,13 @@ import client.util.Link;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -238,7 +240,7 @@ public class EditSurveyPanel extends VerticalPanel
             table.setWidget(row++, 1, maxSubmissions);
 
             final CheckBox enabled = new CheckBox();
-            enabled.setChecked(_result.survey.enabled);
+            enabled.setValue(_result.survey.enabled);
             table.setText(row, 0, _msgs.enabledLabel(), 1, "label");
             table.setWidget(row++, 1, enabled);
 
@@ -259,7 +261,7 @@ public class EditSurveyPanel extends VerticalPanel
                 @Override // from ClickCallback
                 protected boolean callService () {
                     _result.survey.name = name.getText();
-                    _result.survey.enabled = enabled.isChecked();
+                    _result.survey.enabled = enabled.getValue();
                     _result.survey.startDate = start.getDate();
                     _result.survey.finishDate = finish.getDate();
                     _result.survey.maxSubmissions = Integer.parseInt(maxSubmissions.getText());
@@ -345,13 +347,13 @@ public class EditSurveyPanel extends VerticalPanel
             {
                 CheckBox set = new CheckBox();
                 add(set);
-                set.addClickListener(new ClickListener() {
-                    public void onClick (Widget w) {
-                        _date.setVisible(((CheckBox)w).isChecked());
+                set.addClickHandler(new ClickHandler() {
+                    public void onClick (ClickEvent e) {
+                        _date.setVisible(((CheckBox)e.getSource()).getValue());
                     }
                 });
                 add(_date = new DateFields(-50, 1));
-                set.setChecked(initialValue != null);
+                set.setValue(initialValue != null);
                 _date.setVisible(initialValue != null);
                 _date.setDate(DateUtil.toDateVec(
                     initialValue != null ? initialValue : new Date()));
@@ -372,7 +374,7 @@ public class EditSurveyPanel extends VerticalPanel
          * Listener/Callback for moving a question up or down or deleting it.
          */
         protected class AlterQuestion
-            implements ClickListener, AsyncCallback<Void>
+            implements ClickHandler, AsyncCallback<Void>
         {
             /**
              * Creates a new alteration callback.
@@ -385,7 +387,7 @@ public class EditSurveyPanel extends VerticalPanel
                 _direction = direction;
             }
 
-            public void onClick (Widget sender)
+            public void onClick (ClickEvent e)
             {
                 if (_altering) {
                     return;
@@ -491,8 +493,8 @@ public class EditSurveyPanel extends VerticalPanel
             for (SurveyQuestion.Type type : SurveyQuestion.Type.values()) {
                 types.addItem(getQuestionTypeName(type));
             }
-            types.addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
+            types.addChangeHandler(new ChangeHandler() {
+                public void onChange (ChangeEvent sender) {
                     int idx = types.getSelectedIndex() - 1;
                     if (idx >= 0 && idx < SurveyQuestion.Type.values().length) {
                         _question = new SurveyQuestion();
@@ -517,7 +519,7 @@ public class EditSurveyPanel extends VerticalPanel
             _editGrid.setText(2, 0, _msgs.questionOptionalLabel());
             final CheckBox optional = new CheckBox();
             _editGrid.setWidget(2, 1, optional);
-            optional.setChecked(_question.optional);
+            optional.setValue(_question.optional);
 
             _typeStartRow = 3;
 
@@ -535,8 +537,8 @@ public class EditSurveyPanel extends VerticalPanel
                 HorizontalPanel add = new HorizontalPanel();
                 final TextBox choice = MsoyUI.createTextBox("", 60, 20);
                 add.add(choice);
-                add.add(new Button(_msgs.newChoiceButtonLabel(), new ClickListener() {
-                    public void onClick (Widget sender) {
+                add.add(new Button(_msgs.newChoiceButtonLabel(), new ClickHandler() {
+                    public void onClick (ClickEvent e) {
                         _choices = ArrayUtil.append(
                             _choices, choice.getText(), ArrayUtil.STRING_TYPE);
                         refreshChoices();
@@ -558,7 +560,7 @@ public class EditSurveyPanel extends VerticalPanel
                 protected boolean callService () {
                     _question.text = text.getText();
                     _question.choices = _choices;
-                    _question.optional = optional.isChecked();
+                    _question.optional = optional.getValue();
                     if (fmaxValue != null) {
                         _question.maxValue = Integer.parseInt(fmaxValue.getText());
                     }
@@ -595,8 +597,8 @@ public class EditSurveyPanel extends VerticalPanel
                 choices.setText(frow, 0, String.valueOf(ii + 1) + ".", 1, "number");
                 choices.setText(frow, 1, _choices[ii], 1, "choice");
                 choices.setWidget(frow, 2, MsoyUI.createActionLabel(_msgs.delete(),
-                    new ClickListener() {
-                        public void onClick (Widget sender) {
+                    new ClickHandler() {
+                        public void onClick (ClickEvent e) {
                             _choices = ArrayUtil.splice(_choices, frow, 1, ArrayUtil.STRING_TYPE);
                             refreshChoices();
                         }

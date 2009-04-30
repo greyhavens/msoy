@@ -177,7 +177,7 @@ public class GalleryViewPanel extends FlowPanel
             actions.add(MsoyUI.createActionLabel(_pmsgs.galleryEditButton(), editListener));
             actions.add(new Label("|"));
 
-            Label delete = MsoyUI.createActionLabel(_pmsgs.galleryDeleteButton(), null);
+            Label delete = MsoyUI.createLabel(_pmsgs.galleryDeleteButton(), null);
             delete.addStyleName("actionLabel");
             new ClickCallback<Void>(delete, _pmsgs.galleryConfirmDelete()) {
                 @Override protected boolean callService () {
