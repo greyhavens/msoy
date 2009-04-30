@@ -381,7 +381,8 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public ForumMessage postMessage (int threadId, int inReplyTo, String message)
+    public ForumMessage postMessage (
+        int threadId, int inReplyTo, int inReplyToMemberId, String message)
         throws ServiceException
     {
         MemberRecord mrec = requireValidatedUser();
@@ -392,14 +393,12 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_INVALID_THREAD);
         }
         checkAccess(mrec, ftr.groupId, Group.Access.POST, ftr.flags);
-        int previousPosterId = ftr.mostRecentPosterId;
 
         // sanitize this message's HTML, expand Whirled URLs and do length checking
         message = processMessage(message);
 
         // create the message in the database and return its runtime form
-        ForumMessageRecord fmr = _forumRepo.postMessage(
-            ftr, mrec.memberId, inReplyTo, message);
+        ForumMessageRecord fmr = _forumRepo.postMessage(ftr, mrec.memberId, inReplyTo, message);
 
         // log event for metrics purposes
         _eventLog.forumMessagePosted(mrec.memberId, mrec.visitorId, fmr.threadId, ftr.posts);
@@ -407,9 +406,9 @@ public class ForumServlet extends MsoyServiceServlet
         // mark this thread as read by the poster
         _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts+1);
 
-        // add a feed item for the previous poster that their post has been replied to
-        if (previousPosterId != mrec.memberId) {
-            _feedRepo.publishSelfMessage(previousPosterId, mrec.memberId,
+        // add a feed item for the poster of the message being replied to
+        if (inReplyToMemberId != 0 && inReplyToMemberId != mrec.memberId) {
+            _feedRepo.publishSelfMessage(inReplyToMemberId, mrec.memberId,
                 FeedMessageType.SELF_FORUM_REPLY, ftr.threadId + "\t" + ftr.subject);
         }
 

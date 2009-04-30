@@ -114,7 +114,7 @@ public interface ForumService extends RemoteService
     /**
      * Posts a message to the specified thread.
      */
-    ForumMessage postMessage (int threadId, int inReplyTo, String message)
+    ForumMessage postMessage (int threadId, int inReplyTo, int inReplyToMemberId, String message)
         throws ServiceException;
 
     /**

@@ -70,7 +70,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#postMessage}.
      */
-    void postMessage (int threadId, int inReplyTo, String message,
+    void postMessage (int threadId, int inReplyTo, int inReplytoMemberId, String message,
                       AsyncCallback<ForumMessage> callback);
 
     /**
