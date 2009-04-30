@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.survey;
 
 import java.util.ArrayList;
