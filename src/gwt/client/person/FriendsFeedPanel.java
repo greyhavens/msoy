@@ -54,7 +54,7 @@ public class FriendsFeedPanel extends FlowPanel
             return;
         }
 
-        String categoryTitle = _dmsgs.xlate("feedCategory" + category.category);
+        String categoryTitle = _dmsgs.xlate("feedCategory" + category.category.ordinal());
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 _mesvc.loadFeedCategory(
