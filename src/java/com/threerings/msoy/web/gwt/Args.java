@@ -44,7 +44,21 @@ public class Args
     }
 
     /**
-     * Convenience function.
+     * Extracts, parses and returns the args from the supplied history token. The history token
+     * contains the page and the args.
+     */
+    public static Args fromHistory (String historyToken)
+    {
+        Args args = new Args();
+        int didx = historyToken.indexOf("-");
+        if (didx >= 0) {
+            args.setToken(historyToken.substring(didx+1));
+        }
+        return args;
+    }
+
+    /**
+     * Parses args from the supplied token. This token must not contain the page, just the args.
      */
     public static Args fromToken (String token)
     {
@@ -140,41 +154,31 @@ public class Args
     }
 
     /**
-     * Splices off the arguments from the specified index onward and returns them as an array for
-     * recomposition with {@link #compose}.
+     * Recomposes the arguments from the specified index onward with {@link #compose}.
      */
-    public String[] splice (int fromIndex)
+    public String recompose (int fromIndex)
     {
-        String[] args = new String[_args.size()-fromIndex];
-        for (int ii = 0; ii < args.length; ii++) {
-            args[ii] = _args.get(ii + fromIndex);
-        }
-        return args;
+        return recomposeWithout(0, fromIndex);
     }
 
     /**
-     * Removes arguments between the start index, up to but not including the end index,
-     * and returns the result as a new array for recomposition with {@link #compose}.
+     * Removes arguments between the start index, up to but not including the end index, and
+     * recomposes the remaining arguments using {@link #compose}.
      *
-     * <p>For example, suppose your Args holds elements { "a", "b", "c", "d", "e" }.
-     * Calling <code>remove(1, 3)</code> will return an array of strings
-     * containing elements { "a", "d", "e" }.
+     * <p>For example, suppose your Args holds elements { "a", "b", "c", "d", "e" }. Calling
+     * <code>remove(1, 2)</code> will return an array of strings containing elements { "a", "d",
+     * "e" }.
      */
-    public String[] remove (int start, int end)
+    public String recomposeWithout (int start, int span)
     {
-        int total = _args.size();
-        String[] args = new String[total - (end - start)];
-
-        int from = 0;
-        int to = 0;
-        while (from < total) {
-            if (from < start || from >= end) {
-                args[to] = _args.get(from);
-                to++;
-            }
-            from++;
+        List<String> args = new ArrayList<String>();
+        for (int ii = 0, ll = Math.min(_args.size(), start); ii < ll; ii++) {
+            args.add(_args.get(ii));
         }
-        return args;
+        for (int ii = start+span, ll = _args.size(); ii < ll; ii++) {
+            args.add(_args.get(ii));
+        }
+        return compose(args);
     }
 
     /**

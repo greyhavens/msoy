@@ -30,6 +30,16 @@ public enum Pages
     WORLD(null);
 
     /**
+     * Extracts and returns the page from the supplied history token.
+     */
+    public static Pages fromHistory (String historyToken)
+    {
+        int didx = historyToken.indexOf("-");
+        return Enum.valueOf(Pages.class, (didx == -1) ? historyToken :
+                            historyToken.substring(0, didx));
+    }
+
+    /**
      * Creates a link to the specified page and arguments. The link will contain the server URL and
      * will use the safer <code>http://www.whirled.com/go/args</code> form. Thus this should be
      * used for URLs that are going to be sent off outside of Whirled. If that is not desired, use

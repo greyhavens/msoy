@@ -144,16 +144,11 @@ public class FrameEntryPoint
         _prevToken = _currentToken;
         _currentToken = token;
 
-        String pagename = "";
         Pages page;
         Args args = new Args();
         try {
-            pagename = token.split("-")[0];
-            page = Enum.valueOf(Pages.class, pagename.toUpperCase());
-            int dashidx = token.indexOf("-");
-            if (dashidx != -1) {
-                args.setToken(token.substring(dashidx+1));
-            }
+            page = Pages.fromHistory(token);
+            args = Args.fromHistory(token);
         } catch (Exception e) {
             // on bogus or missing URLs, go to landing page for guests or world-places for members
             if (CShell.isGuest()) {
@@ -185,7 +180,7 @@ public class FrameEntryPoint
 
         // pull out the vector id from the URL; it will be of the form: "vec_VECTOR"
         String vector = null;
-        ExtractedParam afterVector = extractParams("vec", pagename, token, args);
+        ExtractedParam afterVector = extractParams("vec", page, token, args);
         if (afterVector != null) {
             vector = afterVector.value;
             token = afterVector.newToken;
@@ -243,7 +238,7 @@ public class FrameEntryPoint
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
         // for the first time, it will request in a moment with a call to getPageToken)
-        _pageToken = Args.compose((Object[])args.splice(0));
+        _pageToken = args.recompose(0);
 
         // replace the page if necessary
         if (_page != page || _page == Pages.WORLD) {
@@ -471,7 +466,7 @@ public class FrameEntryPoint
         public Args newArgs;
     }
 
-    protected ExtractedParam extractParams (String key, String pagename, String token, Args args)
+    protected ExtractedParam extractParams (String key, Pages page, String token, Args args)
     {
         int idx = args.indexOf(key);
         if (idx == -1 || args.getArgCount() < idx + 2) {
@@ -479,13 +474,11 @@ public class FrameEntryPoint
         }
 
         ExtractedParam result = new ExtractedParam();
-
-        // get the result
         result.value = args.get(idx + 1, null);
         // remove the key tag and its value from the URL
-        String shortened = Args.compose((Object[])args.remove(idx, idx + 2));
+        String shortened = args.recomposeWithout(idx, 2);
+        result.newToken = Pages.makeToken(page, shortened);
         result.newArgs = Args.fromToken(shortened);
-        result.newToken = pagename + "-" + shortened;
         return result;
     }
 
@@ -532,11 +525,9 @@ public class FrameEntryPoint
                     displayWorldClient("sceneId=" + sceneId, null);
                 } else {
                     // if we have sNN-extra-args we want the close button to use just "sNN"
-                    String passArgs = args.getArgCount() >= 2 ?
-                        Args.compose((Object[])args.splice(2)) : null;
-                    displayWorldClient(
-                        "sceneId=" + sceneId + "&page=" + args.get(1, "") + (passArgs == null ? "" :
-                        "&args=" + passArgs), Pages.WORLD.getPath() + "-s" + sceneId);
+                    displayWorldClient("sceneId=" + sceneId +
+                                       "&page=" + args.get(1, "") + "&args=" + args.recompose(2),
+                                       Pages.WORLD.getPath() + "-s" + sceneId);
                 }
 
             } else if (action.equals("game")) {
