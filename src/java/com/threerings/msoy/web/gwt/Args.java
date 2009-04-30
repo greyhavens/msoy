@@ -139,21 +139,6 @@ public class Args
     }
 
     /**
-     * If this args list contains the specified string, returns its index.
-     * Otherwise returns the value -1.
-     */
-    public int indexOf (String value)
-    {
-        for (int ii = 0, count = _args.size(); ii < count; ii++) {
-            String element = _args.get(ii);
-            if ((element == null && value == null) || element.equals(value)) {
-                return ii;
-            }
-        }
-        return -1;
-    }
-
-    /**
      * Recomposes the arguments from the specified index onward with {@link #compose}.
      */
     public String recompose (int fromIndex)

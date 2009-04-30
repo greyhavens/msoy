@@ -35,8 +35,8 @@ public enum Pages
     public static Pages fromHistory (String historyToken)
     {
         int didx = historyToken.indexOf("-");
-        return Enum.valueOf(Pages.class, (didx == -1) ? historyToken :
-                            historyToken.substring(0, didx));
+        String pstr = (didx == -1) ? historyToken : historyToken.substring(0, didx);
+        return Enum.valueOf(Pages.class, pstr.toUpperCase());
     }
 
     /**
