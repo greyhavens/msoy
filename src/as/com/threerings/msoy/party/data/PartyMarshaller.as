@@ -47,8 +47,21 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>disbandParty</code> requests. */
+    public static const DISBAND_PARTY :int = 3;
+
+    // from interface PartyService
+    public function disbandParty (arg1 :Client, arg2 :InvocationService_InvocationListener) :void
+    {
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, DISBAND_PARTY, [
+            listener2
+        ]);
+    }
+
     /** The method id used to dispatch <code>inviteMember</code> requests. */
-    public static const INVITE_MEMBER :int = 3;
+    public static const INVITE_MEMBER :int = 4;
 
     // from interface PartyService
     public function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -61,7 +74,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>moveParty</code> requests. */
-    public static const MOVE_PARTY :int = 4;
+    public static const MOVE_PARTY :int = 5;
 
     // from interface PartyService
     public function moveParty (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -74,7 +87,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setGame</code> requests. */
-    public static const SET_GAME :int = 5;
+    public static const SET_GAME :int = 6;
 
     // from interface PartyService
     public function setGame (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_InvocationListener) :void
@@ -87,7 +100,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateRecruitment</code> requests. */
-    public static const UPDATE_RECRUITMENT :int = 6;
+    public static const UPDATE_RECRUITMENT :int = 7;
 
     // from interface PartyService
     public function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -100,7 +113,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateStatus</code> requests. */
-    public static const UPDATE_STATUS :int = 7;
+    public static const UPDATE_STATUS :int = 8;
 
     // from interface PartyService
     public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void

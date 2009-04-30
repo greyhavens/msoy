@@ -5,6 +5,7 @@ package com.threerings.msoy.party.client {
 
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.controls.CheckBox;
 import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
@@ -14,6 +15,7 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandComboBox;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.PlayerList;
@@ -100,9 +102,15 @@ public class PartyPanel extends FloatingPanel
         spacer.percentWidth = 100;
         hbox.addChild(spacer);
 
-        hbox.addChild(
-            new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().clearParty));
+        hbox.addChild(new CommandButton(Msgs.PARTY.get("b.leave"), doLeaveParty));
         box.addChild(hbox);
+
+        _disband = new CheckBox();
+        _disband.label = Msgs.PARTY.get("b.disband");
+        _disband.selected = true;
+        FlexUtil.setVisible(_disband, (_partyObj.leaderId == _ctx.getMyId()));
+        box.addChild(_disband);
+
         addChild(box);
     }
 
@@ -122,6 +130,7 @@ public class PartyPanel extends FloatingPanel
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyId());
                 _status.enabled = isLeader;
                 _recruit.enabled = isLeader;
+                FlexUtil.setVisible(_disband, isLeader);
                 break;
 
             case PartyObject.RECRUITMENT:
@@ -136,6 +145,18 @@ public class PartyPanel extends FloatingPanel
         _wctx.getControlBar().giveChatFocus();
     }
 
+    /**
+     * Enact leaving the party.
+     */
+    protected function doLeaveParty () :void
+    {
+        if (_disband.selected && (_partyObj.leaderId == _ctx.getMyId())) {
+            _wctx.getPartyDirector().disbandParty();
+        } else {
+            _wctx.getPartyDirector().clearParty();
+        }
+    }
+
     protected var _wctx :WorldContext;
 
     protected var _partyObj :PartyObject;
@@ -143,5 +164,7 @@ public class PartyPanel extends FloatingPanel
     protected var _roster :PlayerList;
     protected var _status :TextInput;
     protected var _recruit :CommandComboBox;
+
+    protected var _disband :CheckBox;
 }
 }

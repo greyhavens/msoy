@@ -62,6 +62,10 @@ public class PartyObject extends DObject
     public static final String PARTY_SERVICE = "partyService";
     // AUTO-GENERATED: FIELDS END
 
+    /** A message sent to indicate a notification that should be dispatched to all partiers.
+     * Format: [ Notification ]. */
+    public static final String NOTIFICATION = "notification";
+
     /** This party's guid. */
     public int id;
 

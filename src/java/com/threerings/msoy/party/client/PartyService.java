@@ -11,6 +11,9 @@ import com.threerings.presents.client.InvocationService;
  */
 public interface PartyService extends InvocationService
 {
+    /** Requests to kill the party. */
+    void disbandParty (Client client, InvocationListener il);
+
     /** Requests to boot a player from the party. */
     void bootMember (Client client, int memberId, InvocationListener il);
 

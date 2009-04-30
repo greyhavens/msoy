@@ -62,6 +62,10 @@ public class PartyObject extends DObject
 //    public static const SPEAK_SERVICE :String = "speakService";
     // AUTO-GENERATED: FIELDS END
 
+    /** A message sent to indicate a notification that should be dispatched to all partiers.
+     * Format: [ Notification ]. */
+    public static const NOTIFICATION :String = "notification";
+
     /** This party's guid. */
     public var id :int;
 

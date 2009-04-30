@@ -32,6 +32,8 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.notify.data.GenericNotification;
+import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.party.data.MemberParty;
@@ -181,12 +183,25 @@ public class PartyManager
     }
 
     // from interface PartyProvider
+    public void disbandParty (ClientObject caller, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        requireLeader(caller);
+        _partyObj.postMessage(PartyObject.NOTIFICATION,
+            new GenericNotification("m.party_disbanded", Notification.PERSONAL));
+        shutdown();
+    }
+
+    // from interface PartyProvider
     public void bootMember (
         ClientObject caller, int playerId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         requireLeader(caller);
-        removePlayer(playerId);
+        if (removePlayer(playerId)) {
+            MemberNodeActions.sendNotification(playerId,
+                new GenericNotification("m.party_booted", Notification.PERSONAL));
+        }
     }
 
     // from interface PartyProvider
@@ -312,18 +327,19 @@ public class PartyManager
 
     /**
      * Remove the specified player from the party.
+     * @return true if they were removed.
      */
-    protected void removePlayer (int memberId)
+    protected boolean removePlayer (int memberId)
     {
         // make sure we're still alive and they're actually in
         if (_partyObj == null || !_partyObj.peeps.containsKey(memberId)) {
-            return;
+            return false;
         }
 
         // if they're the last one, just kill the party
         if (_partyObj.peeps.size() == 1) {
             shutdown();
-            return;
+            return true;
         }
 
         // clear the party info from this player's member object
@@ -340,13 +356,13 @@ public class PartyManager
             _partyObj.commitTransaction();
         }
         updatePartyInfo();
+        return true;
     }
 
     protected void indicateMemberPartying (int memberId, boolean set)
     {
         MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
 
-        // TODO: leaderId indication...
         if (set) {
             nodeObj.addToMemberParties(new MemberParty(memberId, _partyObj.id));
         } else {

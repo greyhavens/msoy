@@ -44,8 +44,21 @@ public class PartyMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #disbandParty} requests. */
+    public static final int DISBAND_PARTY = 3;
+
+    // from interface PartyService
+    public void disbandParty (Client arg1, InvocationService.InvocationListener arg2)
+    {
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, DISBAND_PARTY, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #inviteMember} requests. */
-    public static final int INVITE_MEMBER = 3;
+    public static final int INVITE_MEMBER = 4;
 
     // from interface PartyService
     public void inviteMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -58,7 +71,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #moveParty} requests. */
-    public static final int MOVE_PARTY = 4;
+    public static final int MOVE_PARTY = 5;
 
     // from interface PartyService
     public void moveParty (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -71,7 +84,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setGame} requests. */
-    public static final int SET_GAME = 5;
+    public static final int SET_GAME = 6;
 
     // from interface PartyService
     public void setGame (Client arg1, int arg2, byte arg3, int arg4, InvocationService.InvocationListener arg5)
@@ -84,7 +97,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRecruitment} requests. */
-    public static final int UPDATE_RECRUITMENT = 6;
+    public static final int UPDATE_RECRUITMENT = 7;
 
     // from interface PartyService
     public void updateRecruitment (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
@@ -97,7 +110,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 7;
+    public static final int UPDATE_STATUS = 8;
 
     // from interface PartyService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)

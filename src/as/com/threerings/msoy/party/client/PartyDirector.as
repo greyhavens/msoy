@@ -10,6 +10,7 @@ import mx.core.UIComponent;
 
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Util;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
@@ -20,10 +21,9 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
 
-import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.dobj.ChangeListener;
-import com.threerings.presents.dobj.NamedEvent;
+import com.threerings.presents.dobj.EventAdapter;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 
 import com.threerings.presents.util.SafeSubscriber;
@@ -301,6 +301,11 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
+    public function disbandParty () :void
+    {
+        _partyObj.partyService.disbandParty(_pctx.getClient(), _wctx.listener());
+    }
+
     /**
      * Leaves the current party.
      */
@@ -404,7 +409,10 @@ public class PartyDirector extends BasicDirector
     protected function gotPartyObject (obj :PartyObject) :void
     {
         _partyObj = obj;
-        _partyListener = new AttributeChangeAdapter(partyAttrChanged);
+        _partyListener = new EventAdapter();
+        _partyListener.attributeChanged = partyAttrChanged;
+        _partyListener.messageReceived = partyMsgReceived;
+        _partyListener.objectDestroyed = Util.adapt(clearParty);
         _partyObj.addListener(_partyListener);
 
         // if the party popup is up, change to the new popup...
@@ -548,6 +556,18 @@ public class PartyDirector extends BasicDirector
         }
     }
 
+    /**
+     * Handles messages on the party object.
+     */
+    protected function partyMsgReceived (event :MessageEvent) :void
+    {
+        switch (event.getName()) {
+        case PartyObject.NOTIFICATION:
+            _wctx.getNotificationDirector().addNotification(Notification(event.getArgs()[0]));
+            break;
+        }
+    }
+
     // from BasicDirector
     override protected function registerServices (client :Client) :void
     {
@@ -582,7 +602,7 @@ public class PartyDirector extends BasicDirector
     protected var _detailRequests :Dictionary = new Dictionary();
     protected var _detailPanels :Dictionary = new Dictionary();
 
-    protected var _partyListener :ChangeListener;
+    protected var _partyListener :EventAdapter;
 }
 }
 

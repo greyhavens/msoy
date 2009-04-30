@@ -47,6 +47,12 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
+        case PartyMarshaller.DISBAND_PARTY:
+            ((PartyProvider)provider).disbandParty(
+                source, (InvocationService.InvocationListener)args[0]
+            );
+            return;
+
         case PartyMarshaller.INVITE_MEMBER:
             ((PartyProvider)provider).inviteMember(
                 source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
