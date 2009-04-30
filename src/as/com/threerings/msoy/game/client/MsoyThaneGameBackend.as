@@ -10,6 +10,7 @@ import com.whirled.game.client.ThaneGameBackend;
 import com.threerings.msoy.party.client.PartyGameHelper;
 
 import com.threerings.msoy.game.data.ParlorGameObject;
+import com.threerings.msoy.game.data.PlayerObject;
 
 /** Msoy-specific thane game backend. */
 public class MsoyThaneGameBackend extends ThaneGameBackend
@@ -39,12 +40,18 @@ public class MsoyThaneGameBackend extends ThaneGameBackend
         _partyHelper.populateProperties(o);
     }
 
-    /** @inheritDoc */
-    // from BaseGameBackend
+    /** @inheritDoc */ // from BaseGameBackend
     override protected function reportGameError (message :String, error :Error = null) :void
     {
         // We don't want these messages in our logs, go straight to the user code
         _ctrl.outputToUserCode(message, error);
+    }
+
+    /** @inheritDoc */ // from BaseGameBackend
+    override protected function isRegistered_v1 (playerId :int = 0) :Boolean
+    {
+        var plobj :PlayerObject = (getPlayer(playerId) as PlayerObject);
+        return (plobj == null) ? false : !plobj.isPermaguest();
     }
 
     protected var _partyHelper :PartyGameHelper = new PartyGameHelper();

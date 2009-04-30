@@ -15,7 +15,6 @@ import com.whirled.game.client.Thumbnail;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
-import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -73,6 +72,12 @@ public class ParlorGameBackend extends WhirledGameBackend
         log.warning("Unable to find occupant, or username is not a VizMemberName",
             "occId", occupantId);
         return super.getHeadShot_v2(occupantId); // return something that works anyway
+    }
+
+    /** @inheritDoc */ // from BaseGameBackend
+    override protected function isRegistered_v1 (playerId :int = 0 /*unused*/) :Boolean
+    {
+        return !(_ctx as GameContext).getPlayerObject().isPermaguest();
     }
 
     // from WhirledGameBackend
