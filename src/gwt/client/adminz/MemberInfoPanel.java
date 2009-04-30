@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -114,7 +115,7 @@ public class MemberInfoPanel extends SmartTable
                 MsoyUI.info(_msgs.mipChangedRole(_role.toString()));
                 return true;
             }
-            public void onFailure (Throwable cause) {
+            @Override public void onFailure (Throwable cause) {
                 super.onFailure(cause);
                 role.setSelectedIndex(info.role.ordinal());
             }
@@ -143,7 +144,20 @@ public class MemberInfoPanel extends SmartTable
         setText(row, 1, ""+info.lastSession);
 
         row = addText("Humanity:", 1, "Label");
-        setText(row, 1, ""+info.humanity);
+        final Label humanityLabel = new Label(""+info.humanity);
+        Button resetHumanity = new Button("Reset");
+        setWidget(row, 1, MsoyUI.createButtonPair(humanityLabel, resetHumanity));
+        new ClickCallback<Integer>(resetHumanity) {
+            @Override protected boolean callService () {
+                _adminsvc.resetHumanity(info.name.getMemberId(), this);
+                return true;
+            }
+            @Override protected boolean gotResult (Integer newHumanity) {
+                info.humanity = newHumanity;
+                humanityLabel.setText(""+info.humanity);
+                return true;
+            }
+        };
 
         row = addText("Affiliate:", 1, "Label");
         if (info.affiliate != null) {
@@ -201,7 +215,7 @@ public class MemberInfoPanel extends SmartTable
                 final boolean isCoreCharity = coreCharity.isChecked();
                 final String description = charityDescription.getText();
                 AsyncCallback<Void> callback = new InfoCallback<Void>() {
-                    public void onFailure (Throwable caught) {
+                    @Override public void onFailure (Throwable caught) {
                         super.onFailure(caught);
                         charity.setChecked(info.charity);
                         coreCharity.setChecked(info.coreCharity);

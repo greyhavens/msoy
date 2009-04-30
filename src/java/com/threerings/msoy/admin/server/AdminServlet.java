@@ -40,6 +40,7 @@ import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -87,6 +88,7 @@ import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -209,6 +211,31 @@ public class AdminServlet extends MsoyServiceServlet
             tgtrec.setFlag(MemberRecord.Flag.MAINTAINER, role == WebCreds.Role.MAINTAINER);
         }
         _memberRepo.storeFlags(tgtrec);
+    }
+
+    // from interface AdminService
+    public int resetHumanity (int memberId)
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAdminUser();
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        int newHumanity = MsoyCodes.STARTING_HUMANITY;
+
+        // log this as a warning so that it shows up in the nightly filtered logs
+        log.warning("Resetting humanity", "setter", memrec.who(), "target", tgtrec.who(),
+            "from", tgtrec.humanity, "to", newHumanity);
+
+        // it should be enough to update this in the repository without fancy node actions
+        _memberRepo.updateHumanity(memberId, newHumanity);
+
+        // make a note in their support history
+        _supportLogic.noteHumanityReset(memrec.getName(), tgtrec.getName(), newHumanity);
+
+        return newHumanity;
     }
 
     // from interface AdminService
@@ -848,6 +875,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected SupportLogic _supportLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;

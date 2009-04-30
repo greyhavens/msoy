@@ -45,6 +45,11 @@ public interface AdminServiceAsync
     void setRole (int memberId, WebCreds.Role role, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#resetHumanity}.
+     */
+    void resetHumanity (int memberId, AsyncCallback<Integer> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#setDisplayName}.
      */
     void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);

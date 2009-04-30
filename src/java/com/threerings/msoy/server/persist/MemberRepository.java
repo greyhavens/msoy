@@ -377,7 +377,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns ids for all members whose display name match the supplied search string in a
      * natural language sense.
-     * 
+     *
      * TODO: Stop calling this fancy version from GroupServlet.
      */
     public List<MemberSearchRecord> findMembersByDisplayName (String search, int limit)
@@ -1360,6 +1360,13 @@ public class MemberRepository extends DepotRepository
             OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED));
     }
 
+    public boolean updateHumanity (int memberId, int humanity)
+    {
+        return 1 == updatePartial(MemberRecord.class, memberId,
+            MemberRecord.HUMANITY, humanity,
+            MemberRecord.LAST_HUMANITY_ASSESSMENT, new Timestamp(System.currentTimeMillis()));
+    }
+
     /**
      * Saves the given charity record.
      */
@@ -1530,7 +1537,7 @@ public class MemberRepository extends DepotRepository
 
     /** Generator for normal invitations. */
     protected InviteIDGenerator _inviteIdGenerator = new InviteIDGenerator ("InvitationRecord") {
-        protected boolean exists (String id) {
+        @Override protected boolean exists (String id) {
             return loadInvite(id, false) != null;
         }
     };
@@ -1538,7 +1545,7 @@ public class MemberRepository extends DepotRepository
     /** Generator for normal game invitations. */
     protected InviteIDGenerator _gameInviteIdGenerator =
         new InviteIDGenerator ("GameInvitationRecord") {
-            protected boolean exists (String id) {
+            @Override protected boolean exists (String id) {
                 return loadGameInviteById(id) != null;
             }
         };
