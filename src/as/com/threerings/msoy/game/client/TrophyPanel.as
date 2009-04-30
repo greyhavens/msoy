@@ -11,6 +11,8 @@ import mx.core.ScrollPolicy;
 import mx.controls.Label;
 import mx.controls.Text;
 
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.io.TypedArray;
 
@@ -94,19 +96,13 @@ public class TrophyPanel extends FloatingPanel
                     TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
             var bits :VBox = new VBox();
             bits.setStyle("verticalGap", 0);
-            var name :Label = new Label();
-            name.styleName = "trophyPanelName";
-            name.text = trophy.name;
+            var name :Label = FlexUtil.createLabel(trophy.name, "trophyPanelName");
             bits.addChild(name);
-            var descrip :Text = new Text();
-            descrip.width = 200;
-            descrip.text = (trophy.description == null) ?
-                Msgs.GAME.get("m.tp_secret") : trophy.description;
+            var descrip :Text = FlexUtil.createText(
+               (trophy.description == null) ? Msgs.GAME.get("m.tp_secret") : trophy.description,
+               200, (trophy.description == null) ? "trophyPanelHidden" : null);
             bits.addChild(descrip);
             tbox.addChild(bits);
-            if (trophy.description == null) {
-                descrip.styleName = "trophyPanelHidden";
-            }
             if (trophy.whenEarned == null) {
                 // TODO: this is a non-starter; it looks like ass.
                 tbox.alpha = 0.35;
@@ -119,31 +115,19 @@ public class TrophyPanel extends FloatingPanel
             }
         }
 
+        showCloseButton = true;
+        var buttons :Array = [ OK_BUTTON ];
         if (filterEarned(_trophies).length > 0) {
-            addButtons(PUBLISH_BUTTON);
+            buttons.push(new CommandButton(Msgs.GAME.get("b.tp_publish"), publishTrophies));
         }
 
-        addButtons(CANCEL_BUTTON);
+        addButtons.apply(this, buttons);
     }
 
-    override protected function getButtonLabel (buttonId :int) :String
+    protected function publishTrophies () :void
     {
-        if (buttonId == PUBLISH_BUTTON) {
-            return Msgs.GAME.get("b.tp_publish");
-        }
-        return Msgs.GENERAL.get("b.ok");
-    }
-
-    override protected function buttonClicked (buttonId :int) :void
-    {
-        if (buttonId == PUBLISH_BUTTON) {
-            close();
-            TrophyFeederPanel.showExisting(
-                _gctx.getWorldContext(), _gameName, filterEarned(_trophies));
-
-        } else {
-            super.buttonClicked(buttonId);
-        }
+        close();
+        TrophyFeederPanel.showExisting(_gctx.getWorldContext(), _gameName, filterEarned(_trophies));
     }
 
     protected var _gctx :GameContext;
