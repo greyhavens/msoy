@@ -1512,7 +1512,7 @@ public class WorldController extends MsoyController
                 enabled: (ourHomeId != curSceneId) });
         }
 
-        var friends :Array = new Array();
+        var friends :Array = [];
         for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
             friends.push({ label: fe.name.toString(),
                 command: VISIT_MEMBER, arg: fe.name.getMemberId() });
@@ -1521,6 +1521,16 @@ public class WorldController extends MsoyController
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
         }
         menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
+
+        var groups :Array = [];
+        for each (var gm :GroupMembership in me.getSortedGroups()) {
+            groups.push({ label: gm.group.toString(),
+                command: GO_GROUP_HOME, arg: gm.group.getGroupId() });
+        }
+        if (groups.length == 0) {
+            groups.push({ label: Msgs.GENERAL.get("m.no_groups"), enabled: false });
+        }
+        menuData.push({ label: Msgs.GENERAL.get("l.visit_groups"), children: groups });
     }
 
     /** Giver of life, context. */
