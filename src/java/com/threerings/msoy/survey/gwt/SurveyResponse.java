@@ -11,8 +11,12 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class SurveyResponse
     implements IsSerializable
 {
-    /** The maximum response string length for free form questions. */
-    public static final int MAX_LENGTH = 255;
+    /**
+     * The maximum response string length for free form questions. NOTE: this must be kept in sync
+     * with the column type in <code>SurveyResponseRecord</code>. (Linking them in code is a bad
+     * idea because the db-side change is non-trivial).
+     */
+    public static final int MAX_LENGTH = 4096;
 
     /** The index of the question this is a response to. */
     public int questionIndex;

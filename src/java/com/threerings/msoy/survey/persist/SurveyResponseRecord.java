@@ -2,6 +2,7 @@ package com.threerings.msoy.survey.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
@@ -31,11 +32,12 @@ public class SurveyResponseRecord extends PersistentRecord
 
     /** The member's entered response to the question. The format depends on the type of
      * question. */
+    @Column(length=4096)
     public String response;
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     // AUTO-GENERATED: METHODS START
     /**
