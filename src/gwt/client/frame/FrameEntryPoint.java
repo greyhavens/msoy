@@ -957,7 +957,7 @@ public class FrameEntryPoint
 
     protected void rebootFlashClient ()
     {
-        WorldClient.rebootFlash(_closeToken == null ? _flashPanelProvider : _miniPanelProvider);
+        WorldClient.rebootFlash(_content == null ? _flashPanelProvider : _miniPanelProvider);
     }
 
     /**
