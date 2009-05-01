@@ -49,7 +49,11 @@ public class MsoyDefaultServlet extends DefaultServlet
         if (req.getRequestURI().equals("/")) {
             doPreMainPageGet(req, rsp);
         }
-        super.doGet(req, rsp);
+        try {
+            super.doGet(req, rsp);
+        } catch (Exception e) {
+            log.warning("Failed to serve defaultness", "uri", req.getRequestURI(), "error", e);
+        }
     }
 
     @Override
