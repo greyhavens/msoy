@@ -917,7 +917,12 @@ public class AVRGameManager extends PlaceManager
     @Override
     public String where ()
     {
-        return String.valueOf(_gameId);
+        StringBuilder buf = new StringBuilder();
+        buf.append(_gameId);
+        if (_gameObj != null) {
+            buf.append(", oid=").append(_gameObj.getOid());
+        }
+        return buf.toString();
     }
 
     protected AVRGameAgentObject createGameAgentObject (int gameId, MsoyGameDefinition def)

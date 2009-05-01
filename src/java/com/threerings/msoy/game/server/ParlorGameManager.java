@@ -171,7 +171,7 @@ public class ParlorGameManager extends WhirledGameManager
     @Override // from PlaceManager
     public String where ()
     {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append(getGameId());
         if (_gameObj != null) {
             buf.append(", oid=").append(_gameObj.getOid());
