@@ -19,6 +19,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
 import com.threerings.util.Name;
+import com.threerings.util.TimeUtil;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -336,7 +337,7 @@ public class AwardDelegate extends RatingDelegate
     @Override // from RatingDelegate
     protected int minimumRatedDuration ()
     {
-        return 10; // don't rate games that last less than 10 seconds
+        return 60; // don't rate games that last less than 60 seconds
     }
 
     @Override // from RatingDelegate
@@ -350,8 +351,11 @@ public class AwardDelegate extends RatingDelegate
      */
     protected void updatePlayerStats (Iterable<Player> players, int winningScore)
     {
+        int gameSecs = TimeUtil.elapsedSeconds(_startStamp, System.currentTimeMillis());
         // we're currently not persisting any stats for in-development games
-        if (Game.isDevelopmentVersion(_content.detail.gameId)) {
+        if (Game.isDevelopmentVersion(_content.detail.gameId) ||
+            // nor games that didn't last long enough to be rated
+            gameSecs < minimumRatedDuration()) {
             return;
         }
 
@@ -793,7 +797,7 @@ public class AwardDelegate extends RatingDelegate
         public int getPlayTime (long now) {
             int secondsOfPlay = _sessionSecondsPlayed;
             if (_beganStamp != 0) {
-                secondsOfPlay += (int)((now - _beganStamp)/1000);
+                secondsOfPlay += TimeUtil.elapsedSeconds(_beganStamp, now);
             }
             return secondsOfPlay;
         }
@@ -804,7 +808,7 @@ public class AwardDelegate extends RatingDelegate
 
         public void stopTracking (long endStamp) {
             if (_beganStamp != 0) {
-                _sessionSecondsPlayed += (int)((endStamp - _beganStamp)/1000L);
+                _sessionSecondsPlayed += TimeUtil.elapsedSeconds(_beganStamp, endStamp);
                 _beganStamp = 0;
             }
         }

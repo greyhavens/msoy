@@ -74,6 +74,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
+import com.threerings.util.TimeUtil;
 
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -750,7 +751,7 @@ public class MemberRepository extends DepotRepository
         Timestamp nowStamp = new Timestamp(now);
 
         // reassess their humanity if the time has come
-        int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
+        int secsSinceLast = TimeUtil.elapsedSeconds(now, record.lastHumanityAssessment.getTime());
         if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
             record.humanity = _actionRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
             record.lastHumanityAssessment = nowStamp;
