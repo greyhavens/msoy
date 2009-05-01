@@ -802,7 +802,9 @@ public class MemberLogic
         }
 
         @Override protected void execute (MemberObject memobj) {
-            memobj.removeFromFriends(_friendId);
+            if (memobj.friends.containsKey(_friendId)) {
+                memobj.removeFromFriends(_friendId);
+            }
             _friendMan.clearFriendInterest(memobj, _friendId);
         }
 
