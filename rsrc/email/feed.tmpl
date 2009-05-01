@@ -1,6 +1,7 @@
-## Expands the list of feed categories in $feed into a text listing.
 ##
-## subject, switch on parameter
+##############################################
+## Subject line, also used for html
+##############################################
 ##
 #if ($subject == "nameNewThings")
 $name: new games, avatars and activity on Whirled!
@@ -13,41 +14,72 @@ Whirled friend feed, new avatars, and games!
 #else
 What you've been missing on Whirled, $name!
 #end
+Check out what's been happening on Whirled!
+${server_url}
 ##
+##############################################
+## New games
+##############################################
 ##
-New and recently staff picked Games:
+
+New & Popular Games
 #foreach ($game in $games)
-    * $game.name
-      $server_url#games-d_$game.gameId
+  * $game.name
+    $server_url#games-d_$game.gameId
 
 #end
-    See more games on Whirled:
-    $server_url#games
+  See more games on Whirled:
+  $server_url#games
+##
+##############################################
+## New avatars
+##############################################
+##
 
-New and recently staff picked Avatars:
+New & Popular Avatars
 #foreach ($avi in $avatars)
-    * $avi.name
-      $server_url#shop-l_5_$avi.catalogId
+  * $avi.name
+    $server_url#shop-l_5_$avi.catalogId
 
 #end
-    See more avatars on Whirled:
-    $server_url#shop-5_7_
+  See more avatars on Whirled:
+  $server_url#shop-5_7_
+##
+##############################################
+## Friend threads
+##############################################
+##
+#if ($threads)
 
+New Forum Posts From Your Friends
+#foreach ($thread in $threads)
+  * $thread.subject
+    $thread.firstUnreadURL
+
+#end
+  See the full list here:
+  $server_url#groups-friends
+#end
+##
+##############################################
+## News feed
+##############################################
+##
 #if ($feed)
-Your News Feed; Here are a few things that have been happening on Whirled.
 
+Your News Feed
 #foreach ($cat in $feed)
 #if ($cat.items.size() > 0)
-$cat.CategoryName
+
+  $cat.CategoryName
 #foreach ($item in $cat.items)
- * $item.PlainText
+    * $item.PlainText
+#end
+#end
 #end
 
-#end
+  You can also see this feed on your Whirled home page here:
+  $server_url#me
 #end
 
-You can also see this feed on your Whirled home page here:
-
-$server_url#me
-#end
 Come on back and get in the game!

@@ -34,6 +34,9 @@ import com.threerings.util.MessageBundle;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberMailUtil;
+import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.fora.server.ForumLogic;
+import com.threerings.msoy.group.server.GroupLogic;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
@@ -85,8 +88,9 @@ import static com.threerings.msoy.Log.log;
 public class SpamLogic
 {
     /**
-     * News feed category for the purposes of filling in a velocity template. NOTE: this class must
-     * be public so velocity can reflect its methods and members.
+     * News feed category for the purposes of filling in a velocity template. NOTE: all public
+     * methods and members are referenced from the <code>feed.tmpl</code> template using
+     * reflection.
      */
     public class EmailFeedCategory
         implements Comparable<EmailFeedCategory>
@@ -98,7 +102,7 @@ public class SpamLogic
         public List<EmailFeedItem> items;
 
         /**
-         * Gets the name of this feed category. NOTE: this is called using reflection by velocity.
+         * Gets the name of this feed category.
          */
         public String getCategoryName ()
         {
@@ -121,14 +125,13 @@ public class SpamLogic
     }
 
     /**
-     * News feed item for the purposes of filling in a velocity template. NOTE: this class must be
-     * public so velocity can reflect its methods and members.
+     * News feed item for the purposes of filling in a velocity template. NOTE: all public methods
+     * and members are referenced from the <code>feed.tmpl</code> template using reflection.
      */
     public class EmailFeedItem
     {
         /**
-         * Gets the plain text representation of this feed item. NOTE: this is called using
-         * reflection by velocity.
+         * Gets the plain text representation of this feed item.
          */
         public String getPlainText ()
         {
@@ -137,8 +140,7 @@ public class SpamLogic
         }
 
         /**
-         * Gets the html text representation of this feed item. NOTE: this is called using
-         * reflection by velocity.
+         * Gets the html text representation of this feed item.
          */
         public String getHTMLText ()
         {
@@ -176,10 +178,64 @@ public class SpamLogic
     }
 
     /**
-     * Item listing for the purposes of filling in a velocity template. NOTE: this class must be
-     * public so that velocity can inspect its members.
+     * Wrapper for a forum thread for use by velocity. NOTE: all public methods and members are
+     * referenced from the <code>feed.tmpl</code> template using reflection.
      */
-    public class Listing
+    public class EmailForumThread
+    {
+        /**
+         * Gets the subject of the thread.
+         */
+        public String getSubject ()
+        {
+            return _thread.subject;
+        }
+
+        /**
+         * Gets the URL leading to the most recent post in the thread.
+         */
+        public String getMostRecentURL ()
+        {
+            return Pages.makeURL(Pages.GROUPS, _thread.getMostRecentPostArgs());
+        }
+
+        /**
+         * Gets the URL leading to the first unread post in the thread.
+         */
+        public String getFirstUnreadURL ()
+        {
+            return Pages.makeURL(Pages.GROUPS, _thread.getFirstUnreadPostArgs());
+        }
+
+        /**
+         * Gets the URL leading to the thread's group.
+         */
+        public String getGroupURL ()
+        {
+            return Pages.makeURL(Pages.GROUPS, String.valueOf(_thread.group.getGroupId()));
+        }
+
+        /**
+         * Gets the name the thread's group.
+         */
+        public String getGroupName ()
+        {
+            return _thread.group.toString();
+        }
+
+        protected EmailForumThread (ForumThread thread)
+        {
+            _thread = thread;
+        }
+
+        protected ForumThread _thread;
+    }
+
+    /**
+     * Item listing for the purposes of filling in a velocity template. NOTE: all public methods
+     * and members are referenced from the <code>feed.tmpl</code> template using reflection.
+     */
+    public class EmailListing
     {
         /**
          * Returns the game id associated with this listing, if any.
@@ -213,7 +269,7 @@ public class SpamLogic
             return _listing.catalogId;
         }
 
-        protected Listing (ListingCard listing)
+        protected EmailListing (ListingCard listing)
         {
             _listing = listing;
             if (listing.itemType == Item.GAME) {
@@ -498,6 +554,20 @@ public class SpamLogic
             params.set("feed", null);
         }
 
+        // list of threads with unread posts from friends
+        List<ForumThread> threads = _forumLogic.loadUnreadFriendThreads(mrec, FRIEND_THREAD_COUNT);
+        if (threads.size() > 0) {
+            params.set("threads", Lists.transform(threads,
+                new Function<ForumThread, EmailForumThread>() {
+                    public EmailForumThread apply (ForumThread thread) {
+                        return new EmailForumThread(thread);
+                    }
+                }));
+
+        } else {
+            params.set("threads", null);
+        }
+
         // pick a random subject line based on the bucket
         String subjectLine = RandomUtil.pickRandom(bucket.subjectLines);
 
@@ -540,7 +610,7 @@ public class SpamLogic
     /**
      * Loads a random set of new & hot and staff pick items for the filler.
      */
-    protected List<Listing> randomItems (Collection<Integer> memberIds, byte itemType)
+    protected List<EmailListing> randomItems (Collection<Integer> memberIds, byte itemType)
         throws ServiceException
     {
         int count = ITEM_COUNT;
@@ -730,10 +800,10 @@ public class SpamLogic
     protected static class NewStuff
     {
         /** New avatar listings. */
-        public List<Listing> avatars;
+        public List<EmailListing> avatars;
 
         /** New game listings. */
-        protected List<Listing> games;
+        protected List<EmailListing> games;
     }
 
     /**
@@ -869,11 +939,12 @@ public class SpamLogic
     }
 
     /** Converts listing cards to the velocity listing. */
-    protected Function<ListingCard, Listing> _toListing = new Function<ListingCard, Listing> () {
-        public Listing apply (ListingCard card) {
-            return new Listing(card);
-        }
-    };
+    protected Function<ListingCard, EmailListing> _toListing =
+        new Function<ListingCard, EmailListing> () {
+            public EmailListing apply (ListingCard card) {
+                return new EmailListing(card);
+            }
+        };
 
     /** Messages instance that delegates to the bundles in our parent class. */
     protected Messages _messages = new Messages () {
@@ -997,8 +1068,10 @@ public class SpamLogic
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected CronLogic _cronLogic;
     @Inject protected FeedLogic _feedLogic;
+    @Inject protected ForumLogic _forumLogic;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected MailSender _mailSender;
-    @Inject protected MemberRepository _memberRepo; 
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected SpamRepository _spamRepo;
     @Inject protected ItemLogic _itemLogic;
@@ -1014,6 +1087,7 @@ public class SpamLogic
     protected static final int MIN_NEWS_ITEM_COUNT = 2;
     protected static final int ITEM_COUNT = 5;
     protected static final int SEND_LIMIT = DeploymentConfig.devDeployment ? 100 : 5000;
+    protected static final int FRIEND_THREAD_COUNT = 5;
 
     protected static final String IMG_STYLE = "border: 0px; padding: 2px; margin: 2px; " +
         "vertical-align: middle;";

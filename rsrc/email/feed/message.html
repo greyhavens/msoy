@@ -1,4 +1,3 @@
-## Expands the list of feed categories in $feed into an html listing.
 <html>
 <head>
 <base href="$server_url"/>
@@ -24,19 +23,24 @@ h4, ul, li {
 </style>
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif;">
+
 #set ($itemCellStyle = "text-align :center; width: 100px; height: 100px; vertical-align: top;")
 #set ($itemCellStyle = $itemCellStyle + " font-size: 11px;")
 
-<h3 style="border-bottom: 1px solid gray;">
-Check out these new and hot items on
-<a href="$server_url" style="text-decoration: none;">Whirled</a>:
+<h3>
+Check out what's been happening on <a href="$server_url"
+style="text-decoration: none;">Whirled</a>... come on back and get in the game!
 </h3>
 
+##############################################
 ## Games
-<table cellpadding=0 cellspacing=0><tr style="background: #E0E0F0;">
-    <td colspan=3 style="padding: 1px 0 3px 5px;">Games</td>
+##############################################
+
+<table cellpadding=0 cellspacing=0 width="700px">
+	<tr style="background: #E0E0F0; padding-bottom: 3px;">
+    <td colspan=3 style="padding: 1px 0 3px 5px;">New & Popular Games</td>
     <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a href="$server_url#games"
-        style="font-size: 12px;">See More...</a></i></td>
+        style="font-size: 12px;">See More</a></i></td>
 </tr><tr>
     #foreach ($item in $games)
         <td style="$itemCellStyle"><a href="$server_url#games-d_$item.gameId"
@@ -46,9 +50,13 @@ Check out these new and hot items on
     #end
 </tr></table>
 
+##############################################
 ## Avatars
-<table cellpadding=0 cellspacing=0><tr style="background: #E0E0F0; padding-bottom: 3px;">
-    <td colspan=3 style="padding: 1px 0 3px 5px;">Avatars</td>
+##############################################
+
+<table cellpadding=0 cellspacing=0 width="700px">
+	<tr style="background: #E0E0F0; padding-bottom: 3px;">
+    <td colspan=3 style="padding: 1px 0 3px 5px;">New & Popular Avatars</td>
     <td colspan=2 style="text-align: right; padding: 1px 5px 3px 0;"><i><a href="$server_url#shop"
         style="font-size: 12px;">Go To Shop</a></i> | <i><a href="$server_url#shop-5_7_"
         style="font-size: 12px;">See More Avatars</a></i></td>
@@ -61,29 +69,60 @@ Check out these new and hot items on
     #end
 </tr></table>
 
-## News feed
+##############################################
+## Friend Threads
+##############################################
+
+#if ($threads)
+	<table cellpadding=0 cellspacing=0 width="700px">
+		<tr style="background: #E0E0F0; padding-bottom: 3px;">
+	    <td with="70%" style="padding: 1px 0 3px 5px;">
+	    New Forum Posts From Your Friends
+	    </td>
+	    <td style="text-align: right; padding: 1px 5px 3px 0;"><i>
+	    	<a href="$server_url#groups-friends" style="font-size: 12px;">See All</a></i>
+	  	</td>
+	</tr></table>
+	<ul style="list-style-type: none; padding=0px;">
+	#foreach ($thread in $threads)
+	    <li style="padding=0px;">
+	    	<img src="${server_url}images/msgs/unread.png" style="vertical-align: middle;"/>
+	        <a href="$thread.firstUnreadURL" style="text-decoration: none;">$thread.subject</a>
+	        from <a href="$thread.groupURL" style="text-decoration: none;">$thread.groupName</a>
+	        (<a href="$thread.mostRecentURL" style="text-decoration: none;">most recent post</a>)
+	    </li>
+	#end
+	</ul>
+#end
+
+##############################################
+## News Feed
+##############################################
+
 #if ($feed)
-    <h3 style="border-bottom: 1px solid gray;">
-    Your news feed. Come on back and get in the game!
-    </h3>
+	<table cellpadding=0 cellspacing=0 width="700px">
+		<tr style="background: #E0E0F0; padding-bottom: 3px;">
+	    <td with="70%" style="padding: 1px 0 3px 5px;">
+	    Your News Feed
+	    </td>
+	    <td style="text-align: right; padding: 1px 5px 3px 0;"><i>
+	    	<a href="$server_url#me" style="font-size: 12px;">Home Page</a></i>
+	  	</td>
+	</tr></table>
     #foreach ($cat in $feed)
         #if ($cat.items.size() > 0)
             <p>
-            <h4>$cat.CategoryName</h4>
+            <h4 style="padding: 0px;">$cat.CategoryName</h4>
             <ul style="list-style-type: none; padding=0px;">
 
             #foreach ($item in $cat.items)
-                <li style="padding=0px;">$item.HTMLText</li>
+                <li style="padding=0 0 0 5px;">$item.HTMLText</li>
             #end
 
             </ul>
             </p>
         #end
     #end
-    <p style="border-top: 1px solid gray;">
-    You can also see this feed on your Whirled <a href="$server_url#me">home page</a>.
-    </p>
 #end
-
 </body>
 </html>
