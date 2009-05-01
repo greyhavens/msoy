@@ -158,7 +158,7 @@ public class TrophyDelegate extends PlayManagerDelegate
                 if (cause instanceof InvocationException) {
                     listener.requestFailed(cause.getMessage());
                 } else {
-                    log.warning("Prize award failed", cause);
+                    log.warning("Prize award failed", "game", where(), cause);
                     listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
                 }
             }

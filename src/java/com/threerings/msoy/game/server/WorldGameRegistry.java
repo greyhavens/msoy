@@ -292,7 +292,7 @@ public class WorldGameRegistry
         if (!_games.add(game.gameId)) {
             log.warning("Requested to host game that we're already hosting?", "game", game.gameId);
         } else {
-            log.info("Hosting game", "game", game.gameId, "info", game);
+            log.info("Hosting game", "game", game.gameId, "name", game.name);
             _peerMan.gameDidStartup(game.gameId, game.name);
         }
         listener.gameLocated(ServerConfig.serverHost, ServerConfig.serverPorts[0]);

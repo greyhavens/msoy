@@ -107,8 +107,8 @@ public class AwardDelegate extends RatingDelegate
         // note whether any guests were involved in this game
         _gameInvolvedGuest = Iterables.any(players.values(), IS_GUEST);
 
-        log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
-                 "payoutType", payoutType, "players", players.values());
+        log.info("endGameWithScores", "game", where(), "payoutType", payoutType,
+                 "players", players.values());
 
         // if we have no non-zero scores then end the game without awarding flow or updating
         // ratings or percentilers
@@ -218,7 +218,7 @@ public class AwardDelegate extends RatingDelegate
             }
             ((WhirledGameManager)_gmgr).setWinners(winners.toArray(new Name[winners.size()]));
         } else {
-            log.warning("Unable to configure WhirledGameManager with winners", "where", where(),
+            log.warning("Unable to configure WhirledGameManager with winners", "game", where(),
                         "isa", _gmgr.getClass().getName());
         }
 
@@ -429,7 +429,7 @@ public class AwardDelegate extends RatingDelegate
         rating.experience++;
         rating.modified = true;
 
-        log.info("Updated rating", "where", where(), "who", rating.playerName, "orat", orat,
+        log.info("Updated rating", "game", where(), "who", rating.playerName, "orat", orat,
                  "erat", erat, "diff", pctdiff, "K", K, "nrat", nrat);
     }
 
@@ -704,7 +704,7 @@ public class AwardDelegate extends RatingDelegate
         // remove their flow record and grant them the flow
         FlowRecord record = _flowRecords.remove(playerId);
         if (record == null) {
-            log.warning("No flow record found", "id", playerId);
+            log.warning("No flow record found", "game", where(), "id", playerId);
             return;
         }
 
