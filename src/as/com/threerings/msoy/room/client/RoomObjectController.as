@@ -508,6 +508,10 @@ public class RoomObjectController extends RoomController
             menuItems.push({ label: Msgs.GENERAL.get("b.order_pet_sleep"),
                 command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] });
         }
+        if (isPetOwner && pet.hasCustomConfigPanel()) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.config_item", "pet"),
+                callback: showConfigPopup, arg: pet, enabled: memoriesWillSave() });
+        }
 
         popActorMenu(pet, menuItems);
     }
