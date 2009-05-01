@@ -12,9 +12,8 @@ public class SurveyResponse
     implements IsSerializable
 {
     /**
-     * The maximum response string length for free form questions. NOTE: this must be kept in sync
-     * with the column type in <code>SurveyResponseRecord</code>. (Linking them in code is a bad
-     * idea because the db-side change is non-trivial).
+     * The maximum response string length for free form questions. NOTE: if this is increased, a
+     * column retype migration must be done on <code>SurveyResponseRecord</code>.
      */
     public static final int MAX_LENGTH = 4096;
 
