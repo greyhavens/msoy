@@ -156,7 +156,8 @@ public class AVRGameBackend extends ControlBackend
         }
 
         _roomPropsNetAdapter = new BackendNetAdapter(
-            roomProps, RoomPropertiesObject.USER_MESSAGE,
+            roomProps,
+            [ RoomPropertiesObject.USER_MESSAGE, RoomPropertiesObject.USER_MESSAGE_EXCLUDE_AGENT ],
             _props, "room_propertyWasSet_v1", "room_messageReceived_v1");
 
         _avatarAdapter = new BackendAvatarAdapter(
@@ -235,11 +236,12 @@ public class AVRGameBackend extends ControlBackend
         super.setUserProperties(o);
 
         _gameNetAdapter = new BackendNetAdapter(
-            _gameObj, AVRGameObject.USER_MESSAGE, o, "game_propertyWasSet_v1",
-            "game_messageReceived_v1");
+            _gameObj,
+            [ AVRGameObject.USER_MESSAGE, AVRGameObject.USER_MESSAGE_EXCLUDE_AGENT ],
+            o, "game_propertyWasSet_v1", "game_messageReceived_v1");
 
         _playerNetAdapter = new BackendNetAdapter(
-            _playerObj, WhirledPlayerObject.getMessageName(_gameObj.getOid()), o,
+            _playerObj, [ WhirledPlayerObject.getMessageName(_gameObj.getOid()) ] , o,
             "player_propertyWasSet_v1", "player_messageReceived_v1");
     }
 

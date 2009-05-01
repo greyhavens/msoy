@@ -33,6 +33,9 @@ public class AVRGameObject extends PlaceObject
     /** The identifier for a MessageEvent containing a user message. */
     public static const USER_MESSAGE :String = "Umsg";
 
+    /** The identifier for a MessageEvent containing a user message. */
+    public static const USER_MESSAGE_EXCLUDE_AGENT :String = "UmsgEA";
+
     /** The identifier for a MessageEvent containing ticker notifications. */
     public static const TICKER :String = "Utick";
 

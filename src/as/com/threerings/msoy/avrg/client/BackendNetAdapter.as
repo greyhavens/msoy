@@ -4,6 +4,7 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Integer;
 import com.threerings.util.ObjectMarshaller;
 import com.whirled.game.data.PropertySetEvent;
@@ -19,17 +20,17 @@ public class BackendNetAdapter
      * Creates a new adapter. If a function name is given as null, then that function will not
      * be dispatched. If not null, then an exception is thrown if the value could not be found.
      * @object the object on which messages and property changes will be posted
-     * @messageName the name of messages to filter on, e.g. "Umsg"
+     * @messageNames the names of messages to filter on, e.g. "Umsg"
      * @userFuncs the dictionary of front end user functions
      * @propertyChange the name of the user function to use for dispatching property changes
      * @messageReceived the name of the user function to use for dispatching messages
      */
     public function BackendNetAdapter (
-        object :DObject, messageName :String, userFuncs :Object, propertyChanged :String,
+        object :DObject, messageNames :Array, userFuncs :Object, propertyChanged :String,
         messageReceived :String) :void
     {
         _object = object;
-        _messageName = messageName;
+        _messageNames = messageNames;
 
         if (propertyChanged != null) {
             _propertyChanged = userFuncs[propertyChanged] as Function;
@@ -96,7 +97,7 @@ public class BackendNetAdapter
             return;
         }
 
-        if (event.getName() == _messageName) {
+        if (ArrayUtil.contains(_messageNames, event.getName())) {
             var args :Array = event.getArgs();
             var mname :String = (args[0] as String);
             var data :Object = ObjectMarshaller.decode(args[1]);
@@ -113,7 +114,7 @@ public class BackendNetAdapter
     }
 
     protected var _object :DObject;
-    protected var _messageName :String;
+    protected var _messageNames :Array;
     protected var _propertyChanged :Function;
     protected var _messageReceived :Function;
     protected var _targetId :int = 0;

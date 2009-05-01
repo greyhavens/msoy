@@ -16,6 +16,9 @@ public class RoomPropertiesObject extends DObject
     /** Name of messages posted as a result of a message service call. */
     public static const USER_MESSAGE :String = "Umsg";
 
+    /** Name of messages posted as a result of a message service call. */
+    public static const USER_MESSAGE_EXCLUDE_AGENT :String = "UmsgEA";
+
     /** Service for setting the properties. */
     public var propertiesService :PropertySpaceMarshaller;
 

@@ -150,7 +150,7 @@ public class ThaneAVRGameBackend
     public function createPlayerNetAdapter (player :PlayerObject) :BackendNetAdapter
     {
         var adapter :BackendNetAdapter = new BackendNetAdapter(
-            player, RoomPropertiesObject.USER_MESSAGE, _userFuncs, "player_propertyWasSet_v1",
+            player, [ RoomPropertiesObject.USER_MESSAGE ], _userFuncs, "player_propertyWasSet_v1",
             null);
         adapter.setTargetId(player.getMemberId());
         return adapter;
@@ -245,7 +245,7 @@ public class ThaneAVRGameBackend
 
         _privateMessageAdapter = new BackendNetAdapter(
             _ctx.getClient().getClientObject(),
-            WhirledPlayerObject.getMessageName(_gameObj.getOid()), _userFuncs, null,
+            [ WhirledPlayerObject.getMessageName(_gameObj.getOid()) ], _userFuncs, null,
             "game_messageReceived_v1");
     }
 
