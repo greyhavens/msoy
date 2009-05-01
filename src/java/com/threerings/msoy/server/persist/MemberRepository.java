@@ -751,7 +751,7 @@ public class MemberRepository extends DepotRepository
         Timestamp nowStamp = new Timestamp(now);
 
         // reassess their humanity if the time has come
-        int secsSinceLast = TimeUtil.elapsedSeconds(now, record.lastHumanityAssessment.getTime());
+        int secsSinceLast = TimeUtil.elapsedSeconds(record.lastHumanityAssessment.getTime(), now);
         if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
             record.humanity = _actionRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
             record.lastHumanityAssessment = nowStamp;
