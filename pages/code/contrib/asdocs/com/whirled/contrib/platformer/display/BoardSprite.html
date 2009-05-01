@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="BoardSprite,com.whirled.contrib.platformer.display.BoardSprite,ACTOR_LAYER,BACK_DYNAMIC_LAYER,BACK_PARTICLE_LAYER,BG_LAYER,BUFFER,DYNAMIC_LAYERS,FRONT_LEVEL_LAYER,FRONT_PARTICLE_LAYER,LBUFFER,LEVEL_LAYER,NUM_LAYERS,PARALLAX,SHOT_LAYER,SHOW_DETAILS,Y_ADJUST,_board,_cameraCtrl,_centerX,_centerY,_lastDelta,_layerEnabled,_layers,_lowBounds,_maxX,_minX,_minY,_showBG,actorTick,dynamicTick,layerTicks,shotTick,centerX,centerY,minY,addParticleEffect,addPieces,centerOn,ensureCentered,ensureVisible,handleDynamicAdded,handleDynamicRemoved,initBounds,initDisplay,moveDelta,setCameraController,setDynamics,shutdown,tick,toggleLayer,updateActors,updateDisplay" name="keywords">
+<meta content="BoardSprite,com.whirled.contrib.platformer.display.BoardSprite,ACTOR_LAYER,BACK_DYNAMIC_LAYER,BACK_PARTICLE_LAYER,BG_LAYER,BUFFER,DYNAMIC_LAYERS,FRONT_LEVEL_LAYER,FRONT_PARTICLE_LAYER,LBUFFER,LEVEL_LAYER,NUM_LAYERS,PARALLAX,SHOT_LAYER,SHOW_DETAILS,Y_ADJUST,_board,_cameraCtrl,_centerX,_centerY,_lastDelta,_layerCount,_layerEnabled,_layers,_lowBounds,_maxX,_minX,_minY,_showBG,actorTick,dynamicTick,layerTicks,shotTick,centerX,centerY,minY,addParticleEffect,addPieces,centerOn,ensureCentered,ensureVisible,getCount,handleDynamicAdded,handleDynamicRemoved,initBounds,initDisplay,moveDelta,setCameraController,setDynamics,shutdown,tick,toggleLayer,updateActors,updateDisplay" name="keywords">
 <title>com.whirled.contrib.platformer.display.BoardSprite</title>
 </head>
 <body>
@@ -114,6 +114,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_layerCount">_layerCount</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoardSprite</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_layerEnabled">_layerEnabled</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
@@ -175,6 +179,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#ensureVisible()">ensureVisible</a>(actor:<a href="../piece/Actor.html">Actor</a>, xshift:Number = 0, yshift:Number = 0):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoardSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getCount()">getCount</a>():String</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
@@ -458,6 +469,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _lastDelta:Number = 0</code>
 </div>
+<a name="_layerCount"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_layerCount</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _layerCount:Array</code>
+</div>
 <a name="_layerEnabled"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -677,6 +697,22 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">yshift</span>:Number</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="getCount()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getCount</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getCount():String</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
 </tr>
 </table>
 </div>

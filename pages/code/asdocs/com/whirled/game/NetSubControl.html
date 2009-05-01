@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="NetSubControl,com.whirled.game.NetSubControl,TO_ALL,TO_SERVER_AGENT,_agentMsgCtrl,_playerCtrls,_playersMsgCtrl,agent,players,getPlayer,getPropertyNames,sendMessage,setAt,setIn,testAndSet,get,set" name="keywords">
+<meta content="NetSubControl,com.whirled.game.NetSubControl,EXCLUDE_AGENT,TO_ALL,TO_SERVER_AGENT,_agentMsgCtrl,_playerCtrls,_playersMsgCtrl,agent,players,getPlayer,getPropertyNames,sendMessage,setAt,setIn,testAndSet,get,set" name="keywords">
 <title>com.whirled.game.NetSubControl</title>
 </head>
 <body>
@@ -51,13 +51,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  a property it is immediately distributed to the other clients in the game. Reading a property
  is immediate, you are reading the properties that have already been distributed. When a client
  connects to an already-running game, any properties already set will be available.
-  Neessages can be sent by either a server agent or a client at a maximum rate of 10 messages per
+  Messages can be sent by either a server agent or a client at a maximum rate of 10 messages per
  second.  Messages sent at a greater rate will be buffered until sending them will not cause this
  limit to be  exceeded.  A message sent to all players counts as a single message against this
  limit.  Changing a property value also counts as sending a single message.
- 
- The doBatch method can be used to combine a number of otherwise unrelated messages or property 
- changes into a single unit so that they count only once against the limit.  
+  The doBatch method can be used to combine a number of otherwise unrelated messages or property
+ changes into a single unit so that they count only once against the limit.
  <p></p>
 <p>
 <span class="classHeaderTableLabel">See also</span>
@@ -84,7 +83,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#players">players</a> : <a href="../net/MessageSubControl.html">MessageSubControl</a>
 <div class="summaryTableDescription">[read-only]
-     Provides a control with which to send messages to all the players of this game.</div>
+     Provides a control with which to send messages to all the players of this game, excluding
+     any agent.</div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
 </table>
@@ -102,7 +102,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_playerCtrls">_playerCtrls</a> : Dictionary<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_playerCtrls">_playerCtrls</a> : <a href="../../threerings/util/WeakValueHashMap.html">WeakValueHashMap</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
 <tr class="">
@@ -302,6 +303,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
+<a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#EXCLUDE_AGENT">EXCLUDE_AGENT</a> : int = -2.147483647E9<div class="summaryTableDescription">[static] A special constant for sending a message to players only, and not the agent.</div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+</table>
+</div>
 <script type="text/javascript" language="javascript">
 <!--
 showHideInherited();
@@ -345,7 +359,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _playerCtrls:Dictionary</code>
+<code>protected var _playerCtrls:<a href="../../threerings/util/WeakValueHashMap.html">WeakValueHashMap</a></code>
 </div>
 <a name="players"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -355,7 +369,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>players:<a href="../net/MessageSubControl.html">MessageSubControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Provides a control with which to send messages to all the players of this game.
+     Provides a control with which to send messages to all the players of this game, excluding
+     any agent.
      </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get players():<a href="../net/MessageSubControl.html">MessageSubControl</a></code>
@@ -480,8 +495,8 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if <code>TO_ALL</code> (or unset), sends to all players, 
-     otherwise the message will be private to just one player; if the game employs a server agent, 
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if <code>TO_ALL</code> (or unset), sends to everyone (including the agent),
+     otherwise the message will be private to just one player; if the game employs a server agent,
      <code>TO_SERVER_AGENT</code> may be used to send a message only to the server.
      </td>
 </tr>
@@ -697,10 +712,18 @@ showHideInherited();
           </p></div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="EXCLUDE_AGENT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">EXCLUDE_AGENT</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const EXCLUDE_AGENT:int = -2.147483647E9</code><p> A special constant for sending a message to players only, and not the agent. </p></div>
 <a name="TO_ALL"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">TO_ALL</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">TO_ALL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">

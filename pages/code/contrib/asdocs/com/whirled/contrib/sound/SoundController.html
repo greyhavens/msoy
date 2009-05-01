@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="SoundController,com.whirled.contrib.sound.SoundController,BACKGROUND_MUSIC_COMPLETE,DISTANCE_NORMALIZE,FADE_TIME,SOUND_ENABLED,_backgroundVolume,_channels,_effectsVolume,_eventMgr,_soundFactory,_tickBindings,_track,_trackName,_tracks,backgroundVolume,effectsVolume,addBinding,bindChannelRemoval,bindFadein,bindFadeout,getKey,loopTrack,playEffect,playSound,shutdown,startBackgroundMusic,stopBackgroundMusic,stopEffect,tick" name="keywords">
+<meta content="SoundController,com.whirled.contrib.sound.SoundController,BACKGROUND_MUSIC_COMPLETE,DISTANCE_NORMALIZE,FADE_TIME,SOUND_ENABLED,_backgroundVolume,_channels,_effectsVolume,_eventMgr,_levelPackMgr,_soundFactory,_tickBindings,_track,_trackName,_tracks,backgroundVolume,effectsVolume,addBinding,bindChannelRemoval,bindFadein,bindFadeout,getKey,loopTrack,playEffect,playSound,shutdown,startBackgroundMusic,stopBackgroundMusic,stopEffect,tick" name="keywords">
 <title>com.whirled.contrib.sound.SoundController</title>
 </head>
 <body>
@@ -88,6 +88,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">SoundController</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_levelPackMgr">_levelPackMgr</a> : <a href="../../contrib/LevelPackManager.html">LevelPackManager</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">SoundController</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_soundFactory">_soundFactory</a> : <a href="../sound/SoundFactory.html">SoundFactory</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">SoundController</td>
@@ -120,8 +125,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#SoundController()">SoundController</a>(factory:<a href="SoundFactory.html">SoundFactory</a> = null, initialBackgroundVolume:Number = 0.5, initialEffectsVolume:Number = 0.5)</div>
-<div class="summaryTableDescription"></div>
+<a class="signatureLink" href="#SoundController()">SoundController</a>(factory:<a href="SoundFactory.html">SoundFactory</a> = null, initialBackgroundVolume:Number = 0.5, initialEffectsVolume:Number = 0.5, levelPackMgr:<a href="../LevelPackManager.html">LevelPackManager</a> = null)</div>
+<div class="summaryTableDescription">
+     </div>
 </td><td class="summaryTableOwnerCol">SoundController</td>
 </tr>
 <tr class="">
@@ -348,6 +354,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _eventMgr:<a href="../../contrib/EventHandlerManager.html">EventHandlerManager</a></code>
 </div>
+<a name="_levelPackMgr"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_levelPackMgr</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _levelPackMgr:<a href="../../contrib/LevelPackManager.html">LevelPackManager</a></code>
+</div>
 <a name="_soundFactory"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -402,22 +417,36 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function SoundController(factory:<a href="SoundFactory.html">SoundFactory</a> = null, initialBackgroundVolume:Number = 0.5, initialEffectsVolume:Number = 0.5)</code><span class="label">Parameters</span>
+<code>public function SoundController(factory:<a href="SoundFactory.html">SoundFactory</a> = null, initialBackgroundVolume:Number = 0.5, initialEffectsVolume:Number = 0.5, levelPackMgr:<a href="../LevelPackManager.html">LevelPackManager</a> = null)</code><p>
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">factory</span>:<a href="SoundFactory.html">SoundFactory</a></code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">factory</span>:<a href="SoundFactory.html">SoundFactory</a></code> (default = <code>null</code>)<code></code> &mdash; The sound factory to use to fetch sound effects.  If none is provided,
+                    a default ApplicationDomainSoundFactory is created that uses the currentDomain
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">initialBackgroundVolume</span>:Number</code> (default = <code>0.5</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">initialBackgroundVolume</span>:Number</code> (default = <code>0.5</code>)<code></code> &mdash; The initial value of the background volume
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">initialEffectsVolume</span>:Number</code> (default = <code>0.5</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">initialEffectsVolume</span>:Number</code> (default = <code>0.5</code>)<code></code> &mdash; The initial volume of sound effects
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">levelPackMgr</span>:<a href="../LevelPackManager.html">LevelPackManager</a></code> (default = <code>null</code>)<code></code> &mdash; Background music is defined as MP3s that are loaded out of game level
+                         packs.  If no LevelPackManager is provided, LevelPacks.getGlobalManager()
+                         is used.
+     </td>
 </tr>
 </table>
 </div>

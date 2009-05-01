@@ -562,11 +562,15 @@ showHideInherited();
 <span class="label">ControlEvent.type property = </span><a href="../../whirled/ControlEvent.html#MUSIC_STARTED"><code>com.whirled.ControlEvent.MUSIC_STARTED</code></a>
 <br><p>
  Dispatched when music starts playing in the room. If the current user can hear it,
- id3 data aybe available shortly after this event.
+ id3 data aybe available shortly after this event. The sequence of events goes like this:
+ MUSIC_STARTED, 0 or more MUSIC_ID3 tags (client only), MUSIC_STOPPED. Note however that
+ you may not get a MUSIC_STARTED event if the music starts playing prior to your avrg
+ being initialized. Calling getMusicOwnerId() can tell you definitively if there is music
+ currently playing.
   </p><p>
      An event dispatched when some music starts playing.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="event:musicStopped"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -579,12 +583,17 @@ showHideInherited();
 <br>
 <span class="label">ControlEvent.type property = </span><a href="../../whirled/ControlEvent.html#MUSIC_STOPPED"><code>com.whirled.ControlEvent.MUSIC_STOPPED</code></a>
 <br><p>
- Dispatched when music stops playing in the room.
-  </p><p>
+ Dispatched when music stops playing in the room. </p><p>
      An event dispatched when some music stops playing.
-     name: unused
-     value: unused
-          </p></div>
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../avrg/RoomSubControlBase.html#event:MUSIC_STARTED" target="">MUSIC_STARTED</a>
+</div>
+</div>
 <a name="event:playerEntered"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

@@ -319,8 +319,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const ACTION_TRIGGERED:String = "actionTriggered"</code><p> An event type dispatched when an action is triggered.
-     name: action name 
-     value: action value
+     </br><b>name</b> - action name
+     </br><b>value</b> - action value
           </p></div>
 <a name="APPEARANCE_CHANGED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -333,8 +333,8 @@ showHideInherited();
      changed. Your code should react to this event and possibly redraw
      the actor, taking into account the orientation and whether the
      actor is moving or sleeping.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="AVATAR_SPOKE"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -344,8 +344,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const AVATAR_SPOKE:String = "avatarSpoke"</code><p> An event type dispatched when this avatar speaks.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="CHAT_RECEIVED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -356,8 +356,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const CHAT_RECEIVED:String = "chatReceived"</code><p> An event type dispatched to all entities when someone chats.
      Note that only the instance in control receives this event.
-     name: the speaker's entity ID
-     value: chat message
+     </br><b>name</b> - the speaker's entity ID
+     </br><b>value</b> - chat message
           </p></div>
 <a name="CONTROL_ACQUIRED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -368,8 +368,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const CONTROL_ACQUIRED:String = "controlAcquired"</code><p> An event type dispatched when this client-side instance of the item
      has gained "control" over the other client-side instances.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="ENTITY_ENTERED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -381,8 +381,8 @@ showHideInherited();
 <code>public static const ENTITY_ENTERED:String = "entityEntered"</code><p>
      An event dispatched when a new entity has been added to the room.
      Note: only the instance in control receives this event.
-     name: The new entity ID
-     value: unused
+     </br><b>name</b> - The new entity ID
+     </br><b>value</b> - unused
           </p></div>
 <a name="ENTITY_LEFT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -394,8 +394,8 @@ showHideInherited();
 <code>public static const ENTITY_LEFT:String = "entityLeft"</code><p>
      An event dispatched when an entity has been removed from the room.
      Note: only the instance in control receives this event.
-     name: The entity ID. Note that this will no longer exist in the room.
-     value: unused
+     </br><b>name</b> - The entity ID. Note that this will no longer exist in the room.
+     </br><b>value</b> - unused
           </p></div>
 <a name="ENTITY_MOVED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -407,10 +407,10 @@ showHideInherited();
 <code>public static const ENTITY_MOVED:String = "entityMoved"</code><p>
      An event dispatched when an actor begins and ends walking within the room.
      Note: only the instance in control receives this event.
-     name: The moving entity's ID
-     value: If the actor has started moving, this is an array containing the logical location it
-       is moving to. Null when this event fires in response to the actor arriving at its
-       destination.
+     </br><b>name</b> - The moving entity's ID
+     </br><b>value</b> - If the actor has started moving, this is an array containing the
+       logical location it is moving to. Null when this event fires in response to the actor
+       arriving at its destination.
           </p></div>
 <a name="HOVER_OUT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -422,8 +422,8 @@ showHideInherited();
 <code>public static const HOVER_OUT:String = "hoverOut"</code><p> An event type dispatched to Furniture and Toys when the mouse is leaves them.
      Note that the normal MouseEvents will be blocked if the furniture has an action,
      so this is necessary to make doorways that react to mouse hovering.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="HOVER_OVER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -435,8 +435,8 @@ showHideInherited();
 <code>public static const HOVER_OVER:String = "hoverOver"</code><p> An event type dispatched to Furniture and Toys when the mouse is over them.
      Note that the normal MouseEvents will be blocked if the furniture has an action,
      so this is necessary to make doorways that react to mouse hovering.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="MEMORY_CHANGED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -446,8 +446,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const MEMORY_CHANGED:String = "memoryChanged"</code><p> An event type dispatched when the memory has changed.
-     name: memory name
-     value: memory value
+     </br><b>name</b> - memory name
+     </br><b>value</b> - memory value
           </p></div>
 <a name="MESSAGE_RECEIVED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -457,8 +457,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const MESSAGE_RECEIVED:String = "messageRecieved"</code><p> An event type dispatched when a message is received.
-     name: message name
-     value: message value
+     </br><b>name</b> - message name
+     </br><b>value</b> - message value
           </p></div>
 <a name="MUSIC_ID3"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -469,8 +469,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const MUSIC_ID3:String = "musicId3"</code><p>
      An event that may be dispatched soon after music starts playing.
-     name: unused
-     value: an Object from which id3 tags may be read.
+     </br><b>name</b> - unused
+     </br><b>value</b> - an Object from which id3 tags may be read.
           </p></div>
 <a name="MUSIC_STARTED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -481,8 +481,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const MUSIC_STARTED:String = "musicStarted"</code><p>
      An event dispatched when some music starts playing.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="MUSIC_STOPPED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -493,8 +493,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const MUSIC_STOPPED:String = "musicStopped"</code><p>
      An event dispatched when some music stops playing.
-     name: unused
-     value: unused
+     </br><b>name</b> - unused
+     </br><b>value</b> - unused
           </p></div>
 <a name="SIGNAL_RECEIVED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -505,8 +505,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const SIGNAL_RECEIVED:String = "signalRecieved"</code><p> An event type dispatched when a signal is received.
      Dispatched only to the instance in control.
-     name: signal name
-     value: signal value
+     </br><b>name</b> - signal name
+     </br><b>value</b> - signal value
           </p></div>
 <a name="STATE_CHANGED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -517,8 +517,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const STATE_CHANGED:String = "stateChanged"</code><p> An event type dispatched to actors to indicate that they should
      be in the specified state.
-     name: state name
-     value: unused
+     </br><b>name</b> - state name
+     </br><b>value</b> - unused
           </p></div>
 <br>
 <br>

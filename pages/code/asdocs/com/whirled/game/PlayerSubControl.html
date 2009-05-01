@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PlayerSubControl,com.whirled.game.PlayerSubControl,CURRENT_USER,awardPrize,awardTrophy,getCookie,getPlayerItemPacks,getPlayerLevelPacks,holdsTrophy,requestConsumeItemPack,setCookie" name="keywords">
+<meta content="PlayerSubControl,com.whirled.game.PlayerSubControl,CURRENT_USER,awardPrize,awardTrophy,getCookie,getPartyId,getPlayerItemPacks,getPlayerLevelPacks,holdsTrophy,isRegistered,requestConsumeItemPack,setCookie" name="keywords">
 <title>com.whirled.game.PlayerSubControl</title>
 </head>
 <body>
@@ -108,6 +108,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getPartyId()">getPartyId</a>(occupantId:int):int</div>
+<div class="summaryTableDescription">
+     Get the specified player's partyId, or 0 if they're not in a party.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getPlayerItemPacks()">getPlayerItemPacks</a>(playerId:int):Array</div>
 <div class="summaryTableDescription">
      Returns all item packs owned by this client's player (the default) or a specified player.</div>
@@ -140,6 +148,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      loaded up our SWF by itself?
      </div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractSubControl.html">AbstractSubControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isRegistered()">isRegistered</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Returns true if this player is a full registered member of Whirled, false if they are an
+     anonymous guest.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -189,6 +206,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when this player has been awarded coins.</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:PlayerContentAdded">PlayerContentAdded</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when this player has purchased new game content.</td><td class="summaryTableOwnerCol">PlayerSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -320,8 +345,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getCookie(callback:Function, occupantId:int):void</code><p>
-     Get the user-specific game data for the specified occupant. The first time this is requested 
-     per game instance it will be retrieved from the database. After that, it will be returned 
+     Get the user-specific game data for the specified occupant. The first time this is requested
+     per game instance it will be retrieved from the database. After that, it will be returned
      from memory.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -341,6 +366,29 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="getPartyId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPartyId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPartyId(occupantId:int):int</code><p>
+     Get the specified player's partyId, or 0 if they're not in a party.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">occupantId</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -443,6 +491,26 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="isRegistered()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isRegistered</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isRegistered():Boolean</code><p>
+     Returns true if this player is a full registered member of Whirled, false if they are an
+     anonymous guest. Games that wish to grant additional functionality to fully-registered
+     members thereby encouraging guests to register for Whirled are themselves encouraged!
+          </p><p>Note: this will always return false in the test environment.</p>
+     <p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="requestConsumeItemPack()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -537,6 +605,21 @@ showHideInherited();
      An event type dispatched at the end of a game (before GAME_ENDED) to inform the game that
      the player has earned coins.
           </p></div>
+<a name="event:PlayerContentAdded"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PlayerContentAdded</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../game/GameContentEvent.html"><code>com.whirled.game.GameContentEvent</code></a>
+<br>
+<span class="label">GameContentEvent.type property = </span><a href="../game/GameContentEvent.html#PLAYER_CONTENT_ADDED"><code>com.whirled.game.GameContentEvent.PLAYER_CONTENT_ADDED</code></a>
+<br><p>
+ Dispatched when this player has purchased new game content.
+  </p><p>
+     Indicates that the a player has purchased new game content.
+     </p></div>
 <a name="event:PlayerContentConsumed"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

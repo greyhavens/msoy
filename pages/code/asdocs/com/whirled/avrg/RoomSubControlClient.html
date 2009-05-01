@@ -308,7 +308,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#event:musicId3">musicId3</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when id3 data is known for a song.</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+ Dispatched when id3 data is found in the currently playing song.</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -562,11 +562,10 @@ showHideInherited();
 <span class="label">ControlEvent.type property = </span><a href="../../whirled/ControlEvent.html#CHAT_RECEIVED"><code>com.whirled.ControlEvent.CHAT_RECEIVED</code></a>
 <br><p>
  Dispatched to entities when they overhear chatter in the room.
- 
- </p><p> An event type dispatched to all entities when someone chats.
+  </p><p> An event type dispatched to all entities when someone chats.
      Note that only the instance in control receives this event.
-     name: the speaker's entity ID
-     value: chat message
+     </br><b>name</b> - the speaker's entity ID
+     </br><b>value</b> - chat message
           </p></div>
 <a name="event:MsgReceived"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -600,11 +599,14 @@ showHideInherited();
 <br>
 <span class="label">ControlEvent.type property = </span><a href="../../whirled/ControlEvent.html#MUSIC_ID3"><code>com.whirled.ControlEvent.MUSIC_ID3</code></a>
 <br><p>
- Dispatched when id3 data is known for a song.
+ Dispatched when id3 data is found in the currently playing song. Apparently many mp3
+ files contain both 2.id3 data, near the beginning of the file, and 1.data, found at
+ the end, and so flash dispatches each set of data as it finds it. And we just pass
+ it along to you.
   </p><p>
      An event that may be dispatched soon after music starts playing.
-     name: unused
-     value: an Object from which id3 tags may be read.
+     </br><b>name</b> - unused
+     </br><b>value</b> - an Object from which id3 tags may be read.
           </p></div>
 <br>
 <br>

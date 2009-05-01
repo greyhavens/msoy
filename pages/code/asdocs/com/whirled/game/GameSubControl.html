@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,loadItemPackData,loadLevelPackData,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
+<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getParty,getPartyIds,getRound,getTurnHolderId,isInPlay,isMyTurn,loadItemPackData,loadLevelPackData,playerReady,restartGameIn,startNextTurn,systemMessage,takeOverPlayer" name="keywords">
 <title>com.whirled.game.GameSubControl</title>
 </head>
 <body>
@@ -220,6 +220,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getParty()">getParty</a>(partyId:int):<a href="../party/PartySubControl.html">PartySubControl</a>
+</div>
+<div class="summaryTableDescription">
+     Get the party control for the specified party.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getPartyIds()">getPartyIds</a>():Array</div>
+<div class="summaryTableDescription">
+     Return the ids of all parties presently in this game.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#getRound()">getRound</a>():int</div>
 <div class="summaryTableDescription">
      Returns the current round number.</div>
@@ -282,8 +299,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#playerReady()">playerReady</a>():void</div>
 <div class="summaryTableDescription">
-     If the game was not configured to auto-start, which is determined by the 2nd parameter
-     to the GameControl constructor, then all player clients must call this function to let the
+     If the game was not configured to auto-start, which is determined by the 2nd parameter to
+     the GameControl constructor, then all player clients must call this function to let the
      server know that they are ready, at which point the game will be started.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
@@ -315,9 +332,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#systemMessage()">systemMessage</a>(msg:String):void</div>
-<div class="summaryTableDescription"> 
+<div class="summaryTableDescription">
      Send a system chat message that will be seen by everyone in the game room,
      even observers.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#takeOverPlayer()">takeOverPlayer</a>(playerId:int):void</div>
+<div class="summaryTableDescription">
+     Tells the system that the server agent will take over for the specified player.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 </table>
@@ -376,6 +401,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when an occupant leaves the game.</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:partyEntered">partyEntered</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a party arrives in the game.</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:partyLeft">partyLeft</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a party leaves the game.</td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -822,6 +863,48 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getParty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getParty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getParty(partyId:int):<a href="../party/PartySubControl.html">PartySubControl</a></code><p>
+     Get the party control for the specified party. Note that this will always
+     return a PartySubControl, even for partyIds that are not present in the game.
+     Be careful.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">partyId</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../party/PartySubControl.html">PartySubControl</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getPartyIds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPartyIds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPartyIds():Array</code><p>
+     Return the ids of all parties presently in this game.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
 <a name="getRound()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -972,11 +1055,12 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function playerReady():void</code><p>
-     If the game was not configured to auto-start, which is determined by the 2nd parameter
-     to the GameControl constructor, then all player clients must call this function to let the
-     server know that they are ready, at which point the game will be started. Once a game is
-     over, all clients can call this function again to start a new game.
-     </p></div>
+     If the game was not configured to auto-start, which is determined by the 2nd parameter to
+     the GameControl constructor, then all player clients must call this function to let the
+     server know that they are ready, at which point the game will be started.
+          </p><p> This method is also used for rematches: once a game has started and finished, all
+     clients can call this function again to start a new game.
+     </div>
 <a name="restartGameIn()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1022,13 +1106,33 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function systemMessage(msg:String):void</code><p> 
+<code>public function systemMessage(msg:String):void</code><p>
      Send a system chat message that will be seen by everyone in the game room,
      even observers.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="takeOverPlayer()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">takeOverPlayer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function takeOverPlayer(playerId:int):void</code><p>
+     Tells the system that the server agent will take over for the specified player. If a game
+     wishes the take over the control for a departed player to allow the other players to
+     continue to play with an AI in that player's position or without the player entirely, this
+     method can be used. Only call this method for players that have left the game.
+          </p><p> Note: this method can only be called by the server agent.
+     <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
 </div>
@@ -1106,6 +1210,40 @@ showHideInherited();
  Dispatched when an occupant leaves the game.
   </p><p>
      </p></div>
+<a name="event:partyEntered"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">partyEntered</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../party/PartySubControl.html#PARTY_ENTERED"><code>com.whirled.party.PartySubControl.PARTY_ENTERED</code></a>
+<br><p>
+ Dispatched when a party arrives in the game.
+  </p><p>
+     An event type dispatched on the GameSubControl when a party joins the game.
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - partyId
+          </p></div>
+<a name="event:partyLeft"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">partyLeft</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../party/PartySubControl.html#PARTY_LEFT"><code>com.whirled.party.PartySubControl.PARTY_LEFT</code></a>
+<br><p>
+ Dispatched when a party leaves the game.
+  </p><p>
+     An event type dispatched on the GameSubControl when a party leaves the game.
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - partyId
+          </p></div>
 <a name="event:RoundEnded"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1197,7 +1335,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const SERVER_AGENT_ID:int = -2.147483648E9</code><p> ID constant returned by <code>getMyId</code> when called by a game's server agent. 
+<code>public static const SERVER_AGENT_ID:int = -2.147483648E9</code><p> ID constant returned by <code>getMyId</code> when called by a game's server agent.
      </p><p>
 <span class="label">See also</span>
 </p>
