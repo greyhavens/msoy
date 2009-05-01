@@ -47,7 +47,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     public MessagesPanel (ThreadPanel parent, ForumModels.ThreadMessages model,
                           int page, int scrollToId)
     {
-        super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
+        super(ForumThread.MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_TOP);
         addStyleName("dottedGrid");
         setWidth("100%");
@@ -318,10 +318,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             String path = "/images/msgs/" +
                 ((_message.messageId > _thread.lastReadPostId) ? "unread" : "read") + ".png";
-            // fake up a message index that will put us on the correct page
-            int msgIndex = _page * MESSAGES_PER_PAGE;
-            String args = ThreadListPanel.threadArgs(
-                _thread.threadId, msgIndex, _message.messageId);
+            String args = _thread.getPagePostArgs(_page, _message.messageId);
             return Link.createImage(path, _mmsgs.permaLink(), Pages.GROUPS, args);
         }
 
@@ -383,6 +380,4 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
-
-    protected static final int MESSAGES_PER_PAGE = 10;
 }
