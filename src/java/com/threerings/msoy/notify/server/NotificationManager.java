@@ -133,9 +133,6 @@ public class NotificationManager
             List<Notification> notes = local.deferredNotifications;
             local.deferredNotifications = null;
             notify(memobj, notes);
-        } else {
-            log.warning("Client requested deferred notifications, but they've already been sent",
-                "who", memobj.who());
         }
     }
 }
