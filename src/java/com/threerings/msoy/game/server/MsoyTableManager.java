@@ -66,20 +66,14 @@ public class MsoyTableManager extends TableManager
     }
 
     @Override
-    protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
+    protected boolean shouldPublish (Table table)
     {
-        super.gameCreated(table, gameobj, gmgr);
-
         // remove unactionable tables from the lobby as normal players don't see them and we don't
         // want huge numbers of hidden single player tables clogging up our lobby object
         ParlorGameConfig config = (ParlorGameConfig)table.config;
         MsoyMatchConfig matchConfig = (MsoyMatchConfig)config.getGameDefinition().match;
-        if (config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable &&
-            // we need to keep at least one table around otherwise the lobby will shutdown which is
-            // bad, oh god the hackery
-            _lobj.tables.size() > 1) {
-            purgeTable(table);
-        }
+        return !table.inPlay() ||
+            !(config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable);
     }
 
     protected LobbyManager _lmgr;

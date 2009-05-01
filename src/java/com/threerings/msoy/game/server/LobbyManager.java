@@ -49,7 +49,6 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class LobbyManager
-    implements LobbyObject.SubscriberListener
 {
     /** Allows interested parties to know when a lobby shuts down. */
     public interface ShutdownObserver
@@ -65,10 +64,24 @@ public class LobbyManager
         _shutObs = shutObs;
 
         _lobj = _omgr.registerObject(new LobbyObject());
-        _lobj.subscriberListener = this;
-        _lobj.addListener(_tableWatcher);
+        _lobj.subscriberListener = new LobbyObject.SubscriberListener() {
+            public void subscriberCountChanged (LobbyObject lobj) {
+                recheckShutdownInterval();
+            }
+        };
 
-        _tableMgr = new MsoyTableManager(_omgr, invmgr, _plreg, _playerActions, this);
+        _tableMgr = new MsoyTableManager(_omgr, invmgr, _plreg, _playerActions, this) {
+            @Override protected void tableCreated (Table table) {
+                super.tableCreated(table);
+                cancelShutdowner();
+            }
+            @Override protected void purgeTable (Table table) {
+                super.purgeTable(table);
+                if (_tables.size() == 0) {
+                    recheckShutdownInterval();
+                }
+            }
+        };
 
         // since we start empty, we need to immediately assume shutdown
         recheckShutdownInterval();
@@ -250,10 +263,7 @@ public class LobbyManager
     public void shutdown ()
     {
         _lobj.subscriberListener = null;
-        _lobj.removeListener(_tableWatcher);
-
         _shutObs.lobbyDidShutdown(getGameId());
-
         _tableMgr.shutdown();
 
         // make sure we don't have any shutdowner in the queue
@@ -261,12 +271,6 @@ public class LobbyManager
 
         // finally, destroy the Lobby DObject
         _omgr.destroyObject(_lobj.getOid());
-    }
-
-    // from LobbyObject.SubscriberListener
-    public void subscriberCountChanged (LobbyObject lobj)
-    {
-        recheckShutdownInterval();
     }
 
     /**
@@ -285,7 +289,7 @@ public class LobbyManager
      */
     protected void recheckShutdownInterval ()
     {
-        if (_lobj.getSubscriberCount() == 0 && _lobj.tables.size() == 0) {
+        if (_lobj.getSubscriberCount() == 0 && _tableMgr.getTableCount() == 0) {
             // queue up a shutdown interval, unless we've already got one.
             if (_shutdownInterval == null) {
                 _shutdownInterval = new Interval(_omgr) {
@@ -312,20 +316,6 @@ public class LobbyManager
             _shutdownInterval = null;
         }
     }
-
-    /** Listens for table removal/addition and considers destroying the room. */
-    protected SetAdapter<Table> _tableWatcher = new SetAdapter<Table>() {
-        @Override public void entryAdded (EntryAddedEvent<Table> event) {
-            if (event.getName().equals(LobbyObject.TABLES)) {
-                cancelShutdowner();
-            }
-        }
-        @Override public void entryRemoved (EntryRemovedEvent<Table> event) {
-            if (event.getName().equals(LobbyObject.TABLES)) {
-                recheckShutdownInterval();
-            }
-        }
-    };
 
     /** The Lobby object we're using. */
     protected LobbyObject _lobj;
