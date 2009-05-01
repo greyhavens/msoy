@@ -92,7 +92,7 @@ public class AwardDelegate extends RatingDelegate
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
-        int now = now();
+        long now = System.currentTimeMillis();
         int highestScore = Integer.MIN_VALUE;
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerIds.length; ii++) {
@@ -177,7 +177,7 @@ public class AwardDelegate extends RatingDelegate
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
-        int now = now();
+        long now = System.currentTimeMillis();
 
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
@@ -292,7 +292,7 @@ public class AwardDelegate extends RatingDelegate
             _flowRecords.put(plobj.getMemberId(), record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
-                record.startTracking(now());
+                record.startTracking(System.currentTimeMillis());
             }
         }
     }
@@ -365,7 +365,7 @@ public class AwardDelegate extends RatingDelegate
             /*_gameReg.addToSetStat(
                 memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
 
-            if (isMultiplayer() && ((ParlorGameManager) _gmgr).getPlayerCount() > 1) {
+            if (isMultiplayer()) {
                 // track multiplayer game wins
                 if (player.score == winningScore) {
                     _gameReg.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
@@ -635,7 +635,7 @@ public class AwardDelegate extends RatingDelegate
         _tracking = true;
 
         // note the time at which we started for flow calculations
-        int startStamp = now();
+        long startStamp = System.currentTimeMillis();
         for (FlowRecord record : _flowRecords.values()) {
             record.startTracking(startStamp);
         }
@@ -649,7 +649,7 @@ public class AwardDelegate extends RatingDelegate
         _tracking = false;
 
         // note all remaining player's seconds played
-        int endStamp = now();
+        long endStamp = System.currentTimeMillis();
         for (FlowRecord record : _flowRecords.values()) {
             record.stopTracking(endStamp);
         }
@@ -666,7 +666,7 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    protected int getAwardableFlow (int now, int playerId)
+    protected int getAwardableFlow (long now, int playerId)
     {
         FlowRecord record = _flowRecords.get(playerId);
         if (record == null) {
@@ -711,7 +711,7 @@ public class AwardDelegate extends RatingDelegate
         // if they're leaving in the middle of things, update their secondsPlayed, just so that
         // it's correct for calculations below
         if (_tracking) {
-            record.stopTracking(now());
+            record.stopTracking(System.currentTimeMillis());
         }
         // note any pending accumulated time
         record.accumSecondsPlayed();
@@ -772,14 +772,6 @@ public class AwardDelegate extends RatingDelegate
     }
 
     /**
-     * Convenience method to calculate the current timestmap in seconds.
-     */
-    protected static int now ()
-    {
-        return (int) (System.currentTimeMillis() / 1000);
-    }
-
-    /**
      * A record of flow awarded.
      */
     protected static class FlowRecord
@@ -798,21 +790,21 @@ public class AwardDelegate extends RatingDelegate
             this.isGuest = plobj.isPermaguest();
         }
 
-        public int getPlayTime (int now) {
+        public int getPlayTime (long now) {
             int secondsOfPlay = _sessionSecondsPlayed;
             if (_beganStamp != 0) {
-                secondsOfPlay += (now - _beganStamp);
+                secondsOfPlay += (int)((now - _beganStamp)/1000);
             }
             return secondsOfPlay;
         }
 
-        public void startTracking (int startStamp) {
+        public void startTracking (long startStamp) {
             _beganStamp = startStamp;
         }
 
-        public void stopTracking (int endStamp) {
+        public void stopTracking (long endStamp) {
             if (_beganStamp != 0) {
-                _sessionSecondsPlayed += endStamp - _beganStamp;
+                _sessionSecondsPlayed += (int)((endStamp - _beganStamp)/1000L);
                 _beganStamp = 0;
             }
         }
@@ -855,7 +847,7 @@ public class AwardDelegate extends RatingDelegate
         protected int _unnotedAward;
         protected int _notedAward;
 
-        protected int _beganStamp;
+        protected long _beganStamp;
         protected int _sessionSecondsPlayed;
 
         protected int _unnotedSecondsPlayed;
