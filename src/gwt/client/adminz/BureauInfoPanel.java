@@ -134,7 +134,7 @@ public class BureauInfoPanel extends VerticalPanel
         Collections.sort(binfos, new Comparator<BureauInfo>() {
             public int compare (BureauInfo o1, BureauInfo o2) {
                 int cmp = Boolean.valueOf(o2.isRunning()).compareTo(
-                    Boolean.valueOf(o2.isRunning()));
+                    Boolean.valueOf(o1.isRunning()));
                 return cmp == 0 ? o1.bureauId.compareTo(o2.bureauId) : cmp;
             }
         });
