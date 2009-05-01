@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.List;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
@@ -15,10 +18,10 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
+import com.threerings.util.Name;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -40,6 +43,7 @@ import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry.MetricType;
+import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -80,7 +84,7 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Handles {@link WhirledGameService#endGameWithScores}.
      */
-    public void endGameWithScores (ClientObject caller, int[] playerOids, int[] scores,
+    public void endGameWithScores (ClientObject caller, int[] playerIds, int[] scores,
                                    int payoutType, int gameMode,
                                    InvocationService.InvocationListener listener)
         throws InvocationException
@@ -95,11 +99,11 @@ public class AwardDelegate extends RatingDelegate
         int now = now();
         int highestScore = Integer.MIN_VALUE;
         IntMap<Player> players = IntMaps.newHashIntMap();
-        for (int ii = 0; ii < playerOids.length; ii++) {
-            int availFlow = getAwardableFlow(now, playerOids[ii]);
-            Player player = createPlayer(playerOids[ii], scores[ii], availFlow);
+        for (int ii = 0; ii < playerIds.length; ii++) {
+            int availFlow = getAwardableFlow(now, playerIds[ii]);
+            Player player = createPlayer(playerIds[ii], scores[ii], availFlow);
             if (player != null) {
-                players.put(playerOids[ii], player);
+                players.put(playerIds[ii], player);
                 highestScore = Math.max(highestScore, player.score); // used capped score
             }
         }
@@ -169,7 +173,7 @@ public class AwardDelegate extends RatingDelegate
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithWinners (ClientObject caller, int[] winnerOids, int[] loserOids,
+    public void endGameWithWinners (ClientObject caller, int[] winnerIds, int[] loserIds,
                                     int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -182,20 +186,20 @@ public class AwardDelegate extends RatingDelegate
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
         IntMap<Player> players = IntMaps.newHashIntMap();
-        for (int winnerOid : winnerOids) {
-            Player pl = createPlayer(winnerOid, 1, getAwardableFlow(now, winnerOid));
+        for (int winnerId : winnerIds) {
+            Player pl = createPlayer(winnerId, 1, getAwardableFlow(now, winnerId));
             if (pl != null) {
                 // everyone gets ranked as a 50% performance in multiplayer and we award portions of
                 // the losers' winnings to the winners
                 pl.percentile = 49;
-                players.put(winnerOid, pl);
+                players.put(winnerId, pl);
             }
         }
-        for (int loserOid : loserOids) {
-            Player pl = createPlayer(loserOid, 0, getAwardableFlow(now, loserOid));
+        for (int loserId : loserIds) {
+            Player pl = createPlayer(loserId, 0, getAwardableFlow(now, loserId));
             if (pl != null) {
                 pl.percentile = 49;
-                players.put(loserOid, pl);
+                players.put(loserId, pl);
             }
         }
 
@@ -210,13 +214,13 @@ public class AwardDelegate extends RatingDelegate
 
         // tell the game manager about our winners which will be used to compute ratings, etc.
         if (_gmgr instanceof WhirledGameManager) {
-            ArrayIntSet fWinnerOids = new ArrayIntSet();
+            List<Name> winners = Lists.newArrayList();
             for (Player player : players.values()) {
                 if (player.score == 1) {
-                    fWinnerOids.add(player.playerOid);
+                    winners.add(player.name);
                 }
             }
-            ((WhirledGameManager)_gmgr).setWinners(fWinnerOids.toIntArray());
+            ((WhirledGameManager)_gmgr).setWinners(winners.toArray(new Name[winners.size()]));
         } else {
             log.warning("Unable to configure WhirledGameManager with winners", "where", where(),
                         "isa", _gmgr.getClass().getName());
@@ -245,9 +249,9 @@ public class AwardDelegate extends RatingDelegate
         resetTracking();
 
         // pay out to all the players who have not yet been paid
-        int[] oids = _flowRecords.intKeySet().toIntArray();
-        for (int oid : oids) {
-            payoutPlayer(oid);
+        int[] ids = _flowRecords.intKeySet().toIntArray();
+        for (int id : ids) {
+            payoutPlayer(id);
         }
 
         // put the kibosh on further flow tracking
@@ -287,10 +291,10 @@ public class AwardDelegate extends RatingDelegate
         PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
 
         // potentially create a flow record for this occupant
-        if (!_flowRecords.containsKey(bodyOid) && plobj != null) {
+        if (!_flowRecords.containsKey(plobj.getMemberId()) && plobj != null) {
             FlowRecord record = new FlowRecord(
                 plobj.memberName, plobj.getHumanity(), plobj.isPermaguest());
-            _flowRecords.put(bodyOid, record);
+            _flowRecords.put(plobj.getMemberId(), record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
                 record.startTracking(now());
@@ -376,18 +380,18 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    protected Player createPlayer (int playerOid, int score, int availFlow)
+    protected Player createPlayer (int playerId, int score, int availFlow)
     {
-        FlowRecord record = _flowRecords.get(playerOid);
+        FlowRecord record = _flowRecords.get(playerId);
         if (record == null) {
-            // playerOid came from the game, which may have been smoking up the crack, so only
-            // complain if they provide a positive playerOid which does not correspond to a player
-            if (playerOid > 0) {
-                log.warning("Missing flow record for player", "game", where(), "oid", playerOid);
+            // playerId came from the game, which may have been smoking up the crack, so only
+            // complain if they provide a positive playerId which does not correspond to a player
+            if (playerId > 0) {
+                log.warning("Missing flow record for player", "game", where(), "id", playerId);
             }
             return null;
         }
-        return new Player(record.name, record.isGuest, playerOid, score, availFlow);
+        return new Player(record.name, record.isGuest, score, availFlow);
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -529,7 +533,7 @@ public class AwardDelegate extends RatingDelegate
         // finally, award the flow and report it to the player
         boolean actuallyAward = !_content.game.isDevelopmentVersion();
         for (Player player : players.values()) {
-            FlowRecord record = _flowRecords.get(player.playerOid);
+            FlowRecord record = _flowRecords.get(player.name.getMemberId());
             if (record == null) {
                 continue;
             }
@@ -540,7 +544,7 @@ public class AwardDelegate extends RatingDelegate
             }
 
             // report to the game that this player earned some flow
-            DObject user = _omgr.getObject(player.playerOid);
+            PlayerObject user = _locator.lookupPlayer(player.name);
             if (user != null) {
                 boolean hasCookie = (_plmgr instanceof ParlorGameManager) &&
                     ((WhirledGameObject)_plmgr.getPlaceObject()).userCookies.containsKey(
@@ -659,9 +663,9 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    protected int getAwardableFlow (int now, int playerOid)
+    protected int getAwardableFlow (int now, int playerId)
     {
-        FlowRecord record = _flowRecords.get(playerOid);
+        FlowRecord record = _flowRecords.get(playerId);
         if (record == null) {
             return 0;
         }
@@ -692,12 +696,12 @@ public class AwardDelegate extends RatingDelegate
         return Math.round(record.humanity * _flowPerMinute * awardMins);
     }
 
-    protected void payoutPlayer (int oid)
+    protected void payoutPlayer (int playerId)
     {
         // remove their flow record and grant them the flow
-        FlowRecord record = _flowRecords.remove(oid);
+        FlowRecord record = _flowRecords.remove(playerId);
         if (record == null) {
-            log.warning("No flow record found", "oid", oid);
+            log.warning("No flow record found", "id", playerId);
             return;
         }
 
@@ -858,17 +862,16 @@ public class AwardDelegate extends RatingDelegate
     {
         public MemberName name;
         public boolean isGuest;
-        public int playerOid;
+        public int playerId;
         public int score;
         public int availFlow;
 
         public int percentile;
         public int flowAward;
 
-        public Player (MemberName name, boolean isGuest, int playerOid, int score, int availFlow) {
+        public Player (MemberName name, boolean isGuest, int score, int availFlow) {
             this.name = name;
             this.isGuest = isGuest;
-            this.playerOid = playerOid;
             this.score = Math.max(0, Math.min(MAX_ALLOWED_SCORE, score));
             this.availFlow = availFlow;
         }
@@ -878,7 +881,7 @@ public class AwardDelegate extends RatingDelegate
         }
 
         public int compareTo (Player other) {
-            return Comparators.compare(playerOid, other.playerOid);
+            return name.compareTo(other.name);
         }
 
         @Override // from Object
@@ -914,6 +917,7 @@ public class AwardDelegate extends RatingDelegate
     protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
     // our dependencies
+    @Inject protected PlayerLocator _locator;
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
