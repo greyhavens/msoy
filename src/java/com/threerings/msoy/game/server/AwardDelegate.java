@@ -69,14 +69,10 @@ public class AwardDelegate extends RatingDelegate
     public void flushCoinEarnings (final int playerId)
     {
         // flow record is indexed by oid not playerId so we have to search
-        FlowRecord record = Iterables.find(_flowRecords.values(), new Predicate<FlowRecord>() {
-            public boolean apply (FlowRecord record) {
-                return record.memberId == playerId;
-            }
-        });
+        FlowRecord record = _flowRecords.get(playerId);
         if (record != null) {
             // payout their pending earnings (this will NOOP if they have nothing pending)
-            payoutCoins(record.memberId, record.getAndNoteAward(),
+            payoutCoins(record.name.getMemberId(), record.getAndNoteAward(),
                         record.getAndNoteSecondsPlayed());
         }
     }
@@ -292,8 +288,7 @@ public class AwardDelegate extends RatingDelegate
 
         // potentially create a flow record for this occupant
         if (!_flowRecords.containsKey(plobj.getMemberId()) && plobj != null) {
-            FlowRecord record = new FlowRecord(
-                plobj.memberName, plobj.getHumanity(), plobj.isPermaguest());
+            FlowRecord record = new FlowRecord(plobj);
             _flowRecords.put(plobj.getMemberId(), record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
@@ -303,12 +298,20 @@ public class AwardDelegate extends RatingDelegate
     }
 
     @Override // from PlaceManagerDelegate
-    public void bodyLeft (int bodyOid)
+    public void bodyLeft (final int bodyOid)
     {
         super.bodyLeft(bodyOid);
 
-        // when a player leaves the game, pay out their earned flow
-        payoutPlayer(bodyOid);
+        // when a player leaves the game, pay out their earned flow (flow records are not mapped by
+        // oid, so we have to search)
+        FlowRecord record = Iterables.find(_flowRecords.values(), new Predicate<FlowRecord>() {
+            public boolean apply (FlowRecord record) {
+                return record.bodyOid == bodyOid;
+            }
+        });
+        if (record != null) {
+            payoutPlayer(record.name.getMemberId());
+        }
     }
 
     @Override // from GameManagerDelegate
@@ -540,7 +543,7 @@ public class AwardDelegate extends RatingDelegate
 
             // update the player's member object on their world server
             if (actuallyAward && player.flowAward > 0) {
-                _gameReg.reportCoinAward(record.memberId, player.flowAward);
+                _gameReg.reportCoinAward(record.name.getMemberId(), player.flowAward);
             }
 
             // report to the game that this player earned some flow
@@ -689,7 +692,7 @@ public class AwardDelegate extends RatingDelegate
         // log things for a while so we can see how often and to what extent this happens
         if (awardMins != avgMins) {
             log.info("Scaling player's awardable flow due to short game", "game", where(),
-                     "memberId", record.memberId, "avgMins", avgMins, "playerMins", playerMins,
+                     "who", record.name, "avgMins", avgMins, "playerMins", playerMins,
                      "awardMins", awardMins);
         }
 
@@ -734,11 +737,12 @@ public class AwardDelegate extends RatingDelegate
 
         // actually grant their flow award (this may only be partial as we may have flushed pending
         // coins due to an earlier request)
-        payoutCoins(record.memberId, record.getAndNoteAward(), record.getAndNoteSecondsPlayed());
+        payoutCoins(record.name.getMemberId(), record.getAndNoteAward(),
+                    record.getAndNoteSecondsPlayed());
 
         // and let the game registry know that we paid out this player (this will be their total
         // award because we only do this when they finally leave the game)
-        _gameReg.gameDidPayout(record.memberId, _content.game, record.getTotalAward(),
+        _gameReg.gameDidPayout(record.name.getMemberId(), _content.game, record.getTotalAward(),
                                record.getTotalSecondsPlayed());
     }
 
@@ -780,18 +784,18 @@ public class AwardDelegate extends RatingDelegate
      */
     protected static class FlowRecord
     {
-        public float humanity;
-        public int memberId;
+        public int bodyOid;
         public MemberName name;
+        public float humanity;
         public boolean isGuest;
 
         public int played;
 
-        public FlowRecord (MemberName name, float humanity, boolean isGuest) {
-            this.humanity = humanity;
-            this.memberId = name.getMemberId();
-            this.name = name;
-            this.isGuest = isGuest;
+        public FlowRecord (PlayerObject plobj) {
+            this.bodyOid = plobj.getOid();
+            this.name = plobj.memberName;
+            this.humanity = plobj.getHumanity();
+            this.isGuest = plobj.isPermaguest();
         }
 
         public int getPlayTime (int now) {
