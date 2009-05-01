@@ -6,11 +6,17 @@ package client.account;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
+import com.google.gwt.event.dom.client.HasBlurHandlers;
+import com.google.gwt.event.dom.client.HasFocusHandlers;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -296,13 +302,15 @@ public class CreateAccountPanel extends FlowPanel
         {
             add(MsoyUI.createHTML(title, "Label"));
             add(contents);
-            if (contents instanceof SourcesFocusEvents) {
-                ((SourcesFocusEvents)contents).addFocusListener(new FocusListener() {
-                    public void onFocus (Widget sender) {
+            if (contents instanceof HasAllFocusHandlers) {
+                ((HasFocusHandlers)contents).addFocusHandler(new FocusHandler() {
+                    public void onFocus (FocusEvent event) {
                         // we want contents here not sender because of DateFields
                         showTip(contents, tip);
                     }
-                    public void onLostFocus (Widget sender) {
+                });
+                ((HasBlurHandlers)contents).addBlurHandler(new BlurHandler() {
+                    public void onBlur (BlurEvent event) {
                         if (_tip.isAttached()) {
                             remove(_tip);
                         }

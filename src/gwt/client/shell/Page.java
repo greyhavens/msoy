@@ -8,8 +8,9 @@ import java.util.List;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -174,26 +175,30 @@ public abstract class Page
                 }
             });
 
-            final HistoryListener listener = new HistoryListener() {
-                public void onHistoryChanged (String token) {
-                    // this is only called when we're in single page test mode, so we assume we're
-                    // staying on the same page and just pass the arguments back into ourselves
-                    token = token.substring(token.indexOf("-")+1);
-                    setPageToken(token);
+            History.addValueChangeHandler(new ValueChangeHandler<String>() {
+                public void onValueChange (ValueChangeEvent<String> event)  {
+                    onHistoryChanged(event.getValue());
                 }
-            };
-            History.addHistoryListener(listener);
+            });
 
             Session.addObserver(new Session.Observer() {
                 public void didLogon (SessionData data) {
-                    listener.onHistoryChanged(History.getToken());
+                    onHistoryChanged(History.getToken());
                 }
                 public void didLogoff () {
-                    listener.onHistoryChanged(History.getToken());
+                    onHistoryChanged(History.getToken());
                 }
             });
             Session.validate();
         }
+    }
+
+    protected void onHistoryChanged (String token)
+    {
+        // this is only called when we're in single page test mode, so we assume we're staying on
+        // the same page and just pass the arguments back into ourselves
+        token = token.substring(token.indexOf("-")+1);
+        setPageToken(token);
     }
 
     /**
