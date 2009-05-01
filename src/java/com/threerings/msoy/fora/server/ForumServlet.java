@@ -6,13 +6,11 @@ package com.threerings.msoy.fora.server;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -110,25 +108,7 @@ public class ForumServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        // load up the meta data of unread posts by friends
-        List<ForumThreadRecord> threads = _forumRepo.loadUnreadFriendThreads(mrec.memberId,
-            _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
-                mrec.memberId, null), maximum);
-
-        // build the group names so these can be displayed on the client
-        Set<Integer> groupIds = Sets.newHashSet();
-        for (ForumThreadRecord ftr : threads) {
-            groupIds.add(ftr.groupId);
-        }
-
-        // load group names
-        Map<Integer, GroupName> groupNames = Maps.newHashMap();
-        for (GroupName name : _groupRepo.loadGroupNames(groupIds)) {
-            groupNames.put(name.getGroupId(), name);
-        }
-
-        return _forumLogic.resolveThreads(mrec, threads, groupNames, true, false);
+        return _forumLogic.loadUnreadFriendThreads(mrec, maximum);
     }
 
     // from interface ForumService

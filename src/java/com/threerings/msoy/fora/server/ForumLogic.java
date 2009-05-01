@@ -6,9 +6,11 @@ package com.threerings.msoy.fora.server;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -29,6 +31,8 @@ import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
+import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 /**
  * Contains forum services that are used by servlets and other blocking thread code.
@@ -79,6 +83,33 @@ public class ForumLogic
         return Lists.newArrayList(thrmap.values());
     }
 
+    /**
+     * Loads up to a maximum number threads that contain unread posts by the given member's friends.
+     */
+    public List<ForumThread> loadUnreadFriendThreads (MemberRecord mrec, int maximum)
+    {
+        // load up the meta data of unread posts by friends
+        List<ForumThreadRecord> threads = _forumRepo.loadUnreadFriendThreads(mrec.memberId,
+            _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
+                mrec.memberId, null), maximum);
+
+        // build the group names so these can be displayed on the client
+        Set<Integer> groupIds = Sets.newHashSet();
+        for (ForumThreadRecord ftr : threads) {
+            groupIds.add(ftr.groupId);
+        }
+
+        // load group names
+        Map<Integer, GroupName> groupNames = Maps.newHashMap();
+        for (GroupName name : _groupRepo.loadGroupNames(groupIds)) {
+            groupNames.put(name.getGroupId(), name);
+        }
+
+        return resolveThreads(mrec, threads, groupNames, true, false);
+    }
+
     @Inject protected ForumRepository _forumRepo;
+    @Inject protected GroupLogic _groupLogic;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
 }
