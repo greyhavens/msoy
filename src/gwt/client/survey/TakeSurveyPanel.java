@@ -24,6 +24,7 @@ import com.threerings.msoy.survey.gwt.SurveyResponse;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
 
+import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
@@ -161,29 +162,29 @@ public class TakeSurveyPanel extends VerticalPanel
         protected Widget makeWidget ()
         {
             // buttons for true and false
-            trueButton = new RadioButton("Q" + _index, _msgs.trueLabel());
-            falseButton = new RadioButton("Q" + _index, _msgs.falseLabel());
+            _trueButton = new RadioButton("Q" + _index, _msgs.trueLabel());
+            _falseButton = new RadioButton("Q" + _index, _msgs.falseLabel());
 
             // make the panel
             VerticalPanel panel = new VerticalPanel();
             panel.setStyleName("trueFalse");
-            panel.add(trueButton);
-            panel.add(falseButton);
+            panel.add(_trueButton);
+            panel.add(_falseButton);
             return panel;
         }
 
         protected String getResponse ()
         {
-            if (trueButton.getValue()) {
+            if (_trueButton.getValue()) {
                 return _responseChoices[1];
             }
-            if (falseButton.getValue()) {
+            if (_falseButton.getValue()) {
                 return _responseChoices[0];
             }
             return null;
         }
 
-        protected RadioButton trueButton, falseButton;
+        protected RadioButton _trueButton, _falseButton;
     }
 
     protected class ExclusiveChoice extends QuestionUI
@@ -191,12 +192,12 @@ public class TakeSurveyPanel extends VerticalPanel
         protected Widget makeWidget ()
         {
             // one button per choice
-            buttons = new RadioButton[_question.choices.length];
+            _buttons = new RadioButton[_question.choices.length];
 
             // create all the buttons and add them to the panel
             VerticalPanel panel = new VerticalPanel();
             for (int ii = 0; ii < _question.choices.length; ++ii) {
-                panel.add(buttons[ii] = new RadioButton("Q" + _index, _question.choices[ii]));
+                panel.add(_buttons[ii] = new RadioButton("Q" + _index, _question.choices[ii]));
             }
             panel.setStyleName("exclusive");
             return panel;
@@ -204,15 +205,15 @@ public class TakeSurveyPanel extends VerticalPanel
 
         protected String getResponse ()
         {
-            for (int ii = 0; ii < buttons.length; ++ii) {
-                if (buttons[ii].getValue()) {
+            for (int ii = 0; ii < _buttons.length; ++ii) {
+                if (_buttons[ii].getValue()) {
                     return _responseChoices[ii];
                 }
             }
             return null;
         }
 
-        protected RadioButton[] buttons;
+        protected RadioButton[] _buttons;
     }
 
     protected class SubsetChoice extends QuestionUI
@@ -220,12 +221,12 @@ public class TakeSurveyPanel extends VerticalPanel
         protected Widget makeWidget ()
         {
             // one button per choice
-            buttons = new CheckBox[_question.choices.length];
+            _buttons = new CheckBox[_question.choices.length];
 
             // create all the buttons and add them to the panel
             VerticalPanel panel = new VerticalPanel();
             for (int ii = 0; ii < _question.choices.length; ++ii) {
-                panel.add(buttons[ii] = new CheckBox(_question.choices[ii]));
+                panel.add(_buttons[ii] = new CheckBox(_question.choices[ii]));
             }
             panel.setStyleName("subset");
             return panel;
@@ -234,8 +235,8 @@ public class TakeSurveyPanel extends VerticalPanel
         protected String getResponse ()
         {
             StringBuilder response = new StringBuilder();
-            for (int ii = 0; ii < buttons.length; ++ii) {
-                if (buttons[ii].getValue()) {
+            for (int ii = 0; ii < _buttons.length; ++ii) {
+                if (_buttons[ii].getValue()) {
                     if (response.length() > 0) {
                         response.append(",");
                     }
@@ -248,7 +249,7 @@ public class TakeSurveyPanel extends VerticalPanel
             return null;
         }
 
-        protected CheckBox[] buttons;
+        protected CheckBox[] _buttons;
     }
 
     protected class Rating extends QuestionUI
@@ -256,13 +257,13 @@ public class TakeSurveyPanel extends VerticalPanel
         protected Widget makeWidget ()
         {
             // one button per rating value
-            buttons = new RadioButton[_question.maxValue];
+            _buttons = new RadioButton[_question.maxValue];
 
             // create all the buttons and add them to the panel
             HorizontalPanel panel = new HorizontalPanel();
             panel.add(MsoyUI.createLabel("1", "value"));
             for (int ii = 0; ii < _question.maxValue; ++ii) {
-                panel.add(buttons[ii] = new RadioButton("Q" + _index));
+                panel.add(_buttons[ii] = new RadioButton("Q" + _index));
             }
             panel.add(MsoyUI.createLabel("" + _question.maxValue, "value"));
             panel.setStyleName("rating");
@@ -272,31 +273,31 @@ public class TakeSurveyPanel extends VerticalPanel
 
         protected String getResponse ()
         {
-            for (int ii = 0; ii < buttons.length; ++ii) {
-                if (buttons[ii].getValue()) {
+            for (int ii = 0; ii < _buttons.length; ++ii) {
+                if (_buttons[ii].getValue()) {
                     return _responseChoices[ii];
                 }
             }
             return null;
         }
 
-        protected RadioButton[] buttons;
+        protected RadioButton[] _buttons;
     }
 
     protected class Essay extends QuestionUI
     {
         protected Widget makeWidget ()
         {
-            return text = MsoyUI.createTextArea("", 80, 4);
+            return _text = new LimitedTextArea(SurveyResponse.MAX_LENGTH, 80, 4);
         }
 
         protected String getResponse ()
         {
-            String resp = text.getText();
+            String resp = _text.getText();
             return resp.length() == 0 ? null : resp;
         }
 
-        protected TextArea text;
+        protected LimitedTextArea _text;
     }
 
     public int _surveyId;
