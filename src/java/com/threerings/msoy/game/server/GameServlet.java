@@ -290,9 +290,7 @@ public class GameServlet extends MsoyServiceServlet
             shelf.gameId = gameId;
             GameRecord grec = _mgameRepo.loadGameRecord(shelf.gameId);
             if (grec == null) {
-                log.warning("Have trophies for unknown game [who=" + memberId +
-                            ", gameId=" + shelf.gameId + "].");
-                shelf.name = "???";
+                shelf.name = "???"; // the game was delisted or deleted, oh well
             } else {
                 shelf.name = grec.name;
             }
