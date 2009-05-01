@@ -154,7 +154,7 @@ public class ParlorGameManager extends WhirledGameManager
 
         MsoyBureauClient client = (MsoyBureauClient)_bureauReg.lookupClient(getBureauId());
         if (client == null) {
-            log.warning("Agent ready but no bureau client?", "gameMgr", this);
+            log.warning("Agent ready but no bureau client?", "game", where());
         } else {
             client.agentAdded();
             _agentAdded = true;
@@ -171,19 +171,12 @@ public class ParlorGameManager extends WhirledGameManager
     @Override // from PlaceManager
     public String where ()
     {
-        if (_config == null) {
-            return super.where();
-        }
-        ParlorGameConfig cfg = (ParlorGameConfig)_config;
-        StringBuilder sbuf = new StringBuilder();
-        sbuf.append("[");
-        sbuf.append(cfg.game.name).append(":").append(cfg.getGameId());
+        StringBuffer buf = new StringBuffer();
+        buf.append(getGameId());
         if (_gameObj != null) {
-            sbuf.append(":").append(_gameObj.getOid());
-            StringUtil.toString(sbuf, _gameobj.players);
+            buf.append(", oid=").append(_gameObj.getOid());
         }
-        sbuf.append("]");
-        return sbuf.toString();
+        return buf.toString();
     }
 
     @Override // from PlaceManager
@@ -281,8 +274,7 @@ public class ParlorGameManager extends WhirledGameManager
             }
 
             @Override protected String getFailureMessage () {
-                return "Failed to resolve content [game=" + _gameconfig.getGameId() +
-                    ", who=" + plobj.who() + "].";
+                return "Failed to resolve content [game=" + where() + ", who=" + plobj.who() + "].";
             }
         });
     }
