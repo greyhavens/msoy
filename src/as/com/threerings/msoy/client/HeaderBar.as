@@ -82,7 +82,7 @@ public class HeaderBar extends HBox
 
         _goBtn = new CommandButton();
         _goBtn.toolTip = Msgs.GENERAL.get("i.go");
-        _goBtn.setCommand(MsoyController.POP_GO_MENU, _goBtn);
+        _goBtn.setCommand(MsoyController.POP_GO_MENU, [ _goBtn, false ]);
         _goBtn.styleName = "headerBarGoButton";
         addChild(_goBtn);
 

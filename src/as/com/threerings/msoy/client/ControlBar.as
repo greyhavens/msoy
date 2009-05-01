@@ -58,6 +58,9 @@ public class ControlBar extends HBox
     /** Handles volume adjustment. */
     public var volBtn :CommandButton;
 
+    /** Handles recent scenes and other destinations. */
+    public var goBtn :CommandButton;
+
     /** Handles full screening. */
     public var fullBtn :CommandButton;
 
@@ -202,6 +205,9 @@ public class ControlBar extends HBox
         updateVolumeSkin(Prefs.getSoundVolume());
         volBtn.setCallback(handlePopVolume);
 
+        goBtn = createButton("controlBarButtonGo", "i.go");
+        goBtn.setCommand(MsoyController.POP_GO_MENU, goBtn);
+
         fullBtn = createButton("controlBarButtonFull", "i.full");
         fullBtn.setCommand(MsoyController.SET_DISPLAY_STATE);
 
@@ -293,6 +299,7 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(volBtn, true, VOLUME_PRIORITY);
+        addButton(goBtn, true, GLOBAL_PRIORITY);
         addButton(fullBtn, isFullOn, GLOBAL_PRIORITY);
 
         addButton(shareBtn, showShare);

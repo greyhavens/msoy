@@ -553,6 +553,7 @@ TabNavigator, TabBar {
 
 /** All these buttons use the ImageButtonSkin and need the per-state skins cleared out. */
 .imageButton,
+.controlBarButtonGo,
 .controlBarButtonChat, .controlBarButtonEdit, .controlBarButtonZoom, .controlBarButtonComment,
 .controlBarButtonInstructions, .controlBarButtonShare, .controlBarButtonScores,
 .controlBarHoverZone, .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
@@ -578,6 +579,10 @@ TabNavigator, TabBar {
 
 .controlBarButtonChat {
   image: Embed(source="../media/skins/controlbar/chatoptions.png");
+}
+
+.controlBarButtonGo {
+  image: Embed(source="../media/skins/controlbar/go.png");
 }
 
 .controlBarButtonEdit {

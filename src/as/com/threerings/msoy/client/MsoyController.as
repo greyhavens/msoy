@@ -307,7 +307,7 @@ public class MsoyController extends Controller
     /**
      * Handles the POP_GO_MENU command.
      */
-    public function handlePopGoMenu (trigger :Button) :void
+    public function handlePopGoMenu (trigger :Button, popUpwards :Boolean = true) :void
     {
         if (_goMenu != null) {
             _goMenu.hide(); // and then will be nulled automatically
@@ -327,9 +327,13 @@ public class MsoyController extends Controller
             }
         }
 
+        if (popUpwards) {
+            menuData.reverse();
+        }
+
         var r :Rectangle = trigger.getBounds(trigger.stage);
         _goMenu = CommandMenu.createMenu(menuData, _topPanel);
-        _goMenu.popUpAt(r.left, r.bottom);
+        _goMenu.popUpAt(r.left, popUpwards ? r.top : r.bottom, popUpwards);
         _goMenu.addEventListener(MenuEvent.MENU_HIDE, function (... ignored) :void {
             _goMenu = null;
         });
