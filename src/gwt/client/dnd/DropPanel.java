@@ -112,7 +112,6 @@ public abstract class DropPanel<T> extends FlowPanel
         return super.remove(widget);
     }
 
-
     public boolean isCapturing ()
     {
         return _capturing;

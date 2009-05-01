@@ -43,7 +43,6 @@ public class PropEditor extends SubItemEditor
         return _emsgs.errPropNotFlash();
     }
 
-
     protected Prop _prop;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);

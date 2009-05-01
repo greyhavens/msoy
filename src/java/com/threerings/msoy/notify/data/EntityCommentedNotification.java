@@ -9,7 +9,6 @@ import com.threerings.util.MessageBundle;
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.MsoyCodes;
 
-
 import com.threerings.msoy.item.data.all.Item;
 
 /**

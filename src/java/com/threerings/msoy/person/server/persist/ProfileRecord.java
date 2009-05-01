@@ -109,7 +109,6 @@ public class ProfileRecord extends PersistentRecord
      * be non-zero. */
     public int profileMedalId;
 
-
     /**
      * Converts (year, month, day) to a {@link Date}. Month is 0-11, the other values are as a
      * human would expect to read them.

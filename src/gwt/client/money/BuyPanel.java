@@ -256,7 +256,6 @@ public abstract class BuyPanel<T> extends SmartTable
         protected Currency _currency;
     }; // end: class BuyCallback
 
-
     protected class BuyButton extends StretchButton
     {
         public BuyButton (Currency currency)

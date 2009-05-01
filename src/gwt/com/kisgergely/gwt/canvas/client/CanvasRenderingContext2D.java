@@ -4,7 +4,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Image;
 
-
 /**
  * Wrapper Class to represent the 2D Rendering Context of a Canvas element.
  * It implements all the methods of the WhatWG specification but with some

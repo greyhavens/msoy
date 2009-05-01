@@ -13,7 +13,6 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
-
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
  */

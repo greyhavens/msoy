@@ -61,10 +61,8 @@ import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
-import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowSessionFactory;
 import com.threerings.msoy.chat.server.JabberManager;

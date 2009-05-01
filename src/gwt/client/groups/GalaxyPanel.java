@@ -182,7 +182,6 @@ public class GalaxyPanel extends FlowPanel
         }
         _categoryLinks.add(Link.create(_msgs.galaxyCategoryAll(), "Link", Pages.GROUPS, ""));
 
-
         // If currently displaying search results, lock the sort box to "By Relevance", otherwise
         // display all search values and select the right one.
         if (query.search != null || query.tag != null) {

@@ -24,5 +24,4 @@ public class CanvasImageData {
 		return jsImageData;
 	}
 
-
 }

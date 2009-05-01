@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.underwire.server;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 

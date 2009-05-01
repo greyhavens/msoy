@@ -43,7 +43,6 @@ import client.util.Link;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
-
 import client.item.ItemMessages;
 import client.item.SideBar;
 

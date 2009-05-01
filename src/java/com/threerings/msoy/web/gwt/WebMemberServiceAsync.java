@@ -11,7 +11,6 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 
-
 /**
  * The asynchronous (client-side) version of {@link WebMemberService}.
  */

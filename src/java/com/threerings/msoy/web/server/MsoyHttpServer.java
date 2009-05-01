@@ -8,14 +8,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -32,19 +26,14 @@ import org.mortbay.jetty.handler.HandlerCollection;
 import org.mortbay.jetty.handler.RequestLogHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.resource.Resource;
 
-import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.pulse.web.server.PulseServlet;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.server.AdminServlet;
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
-import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -86,8 +75,6 @@ import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.room.server.WebRoomServlet;
 
-import com.threerings.msoy.web.gwt.ABTestUtil;
-import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebUserService;
 

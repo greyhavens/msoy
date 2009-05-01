@@ -825,7 +825,6 @@ public abstract class ItemEditor extends FlowPanel
         }).setContext(details).prompt();
     }
 
-
     protected void doEasyRemix (String mediaId, MediaDesc prototype, MediaDesc image)
     {
         int popWidth = getOffsetWidth() - 8;

@@ -3,7 +3,6 @@
 
 package client.support;
 
-
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
 

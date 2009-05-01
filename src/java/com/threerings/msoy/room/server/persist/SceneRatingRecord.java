@@ -18,7 +18,6 @@ public class SceneRatingRecord extends RatingRecord
     public static final ColumnExp RATING = colexp(_R, "rating");
     // AUTO-GENERATED: FIELDS END
 
-
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link SceneRatingRecord}
