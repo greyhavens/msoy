@@ -74,7 +74,10 @@ public class MsoyTableManager extends TableManager
         // want huge numbers of hidden single player tables clogging up our lobby object
         ParlorGameConfig config = (ParlorGameConfig)table.config;
         MsoyMatchConfig matchConfig = (MsoyMatchConfig)config.getGameDefinition().match;
-        if (config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable) {
+        if (config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable &&
+            // we need to keep at least one table around otherwise the lobby will shutdown which is
+            // bad, oh god the hackery
+            _lobj.tables.size() > 1) {
             purgeTable(table);
         }
     }
