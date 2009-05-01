@@ -69,6 +69,7 @@ public class BureauInfoPanel extends VerticalPanel
         // TODO: show the running time or time since shutdown
         // TODO: show a table of contents and link to specific bureau info
         // TODO: show a kill button for each bureau
+        // TODO: allow sorting by different things
 
         _infoPanel.clear();
 
@@ -94,20 +95,20 @@ public class BureauInfoPanel extends VerticalPanel
         int row = 0;
 
         table.setText(row, 0, _msgs.bureauHostname());
-        table.setText(row, 1, _msgs.bureauError());
-        table.setText(row, 2, _msgs.bureauConnections());
+        table.setText(row, 1, _msgs.bureauConnections());
+        table.setText(row, 2, _msgs.bureauError());
         table.getRowFormatter().addStyleName(row++, "header");
 
         for (int ii = 0; ii < infos.length; ++ii) {
             BureauLauncherInfo info = infos[ii];
             table.setText(row, 0, getShortHostName(info.hostname));
-            table.setText(row, 1, info.error==null ? "" : info.error);
             StringBuilder connections = new StringBuilder();
             for (String connection : info.connections) {
                 connections.append(connections.length() > 0 ? ", " : "");
                 connections.append(getShortHostName(connection));
             }
-            table.setText(row++, 2, connections.toString());
+            table.setText(row, 1, connections.toString());
+            table.setText(row++, 2, info.error==null ? "" : info.error);
         }
 
         return table;
@@ -129,9 +130,12 @@ public class BureauInfoPanel extends VerticalPanel
             return new Label(_msgs.bureauNoBureaus());
         }
 
+        // sort so that running bureaus are first
         Collections.sort(binfos, new Comparator<BureauInfo>() {
             public int compare (BureauInfo o1, BureauInfo o2) {
-                return o1.bureauId.compareTo(o2.bureauId);
+                int cmp = Boolean.valueOf(o2.isRunning()).compareTo(
+                    Boolean.valueOf(o2.isRunning()));
+                return cmp == 0 ? o1.bureauId.compareTo(o2.bureauId) : cmp;
             }
         });
 
@@ -158,8 +162,9 @@ public class BureauInfoPanel extends VerticalPanel
             } else {
                 table.setText(row, col++, "");
             }
-            table.setText(row, col++,
-                binfo.launchTime > binfo.shutdownTime ? _msgs.bureauRunning() : _msgs.bureauStopped());
+            boolean running = binfo.isRunning();
+            table.setText(row, col, running ? _msgs.bureauRunning() : _msgs.bureauStopped());
+            table.getFlexCellFormatter().setStyleName(row, col++, running ? "running" : "stopped");
             table.setText(row, col++, getShortHostName(launchers.get(binfo).hostname));
             String launchTime = "";
             if (binfo.launchTime != 0) {

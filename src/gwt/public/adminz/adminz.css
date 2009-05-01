@@ -381,3 +381,12 @@
 .bureauInfoPanel .info .row1 {
   background: #dbeffc;
 }
+
+.bureauInfoPanel .info .running {
+  color: #80FF80;
+}
+
+.bureauInfoPanel .info .stopped {
+  color: #FF8080;
+}
+

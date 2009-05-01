@@ -41,6 +41,14 @@ public class BureauLauncherInfo
         /** Game that this bureau is running (filled in by world server). */
         public Game game;
 
+        /**
+         * Returns true if the bureau represented by this info was running.
+         */
+        public boolean isRunning ()
+        {
+            return launchTime > shutdownTime;
+        }
+
         public String toString ()
         {
             return "BureauInfo(bureauId=" + bureauId + ", launchTime=" + launchTime +
