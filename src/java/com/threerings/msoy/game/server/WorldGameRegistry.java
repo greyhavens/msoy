@@ -3,12 +3,17 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
@@ -75,6 +80,17 @@ public class WorldGameRegistry
     {
         // listen for peer connections so that we can manage multiply claimed games
         _peerMan.peerObs.add(this);
+    }
+
+    /**
+     * Returns true if we're hosting or currently resolving the specified game. It is possible that
+     * this will return true during the window where we're finding out that some other node is
+     * hosting a game, but we'll just gloss over that because we like the occasional inexplicable
+     * behavior and doing the "right thing" is extremely complicated.
+     */
+    public boolean isHosting (int gameId)
+    {
+        return _games.contains(gameId) || _penders.containsKey(gameId);
     }
 
     /**
@@ -165,22 +181,15 @@ public class WorldGameRegistry
             return;
         }
 
-        // we're going to need the Game item to finish resolution
-        _invoker.postUnit(new PersistingUnit("locateGame", listener) {
-            public void invokePersistent () throws Exception {
-                GameRecord grec = _mgameRepo.loadGameRecord(gameId);
-                _game = (grec == null) ? null : (Game)grec.toItem();
-            }
-            public void handleSuccess () {
-                if (_game == null) {
-                    log.warning("Requested to locate unknown game", "game", gameId);
-                    _listener.requestFailed(GameCodes.INTERNAL_ERROR);
-                } else {
-                    lockGame(_game, (WorldGameService.LocationListener)_listener);
-                }
-            }
-            protected Game _game;
-        });
+        // either we're resolving it, or we're going to start resolving it
+        GameResolver resolver = _penders.get(gameId);
+        if (resolver == null) {
+            _penders.put(gameId, resolver = new GameResolver(gameId));
+            resolver.lners.add(listener); // needs to be added before start()
+            resolver.start();
+        } else {
+            resolver.lners.add(listener);
+        }
     }
 
     // from interface MsoyGameProvider
@@ -255,39 +264,31 @@ public class WorldGameRegistry
         return true;
     }
 
-    protected void lockGame (final Game game, final WorldGameService.LocationListener listener)
+    protected void resolveGame (final int gameId, final GameResolver resolver)
     {
-        // otherwise obtain a lock and resolve the game ourselves
-        _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId),
-            new ResultListener<String>() {
-            public void requestCompleted (String nodeName) {
-                if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
-                    log.debug("Got lock, resolving " + game.name + ".");
-                    hostGame(game, listener);
-
-                } else if (nodeName != null) {
-                    // some other peer got the lock before we could; send them there
-                    log.debug("Didn't get lock, going to " + game.gameId + "@" + nodeName + ".");
-                    if (!checkAndSendToNode(game.gameId, listener)) {
-                        log.warning("Failed to acquire lock but no registered host for game!?",
-                                    "game", game.gameId);
-                        listener.requestFailed(GameCodes.INTERNAL_ERROR);
-                    }
-
+        // we're going to need the Game item to finish resolution
+        _invoker.postUnit(new RepositoryUnit("resolveGame") {
+            public void invokePersist () throws Exception {
+                GameRecord grec = _mgameRepo.loadGameRecord(gameId);
+                _game = (grec == null) ? null : (Game)grec.toItem();
+            }
+            public void handleSuccess () {
+                if (_game == null) {
+                    log.warning("Requested to resolve unknown game", "game", gameId);
+                    resolver.fail();
                 } else {
-                    log.warning("Game lock acquired by null?", "game", game.gameId);
-                    listener.requestFailed(GameCodes.INTERNAL_ERROR);
+                    hostGame(_game, resolver);
                 }
             }
-
-            public void requestFailed (Exception cause) {
-                log.warning("Failed to acquire game resolution lock", "game", game.gameId, cause);
-                listener.requestFailed(GameCodes.INTERNAL_ERROR);
+            public void handleFailure (Exception e) {
+                log.warning("Failed to resolve game", "game", gameId, e);
+                resolver.fail();
             }
+            protected Game _game;
         });
     }
 
-    protected void hostGame (Game game, WorldGameService.LocationListener listener)
+    protected void hostGame (Game game, GameResolver resolver)
     {
         if (!_games.add(game.gameId)) {
             log.warning("Requested to host game that we're already hosting?", "game", game.gameId);
@@ -295,7 +296,8 @@ public class WorldGameRegistry
             log.info("Hosting game", "game", game.gameId, "name", game.name);
             _peerMan.gameDidStartup(game.gameId, game.name);
         }
-        listener.gameLocated(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
+        // this will notify the waiting listeners, release our lock and clean itself up
+        resolver.finish(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
     }
 
     /** Handles dispatching invitations to users wherever they may be. */
@@ -321,8 +323,82 @@ public class WorldGameRegistry
         @Inject protected transient NotificationManager _notifyMan;
     }
 
+    protected class GameResolver implements ResultListener<String>
+    {
+        public final List<WorldGameService.LocationListener> lners = Lists.newArrayList();
+
+        public GameResolver (int gameId) {
+            _gameId = gameId;
+        }
+
+        public void start () {
+            _peerMan.acquireLock(MsoyPeerManager.getGameLock(_gameId), this);
+        }
+
+        public void finish (String host, int port) {
+            for (WorldGameService.LocationListener listener : lners) {
+                listener.gameLocated(host, port);
+            }
+            clear();
+        }
+
+        public void requestCompleted (String nodeName) {
+            if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
+                log.debug("Got lock, resolving", "game", _gameId);
+                _lock = MsoyPeerManager.getGameLock(_gameId); // note that we got the lock
+                resolveGame(_gameId, this);
+
+            } else if (nodeName != null) {
+                // some other peer got the lock before we could; send them there
+                log.debug("Didn't get lock", "game", _gameId, "remote", nodeName);
+                Tuple<String, HostedGame> rhost = _peerMan.getGameHost(_gameId);
+                if (rhost != null) {
+                    finish(_peerMan.getPeerPublicHostName(rhost.left),
+                           _peerMan.getPeerPort(rhost.left));
+                } else {
+                    log.warning("Failed to acquire lock but no registered host for game!?",
+                                "game", _gameId);
+                    fail();
+                }
+
+            } else {
+                log.warning("Game lock acquired by null?", "game", _gameId);
+                fail();
+            }
+        }
+
+        public void requestFailed (Exception cause) {
+            log.warning("Failed to acquire game resolution lock", "game", _gameId, cause);
+            fail();
+        }
+
+        public void fail () {
+            for (WorldGameService.LocationListener listener : lners) {
+                listener.requestFailed(GameCodes.INTERNAL_ERROR);
+            }
+            clear();
+        }
+
+        protected void clear ()
+        {
+            // clear ourselves from the penders table
+            _penders.remove(_gameId);
+
+            // if we got the lock, we need to release it
+            if (_lock != null) {
+                _peerMan.releaseLock(_lock, new ResultListener.NOOP<String>());
+            }
+        }
+
+        protected int _gameId;
+        protected MsoyNodeObject.Lock _lock; // filled in if we get the lock
+    }
+
     /** A map of all games hosted on this server. */
     protected ArrayIntSet _games = new ArrayIntSet();
+
+    /** A map of games pending resolution. */
+    protected IntMap<GameResolver> _penders = IntMaps.newHashIntMap();
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;

@@ -400,8 +400,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.debug("Hosting game", "id", gameId, "name", name);
         _mnobj.addToHostedGames(new HostedGame(gameId, name));
-        // releases our lock on this game now that it is resolved and we are hosting it
-        releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
     }
 
     /**

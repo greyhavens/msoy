@@ -823,6 +823,13 @@ public class GameGameRegistry
                                InvocationService.ResultListener listener)
         throws InvocationException
     {
+        // if we aren't hosting this game, fail
+        if (!_wgameReg.isHosting(gameId)) {
+            log.warning("Requested to identify lobby for game we're not hosting", "game", gameId,
+                        "caller", caller.who());
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
         // if we're already resolving this lobby, add this listener to the list of those interested
         // in the outcome
         ResultListenerList list = _loadingLobbies.get(gameId);
