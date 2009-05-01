@@ -144,6 +144,7 @@ public class WorldGameRegistry
         if (!_games.remove(gameId)) {
             log.warning("Requested to clear game that we're not hosting?", "game", gameId);
         } else {
+            log.info("No longer hosting game", "game", gameId);
             _peerMan.gameDidShutdown(gameId);
         }
     }
@@ -172,7 +173,7 @@ public class WorldGameRegistry
             }
             public void handleSuccess () {
                 if (_game == null) {
-                    log.warning("Requested to locate unknown game", "id", gameId);
+                    log.warning("Requested to locate unknown game", "game", gameId);
                     _listener.requestFailed(GameCodes.INTERNAL_ERROR);
                 } else {
                     lockGame(_game, (WorldGameService.LocationListener)_listener);
@@ -269,18 +270,18 @@ public class WorldGameRegistry
                     log.debug("Didn't get lock, going to " + game.gameId + "@" + nodeName + ".");
                     if (!checkAndSendToNode(game.gameId, listener)) {
                         log.warning("Failed to acquire lock but no registered host for game!?",
-                                    "id", game.gameId);
+                                    "game", game.gameId);
                         listener.requestFailed(GameCodes.INTERNAL_ERROR);
                     }
 
                 } else {
-                    log.warning("Game lock acquired by null?", "id", game.gameId);
+                    log.warning("Game lock acquired by null?", "game", game.gameId);
                     listener.requestFailed(GameCodes.INTERNAL_ERROR);
                 }
             }
 
             public void requestFailed (Exception cause) {
-                log.warning("Failed to acquire game resolution lock", "id", game.gameId, cause);
+                log.warning("Failed to acquire game resolution lock", "game", game.gameId, cause);
                 listener.requestFailed(GameCodes.INTERNAL_ERROR);
             }
         });
@@ -291,6 +292,7 @@ public class WorldGameRegistry
         if (!_games.add(game.gameId)) {
             log.warning("Requested to host game that we're already hosting?", "game", game.gameId);
         } else {
+            log.info("Hosting game", "game", game.gameId, "info", game);
             _peerMan.gameDidStartup(game.gameId, game.name);
         }
         listener.gameLocated(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
