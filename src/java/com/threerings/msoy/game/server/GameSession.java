@@ -54,17 +54,6 @@ public class GameSession extends CrowdSession
     }
 
     @Override // from PresentsSession
-    protected void sessionConnectionClosed ()
-    {
-        super.sessionConnectionClosed();
-
-        if (_plobj != null) {
-            // there's no sensible way to resume sessions to a game at the moment
-            safeEndSession();
-        }
-    }
-
-    @Override // from PresentsSession
     protected void sessionDidEnd ()
     {
         super.sessionDidEnd();
@@ -81,6 +70,12 @@ public class GameSession extends CrowdSession
 
         // clear out our player object reference
         _plobj = null;
+    }
+
+    @Override // from PresentsSession
+    protected long getFlushTime ()
+    {
+        return 10 * 1000L; // give them just long enough to replace their session
     }
 
     /** A casted reference to the userobject. */
