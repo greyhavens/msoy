@@ -73,7 +73,6 @@ import com.threerings.msoy.room.server.RoomManager;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.ContentDelegate;
@@ -247,7 +246,7 @@ public class AVRGameManager extends PlaceManager
         _gameObj.setContentService(addDispatcher(new ContentDispatcher(this)));
         _gameObj.setPrizeService(addDispatcher(new PrizeDispatcher(this)));
         _gameObj.setMessageService(addDispatcher(new WhirledGameMessageDispatcher(
-            new WhirledGameMessageHandler(_gameObj, MsoyUserIdentifier.SINGLETON) {
+            new WhirledGameMessageHandler(_gameObj) {
                 @Override protected ClientObject getAudienceMember (int id)
                     throws InvocationException {
                     ClientObject target = null;

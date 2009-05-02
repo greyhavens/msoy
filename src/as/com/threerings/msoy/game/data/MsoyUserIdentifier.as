@@ -10,9 +10,8 @@ import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.msoy.data.all.MemberName;
 
 public class MsoyUserIdentifier
-    implements UserIdentifier
 {
-    public function getUserId (name :Name) :int
+    public static function getUserId (name :Name) :int
     {
         return MemberName(name).getMemberId();
     }

@@ -102,8 +102,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
 
-import com.threerings.msoy.game.data.MsoyUserIdentifier;
-
 import com.threerings.msoy.party.server.PartyRegistry;
 
 import com.threerings.msoy.room.client.RoomService;
@@ -1206,7 +1204,7 @@ public class RoomManager extends SpotSceneManager
                 }
             }};
         final WhirledGameMessageHandler messageService =
-            new WhirledGameMessageHandler(props, MsoyUserIdentifier.SINGLETON) {
+            new WhirledGameMessageHandler(props) {
             @Override protected ClientObject getAudienceMember (int id)
                 throws InvocationException {
                 // We don't support private messages in rooms (the client should use

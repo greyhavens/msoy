@@ -47,7 +47,7 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
-import com.threerings.parlor.game.server.GameManager;
+import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
@@ -213,8 +213,8 @@ public class MsoyServer extends MsoyBaseServer
         // tell our dictionary manager where to find its dictionaries
         _dictMan.init("data/dictionary");
 
-        // tell GameManager how to identify our users
-        GameManager.setUserIdentifier(MsoyUserIdentifier.SINGLETON);
+        // tell games how to identify our users
+        UserIdentifier.setIder(new MsoyUserIdentifier());
 
         // TEMP: give a peer manager reference to MemberNodeActions
         MemberNodeActions.init(_peerMan);

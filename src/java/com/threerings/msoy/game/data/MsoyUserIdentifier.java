@@ -10,11 +10,9 @@ import com.threerings.parlor.game.data.UserIdentifier;
 import com.threerings.msoy.data.all.MemberName;
 
 public class MsoyUserIdentifier
-    implements UserIdentifier
+    implements UserIdentifier.Ider
 {
-    public static final MsoyUserIdentifier SINGLETON = new MsoyUserIdentifier();
-
-    // from UserIdentifier
+    // from UserIdentifier.Ider
     public int getUserId (Name name)
     {
         return ((MemberName) name).getMemberId();

@@ -16,9 +16,9 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.parlor.game.client.GameController;
-
 import com.threerings.flex.CommandMenu;
+
+import com.threerings.parlor.game.data.UserIdentifier;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
@@ -84,8 +84,8 @@ public class GameDirector extends BasicDirector
         super(ctx);
         _wctx = ctx;
 
-        com.threerings.parlor.game.client.GameController.setUserIdentifier(
-            new MsoyUserIdentifier());
+        // set up our user identifier
+        UserIdentifier.setIder(MsoyUserIdentifier.getUserId);
     }
 
     public function dispatchGamingStateChanged () :void

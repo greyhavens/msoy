@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.parlor.game.data.UserIdentifier;
+
 import com.whirled.game.client.ThaneGameBackend;
 import com.whirled.game.client.ThaneGameController;
 
@@ -18,7 +20,7 @@ public class MsoyThaneGameController extends ThaneGameController
         super();
 
         // init the static identifier each time. Not sure if there's a better place for it.
-        _userIder = new MsoyUserIdentifier();
+        UserIdentifier.setIder(MsoyUserIdentifier.getUserId);
     }
 
     /** @inheritDoc */
