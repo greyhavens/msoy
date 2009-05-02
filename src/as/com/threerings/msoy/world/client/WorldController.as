@@ -5,15 +5,19 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.external.ExternalInterface;
 
 import mx.controls.Button;
 
+import mx.styles.StyleManager;
+
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
@@ -79,11 +83,17 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.skins.CommentButton;
 
+import com.threerings.msoy.room.client.PlaylistMusicDialog;
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
+import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetName;
+import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * Extends the MsoyController with World specific bits.
@@ -92,6 +102,9 @@ public class WorldController extends MsoyController
 {
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
+
+    /** Command to display the room menu. */
+    public static const POP_ROOM_MENU :String = "PopRoomMenu";
 
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "RoomEdit";
@@ -283,7 +296,7 @@ public class WorldController extends MsoyController
         CommandMenu.addSeparator(menuData);
 
         // slap your friends in a menu
-        var friends :Array = new Array();
+        var friends :Array = [];
         for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
             var item :Object = {
                 label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
@@ -345,6 +358,70 @@ public class WorldController extends MsoyController
         var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse(), _topPanel);
         menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
         menu.popUpAt(r.left, r.top, true);
+    }
+
+    /**
+     * Handles the POP_ROOM_MENU command.
+     */
+    public function handlePopRoomMenu (trigger :Button) :void
+    {
+        var menuData :Array = [];
+
+        var roomView :RoomView = _wctx.getPlaceView() as RoomView;
+        var setZoom :Function;
+        var zoom :Number;
+        if (roomView is RoomStudioView) {
+            zoom = RoomStudioView(roomView).getZoom();
+            setZoom = RoomStudioView(roomView).setZoom;
+        } else {
+            zoom = Math.round(Prefs.getZoom());
+            setZoom = Prefs.setZoom;
+        }
+
+        CommandMenu.addTitle(menuData, roomView.getPlaceName());
+        // TODO: add room-specific "visit group" and "play game" entries. From GO menu.
+        menuData.push({ label: Msgs.GENERAL.get("b.editScene"), icon: ROOM_EDIT_ICON,
+             command: ROOM_EDIT, enabled: roomView.getRoomController().canManageRoom() });
+        menuData.push({ label: Msgs.GENERAL.get("b.comment"), icon: CommentButton,
+            command: MsoyController.VIEW_COMMENT_PAGE });
+        menuData.push({ label: Msgs.GENERAL.get("b.snapshot"), icon: SNAPSHOT_ICON,
+            command: doSnapshot });
+        menuData.push({ label: Msgs.GENERAL.get("b.music"), icon: MUSIC_ICON,
+            command: MethodQueue.callLater, arg: [ doShowMusic, [ trigger ] ],
+            enabled: (_music != null) }); // pop it later so that it avoids the menu itself
+        menuData.push({ label: Msgs.GENERAL.get("b.zoom"), icon: ZOOM_ICON,
+            command: setZoom, arg: 1 - zoom, enabled: roomView.canScale() });
+
+        var r :Rectangle = trigger.getBounds(trigger.stage);
+        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
+        menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
+        menu.popUpAt(r.left, r.top, true);
+    }
+
+    // TODO: move
+    protected function doSnapshot () :void
+    {
+        if (_snapPanel == null) {
+            _snapPanel = new SnapshotPanel(_wctx);
+            _snapPanel.addCloseCallback(function () :void {
+                _snapPanel = null;
+            });
+        }
+    }
+
+    // TODO: move
+    protected function doShowMusic (trigger :Button) :void
+    {
+        if (_music != null && _musicDialog == null) {
+            var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
+            var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
+            _musicDialog = new PlaylistMusicDialog(
+                _wctx, trigger.localToGlobal(new Point()), room, scene);
+            _musicDialog.addCloseCallback(function () :void {
+                _musicDialog = null;
+            });
+            _musicDialog.open();
+        }
     }
 
     /**
@@ -798,7 +875,9 @@ public class WorldController extends MsoyController
             _musicPlayer.load(music.audioMedia.getMediaPath(),
                 [ music.audioMedia, music.getIdent() ]);
         }
-        WorldControlBar(_wctx.getControlBar()).setMusicPlaying(music != null);
+        if (music == null && _musicDialog != null) {
+            _musicDialog.close();
+        }
     }
 
     /**
@@ -1531,6 +1610,12 @@ public class WorldController extends MsoyController
             groups.push({ label: Msgs.GENERAL.get("m.no_groups"), enabled: false });
         }
         menuData.push({ label: Msgs.GENERAL.get("l.visit_groups"), children: groups });
+
+        // and the world tour, baby!
+        CommandMenu.addSeparator(menuData);
+        menuData.push({ label: Msgs.WORLD.get("b.start_tour"),
+            enabled: !_wctx.getTourDirector().isOnTour(),
+            command: _wctx.getTourDirector().startTour });
     }
 
     /** Giver of life, context. */
@@ -1547,6 +1632,10 @@ public class WorldController extends MsoyController
 
     /** Have we paused the music so that we can play some media in gwt? */
     protected var _musicPausedForGwt :Boolean;
+
+    protected var _musicDialog :PlaylistMusicDialog;
+
+    protected var _snapPanel :SnapshotPanel;
 
     /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
      * subsequently move between servers (and log off and on in the process). */
@@ -1568,5 +1657,17 @@ public class WorldController extends MsoyController
     protected static const MAX_RECENT_SCENES :int = 11;
 
     private static const log :Log = Log.getLog(WorldController);
+
+    [Embed(source="../../../../../../../rsrc/media/skins/controlbar/editroom.png")]
+    protected static const ROOM_EDIT_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/controlbar/music.png")]
+    protected static const MUSIC_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/controlbar/zoom.png")]
+    protected static const ZOOM_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/controlbar/snapshot.png")]
+    protected static const SNAPSHOT_ICON :Class;
 }
 }

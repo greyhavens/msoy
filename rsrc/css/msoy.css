@@ -553,14 +553,13 @@ TabNavigator, TabBar {
 
 /** All these buttons use the ImageButtonSkin and need the per-state skins cleared out. */
 .imageButton,
-.controlBarButtonGo,
-.controlBarButtonChat, .controlBarButtonEdit, .controlBarButtonZoom, .controlBarButtonComment,
+.controlBarButtonGo, .controlBarButtonRoom, .controlBarButtonChat,
 .controlBarButtonInstructions, .controlBarButtonShare, .controlBarButtonScores,
-.controlBarHoverZone, .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
+.controlBarHoverZone, .controlBarFriendButton, .controlBarTalkButton,
 .controlBarIdleButton, .controlBarScaleButton, .controlBarGameButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
-.controlBarButtonMusic, .controlBarPartyButton, .controlBarConfig,
+.controlBarPartyButton, .controlBarConfig,
 .roomEditScaleDown, .roomEditScaleUp, .roomEditMoveDown, .roomEditMoveUp,
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
@@ -585,20 +584,12 @@ TabNavigator, TabBar {
   image: Embed(source="../media/skins/controlbar/go.png");
 }
 
-.controlBarButtonEdit {
-  image: Embed(source="../media/skins/controlbar/editroom.png");
+.controlBarButtonRoom {
+  image: Embed(source="../media/skins/controlbar/room.png");
 }
 
 .controlBarConfig {
   image: Embed(source="../media/skins/controlbar/config.png");
-}
-
-.controlBarButtonZoom {
-  image: Embed(source="../media/skins/controlbar/zoom.png");
-}
-
-.controlBarButtonComment {
-  image: ClassReference("com.threerings.msoy.ui.skins.CommentButton");
 }
 
 .controlBarButtonInstructions {
@@ -615,10 +606,6 @@ TabNavigator, TabBar {
 
 .controlBarHoverZone {
   image: Embed(source="../media/skins/controlbar/clickable.png");
-}
-
-.controlBarButtonSnapshot {
-  image: Embed(source="../media/skins/controlbar/snapshot.png");
 }
 
 .controlBarFriendButton {
@@ -643,10 +630,6 @@ TabNavigator, TabBar {
 
 .controlBarHomePageGridButton {
   image: Embed(source="../media/skins/controlbar/grid.png");
-}
-
-.controlBarButtonMusic {
-  image: Embed(source="../media/skins/controlbar/music.png");
 }
 
 .controlBarPartyButton {

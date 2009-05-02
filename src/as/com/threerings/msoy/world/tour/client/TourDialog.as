@@ -15,6 +15,7 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.Stars;
+import com.threerings.msoy.ui.skins.CommentButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -34,7 +35,8 @@ public class TourDialog extends FlyingPanel
         nextBtn.styleName = "tourNext";
 
         var commentBtn :CommandButton = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
-        commentBtn.styleName = "controlBarButtonComment"
+        commentBtn.styleName = "imageButton";
+        commentBtn.setStyle("image", CommentButton);
         commentBtn.toolTip = Msgs.GENERAL.get("i.comment");
 
         _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);

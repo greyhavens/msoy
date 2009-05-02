@@ -86,6 +86,14 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Can we zoom in and out?
+     */
+    public function canScale () :Boolean
+    {
+        return _canScale;
+    }
+
+    /**
      * Returns the layout object responsible for room layout.
      */
     public function get layout () :RoomLayout
@@ -745,9 +753,8 @@ public class RoomView extends Sprite
         }
         const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
         if (!UberClient.isFeaturedPlaceView()) {
-            const canScale :Boolean = maxScale > minScale;
-            WorldControlBar(_ctx.getControlBar()).enableZoomControl(canScale);
-            if (canScale) {
+            _canScale = maxScale > minScale;
+            if (_canScale) {
                 return minScale + (maxScale - minScale) * getZoom();
             }
         }
@@ -1040,6 +1047,9 @@ public class RoomView extends Sprite
 
     /** Are we actually showing? */
     protected var _showing :Boolean = true;
+
+    /** Can we zoom in and out? */
+    protected var _canScale :Boolean = false;
 
     /** The model of the current scene. */
     protected var _scene :MsoyScene;

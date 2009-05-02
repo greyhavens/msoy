@@ -64,9 +64,6 @@ public class ControlBar extends HBox
     /** Handles full screening. */
     public var fullBtn :CommandButton;
 
-    /** Handles commenting on the current scene or game. */
-    public var commentBtn :CommandButton;
-
     /** Handles bringing up a share dialog. */
     public var shareBtn :CommandButton;
 
@@ -211,9 +208,6 @@ public class ControlBar extends HBox
         fullBtn = createButton("controlBarButtonFull", "i.full");
         fullBtn.setCommand(MsoyController.SET_DISPLAY_STATE);
 
-        commentBtn = createButton("controlBarButtonComment", "i.comment");
-        commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
-
         shareBtn = createButton("controlBarButtonShare", "i.share");
         shareBtn.toggle = true;
         shareBtn.setCallback(FloatingPanel.createPopper(function () :ShareDialog {
@@ -272,19 +266,11 @@ public class ControlBar extends HBox
 
         // visibility conditions for our buttons
         function showChat () :Boolean {
-            return !isInViewer() && state.showChat;
-        }
-
-        function showNotification () :Boolean {
-            return !isInViewer();
+            return isNotInViewer() && state.showChat;
         }
 
         function showShare () :Boolean {
             return state.inRoom || state.inGame;
-        }
-
-        function showComment () :Boolean {
-            return state.inRoom;
         }
 
         function showGame () :Boolean {
@@ -299,21 +285,20 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(volBtn, true, VOLUME_PRIORITY);
-        addButton(goBtn, true, GLOBAL_PRIORITY);
+        addButton(goBtn, isNotInViewer, GLOBAL_PRIORITY);
         addButton(fullBtn, isFullOn, GLOBAL_PRIORITY);
 
         addButton(shareBtn, showShare);
-        addButton(commentBtn, showComment);
         addButton(gameBtn, showGame);
 
         if (_notificationDisplay != null) {
-            addControl(_notificationDisplay, showNotification, NOTIFICATION_SECTION);
+            addControl(_notificationDisplay, isNotInViewer, NOTIFICATION_SECTION);
         }
     }
 
-    protected function isInViewer () :Boolean
+    protected function isNotInViewer () :Boolean
     {
-        return false;
+        return true;
     }
 
     /**

@@ -30,20 +30,11 @@ import com.threerings.msoy.room.data.MsoyScene;
  */
 public class WorldControlBar extends ControlBar
 {
-    /** Handles room zooming. */
-    public var zoomBtn :CommandButton;
-
-    /** Button for editing the current scene. */
-    public var roomEditBtn :CommandButton;
+    /** A button for room-related crap. */
+    public var roomBtn :CommandButton;
 
     /** Hovering over this shows clickable components. */
     public var hotZoneBtn :CommandButton;
-
-    /** Button to display info about the currently playing music. */
-    public var musicBtn :CommandButton;
-
-    /** Button for room snapshots. */
-    public var snapBtn :CommandButton;
 
     /** A button for popping up the friends list. */
     public var friendsBtn :CommandButton;
@@ -65,56 +56,19 @@ public class WorldControlBar extends ControlBar
         _wctx = ctx;
     }
 
-    public function enableZoomControl (enabled :Boolean ) :void
-    {
-        zoomBtn.enabled = enabled;
-        zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
-        updateZoomButton();
-    }
-
-    public function setMusicPlaying (playing :Boolean) :void
-    {
-        // pop down the dialog if no more music...
-        if (!playing && musicBtn.selected) {
-            musicBtn.activate();
-        }
-
-        FlexUtil.setVisible(musicBtn, playing);
-        _buttons.recheckButtons();
-    }
-
     // from ControlBar
     override protected function createControls () :void
     {
         super.createControls();
 
-        musicBtn = createButton("controlBarButtonMusic", "i.music");
-        musicBtn.toggle = true;
-        FlexUtil.setVisible(musicBtn, false);
-        musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
-            var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
-            var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
-            return new PlaylistMusicDialog(_wctx, musicBtn.localToGlobal(new Point()), room, scene);
-        }, musicBtn));
-
-        roomEditBtn = createButton("controlBarButtonEdit", "i.editScene");
-        roomEditBtn.setCommand(WorldController.ROOM_EDIT);
-        roomEditBtn.enabled = false;
-
-        zoomBtn = createButton("controlBarButtonZoom", "i.zoom");
-        zoomBtn.setCallback(handleToggleZoom);
+        roomBtn = createButton("controlBarButtonRoom", "i.room");
+        roomBtn.setCommand(WorldController.POP_ROOM_MENU, roomBtn);
 
         hotZoneBtn = createButton("controlBarHoverZone", "i.hover");
         hotZoneBtn.toggle = true;
         hotZoneBtn.setCallback(updateHot);
         hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
         hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
-
-        snapBtn = createButton("controlBarButtonSnapshot", "i.snapshot");
-        snapBtn.toggle = true;
-        snapBtn.setCallback(FloatingPanel.createPopper(function () :SnapshotPanel {
-            return new SnapshotPanel(_wctx);
-        }, snapBtn));
 
         friendsBtn = createButton("controlBarFriendButton", "i.friends");
         friendsBtn.toggle = true;
@@ -158,88 +112,33 @@ public class WorldControlBar extends ControlBar
         super.addControls();
         var state :UIState = _ctx.getUIState();
 
-        function showMusic () :Boolean {
+        function isInRoom () :Boolean {
             return state.inRoom;
         }
 
         function showFriends () :Boolean {
-            return !isInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
-        }
-
-        function showHotZone () :Boolean {
-            return state.inRoom;
-        }
-
-        function showZoom () :Boolean {
-            return state.inRoom || isInViewer();
-        }
-
-        function showSnap () :Boolean {
-            return state.inRoom;
-        }
-
-        function showRoomEdit () :Boolean {
-            return state.inRoom;
+            return isNotInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
         }
 
         function showParty () :Boolean {
-            return !isInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
+            return isNotInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
         }
 
-        addButton(musicBtn, showMusic, VOLUME_PRIORITY);
-        //addButton(homePageGridBtn, notInViewer, GLOBAL_PRIORITY);
+        //addButton(homePageGridBtn, isNotInViewer, GLOBAL_PRIORITY);
         addButton(friendsBtn, showFriends, GLOBAL_PRIORITY);
-
-        addButton(hotZoneBtn, showHotZone, PLACE_PRIORITY);
-        addButton(zoomBtn, showZoom, PLACE_PRIORITY);
-
-        addButton(snapBtn, showSnap, PLACE_PRIORITY);
-        addButton(roomEditBtn, showRoomEdit, PLACE_PRIORITY);
-
         addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
+        addButton(roomBtn, isInRoom, PLACE_PRIORITY);
+        addButton(hotZoneBtn, isInRoom, PLACE_PRIORITY);
 
-        if (foolsBtn != null && !isInViewer()) {
-            addButton(foolsBtn, showMusic, VOLUME_PRIORITY);
+        if (foolsBtn != null && isNotInViewer()) {
+            addButton(foolsBtn, isInRoom, VOLUME_PRIORITY);
         }
     }
 
     // from ControlBar
-    override protected function isInViewer () :Boolean
+    override protected function isNotInViewer () :Boolean
     {
-        return !UberClient.isRegularClient();
-    }
-
-    /**
-     * Handle the zoom button.
-     */
-    protected function handleToggleZoom () :void
-    {
-        setZoom(1 - getZoom()); // toggle between 1 and 0
-        updateZoomButton();
-    }
-
-    protected function updateZoomButton () :void
-    {
-        zoomBtn.selected = (getZoom() == 0);
-    }
-
-    protected function getZoom () :Number
-    {
-        // in the "viewer", we don't save the zoom in preferences
-        // and we use Math.round() to adapt older-style settings which could be .5634
-        var studioView :RoomStudioView = _ctx.getPlaceView() as RoomStudioView;
-        return (studioView != null) ? studioView.getZoom() : Math.round(Prefs.getZoom());
-    }
-
-    protected function setZoom (newZoom :Number) :void
-    {
-        // in the "viewer", we don't save the zoom in preferences
-        var studioView :RoomStudioView = _ctx.getPlaceView() as RoomStudioView;
-        if (studioView != null) {
-            studioView.setZoom(newZoom);
-        } else {
-            Prefs.setZoom(newZoom);
-        }
+        return UberClient.isRegularClient();
     }
 
     protected function updateHot (on :Boolean) :void

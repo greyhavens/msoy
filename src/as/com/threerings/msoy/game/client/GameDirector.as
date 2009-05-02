@@ -27,6 +27,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.skins.CommentButton;
 import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.utils.Base64Encoder;
 
@@ -210,7 +211,7 @@ public class GameDirector extends BasicDirector
             menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentLobby});
         }
         menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
-            icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
+            icon: CommentButton });
         menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
         if (Game.isDevelopmentVersion(_liaison.gameId) && !(_liaison is AVRGameLiaison)) {

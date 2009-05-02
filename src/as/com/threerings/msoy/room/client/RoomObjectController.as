@@ -757,11 +757,8 @@ public class RoomObjectController extends RoomController
         _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
         _wdctx.getMuteDirector().addMuteObserver(this);
 
-        var bar :WorldControlBar = WorldControlBar(_wdctx.getControlBar());
-        _roomEditBtn = bar.roomEditBtn;
-        _roomEditBtn.enabled = canManageRoom();
-
         // deactivate any hot zoneiness
+        var bar :WorldControlBar = WorldControlBar(_wdctx.getControlBar());
         if (bar.hotZoneBtn.selected) {
             bar.hotZoneBtn.activate();
         }
@@ -834,12 +831,8 @@ public class RoomObjectController extends RoomController
         _walkTarget.visible = false;
         _flyTarget.visible = false;
 
-        // put the room edit button in the selected state
-        _roomEditBtn.selected = true;
-
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
-            _roomEditBtn.selected = false;
             _editor = null;
         }
 
@@ -1099,9 +1092,6 @@ public class RoomObjectController extends RoomController
 
     /** The room object. */
     protected var _roomObj :RoomObject;
-
-    /** The room edit button, on the control bar (imported). */
-    protected var _roomEditBtn :Button;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
