@@ -612,20 +612,23 @@ public class AwardDelegate extends RatingDelegate
 
     protected int getCappedScore (Percentiler tiler, Player player)
     {
+        // we cap scores at +/- 150% outside a range of [-100,100], we allow +/-100 to ensure that
+        // the scores can grow to a size where +/- 150% does not round back into the existing range
+        // and thereby break our "slow expansion" allowance
         int range = tiler.getMaxScore() - tiler.getMinScore();
+        int minmin = Math.min(tiler.getMinScore() - range/2, -100);
+        int maxmax = Math.min(tiler.getMaxScore() + range/2, 100);
+
         if (tiler.getRecordedCount() < MIN_VALID_SCORES) {
             return player.score;
-
-        } else if (player.score < tiler.getMinScore() - range/2) {
+        } else if (player.score < minmin) {
             log.warning("Capping extremely low score", "game", where(), "player", player.name,
                         "score", player.score, "min", tiler.getMinScore(), "range", range);
-            return tiler.getMinScore() - range/2;
-
-        } else if (player.score > tiler.getMaxScore() + range/2) {
+            return minmin;
+        } else if (player.score > maxmax) {
             log.warning("Capping extremely high score", "game", where(), "player", player.name,
                         "score", player.score, "max", tiler.getMaxScore(), "range", range);
-            return tiler.getMaxScore() + range/2;
-
+            return maxmax;
         } else {
             return player.score;
         }
