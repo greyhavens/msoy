@@ -508,7 +508,6 @@ TabNavigator, TabBar {
   borderStyle: "none";
   paddingBottom: 0;
   paddingTop: 0;
-  paddingLeft: 0;
   paddingRight: 0;
 }
 
@@ -950,15 +949,9 @@ ChatInput {
 }
 
 .headerBar {
+  paddingLeft: 16;
   backgroundImage: Embed(source="../media/skins/headerbar/bg.png");
   backgroundSize: "100%";
-}
-
-.headerBarGoButton {
-  upSkin: Embed(source="../media/skins/headerbar/go_default.jpg");
-  overSkin: Embed(source="../media/skins/headerbar/go_over.jpg");
-  downSkin: Embed(source="../media/skins/headerbar/go_down.jpg");
-  disabledSkin: Embed(source="../media/skins/headerbar/go_disabled.jpg");
 }
 
 .closeButton {

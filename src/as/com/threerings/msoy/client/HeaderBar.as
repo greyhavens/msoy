@@ -80,12 +80,6 @@ public class HeaderBar extends HBox
     {
         super.createChildren();
 
-        _goBtn = new CommandButton();
-        _goBtn.toolTip = Msgs.GENERAL.get("i.go");
-        _goBtn.setCommand(MsoyController.POP_GO_MENU, [ _goBtn, false ]);
-        _goBtn.styleName = "headerBarGoButton";
-        addChild(_goBtn);
-
         _loc = new Label();
         _loc.styleName = "locationName";
         _loc.width = WHIRLED_LOGO_WIDTH;
@@ -247,7 +241,6 @@ public class HeaderBar extends HBox
     protected function handleUIStateChange (event :Event) :void
     {
         var state :UIState = _ctx.getUIState();
-        _goBtn.visible = !(state.embedded && state.inGame);
         _tabsContainer.visible = state.showChat;
     }
 
@@ -266,9 +259,6 @@ public class HeaderBar extends HBox
     protected var _tabs :ChatTabBar;
 
     protected var _tabsContainer :TabsContainer;
-
-    /** The go button. */
-    protected var _goBtn :CommandButton;
 
     /** The currency labels, used only when embedded. Disabled for now.
      * TODO: remove. */
