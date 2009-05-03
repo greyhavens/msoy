@@ -494,10 +494,10 @@ public class MsoyController extends Controller
     {
         _mctx.getUpsellDirector().locationUpdated();
 
-        if (_goMenu != null) {
-            _goMenu.hide();
-            // will be nulled automatically...
-        }
+//        if (_goMenu != null) {
+//            _goMenu.hide();
+//            // will be nulled automatically...
+//        }
     }
 
     /**
