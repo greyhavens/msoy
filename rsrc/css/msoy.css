@@ -949,7 +949,7 @@ ChatInput {
 }
 
 .headerBar {
-  paddingLeft: 16;
+  paddingLeft: 15;
   backgroundImage: Embed(source="../media/skins/headerbar/bg.png");
   backgroundSize: "100%";
 }
