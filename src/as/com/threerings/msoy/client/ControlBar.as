@@ -203,6 +203,7 @@ public class ControlBar extends HBox
         volBtn.setCallback(handlePopVolume);
 
         goBtn = createButton("controlBarButtonGo", "i.go");
+        goBtn.toggle = true;
         goBtn.setCommand(MsoyController.POP_GO_MENU, goBtn);
 
         fullBtn = createButton("controlBarButtonFull", "i.full");

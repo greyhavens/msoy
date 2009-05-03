@@ -1573,34 +1573,10 @@ public class WorldController extends MsoyController
     {
         super.populateGoMenu(menuData);
 
-        const curSceneId :int = getCurrentSceneId();
-        var sceneSubmenu :Array = [];
-        for each (var entry :Object in _recentScenes) {
-            sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
-                command: GO_SCENE, arg: entry.id, enabled: (entry.id != curSceneId) });
-        }
-        if (sceneSubmenu.length == 0) {
-            sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });
-        }
-        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
-
         const me :MemberObject = _wctx.getMemberObject();
-        const ourHomeId :int = me.homeSceneId;
-        if (ourHomeId != 0) {
-            menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
-                enabled: (ourHomeId != curSceneId) });
-        }
+        const curSceneId :int = getCurrentSceneId();
 
-        var friends :Array = [];
-        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
-            friends.push({ label: fe.name.toString(),
-                command: VISIT_MEMBER, arg: fe.name.getMemberId() });
-        }
-        if (friends.length == 0) {
-            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
-        }
-        menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
-
+        // our groups
         var groups :Array = [];
         for each (var gm :GroupMembership in me.getSortedGroups()) {
             groups.push({ label: gm.group.toString(),
@@ -1611,11 +1587,39 @@ public class WorldController extends MsoyController
         }
         menuData.push({ label: Msgs.GENERAL.get("l.visit_groups"), children: groups });
 
-        // and the world tour, baby!
+        // our friends
+        var friends :Array = [];
+        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
+            friends.push({ label: fe.name.toString(),
+                command: VISIT_MEMBER, arg: fe.name.getMemberId() });
+        }
+        if (friends.length == 0) {
+            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
+        }
+        menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
+
+        // recent scenes
+        var sceneSubmenu :Array = [];
+        for each (var entry :Object in _recentScenes) {
+            sceneSubmenu.unshift({ label: StringUtil.truncate(entry.name, 50, "..."),
+                command: GO_SCENE, arg: entry.id, enabled: (entry.id != curSceneId) });
+        }
+        if (sceneSubmenu.length == 0) {
+            sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });
+        }
+        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
+
         CommandMenu.addSeparator(menuData);
+        // and the world tour, baby!
         menuData.push({ label: Msgs.WORLD.get("b.start_tour"),
             enabled: !_wctx.getTourDirector().isOnTour(),
             command: _wctx.getTourDirector().startTour });
+        // and our home
+        const ourHomeId :int = me.homeSceneId;
+        if (ourHomeId != 0) {
+            menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
+                enabled: (ourHomeId != curSceneId) });
+        }
     }
 
     /** Giver of life, context. */

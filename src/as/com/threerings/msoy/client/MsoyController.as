@@ -32,6 +32,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 
@@ -44,6 +45,7 @@ import com.threerings.crowd.data.CrowdCodes;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.flex.ChatControl;
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.Client;
@@ -307,13 +309,8 @@ public class MsoyController extends Controller
     /**
      * Handles the POP_GO_MENU command.
      */
-    public function handlePopGoMenu (trigger :Button) :void
+    public function handlePopGoMenu (trigger :CommandButton) :void
     {
-        if (_goMenu != null) {
-            _goMenu.hide(); // and then will be nulled automatically
-            return;
-        }
-
         var menuData :Array = [];
         // add standard items
         populateGoMenu(menuData);
@@ -327,15 +324,10 @@ public class MsoyController extends Controller
             }
         }
 
-        // TODO: avoid
-        menuData.reverse();
-
         var r :Rectangle = trigger.getBounds(trigger.stage);
-        _goMenu = CommandMenu.createMenu(menuData, _topPanel);
-        _goMenu.popUpAt(r.left, r.top, true);
-        _goMenu.addEventListener(MenuEvent.MENU_HIDE, function (... ignored) :void {
-            _goMenu = null;
-        });
+        var goMenu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
+        //goMenu.setTriggerButton(trigger);
+        goMenu.popUpAt(r.left, r.top, true);
     }
 
     /**
@@ -810,9 +802,9 @@ public class MsoyController extends Controller
      */
     protected function populateGoMenu (menuData :Array) :void
     {
-        // always put "back" first
-        menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
-            enabled: canMoveBack() });
+//        // always put "back" first
+//        menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
+//            enabled: canMoveBack() });
     }
 
     /**
@@ -852,9 +844,6 @@ public class MsoyController extends Controller
 
     /** A timer to log us out if we've been idle too long. */
     protected var _byebyeTimer :Timer;
-
-    /** The "go" menu, while it's up. */
-    protected var _goMenu :CommandMenu;
 
     /** Functions that can be called to populate the "go" menu. */
     protected var _goMenuProviders :Array = [];
