@@ -401,32 +401,6 @@ public class WorldController extends MsoyController
         popControlBarMenu(menuData, trigger);
     }
 
-    // TODO: move
-    protected function doSnapshot () :void
-    {
-        if (_snapPanel == null) {
-            _snapPanel = new SnapshotPanel(_wctx);
-            _snapPanel.addCloseCallback(function () :void {
-                _snapPanel = null;
-            });
-        }
-    }
-
-    // TODO: move
-    protected function doShowMusic (trigger :Button) :void
-    {
-        if (_music != null && _musicDialog == null) {
-            var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
-            var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
-            _musicDialog = new PlaylistMusicDialog(
-                _wctx, trigger.localToGlobal(new Point()), room, scene);
-            _musicDialog.addCloseCallback(function () :void {
-                _musicDialog = null;
-            });
-            _musicDialog.open();
-        }
-    }
-
     /**
      * Handles the VIEW_COMMENTED_ITEM command.
      */
@@ -1618,6 +1592,30 @@ public class WorldController extends MsoyController
         if (ourHomeId != 0) {
             menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
                 enabled: (ourHomeId != curSceneId) });
+        }
+    }
+
+    protected function doSnapshot () :void
+    {
+        if (_snapPanel == null) {
+            _snapPanel = new SnapshotPanel(_wctx);
+            _snapPanel.addCloseCallback(function () :void {
+                _snapPanel = null;
+            });
+        }
+    }
+
+    protected function doShowMusic (trigger :Button) :void
+    {
+        if (_music != null && _musicDialog == null) {
+            var room :RoomObject = _wctx.getLocationDirector().getPlaceObject() as RoomObject;
+            var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
+            _musicDialog = new PlaylistMusicDialog(
+                _wctx, trigger.localToGlobal(new Point()), room, scene);
+            _musicDialog.addCloseCallback(function () :void {
+                _musicDialog = null;
+            });
+            _musicDialog.open();
         }
     }
 
