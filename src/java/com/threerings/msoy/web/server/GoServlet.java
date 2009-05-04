@@ -101,7 +101,7 @@ public class GoServlet extends HttpServlet
                     }
                 }
                 if (vec == null) {
-                    log.warning("Thought we had an entry vector but didn't!?", "path", path);
+                    log.info("Passing through malformed entry vector", "path", path);
 
                 } else if (info != null) {
                     // if we assigned this user a visitor info on this request, that means they are
