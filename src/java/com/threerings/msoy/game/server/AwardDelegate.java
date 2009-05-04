@@ -617,7 +617,7 @@ public class AwardDelegate extends RatingDelegate
         // and thereby break our "slow expansion" allowance
         int range = tiler.getMaxScore() - tiler.getMinScore();
         int minmin = Math.min(tiler.getMinScore() - range/2, -100);
-        int maxmax = Math.min(tiler.getMaxScore() + range/2, 100);
+        int maxmax = Math.max(tiler.getMaxScore() + range/2, 100);
 
         if (tiler.getRecordedCount() < MIN_VALID_SCORES) {
             return player.score;
