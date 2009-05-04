@@ -30,6 +30,9 @@ import com.threerings.msoy.room.data.MsoyScene;
  */
 public class WorldControlBar extends ControlBar
 {
+    /** A special copy of the zoom button for use in the viewer. */
+    public var zoomBtn :CommandButton;
+
     /** A button for room-related crap. */
     public var roomBtn :CommandButton;
 
@@ -60,6 +63,11 @@ public class WorldControlBar extends ControlBar
     override protected function createControls () :void
     {
         super.createControls();
+
+        zoomBtn = createButton("imageButton", "b.zoom");
+        zoomBtn.setStyle("image", WorldController.ZOOM_ICON);
+        zoomBtn.toggle = true;
+        zoomBtn.setCallback(handleToggleZoom);
 
         roomBtn = createButton("controlBarButtonRoom", "i.room");
         roomBtn.toggle = true;
@@ -126,6 +134,7 @@ public class WorldControlBar extends ControlBar
         }
 
         //addButton(homePageGridBtn, isNotInViewer, GLOBAL_PRIORITY);
+        addButton(zoomBtn, UberClient.isViewer, GLOBAL_PRIORITY);
         addButton(friendsBtn, showFriends, GLOBAL_PRIORITY);
         addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
         addButton(roomBtn, isInRoom, PLACE_PRIORITY);
@@ -158,6 +167,12 @@ public class WorldControlBar extends ControlBar
         if (!hotZoneBtn.selected) {
             updateHot(event.type == MouseEvent.ROLL_OVER);
         }
+    }
+
+    protected function handleToggleZoom (zoom :Boolean) :void
+    {
+        var rsv :RoomStudioView = (_wctx.getPlaceView() as RoomStudioView);
+        rsv.setZoom(1 - rsv.getZoom());
     }
 
     /** Our context, cast as a WorldContext. */

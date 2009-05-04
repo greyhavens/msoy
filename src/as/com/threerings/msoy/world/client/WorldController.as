@@ -369,15 +369,6 @@ public class WorldController extends MsoyController
         var menuData :Array = [];
 
         var roomView :RoomView = _wctx.getPlaceView() as RoomView;
-        var setZoom :Function;
-        var zoom :Number;
-        if (roomView is RoomStudioView) {
-            zoom = RoomStudioView(roomView).getZoom();
-            setZoom = RoomStudioView(roomView).setZoom;
-        } else {
-            zoom = Math.round(Prefs.getZoom());
-            setZoom = Prefs.setZoom;
-        }
 
         CommandMenu.addTitle(menuData, roomView.getPlaceName());
         var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
@@ -404,7 +395,8 @@ public class WorldController extends MsoyController
             command: MethodQueue.callLater, arg: [ doShowMusic, [ trigger ] ],
             enabled: (_music != null) }); // pop it later so that it avoids the menu itself
         menuData.push({ label: Msgs.GENERAL.get("b.zoom"), icon: ZOOM_ICON,
-            command: setZoom, arg: 1 - zoom, enabled: roomView.canScale() });
+            command: Prefs.setZoom, arg: 1 - Math.round(Prefs.getZoom()),
+            enabled: roomView.canScale() });
 
         popControlBarMenu(menuData, trigger);
     }
@@ -1676,7 +1668,7 @@ public class WorldController extends MsoyController
     protected static const MUSIC_ICON :Class;
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/zoom.png")]
-    protected static const ZOOM_ICON :Class;
+    public static const ZOOM_ICON :Class;
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/snapshot.png")]
     protected static const SNAPSHOT_ICON :Class;
