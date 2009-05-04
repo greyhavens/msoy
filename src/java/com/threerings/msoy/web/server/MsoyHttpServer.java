@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.channels.SocketChannel;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -17,7 +18,12 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import org.mortbay.io.Connection;
+import org.mortbay.io.nio.SelectChannelEndPoint;
+
 import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.HttpConnection;
+import org.mortbay.jetty.HttpException;
 import org.mortbay.jetty.NCSARequestLog;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
@@ -27,7 +33,6 @@ import org.mortbay.jetty.handler.RequestLogHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
-
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.pulse.web.server.PulseServlet;
@@ -100,9 +105,8 @@ public class MsoyHttpServer extends Server
     public void init (File logdir)
         throws IOException
     {
-        SelectChannelConnector conn = new SelectChannelConnector();
-        conn.setPort(ServerConfig.httpPort);
-        setConnectors(new Connector[] { conn });
+        // use a custom connector that works around some jetty non-awesomeness
+        setConnectors(new Connector[] { new MsoyChannelConnector() });
 
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
@@ -139,6 +143,28 @@ public class MsoyHttpServer extends Server
             handlers.addHandler(logger);
         }
         setHandler(handlers);
+    }
+
+    protected static class MsoyChannelConnector extends SelectChannelConnector
+    {
+        public MsoyChannelConnector () {
+            setPort(ServerConfig.httpPort);
+        }
+
+        @Override // from SelectChannelConnector
+        protected Connection newConnection (SocketChannel chan, SelectChannelEndPoint ep) {
+            return new HttpConnection(this, ep, getServer()) {
+                protected void handleRequest() throws IOException {
+                    try {
+                        super.handleRequest();
+                    } catch (NumberFormatException nfe) {
+                        // TODO: demote this to log.info in a week or two
+                        log.warning("Failing invalid HTTP request", "uri", _uri);
+                        throw new HttpException(400); // bad request
+                    }
+                }
+            };
+        }
     }
 
     /** Populated during {@link #preInit} with dependency resolved servlet instances. */
