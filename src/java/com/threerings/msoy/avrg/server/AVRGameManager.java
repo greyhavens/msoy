@@ -668,8 +668,8 @@ public class AVRGameManager extends PlaceManager
         }
 
         if (player.location == null || !player.location.equals(getLocation())) {
-            // if we're not already playing this avrg, initialize our property
-            // space from the database records
+            // if we're not already playing this avrg, initialize our property space from the
+            // database records
             if (initialProps != null) {
                 PropertySpaceHelper.initWithProperties(player, initialProps);
             }
@@ -685,7 +685,7 @@ public class AVRGameManager extends PlaceManager
             }
 
         } else {
-            log.warning("Unexpectedly rejoining AVRG", "playerId", playerId, "gameId", _gameId);
+            log.debug("Player shift-reloaded AVRG", "playerId", playerId, "gameId", _gameId);
         }
         listener.avrgJoined(_gameObj.getOid(), (AVRGameConfig) _config);
     }
