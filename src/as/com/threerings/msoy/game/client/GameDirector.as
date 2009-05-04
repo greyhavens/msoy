@@ -203,7 +203,9 @@ public class GameDirector extends BasicDirector
             icon: StyleManager.getStyleDeclaration(".controlBarGameButton").getStyle("image")});
         if (_liaison.gameGroupId != Game.NO_GROUP) {
             menuData.push({label: Msgs.GAME.get("b.gameGroup"),
-                           command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
+                command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
+            menuData.push({label :Msgs.GAME.get("b.game_whirled"),
+                command: MsoyController.GO_GROUP_HOME, arg: _liaison.gameGroupId});
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
         if ((config is ParlorGameConfig) &&

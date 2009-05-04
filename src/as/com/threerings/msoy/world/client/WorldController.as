@@ -92,6 +92,7 @@ import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
 import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.data.RoomObject;
 
@@ -379,7 +380,20 @@ public class WorldController extends MsoyController
         }
 
         CommandMenu.addTitle(menuData, roomView.getPlaceName());
-        // TODO: add room-specific "visit group" and "play game" entries. From GO menu.
+        var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
+        if (scene != null) {
+            var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
+            if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                menuData.push({ label: Msgs.GENERAL.get("b.group_page"),
+                    command: MsoyController.VIEW_GROUP, arg: model.ownerId });
+            }
+            if (model.gameId != 0) {
+                menuData.push({ label: Msgs.GENERAL.get("b.group_game"),
+                    command: WorldController.PLAY_GAME, arg: model.gameId });
+            }
+        }
+
+        CommandMenu.addSeparator(menuData);
         menuData.push({ label: Msgs.GENERAL.get("b.editScene"), icon: ROOM_EDIT_ICON,
              command: ROOM_EDIT, enabled: roomView.getRoomController().canManageRoom() });
         menuData.push({ label: Msgs.GENERAL.get("b.comment"), icon: CommentButton,
@@ -1602,6 +1616,7 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
 
         CommandMenu.addSeparator(menuData);
+        menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
         // and the world tour, baby!
         menuData.push({ label: Msgs.WORLD.get("b.start_tour"),
             enabled: !_wctx.getTourDirector().isOnTour(),

@@ -132,7 +132,6 @@ public class ParlorGamePanel extends WhirledGamePanel
             config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
         const embedded :Boolean = mctx.getMsoyClient().isEmbedded();
 
-        mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
         mctx.getUIState().setInGame(true, multiplayer);
         bar.setGameButtonIcon(getPlaceLogo());
 
@@ -184,7 +183,6 @@ public class ParlorGamePanel extends WhirledGamePanel
         bar.setChatDirector(mctx.getMsoyChatDirector());
 
         mctx.getUIState().setInGame(false, false);
-        mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         if (_showPlayers != null) { // indicates we're in "gamestub" mode where chat is an overlay
             if (_showPlayers.parent != null) {
@@ -231,24 +229,6 @@ public class ParlorGamePanel extends WhirledGamePanel
     {
         const gameObj :ParlorGameObject = plobj as ParlorGameObject;
         return Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch");
-    }
-
-    /**
-     * Populates any game-specific entries on the client's "go" menu.
-     */
-    protected function populateGoMenu () :Array
-    {
-        const cfg :ParlorGameConfig = _ctrl.getPlaceConfig() as ParlorGameConfig;
-
-        const menuData :Array = [];
-        menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
-        menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
-                        callback: _gctx.backToWhirled, arg: true });
-        if (cfg.groupId != Game.NO_GROUP) {
-            menuData.push({ label: Msgs.GAME.get("b.game_whirled"),
-                            command: MsoyController.GO_GROUP_HOME, arg: cfg.groupId });
-        }
-        return menuData;
     }
 
     override protected function displayGameOver (gameOver :Boolean) :void

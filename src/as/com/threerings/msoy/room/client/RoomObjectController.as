@@ -12,6 +12,7 @@ import flash.utils.ByteArray;
 import mx.controls.Button;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
@@ -51,6 +52,8 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
+
+import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.world.client.WorldControlBar;
 import com.threerings.msoy.world.client.WorldController;
@@ -754,7 +757,15 @@ public class RoomObjectController extends RoomController
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
-        _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
+        // if we're not playing a game, invite the user to play this group's game
+        if (!_wdctx.getGameDirector().isGaming()) {
+            var model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
+            if (model.gameId != 0) {
+                _wdctx.getNotificationDirector().addGenericNotification(
+                    MessageBundle.tcompose("m.group_game", model.gameId), Notification.INVITE);
+            }
+        }
+
         _wdctx.getMuteDirector().addMuteObserver(this);
 
         // deactivate any hot zoneiness
@@ -787,7 +798,6 @@ public class RoomObjectController extends RoomController
         }
 
         _wdctx.getMuteDirector().removeMuteObserver(this);
-        _wdctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
@@ -1057,25 +1067,6 @@ public class RoomObjectController extends RoomController
     {
         _wdctx.getTopPanel().dispatchEvent(
             new ValueEvent(TopPanel.LOCATION_OWNER_CHANGED, _roomObj.owner));
-    }
-
-    /**
-     * Populates any room-specific entries on the client's "go" menu.
-     */
-    protected function populateGoMenu () :Array
-    {
-        const model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
-
-        const stuff :Array = [];
-        if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-            stuff.push({ label: Msgs.GENERAL.get("b.group_page"),
-                command: MsoyController.VIEW_GROUP, arg: model.ownerId });
-        }
-        if (model.gameId != 0) {
-            stuff.push({ label: Msgs.GENERAL.get("b.group_game"),
-                command: WorldController.PLAY_GAME, arg: model.gameId });
-        }
-        return stuff;
     }
 
     protected function roomAttrChanged (event :AttributeChangedEvent) :void

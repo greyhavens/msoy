@@ -244,23 +244,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Add a function for populating the "go" menu. Adds the returned menu items.
-     * signature: function () :Array;
-     */
-    public function addGoMenuProvider (fn :Function) :void
-    {
-        _goMenuProviders.push(fn);
-    }
-
-    /**
-     * Remove a previously-registered "go" menu provider function.
-     */
-    public function removeGoMenuProvider (fn :Function) :void
-    {
-        ArrayUtil.removeAll(_goMenuProviders, fn);
-    }
-
-    /**
      * Adds a place exit handler to be invoked whenever the user requests to leave the current
      * place. The function should take no arguments and return a Boolean. A true return value means
      * carry on closing the place view. A false value means ignore the current request. In the
@@ -314,15 +297,6 @@ public class MsoyController extends Controller
         var menuData :Array = [];
         // add standard items
         populateGoMenu(menuData);
-
-        // then, populate the menu with custom stuff from providers
-        for each (var fn :Function in _goMenuProviders) {
-            var array :Array = fn();
-            if (array != null && array.length > 0) {
-                CommandMenu.addSeparator(menuData);
-                menuData.push.apply(null, array);
-            }
-        }
 
         popControlBarMenu(menuData, trigger);
     }
@@ -854,9 +828,6 @@ public class MsoyController extends Controller
 
     /** A timer to log us out if we've been idle too long. */
     protected var _byebyeTimer :Timer;
-
-    /** Functions that can be called to populate the "go" menu. */
-    protected var _goMenuProviders :Array = [];
 
     /** Handlers that can perform actions and/or abort the exiting of a place. */
     protected var _placeExitHandlers :Array = [];
