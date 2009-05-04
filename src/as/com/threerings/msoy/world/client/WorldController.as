@@ -392,10 +392,7 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.GENERAL.get("b.zoom"), icon: ZOOM_ICON,
             command: setZoom, arg: 1 - zoom, enabled: roomView.canScale() });
 
-        var r :Rectangle = trigger.getBounds(trigger.stage);
-        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
-        menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
-        menu.popUpAt(r.left, r.top, true);
+        popControlBarMenu(menuData, trigger);
     }
 
     // TODO: move
@@ -910,14 +907,9 @@ public class WorldController extends MsoyController
     public function handlePopGameMenu (trigger :Button) :void
     {
         var menuData :Array = [];
-        if (!_wctx.getGameDirector().populateGameMenu(menuData)) {
-            return;
+        if (_wctx.getGameDirector().populateGameMenu(menuData)) {
+            popControlBarMenu(menuData, trigger);
         }
-
-        var r :Rectangle = trigger.getBounds(trigger.stage);
-        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
-        menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
-        menu.popUpAt(r.left, r.top, true);
     }
 
     /**

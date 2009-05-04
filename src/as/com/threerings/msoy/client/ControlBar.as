@@ -216,6 +216,7 @@ public class ControlBar extends HBox
         }, shareBtn));
 
         gameBtn = createButton("controlBarGameButton", "i.game");
+        gameBtn.toggle = true;
         gameBtn.setCommand(WorldController.POP_GAME_MENU, gameBtn);
     }
 

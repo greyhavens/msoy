@@ -324,10 +324,7 @@ public class MsoyController extends Controller
             }
         }
 
-        var r :Rectangle = trigger.getBounds(trigger.stage);
-        var goMenu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
-        //goMenu.setTriggerButton(trigger);
-        goMenu.popUpAt(r.left, r.top, true);
+        popControlBarMenu(menuData, trigger);
     }
 
     /**
@@ -635,6 +632,19 @@ public class MsoyController extends Controller
             _idleTimer.start();
             resetIdleTracking();
         }
+    }
+
+    /**
+     * Convenience to pop a menu triggered from a button on the control bar.
+     */
+    protected function popControlBarMenu (menuData :Array, trigger :Button) :void
+    {
+        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
+        menu.setBounds(_mctx.getTopPanel().getMainAreaBounds());
+        menu.setTriggerButton(trigger);
+        var r :Rectangle = trigger.getBounds(trigger.stage);
+        var p :Point = _mctx.getControlBar().localToGlobal(new Point());
+        menu.popUpAt(r.left, Math.min(p.y, r.top), true);
     }
 
     /**

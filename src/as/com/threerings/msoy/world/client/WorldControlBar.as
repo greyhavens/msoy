@@ -62,6 +62,7 @@ public class WorldControlBar extends ControlBar
         super.createControls();
 
         roomBtn = createButton("controlBarButtonRoom", "i.room");
+        roomBtn.toggle = true;
         roomBtn.setCommand(WorldController.POP_ROOM_MENU, roomBtn);
 
         hotZoneBtn = createButton("controlBarHoverZone", "i.hover");
