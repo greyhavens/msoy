@@ -731,7 +731,7 @@ public class RoomController extends SceneController
     {
         _clickSuppress = null;
         _wdctx.getTopPanel().systemManager.topLevelSystemManager.getSandboxRoot().
-            removeEventListener(MouseEvent.MOUSE_DOWN, removeSuppress);
+            removeEventListener(MouseEvent.MOUSE_DOWN, clearClickSuppress);
     }
 
     /**
