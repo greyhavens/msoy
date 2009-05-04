@@ -1233,16 +1233,41 @@
         <arg line="info"/>
     </exec>
 
-    <!-- copy in our msoy server startup script (msoy only) -->
+    <!-- copy in our Linux msoy server startup script (msoy only) -->
     <mkdir dir="${approot.server}/etc/init.d"/>
     <copy tofile="${approot.server}/etc/init.d/msoy-server" file="${basedir}/etc/init.d/msoy-server"/>
 
-    <!-- copy in our policy server startup script (msoy only) -->
+    <!-- copy in our Linux policy server startup script (msoy only) -->
     <copy tofile="${approot.server}/etc/init.d/msoy-policy" file="${basedir}/etc/init.d/msoy-policy"/>
 
-    <!-- copy in our bureau launcher startup script -->
+    <!-- copy in our Linux bureau launcher startup script -->
     <mkdir dir="${approot.burlserver}/etc/init.d"/>
     <copy tofile="${approot.burlserver}/etc/init.d/msoy-burl" file="${basedir}/etc/init.d/msoy-burl"/>
+
+    <!-- Also create our FreeBSD msoy server startup scripts (msoy only) -->
+    <mkdir dir="${approot.server}/etc/rc.d"/>
+    <startupscript name="msoy_server" runas="${msoy.user}"
+                   output="${approot.server}/etc/rc.d/${app.name}-server.sh">
+      <commands>
+        <start cmdline="${app.prefix}/bin/msoy start"/>
+        <stop cmdline="${app.prefix}/bin/msoy stop"/>
+      </commands>
+    </startupscript>
+    <!-- create FreeBSD policy server startup script (msoy only) -->
+    <startupscript name="policy_server" runas="root"
+                   pidfile="${app.prefix}/run/policy-server.pid"
+                   output="${approot.server}/etc/rc.d/policy-server.sh">
+      <command cmd="/usr/sbin/daemon" args="-f ${app.prefix}/bin/runpolicy" procname="*java*"/>
+    </startupscript>
+    <!-- create FreeBSD bureau launcher startup script -->
+    <mkdir dir="${approot.burlserver}/etc/rc.d"/>
+    <startupscript name="msoy_bureau" runas="${burl.user}"
+                   output="${approot.burlserver}/etc/rc.d/${app.name}-bureau.sh">
+      <commands>
+        <start cmdline="${app.prefix}/bin/burl start"/>
+        <stop cmdline="${app.prefix}/bin/burl stop"/>
+      </commands>
+    </startupscript>
 
     <!-- build the actual Debian packages -->
 
@@ -1267,6 +1292,7 @@
           <permission mode="555" recursive="true">
             <path>bin/</path>
             <path>etc/init.d/</path>
+            <path>etc/rc.d/</path>
           </permission>
         </permissions>
       </package>
@@ -1298,6 +1324,7 @@
           <permission mode="555" recursive="true">
             <path>bin/</path>
             <path>etc/init.d/</path>
+            <path>etc/rc.d/</path>
           </permission>
           <permission user="${msoy.user}" group="${msoy.group}" mode="550">
             <path>dist/msoy-server.properties</path>
@@ -1328,6 +1355,7 @@
           <permission mode="555" recursive="true">
             <path>bin/</path>
             <path>etc/init.d/</path>
+            <path>etc/rc.d/</path>
           </permission>
           <permission user="${burl.user}" group="${msoy.group}" mode="550">
             <path>dist/burl-server.properties</path>
