@@ -15,6 +15,8 @@ import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.Timer;
 
+import mx.events.MenuEvent;
+
 import mx.core.Application;
 import mx.core.IToolTip;
 import mx.core.UIComponent;
@@ -413,6 +415,13 @@ public class RoomController extends SceneController
             var menu :CommandMenu = CommandMenu.createMenu(menuItems, _roomView);
             menu.setBounds(_wdctx.getPlaceViewBounds());
             menu.popUpAtMouse();
+            menu.addEventListener(MenuEvent.MENU_HIDE, function (event :MenuEvent) :void {
+                if (event.menu == menu) {
+                    _clickSuppress = sprite;
+                    _wdctx.getTopPanel().systemManager.topLevelSystemManager.getSandboxRoot().
+                        addEventListener(MouseEvent.MOUSE_DOWN, clearClickSuppress, false, 0, true);
+                }
+            });
 
 //            var menu :RadialMenu = new RadialMenu();
 //            menu.dataProvider = menuItems;
@@ -687,7 +696,9 @@ public class RoomController extends SceneController
         var hitter :MsoySprite = (hit as MsoySprite);
         if (hitter != null) {
             // let the sprite decide what to do with it
-            hitter.mouseClick(event);
+            if (hitter != _clickSuppress) {
+                hitter.mouseClick(event);
+            }
 
         } else if (_wdctx.worldProps.userControlsAvatar) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
@@ -711,6 +722,16 @@ public class RoomController extends SceneController
                 requestAvatarMove(newLoc);
             }
         }
+    }
+
+    /**
+     * Clear out the click suppress sprite.
+     */
+    protected function clearClickSuppress (event :MouseEvent) :void
+    {
+        _clickSuppress = null;
+        _wdctx.getTopPanel().systemManager.topLevelSystemManager.getSandboxRoot().
+            removeEventListener(MouseEvent.MOUSE_DOWN, removeSuppress);
     }
 
     /**
@@ -1011,6 +1032,9 @@ public class RoomController extends SceneController
 
     /** If shift is being held down, the coordinates at which it was pressed. */
     protected var _shiftDownSpot :Point;
+
+    /** Assigned to a sprite that we should not process clicks upon. */
+    protected var _clickSuppress :Object;
 
     /** The "cursor" used to display that a location is walkable. */
     protected var _walkTarget :WalkTarget = new WalkTarget();
