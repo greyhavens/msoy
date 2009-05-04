@@ -16,6 +16,7 @@ public enum Pages
     FAVORITES(Tabs.SHOP),
     GAMES(Tabs.GAMES),
     HELP(Tabs.HELP),
+    LANDACC(null, "account"), // account with no header
     LANDING(null),
     MAIL(Tabs.ME),
     ME(Tabs.ME),
@@ -87,7 +88,7 @@ public enum Pages
      */
     public String getPath ()
     {
-        return toString().toLowerCase();
+        return (_path == null) ? toString().toLowerCase() : _path;
     }
 
     /**
@@ -102,5 +103,11 @@ public enum Pages
         _tab = tab;
     }
 
+    Pages (Tabs tab, String path) {
+        _tab = tab;
+        _path = path;
+    }
+
     protected Tabs _tab;
+    protected String _path;
 }
