@@ -7,11 +7,14 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.samskivert.depot.EHCacheAdapter;
+import com.samskivert.util.Tuple;
 import com.threerings.presents.peer.data.NodeObject;
 
 import net.sf.ehcache.CacheException;
@@ -39,13 +42,13 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
     public static void initWithPeers (MsoyPeerManager peerMan)
     {
         if (_instance == null) {
-            log.warning("Not coordinat Whirled peers with EHCache peers; no provider initialized.");
+            log.warning("No provider initialized -- not coordinating Whirled and EHCache peers.");
             return;
         }
         _instance.initWithPeers(peerMan);
     }
 
-    /** We're both the factory and the provider, just return ourselves. */
+    /** Return our provider, creating it if needed. */
     @Override
     public CacheManagerPeerProvider createCachePeerProvider (
         CacheManager cacheManager, Properties properties)
@@ -76,20 +79,35 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
             throws CacheException
         {
             if (_peerMan == null) {
-                // the ehcache subsystem has fired up but Whirled is still booting; we return null
-                // here and ehcache will try again for up to getTimeForClusterToForm milliseconds
+                // the ehcache subsystem has fired up but Whirled is still booting;
+                // we return null here and ehcache will try again
                 return null;
             }
 
+            // list the current whirled peers
             final List<CachePeer> result = Lists.newArrayList();
+            final Set<String> nodes = Sets.newHashSet();
             _peerMan.applyToNodes(new Function<NodeObject, Void>() {
                 public Void apply (NodeObject node) {
                     if (node != _peerMan.getNodeObject()) {
                         addCachesForNode(result, node.nodeName);
+                        nodes.add(node.nodeName);
                     }
                     return null;
                 }
             });
+
+            // if any previously known peer is no longer with us, clear out the cache
+            Set<Tuple<String, String>> toRemove = Sets.newHashSet();
+            for (Tuple<String, String> key : _peerCache.keySet()) {
+                if (!nodes.contains(key.left)) {
+                    toRemove.add(key);
+                }
+            }
+            for (Tuple<String, String> key : toRemove) {
+                log.info("Removing EHCache peer: " + key);
+                _peerCache.remove(key);
+            }
 
             return result;
         }
@@ -123,7 +141,7 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
             // for the given node, acquire a RMI handle for each known Depot cache
             for (String cacheName : EHCACHES) {
                 try {
-                    result.add(getCacheByURL(rmiBase + cacheName));
+                    result.add(getCache(nodeName, rmiBase + cacheName));
                 } catch (Exception e) {
                     log.warning("Could not resolve remote peer", "host", nodeHost,
                         "cache", cacheName, e);
@@ -131,23 +149,24 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
             }
         }
 
-        protected CachePeer getCacheByURL (String url)
+        protected CachePeer getCache (String nodeName, String url)
             throws MalformedURLException, RemoteException, NotBoundException
         {
+            Tuple<String, String> key = Tuple.newTuple(nodeName, url);
             // retrieve the RMI handle for the given peer
-            synchronized(_cacheByURL) {
-                CachePeer peer = _cacheByURL.get(url);
+            synchronized(_peerCache) {
+                CachePeer peer = _peerCache.get(key);
                 if (peer == null) {
                     // do the (blocking) lookup and stow away the result
                     log.info("RMI lookup of remote cache", "url", url);
                     peer = (CachePeer) Naming.lookup(url);
-                    _cacheByURL.put(url, peer);
+                    _peerCache.put(key, peer);
                 }
                 return peer;
             }
         }
 
-        protected Map<String, CachePeer> _cacheByURL = Maps.newHashMap();
+        protected Map<Tuple<String, String>, CachePeer> _peerCache = Maps.newHashMap();
         protected MsoyPeerManager _peerMan;
         protected CacheManager _cacheMan;
     }
