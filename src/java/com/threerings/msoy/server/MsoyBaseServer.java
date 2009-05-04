@@ -28,6 +28,8 @@ import com.threerings.msoy.server.persist.BatchInvoker;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Provides the set of services that are shared between the Game and World servers.
  */
@@ -119,7 +121,12 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // shutdown our persistence context (JDBC connections) and the cache manager
         _perCtx.shutdown();
-        _cacheMgr.shutdown();
+
+        try {
+            _cacheMgr.shutdown();
+        } catch (Exception e) {
+            log.warning("EHCache manager did not shut down gracefully", e);
+        }
 
         // and shutdown our event logger now that everything else is done shutting down
         _eventLog.shutdown();
