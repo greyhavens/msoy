@@ -154,12 +154,15 @@ public class MsoyHttpServer extends Server
         @Override // from SelectChannelConnector
         protected Connection newConnection (SocketChannel chan, SelectChannelEndPoint ep) {
             return new HttpConnection(this, ep, getServer()) {
-                protected void handleRequest() throws IOException {
+                @Override public void handle () throws IOException {
                     try {
-                        super.handleRequest();
+                        super.handle();
                     } catch (NumberFormatException nfe) {
                         // TODO: demote this to log.info in a week or two
-                        log.warning("Failing invalid HTTP request", "uri", _uri);
+                        log.warning("Failing invalid HTTP request", "uri", _uri, "error", nfe);
+                        throw new HttpException(400); // bad request
+                    } catch (IOException ioe) {
+                        log.warning("Failing invalid HTTP request", "uri", _uri, "error", ioe);
                         throw new HttpException(400); // bad request
                     }
                 }
