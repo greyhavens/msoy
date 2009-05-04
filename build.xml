@@ -1011,7 +1011,7 @@
         <reference refid="ooo.oooconfig.source"/>
         <reference refid="ooo.maven.depends.repo"/>
     </ant>
--->
+    -->
 
   </target>
 
@@ -1067,7 +1067,7 @@
     <delete dir="${deploy.dir}"/>
     <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
     <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
-    <ant dir="projects/mcell" target="distclean" inheritAll="false"/>
+    <!-- <ant dir="projects/mcell" target="distclean" inheritAll="false"/> -->
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
@@ -1370,6 +1370,7 @@
     </move>
   </target>
 
+  <!-- Commented out for now
   <target name="package-cell" depends="dist">
     <ant dir="projects/mcell" target="just-package" inheritAll="false">
         <property name="ooo.architecture" value="${ooo.architecture}"/>
@@ -1377,6 +1378,7 @@
         <reference refid="ooo.maven.depends.repo"/>
     </ant>
   </target>
+  -->
 
   <!-- builds our javadocs and packages them up -->
   <target name="package-docs" depends="distall,javadoc,asdoc,prepare-package">
