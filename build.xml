@@ -1235,14 +1235,14 @@
 
     <!-- copy in our Linux msoy server startup script (msoy only) -->
     <mkdir dir="${approot.server}/etc/init.d"/>
-    <copy tofile="${approot.server}/etc/init.d/msoy-server" file="${basedir}/etc/init.d/msoy-server"/>
+    <copy file="${basedir}/etc/init.d/msoy-server" todir="${approot.server}/etc/init.d"/>
 
     <!-- copy in our Linux policy server startup script (msoy only) -->
-    <copy tofile="${approot.server}/etc/init.d/msoy-policy" file="${basedir}/etc/init.d/msoy-policy"/>
+    <copy file="${basedir}/etc/init.d/msoy-policy" todir="${approot.server}/etc/init.d"/>
 
     <!-- copy in our Linux bureau launcher startup script -->
     <mkdir dir="${approot.burlserver}/etc/init.d"/>
-    <copy tofile="${approot.burlserver}/etc/init.d/msoy-burl" file="${basedir}/etc/init.d/msoy-burl"/>
+    <copy file="${basedir}/etc/init.d/msoy-burl" todir="${approot.burlserver}/etc/init.d"/>
 
     <!-- Also create our FreeBSD msoy server startup scripts (msoy only) -->
     <mkdir dir="${approot.server}/etc/rc.d"/>
