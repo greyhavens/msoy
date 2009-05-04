@@ -374,10 +374,10 @@ public class WorldController extends MsoyController
         var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
         if (scene != null) {
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
-            if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                menuData.push({ label: Msgs.GENERAL.get("b.group_page"),
-                    command: MsoyController.VIEW_GROUP, arg: model.ownerId });
-            }
+//            if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+//                menuData.push({ label: Msgs.GENERAL.get("b.group_page"),
+//                    command: MsoyController.VIEW_GROUP, arg: model.ownerId });
+//            }
             if (model.gameId != 0) {
                 menuData.push({ label: Msgs.GENERAL.get("b.group_game"),
                     command: WorldController.PLAY_GAME, arg: model.gameId });
