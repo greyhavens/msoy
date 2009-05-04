@@ -1,0 +1,60 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          msoy-burl
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop msoy burl server
+### END INIT INFO
+#
+# msoy-burl		This init.d script is used to start whirled msoy burl server.
+
+
+. /lib/lsb/init-functions
+
+test -f /etc/default/rcS && . /etc/default/rcS
+
+ulimit -c unlimited
+
+msoy_stop() {
+	/export/msoy/bin/burl stop
+}
+
+msoy_start() {
+	/export/msoy/bin/burl start
+}
+
+case $1 in
+	start)
+		log_daemon_msg "Starting burl server" "burl"
+		if msoy_start; then
+                        log_end_msg 0
+                else
+                        log_end_msg 1
+                fi
+	;;
+	stop)
+		if msoy_stop; then
+                        log_end_msg 0
+                else
+                        log_end_msg 1
+                fi
+	;;
+	restart)
+		log_daemon_msg "Restarting burl server" "burl"
+		if ! msoy_stop; then
+                        log_end_msg 1 || true
+                fi
+		sleep 5
+		if msoy_start; then
+                        log_end_msg 0
+                else
+                        log_end_msg 1
+                fi
+	;;
+	*)
+		log_success_msg "Usage: /etc/init.d/msoy-burl {start|stop|restart}"
+		exit 1
+	;;
+esac
