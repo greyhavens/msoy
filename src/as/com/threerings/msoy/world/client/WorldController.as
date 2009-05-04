@@ -6,7 +6,6 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
 import flash.external.ExternalInterface;
 
@@ -355,10 +354,7 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.CHAT.get("m." + ge.gateway), children: subMenuData});
         }
 
-        var r :Rectangle = trigger.getBounds(trigger.stage);
-        var menu :CommandMenu = CommandMenu.createMenu(menuData.reverse(), _topPanel);
-        menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
-        menu.popUpAt(r.left, r.top, true);
+        popControlBarMenu(menuData.reverse(), trigger);
     }
 
     /**

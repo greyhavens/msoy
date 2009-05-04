@@ -196,6 +196,7 @@ public class ControlBar extends HBox
         _chatControl.chatInput.maxChars = BaseChatDirector.MAX_CHAT_LENGTH;
 
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
+        chatOptsBtn.toggle = true;
         chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, chatOptsBtn);
 
         volBtn = createButton("imageButton", "i.volume");
