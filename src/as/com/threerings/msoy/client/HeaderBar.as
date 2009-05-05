@@ -249,7 +249,7 @@ public class HeaderBar extends HBox
     {
         var state :UIState = _ctx.getUIState();
         _tabsContainer.visible = state.showChat;
-        _backBtn.visible = !(state.embedded && state.inGame);
+        _backBtn.visible = state.inRoom || !state.embedded;
         checkBackButton();
     }
 
