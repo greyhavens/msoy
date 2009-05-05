@@ -276,13 +276,16 @@ public class MemberRepository extends DepotRepository
      */
     public List<Tuple<Integer, String>> loadMemberEmailsForAnnouncement ()
     {
-        SQLExpression annFlags = new Arithmetic.BitAnd(MemberRecord.FLAGS,
-            MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit() | MemberRecord.Flag.SPANKED.getBit());
+        // no_announce and spanked must be off and validated muts be on, thus we match:
+        // (no_announce|spanked|validated) & flags == validated
+        int valbit = MemberRecord.Flag.VALIDATED.getBit();
+        int bits = (MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit() |
+                    MemberRecord.Flag.SPANKED.getBit() | valbit);
+        SQLExpression where = new Equals(new Arithmetic.BitAnd(MemberRecord.FLAGS, bits), valbit);
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
-        Where where = new Where(new Equals(annFlags, 0));
-        for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
-            if (!MemberMailUtil.isPlaceholderAddress(record.accountName) &&
-                !MemberRecord.isDeleted(record.memberId, record.accountName)) {
+        for (MemberEmailRecord record : findAll(MemberEmailRecord.class, new Where(where))) {
+            // !MemberMailUtil.isPlaceholderAddress(record.accountName) (no longer needed)
+            if (!MemberRecord.isDeleted(record.memberId, record.accountName)) {
                 emails.add(Tuple.newTuple(record.memberId, record.accountName));
             }
         }
