@@ -105,7 +105,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public RegisterData register (String clientVersion, RegisterInfo info)
+    public RegisterData register (String clientVersion, RegisterInfo info, boolean forceValidation)
         throws ServiceException
     {
         checkClientVersion(clientVersion, info.email);
@@ -148,6 +148,7 @@ public class WebUserServlet extends MsoyServiceServlet
         if (invite != null && invite.inviterId != 0) {
             _memberRepo.linkInvite(info.inviteId, mrec);
 
+            // TODO: if forceValidation, we shouldn't tell the inviter anything yet
             MemberRecord inviter = _memberRepo.loadMember(invite.inviterId);
             if (inviter != null) {
                 // send them a whirled mail informing them of the acceptance
@@ -197,9 +198,10 @@ public class WebUserServlet extends MsoyServiceServlet
             }
         }
 
-        // send a welcome email to our new registrant
+        // send a welcome or validation email to our new registrant
+        String tmpl = forceValidation ? "forceValidation" : "welcome";
         _mailer.sendTemplateEmail(
-            MailSender.By.HUMAN, info.email, ServerConfig.getFromAddress(), "welcome",
+            MailSender.By.HUMAN, info.email, ServerConfig.getFromAddress(), tmpl,
             "server_url", ServerConfig.getServerURL(), "name", info.displayName,
             "email", info.email, "memberId", mrec.memberId,
             "code", _accountLogic.generateValidationCode(mrec));

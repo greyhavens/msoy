@@ -45,7 +45,17 @@ public class AccountPage extends Page
             }.schedule(2000);
 
         } else if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
-            setContent(_msgs.createTitle(), new CreateAccountPanel(CShell.isPermaguest(), true));
+            setContent(_msgs.createTitle(), new CreateAccountPanel(CShell.isPermaguest(), false));
+
+        } else if (action.equals("reg") && !CShell.isMember()) {
+            if (args.get(1, "").equals("v")) {
+                // TODO: validate the email address then somehow get a session token - I'm thinking
+                // this will take the form of another LogonPanel subclass that requests validation
+                // and sets Session.justCreated so that the profile configuration page gets shown
+
+            } else {
+                setContent(_msgs.createTitle(), new CreateAccountPanel(false, true));
+            }
 
         } else if (action.equals("edit")) {
             if (CShell.isMember()) {

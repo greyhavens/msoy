@@ -46,11 +46,12 @@ public interface WebUserService extends RemoteService
     /**
      * Requests that an account be created for the specified user. The user will be logged in after
      * the account is created.
-     *
+     * @param forceValidation experimental flag to send a validation email instead of a welcome
+     * email. The link in the email will then take the user on the the next step of registration.
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    RegisterData register (String clientVersion, RegisterInfo info)
+    RegisterData register (String clientVersion, RegisterInfo info, boolean forceValidation)
         throws ServiceException;
 
     /**

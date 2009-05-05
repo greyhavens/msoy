@@ -204,7 +204,7 @@ public class FrameEntryPoint
                 break;
             case 2:  // group B: register NOW
                 page = Pages.LANDACC;
-                args = Args.fromToken("create");
+                args = Args.fromToken("reg");
                 break;
             }
             // log the result to the server

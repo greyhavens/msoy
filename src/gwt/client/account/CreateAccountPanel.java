@@ -57,14 +57,23 @@ import client.util.ServiceUtil;
  */
 public class CreateAccountPanel extends FlowPanel
 {
-    public CreateAccountPanel (boolean saveProgress, boolean showLogon)
+    /**
+     * Creates a new account creation panel.
+     * @param saveProgress causes the layout & text to be more geared towards users that have some
+     * earnings to bank
+     * @param forceValidation set if this panel is part of the landing A/B test that forces users
+     * to validate after registration but before continuing to enter their profile
+     */
+    public CreateAccountPanel (boolean saveProgress, final boolean forceValidation)
     {
+        boolean showLogon = !forceValidation;
+
         setStyleName("createAccount");
 
         add(WidgetUtil.makeShim(15, 15));
 
         add(new Image("/images/account/create_bg_top.png"));
-        FlowPanel content = MsoyUI.createFlowPanel("Content");
+        final FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
 
@@ -174,16 +183,34 @@ public class CreateAccountPanel extends FlowPanel
                     RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
 
                 setStatus(_msgs.creatingAccount());
-                _usersvc.register(DeploymentConfig.version, info, this);
+                _usersvc.register(DeploymentConfig.version, info, forceValidation, this);
                 return true;
             }
 
             @Override protected boolean gotResult (final WebUserService.RegisterData session) {
+                Widget[] trackers = {
+                    ConversionTrackingUtil.createAdWordsTracker(),
+                    ConversionTrackingUtil.createBeacon(session.entryVector)}; 
+
+                if (forceValidation) {
+                    // they are going to be clicking a link in an email and starting a new session
+                    // in a new window, so just set the status and leave the button disabled.
+                    // Ignore the registration data because otherwise they will be fully logged in,
+                    // breaking the illusion of being forced to register.
+                    // TODO: set the session cookie so that when they come back from validating,
+                    // they won't have to login again.
+                    // TODO: this may not be the right time to set the trackers
+                    // TODO: this doesn't look too hot, add several rows of left-justified text
+                    // instead
+                    content.clear();
+                    content.add(_status);
+                    setStatus(_msgs.creatingValidationSent(), trackers);
+                    return false;
+                }
+
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!
-                setStatus(_msgs.creatingDone(),
-                          ConversionTrackingUtil.createAdWordsTracker(),
-                          ConversionTrackingUtil.createBeacon(session.entryVector));
+                setStatus(_msgs.creatingDone(), trackers);
                 session.justCreated = true;
                 new Timer() {
                     public void run () {
