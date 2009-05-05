@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -24,36 +26,52 @@ import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
 import com.threerings.panopticon.aggregator.hadoop.KeyInitData;
 import com.threerings.panopticon.aggregator.writable.Keys;
 import com.threerings.panopticon.common.event.EventData;
-import com.threerings.panopticon.common.event.EventDataBuilder;
 import com.threerings.panopticon.efs.storev2.EventWriter;
 import com.threerings.panopticon.shared.util.DateFactory;
 
-@Aggregator(output = RetentionEmail.OUTPUT)
-public class RetentionEmail
+
+public abstract class RetentionEmail
     implements JavaAggregator<Keys.LongKey>, KeyFactory<Keys.LongKey>
 {
-    public static final String OUTPUT = "msoy.RetentionEmailResponse";
     // Our results
     public RetentionEmailResult mailings;
     public RetentionEmailLoginsResult logins;
+
+    public RetentionEmail (int[] firstYMD, int[] lastYMD, String[] buckets)
+    {
+        Calendar cal = DateFactory.newCalendar();
+        cal.set(firstYMD[0], firstYMD[1], firstYMD[2]);
+        _first = cal.getTimeInMillis();
+
+        cal.set(lastYMD[0], lastYMD[1], lastYMD[2]);
+        _last = cal.getTimeInMillis();
+
+        _buckets = buckets;
+    }
 
     @Override
     public List<Keys.LongKey> createKeys (KeyInitData keyInitData)
     {
         EventData eventData = keyInitData.eventData;
         if (RetentionEmailResult.checkInputs(eventData)) {
-            return Collections.singletonList(new Keys.LongKey(
-                getDayOfEvent(eventData).getTimeInMillis()));
+            long date = getDayOfEvent(eventData).getTimeInMillis();
+            if (date < _first || date > _last) {
+                return Collections.emptyList();
+            }
+            return Collections.singletonList(new Keys.LongKey(date));
 
         } else if (RetentionEmailLoginsResult.checkInputs(eventData)) {
             final long daysToConsider = 21;
             Calendar calendar = getDayOfEvent(eventData);
             List<Keys.LongKey> keys = Lists.newArrayList();
             for (int day = 0; day < daysToConsider; ++day) {
-                if (calendar.getTimeInMillis() < _inceptionTime) {
+                long millis = calendar.getTimeInMillis();
+                if (millis < _first) {
                     break;
                 }
-                keys.add(new Keys.LongKey(calendar.getTimeInMillis()));
+                if (millis <= _last) {
+                    keys.add(new Keys.LongKey(millis));
+                }
                 calendar.add(Calendar.DATE, -1);
             }
             return keys;
@@ -62,29 +80,56 @@ public class RetentionEmail
         return Collections.emptyList();
     }
 
-    @Override
-    public void write (EventWriter writer, EventDataBuilder builder, Keys.LongKey key)
-        throws IOException
+    protected class OutputBuilder
     {
-        // count up how many people who were sent an email logged back in, group by subject line
-        CountHashMap<String> sent = new CountHashMap<String>();
-        CountHashMap<String> respondents = new CountHashMap<String>();
-        for (Map.Entry<String, Set<Integer>> entry : mailings.sent.entrySet()) {
-            sent.incrementCount(entry.getKey(), entry.getValue().size());
-            for (int memberId : entry.getValue()) {
-                int count = logins.memberIds.contains(memberId) ? 1 : 0;
-                respondents.incrementCount(entry.getKey(), count);
+        /** Number of emails sent, by subject line. */
+        public CountHashMap<String> sent = new CountHashMap<String>();
+
+        /** Number of people who logged in within the DAYS_TO_CONSIDER, by subject line */
+        public CountHashMap<String> respondents = new CountHashMap<String>();
+
+        Map<String, Object> eventData = Maps.newHashMap();
+
+        public void write (EventWriter writer)
+            throws IOException
+        {
+            Map<String, Object> props = new HashMap<String, Object>();
+            writer.write(new EventData(getOutputEventName(), eventData, props));
+        }
+
+        public void build (Keys.LongKey key, String[] hardCodedSubjectLine)
+        {
+            for (Map.Entry<String, Set<Integer>> entry : mailings.sent.entrySet()) {
+                addRecipients(entry.getKey(), entry.getValue());
+            }
+
+            // create our standard output columns
+            eventData.put("totalRespondents", respondents.getTotalCount());
+            eventData.put("mailings", sent.getTotalCount());
+            eventData.put("date", new Date(key.get()));
+
+            // and 3 output columns per subject line
+            for (String subjLine : hardCodedSubjectLine) {
+                addSubjectLineTotals(subjLine);
             }
         }
 
-        // create our standard output columns
-        Map<String, Object> eventData = Maps.newHashMap();
-        eventData.put("totalRespondents", respondents.getTotalCount());
-        eventData.put("mailings", sent.getTotalCount());
-        eventData.put("date", new Date(key.get()));
+        public void addRecipients (String subjectLine, Set<Integer> recipients)
+        {
+            sent.incrementCount(subjectLine, recipients.size());
+            for (int memberId : recipients) {
+                addRecipient(subjectLine, memberId);
+            }
+        }
 
-        // and 3 output columns per subject line
-        for (String subjLine : _subjectLines) {
+        public void addRecipient (String subjectLine, int memberId)
+        {
+            int count = logins.memberIds.contains(memberId) ? 1 : 0;
+            respondents.incrementCount(subjectLine, count);
+        }
+
+        public void addSubjectLineTotals (String subjLine)
+        {
             // number of responses by subject line
             eventData.put(subjLine + "Rsp", respondents.getCount(subjLine));
             // number sent by subject line
@@ -93,9 +138,6 @@ public class RetentionEmail
             float rate = (float)(respondents.getCount(subjLine)) / sent.getCount(subjLine);
             eventData.put(subjLine + "Pct", (int)(rate * 100));
         }
-
-        // write the event
-        writer.write(new EventData(OUTPUT, eventData, new HashMap<String, Object>()));
     }
 
     protected static Calendar getDayOfEvent (EventData eventData)
@@ -111,18 +153,15 @@ public class RetentionEmail
         return calendar;
     }
 
-    /** Lower bound for earliest retention mailing event. */
-    protected static final long _inceptionTime;
-
-    // ideally, we would not need to hardwire these, but every instance of the output event needs
-    // to have the same data fields
-    protected static final String[] _subjectLines = {
-        "nameNewThings", "nameBusyFriends", "whirledFeedAndNewThings", "default"};
-
-    static
+    protected String getOutputEventName ()
     {
-        Calendar cal = DateFactory.newCalendar();
-        cal.set(2009, 3, 1);
-        _inceptionTime = cal.getTimeInMillis();
+        return getClass().getAnnotation(Aggregator.class).output();
     }
+
+    protected static final int DAYS_TO_CONSIDER = 21;
+
+    protected long _first, _last;
+    protected String[] _buckets;
+
+    protected final static Logger log = Logger.getLogger(RetentionEmail.class);
 }
