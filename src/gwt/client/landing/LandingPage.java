@@ -8,7 +8,6 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.account.CreateAccountPanel;
 import client.shell.Page;
 
 /**
@@ -22,7 +21,6 @@ public class LandingPage extends Page
     public static final String GAME_CONTEST = "gamecontest";
     public static final String DESIGN_CONTEST = "designcontest";
     public static final String DEVELOPER_INTRO = "devintro";
-    public static final String REGISTER = "register";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -48,10 +46,6 @@ public class LandingPage extends Page
         // landing page with an introduction to Whirled for developers
         } else if (action.equals(DEVELOPER_INTRO)) {
             setContent(_msgs.landingTitle(), new DeveloperIntroPanel());
-
-        // landing page for registration test "B" group
-        } else if (action.equals(REGISTER)) {
-            setContent(_msgs.landingTitle(), new CreateAccountPanel(false, false));
 
         } else {
             setContent(_msgs.landingTitle(), new LandingPanel());
