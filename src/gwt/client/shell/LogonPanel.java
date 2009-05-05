@@ -87,7 +87,7 @@ public class LogonPanel extends SmartTable
 
         // create the password entry widget
         _password = new PasswordTextBox();
-        _password.addKeyPressListener(new EnterClickAdapter(onLogon));
+        _password.addKeyPressHandler(new EnterClickAdapter(onLogon));
 
         // create the forgot password tip link
         String lbl = _cmsgs.forgotPassword();
