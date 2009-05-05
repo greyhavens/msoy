@@ -200,11 +200,20 @@ public class CreateAccountPanel extends FlowPanel
                     // TODO: set the session cookie so that when they come back from validating,
                     // they won't have to login again.
                     // TODO: this may not be the right time to set the trackers
-                    // TODO: this doesn't look too hot, add several rows of left-justified text
-                    // instead
+                    FlowPanel p = new FlowPanel();
                     content.clear();
-                    content.add(_status);
-                    setStatus(_msgs.creatingValidationSent(), trackers);
+                    content.add(p);
+                    for (String msg : new String[] {
+                        _msgs.creatingValidationSentPt1(),
+                        _msgs.creatingValidationSentPt2(),
+                        _msgs.creatingValidationSentPt3()}) {
+                        p.add(MsoyUI.createLabel(msg, "ValidationSent"));
+                    }
+                    for (Widget w : trackers) {
+                        if (w != null) {
+                            p.add(w);
+                        }
+                    }
                     return false;
                 }
 

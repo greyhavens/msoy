@@ -87,6 +87,13 @@
   font-weight: bold;
 }
 
+.createAccount .ValidationSent {
+  padding: 10px;
+  font-size: 14px;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
 .createAccount .dateFields div {
   color: #FFFFFF;
 }
