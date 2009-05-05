@@ -13,9 +13,12 @@ import mx.controls.TextInput;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
 import com.threerings.util.StringUtil;
+import com.threerings.util.Util;
+
+import com.threerings.flex.CommandButton;
+//import com.threerings.flex.CommandLinkButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Parameter;
@@ -97,14 +100,25 @@ public class LobbyTablePanel extends VBox
         _info.percentWidth = 100;
         addChild(makeVBox(_title, _info));
 
+        var shareLink :String = _gctx.getWorldContext().getMsoyController().createSharableLink(
+            "world-game_i_" + _lobj.game.gameId + "_" + memId);
+
         // display our invite verbiage
         var ititle :Label = FlexUtil.createLabel(Msgs.GAME.get("t.invite_link"), "lobbyTitle");
         var isubtitle :Label = FlexUtil.createLabel(Msgs.GAME.get("l.invite_link"));
         var ilink :TextInput = new TextInput();
         const memId :int = _gctx.getMyId(); // ok if guest
-        ilink.text = _gctx.getWorldContext().getMsoyController().createSharableLink(
-            "world-game_i_" + _lobj.game.gameId + "_" + memId);
+        ilink.text = shareLink;
         addChild(makeVBox(ititle, isubtitle, new CopyableText(ilink)));
+
+        // twitter an invite
+        var tweetLbl :Label = FlexUtil.createLabel(Msgs.GAME.get("l.invite_twitter"));
+        var tweet :String = Msgs.GAME.get("m.invite_twitter", _lobj.game.name, shareLink);
+        var tweetBtn :CommandButton = new CommandButton(Msgs.GAME.get("b.invite_twitter"),
+            _gctx.getWorldContext().getMsoyController().handleViewUrl,
+            [ "http://twitter.com/home?status=" + encodeURIComponent(tweet), "_blank" ]);
+        tweetBtn.styleName = "orangeButton";
+        addChild(makeHBox(tweetLbl, tweetBtn));
 
         // create our seats grid
         addChild(_seatsGrid = new SimpleGrid(SEAT_COLS))
@@ -142,9 +156,15 @@ public class LobbyTablePanel extends VBox
         var box :VBox = new VBox();
         box.percentWidth = 100;
         box.setStyle("verticalGap", 0);
-        for each (var child :UIComponent in children) {
-            box.addChild(child);
-        }
+        children.forEach(Util.adapt(box.addChild));
+        return box;
+    }
+
+    protected function makeHBox (... children) :HBox
+    {
+        var box :HBox = new HBox();
+        box.percentWidth = 100;
+        children.forEach(Util.adapt(box.addChild));
         return box;
     }
 
