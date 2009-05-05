@@ -52,6 +52,9 @@ LIBS=$MSOY_HOME/dist/msoylib.abc
 # the 'main' abc file
 MAIN=$MSOY_HOME/dist/MsoyThaneClient.abc
 
+# if this thing crashes, we want to know as much as possible
+ulimit -c unlimited
+
 # Start up the server
 echo "Running $DESC"
 echo "------------------------------------------------------------------------------"
