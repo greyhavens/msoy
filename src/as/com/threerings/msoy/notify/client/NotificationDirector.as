@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.notify.client {
 
+import flash.utils.Dictionary;
+import flash.utils.clearTimeout; // function
+import flash.utils.setTimeout; // function
+
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
@@ -72,9 +76,7 @@ public class NotificationDirector extends BasicDirector
 
         // clear our display if we lose connection to the server
         ctx.getClient().addClientObserver(new ClientAdapter(null, null, null, null, null,
-            function () :void {
-                _notificationDisplay.clearDisplay();
-        }, null, null));
+            _notificationDisplay.clearDisplay, null, null));
     }
 
     /**
@@ -228,14 +230,7 @@ public class NotificationDirector extends BasicDirector
                     Notification.BUTTSCRATCHING, entry.name);
 
             } else if (entry.status != oldEntry.status) {
-                var statusString :String =
-                    _mctx.getChatDirector().filter(entry.status, entry.name, false);
-                if (!StringUtil.isBlank(statusString)) {
-                    addGenericNotification(
-                        MessageBundle.tcompose("m.friend_status_changed", entry.name, memberId,
-                            statusString),
-                        Notification.BUTTSCRATCHING, entry.name);
-                }
+                queueStatusChange(memberId);
             }
         }
     }
@@ -301,6 +296,34 @@ public class NotificationDirector extends BasicDirector
         addGenericNotification(MessageBundle.tcompose("m.new_mail", count), Notification.PERSONAL);
     }
 
+    protected function queueStatusChange (memberId :int) :void
+    {
+        if (memberId in _statusTimeouts) {
+            clearTimeout(uint(_statusTimeouts[memberId]));
+        }
+        _statusTimeouts[memberId] = setTimeout(function () :void {
+            reportStatusChange(memberId);
+        }, STATUS_UPDATE_DELAY);
+    }
+
+    protected function reportStatusChange (memberId :int) :void
+    {
+        delete _statusTimeouts[memberId];
+
+        var entry :FriendEntry = MemberObject(_mctx.getClient().getClientObject()).friends.get(
+            memberId) as FriendEntry;
+        if ((entry != null) && entry.online) {
+            var statusString :String =
+                _mctx.getChatDirector().filter(entry.status, entry.name, false);
+            if (!StringUtil.isBlank(statusString)) {
+                addGenericNotification(
+                    MessageBundle.tcompose("m.friend_status_changed", entry.name, memberId,
+                        statusString),
+                    Notification.BUTTSCRATCHING, entry.name);
+            }
+        }
+    }
+
     protected function notificationExpired (event :ValueEvent) :void
     {
         // all we currently need to do is check if this list is empty, and if so, have the
@@ -321,6 +344,8 @@ public class NotificationDirector extends BasicDirector
     /** Give notifications 15 minutes to be relevant. */
     protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60; // in seconds
 
+    protected static const STATUS_UPDATE_DELAY :int = 15 * 1000; // 15 ms
+
     protected var _mctx :MsoyContext;
 
     protected var _notificationDisplay :NotificationDisplay;
@@ -330,6 +355,9 @@ public class NotificationDirector extends BasicDirector
 
     /** An ExpiringSet to track which notifications are relevant */
     protected var _currentNotifications :ExpiringSet;
+
+    /** Tracks the timeout uint for each memberId, for displaying their status. */
+    protected var _statusTimeouts :Dictionary = new Dictionary();
 
     protected var _didStartupNotifs :Boolean;
     protected var _lastId :uint = 0;
