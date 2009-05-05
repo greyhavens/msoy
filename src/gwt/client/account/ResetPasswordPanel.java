@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.EnterClickHandler;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -60,7 +60,7 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, _msgs.resetPassword());
         setWidget(row++, 1, _password = new PasswordTextBox());
-        _password.addKeyboardListener(new EnterClickAdapter(new ClickHandler() {
+        _password.addKeyPressHandler(new EnterClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }
@@ -76,7 +76,7 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         setText(row, 0, _msgs.resetConfirm());
         setWidget(row++, 1, _confirm = new PasswordTextBox());
-        _confirm.addKeyboardListener(new EnterClickAdapter(submit));
+        _confirm.addKeyPressHandler(new EnterClickHandler(submit));
         TextBoxUtil.addTypingListener(_confirm, _validator);
 
         getFlexCellFormatter().setColSpan(row, 0, 2);

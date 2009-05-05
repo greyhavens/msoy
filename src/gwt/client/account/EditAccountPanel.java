@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.EnterClickHandler;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
@@ -168,12 +168,12 @@ public class EditAccountPanel extends FlowPanel
         _whirledEmail = new CheckBox(_msgs.editWhirledMailEmailTip());
         table.setWidget(0, 1, _whirledEmail, 2, null);
         _whirledEmail.addStyleName("tipLabel");
-        _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
+        _whirledEmail.setValue(_accountInfo.emailWhirledMail);
 
         table.setText(1, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
         table.setWidget(1, 1, _announceEmail = new CheckBox(_msgs.editAnnounceEmailTip()), 2, null);
         _announceEmail.addStyleName("tipLabel");
-        _announceEmail.setChecked(_accountInfo.emailAnnouncements);
+        _announceEmail.setValue(_accountInfo.emailAnnouncements);
 
         _upeprefs = new Button(_cmsgs.update(), new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -218,7 +218,7 @@ public class EditAccountPanel extends FlowPanel
                 _uppass.setEnabled(_password.getText().trim().length() > 0);
             }
         });
-        _password.addKeyboardListener(new EnterClickAdapter(new ClickHandler() {
+        _password.addKeyPressHandler(new EnterClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }
@@ -273,7 +273,7 @@ public class EditAccountPanel extends FlowPanel
         charityTable.setWidget(1, 0, randomCharity, 1, "rightLabel");
         charityTable.setText(1, 1, _msgs.defaultCharity(), 2, null);
         if (_accountInfo.charityMemberId == 0) {
-            randomCharity.setChecked(true);
+            randomCharity.setValue(true);
         }
 
         // Add charity info for each charity.
@@ -285,7 +285,7 @@ public class EditAccountPanel extends FlowPanel
 
             RadioButton charityButton = new RadioButton(CHARITY_RADIO_GROUP);
             if (_accountInfo.charityMemberId == name.getMemberId()) {
-                charityButton.setChecked(true);
+                charityButton.setValue(true);
             }
             charityButtons.add(charityButton);
             charityTable.setWidget(row, 0, charityButton);
@@ -306,7 +306,7 @@ public class EditAccountPanel extends FlowPanel
                 // of charity names + 1 (the +1 for the random charity).
                 int memberId = 0;
                 for (int i = 1; i < charityButtons.size(); i++) {
-                    if (charityButtons.get(i).isChecked()) {
+                    if (charityButtons.get(i).getValue()) {
                         memberId = _accountInfo.charityNames.get(i-1).getMemberId();
                         break;
                     }
@@ -381,7 +381,7 @@ public class EditAccountPanel extends FlowPanel
     {
         _upeprefs.setEnabled(false);
         _usersvc.updateEmailPrefs(
-            _whirledEmail.isChecked(), _announceEmail.isChecked(), new AsyncCallback<Void>() {
+            _whirledEmail.getValue(), _announceEmail.getValue(), new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _upeprefs.setEnabled(true);
                 MsoyUI.infoNear(_msgs.eprefsUpdated(), _upeprefs);

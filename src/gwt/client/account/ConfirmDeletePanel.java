@@ -46,7 +46,7 @@ public class ConfirmDeletePanel extends FlowPanel
         });
         new ClickCallback<Void>(delgo) {
             protected boolean callService () {
-                if (!_confirm.isChecked()) {
+                if (!_confirm.getValue()) {
                     MsoyUI.errorNear(_msgs.confirmDeleteMustCheck(), delgo);
                     return false;
                 }

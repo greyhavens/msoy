@@ -13,6 +13,8 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.HasFocusHandlers;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -22,7 +24,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -84,7 +85,7 @@ public class CreateAccountPanel extends FlowPanel
         content.add(new LabeledBox(_msgs.createEmail(),
                            _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
                            _msgs.createEmailTip()));
-        _email.addKeyboardListener(_onType);
+        _email.addKeyDownHandler(_onKeyDown);
         Invitation invite = CShell.frame.getActiveInvitation();
         if (invite != null && invite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
             // provide the invitation email as the default
@@ -93,11 +94,11 @@ public class CreateAccountPanel extends FlowPanel
 
         content.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
                            _msgs.createPasswordTip()));
-        _password.addKeyboardListener(_onType);
+        _password.addKeyDownHandler(_onKeyDown);
 
         content.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
                            _msgs.createConfirmTip()));
-        _confirm.addKeyboardListener(_onType);
+        _confirm.addKeyDownHandler(_onKeyDown);
 
 //         content.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
 //                            _msgs.createRealNameTip()));
@@ -245,7 +246,7 @@ public class CreateAccountPanel extends FlowPanel
 //         } else if (!MemberName.isValidNonSupportName(name)) {
 //             status = _cmsgs.nonSupportNameInvalid();
 //             toFocus = _name;
-        } else if (!_tosBox.isChecked()) {
+        } else if (!_tosBox.getValue()) {
             status = _msgs.createMustAgreeTOS();
         } else if (RecaptchaUtil.isEnabled() && (RecaptchaUtil.getResponse() == null ||
                                                  RecaptchaUtil.getResponse().length() == 0)) {
@@ -334,8 +335,8 @@ public class CreateAccountPanel extends FlowPanel
         protected SmartTable _tip;
     }
 
-    protected KeyboardListenerAdapter _onType = new KeyboardListenerAdapter() {
-        public void onKeyDown (Widget sender, char keyCode, int modifiers) {
+    protected KeyDownHandler _onKeyDown = new KeyDownHandler() {
+        public void onKeyDown (KeyDownEvent event) {
             setStatus("");
         }
     };
