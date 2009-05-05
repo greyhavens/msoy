@@ -162,8 +162,12 @@ public class MsoyHttpServer extends Server
                         log.warning("Failing invalid HTTP request", "uri", _uri, "error", nfe);
                         throw new HttpException(400); // bad request
                     } catch (IOException ioe) {
-                        log.warning("Failing invalid HTTP request", "uri", _uri, "error", ioe);
-                        throw new HttpException(400); // bad request
+                        if (ioe.getClass() == IOException.class) { // fucking stupid fucking jetty
+                            log.warning("Failing invalid HTTP request", "uri", _uri, "error", ioe);
+                            throw new HttpException(400); // bad request
+                        } else {
+                            throw ioe;
+                        }
                     }
                 }
             };
