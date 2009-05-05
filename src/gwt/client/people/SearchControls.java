@@ -54,7 +54,7 @@ public class SearchControls extends SmartTable
                 _go.setEnabled(getQuery().length() != 0);
             }
         });
-        _search.addKeyPressListener(new EnterClickAdapter(this));
+        _search.addKeyPressHandler(new EnterClickAdapter(this));
         setWidget(1, 1, _go = new Button(_msgs.searchGo(), this));
         _go.setEnabled(false);
 
