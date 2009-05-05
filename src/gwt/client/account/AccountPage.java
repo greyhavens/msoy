@@ -51,9 +51,7 @@ public class AccountPage extends Page
 
         } else if (action.equals("reg") && !CShell.isMember()) {
             if (args.get(1, "").equals("v")) {
-                // TODO: validate the email address then somehow get a session token - I'm thinking
-                // this will take the form of another LogonPanel subclass that requests validation
-                // and sets Session.justCreated so that the profile configuration page gets shown
+                // TODO: check everything and show the profile configurator
 
             } else {
                 setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST));

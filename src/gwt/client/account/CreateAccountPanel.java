@@ -44,6 +44,7 @@ import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
+import com.threerings.msoy.web.gwt.SessionData.Source;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -225,10 +226,6 @@ public class CreateAccountPanel extends FlowPanel
                 if (mode == Mode.VALIDATION_TEST) {
                     // they are going to be clicking a link in an email and starting a new session
                     // in a new window, so just set the status and leave the button disabled.
-                    // Ignore the registration data because otherwise they will be fully logged in,
-                    // breaking the illusion of being forced to register.
-                    // TODO: set the session cookie so that when they come back from validating,
-                    // they won't have to login again.
                     // TODO: this may not be the right time to set the trackers
                     FlowPanel p = new FlowPanel();
                     content.clear();
@@ -244,13 +241,16 @@ public class CreateAccountPanel extends FlowPanel
                             p.add(w);
                         }
                     }
+                    p.add(WidgetUtil.makeShim(1, 150));
+                    session.source = Source.VALIDATED_CREATE;
+                    CShell.frame.dispatchDidLogon(session);
                     return false;
                 }
 
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!
                 setStatus(_msgs.creatingDone(), trackers);
-                session.justCreated = true;
+                session.source = Source.CREATE;
                 new Timer() {
                     public void run () {
                         CShell.frame.dispatchDidLogon(session);

@@ -245,18 +245,22 @@ public class FrameEntryPoint
 
         // reboot the flash client (which will put them back where they are but logged in as their
         // newly registered self)
-        if (FlashClients.clientExists() && data.justCreated) {
+        if (FlashClients.clientExists() && data.source == SessionData.Source.CREATE) {
             rebootFlashClient();
         }
 
         // now that we know we're a member, we can add our "open home in minimized mode" icon
-        // (which may get immediately removed if we're going directly into the world)
-        if (_client == null) {
+        // (which may get immediately removed if we're going directly into the world)... don't do
+        // it if we have registered with validation so that the "ok, now check your email" screen
+        // stays as-is
+        if (_client == null && data.source != SessionData.Source.VALIDATED_CREATE) {
             addNoClientIcon();
         }
 
-        if (data.justCreated) {
+        if (data.source == SessionData.Source.CREATE) {
             Link.go(Pages.PEOPLE, "confprof"); // send them to step 2: configure profile
+        } else if (data.source == SessionData.Source.VALIDATED_CREATE) {
+            // don't do any redirection in this case, we are waiting for them to validate
         } else if (_page == Pages.LANDING || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {
