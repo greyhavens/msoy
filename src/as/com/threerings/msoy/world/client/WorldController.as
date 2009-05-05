@@ -1290,7 +1290,11 @@ public class WorldController extends MsoyController
         // you can only NOT move back if you are in your home room and there are no
         // other scenes in your history
         const curSceneId :int = getCurrentSceneId();
-        if (_wctx.getMemberObject().getHomeSceneId() != curSceneId) {
+        var memObj :MemberObject = _wctx.getMemberObject();
+        if (memObj == null) {
+            return false;
+        }
+        if (memObj.getHomeSceneId() != curSceneId) {
             return true;
         }
         for each (var entry :Object in _recentScenes) {
