@@ -57,17 +57,48 @@ import client.util.ServiceUtil;
  */
 public class CreateAccountPanel extends FlowPanel
 {
-    /**
-     * Creates a new account creation panel.
-     * @param saveProgress causes the layout & text to be more geared towards users that have some
-     * earnings to bank
-     * @param forceValidation set if this panel is part of the landing A/B test that forces users
-     * to validate after registration but before continuing to enter their profile
-     */
-    public CreateAccountPanel (boolean saveProgress, final boolean forceValidation)
-    {
-        boolean showLogon = !forceValidation;
+    /** Modes for tweaking layout, text and behavior. */
+    enum Mode {
 
+        /** Standard text and layout. */
+        NORMAL {
+            public String getIntro () {
+                return _msgs.createCoins();
+            }
+            public boolean logonOnBottom () {
+                return false;
+            }
+        },
+
+        /** Shows "save your progress" text and has logon fields last. */
+        PERMAGUEST {
+            public String getIntro () {
+                return _msgs.createSaveModeIntro();
+            }
+            public boolean logonOnBottom () {
+                return true;
+            }
+        },
+
+        /** Standard text, logon last, does not dispatch the session data after creation. */
+        VALIDATION_TEST {
+            public String getIntro () {
+                return _msgs.createCoins();
+            }
+            public boolean logonOnBottom () {
+                return true;
+            }
+        };
+
+        public abstract String getIntro ();
+        public abstract boolean logonOnBottom ();
+    }
+
+    /**
+     * Creates a new account creation panel in the given mode.
+     */
+    public CreateAccountPanel (final Mode mode)
+    {
         setStyleName("createAccount");
 
         add(WidgetUtil.makeShim(15, 15));
@@ -77,18 +108,16 @@ public class CreateAccountPanel extends FlowPanel
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
 
-        if (saveProgress) {
+        if (mode.logonOnBottom()) {
             content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
-            content.add(MsoyUI.createLabel(_msgs.createSaveModeIntro(), "Coins"));
+            content.add(MsoyUI.createLabel(mode.getIntro(), "Coins"));
 
         } else {
-            if (showLogon) {
-                content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
-                content.add(new FullLogonPanel());
-            }
+            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+            content.add(new FullLogonPanel());
 
             content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
-            content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
+            content.add(MsoyUI.createLabel(mode.getIntro(), "Coins"));
         }
 
         content.add(new LabeledBox(_msgs.createEmail(),
@@ -183,7 +212,8 @@ public class CreateAccountPanel extends FlowPanel
                     RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
 
                 setStatus(_msgs.creatingAccount());
-                _usersvc.register(DeploymentConfig.version, info, forceValidation, this);
+                _usersvc.register(DeploymentConfig.version, info, mode == Mode.VALIDATION_TEST,
+                                  this);
                 return true;
             }
 
@@ -192,7 +222,7 @@ public class CreateAccountPanel extends FlowPanel
                     ConversionTrackingUtil.createAdWordsTracker(),
                     ConversionTrackingUtil.createBeacon(session.entryVector)}; 
 
-                if (forceValidation) {
+                if (mode == Mode.VALIDATION_TEST) {
                     // they are going to be clicking a link in an email and starting a new session
                     // in a new window, so just set the status and leave the button disabled.
                     // Ignore the registration data because otherwise they will be fully logged in,
@@ -240,7 +270,7 @@ public class CreateAccountPanel extends FlowPanel
             }
         };
 
-        if (saveProgress && showLogon) {
+        if (mode.logonOnBottom()) {
             content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
             content.add(new FullLogonPanel());
         }

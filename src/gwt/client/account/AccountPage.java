@@ -14,6 +14,7 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
+import client.account.CreateAccountPanel.Mode;
 import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
@@ -45,7 +46,8 @@ public class AccountPage extends Page
             }.schedule(2000);
 
         } else if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
-            setContent(_msgs.createTitle(), new CreateAccountPanel(CShell.isPermaguest(), false));
+            setContent(_msgs.createTitle(), new CreateAccountPanel(
+                CShell.isPermaguest() ? Mode.PERMAGUEST : Mode.NORMAL));
 
         } else if (action.equals("reg") && !CShell.isMember()) {
             if (args.get(1, "").equals("v")) {
@@ -54,7 +56,7 @@ public class AccountPage extends Page
                 // and sets Session.justCreated so that the profile configuration page gets shown
 
             } else {
-                setContent(_msgs.createTitle(), new CreateAccountPanel(false, true));
+                setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST));
             }
 
         } else if (action.equals("edit")) {
