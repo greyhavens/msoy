@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickHandler;
+import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
@@ -218,7 +218,7 @@ public class EditAccountPanel extends FlowPanel
                 _uppass.setEnabled(_password.getText().trim().length() > 0);
             }
         });
-        _password.addKeyPressHandler(new EnterClickHandler(new ClickHandler() {
+        _password.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _confirm.setFocus(true);
             }

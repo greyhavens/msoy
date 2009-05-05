@@ -85,7 +85,7 @@ public class MeFriendsPanel extends FlowPanel
                 }
             }
         };
-        search.addKeyboardListener(new EnterClickAdapter(onClick));
+        search.addKeyPressListener(new EnterClickAdapter(onClick));
         searchControls.add(new Button("Go", onClick));
 
         add(searchControls);

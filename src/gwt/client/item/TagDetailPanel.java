@@ -279,7 +279,7 @@ public class TagDetailPanel extends VerticalPanel
         public NewTagBox () {
             setMaxLength(20);
             setVisibleLength(12);
-            addKeyboardListener(new EnterClickAdapter(this));
+            addKeyPressListener(new EnterClickAdapter(this));
         }
 
         public void onClick (ClickEvent event) {

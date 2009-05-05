@@ -79,7 +79,7 @@ public class LogonPanel extends SmartTable
         } else {
             DefaultTextListener.configure(_email, _cmsgs.logonEmailDefault());
         }
-        _email.addKeyboardListener(new EnterClickAdapter(new ClickHandler() {
+        _email.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _password.setFocus(true);
             }
@@ -87,7 +87,7 @@ public class LogonPanel extends SmartTable
 
         // create the password entry widget
         _password = new PasswordTextBox();
-        _password.addKeyboardListener(new EnterClickAdapter(onLogon));
+        _password.addKeyPressListener(new EnterClickAdapter(onLogon));
 
         // create the forgot password tip link
         String lbl = _cmsgs.forgotPassword();

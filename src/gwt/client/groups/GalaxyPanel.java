@@ -62,7 +62,7 @@ public class GalaxyPanel extends FlowPanel
                 }
             }
         };
-        _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
+        _searchInput.addKeyPressListener(new EnterClickAdapter(doSearch));
         search.add(MsoyUI.createImageButton("GoButton", doSearch));
         add(search);
 
