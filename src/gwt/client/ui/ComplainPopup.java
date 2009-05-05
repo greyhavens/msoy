@@ -39,7 +39,7 @@ public abstract class ComplainPopup extends BorderedDialog
                 sendComplain();
             }
         };
-        _description.addKeyPressListener(new EnterClickAdapter(sendComplain));
+        _description.addKeyPressHandler(new EnterClickAdapter(sendComplain));
 
         addButton(new Button(_cmsgs.send(), sendComplain));
         addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
