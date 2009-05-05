@@ -10,6 +10,7 @@ import flash.utils.setTimeout; // function
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
+import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.BasicDirector;
@@ -76,7 +77,7 @@ public class NotificationDirector extends BasicDirector
 
         // clear our display if we lose connection to the server
         ctx.getClient().addClientObserver(new ClientAdapter(null, null, null, null, null,
-            _notificationDisplay.clearDisplay, null, null));
+            Util.adapt(_notificationDisplay.clearDisplay), null, null));
     }
 
     /**
