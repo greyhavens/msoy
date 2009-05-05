@@ -280,6 +280,10 @@ public class ControlBar extends HBox
             return state.inGame || state.inAVRGame;
         }
 
+        function showGo () :Boolean {
+            return isNotInViewer() && (!state.embedded || state.inRoom);
+        }
+
         // add our standard control bar features
         // TODO: show chat in lobby
         addControl(chatOptsBtn, showChat, CHAT_SECTION);
@@ -288,7 +292,7 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(volBtn, true, VOLUME_PRIORITY);
-        addButton(goBtn, isNotInViewer, GLOBAL_PRIORITY);
+        addButton(goBtn, showGo, GLOBAL_PRIORITY);
         addButton(fullBtn, isFullOn, GLOBAL_PRIORITY);
 
         addButton(shareBtn, showShare);
