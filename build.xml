@@ -447,7 +447,6 @@
       </classpath>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
-      <compilerarg value="-Xlint:-deprecation"/>
     </javac>
     <delete dir="${deploy.dir}/gclasses"/>
   </target>
