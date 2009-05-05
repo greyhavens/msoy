@@ -292,19 +292,11 @@ public class MsoyController extends Controller
     /**
      * Handles the POP_GO_MENU command.
      */
-    public function handlePopGoMenu (trigger :CommandButton, fromBottom :Boolean = true) :void
+    public function handlePopGoMenu (trigger :CommandButton) :void
     {
         var menuData :Array = [];
-        // add standard items
         populateGoMenu(menuData);
-        if (!fromBottom) {
-            // on the header, add the back link
-            menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
-                enabled: canMoveBack() });
-            menuData.reverse(); // and reverse everything
-        }
-
-        popControlBarMenu(menuData, trigger, fromBottom);
+        popControlBarMenu(menuData, trigger);
     }
 
     /**
