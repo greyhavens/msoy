@@ -131,11 +131,25 @@ public class ShareDialog extends FloatingPanel
         row.addChild(createSocialButton(null,
             DeploymentConfig.serverURL + "images/ui/digg.png",
             popDigg));
+        box.addChild(row);
+
+        row = new HBox();
+        row.percentWidth = 100;
+        row.setStyle("horizontalGap", 20);
+
+        row.addChild(createSocialButton("b.share_twitter",
+            "http://www.blogsdna.com/wp-content/uploads/2008/05/small-twitter.jpg", // TODO
+            popTwitter));
 
         box.addChild(row);
         return box;
     }
 
+    /**
+     * @param msg the text for the button, or null.
+     * @param the class or URL of the icon, or null.
+     * @param callback cmon
+     */
     protected function createSocialButton (
         msg :String, iconURL :String, callback :Function) :UIComponent
     {
@@ -449,6 +463,14 @@ public class ShareDialog extends FloatingPanel
             "&url=" + encodeURIComponent(link) +
             "&title=" + encodeURIComponent(getShareTitle()) +
             "&bodytext=" + encodeURIComponent(getShareTitle()); // TODO
+        _ctx.getMsoyController().handleViewUrl(shareURL, "_blank");
+    }
+
+    protected function popTwitter () :void
+    {
+        var status :String = Msgs.GENERAL.get(
+            "m.tweet_" + (_inGame ? "game" : "room"), createLink());
+        var shareURL :String = "http://twitter.com/home?status=" + encodeURIComponent(status);
         _ctx.getMsoyController().handleViewUrl(shareURL, "_blank");
     }
 
