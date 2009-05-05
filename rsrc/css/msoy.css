@@ -638,7 +638,7 @@ TabNavigator, TabBar {
 }
 
 .headerBarBack {
-  image: Embed(source="../media/skins/headerbar/go.jpg");
+  image: Embed(source="../media/skins/headerbar/back.png");
 }
 
 .tickButton {
