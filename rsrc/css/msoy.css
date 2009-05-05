@@ -559,7 +559,7 @@ TabNavigator, TabBar {
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
 .controlBarPartyButton, .controlBarConfig,
-.headerBarButtonGo,
+.headerBarBack,
 .roomEditScaleDown, .roomEditScaleUp, .roomEditMoveDown, .roomEditMoveUp,
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
@@ -637,7 +637,7 @@ TabNavigator, TabBar {
   highlightAlpha: .5;
 }
 
-.headerBarButtonGo {
+.headerBarBack {
   image: Embed(source="../media/skins/headerbar/go.jpg");
 }
 

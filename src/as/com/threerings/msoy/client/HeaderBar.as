@@ -80,11 +80,11 @@ public class HeaderBar extends HBox
     {
         super.createChildren();
 
-        _goBtn = new CommandButton();
-        _goBtn.toolTip = Msgs.GENERAL.get("i.go");
-        _goBtn.setCommand(MsoyController.POP_GO_MENU, [ _goBtn, false ]);
-        _goBtn.styleName = "headerBarButtonGo";
-        addChild(_goBtn);
+        _backBtn = new CommandButton();
+        _backBtn.toolTip = Msgs.GENERAL.get("b.back");
+        _backBtn.setCommand(MsoyController.MOVE_BACK);
+        _backBtn.styleName = "headerBarBack";
+        addChild(_backBtn);
 
         _loc = new Label();
         _loc.styleName = "locationName";
@@ -181,6 +181,7 @@ public class HeaderBar extends HBox
 
         // update our window title with the location name
         _ctx.getMsoyClient().setWindowTitle(name);
+        checkBackButton();
     }
 
     protected function locationOwnerChanged (event :ValueEvent) :void
@@ -247,8 +248,15 @@ public class HeaderBar extends HBox
     protected function handleUIStateChange (event :Event) :void
     {
         var state :UIState = _ctx.getUIState();
-        _goBtn.visible = !(state.embedded && state.inGame);
         _tabsContainer.visible = state.showChat;
+        _backBtn.visible = !(state.embedded && state.inGame);
+        checkBackButton();
+    }
+
+    protected function checkBackButton () :void
+    {
+        var ctrl :MsoyController = _ctx.getMsoyController();
+        _backBtn.enabled = (ctrl != null) && ctrl.canMoveBack();
     }
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
@@ -261,7 +269,7 @@ public class HeaderBar extends HBox
 
     protected var _visibles :Dictionary = new Dictionary(true);
 
-    protected var _goBtn :CommandButton;
+    protected var _backBtn :CommandButton;
 
     protected var _closeBox :HBox;
 
