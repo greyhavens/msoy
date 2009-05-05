@@ -22,10 +22,9 @@ import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.games.GameBitsPanel;
-import client.games.GameNamePanel;
-import client.games.GamesMessages;
-import client.games.PlayButton;
+import client.game.GameBitsPanel;
+import client.game.GameNamePanel;
+import client.game.PlayButton;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -153,8 +152,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));
-            left.add(MsoyUI.createLabel(
-                _msgs.featuredOnline("" + game.playersOnline), "Online"));
+            left.add(MsoyUI.createLabel(_msgs.topGamesOnline("" + game.playersOnline), "Online"));
         }
 
         left.add(WidgetUtil.makeShim(10, 10));
@@ -213,5 +211,5 @@ public class TopGamesPanel extends AbsolutePanel
     /** Game info panel; changes when a new game is selected */
     protected SimplePanel _gameInfo;
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
 }

@@ -33,6 +33,9 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
 import client.comment.CommentsPanel;
+import client.game.GameBitsPanel;
+import client.game.GameNamePanel;
+import client.game.PlayButton;
 import client.item.FavoriteIndicator;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -40,8 +43,8 @@ import client.ui.MsoyUI;
 import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
 

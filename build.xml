@@ -218,7 +218,7 @@
   </target>
 
   <!-- enumerate our GWT pages -->
-  <property name="pages1.list" value="account,adminz,games,help,landing,mail,me,people"/>
+  <property name="pages1.list" value="account,adminz,game,games,help,landing,mail,me,people"/>
   <property name="pages2.list" value="rooms,shop,stuff,support,groups,issues"/>
   <property name="gpages.list" value="frame,${pages1.list},${pages2.list}"/>
 
@@ -437,7 +437,7 @@
     <echo>Compiling GWT classes...</echo>
     <mkdir dir="${deploy.dir}/gclasses"/>
     <javac srcdir="${gsrc.dir}" destdir="${deploy.dir}/gclasses" includeAntRuntime="false"
-           debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
+           debug="on" optimize="off" source="1.5" target="1.5">
       <classpath>
         <fileset dir="${deploy.dir}/lib">
           <include name="*.jar"/>
@@ -447,6 +447,7 @@
       </classpath>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
+      <compilerarg value="-Xlint:-deprecation"/>
     </javac>
     <delete dir="${deploy.dir}/gclasses"/>
   </target>

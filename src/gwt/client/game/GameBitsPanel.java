@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.game;
 
 import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
@@ -58,5 +58,5 @@ public class GameBitsPanel extends SmartTable
         return (avgMins > 1) ? _msgs.bitsMinutes(""+avgMins) : _msgs.bitsMinute();
     }
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final GameMessages _msgs = GWT.create(GameMessages.class);
 }

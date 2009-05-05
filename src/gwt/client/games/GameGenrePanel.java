@@ -27,13 +27,13 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.games.PlayButton;
+import client.game.PlayButton;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.Stars;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.InfoCallback;
 import client.util.ServiceUtil;
 
 /**

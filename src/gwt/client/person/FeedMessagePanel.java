@@ -133,6 +133,7 @@ public class FeedMessagePanel extends FocusPanel
 
                 case FRIEND_UPDATED_ROOM:
                     switch (plural) {
+                    default:
                     case NONE:
                         return _pmsgs.friendUpdatedRoom(subject, object);
                     case SUBJECT:

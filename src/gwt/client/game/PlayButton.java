@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.game;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.PushButton;
@@ -64,7 +64,7 @@ public class PlayButton
         return play;
     }
 
-    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final GameMessages _msgs = GWT.create(GameMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

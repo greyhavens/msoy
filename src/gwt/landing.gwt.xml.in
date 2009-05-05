@@ -3,30 +3,20 @@
   <!-- TODO TODO TODO: the landing page is too big, we need to remove or at least narrow some of
        these inherits and/or source tags. -->
 
-  <inherits name="item"/>
+  <inherits name="game"/>
   <inherits name="room"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/gwt"/>
-  <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
-  <source path="com/threerings/msoy/game/data/all"/>
-  <source path="com/threerings/msoy/game/gwt"/>
-  <source path="com/threerings/msoy/room/gwt"/>
+<!--  <source path="com/threerings/msoy/room/gwt"/> -->
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/landing/gwt"/>
 
-  <source path="client/comment"/>
-  <source path="client/trophy"/>
-  <source path="client/games"/>
-  <source path="client/msgs"/>
   <source path="client/landing"/>
 
   <public path="public/landing"/>
-  <stylesheet src="../games/games.css"/>
   <stylesheet src="landing.css"/>
 
   <entry-point class="client.landing.LandingPage"/>

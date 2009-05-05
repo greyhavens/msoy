@@ -1,12 +1,10 @@
 <module>
-  <inherits name="item"/>
+  <inherits name="game"/>
   <inherits name="trophy"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
-  <source path="com/threerings/msoy/game/data/all"/>
-  <source path="com/threerings/msoy/game/gwt"/>
 
   <source path="client/comment"/>
   <source path="client/games"/>

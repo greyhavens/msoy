@@ -13,6 +13,7 @@ import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.game.PlayButton;
 import client.shell.DynamicLookup;
 import client.ui.CreatorLabel;
 import client.ui.MsoyUI;

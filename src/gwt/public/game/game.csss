@@ -1,0 +1,79 @@
+/**
+ * $Id$
+ *
+ * CSS styles for the share game interfaces.
+ */
+
+/* ------------------------------------
+   GameNamePanel
+-------------------------------------*/
+
+.gameName .Name {
+  font-weight: bold;
+  font-size: 18px;
+  width: 470px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.gameName .Genre {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.gameName .Descrip {
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* ------------------------------------
+   GameBitsPanel
+-------------------------------------*/
+
+.gameBits .Title {
+  padding-top: 10px;
+  font-weight: bold;
+  color: #5F96AC;
+}
+
+.gameBits .Label {
+  padding-right: 5px;
+}
+
+/* ------------------------------------
+   PlayButton
+-------------------------------------*/
+
+.playButtonLarge {
+  width: 182px;
+  height: 74px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  background: transparent url(/images/game/play_button.png);
+}
+
+.playButtonLarge-down-hovering {
+  background: transparent url(/images/game/play_button_down.png);
+}
+
+.playButtonLarge-up-hovering {
+  background: transparent url(/images/game/play_button_over.png);
+}
+
+.playButtonMedium {
+  width: 120px;
+  height: 44px;
+  cursor: pointer;
+  background: transparent url(/images/game/play_button_small.png);
+}
+
+.playButtonMedium-down-hovering {
+  background: transparent url(/images/game/play_button_small_down.png);
+}
+
+.playButtonMedium-up-hovering {
+  background: transparent url(/images/game/play_button_small_over.png);
+}
+
+/** .playButtonSmall is a normal button */

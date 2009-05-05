@@ -129,7 +129,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
     protected String compose (Object ...moreArgs)
     {
         Object[] args = ArrayUtil.concatenate(_baseArgs, moreArgs, ArrayUtil.OBJECT_TYPE);
-        return Args.compose((Object[])args);
+        return Args.compose(args);
     }
 
     @Override // from PagedGrid
