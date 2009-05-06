@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -43,8 +44,8 @@ public interface ProfileService extends RemoteService
         /** This user's total friend count. */
         public int totalFriendCount;
 
-        /** Whether or not the requesting member is a friend of this member. */
-        public boolean isOurFriend;
+        /** The full friendship status of this member in relation to the requesting member. */
+        public Friendship friendship;
 
         /** Whether or not the requesting member is a whirled greeter or may become one. */
         public GreeterStatus greeterStatus;

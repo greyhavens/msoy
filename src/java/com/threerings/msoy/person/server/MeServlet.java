@@ -100,7 +100,7 @@ public class MeServlet extends MsoyServiceServlet
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
         data.friendCount = friendIds.size();
         if (data.friendCount > 0) {
-            data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
+            data.friends = _mhelper.resolveMemberCards(friendIds, true, null);
         }
 
         if (PROFILING_ENABLED) {

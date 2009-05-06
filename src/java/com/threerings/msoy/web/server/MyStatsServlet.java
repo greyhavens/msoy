@@ -34,32 +34,32 @@ import com.threerings.msoy.web.gwt.WebCreds;
 public class MyStatsServlet extends HttpServlet
 {
     @Override // from HttpServlet
-    protected void doGet (final HttpServletRequest req, final HttpServletResponse rsp)
+    protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
         try {
             // pull out session token from the request header
-            final String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
+            String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
             if (token == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
 
             // make sure the user is authenticated, and pull out their record object
-            final MemberRecord member = _mhelper.getAuthedUser(token);
+            MemberRecord member = _mhelper.getAuthedUser(token);
             if (member == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
             // get their money
-            final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
+            MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
 
             // now get their friend ids
-            final IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
-            final List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
+            IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
+            List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, null);
 
             // and print out the response
-            final String results = makeResults(member, friends, money);
+            String results = makeResults(member, friends, money);
             rsp.getOutputStream().println(results);
             StreamUtil.close(rsp.getOutputStream());
 
@@ -70,11 +70,10 @@ public class MyStatsServlet extends HttpServlet
         }
     }
 
-    protected String makeResults (final MemberRecord member, final List<MemberCard> friends,
-                                  final MemberMoney money)
+    protected String makeResults (MemberRecord member, List<MemberCard> friends, MemberMoney money)
         throws JSONException, UnsupportedEncodingException
     {
-        final JSONObject result = new JSONObject();
+        JSONObject result = new JSONObject();
 
         result.put("name", URLEncoder.encode(member.name, "UTF-8"));
         result.put("coins", money.coins);

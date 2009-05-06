@@ -1133,17 +1133,56 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Count the number of fully-established friendships that the specified player has.
+     */
+    public int countFullFriends (int memberId)
+    {
+        QueryClause[] clauses = new QueryClause[2];
+        clauses[0] = fullFriendWhere(memberId);
+        clauses[1] = new FromOverride(FriendshipRecord.class);
+        return load(CountRecord.class, clauses).count;
+    }
+
+    /**
      * Loads the member ids of the specified member's friends.
      */
     public IntSet loadFriendIds (int memberId)
     {
         IntSet memIds = new ArrayIntSet();
-        for (FriendshipRecord frec : findAll(FriendshipRecord.class,
-                new Where(new And(new Equals(FriendshipRecord.MEMBER_ID, memberId),
-                    new Equals(FriendshipRecord.VALID, true))))) {
+        for (FriendshipRecord frec : findAll(FriendshipRecord.class, fullFriendWhere(memberId))) {
             memIds.add(frec.friendId);
         }
         return memIds;
+    }
+
+    /**
+     * Return a mapping of all friend relationships extending from this member. This means
+     * that only FRIENDS and INVITED will be returned.
+     */
+    public IntMap<Friendship> loadFriendships (int memberId)
+    {
+        IntMap<Friendship> ships = IntMaps.newHashIntMap();
+        for (FriendshipRecord frec : findAll(FriendshipRecord.class,
+                new Where(FriendshipRecord.MEMBER_ID, memberId))) {
+            ships.put(frec.friendId, frec.valid ? Friendship.FRIENDS : Friendship.INVITED);
+        }
+        return ships;
+    }
+
+    /**
+     * Return a mapping of all the specified friend relationships extending from this member.
+     * Only FRIENDS and INVITED will be returned, NOT_FRIENDS is implicit with missing ids
+     * in the returned map.
+     */
+    public IntMap<Friendship> loadFriendships (int memberId, Collection<Integer> otherIds)
+    {
+        IntMap<Friendship> ships = IntMaps.newHashIntMap();
+        for (FriendshipRecord frec : findAll(FriendshipRecord.class, new Where(new And(
+                new Equals(FriendshipRecord.MEMBER_ID, memberId),
+                new In(FriendshipRecord.FRIEND_ID, otherIds))))) {
+            ships.put(frec.friendId, frec.valid ? Friendship.FRIENDS : Friendship.INVITED);
+        }
+        return ships;
     }
 
     /**
@@ -1181,9 +1220,7 @@ public class MemberRepository extends DepotRepository
     {
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Where(new And(
-            new Equals(FriendshipRecord.MEMBER_ID, memberId),
-            new Equals(FriendshipRecord.VALID, true))));
+        clauses.add(fullFriendWhere(memberId));
         SQLExpression condition = new And(
             new Equals(FriendshipRecord.MEMBER_ID, memberId),
             new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID));
@@ -1502,6 +1539,16 @@ public class MemberRepository extends DepotRepository
         if (mrec.updateFlag(MemberRecord.Flag.SPANKED, value)) {
             storeFlags(mrec);
         }
+    }
+
+    /**
+     * Convenience to return a Where for finding full friendship.
+     */
+    protected Where fullFriendWhere (int memberId)
+    {
+        return new Where(new And(
+            new Equals(FriendshipRecord.MEMBER_ID, memberId),
+            new Equals(FriendshipRecord.VALID, true)));
     }
 
     @Override // from DepotRepository

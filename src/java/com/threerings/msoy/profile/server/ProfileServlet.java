@@ -29,6 +29,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -126,9 +127,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // load friend info
         result.friends = resolveFriendsData(memrec, tgtrec);
-        final IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
-        result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
-        result.totalFriendCount = friendIds.size();
+        result.friendship = _memberRepo.getFullFriendship(memrec.memberId, tgtrec.memberId);
+        result.totalFriendCount = _memberRepo.countFullFriends(tgtrec.memberId);
 
         // load greeter info
         result.greeterStatus = getGreeterStatus(tgtrec, result.totalFriendCount);
@@ -253,9 +253,6 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
 
-        // if the caller is a member, load up their friends set
-        IntSet friendIds = (mrec == null) ? null : _memberRepo.loadFriendIds(mrec.memberId);
-
         // ccumulate & refine a map of memberId -> that member's current search rank
         final Map<Integer, Double> mids = Maps.newHashMap();
 
@@ -282,7 +279,9 @@ public class ProfileServlet extends MsoyServiceServlet
         }
 
         // now resolve cards for these members
-        List<MemberCard> results = _mhelper.resolveMemberCards(mids.keySet(), false, friendIds);
+        IntMap<Friendship> friendships = (mrec == null) ? null :
+            _memberRepo.loadFriendships(mrec.memberId, mids.keySet());
+        List<MemberCard> results = _mhelper.resolveMemberCards(mids.keySet(), false, friendships);
 
         // for each successful result, potentially tweak search ranking by recent-ness
         for (MemberCard result : results) {

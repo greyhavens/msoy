@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.Friendship;
+
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
@@ -80,7 +82,9 @@ public class MemberList extends PagedGrid<MemberCard>
             ClickHandler onClick;
 
             // potentially show the add friend button
-            if (isNotMe && !card.isFriend) {
+            boolean isFriendOrInvited = (card.friendship == Friendship.FRIENDS) ||
+                (card.friendship == Friendship.INVITED);
+            if (isNotMe && !isFriendOrInvited) {
                 onClick = new FriendInviter(card.name, _id);
                 extras.setWidget(row, 0, MsoyUI.createActionImage(
                                      "/images/profile/addfriend.png", onClick));
@@ -105,7 +109,7 @@ public class MemberList extends PagedGrid<MemberCard>
                 MsoyUI.createActionLabel(_msgs.mlVisitHome(), onClick));
 
             // if they are our friend, show the remove friend button
-            if (isNotMe && card.isFriend) {
+            if (isNotMe && isFriendOrInvited) {
                 onClick = new FriendRemover(card.name, new Command() {
                     public void execute () {
                         removeItem(card);
@@ -113,8 +117,9 @@ public class MemberList extends PagedGrid<MemberCard>
                 });
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/remove.png", onClick));
-                extras.setWidget(row++, 1,
-                    MsoyUI.createActionLabel(_msgs.mlRemoveFriend(), onClick));
+                String action = (card.friendship == Friendship.INVITED) ? _msgs.mlRetractFriend()
+                                                                        : _msgs.mlRemoveFriend();
+                extras.setWidget(row++, 1, MsoyUI.createActionLabel(action, onClick));
             }
         }
     }

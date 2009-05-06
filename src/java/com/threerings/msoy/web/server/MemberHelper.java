@@ -20,6 +20,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -178,11 +179,12 @@ public class MemberHelper
      *
      * @param memberIds the ids of the members for whom to resolve cards.
      * @param onlineOnly if true, all non-online members will be filtered from the results.
-     * @param friendIds if non-null, indicates the ids of the friends of the caller and will be
-     * used to fill in {@link MemberCard#isFriend}, otherwise isFriend will be left false.
+     * @param friendships if non-null, contains friendship status for the specified memberIds
+     * as they relate to the caller. Values present in the map will be used to populate the
+     * {@link MemberCard#friendship}, otherwise friendship will be left null.
      */
     public List<MemberCard> resolveMemberCards (
-        final Collection<Integer> memberIds, boolean onlineOnly, IntSet friendIds)
+        final Collection<Integer> memberIds, boolean onlineOnly, IntMap<Friendship> friendships)
         throws ServiceException
     {
         List<MemberCard> cards = Lists.newArrayList();
@@ -242,9 +244,9 @@ public class MemberHelper
             log.warning("Failed to populate member cards.", e);
         }
 
-        if (friendIds != null) {
+        if (friendships != null) {
             for (MemberCard card : cards) {
-                card.isFriend = friendIds.contains(card.name.getMemberId());
+                card.friendship = friendships.get(card.name.getMemberId());
             }
         }
 

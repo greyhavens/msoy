@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 
 import com.threerings.gwt.util.PagedResult;
@@ -76,15 +77,20 @@ public class MemberServlet extends MsoyServiceServlet
         FriendsResult result = new FriendsResult();
         result.name = tgtrec.getName();
         IntSet friendIds = _memberRepo.loadFriendIds(memberId);
-        IntSet callerFriendIds = null;
-        if (mrec != null) {
-            if (mrec.memberId == memberId) {
-                callerFriendIds = friendIds;
-            } else {
-                callerFriendIds = _memberRepo.loadFriendIds(mrec.memberId);
+        IntMap<Friendship> callerFriendships = null;
+        if ((mrec != null) && (mrec.memberId != memberId)) {
+            // if we're loading someone else's friend list, we want to know whether the people
+            // are OUR friends
+            callerFriendships = _memberRepo.loadFriendships(mrec.memberId, friendIds);
+        }
+        List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendships);
+        if ((mrec != null) && (mrec.memberId == memberId)) {
+            // we are loading our own friends, let's manually fill in the FRIENDS status
+            for (MemberCard card : list) {
+                card.friendship = Friendship.FRIENDS;
             }
         }
-        List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
+
         Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
         result.friendsAndGreeters = list;
 
@@ -158,10 +164,10 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         // resolve the cards of the requested slice
-        result.friendsAndGreeters = _mhelper.resolveMemberCards(
-            allGreeterIds.subList(offset, Math.min(offset + limit, allGreeterIds.size())), false,
-            _memberRepo.loadFriendIds(tgtrec.memberId));
-
+        List<Integer> showingIds = allGreeterIds.subList(
+            offset, Math.min(offset + limit, allGreeterIds.size()));
+        IntMap<Friendship> friendships = _memberRepo.loadFriendships(tgtrec.memberId, showingIds);
+        result.friendsAndGreeters = _mhelper.resolveMemberCards(showingIds, false, friendships);
         return result;
     }
 

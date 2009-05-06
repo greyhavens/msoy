@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.data.all.Friendship;
+
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
@@ -59,7 +61,7 @@ public class FriendsPanel extends FlowPanel
         
         int numFriends = 0;
         for (MemberCard card : data.friendsAndGreeters) {
-            if (card.isFriend) {
+            if (card.friendship == Friendship.FRIENDS) {
                 numFriends++;
             }
         }

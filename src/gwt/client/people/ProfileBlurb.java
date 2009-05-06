@@ -24,6 +24,7 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
@@ -36,6 +37,8 @@ import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.item.ImageChooserPopup;
 import client.item.ShopUtil;
@@ -181,18 +184,7 @@ public class ProfileBlurb extends Blurb
         // create our action buttons
         _buttons = MsoyUI.createFlowPanel("Buttons");
         if (!isMe) {
-            Command removeFriendBtn = new Command() {
-                public void execute () {
-                    _buttons.remove(_friendBtn);
-                }
-            };
-            if (_pdata.isOurFriend) {
-                _friendBtn = addButton(_buttons, "/images/profile/remove.png",
-                    _msgs.removeFriend(), new FriendRemover(_pdata.name, removeFriendBtn));
-            } else {
-                _friendBtn = addButton(_buttons, "/images/profile/addfriend.png",
-                    _msgs.inviteFriend(), new FriendInviter(_name, "Profile", removeFriendBtn));
-            }
+            addFriendButton();
             if (!CShell.isGuest()) {
                 addButton(_buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
                     Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
@@ -422,6 +414,51 @@ public class ProfileBlurb extends Blurb
         return (text == null) ? "" : text;
     }
 
+    protected void addFriendButton ()
+    {
+        final Command removeFriendBtn = new Command() {
+            public void execute () {
+                _buttons.remove(_friendBtn);
+            }
+        };
+        String label;
+        String image;
+        ClickHandler handler;
+
+        switch (_pdata.friendship) {
+        case FRIENDS:
+            label = _msgs.removeFriend();
+            image = "/images/profile/remove.png";
+            handler = new FriendRemover(_pdata.name, removeFriendBtn);
+            break;
+
+        case INVITED:
+            label = _msgs.retractFriend();
+            image = "/images/profile/remove.png";
+            handler = new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    _membersvc.removeFriend(_name.getMemberId(), new InfoCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            removeFriendBtn.execute();
+                        }
+                    });
+                }
+            };
+            break;
+
+        default:
+            label = (_pdata.friendship == Friendship.INVITEE) ?
+                _msgs.validateFriend() : _msgs.inviteFriend();
+            image = "/images/profile/addfriend.png";
+            Boolean forceAuto = (_pdata.greeterStatus == GreeterStatus.GREETER) ||
+                (_pdata.friendship == Friendship.INVITEE);
+            handler = new FriendInviter(_name, "Profile", removeFriendBtn, forceAuto);
+            break;
+        }
+
+        _friendBtn = addButton(_buttons, image, label, handler);
+    }
+
     protected ProfileService.ProfileResult _pdata;
     protected Profile _profile;
     protected ProfileService.GreeterStatus _greeter;
@@ -441,6 +478,8 @@ public class ProfileBlurb extends Blurb
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 
     protected static final long YEAR_MILLIS = (365L * 24L * 60L * 60L * 1000L);
 }

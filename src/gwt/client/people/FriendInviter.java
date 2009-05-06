@@ -46,9 +46,20 @@ public class FriendInviter
      */
     public FriendInviter (MemberName target, String callerId, Command success)
     {
+        this(target, callerId, success, null);
+    }
+
+    /**
+     * Make it possible to force the bypass of the mail popup (or force it on)
+     * if we happen to already know the greeter status of the target.
+     */
+    public FriendInviter (
+        MemberName target, String callerId, Command success, Boolean forcedAutomatic)
+    {
         _target = target;
         _callerId = callerId;
         _success = success;
+        _forcedAutomatic = forcedAutomatic;
     }
 
     // from ClickHandler
@@ -67,19 +78,29 @@ public class FriendInviter
 
     protected void doClick ()
     {
+        if (_forcedAutomatic != null) {
+            doAction(_forcedAutomatic);
+            return;
+        }
+
         _membersvc.isAutomaticFriender(_target.getMemberId(), new AsyncCallback<Boolean>() {
             public void onFailure (Throwable caught) {
                 _clicked = false;
             }
             public void onSuccess (Boolean automatic) {
                 _clicked = false;
-                if (automatic) {
-                    doAutomaticFriending();
-                } else {
-                    new InviteFriendPopup(_target, _success).show();
-                }
+                doAction(automatic);
             }
         });
+    }
+
+    protected void doAction (boolean automatic)
+    {
+        if (automatic) {
+            doAutomaticFriending();
+        } else {
+            new InviteFriendPopup(_target, _success).show();
+        }
     }
 
     protected void doAutomaticFriending ()
@@ -104,6 +125,7 @@ public class FriendInviter
     protected MemberName _target;
     protected String _callerId;
     protected Command _success;
+    protected Boolean _forcedAutomatic;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)

@@ -5,6 +5,7 @@ package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -117,6 +118,7 @@ public class MemberCard
     /** This member's level. */
     public int level;
 
-    /** Whether or not this member is the requester's friend. */
-    public boolean isFriend;
+    /** The friendship status of this member with respect to the caller. May be null
+     * or contain only a subset of the Friendship constants, depending on context. */
+    public Friendship friendship;
 }
