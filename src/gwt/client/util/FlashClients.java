@@ -264,7 +264,16 @@ public class FlashClients
      * Returns the element that represents the Flash client.
      */
     public static native Element findClient () /*-{
-        return $wnd.top.document.getElementById("asclient");
+        var client = $wnd.document.getElementById("asclient");
+        try {
+            if (client == null) {
+                client = $wnd.parent.document.getElementById("asclient");
+            }
+        } catch (e) {
+            // we may be running in an iframe on Facebook in which case touching parent will throw
+            // an exception, so we just catch that here and go on about our business
+        }
+        return client;
     }-*/;
 
     /**

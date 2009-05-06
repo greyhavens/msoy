@@ -246,23 +246,19 @@ public abstract class BaseItemDetailPanel extends SmartTable
         }
 
         // tell the client we're not playing music anymore
-        playbackStopped();
+        updateMediaPlayback(false);
     }
 
     /**
-     * When we detach, say we're not playing media.
+     * Tells the client whether music is playing.
      */
-    protected static native void playbackStopped () /*-{
-        $wnd.gwtMediaPlayback(false);
-    }-*/;
-
-    /**
-     * Sends the new avatar scale to the whirled client.
-     */
-    protected static native void sendAvatarScaleToWorld (
-        Element client, int avatarId, float newScale) /*-{
-        client.updateAvatarScale(avatarId, newScale);
-    }-*/;
+    protected void updateMediaPlayback (boolean started)
+    {
+        Element client = FlashClients.findClient();
+        if (client != null) {
+            updateMediaPlaybackNative(client, started);
+        }
+    }
 
     /**
      * Configures interface to be called by the avatarviewer.
@@ -272,11 +268,17 @@ public abstract class BaseItemDetailPanel extends SmartTable
             panel.@client.item.BaseItemDetailPanel::updateAvatarScale(F)(newScale);
         };
         $wnd.gwtMediaPlayback= function (started) {
-            var client = $wnd.top.document.getElementById("asclient");
-            if (client) {
-                client.gwtMediaPlayback(started);
-            }
+            panel.@client.item.BaseItemDetailPanel::updateMediaPlayback(B)(started);
         };
+    }-*/;
+
+    protected static native void sendAvatarScaleToWorld (
+        Element client, int avatarId, float newScale) /*-{
+        client.updateAvatarScale(avatarId, newScale);
+    }-*/;
+
+    protected static native void updateMediaPlaybackNative (Element client, boolean started) /*-{
+        client.gwtMediaPlayback(started);
     }-*/;
 
     protected Item _item;

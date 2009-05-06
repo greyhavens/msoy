@@ -346,15 +346,25 @@ public abstract class Page
         $wnd.displayPage = function (page, args) {
             @client.util.Link::goFromFlash(Ljava/lang/String;Ljava/lang/String;)(page, args);
         };
-        return $wnd != $wnd.top;
+        return typeof($wnd.parent.frameCall) != "undefined";
     }-*/;
 
     protected static native String[] nativeFrameCall (String action, String[] args) /*-{
-        return $wnd.top.frameCall(action, args);
+        if ($wnd.frameCall) {
+            return $wnd.frameCall(action, args);
+        } else if ($wnd.parent.frameCall) {
+            return $wnd.parent.frameCall(action, args);
+        } else {
+            return null;
+        }
     }-*/;
 
     protected static native void frameTriggerEvent (String name, JavaScriptObject args) /*-{
-        $wnd.top.triggerFlashEvent(name, args);
+        if ($wnd.triggerFlashEvent) {
+            return $wnd.triggerFlashEvent(name, args);
+        } else if ($wnd.parent.triggerFlashEvent) {
+            return $wnd.parent.triggerFlashEvent(name, args);
+        }
     }-*/;
 
     protected abstract class PageFrame implements Frame
