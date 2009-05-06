@@ -6,6 +6,7 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -156,7 +157,8 @@ public class MemberRepository extends DepotRepository
             {
                 int count = 0;
                 log.info("Friend conversion: starting.");
-                for (FriendRecord fr : findAll(FriendRecord.class)) {
+                for (FriendRecord fr : findAll(FriendRecord.class,
+                        CacheStrategy.NONE, new ArrayList<QueryClause>())) {
                     store(new FriendshipRecord(fr.inviterId, fr.inviteeId, true));
                     store(new FriendshipRecord(fr.inviteeId, fr.inviterId, true));
                     if (++count % 2000 == 0) {
