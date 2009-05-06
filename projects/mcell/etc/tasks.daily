@@ -1,7 +1,6 @@
 # Tasks that should run daily, as soon as all data from the night before is safely in S3.
 
 com.threerings.msoy.aggregators.AccountsWithVectors
-com.threerings.msoy.aggregators.RetentionEmail
 
 DailyBatchFriendRequests
 DailyChainedActionResults
@@ -31,3 +30,6 @@ PreProcessInvites
 # Wait until last to run this relatively unimportant and very time-consuming task quadruplet
 DailyExperience1
 DailyExperience3
+
+# the results from retention mails only get interesting after about 5 days, so do them last
+com.threerings.msoy.aggregators.RetentionEmailOld

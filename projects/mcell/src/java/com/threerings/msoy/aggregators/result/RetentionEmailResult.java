@@ -20,8 +20,8 @@ import com.threerings.panopticon.common.event.EventData;
 @StringInputNameResult(inputs="RetentionMailSent") // original msoy event
 public class RetentionEmailResult extends FieldAggregatedResult
 {
-    /** The members addressed, mapped by subject. */
-    public Map<String, Set<Integer>> sent = Maps.newHashMap();
+    /** The members addressed, mapped by bucket, then subject line. */
+    public Map<String, Map<String, Set<Integer>>> sent = Maps.newHashMap();
 
     public static boolean checkInputs (EventData eventData)
     {
@@ -31,11 +31,16 @@ public class RetentionEmailResult extends FieldAggregatedResult
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
-        String subj = eventData.containsKey("subjectLine") ?
-            eventData.getString("subjectLine") : "default";
-        Set<Integer> memberIds = sent.get(subj);
+        String bucket = eventData.getDefaultString("bucket", "default");
+        String subject = eventData.getDefaultString("subjectLine", "default");
+
+        Map<String, Set<Integer>> subjectLines = sent.get(bucket);
+        if (subjectLines == null) {
+            sent.put(bucket, subjectLines = Maps.newHashMap());
+        }
+        Set<Integer> memberIds = subjectLines.get(subject);
         if (memberIds == null) {
-            sent.put(subj, memberIds = Sets.newHashSet());
+            subjectLines.put(subject, memberIds = Sets.newHashSet());
         }
         memberIds.add(eventData.getInt("recipientId"));
     }

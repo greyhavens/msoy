@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.samskivert.util.CountHashMap;
 import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
@@ -37,16 +38,18 @@ public abstract class RetentionEmail
     public RetentionEmailResult mailings;
     public RetentionEmailLoginsResult logins;
 
-    public RetentionEmail (int[] firstYMD, int[] lastYMD, String[] buckets)
+    public RetentionEmail (int[] firstYMD, int[] lastYMD, List<String> bucketNames)
     {
         Calendar cal = DateFactory.newCalendar();
+        cal.clear();
+
         cal.set(firstYMD[0], firstYMD[1], firstYMD[2]);
         _first = cal.getTimeInMillis();
 
         cal.set(lastYMD[0], lastYMD[1], lastYMD[2]);
         _last = cal.getTimeInMillis();
 
-        _buckets = buckets;
+        _buckets = Sets.newHashSet(bucketNames);
     }
 
     @Override
@@ -99,8 +102,11 @@ public abstract class RetentionEmail
 
         public void build (Keys.LongKey key, String[] hardCodedSubjectLine)
         {
-            for (Map.Entry<String, Set<Integer>> entry : mailings.sent.entrySet()) {
-                addRecipients(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Map<String, Set<Integer>>> entry :
+                mailings.sent.entrySet()) {
+                if (_buckets.contains(entry.getKey())) {
+                    addBucket(entry.getKey(), entry.getValue());
+                }
             }
 
             // create our standard output columns
@@ -111,6 +117,13 @@ public abstract class RetentionEmail
             // and 3 output columns per subject line
             for (String subjLine : hardCodedSubjectLine) {
                 addSubjectLineTotals(subjLine);
+            }
+        }
+
+        public void addBucket (String bucket, Map<String, Set<Integer>> subjectLines)
+        {
+            for (Map.Entry<String, Set<Integer>> entry : subjectLines.entrySet()) {
+                addRecipients(entry.getKey(), entry.getValue());
             }
         }
 
@@ -161,7 +174,7 @@ public abstract class RetentionEmail
     protected static final int DAYS_TO_CONSIDER = 21;
 
     protected long _first, _last;
-    protected String[] _buckets;
+    protected Set<String> _buckets;
 
     protected final static Logger log = Logger.getLogger(RetentionEmail.class);
 }
