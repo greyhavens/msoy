@@ -21,15 +21,16 @@ import com.threerings.panopticon.shared.util.DateFactory;
 /**
  * Extracts a table of guest experiences before conversion, per entry vector / conversion status.
  */
-@StringInputNameResult(inputs="AllGuestBehavior")
 public abstract class GuestExperienceResult extends FieldResult<GuestExperienceResult>
 {
+    @StringInputNameResult(inputs="AllGuestBehavior")
     public static class Conversion extends GuestExperienceResult {
         @Override protected String getEventsField () {
             return "events_till_conversion";
         }
     };
 
+    @StringInputNameResult(inputs="AllGuestBehavior")
     public static class Retention extends GuestExperienceResult {
         @Override protected String getEventsField () {
             return "events_till_retention";
