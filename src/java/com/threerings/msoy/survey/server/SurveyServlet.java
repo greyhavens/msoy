@@ -277,7 +277,7 @@ public class SurveyServlet extends MsoyServiceServlet
         }
 
         // get one page of results
-        result.page = Lists.newArrayListWithExpectedSize(count);
+        result.page = Lists.newArrayListWithCapacity(count);
         for (SurveyResponseRecord response :
             _surveyRepo.loadResponses(surveyId, index, start, count)) {
             result.page.add(response.response);

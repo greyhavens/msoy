@@ -407,7 +407,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             OrderBy.descending(getCloneColumn(CloneRecord.LAST_TOUCHED)), limit);
         int size = originals.size() + clones.size();
 
-        List<T> list = Lists.newArrayListWithExpectedSize(size);
+        List<T> list = Lists.newArrayListWithCapacity(size);
         list.addAll(originals);
         list.addAll(clones);
 
@@ -447,7 +447,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         for (T item : items) {
             idMap.put(item.itemId, item);
         }
-        List<T> result = Lists.newArrayListWithExpectedSize(items.size());
+        List<T> result = Lists.newArrayListWithCapacity(items.size());
         for (Integer id : itemIds) {
             T item = idMap.get(id);
             if (item != null) {

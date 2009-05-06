@@ -772,7 +772,7 @@ public class ItemLogic
         }
 
         // finally, return all the items in list order
-        List<Item> list = Lists.newArrayListWithExpectedSize(idents.length);
+        List<Item> list = Lists.newArrayListWithCapacity(idents.length);
         for (ItemIdent ident : idents) {
             list.add(items.get(ident));
         }
