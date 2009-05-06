@@ -351,11 +351,10 @@ public class AwardDelegate extends RatingDelegate
      */
     protected void updatePlayerStats (Iterable<Player> players, int winningScore)
     {
+        // we're currently not persisting any stats for in-development games,
+        // nor games that didn't last long enough to be rated
         int gameSecs = TimeUtil.elapsedSeconds(_startStamp, System.currentTimeMillis());
-        // we're currently not persisting any stats for in-development games
-        if (Game.isDevelopmentVersion(_content.detail.gameId) ||
-            // nor games that didn't last long enough to be rated
-            gameSecs < minimumRatedDuration()) {
+        if (_content.game.isDevelopmentVersion() || (gameSecs < minimumRatedDuration())) {
             return;
         }
 
