@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.aggregators;
 
 import java.io.IOException;
