@@ -74,7 +74,7 @@ public class FacebookServlet extends HttpServlet
             // enchilada)
             String authtok = _memberRepo.startOrJoinSession(memberId, FBAUTH_DAYS);
             SwizzleServlet.setCookie(req, rsp, authtok);
-            rsp.sendRedirect("/facebook.html");
+            rsp.sendRedirect("/");
             return;
         }
 
