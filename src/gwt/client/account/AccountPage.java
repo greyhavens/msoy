@@ -50,12 +50,32 @@ public class AccountPage extends Page
                 CShell.isPermaguest() ? Mode.PERMAGUEST : Mode.NORMAL));
 
         } else if (action.equals("reg") && !CShell.isMember()) {
-            if (args.get(1, "").equals("v")) {
-                // TODO: check everything and show the profile configurator
+            setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST));
 
-            } else {
-                setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST));
-            }
+        } else if (action.equals("regv") && CShell.isMember()) {
+            // validation received, show a quick message and move on to #people-confprof
+            final int memberId = args.get(1, 0);
+            final String code = args.get(2, "");
+            _usersvc.validateEmail(memberId, code, new InfoCallback<Boolean>() {
+                public void onSuccess (Boolean valid) {
+                    String msg;
+                    if (valid) {
+                        msg = _msgs.emailRegisterValidated();
+                        if (memberId == CShell.getMemberId()) {
+                            CShell.frame.emailUpdated(CShell.creds.accountName, true);
+                        }
+                        new Timer() {
+                            public void run () {
+                                Link.go(Pages.PEOPLE, "confprof");
+                            }
+                        }.schedule(3000);
+
+                    } else {
+                        msg = _msgs.emailInvalid();
+                    }
+                    setContent("", MsoyUI.createLabel(msg, "infoLabel"));
+                }
+            });
 
         } else if (action.equals("edit")) {
             if (CShell.isMember()) {
