@@ -117,7 +117,7 @@ public class MemberList extends PagedGrid<MemberCard>
                 });
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/remove.png", onClick));
-                String action = (card.friendship == Friendship.INVITED) ? _msgs.mlRetractFriend()
+                String action = (card.friendship == Friendship.INVITED) ? _msgs.retractFriend()
                                                                         : _msgs.mlRemoveFriend();
                 extras.setWidget(row++, 1, MsoyUI.createActionLabel(action, onClick));
             }
