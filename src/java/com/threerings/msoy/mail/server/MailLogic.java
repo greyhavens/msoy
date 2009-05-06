@@ -74,7 +74,6 @@ public class MailLogic
         String subj = _serverMsgs.getBundle("server").get("m.friend_invite_subject");
         String body = _serverMsgs.getBundle("server").get("m.friend_invite_body");
         startConversation(sender, recip, subj, body, new FriendInvitePayload());
-        _memberRepo.noteFriendInvitationSent(inviterId, friendId);
     }
 
     /**
@@ -137,6 +136,9 @@ public class MailLogic
 
         _mailRepo.startConversation(
             recip.memberId, sender.memberId, subject, body, cmr, true, !isMuted);
+        if (attachment instanceof FriendInvitePayload) {
+            _memberRepo.noteFriendInvitationSent(sender.memberId, recip.memberId);
+        }
 
         if (!isMuted) {
             // potentially send a real email to the recipient
