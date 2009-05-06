@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
@@ -22,9 +23,9 @@ public interface WebMemberServiceAsync
     void getMemberCard (int memberId, AsyncCallback<MemberCard> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#getFriendStatus}.
+     * The asynchronous version of {@link WebMemberService#getFriendship}.
      */
-    void getFriendStatus (int memberId, AsyncCallback<Boolean> callback);
+    void getFriendship (int memberId, AsyncCallback<Friendship> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#loadFriends}.

@@ -83,6 +83,7 @@ import com.threerings.util.TimeUtil;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -1105,13 +1106,30 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Determine what the friendship status is between one member and another.
+     * NOTE: this does not presently return Friendship.INVITEE,
+     * just NOT_FRIENDS, INVITED, or FRIENDS.
      */
-    public boolean getFriendStatus (int memberId, int friendId)
+    public Friendship getFriendship (int memberId, int friendId)
     {
         FriendshipRecord frec = load(FriendshipRecord.class,
             FriendshipRecord.getKey(memberId, friendId));
-        // TODO: new friend status constants
-        return (frec != null) && frec.valid;
+        return (frec == null) ? Friendship.NOT_FRIENDS
+                              : frec.valid ? Friendship.FRIENDS : Friendship.INVITED;
+    }
+
+    /**
+     * Determine the full friendship status between two members.
+     */
+    public Friendship getFullFriendship (int memberId, int friendId)
+    {
+        Friendship fr = getFriendship(memberId, friendId);
+        if (fr == Friendship.NOT_FRIENDS) {
+            fr = getFriendship(friendId, memberId);
+            if (fr == Friendship.INVITED) {
+                return Friendship.INVITEE;
+            }
+        }
+        return fr;
     }
 
     /**
@@ -1216,6 +1234,11 @@ public class MemberRepository extends DepotRepository
         store(new FriendshipRecord(friendId, memberId, true));
 
         return other;
+    }
+
+    public void noteFriendInvitationSent (int memberId, int friendId)
+    {
+        store(new FriendshipRecord(memberId, friendId, false));
     }
 
     /**

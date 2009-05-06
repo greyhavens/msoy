@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -43,7 +44,7 @@ public interface WebMemberService extends RemoteService
     /**
      * Figure out whether or not a given member is your friend.
      */
-    boolean getFriendStatus (int memberId)
+    Friendship getFriendship (int memberId)
         throws ServiceException;
 
     /**

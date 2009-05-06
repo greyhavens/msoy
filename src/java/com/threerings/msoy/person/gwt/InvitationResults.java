@@ -31,6 +31,9 @@ public class InvitationResults
     /** The invitee is already your friend.  (Some friend you are) */
     public static final String ALREADY_FRIEND = "e.already_friend";
 
+    /** The invitee is already a pending friend.  (Some friend you are) */
+    public static final String ALREADY_FRIEND_INV = "e.already_friend_inv";
+
     /** The invitee has already been invited by the inviter. */
     public static final String ALREADY_INVITED = "e.already_invited";
 

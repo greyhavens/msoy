@@ -22,6 +22,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.persist.GameDetailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
@@ -93,7 +94,7 @@ public class InviteServlet extends MsoyServiceServlet
                         // skip self invites
                         continue;
                     }
-                    ec.friend = _memberRepo.getFriendStatus(memrec.memberId, member.memberId);
+                    ec.friendship = _memberRepo.getFriendship(memrec.memberId, member.memberId);
                     ec.mname = member.getName();
                 }
                 results.add(ec);
@@ -103,7 +104,7 @@ public class InviteServlet extends MsoyServiceServlet
         } catch (AddressBookAuthenticationException e) {
             throw new ServiceException(ProfileCodes.E_BAD_USERNAME_PASS);
         } catch (UnexpectedFormatException e) {
-            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
+            log.warning("getWebMailAddresses failed", "email", email, e);
             throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
         } catch (AddressBookException e) {
             throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
@@ -295,8 +296,11 @@ public class InviteServlet extends MsoyServiceServlet
         // make sure this address isn't already registered
         MemberRecord invitee = _memberRepo.loadMember(email);
         if (invitee != null) {
-            if (_memberRepo.getFriendStatus(inviter.memberId, invitee.memberId)) {
+            Friendship fr = _memberRepo.getFriendship(inviter.memberId, invitee.memberId);
+            if (fr == Friendship.FRIENDS) {
                 throw new ServiceException(InvitationResults.ALREADY_FRIEND);
+            } else if (fr == Friendship.INVITED) {
+                throw new ServiceException(InvitationResults.ALREADY_FRIEND_INV);
             }
             throw new NameServiceException(
                 InvitationResults.ALREADY_REGISTERED, invitee.getName());

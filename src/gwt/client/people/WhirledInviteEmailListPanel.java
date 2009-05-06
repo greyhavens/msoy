@@ -85,9 +85,16 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
         contents.setText(row++, 0, _msgs.inviteResultsMembers());
         for (EmailContact ec : addrs) {
             contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-            if (ec.friend) {
+            switch (ec.friendship) {
+            case FRIENDS:
                 contents.setText(row++, 2, _msgs.mlAlreadyFriend());
-            } else {
+                break;
+
+            case INVITED:
+                contents.setText(row++, 2, _msgs.mlAlreadyFriendInv());
+                break;
+
+            default:
                 ClickHandler onClick = new FriendInviter(ec.mname, "InvitePanel");
                 contents.setWidget(
                     row, 1, MsoyUI.createActionImage("/images/profile/addfriend.png", onClick));

@@ -19,6 +19,7 @@ import com.samskivert.util.IntSet;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
@@ -55,11 +56,11 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public boolean getFriendStatus (final int memberId)
+    public Friendship getFriendship (int memberId)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser();
-        return _memberRepo.getFriendStatus(memrec.memberId, memberId);
+        return _memberRepo.getFullFriendship(memrec.memberId, memberId);
     }
 
     // from interface WebMemberService

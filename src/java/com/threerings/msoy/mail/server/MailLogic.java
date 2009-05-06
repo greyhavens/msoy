@@ -70,6 +70,7 @@ public class MailLogic
         String subj = _serverMsgs.getBundle("server").get("m.friend_invite_subject");
         String body = _serverMsgs.getBundle("server").get("m.friend_invite_body");
         startConversation(sender, recip, subj, body, new FriendInvitePayload());
+        _memberRepo.noteFriendInvitationSent(inviterId, friendId);
     }
 
     /**

@@ -85,13 +85,21 @@ public class FindFriendsPanel extends InvitePanel
             for (EmailContact ec : members) {
                 _results.setText(row, 0, ec.mname.toString());
                 _results.setText(row, 1, _msgs.inviteMember(ec.name, ec.email));
-                if (ec.friend) {
+                switch (ec.friendship) {
+                case FRIENDS:
                     _results.setText(row++, 3, _msgs.mlAlreadyFriend());
-                } else {
+                    break;
+
+                case INVITED:
+                    _results.setText(row++, 3, _msgs.mlAlreadyFriendInv());
+                    break;
+
+                default:
                     ClickHandler onClick = new FriendInviter(ec.mname, "InvitePanel");
                     _results.setWidget(row, 2, MsoyUI.createActionImage(ADD_IMAGE, onClick));
                     _results.setWidget(row++, 3, MsoyUI.createActionLabel(
                                            _msgs.mlAddFriend(), onClick));
+                    break;
                 }
             }
 

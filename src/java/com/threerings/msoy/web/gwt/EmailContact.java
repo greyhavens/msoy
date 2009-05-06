@@ -5,6 +5,7 @@ package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 
 public class EmailContact
@@ -19,8 +20,9 @@ public class EmailContact
     /** The memberName. */
     public MemberName mname;
 
-    /** If the user is a friend. */
-    public boolean friend;
+    /** The user's friendship status.
+     * Note: INVTEE will not be filled in. We don't care, presently. */
+    public Friendship friendship;
 
     public EmailContact () { /* For serialization. */ }
 

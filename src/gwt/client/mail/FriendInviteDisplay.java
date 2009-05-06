@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.Friendship;
+
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
@@ -41,21 +43,16 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void refreshUI (final boolean roundtrip)
         {
             int friendId = _message.author.name.getMemberId();
-            _membersvc.getFriendStatus(friendId, new InfoCallback<Boolean>() {
-                public void onSuccess (Boolean result) {
+            _membersvc.getFriendship(friendId, new InfoCallback<Friendship>() {
+                public void onSuccess (Friendship result) {
                     buildUI(result, roundtrip);
                 }
             });
         }
 
-        protected void buildUI (boolean friendStatus, boolean roundtrip)
+        protected void buildUI (Friendship friendship, boolean roundtrip)
         {
-            if (friendStatus) {
-                setText(0, 0, roundtrip ? _msgs.friendAccepted(""+_message.author.name) :
-                        _msgs.friendAlreadyFriend(""+_message.author.name));
-                setText(0, 1, "");
-
-            } else {
+            if (friendship == Friendship.INVITEE) { // normal case
                 setText(0, 0, _msgs.friendInvitation(), 0, "rowPanelCell");
 
                 Button ayeButton = new Button(_msgs.friendBtnAccept());
@@ -71,7 +68,28 @@ public class FriendInviteDisplay extends MailPayloadDisplay
                     }
                 };
                 setWidget(0, 1, ayeButton);
+                return;
             }
+
+            String otherName = _message.author.name.toString();
+            String text;
+            switch (friendship) {
+            case FRIENDS: // success case
+                text = roundtrip ? _msgs.friendAccepted(otherName)
+                                 : _msgs.friendAlreadyFriend(otherName);
+                break;
+
+            case INVITED: // weird, but ok
+                text = _msgs.friendInvited(otherName);
+                break;
+
+            case NOT_FRIENDS: // retracted
+            default:
+                text = _msgs.friendRetracted(otherName);
+                break;
+            }
+            setText(0, 0, text);
+            setText(0, 1, "");
         }
 
         protected void mailResponse ()
