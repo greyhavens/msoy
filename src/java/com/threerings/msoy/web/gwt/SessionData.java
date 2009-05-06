@@ -16,7 +16,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 public class SessionData implements IsSerializable
 {
     /** Indicators for sources of session data that may require special handling. */
-    public enum Source { CREATE, VALIDATED_CREATE };
+    public enum Source { LOGIN, CREATE, VALIDATED_CREATE };
 
     /** Our session credentials. */
     public WebCreds creds;
@@ -36,8 +36,8 @@ public class SessionData implements IsSerializable
     /** Registered user's visitor info structure. */
     public VisitorInfo visitor;
 
-    /** Source of the session data, or null if it's just the usual token-based data. */
-    public transient Source source;
+    /** Source of the session data. */
+    public transient Source source = Source.LOGIN;
 
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.
