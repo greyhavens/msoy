@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.data.all;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Indicates basic friendship information regarding two members.
  */
 public enum Friendship
+    implements IsSerializable
 {
     /** We are not friends with the person in question. */
     NOT_FRIENDS,
