@@ -30,6 +30,9 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -146,6 +149,23 @@ public class MemberRepository extends DepotRepository
         // drop this superfluous index
         ctx.registerMigration(MemberExperienceRecord.class,
             new SchemaMigration.DropIndex(2, "ixDateOccurred"));
+
+        registerMigration(new DataMigration("2009_05_05_friend_revamp") {
+            public void invoke ()
+                throws DatabaseException
+            {
+                int count = 0;
+                log.info("Friend conversion: starting.");
+                for (FriendRecord fr : findAll(FriendRecord.class)) {
+                    store(new FriendshipRecord(fr.inviterId, fr.inviteeId, true));
+                    store(new FriendshipRecord(fr.inviteeId, fr.inviterId, true));
+                    if (++count % 2000 == 0) {
+                        log.info("Friend conversion: chug...");
+                    }
+                }
+                log.info("Friend conversion: done!");
+            }
+        });
     }
 
     /**
@@ -693,9 +713,9 @@ public class MemberRepository extends DepotRepository
                   new Where(new In(CharityRecord.MEMBER_ID, memberIds)));
         deleteAll(EntryVectorRecord.class,
                   new Where(new In(EntryVectorRecord.MEMBER_ID, memberIds)));
-        deleteAll(FriendRecord.class,
-                  new Where(new Or(new In(FriendRecord.INVITER_ID, memberIds),
-                                   new In(FriendRecord.INVITEE_ID, memberIds))));
+        deleteAll(FriendshipRecord.class,
+                  new Where(new Or(new In(FriendshipRecord.MEMBER_ID, memberIds),
+                                   new In(FriendshipRecord.FRIEND_ID, memberIds))));
         // we don't purge InvitationRecord or GameInvitationRecord; they will probably be few in
         // number and are arguably interesting for historical reasons; this may need to be
         // revisited if we achieve "internet scale"
@@ -773,20 +793,19 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Returns the NeighborFriendRecords for all the established friends of a given member, through
-     * an inner join between {@link MemberRecord} and {@link FriendRecord}.
+     * an inner join between {@link MemberRecord} and {@link FriendshipRecord}.
      */
     public List<NeighborFriendRecord> getNeighborhoodFriends (int memberId)
     {
-        SQLOperator joinCondition =
-            new Or(new And(new Equals(FriendRecord.INVITER_ID, memberId),
-                           new Equals(FriendRecord.INVITEE_ID, MemberRecord.MEMBER_ID)),
-                   new And(new Equals(FriendRecord.INVITEE_ID, memberId),
-                           new Equals(FriendRecord.INVITER_ID, MemberRecord.MEMBER_ID)));
+        SQLOperator joinCondition = new And(
+            new Equals(FriendshipRecord.MEMBER_ID, memberId),
+            new Equals(FriendshipRecord.VALID, true),
+            new Equals(FriendshipRecord.FRIEND_ID, MemberRecord.MEMBER_ID));
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
             OrderBy.descending(MemberRecord.LAST_SESSION),
-            new Join(FriendRecord.class, joinCondition));
+            new Join(FriendshipRecord.class, joinCondition));
     }
 
     /**
@@ -1085,11 +1104,12 @@ public class MemberRepository extends DepotRepository
     /**
      * Determine what the friendship status is between one member and another.
      */
-    public boolean getFriendStatus (int firstId, int secondId)
+    public boolean getFriendStatus (int memberId, int friendId)
     {
-        // TODO: migrate existing friend records to (firstId<secondId) format then just do one query
-        return ((load(FriendRecord.class, FriendRecord.getKey(firstId, secondId)) != null) ||
-                (load(FriendRecord.class, FriendRecord.getKey(secondId, firstId)) != null));
+        FriendshipRecord frec = load(FriendshipRecord.class,
+            FriendshipRecord.getKey(memberId, friendId));
+        // TODO: new friend status constants
+        return (frec != null) && frec.valid;
     }
 
     /**
@@ -1098,11 +1118,10 @@ public class MemberRepository extends DepotRepository
     public IntSet loadFriendIds (int memberId)
     {
         IntSet memIds = new ArrayIntSet();
-        List<Where> clauses = Collections.singletonList(
-            new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
-                             new Equals(FriendRecord.INVITEE_ID, memberId))));
-        for (FriendRecord record : findAll(FriendRecord.class, clauses)) {
-            memIds.add(record.getFriendId(memberId));
+        for (FriendshipRecord frec : findAll(FriendshipRecord.class,
+                new Where(new And(new Equals(FriendshipRecord.MEMBER_ID, memberId),
+                    new Equals(FriendshipRecord.VALID, true))))) {
+            memIds.add(frec.friendId);
         }
         return memIds;
     }
@@ -1133,44 +1152,41 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads the FriendEntry record for some or all of the most recently online friends of the
-     * specified member. The online status of each friend will be false. The friends will be
-     * returned in order of most recently online to least.
+     * specified member. The online status of each friend will be false.
      *
-     * @param limit the number of friends to load or 0 for all of them.
+     * @param limit the number of friends to load or 0 for all of them. Also, if nonzero is
+     * specified, then the friends will be ordered by most recently online.
      */
     public List<FriendEntry> loadFriends (int memberId, int limit)
     {
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
-                                     new Equals(FriendRecord.INVITEE_ID, memberId))));
+        clauses.add(new Where(new And(
+            new Equals(FriendshipRecord.MEMBER_ID, memberId),
+            new Equals(FriendshipRecord.VALID, true))));
         SQLExpression condition = new And(
-            new Or(new And(new Equals(FriendRecord.INVITER_ID, memberId),
-                           new Equals(MemberRecord.MEMBER_ID, FriendRecord.INVITEE_ID)),
-                   new And(new Equals(FriendRecord.INVITEE_ID, memberId),
-                           new Equals(MemberRecord.MEMBER_ID, FriendRecord.INVITER_ID))));
+            new Equals(FriendshipRecord.MEMBER_ID, memberId),
+            new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID));
         clauses.add(new Join(MemberRecord.class, condition));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
+            clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
         }
-        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
 
-        // prepare an ordered map of the friends in question
-        Map<Integer, FriendEntry> friends = Maps.newLinkedHashMap();
-        for (FriendRecord record : findAll(FriendRecord.class, clauses)) {
-            friends.put(record.getFriendId(memberId), null);
+        // figure out a list of the friend ids
+        List<Integer> ids = Lists.newArrayList();
+        for (FriendshipRecord frec : findAll(FriendshipRecord.class, clauses)) {
+            ids.add(frec.friendId);
         }
 
         // now load up member card records for these guys and convert them to friend entries
-        for (MemberCardRecord crec : loadMemberCards(friends.keySet())) {
+        List<FriendEntry> friends = Lists.newArrayListWithCapacity(ids.size());
+        for (MemberCardRecord crec : loadMemberCards(ids)) {
             MemberCard card = crec.toMemberCard();
-            friends.put(crec.memberId, new FriendEntry(
-                            new VizMemberName(card.name, card.photo), card.headline, false));
+            friends.add(new FriendEntry(
+                new VizMemberName(card.name, card.photo), card.headline, false));
         }
-
-        // we might have nulls if there are some legacy bastards with no profile record
-        return Lists.newArrayList(
-            Iterables.filter(friends.values(), Predicates.not(Predicates.isNull())));
+        return friends;
     }
 
     /**
@@ -1183,27 +1199,19 @@ public class MemberRepository extends DepotRepository
      * exists.
      * @exception DuplicateKeyException if the members are already friends.
      */
-    public MemberCard noteFriendship (int memberId,  int otherId)
+    public MemberCard noteFriendship (int memberId, int friendId)
     {
         // first load the member record of the potential friend
-        MemberCard other = loadMemberCard(otherId, true);
+        MemberCard other = loadMemberCard(friendId, true);
         if (other == null) {
-            log.warning("Failed to establish friends: member no longer exists " +
-                        "[missingId=" + otherId + ", reqId=" + memberId + "].");
+            log.warning("Failed to establish friends: member no longer exists",
+                "missingId", friendId, "reqId", memberId);
             return null;
         }
 
-        // if they already have a connection, let the caller know by excepting (TODO: this can go
-        // away when we migrate all records to lowestId/highestId)
-        if (getFriendStatus(memberId, otherId)) {
-            throw new DuplicateKeyException(memberId + " and " + otherId + " are already friends");
-        }
-
-        // always store friend ids with the lower of the two ids first
-        FriendRecord rec = new FriendRecord();
-        rec.inviterId = Math.min(memberId, otherId);
-        rec.inviteeId = Math.max(memberId, otherId);
-        insert(rec);
+        // TODO: wrap this in a transaction when we support that
+        store(new FriendshipRecord(memberId, friendId, true));
+        store(new FriendshipRecord(friendId, memberId, true));
 
         return other;
     }
@@ -1211,11 +1219,14 @@ public class MemberRepository extends DepotRepository
     /**
      * Remove a friend mapping from the database.
      */
-    public void clearFriendship (int memberId, int otherId)
+    public void clearFriendship (int memberId, int friendId)
     {
-        // TODO: migrate existing friend records to (firstId<secondId) format then can do one delete
-        delete(FriendRecord.class, FriendRecord.getKey(memberId, otherId));
-        delete(FriendRecord.class, FriendRecord.getKey(otherId, memberId));
+        // clear our friendiness right on out
+        delete(FriendshipRecord.class, FriendshipRecord.getKey(memberId, friendId));
+
+        // but keep the friend marked as liking us, if and only if they already had a record
+        Key<FriendshipRecord> friendKey = FriendshipRecord.getKey(friendId, memberId);
+        updatePartial(FriendshipRecord.class, friendKey, friendKey, FriendshipRecord.VALID, false);
     }
 
     /**
@@ -1473,6 +1484,7 @@ public class MemberRepository extends DepotRepository
     {
         classes.add(MemberRecord.class);
         classes.add(FriendRecord.class);
+        classes.add(FriendshipRecord.class);
         classes.add(SessionRecord.class);
         classes.add(InvitationRecord.class);
         classes.add(InviterRecord.class);
