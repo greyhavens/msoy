@@ -21,6 +21,22 @@ import com.threerings.msoy.web.gwt.WebUserService;
  */
 public class SwizzleServlet extends HttpServlet
 {
+    /**
+     * Configures the supplied response with an auth cookie.
+     */
+    public static void setCookie (HttpServletRequest req, HttpServletResponse rsp, String token)
+    {
+        if (token != null && !StringUtil.isBlank(token)) {
+            Cookie cookie = new Cookie(WebCreds.credsCookie(), token);
+            cookie.setMaxAge(WebUserService.SESSION_DAYS * 24*60*60);
+            cookie.setPath("/");
+            // we need to strip our domain to match how GWT handles this cookie
+            String server = req.getServerName();
+            cookie.setDomain(server.substring(server.indexOf(".")+1));
+            rsp.addCookie(cookie);
+        }
+    }
+
     @Override // from HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
@@ -36,15 +52,7 @@ public class SwizzleServlet extends HttpServlet
                 path = path.substring(nextSlash + 1);
             }
         }
-        if (token != null && !StringUtil.isBlank(token)) {
-            Cookie cookie = new Cookie(WebCreds.credsCookie(), token);
-            cookie.setMaxAge(WebUserService.SESSION_DAYS * 24*60*60);
-            cookie.setPath("/");
-            // we need to strip our domain to match how GWT handles this cookie
-            String server = req.getServerName();
-            cookie.setDomain(server.substring(server.indexOf(".")+1));
-            rsp.addCookie(cookie);
-        }
+        setCookie(req, rsp, token);
         rsp.sendRedirect("/#" + path);
     }
 }
