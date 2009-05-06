@@ -4,9 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.util.List;
-import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -28,7 +26,12 @@ public class ExternalAuthLogic
      */
     public ExternalAuthHandler getHandler (ExternalAuther auther)
     {
-        return _exhandlers.get(auther);
+        switch (auther) {
+        case FACEBOOK:
+            return _faceAuther;
+        default:
+            return null;
+        }
     }
 
     /**
@@ -49,11 +52,7 @@ public class ExternalAuthLogic
         }
     }
 
-    /** Our external authentication handlers. */
-    protected Map<ExternalAuther, ExternalAuthHandler> _exhandlers = ImmutableMap.of(
-        ExternalAuther.FACEBOOK, FacebookAuthHandler.getInstance()
-    );
-
     // dependencies
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected FacebookAuthHandler _faceAuther;
 }

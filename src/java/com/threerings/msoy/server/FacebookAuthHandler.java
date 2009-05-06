@@ -14,6 +14,8 @@ import java.util.Set;
 import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 import com.google.code.facebookapi.ProfileField;
@@ -35,6 +37,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Handles Facebook authentication.
  */
+@Singleton
 public class FacebookAuthHandler extends ExternalAuthHandler
 {
     // trophy bundle: 48939637184
@@ -57,7 +60,7 @@ public class FacebookAuthHandler extends ExternalAuthHandler
         throws ServiceException
     {
         FacebookCreds fbcreds = (FacebookCreds)creds;
-        FacebookJaxbRestClient fbclient = getFacebookClient(fbcreds);
+        FacebookJaxbRestClient fbclient = _faceLogic.getFacebookClient(fbcreds);
 
         Info info = new Info();
         try {
@@ -100,31 +103,7 @@ public class FacebookAuthHandler extends ExternalAuthHandler
         }
     }
 
-    protected FacebookJaxbRestClient getFacebookClient (FacebookCreds creds)
-    {
-        String apiKey = ServerConfig.config.getValue("facebook.api_key", (String)null);
-        if (StringUtil.isBlank(apiKey)) {
-            throw new IllegalStateException("Missing facebook.api_key server configuration.");
-        }
-        String secret = ServerConfig.config.getValue("facebook.secret", (String)null);
-        if (StringUtil.isBlank(secret)) {
-            throw new IllegalStateException("Missing facebook.secret server configuration.");
-        }
-        return new FacebookJaxbRestClient(
-            SERVER_URL, apiKey, secret, creds.sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
-    }
-
-    protected static final int CONNECT_TIMEOUT = 15*1000; // in millis
-    protected static final int READ_TIMEOUT = 15*1000; // in millis
-
-    protected static final URL SERVER_URL;
-    static {
-        try {
-            SERVER_URL = new URL("http://api.facebook.com/restserver.php");
-        } catch (Exception e) {
-            throw new RuntimeException(e); // MalformedURLException should be unchecked, sigh
-        }
-    }
+    @Inject protected FacebookLogic _faceLogic;
 
     /** Used to parse Facebook profile birthdays. */
     protected static SimpleDateFormat _bfmt = new SimpleDateFormat("MMMM dd, yyyy");
