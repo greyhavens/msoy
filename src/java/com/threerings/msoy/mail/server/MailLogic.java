@@ -17,7 +17,9 @@ import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -34,6 +36,8 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.room.server.RoomLogic;
+
+import com.threerings.msoy.person.gwt.InvitationResults;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -104,6 +108,24 @@ public class MailLogic
                                    String subject, String body, MailPayload attachment)
         throws ServiceException
     {
+        if (attachment instanceof FriendInvitePayload) {
+            Friendship friendship = _memberRepo.getFullFriendship(sender.memberId, recip.memberId);
+            switch (friendship) {
+            default:
+                break; // it's all good, proceed
+
+            case INVITEE: // hey, they already sent us an invite!
+                _memberLogic.establishFriendship(sender.memberId, recip.memberId);
+                return; // do not send the mail
+
+            case INVITED:
+                throw new ServiceException(InvitationResults.ALREADY_FRIEND_INV);
+
+            case FRIENDS:
+                throw new ServiceException(InvitationResults.ALREADY_FRIEND);
+            }
+        }
+
         boolean isMuted = checkMuting(sender, recip);
 
         // now start the conversation (and deliver the message)
@@ -351,6 +373,7 @@ public class MailLogic
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MailSender _mailer;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected RoomLogic _roomLogic;
     @Inject protected RootDObjectManager _omgr;

@@ -58,7 +58,6 @@ import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
@@ -74,7 +73,6 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -495,31 +493,16 @@ public class MemberLogic
         if (frec == null) {
             log.warning("Requested to friend non-existent member", "who", memberId,
                         "friendId", friendId);
-            return false;
 
         } else if (frec.isGreeter()) {
             establishFriendship(memberId, friendId);
             return true;
-        }
 
-        Friendship friendship = _memberRepo.getFullFriendship(memberId, friendId);
-        switch (friendship) {
-        default:
-        case NOT_FRIENDS:
+        } else {
+            // pass the buck
             _mailLogic.sendFriendInvite(memberId, friendId);
-            // takes care of noting that we've sent them a friend request
-            return false;
-
-        case INVITEE: // hey, they already sent us an invite!
-            establishFriendship(memberId, friendId);
-            return true;
-
-        case INVITED:
-            throw new ServiceException(InvitationResults.ALREADY_FRIEND_INV);
-
-        case FRIENDS:
-            throw new ServiceException(InvitationResults.ALREADY_FRIEND);
         }
+        return false;
     }
 
     /**
