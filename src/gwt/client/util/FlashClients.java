@@ -15,13 +15,15 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.UberClientModes;
 
 import client.shell.CShell;
-import client.shell.Frame;
 
 /**
  * Utility methods for generating flash clients.
  */
 public class FlashClients
 {
+    /** The height of our Flash client in pixels. */
+    public static final int CLIENT_HEIGHT = 545;
+
     /**
      * Create a tiny applet for uploading media.
      */
@@ -168,7 +170,7 @@ public class FlashClients
         String definition = CShell.frame.checkFlashVersion(0,0);
         return definition != null ? definition : WidgetUtil.createFlashObjectDefinition(
             "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
-            "100%", String.valueOf(Frame.CLIENT_HEIGHT - BLACKBAR_HEIGHT),
+            "100%", String.valueOf(CLIENT_HEIGHT - BLACKBAR_HEIGHT),
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
@@ -190,7 +192,7 @@ public class FlashClients
         if (_clientFullHeight = !_clientFullHeight) {
             setClientHeightNative(findClient(), "100%");
         } else {
-            setClientHeightNative(findClient(), Frame.CLIENT_HEIGHT+"px");
+            setClientHeightNative(findClient(), CLIENT_HEIGHT+"px");
         }
     }
 
@@ -295,7 +297,7 @@ public class FlashClients
      */
     protected static String getClientHeight ()
     {
-        return _clientFullHeight ? "100%" : (""+Frame.CLIENT_HEIGHT);
+        return _clientFullHeight ? "100%" : (""+CLIENT_HEIGHT);
     }
 
     /**
@@ -383,7 +385,6 @@ public class FlashClients
     /** TEMP: Whether or not the client is in full-height mode. */
     protected static boolean _clientFullHeight = false;
 
-    // TODO: put this in Frame?
     protected static final int BLACKBAR_HEIGHT = 20;
 
     protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";

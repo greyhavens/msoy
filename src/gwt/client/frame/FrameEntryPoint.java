@@ -104,7 +104,7 @@ public class FrameEntryPoint
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
 
-        // create our header, dialog and popup
+        // create our header
         _header = new FrameHeader(new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (_closeToken != null) {
@@ -116,8 +116,19 @@ public class FrameEntryPoint
                 }
             }
         });
-        _header.setVisible(false);
-        RootPanel.get(PAGE).add(_header);
+
+        // create our frame layout
+        _layout = Layout.getLayout(_header, new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                // put the client in in minimized state
+                String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
+                _closeToken = Link.createToken(Pages.WORLD, "h");
+                if (_bar != null) {
+                    _bar.setCloseVisible(true);
+                }
+                WorldClient.displayFlash(args, _layout.getClientProvider());
+            }
+        });
 
         // clear out the loading HTML so we can display a browser warning or load Whirled
         DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
@@ -223,6 +234,7 @@ public class FrameEntryPoint
         // replace the page if necessary
         if (_page != page || _page == Pages.WORLD) {
             setPage(page);
+
         } else {
             // reset our navigation as we're not changing pages but need to give the current page a
             // fresh subnavigation palette
@@ -253,8 +265,8 @@ public class FrameEntryPoint
         // (which may get immediately removed if we're going directly into the world)... don't do
         // it if we have registered with validation so that the "ok, now check your email" screen
         // stays as-is
-        if (_client == null && data.source != SessionData.Source.VALIDATED_CREATE) {
-            addNoClientIcon();
+        if (data.source != SessionData.Source.VALIDATED_CREATE) {
+            _layout.addNoClientIcon();
         }
 
         if (data.source == SessionData.Source.CREATE) {
@@ -336,13 +348,7 @@ public class FrameEntryPoint
         WorldClient.setMinimized(false);
 
         // clear out the content
-        clearContent();
-
-        // restore the client to the full glorious browser width
-        if (_client != null) {
-            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
-            _client.setWidth("100%");
-        }
+        clearContent(true);
 
         // restore the client's URL
         if (_closeToken != null) {
@@ -446,96 +452,49 @@ public class FrameEntryPoint
     protected void setPage (Pages page)
     {
         // clear out any old content
-        clearContent();
+        clearContent(false);
 
         // clear out any lingering dialog content
         clearDialog();
 
         // show the header for pages that report a tab of which they are a part
-        _header.setVisible(page.getTab() != null);
+        _header.selectTab(page.getTab());
 
-        // make a note of our current page and create our iframe
+        // make a note of our current page
         _page = page;
+
+        // if we're displaying a world page, that's special
+        if (page == Pages.WORLD) {
+            _layout.closeContent(true); // close any content that is around
+            displayWorld(_pageToken);
+            return;
+        }
+
+        // create our iframe
         _iframe = new Frame("/gwt/" + DeploymentConfig.version + "/" + _page.getPath() + "/");
         _iframe.setStyleName("pageIFrame");
 
-        // select the appropriate header tab
-        _header.selectTab(page.getTab());
-
-        int contentTop = 0;
-        String contentWidth = null, contentHeight = null;
+        // if we're on a headerless page, we need to close the client
         if (page.getTab() == null) {
-            switch (page) {
-            case WORLD:
-                displayWorld(_pageToken);
-                break;
-
-            default:
-                closeClient(); // no client on frameless pages
-                // content takes up whole page
-                contentWidth = "100%";
-                contentHeight = "100%";
-                contentTop = 0;
-
-                // the content is just the supplied widget, no extra bits
-                _content = _iframe;
-                break;
-            }
-
+            closeClient();
         } else {
-            // let the client know it about to be minimized
-            WorldClient.setMinimized(true);
-            if (_client != null) {
-                _client.setWidth(computeClientWidth());
-                RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
-            }
-
-            // position the content normally
-            contentWidth = CONTENT_WIDTH + "px";
-            contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
-            contentTop = NAVI_HEIGHT;
-
-            // add a titlebar to the top of the content
-            FlowPanel content = new FlowPanel();
-            if (page.getTab() != null) {
-                content.add(_bar = TitleBar.create(page.getTab(), new ClickHandler() {
-                    public void onClick (ClickEvent event) {
-                        closeContent();
-                    }
-                }));
-            }
-            _iframe.setWidth(contentWidth);
-            _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-            content.add(_iframe);
-            _content = content;
+            _bar = TitleBar.create(page.getTab(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    closeContent();
+                }
+            });
         }
-
-        // on frameless pages, we don't listen for resize as the iframe is height 100%, otherwise do
-        setWindowResizerEnabled(page == Pages.WORLD || page.getTab() != null);
-
-        // size, add and position the content
-        if (_content != null) {
-            _content.setWidth(contentWidth);
-            _content.setHeight(contentHeight);
-            RootPanel.get(PAGE).add(_content);
-            RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
-
-            // activate our close button if we have a client
-            if (_bar != null) {
-                _bar.setCloseVisible(FlashClients.clientExists());
-            }
-        }
+        _layout.setContent(_bar, _iframe);
     }
 
-    protected void clearContent ()
+    protected void clearContent (boolean restoreClient)
     {
-        if (_content != null) {
-            _bar = null;
-            RootPanel.get(PAGE).remove(_content);
-            _content = null;
+        if (_layout.closeContent(restoreClient)) {
             // restore the title to the last thing flash asked for
             setTitle(_closeTitle);
         }
+        _iframe = null;
+        _bar = null;
     }
 
     protected void closeClient (boolean didLogoff)
@@ -548,15 +507,7 @@ public class FrameEntryPoint
             _bar.setCloseVisible(false);
         }
 
-        if (_client != null) {
-            _client = removeFromPage(_client);
-            addNoClientIcon();
-
-            if (_content != null) {
-                _content.setWidth(CONTENT_WIDTH + "px");
-                _content.setVisible(true);
-            }
-
+        if (_layout.closeClient()) {
             // if we just logged off, go to the logoff page
             if (didLogoff) {
                 Link.go(Pages.ACCOUNT, "logoff");
@@ -577,34 +528,6 @@ public class FrameEntryPoint
                 }
             }
         }
-    }
-
-    protected void addNoClientIcon ()
-    {
-        if (CShell.isGuest()) {
-            return; // no quick-home link for guests
-        }
-
-        ClickHandler goHome = new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                // put the client in in minimized state
-                String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
-                _closeToken = Link.createToken(Pages.WORLD, "h");
-                _bar.setCloseVisible(true);
-                WorldClient.displayFlash(args, _miniPanelProvider);
-            }
-        };
-        FlowPanel bits = MsoyUI.createFlowPanel("Bits");
-        bits.add(MsoyUI.createPushButton(_images.noclient().createImage(),
-                                         _images.noclient_hover().createImage(),
-                                         _images.noclient_hover().createImage(), goHome));
-        bits.add(MsoyUI.createActionLabel(_cmsgs.goHome(), goHome));
-
-        _noclient = MsoyUI.createSimplePanel(bits, "noclient");
-        _noclient.setWidth(computeClientWidth());
-        _noclient.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        RootPanel.get(PAGE).add(_noclient);
-        RootPanel.get(PAGE).setWidgetPosition(_noclient, CONTENT_WIDTH, NAVI_HEIGHT);
     }
 
     protected void displayWorld (String pageToken)
@@ -659,23 +582,8 @@ public class FrameEntryPoint
         // note the current history token so that we can restore it if needed
         _closeToken = (closeToken == null) ? _currentToken : closeToken;
 
-        // hide our content
-        if (_content != null) {
-            _content.setVisible(false);
-        }
-
-        // have the client take up all the space
-        if (_client != null) {
-            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
-            _client.setWidth("100%");
-        }
-
-        // make sure the header is showing as we always want the header above the client
-        _header.setVisible(true);
-        _header.selectTab(null);
-
         // finally actually display the client
-        WorldClient.displayFlash(args, _flashPanelProvider);
+        WorldClient.displayFlash(args, _layout.getClientProvider());
     }
 
     protected void displayGame (final String action, int gameId, final int otherId1,
@@ -842,36 +750,6 @@ public class FrameEntryPoint
         });
     }
 
-    protected void setWindowResizerEnabled (boolean enabled)
-    {
-        if (!enabled && _resizer != null) {
-            Window.removeWindowResizeListener(_resizer);
-            _resizer = null;
-
-        } else if (enabled && _resizer == null) {
-            _resizer = new WindowResizeListener() {
-                public void onWindowResized (int width, int height) {
-                    if (_content != null) {
-                        _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-                    }
-                    if (_iframe != null) {
-                        _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-                    }
-                    Widget right = (_client == null) ? _noclient : _client;
-                    if (right != null) {
-                        // if we have content, the client is in explicitly sized mode and will need
-                        // its width updated manually; if we have no content, it is width 100%
-                        if (_content != null) {
-                            right.setWidth(computeClientWidth());
-                        }
-                        right.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-                    }
-                }
-            };
-            Window.addWindowResizeListener(_resizer);
-        }
-    }
-
     /**
      * Called when Flash or our inner Page frame wants us to dispatch an event.
      */
@@ -914,31 +792,10 @@ public class FrameEntryPoint
         return getVisitorInfo().id;
     }
 
-    protected Panel makeClientPanel ()
-    {
-        Panel client = (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) ?
-            new ScrollPanel() : new SimplePanel();
-        client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        return client;
-    }
-
-    protected String computeClientWidth ()
-    {
-        return Math.max(Window.getClientWidth() - CONTENT_WIDTH, MIN_CLIENT_WIDTH) + "px";
-    }
-
-    protected Widget removeFromPage (Widget widget)
-    {
-        if (widget != null) {
-            RootPanel.get(PAGE).remove(widget);
-        }
-        return null;
-    }
-
     protected void setTitleFromFlash (String title)
     {
         // if we're displaying content currently, don't let flash mess with the title
-        if (_content == null) {
+        if (!_layout.haveContent()) {
             setTitle(title);
         }
         _closeTitle = title;
@@ -967,7 +824,7 @@ public class FrameEntryPoint
 
     protected void rebootFlashClient ()
     {
-        WorldClient.rebootFlash(_content == null ? _flashPanelProvider : _miniPanelProvider);
+        WorldClient.rebootFlash(_layout.getClientProvider());
     }
 
     /**
@@ -1055,34 +912,6 @@ public class FrameEntryPoint
         return $wnd.hex_md5(text);
     }-*/;
 
-    protected WorldClient.PanelProvider _flashPanelProvider = new WorldClient.PanelProvider() {
-        public Panel get () {
-            // clear out any existing bits
-            _noclient = removeFromPage(_noclient);
-            _client = removeFromPage(_client);
-
-            Panel client = makeClientPanel();
-            client.setWidth("100%");
-            RootPanel.get(PAGE).add(client);
-            RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
-
-            _client = client;
-            return client;
-        }
-    };
-
-    protected WorldClient.PanelProvider _miniPanelProvider = new WorldClient.PanelProvider() {
-        public Panel get () {
-            _noclient = removeFromPage(_noclient);
-            Panel client = makeClientPanel();
-            client.setWidth(computeClientWidth());
-            RootPanel.get(PAGE).add(client);
-            RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
-            _client = client;
-            return client;
-        }
-    };
-
     protected Pages _page;
     protected String _currentToken = "";
     protected String _pageToken = "";
@@ -1091,17 +920,13 @@ public class FrameEntryPoint
     protected String _closeTitle;
 
     protected FrameHeader _header;
-    protected Widget _content;
+    protected Layout _layout;
     protected TitleBar _bar;
     protected Frame _iframe;
-    protected Widget _client, _noclient;
     protected BorderedDialog _dialog;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
     protected Invitation _activeInvite;
-
-    /** Handles window resizes. */
-    protected WindowResizeListener _resizer;
 
     /** Used to talk to Google Analytics. */
     protected Analytics _analytics = new Analytics();
@@ -1123,8 +948,6 @@ public class FrameEntryPoint
     // constants for our top-level elements
     protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
-
-    protected static final int MIN_CLIENT_WIDTH = 300;
 
     /** This vector string represents an email invite */
     protected static final String EMAIL_VECTOR = "emailInvite";

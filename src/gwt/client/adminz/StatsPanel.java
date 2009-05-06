@@ -26,7 +26,6 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.StatsModel;
 
-import client.shell.Frame;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
@@ -102,7 +101,7 @@ public class StatsPanel extends FlowPanel
         table.setSortingEnabled(true);
         table.setResizePolicy(ScrollTable.ResizePolicy.UNCONSTRAINED);
         table.setScrollPolicy(ScrollTable.ScrollPolicy.HORIZONTAL);
-        int availwid = Frame.CONTENT_WIDTH - 11 - (model.getColumns()+1)*3; // border, colgap
+        int availwid = 700/*todo*/ - 11 - (model.getColumns()+1)*3; // border, colgap
         int colwid = Math.min(100, Math.max(DATA_WIDTH, (availwid-200)/model.getColumns()));
         table.setColumnWidth(0, Math.max(100, availwid - (model.getColumns() * colwid)));
         for (int cc = 0; cc < model.getColumns(); cc++) {

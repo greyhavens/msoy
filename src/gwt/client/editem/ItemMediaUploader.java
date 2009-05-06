@@ -16,7 +16,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.shell.CShell;
-import client.shell.Frame;
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
@@ -168,7 +167,7 @@ public class ItemMediaUploader extends FlexTable
     public void openImageEditor (MediaDesc desc, boolean takeSnapshot)
     {
         int popWidth = _itemEditor.getOffsetWidth() - 8;
-        int popHeight = Math.max(Frame.CLIENT_HEIGHT,
+        int popHeight = Math.max(FlashClients.CLIENT_HEIGHT,
             Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8));
         String url = (desc == null) ? null : desc.getMediaPath();
         int maxWidth = -1;

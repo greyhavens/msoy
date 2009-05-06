@@ -17,21 +17,6 @@ import client.util.events.FlashEvent;
  */
 public interface Frame
 {
-    /** The height of our frame navigation header. */
-    public static final int NAVI_HEIGHT = 50 /* header */;
-
-    /** The height of our frame navigation header and page title bar. */
-    public static final int HEADER_HEIGHT = NAVI_HEIGHT + 37 /* title bar */;
-
-    /** The height of our Flash or Java client in pixels. */
-    public static final int CLIENT_HEIGHT = 545;
-
-    /** The maximum width of our content UI, the remainder is used by the world client. */
-    public static final int CONTENT_WIDTH = 700;
-
-    /** The offset of the content close button, from the left edge of the separator bar. */
-    public static final int CLOSE_BUTTON_OFFSET = -16;
-
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
         SET_TITLE, ADD_NAV_LINK, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT,
