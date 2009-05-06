@@ -140,7 +140,7 @@ public class AwardDelegate extends RatingDelegate
         // compute new ratings if appropriate
         if (shouldRateGame()) {
             for (Rating rating : _ratings.values()) {
-                Player player = players.get(rating.playerOid);
+                Player player = players.get(rating.playerId);
                 if (player != null) {
                     updateScoreBasedRating(player, rating);
                 }
