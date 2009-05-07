@@ -127,7 +127,9 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // load friend info
         result.friends = _memberRepo.loadFriends(tgtrec.memberId, MAX_PROFILE_FRIENDS);
-        result.friendship = _memberRepo.getFullFriendship(memrec.memberId, tgtrec.memberId);
+        if (memrec != null) {
+            result.friendship = _memberRepo.getFullFriendship(memrec.memberId, tgtrec.memberId);
+        }
         result.totalFriendCount = _memberRepo.countFullFriends(tgtrec.memberId);
 
         // load greeter info
