@@ -1,1 +1,3 @@
 com/threerings/msoy/server/MsoyEvents.class
+com/threerings/msoy/spam/server/SpamLogic.class
+com/threerings/msoy/spam/server/SpamLogic$Bucket.class
