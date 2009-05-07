@@ -57,6 +57,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
@@ -538,14 +539,21 @@ public class MemberLogic
             return;
         }
 
+        // check they are not a permaguest
+        if (mrec.isPermaguest()) {
+            log.warning("Permaguest with a friend?", "permaguestId", friendId,
+                "friendId", payMemberId);
+            return;
+        }
+
         // do the award
         try {
             _memberRepo.noteFriendPayment(friendId, payMemberId);
-            _moneyLogic.award(payMemberId, Currency.BARS, 1, true,
+            _moneyLogic.award(payMemberId, Currency.BARS, TransactionType.FRIEND_AWARD, 1, true,
                 UserAction.receivedFriendAward(payMemberId, friendId));
 
         } catch (DuplicateKeyException dke) {
-            log.info("Friend payment triggered twice?", "friend", friendId, "payee", payMemberId);
+            log.warning("Friend payment triggered twice?", "friend", friendId, "payee", payMemberId);
         }
     }
 
