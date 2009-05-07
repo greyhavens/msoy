@@ -159,11 +159,12 @@ public class MoneyLogic
     }
 
     /**
-     * Shorthand for calling {@link #award} with <code>Currency.COINS</code>.
+     * Shorthand for calling {@link #award} with <code>Currency.COINS</code> and
+     * <code>TransactionType.AWARD</code>.
      */
     public MoneyTransaction awardCoins (int memberId, int amount, boolean notify, UserAction action)
     {
-        return award(memberId, Currency.COINS, amount, notify, action);
+        return award(memberId, Currency.COINS, TransactionType.AWARD, amount, notify, action);
     }
 
     /**
@@ -171,20 +172,20 @@ public class MoneyLogic
      *
      * @param memberId ID of the member to receive the coins.
      * @param currency Currency being awarded
+     * @param type Type of transaction that this is for
      * @param amount Number of coins to be awarded.
      * @param notify If false, an earlier call to {@link MoneyNodeActions#coinsEarned} was made, so
      * this call should not notify the user.
      * @param action The user action that caused coins to be awarded.
      */
-    public MoneyTransaction award (int memberId, Currency currency, int amount, boolean notify,
-                                   UserAction action)
+    public MoneyTransaction award (int memberId, Currency currency, TransactionType type,
+                                   int amount, boolean notify, UserAction action)
     {
         Preconditions.checkArgument(memberId != 0, "Requested to award money to invalid member.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, currency, amount, TransactionType.AWARD, action.description,
-            null, true);
+            memberId, currency, amount, type, action.description, null, true);
         if (notify) {
             _nodeActions.moneyUpdated(tx, true);
         }

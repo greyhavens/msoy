@@ -34,6 +34,7 @@ public enum TransactionType
     CREATED_LISTING(19),
     BROADCAST_PURCHASE(20),
     PARTY_PURCHASE(21),
+    FRIEND_AWARD(22),
     ;
 
     // Required by ByteEnum
