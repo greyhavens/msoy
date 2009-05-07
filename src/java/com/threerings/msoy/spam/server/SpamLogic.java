@@ -88,6 +88,34 @@ import static com.threerings.msoy.Log.log;
 public class SpamLogic
 {
     /**
+     * Retention bucket a user can get assigned to.
+     */
+    public enum Bucket
+    {
+        /** User has some friend or group activity. */
+        HAS_PERSONAL_EVENTS("activeFriends", "nameBusyFriends", "friendFeedAndNewThings"),
+
+        /** Has no friend or group activity, but has at least 1 friend. */
+        HAS_INACTIVE_FRIENDS("inactiveFriends", "nameNewThings", "newsFeedAndNewThings"),
+
+        /** Has no friends and hence no personal events. */
+        HAS_NO_FRIENDS("noFriends", "nameNewThings", "newsFeedAndNewThings");
+
+        /** Name of the bucket. Used for logging and presenting results. */
+        public final String name;
+
+        /** Choices of subject line for retention mailings. NOTE: the values here are for logging;
+         * they are translated to full subject lines by the velocity template feed.tmpl. */
+        public final String[] subjectLines;
+
+        Bucket (String name, String... subjectLines)
+        {
+            this.name = name;
+            this.subjectLines = subjectLines;
+        }
+    }
+
+    /**
      * News feed category for the purposes of filling in a velocity template. NOTE: all public
      * methods and members are referenced from the <code>feed.tmpl</code> template using
      * reflection.
@@ -841,34 +869,6 @@ public class SpamLogic
         {
             this.value = value;
             this.success = success;
-        }
-    }
-
-    /**
-     * Retention bucket a user can get assigned to.
-     */
-    protected enum Bucket
-    {
-        /** User has some friend or group activity. */
-        HAS_PERSONAL_EVENTS("activeFriends", "nameBusyFriends", "friendFeedAndNewThings"),
-
-        /** Has no friend or group activity, but has at least 1 friend. */
-        HAS_INACTIVE_FRIENDS("inactiveFriends", "nameNewThings", "newsFeedAndNewThings"),
-
-        /** Has no friends and hence no personal events. */
-        HAS_NO_FRIENDS("noFriends", "nameNewThings", "newsFeedAndNewThings");
-
-        /** Name of the bucket. Used for logging and presenting results. */
-        public final String name;
-
-        /** Choices of subject line for retention mailings. NOTE: the values here are for logging;
-         * they are translated to full subject lines by the velocity template feed.tmpl. */
-        public final String[] subjectLines;
-
-        Bucket (String name, String... subjectLines)
-        {
-            this.name = name;
-            this.subjectLines = subjectLines;
         }
     }
 
