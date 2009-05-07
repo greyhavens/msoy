@@ -3,15 +3,17 @@
          xmlns:artifact="urn:maven-artifact-ant">
   <!-- the base directory from which we get our bundles and jar files -->
   <property name="base.dir" value="../.."/>
-  <property name="deploy.dir" value="dist"/>
+  <property name="libs.dir" value="${base.dir}/extlibs/java"/>
 
+  <property name="deploy.dir" value="cell/dist"/>
+  <property name="cell.deploy.dir" value="cell/dist"/>
   <import file="cell/build-support.xml"/>
 
   <target name="prepare">
       <prepare-cell configdir="etc">
         <cell-libs>
             <fileset dir="${base.dir}/dist/lib" includes="narya-base.jar,narya-distrib.jar"/>
-            <fileset dir="${base.dir}/extlibs/java" includes="gdata-analytics.jar,gdata-core.jar"/>
+            <fileset refid="cell.libs"/>
         </cell-libs>
         <cell-classes>
             <fileset dir="${base.dir}/dist/classes" includesfile="msoy.includes"/>
