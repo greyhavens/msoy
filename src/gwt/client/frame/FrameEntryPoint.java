@@ -858,7 +858,7 @@ public class FrameEntryPoint
              return entry.@client.frame.FrameEntryPoint::getVisitorId()();
         };
         $wnd.toggleClientHeight = function () {
-            @client.util.FlashClients::toggleClientHeight()();
+            @client.util.FlashClients::toggleClientFullHeight()();
         }
         $wnd.triggerFlashEvent = function (eventName, args) {
             entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);

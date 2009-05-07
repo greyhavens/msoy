@@ -187,11 +187,19 @@ public class FlashClients
     /**
      * Toggles the height 100% state of the client.
      */
-    public static void toggleClientHeight ()
+    public static void toggleClientFullHeight ()
     {
-        if (_clientFullHeight = !_clientFullHeight) {
+        setClientFullHeight(!_clientFullHeight);
+    }
+
+    /**
+     * Sets the client to 100% height or not.
+     */
+    public static void setClientFullHeight (boolean fullHeight)
+    {
+        if (fullHeight && !_clientFullHeight) {
             setClientHeightNative(findClient(), "100%");
-        } else {
+        } else if (!fullHeight && _clientFullHeight) {
             setClientHeightNative(findClient(), CLIENT_HEIGHT+"px");
         }
     }

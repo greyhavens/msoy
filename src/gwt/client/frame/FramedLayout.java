@@ -38,6 +38,7 @@ public class FramedLayout extends Layout
         // if we have a client, adjust its height...
         if (_client.getWidget() != null) {
             _client.setHeight("300px");
+            FlashClients.setClientFullHeight(true);
             avail -= 300;
         }
         content.setHeight(avail + "px");
@@ -65,7 +66,8 @@ public class FramedLayout extends Layout
         return new WorldClient.PanelProvider() {
             public Panel get () {
                 closeClient();
-                _client.setHeight(FlashClients.CLIENT_HEIGHT + "px");
+                _client.setHeight(null);
+                FlashClients.setClientFullHeight(false);
                 return _client;
             }
         };
@@ -77,6 +79,7 @@ public class FramedLayout extends Layout
         if (_client == null) {
             return false;
         }
+        FlashClients.setClientFullHeight(false);
         _client.setHeight(null);
         _client.setWidget(null);
         return true;
