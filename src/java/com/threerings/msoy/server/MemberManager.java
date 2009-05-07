@@ -139,7 +139,8 @@ public class MemberManager
         _levelForFlow = new int[256];
         for (int ii = 0; ii < BEGINNING_FLOW_LEVELS.length; ii++) {
             // augment the value so the account creation does not cause level 3 to happen
-            _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii] + CoinAwards.CREATED_ACCOUNT;
+            _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii] +
+                CoinAwards.CREATED_ACCOUNT + CoinAwards.CREATED_PROFILE;
         }
         calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
 
@@ -782,20 +783,24 @@ public class MemberManager
         level++;
 
         if (member.level < level) {
+            final int oldLevel = member.level;
+            final int newLevel = level;
+            final int memberId = member.getMemberId();
+
             // update their level now so that we don't come along and do this again while the
             // invoker is off writing things to the database
             member.setLevel(level);
 
-            final int newLevel = level;
             _invoker.postUnit(new RepositoryUnit("updateLevel") {
                 @Override public void invokePersist () throws Exception {
-                    final int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
                     _memberRepo.setUserLevel(memberId, newLevel);
                     _memberRepo.grantInvites(memberId, 1);
                     // mark the level gain in their feed
                     _feedRepo.publishMemberMessage(
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
+                    // see if we should award a bar to anyone
+                    _memberLogic.maybeAwardFriendBar(memberId, oldLevel, newLevel);
                 }
                 @Override public void handleSuccess () {
                     _notifyMan.notify(member, new LevelUpNotification(newLevel));
