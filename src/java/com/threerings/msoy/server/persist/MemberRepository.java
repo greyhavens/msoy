@@ -16,9 +16,7 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -1513,6 +1511,19 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Notes that a payment has been awarded for getting a friend to join. The caller must ensure
+     * all conditions of payment have been met.
+     * @throws DuplicateKeyException if the friend has already awarded a payment to someone else
+     */
+    public void noteFriendPayment (int friendId, int paidMemberId)
+    {
+        FriendPayoutRecord payout = new FriendPayoutRecord();
+        payout.friendId = friendId;
+        payout.paidMemberId = paidMemberId;
+        insert(payout);
+    }
+
+    /**
      * Update the expiration time of an existing session. Returns the loaded session or
      * null if none previously existed.
      */
@@ -1568,6 +1579,7 @@ public class MemberRepository extends DepotRepository
         classes.add(EntryVectorRecord.class);
         classes.add(GameInvitationRecord.class);
         classes.add(MuteRecord.class);
+        classes.add(FriendPayoutRecord.class);
     }
 
     /**
