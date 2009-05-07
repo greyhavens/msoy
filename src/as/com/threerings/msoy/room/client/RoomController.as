@@ -892,7 +892,8 @@ public class RoomController extends SceneController
 
     protected function throttle (ident :ItemIdent, fn :Function, ... args) :void
     {
-        if (_roomView.getMyAvatar().getItemIdent().equals(ident)) {
+        var av :MsoySprite = _roomView.getMyAvatar();
+        if (av != null && av.getItemIdent().equals(ident)) {
             // our own avatar is never throttled
             fn.apply(null, args);
 
