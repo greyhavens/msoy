@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.CShell;
 import client.util.FlashClients;
 
 /**
@@ -32,7 +33,8 @@ public class FramedLayout extends Layout
 
         int avail = Window.getClientHeight();
         if (bar != null) {
-            avail -= NAVI_HEIGHT;
+            avail -= FRAMED_NAVI_HEIGHT;
+            bar.makeFramed();
             _bar.setWidget(bar);
         }
         // if we have a client, adjust its height...
@@ -95,10 +97,13 @@ public class FramedLayout extends Layout
     protected void init (FrameHeader header, ClickHandler onGoHome)
     {
         super.init(header, onGoHome);
+        RootPanel.get().addStyleName("framedPage");
         RootPanel.get(PAGE).add(_client = new SimplePanel());
         RootPanel.get(PAGE).add(_bar = new SimplePanel());
         RootPanel.get(PAGE).add(_content = new SimplePanel());
     }
 
     protected SimplePanel _client, _bar, _content;
+
+    protected static final int FRAMED_NAVI_HEIGHT = 28;
 }

@@ -75,6 +75,17 @@ public class TitleBar extends SmartTable
         }
     }
 
+    /**
+     * Hacky method to adjust our UI for framed layout mode.
+     */
+    public void makeFramed ()
+    {
+        // add a style that overrides some bits
+        addStyleName("framedTitle");
+        // clear out the shim image
+        setText(0, 0, "");
+    }
+
     public void resetNav ()
     {
         boolean closeWasVisible = _closeBox.isAttached();

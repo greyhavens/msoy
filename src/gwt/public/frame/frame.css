@@ -4,6 +4,15 @@
  * CSS styles used by our top-level frame and header.
  */
 
+/* StandardLayout styles */
+.standardPage {
+  background: #000000;
+}
+
+.framedPage {
+  background: #FFFFFF;
+}
+
 /* ------------------------------------
    HEADER
 -------------------------------------*/
@@ -196,6 +205,20 @@
 .pageTitle .Close {
   padding-bottom: 12px;
   padding-left: 5px;
+}
+
+/** Some adjustments when we're running in a framed layout. */
+.framedTitle {
+  background: #3581B2;
+  width: 100%;
+}
+
+.framedTitle .Title {
+  height: 100%;
+}
+
+.framedTitle .Close {
+  padding-bottom: 2px;
 }
 
 /** Home icon shown when we have no client */
