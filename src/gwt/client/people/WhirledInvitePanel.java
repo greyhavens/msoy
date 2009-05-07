@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.CoinAwards;
-import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
