@@ -254,7 +254,7 @@ public class GameServlet extends MsoyServiceServlet
 
         // load up cards for the members in question
         result.members = new MemberCard[memberIds.length];
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(new ArrayIntSet(memberIds))) {
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(IntListUtil.asList(memberIds))) {
             result.members[IntListUtil.indexOf(memberIds, mcr.memberId)] = mcr.toMemberCard();
         }
 
