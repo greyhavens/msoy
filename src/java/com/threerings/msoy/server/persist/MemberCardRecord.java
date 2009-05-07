@@ -149,7 +149,7 @@ public class MemberCardRecord extends PersistentRecord
     public MediaDesc toPhoto ()
     {
         return (photoHash == null)
-            ? null
+            ? MemberCard.DEFAULT_PHOTO
             : new MediaDesc(photoHash, photoMimeType, photoConstraint);
     }
 
