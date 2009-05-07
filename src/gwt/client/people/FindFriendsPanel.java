@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.Friendship;
+
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Pages;
@@ -85,21 +87,17 @@ public class FindFriendsPanel extends InvitePanel
             for (EmailContact ec : members) {
                 _results.setText(row, 0, ec.mname.toString());
                 _results.setText(row, 1, _msgs.inviteMember(ec.name, ec.email));
-                switch (ec.friendship) {
-                case FRIENDS:
+                if (ec.friendship == Friendship.FRIENDS) {
                     _results.setText(row++, 3, _msgs.mlAlreadyFriend());
-                    break;
 
-                case INVITED:
+                } else if (ec.friendship == Friendship.INVITED) {
                     _results.setText(row++, 3, _msgs.mlAlreadyFriendInv());
-                    break;
 
-                default:
+                } else {
                     ClickHandler onClick = new FriendInviter(ec.mname, "InvitePanel");
                     _results.setWidget(row, 2, MsoyUI.createActionImage(ADD_IMAGE, onClick));
                     _results.setWidget(row++, 3, MsoyUI.createActionLabel(
                                            _msgs.mlAddFriend(), onClick));
-                    break;
                 }
             }
 

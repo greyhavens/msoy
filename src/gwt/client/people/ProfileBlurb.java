@@ -425,14 +425,12 @@ public class ProfileBlurb extends Blurb
         String image;
         ClickHandler handler;
 
-        switch (_pdata.friendship) {
-        case FRIENDS:
+        if (_pdata.friendship == Friendship.FRIENDS) {
             label = _msgs.removeFriend();
             image = "/images/profile/remove.png";
             handler = new FriendRemover(_pdata.name, removeFriendBtn);
-            break;
 
-        case INVITED:
+        } else if (_pdata.friendship == Friendship.INVITED) {
             label = _msgs.retractFriend();
             image = "/images/profile/remove.png";
             handler = new ClickHandler() {
@@ -444,16 +442,14 @@ public class ProfileBlurb extends Blurb
                     });
                 }
             };
-            break;
 
-        default:
+        } else {
             label = (_pdata.friendship == Friendship.INVITEE) ?
                 _msgs.validateFriend() : _msgs.inviteFriend();
             image = "/images/profile/addfriend.png";
             Boolean forceAuto = (_pdata.greeterStatus == GreeterStatus.GREETER) ||
                 (_pdata.friendship == Friendship.INVITEE);
             handler = new FriendInviter(_name, "Profile", removeFriendBtn, forceAuto);
-            break;
         }
 
         _friendBtn = addButton(_buttons, image, label, handler);

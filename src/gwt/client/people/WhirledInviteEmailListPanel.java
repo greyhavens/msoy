@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.Friendship;
+
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
@@ -85,16 +87,13 @@ public class WhirledInviteEmailListPanel extends EmailListPanel
         contents.setText(row++, 0, _msgs.inviteResultsMembers());
         for (EmailContact ec : addrs) {
             contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-            switch (ec.friendship) {
-            case FRIENDS:
+            if (ec.friendship == Friendship.FRIENDS) {
                 contents.setText(row++, 2, _msgs.mlAlreadyFriend());
-                break;
 
-            case INVITED:
+            } else if (ec.friendship == Friendship.INVITED) {
                 contents.setText(row++, 2, _msgs.mlAlreadyFriendInv());
-                break;
 
-            default:
+            } else {
                 ClickHandler onClick = new FriendInviter(ec.mname, "InvitePanel");
                 contents.setWidget(
                     row, 1, MsoyUI.createActionImage("/images/profile/addfriend.png", onClick));

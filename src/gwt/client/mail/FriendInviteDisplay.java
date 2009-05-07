@@ -73,20 +73,15 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
             String otherName = _message.author.name.toString();
             String text;
-            switch (friendship) {
-            case FRIENDS: // success case
+            if (friendship == Friendship.FRIENDS) { // success case
                 text = roundtrip ? _msgs.friendAccepted(otherName)
                                  : _msgs.friendAlreadyFriend(otherName);
-                break;
 
-            case INVITED: // weird, but ok
+            } else if (friendship == Friendship.INVITED) { // weird, but ok
                 text = _msgs.friendInvited(otherName);
-                break;
 
-            case NOT_FRIENDS: // retracted
-            default:
+            } else { // retracted
                 text = _msgs.friendRetracted(otherName);
-                break;
             }
             setText(0, 0, text);
             setText(0, 1, "");
