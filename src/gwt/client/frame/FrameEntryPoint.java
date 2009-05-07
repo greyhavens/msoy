@@ -483,6 +483,7 @@ public class FrameEntryPoint
                     closeContent();
                 }
             });
+            _bar.setCloseVisible(FlashClients.clientExists());
         }
         _layout.setContent(_bar, _iframe);
     }

@@ -78,11 +78,6 @@ public class StandardLayout extends Layout
         RootPanel.get(PAGE).add(_content);
         RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
 
-        // activate our close button if we have a client
-        if (bar != null) {
-            bar.setCloseVisible(FlashClients.clientExists());
-        }
-
         // on frameless pages, we don't listen for resize as the iframe is height 100%, otherwise do
         setWindowResizerEnabled(_content == iframe);
     }

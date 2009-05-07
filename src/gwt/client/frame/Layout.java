@@ -29,7 +29,7 @@ public abstract class Layout
      */
     public static Layout getLayout (FrameHeader header, ClickHandler onGoHome)
     {
-        Layout layout = new StandardLayout();
+        Layout layout = isFramed() ? new FramedLayout() : new StandardLayout();
         layout.init(header, onGoHome);
         return layout;
     }
@@ -51,6 +51,10 @@ public abstract class Layout
         _header = header;
         _onGoHome = onGoHome;
     }
+
+    public native static boolean isFramed () /*-{
+        return $wnd.top != $wnd;
+    }-*/;
 
     protected FrameHeader _header;
     protected ClickHandler _onGoHome;
