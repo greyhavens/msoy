@@ -43,7 +43,7 @@ public class UserAction extends SimpleStreamableObject
 
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), /*obsolete(52),*/ SUPPORT_ADJUST(53),
-        EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55),
+        EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55), RECEIVED_FRIEND_AWARD(56),
 
         // buying shit from OOO
         BOUGHT_ROOM(100), BOUGHT_GROUP(101), BOUGHT_BROADCAST(102), BOUGHT_PARTY(103),
@@ -190,6 +190,12 @@ public class UserAction extends SimpleStreamableObject
     {
         String descrip = MessageBundle.tcompose("m.completed_survey", surveyName, surveyId);
         return new UserAction(Type.COMPLETED_SURVEY, memberId, descrip);
+    }
+
+    public static UserAction receivedFriendAward (int memberId, int friendId)
+    {
+        String descrip = MessageBundle.tcompose("m.award_for_friend", friendId);
+        return new UserAction(Type.RECEIVED_FRIEND_AWARD, memberId, descrip);
     }
 
     /** Used for unserialization. */
