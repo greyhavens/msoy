@@ -82,6 +82,7 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.Friendship;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -1207,9 +1208,10 @@ public class MemberRepository extends DepotRepository
         // now load up member card records for these guys and convert them to friend entries
         List<FriendEntry> friends = Lists.newArrayListWithCapacity(ids.size());
         for (MemberCardRecord crec : loadMemberCards(ids)) {
-            MemberCard card = crec.toMemberCard();
+            MediaDesc photo = (crec.photoHash == null) ? null
+                : new MediaDesc(crec.photoHash, crec.photoMimeType, crec.photoConstraint);
             friends.add(new FriendEntry(
-                new VizMemberName(card.name, card.photo), card.headline, false));
+                new VizMemberName(crec.name, crec.memberId, photo), crec.headline, false));
         }
         return friends;
     }
@@ -1226,9 +1228,6 @@ public class MemberRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(fullFriendWhere(memberId));
         SQLExpression condition = new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID);
-//        SQLExpression condition = new And(
-//            new Equals(FriendshipRecord.MEMBER_ID, memberId),
-//            new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID));
         clauses.add(new Join(MemberRecord.class, condition));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
