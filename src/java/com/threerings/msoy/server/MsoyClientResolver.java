@@ -151,7 +151,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         throws Exception
     {
         long startStamp = System.currentTimeMillis();
-        List<Long> resolutionStamps = Lists.newArrayList();
+//        List<Long> resolutionStamps = Lists.newArrayList();
         enforceConnected();
 
         // load up their member information using on their authentication (account) name
@@ -161,7 +161,7 @@ public class MsoyClientResolver extends CrowdClientResolver
                                 "[username=" + _username + "]");
         }
 
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
 
@@ -170,7 +170,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // initialization when we know that no one is listening
 
         // we need their profile photo to create the member name
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         final ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         memobj.memberName = new VizMemberName(
@@ -189,7 +189,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // load up this member's persistent stats
         MemberLocal local = memobj.getLocal(MemberLocal.class);
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         final List<Stat> stats = _statRepo.loadStats(member.memberId);
         local.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
@@ -202,12 +202,12 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // and their badges
         local.badgesVersion = member.badgesVersion;
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         local.badges = new EarnedBadgeSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(member.memberId),
                                 EarnedBadgeRecord.TO_BADGE));
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         local.inProgressBadges = new InProgressBadgeSet(
             Iterables.transform(_badgeRepo.loadInProgressBadges(member.memberId),
@@ -224,25 +224,25 @@ public class MsoyClientResolver extends CrowdClientResolver
 // END TEMP
 
         // fill in this member's raw friends list; the friend manager will update it later
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         memobj.friends = new DSet<FriendEntry>(_memberRepo.loadAllFriends(member.memberId));
 
         // load up this member's group memberships
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         memobj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
             _groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail count
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
         memobj.newMailCount = _mailRepo.loadUnreadConvoCount(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
-            resolutionStamps.add(System.currentTimeMillis() - startStamp);
+//            resolutionStamps.add(System.currentTimeMillis() - startStamp);
             enforceConnected();
             final AvatarRecord avatar = _itemLogic.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
