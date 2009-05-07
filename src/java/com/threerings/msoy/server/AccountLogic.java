@@ -21,6 +21,7 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.server.AffiliateCookie;
 
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -69,10 +70,11 @@ public class AccountLogic
      */
     public MemberRecord createWebAccount (
         String email, String password, String displayName, String realName, InvitationRecord invite,
-        VisitorInfo vinfo, int affiliateId, int[] birthdayYMD)
+        VisitorInfo vinfo, AffiliateCookie affiliate, int[] birthdayYMD)
         throws ServiceException
     {
-        AccountData data = new AccountData(true, email, password, displayName, vinfo, affiliateId);
+        // TODO: handle affiliate.autoFriend
+        AccountData data = new AccountData(true, email, password, displayName, vinfo, affiliate);
         data.realName = realName;
         data.invite = invite;
         data.birthdayYMD = birthdayYMD;
@@ -161,15 +163,17 @@ public class AccountLogic
      *
      * @return the newly created member record.
      */
-    public MemberRecord createGuestAccount (String ipAddress, String visitorId, int affiliateId)
+    public MemberRecord createGuestAccount (
+        String ipAddress, String visitorId, AffiliateCookie affiliate)
         throws ServiceException
     {
+        // TODO: handle affiliate.autoFriend
         String email = MemberMailUtil.makePermaguestEmail(
             StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()));
         String displayName = _serverMsgs.getBundle("server").get("m.permaguest_name");
         AccountData data = new AccountData(
             false, email, PERMAGUEST_PASSWORD, displayName,
-            new VisitorInfo(checkCreateId(email, visitorId), false), affiliateId);
+            new VisitorInfo(checkCreateId(email, visitorId), false), affiliate);
         data.roomName = _serverMsgs.getBundle("server").get("m.guest_room_name");
         MemberRecord guest =  createAccount(data);
         // now that we have their member id, we can update their display name with it
@@ -186,11 +190,12 @@ public class AccountLogic
      * @return the newly created member record.
      */
     public MemberRecord createExternalAccount (
-        String email, String displayName, VisitorInfo vinfo, int affiliateId,
+        String email, String displayName, VisitorInfo vinfo, AffiliateCookie affiliate,
         ExternalAuther exAuther, String exAuthUserId)
         throws ServiceException
     {
-        AccountData data = new AccountData(true, email, "", displayName, vinfo, affiliateId);
+        // TODO: handle affiliate.autoFriend
+        AccountData data = new AccountData(true, email, "", displayName, vinfo, affiliate);
         data.exAuther = exAuther;
         data.exAuthUserId = exAuthUserId;
         return createAccount(data);
@@ -393,7 +398,7 @@ public class AccountLogic
             // email link; in that case we want the invite member id to be our affiliate regardless
             // of what other affiliate we might have lurking around in cookies
             mrec.affiliateMemberId = (data.invite == null) ?
-                data.affiliateId : data.invite.inviterId;
+                data.affiliate.memberId : data.invite.inviterId;
             mrec.visitorId = checkCreateId(account.accountName, data.vinfo);
 
             // store their member record in the repository making them a real Whirled citizen
@@ -515,7 +520,7 @@ public class AccountLogic
         public final String password;
         public final String displayName;
         public final VisitorInfo vinfo;
-        public final int affiliateId;
+        public final AffiliateCookie affiliate;
 
         // optional bits
         public String realName;
@@ -526,14 +531,14 @@ public class AccountLogic
         public String roomName;
 
         public AccountData (boolean isRegistering, String email, String password,
-                            String displayName, VisitorInfo vinfo, int affiliateId)
+                            String displayName, VisitorInfo vinfo, AffiliateCookie affiliate)
         {
             this.isRegistering = isRegistering;
             this.email = email.trim().toLowerCase();
             this.password = password.trim();
             this.displayName = displayName.trim();
             this.vinfo = vinfo;
-            this.affiliateId = affiliateId;
+            this.affiliate = affiliate;
         }
     }
 

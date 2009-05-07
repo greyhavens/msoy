@@ -20,6 +20,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
@@ -61,7 +62,9 @@ public class GoServlet extends HttpServlet
         }
 
         int affiliateId = 0;
-        if (req.getRequestURI().startsWith("/welcome/")) {
+        boolean autoFriend = DeploymentConfig.devDeployment &&
+                             req.getRequestURI().startsWith("/friend/");
+        if (autoFriend || req.getRequestURI().startsWith("/welcome/")) {
             // the path will now either be "", "<affiliate>", or "<affiliate>/<token>".
             // <affiliate> may be 0 to indicate "no affiliate" (we just want the redirect).
             int nextSlash = path.indexOf("/");
@@ -119,7 +122,7 @@ public class GoServlet extends HttpServlet
 
         // set their affiliate cookie if appropriate
         if (affiliateId > 0) {
-            AffiliateCookie.set(rsp, affiliateId);
+            AffiliateCookie.set(rsp, affiliateId, autoFriend);
         }
 
         rsp.sendRedirect("/#" + path);

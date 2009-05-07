@@ -17,4 +17,7 @@ public class CookieNames
 
     /** Holds the id of the visitor. */
     public static final String VISITOR = "vis";
+
+    /** Holds info about who invited the visitor. */
+    public static final String AFFILIATE = "a";
 }

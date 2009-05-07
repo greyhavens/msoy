@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
@@ -146,7 +147,7 @@ public class WorldClient extends Widget
 
     protected static String getAffiliateArg ()
     {
-        String affstr = CookieUtil.get(AFF_COOKIE_NAME);
+        String affstr = CookieUtil.get(CookieNames.AFFILIATE);
         return StringUtil.isBlank(affstr) ? "" : ("&aff=" + affstr);
     }
 
@@ -202,8 +203,6 @@ public class WorldClient extends Widget
     /** Our default world server host and port. Configured the first time Flash is used. */
     protected static String _defaultHost;
     protected static int _defaultPort;
-
-    protected static final String AFF_COOKIE_NAME = "a"; // from (non-gwt-visible) AffiliateCookie
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);

@@ -100,8 +100,8 @@ public class WebUserServlet extends MsoyServiceServlet
     {
         // TODO: deal with joining to the permaguest account, if any
         checkClientVersion(clientVersion, creds.getPlaceholderAddress());
-        int affiliateId = AffiliateCookie.get(getThreadLocalRequest());
-        return startSession(_author.authenticateSession(creds, vinfo, affiliateId), expireDays);
+        AffiliateCookie affiliate = AffiliateCookie.fromWeb(getThreadLocalRequest());
+        return startSession(_author.authenticateSession(creds, vinfo, affiliate), expireDays);
     }
 
     // from interface WebUserService
@@ -140,7 +140,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 invite, info.visitor, info.birthday) :
             _accountLogic.createWebAccount(
                 info.email, info.password, info.displayName, info.info.realName, invite,
-                info.visitor, AffiliateCookie.get(getThreadLocalRequest()), info.birthday);
+                info.visitor, AffiliateCookie.fromWeb(getThreadLocalRequest()), info.birthday);
 
         // TODO: consider moving the below code into AccountLogic
 

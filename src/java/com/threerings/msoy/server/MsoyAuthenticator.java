@@ -41,6 +41,7 @@ import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.ExternalCreds;
 // import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.server.AffiliateCookie;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -119,7 +120,7 @@ public class MsoyAuthenticator extends Authenticator
      * @return the user's member record.
      */
     public MemberRecord authenticateSession (
-        ExternalCreds creds, VisitorInfo vinfo, int affiliateId)
+        ExternalCreds creds, VisitorInfo vinfo, AffiliateCookie affiliate)
         throws ServiceException
     {
         try {
@@ -152,7 +153,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // create their account
             MemberRecord mrec = _accountLogic.createExternalAccount(
-                creds.getPlaceholderAddress(), info.displayName, vinfo, affiliateId,
+                creds.getPlaceholderAddress(), info.displayName, vinfo, affiliate,
                 creds.getAuthSource(), creds.getUserId());
 
             // wire them up to any friends they might have
@@ -250,7 +251,8 @@ public class MsoyAuthenticator extends Authenticator
         if (!creds.featuredPlaceView) {
             // create a new guest account
             MemberRecord mrec = _accountLogic.createGuestAccount(
-                conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
+                conn.getInetAddress().toString(), creds.visitorId,
+                AffiliateCookie.fromCreds(creds.affiliateId));
 
             // now authenticate just to make sure everything is in order and get the token
             creds.setUsername(new MsoyAuthName(mrec.accountName, mrec.memberId));

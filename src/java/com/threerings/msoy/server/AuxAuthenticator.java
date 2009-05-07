@@ -22,6 +22,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.server.AffiliateCookie;
 
 import static com.threerings.msoy.Log.log;
 
@@ -90,7 +91,8 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 // a brand new guest
                 if (guest == null) {
                     guest = _accountLogic.createGuestAccount(
-                        conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
+                        conn.getInetAddress().toString(), creds.visitorId,
+                        AffiliateCookie.fromCreds(creds.affiliateId));
                 }
 
                 memberId = guest.memberId;
