@@ -161,6 +161,10 @@
   white-space: nowrap;
 }
 
+.memberInfo .AffiliateOf .Grid .Cell {
+  font-size: 12px;
+}
+
 .CharityDescription {
   width: 400px;
 }

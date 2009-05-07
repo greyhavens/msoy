@@ -4,6 +4,7 @@
 package client.adminz;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -19,7 +20,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -169,11 +172,21 @@ public class MemberInfoPanel extends SmartTable
 
         row = addText("Affiliate of:", 1, "Label");
         FlowPanel affiliateOf = new FlowPanel();
-        for (int ii = 0; ii < info.affiliateOf.size(); ii++) {
+        int maxInline = AFFILIATE_OF_ROWS * AFFILIATE_OF_COLS;
+        for (int ii = 0; ii < Math.min(maxInline, info.affiliateOf.size()); ii++) {
             if (ii > 0) {
                 affiliateOf.add(MsoyUI.createHTML(", ", "inline"));
             }
             affiliateOf.add(infoLink(info.affiliateOf.get(ii)));
+        }
+        if (info.affiliateOf.size() > maxInline) {
+            final int affiliateOfRow = row;
+            Button more = new Button("More...", new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    setWidget(affiliateOfRow, 1, new AffiliateOfGrid(info.affiliateOf));
+                }
+            });
+            affiliateOf.add(more);
         }
         setWidget(row, 1, affiliateOf);
 
@@ -243,10 +256,33 @@ public class MemberInfoPanel extends SmartTable
         }));
     }
 
-    protected Widget infoLink (MemberName name)
+    protected static Widget infoLink (MemberName name)
     {
         return Link.create("" + name, Pages.ADMINZ, Args.compose("info", name.getMemberId()));
     }
+
+    protected static class AffiliateOfGrid extends PagedGrid<MemberName>
+    {
+        public AffiliateOfGrid (List<MemberName> affiliateOf)
+        {
+            super(AFFILIATE_OF_ROWS, AFFILIATE_OF_COLS);
+            setModel(new SimpleDataModel<MemberName>(affiliateOf), 1);
+            addStyleName("AffiliateOf");
+        }
+
+        protected Widget createWidget (MemberName item)
+        {
+            return infoLink(item);
+        }
+
+        protected String getEmptyMessage ()
+        {
+            return "No one";
+        }
+    }
+
+    protected static final int AFFILIATE_OF_ROWS = 10;
+    protected static final int AFFILIATE_OF_COLS = 4;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
