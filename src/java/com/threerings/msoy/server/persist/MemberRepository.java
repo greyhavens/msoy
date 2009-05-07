@@ -82,10 +82,8 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.Friendship;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.persist.MemberRecord.Flag;
@@ -1208,10 +1206,7 @@ public class MemberRepository extends DepotRepository
         // now load up member card records for these guys and convert them to friend entries
         List<FriendEntry> friends = Lists.newArrayListWithCapacity(ids.size());
         for (MemberCardRecord crec : loadMemberCards(ids)) {
-            MediaDesc photo = (crec.photoHash == null) ? null
-                : new MediaDesc(crec.photoHash, crec.photoMimeType, crec.photoConstraint);
-            friends.add(new FriendEntry(
-                new VizMemberName(crec.name, crec.memberId, photo), crec.headline, false));
+            friends.add(new FriendEntry(crec.toVizMemberName(), crec.headline, false));
         }
         return friends;
     }

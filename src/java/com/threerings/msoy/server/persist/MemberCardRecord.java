@@ -21,6 +21,7 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.gwt.MemberCard;
 
@@ -124,9 +125,7 @@ public class MemberCardRecord extends PersistentRecord
     public <T extends MemberCard> T toMemberCard (T card)
     {
         card.name = new MemberName(name, memberId);
-        if (photoHash != null) {
-            card.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
-        }
+        card.photo = toPhoto();
         card.headline = headline;
         MemberCard.NotOnline status = new MemberCard.NotOnline();
         status.lastLogon = (lastSession == null) ? 0L : lastSession.getTime();
@@ -134,6 +133,24 @@ public class MemberCardRecord extends PersistentRecord
         card.level = level;
         card.role = MemberRecord.toRole(memberId, flags, accountName);
         return card;
+    }
+
+    /**
+     * Convert this MemberCardRecord into a VizMemberName
+     */
+    public VizMemberName toVizMemberName ()
+    {
+        return new VizMemberName(name, memberId, toPhoto());
+    }
+
+    /**
+     * Convert this MemberCardRecord into just the photo for the player.
+     */
+    public MediaDesc toPhoto ()
+    {
+        return (photoHash == null)
+            ? null
+            : new MediaDesc(photoHash, photoMimeType, photoConstraint);
     }
 
     // AUTO-GENERATED: METHODS START
