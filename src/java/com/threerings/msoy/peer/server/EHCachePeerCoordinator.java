@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -81,7 +82,7 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
             if (_peerMan == null) {
                 // the ehcache subsystem has fired up but Whirled is still booting;
                 // we return null here and ehcache will try again
-                return null;
+                return Collections.emptyList();
             }
 
             // list the current whirled peers
