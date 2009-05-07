@@ -126,7 +126,7 @@ public class ProfileServlet extends MsoyServiceServlet
         result.interests = interests;
 
         // load friend info
-        result.friends = resolveFriendsData(memrec, tgtrec);
+        result.friends = _memberRepo.loadFriends(tgtrec.memberId, MAX_PROFILE_FRIENDS);
         result.friendship = _memberRepo.getFullFriendship(memrec.memberId, tgtrec.memberId);
         result.totalFriendCount = _memberRepo.countFullFriends(tgtrec.memberId);
 
@@ -371,29 +371,9 @@ public class ProfileServlet extends MsoyServiceServlet
         return profile;
     }
 
-    protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
-    {
-        final Map<Integer,MemberCard> cards = Maps.newLinkedHashMap();
-        for (final FriendEntry entry : _memberRepo.loadFriends(
-                 tgtrec.memberId, MAX_PROFILE_FRIENDS)) {
-            final MemberCard card = new MemberCard();
-            card.name = entry.name;
-            cards.put(entry.name.getMemberId(), card);
-        }
-        for (final ProfileRecord profile : _profileRepo.loadProfiles(cards.keySet())) {
-            final MemberCard card = cards.get(profile.memberId);
-            card.photo = profile.getPhoto();
-            card.headline = profile.headline;
-        }
-
-        final List<MemberCard> results = Lists.newArrayList();
-        results.addAll(cards.values());
-        return results;
-    }
-
     protected List<GroupCard> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
     {
-        final boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
+        boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
         return _groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
     }
 

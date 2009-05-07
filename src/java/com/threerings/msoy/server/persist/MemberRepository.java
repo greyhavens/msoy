@@ -1199,29 +1199,36 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads the FriendEntry record for all friends of the specified member. The online status of
-     * each friend will be false. The friends will be returned in order of most recently online to
-     * least.
+     * each friend will be false.
      */
     public List<FriendEntry> loadAllFriends (int memberId)
     {
-        return loadFriends(memberId, 0);
+        IntSet ids = loadFriendIds(memberId);
+        // now load up member card records for these guys and convert them to friend entries
+        List<FriendEntry> friends = Lists.newArrayListWithCapacity(ids.size());
+        for (MemberCardRecord crec : loadMemberCards(ids)) {
+            MemberCard card = crec.toMemberCard();
+            friends.add(new FriendEntry(
+                new VizMemberName(card.name, card.photo), card.headline, false));
+        }
+        return friends;
     }
 
     /**
      * Loads the FriendEntry record for some or all of the most recently online friends of the
-     * specified member. The online status of each friend will be false.
+     * specified member, sorted by last-online time. The online status of each friend will be false.
      *
-     * @param limit the number of friends to load or 0 for all of them. Also, if nonzero is
-     * specified, then the friends will be ordered by most recently online.
+     * @param limit the number of friends to load or 0 for all of them.
      */
-    public List<FriendEntry> loadFriends (int memberId, int limit)
+    public List<MemberCard> loadFriends (int memberId, int limit)
     {
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(fullFriendWhere(memberId));
-        SQLExpression condition = new And(
-            new Equals(FriendshipRecord.MEMBER_ID, memberId),
-            new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID));
+        SQLExpression condition = new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID);
+//        SQLExpression condition = new And(
+//            new Equals(FriendshipRecord.MEMBER_ID, memberId),
+//            new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID));
         clauses.add(new Join(MemberRecord.class, condition));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
@@ -1235,11 +1242,9 @@ public class MemberRepository extends DepotRepository
         }
 
         // now load up member card records for these guys and convert them to friend entries
-        List<FriendEntry> friends = Lists.newArrayListWithCapacity(ids.size());
+        List<MemberCard> friends = Lists.newArrayListWithCapacity(ids.size());
         for (MemberCardRecord crec : loadMemberCards(ids)) {
-            MemberCard card = crec.toMemberCard();
-            friends.add(new FriendEntry(
-                new VizMemberName(card.name, card.photo), card.headline, false));
+            friends.add(crec.toMemberCard());
         }
         return friends;
     }
