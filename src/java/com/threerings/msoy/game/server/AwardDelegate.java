@@ -864,7 +864,6 @@ public class AwardDelegate extends RatingDelegate
     {
         public MemberName name;
         public boolean isGuest;
-        public int playerId;
         public int score;
         public int availFlow;
 
