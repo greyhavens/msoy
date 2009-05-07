@@ -104,8 +104,8 @@ public class FriendManager
     protected void clearFriendInterest (MemberObject memobj, int friendId)
     {
         if (!_friendMap.remove(friendId, memobj)) {
-            log.warning("Watcher not listed when interest cleared? [watcher=" + memobj.who() +
-                        ", friend=" + friendId + "].");
+            log.warning("Watcher not listed when interest cleared?",
+                "watcher", memobj.who(), "friend", friendId);
         }
     }
 
@@ -114,8 +114,8 @@ public class FriendManager
         for (MemberObject watcher : _friendMap.get(memberId)) {
             FriendEntry entry = watcher.friends.get(memberId);
             if (entry == null) {
-                log.warning("Missing entry for registered watcher? [watcher=" + watcher.who() +
-                            ", friend=" + memberId + "].");
+                log.warning("Missing entry for registered watcher?",
+                    "watcher", watcher.who(), "friend", memberId);
                 continue;
             }
             if (entry.online != online) {
