@@ -56,6 +56,8 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -73,7 +75,10 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
@@ -506,6 +511,45 @@ public class MemberLogic
     }
 
     /**
+     * Checks if the given friend id who has just leveled up is "real" enough and awards a bar
+     * to the inviter, if any.
+     */
+    public void maybeAwardFriendBar (int friendId, int oldLevel, int newLevel)
+    {
+        // check they are crossing the threshold of reality
+        if (newLevel < FRIEND_PAYOUT_MIN_LEVEL || oldLevel > FRIEND_PAYOUT_MIN_LEVEL) {
+            return;
+        }
+
+        // this will never happen... ha!
+        MemberRecord mrec = _memberRepo.loadMember(friendId);
+        if (mrec == null) {
+            return;
+        }
+
+        // check they are affiliated
+        int payMemberId = mrec.affiliateMemberId;
+        if (payMemberId == 0) {
+            return;
+        }
+
+        // check they are friends w/affiliate
+        if (_memberRepo.getFullFriendship(payMemberId, friendId) != Friendship.FRIENDS) {
+            return;
+        }
+
+        // do the award
+        try {
+            _memberRepo.noteFriendPayment(friendId, payMemberId);
+            _moneyLogic.award(payMemberId, Currency.BARS, 1, true,
+                UserAction.receivedFriendAward(payMemberId, friendId));
+
+        } catch (DuplicateKeyException dke) {
+            log.info("Friend payment triggered twice?", "friend", friendId, "payee", payMemberId);
+        }
+    }
+
+    /**
      * Delete all traces of the specified members, with some exceptions. If a member is a
      * permaguest, then all traces are indeed deleted. If they are registered member, then some
      * traces of the member are retained to allow certain parts of their participation in Whirled
@@ -825,6 +869,7 @@ public class MemberLogic
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _msoyGameRepo;
     @Inject protected MsoyPeerManager _peerMan;
@@ -858,4 +903,7 @@ public class MemberLogic
 
     /** The number of slots we have in My Whired Places. */
     protected static final int MWP_COUNT = 9;
+
+    /** Minimum level a player must achieve to trigger a payment to her inviter. */
+    protected static final int FRIEND_PAYOUT_MIN_LEVEL = DeploymentConfig.devDeployment ? 2 : 5;
 }
