@@ -146,12 +146,10 @@ public class StatusPanel extends SmartTable
                 _cmsgs.headerSignup(), Link.createListener(Pages.ACCOUNT, "create"));
             action.setStyleName("SignupButton");
             action.addStyleName("Button");
-            setUpInvitePromo(null);
         } else {
             action = new PushButton(
                 _cmsgs.statusInviteFriends(), Link.createListener(Pages.PEOPLE, "invites"));
             action.setStyleName("InviteFriends");
-            setUpInvitePromo(action);
         }
         setWidget(0, 0, action);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -181,34 +179,6 @@ public class StatusPanel extends SmartTable
     public void didLogoff ()
     {
         _creds = null;
-    }
-
-    protected void setUpInvitePromo (final PushButton button)
-    {
-        if (_promoTimer != null) {
-            _promoTimer.cancel();
-            _promoTimer = null;
-        }
-        if (button == null) {
-            return;
-        }
-        // just alternate the text for 2 seconds every 20 seconds... we can think of something
-        // better later
-        final int[] delays = {20 * 1000, 2 * 1000};
-        _promoTimer = new Timer() {
-            public void run () {
-                _count = (_count + 1) % 2;
-                if (_count == 0) {
-                    button.setText(_cmsgs.statusInviteFriends());
-                } else {
-                    button.setText(_cmsgs.statusInviteFriendsGetBars());
-                }
-                cancel();
-                schedule(delays[_count]);
-            }
-            protected int _count;
-        };
-        _promoTimer.schedule(delays[0]);
     }
 
     protected static boolean isIncrease (StatusChangeEvent event)
