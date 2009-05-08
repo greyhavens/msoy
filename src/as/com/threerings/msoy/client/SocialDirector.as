@@ -73,6 +73,11 @@ public class SocialDirector extends BasicDirector
     // from BasicDirector
     override public function clientDidLogon (event :ClientEvent) :void
     {
+        if (_mctx.getMyName().isViewer()) {
+            // Don't do anything if we're not a real member.
+            return;
+        }
+
         // world client has connected, start observing (this calls willUpdateLocation)
         _wobs = new Observer(this, _mctx.getLocationDirector(), willUpdateLocation);
 
