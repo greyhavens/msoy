@@ -194,7 +194,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // don't let the user become a greeter if it is disabled
         if (!memrec.isGreeter() && greeter) {
-            int friendCount = _memberRepo.loadFriendIds(memrec.memberId).size();
+            int friendCount = _memberRepo.countFullFriends(memrec.memberId);
             if (getGreeterStatus(memrec, friendCount) == GreeterStatus.DISABLED) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
