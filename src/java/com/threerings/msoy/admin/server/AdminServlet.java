@@ -284,7 +284,7 @@ public class AdminServlet extends MsoyServiceServlet
     {
         // make sure there isn't already a test with this name
         final ABTestRecord existingTest = _testRepo.loadTestByName(test.name);
-        if (existingTest != null && existingTest.abTestId != test.abTestId) {
+        if (existingTest != null && existingTest.testId != test.abTestId) {
             throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
         }
         _testRepo.updateABTest(test);

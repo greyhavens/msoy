@@ -13,8 +13,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
-import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
+
 import com.threerings.msoy.admin.gwt.ABTest;
 
 /**
@@ -22,12 +22,11 @@ import com.threerings.msoy.admin.gwt.ABTest;
  * and other metrics.
  */
 @Entity
-@TableGenerator(name="abTest", pkColumnValue="ABTEST_ID")
 public class ABTestRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ABTestRecord> _R = ABTestRecord.class;
-    public static final ColumnExp AB_TEST_ID = colexp(_R, "abTestId");
+    public static final ColumnExp TEST_ID = colexp(_R, "testId");
     public static final ColumnExp NAME = colexp(_R, "name");
     public static final ColumnExp DESCRIPTION = colexp(_R, "description");
     public static final ColumnExp NUM_GROUPS = colexp(_R, "numGroups");
@@ -38,11 +37,14 @@ public class ABTestRecord extends PersistentRecord
     public static final ColumnExp LANDING_COOKIE = colexp(_R, "landingCookie");
     // AUTO-GENERATED: FIELDS END
 
-    /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
-     * all digital items. Each type of item has its own identifier space. */
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 9;
+
+    /** This test's unique identifier. */
     @Id
-    @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE, allocationSize=1)
-    public int abTestId;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    public int testId;
 
     /** The unique string identifier for this test, used to reference it when switching content. */
     @Column(length=ABTest.MAX_NAME_LENGTH, unique=true)
@@ -73,17 +75,13 @@ public class ABTestRecord extends PersistentRecord
     /** True if the test group should be assigned to new users when they land. */
     public boolean landingCookie;
 
-    /** Increment this value if you modify the definition of this persistent object in a way that
-     * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 8;
-
     /**
      * Build a POJO version of this Record, for use outside the persistence system.
      */
     public ABTest toABTest ()
     {
         ABTest test = new ABTest();
-        test.abTestId = abTestId;
+        test.abTestId = testId;
         test.name = name;
         test.description = description;
         test.numGroups = numGroups;
@@ -101,7 +99,7 @@ public class ABTestRecord extends PersistentRecord
      */
     public void fromABTest (ABTest test)
     {
-        abTestId = test.abTestId;
+        testId = test.abTestId;
         name = test.name;
         description = test.description;
         numGroups = test.numGroups;
@@ -117,12 +115,12 @@ public class ABTestRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ABTestRecord}
      * with the supplied key values.
      */
-    public static Key<ABTestRecord> getKey (int abTestId)
+    public static Key<ABTestRecord> getKey (int testId)
     {
         return new Key<ABTestRecord>(
                 ABTestRecord.class,
-                new ColumnExp[] { AB_TEST_ID },
-                new Comparable[] { abTestId });
+                new ColumnExp[] { TEST_ID },
+                new Comparable[] { testId });
     }
     // AUTO-GENERATED: METHODS END
 }

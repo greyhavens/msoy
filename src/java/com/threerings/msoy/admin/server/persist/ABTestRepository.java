@@ -39,6 +39,8 @@ public class ABTestRepository extends DepotRepository
             new SchemaMigration.Retype(7, ABTestRecord.STARTED));
         _ctx.registerMigration(ABTestRecord.class,
             new SchemaMigration.Retype(7, ABTestRecord.ENDED));
+
+        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(9, "abTestId"));
     }
 
     /**
@@ -46,7 +48,7 @@ public class ABTestRepository extends DepotRepository
      */
     public List<ABTestRecord> loadTests ()
     {
-        return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.AB_TEST_ID));
+        return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.TEST_ID));
     }
 
     /**
