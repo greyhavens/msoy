@@ -81,7 +81,7 @@ public class ABTestRecord extends PersistentRecord
     public ABTest toABTest ()
     {
         ABTest test = new ABTest();
-        test.abTestId = testId;
+        test.testId = testId;
         test.name = name;
         test.description = description;
         test.numGroups = numGroups;
@@ -99,7 +99,7 @@ public class ABTestRecord extends PersistentRecord
      */
     public void fromABTest (ABTest test)
     {
-        testId = test.abTestId;
+        testId = test.testId;
         name = test.name;
         description = test.description;
         numGroups = test.numGroups;

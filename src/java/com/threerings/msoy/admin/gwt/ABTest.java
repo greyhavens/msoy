@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ABTest implements IsSerializable
 {
     /** Id. */
-    public int abTestId;
+    public int testId;
 
     /** The unique string identifier for this test, used to reference it when switching content. */
     public String name;
