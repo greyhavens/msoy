@@ -298,10 +298,7 @@ public class WorldController extends MsoyController
         // slap your friends in a menu
         var friends :Array = [];
         for each (var fe :FriendEntry in me.getSortedFriends()) {
-            var item :Object = {
-                label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
-            checkChatChannelOpen(fe.name, item);
-            friends.push(item);
+            friends.push({ label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name });
         }
         if (friends.length == 0) {
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
@@ -310,9 +307,7 @@ public class WorldController extends MsoyController
 
         var groups :Array = (me.groups != null) ? me.getSortedGroups() : [];
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
-            var item :Object = { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
-            checkChatChannelOpen(gm.group, item);
-            return item;
+            return { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
         });
         if (groups.length == 0) {
             groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
@@ -338,10 +333,9 @@ public class WorldController extends MsoyController
                     if (!ce.online) {
                         continue;
                     }
-                    var aitem :Object = {
-                        label: ce.name.toString(), command: OPEN_CHANNEL, arg: ce.name }
-                    checkChatChannelOpen(ce.name, aitem);
-                    subMenuData.push(aitem);
+                    // TODO: does this need to be disabled if it's already open? Prob not
+                    subMenuData.push(
+                        { label: ce.name.toString(), command: OPEN_CHANNEL, arg: ce.name });
                 }
                 if (contacts.length == 0) {
                     subMenuData.push({ label: Msgs.CHAT.get("m.no_im_contacts"), enabled: false});
@@ -1369,15 +1363,6 @@ public class WorldController extends MsoyController
             }
         } catch (e :Error) {
         }
-    }
-
-    /**
-     * Indicate on the menu item whether or not we have the specified chat channel open
-     * or not.
-     */
-    protected function checkChatChannelOpen (name :Name, menuItem :Object) :void
-    {
-        menuItem["enabled"] = !_wctx.getMsoyChatDirector().hasOpenChannel(name);
     }
 
     /**
