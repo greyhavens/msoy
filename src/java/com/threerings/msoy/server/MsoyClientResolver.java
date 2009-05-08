@@ -131,7 +131,7 @@ public class MsoyClientResolver extends CrowdClientResolver
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
             local.stats = new StatSet();
             local.badges = new EarnedBadgeSet();
-            local.friendIds = new StreamableArrayIntSet();
+            local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else if (_username instanceof LurkerName) {
@@ -139,7 +139,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             memobj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
             local.stats = new StatSet();
             local.badges = new EarnedBadgeSet();
-            local.friendIds = new StreamableArrayIntSet();
+            local.friendIds = new StreamableArrayIntSet(0);
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else {
