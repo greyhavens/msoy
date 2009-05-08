@@ -210,6 +210,9 @@ public class MsoyServer extends MsoyBaseServer
         _moneyLogic.init(_cacheMgr);
         _tourMan.init();
 
+        // TODO: this won't be needed if and when ABTestRecord is fixed.
+        injector.getInstance(AccountLogic.class).init(injector.getInstance(MemberLogic.class));
+
         // tell our dictionary manager where to find its dictionaries
         _dictMan.init("data/dictionary");
 
