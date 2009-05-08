@@ -44,7 +44,8 @@ public class FrameHeader extends SmartTable
         int col = 0;
 
         String lpath = "/images/header/header_logo.png";
-        setWidget(col++, 0, MsoyUI.createActionImage(lpath, onLogoClick), 1, "Logo");
+        _naviTable.setWidget(col++, 0, MsoyUI.createActionImage(lpath, onLogoClick), 1, "Logo");
+        _naviTable.setStyleName("navi");
         addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
         addButton(col++, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
                   _images.sstuff());
@@ -56,7 +57,11 @@ public class FrameHeader extends SmartTable
                   _images.sworlds());
         addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
-        _statusCol = col;
+
+        setWidget(0, 0, _naviTable);
+        getFlexCellFormatter().setWidth(0, 0, "700px");
+        getFlexCellFormatter().setHeight(0, 0, "50px");
+        setWidget(0, 1, _statusTable);
 
         // listen for session state changes
         Session.addObserver(this);
@@ -72,23 +77,23 @@ public class FrameHeader extends SmartTable
     // from Session.Observer
     public void didLogon (SessionData data)
     {
-        getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
-        getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
-        setWidget(0, _statusCol, _status, 1, "Right");
+        getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        setWidget(0, 1, _status, 1, "Right");
     }
 
     // from Session.Observer
     public void didLogoff ()
     {
-        getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_CENTER);
-        getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
-        setWidget(0, _statusCol, new SignOrLogonPanel(), 1, "Right");
+        getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
+        getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        setWidget(0, 1, new SignOrLogonPanel(), 1, "Right");
     }
 
     protected void addButton (int col, Pages page, String text, AbstractImagePrototype up,
                               AbstractImagePrototype over, AbstractImagePrototype down) {
         NaviButton button = new NaviButton(page, text, up, over, down);
-        setWidget(0, col, button);
+        _naviTable.setWidget(0, col, button);
         _buttons.add(button);
     }
 
@@ -163,7 +168,8 @@ public class FrameHeader extends SmartTable
         }
     }
 
-    protected int _statusCol;
+    protected SmartTable _naviTable = new SmartTable("navi", 0, 0);
+    protected SmartTable _statusTable = new SmartTable("status", 0, 0);
     protected List<NaviButton> _buttons = new ArrayList<NaviButton>();
     protected StatusPanel _status = new StatusPanel();
 

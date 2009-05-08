@@ -163,12 +163,19 @@ public class StatusPanel extends SmartTable
         lbox.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         lbox.setWidget(0, 2, new Image("/images/header/status_bg_right.png"));
         setWidget(0, 2, lbox);
+        getFlexCellFormatter().setHeight(0, 2, "27px");
         getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_CENTER);
 
         // coins, bars, level on bottom
-        setWidget(1, 0, _levels, 0, null);
-        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
+        SmartTable levelsContainer = new SmartTable(0, 0);
+        levelsContainer.setWidth("300px");
+        levelsContainer.setWidget(0, 0, _levels);
+        levelsContainer.getFlexCellFormatter().setHorizontalAlignment(
+            0, 0, HasAlignment.ALIGN_CENTER);
+        setWidget(1, 0, levelsContainer, 0, null);
+        getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
+        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
 
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));

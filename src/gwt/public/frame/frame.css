@@ -27,11 +27,18 @@
   width: 126px;
 }
 
+.frameHeader td {
+  vertical-align: top;
+}
+
+.frameHeader .navi td {
+  vertical-align: bottom;
+}
+
 .frameHeader .NaviButton {
   height: 32px;
   margin-left: 0px;
   margin-right: 4px;
-  padding-top: 18px;
 }
 
 .frameHeader .Right {
