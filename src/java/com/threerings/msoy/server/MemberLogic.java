@@ -830,13 +830,8 @@ public class MemberLogic
         public AddFriend () {
         }
 
-        @Override protected void execute (final MemberObject memobj) {
-            int friendId = _entry.name.getMemberId();
-            memobj.getLocal(MemberLocal.class).friendIds.add(friendId);
-            if (_peerMan.isMemberOnline(friendId)) {
-                memobj.addToFriends(_entry);
-            }
-            _friendMan.registerFriendInterest(memobj, friendId);
+        @Override protected void execute (MemberObject memobj) {
+            _friendMan.addNewFriend(memobj, _entry);
         }
 
         protected FriendEntry _entry;
@@ -845,7 +840,6 @@ public class MemberLogic
         @Inject protected transient FriendManager _friendMan;
     }
 
-    // TODO: review, revamp
     protected static class RemoveFriend extends MemberNodeAction
     {
         public RemoveFriend (int memberId, int friendId) {
@@ -857,11 +851,7 @@ public class MemberLogic
         }
 
         @Override protected void execute (MemberObject memobj) {
-            if (memobj.friends.containsKey(_friendId)) {
-                memobj.removeFromFriends(_friendId);
-            }
-            memobj.getLocal(MemberLocal.class).friendIds.remove(_friendId);
-            _friendMan.clearFriendInterest(memobj, _friendId);
+            _friendMan.removeFriend(memobj, _friendId);
         }
 
         protected int _friendId;

@@ -58,6 +58,31 @@ public class FriendManager
         _peerMan.memberObs.add(this);
     }
 
+    /**
+     * Called as a result of a friend being added.
+     */
+    public void addNewFriend (MemberObject memobj, FriendEntry entry)
+    {
+        int friendId = entry.name.getMemberId();
+        memobj.getLocal(MemberLocal.class).friendIds.add(friendId);
+        registerFriendInterest(memobj, friendId);
+        if (_peerMan.isMemberOnline(friendId)) {
+            memobj.addToFriends(entry);
+        }
+    }
+
+    /**
+     * Called as a result of a friend being removed.
+     */
+    public void removeFriend (MemberObject memobj, int friendId)
+    {
+        memobj.getLocal(MemberLocal.class).friendIds.remove(friendId);
+        clearFriendInterest(memobj, friendId);
+        if (memobj.friends.containsKey(friendId)) {
+            memobj.removeFromFriends(friendId);
+        }
+    }
+
     // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject memobj)
     {
@@ -81,7 +106,8 @@ public class FriendManager
                 removeKeys.add(id);
             }
         }
-        if (removeKeys != null) { // usually we have nothing to remove
+        // usually we will have nothing to remove, which is why I avoid making a copy of the set
+        if (removeKeys != null) {
             memobj.startTransaction();
             try {
                 for (Integer id : removeKeys) {
