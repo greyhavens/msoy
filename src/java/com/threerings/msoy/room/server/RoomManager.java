@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import com.google.common.collect.Lists;
@@ -207,8 +208,13 @@ public class RoomManager extends SpotSceneManager
     @Override
     public String ratifyBodyEntry (BodyObject body)
     {
+        MsoySceneModel model = (MsoySceneModel) _scene.getSceneModel();
+        Set<Integer> friendIds = (body instanceof MemberObject)
+            ? body.getLocal(MemberLocal.class).friendIds
+            : null;
         // check to see if the scene permits access
-        if (!((MsoyScene) _scene).canEnter((MsoyBodyObject) body)) {
+        if (!((MsoyBodyObject) body).canEnterScene(
+                model.sceneId, model.ownerId, model.ownerType, model.accessControl, friendIds)) {
             return InvocationCodes.E_ACCESS_DENIED; // TODO: better? "This room is friend only"
         }
 

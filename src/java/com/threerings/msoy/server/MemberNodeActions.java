@@ -522,6 +522,9 @@ public class MemberNodeActions
         protected StatModifier<T> _modifier;
     }
 
+    /**
+     * An action for all *online* friends.
+     */
     protected static abstract class AllFriendsAction extends PeerManager.NodeAction
     {
         public AllFriendsAction () {}
@@ -573,12 +576,16 @@ public class MemberNodeActions
         {
             super(memobj);
 
-            _entry = new FriendEntry(memobj.memberName, memobj.headline, true);
+            _entry = new FriendEntry(memobj.memberName, memobj.headline);
         }
 
         @Override protected void execute (MemberObject memobj)
         {
-            memobj.updateFriends(_entry);
+            if (memobj.friends.containsKey(_entry.getKey())) {
+                memobj.updateFriends(_entry);
+            } else {
+                memobj.addToFriends(_entry);
+            }
         }
 
         protected FriendEntry _entry;

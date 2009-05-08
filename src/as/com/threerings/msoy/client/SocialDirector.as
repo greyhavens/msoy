@@ -57,7 +57,8 @@ public class SocialDirector extends BasicDirector
     /** Time the player must be in a game before the other players are potential friends. */
     public static const GAME_PLAY_TIME :int = (DeploymentConfig.devDeployment ? 1 : 3) * 60 * 1000;
 
-    /** Time another player must be in a place before the he or she is considered a potential friend. */
+    /** Time another player must be in a place before the he or she is considered a
+     * potential friend. */
     public static const HANG_OUT_TIME :int = 1 * 60 * 1000;
 
     /**
@@ -97,11 +98,12 @@ public class SocialDirector extends BasicDirector
      */
     public function shouldAdd (name :VizMemberName) :Boolean
     {
+        var memId :int = name.getMemberId();
         // if we're not logged on to the world server yet or this member is us or already our
         // friend or we've already added them to the seen list, skip 'em
         var member :MemberObject = MemberObject(_mctx.getMsoyClient().getClientObject());
-        return !(member == null || name.getMemberId() == member.getMemberId() ||
-            member.friends.containsKey(name.getKey()) || _shown[name.getMemberId()] != null);
+        return (member != null) && (memId != member.getMemberId()) && (_shown[memId] == null) &&
+            !member.isOnlineFriend(memId);
     }
 
     /**

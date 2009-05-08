@@ -3,22 +3,36 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.util.Interator;
+import com.samskivert.util.IntSet;
+import com.samskivert.util.Invoker;
+
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
+
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.persist.MemberRepository;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -47,47 +61,124 @@ public class FriendManager
     // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject memobj)
     {
+        IntSet friendIds = memobj.getLocal(MemberLocal.class).friendIds;
         // register interest in updates for this member's friends
-        Set<Integer> friendIds = Sets.newHashSet();
-        FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
-        for (FriendEntry entry : snapshot) {
-            friendIds.add(entry.name.getMemberId());
-            registerFriendInterest(memobj, entry.name.getMemberId());
+        for (Interator ii = friendIds.interator(); ii.hasNext(); ) {
+            registerFriendInterest(memobj, ii.nextInt());
         }
 
-        // determine which are online and update their friend status
-        Set<Integer> onlineIds = _peerMan.filterOnline(friendIds);
-        memobj.startTransaction();
-        try {
-            for (FriendEntry entry : snapshot) {
-                if (entry.online != onlineIds.contains(entry.name.getMemberId())) {
-                    memobj.updateFriends(entry.toggleOnline());
+        // determine which are online and then load their names and headlines
+        final Set<Integer> onlineIds = _peerMan.filterOnline(friendIds);
+
+        List<Integer> removeKeys = null;
+        for (FriendEntry entry : memobj.friends) {
+            Integer id = entry.name.getMemberId();
+            // remove onlineIds that we already have loaded
+            if (!onlineIds.remove(id)) {
+                if (removeKeys == null) {
+                    removeKeys = Lists.newArrayList();
+                }
+                removeKeys.add(id);
+            }
+        }
+        if (removeKeys != null) { // usually we have nothing to remove
+            memobj.startTransaction();
+            try {
+                for (Integer id : removeKeys) {
+                    memobj.removeFromFriends(id);
+                }
+            } finally {
+                memobj.commitTransaction();
+            }
+        }
+
+        if (onlineIds.isEmpty()) {
+            return; // we're done
+        }
+
+        // Look up entries for all remaining friends
+        _invoker.postUnit(new RepositoryUnit("load FriendEntrys") {
+            public void invokePersist ()
+                throws Exception
+            {
+                _entries = _memberRepo.loadFriendEntries(onlineIds);
+            }
+
+            public void handleSuccess ()
+            {
+                if (memobj.friends.size() == 0) {
+                    // If we're a fresh login, and the invoker was slow, this could otherwise
+                    // result in the client getting a "bla logged on" for every friend, when
+                    // those friends were already online and the client was the new one.
+                    // So we do this.
+                    // We *may* sometimes have someone with no friends online, who switches
+                    // nodes as one friend logs on, and they'll execute this code path and
+                    // miss the online notification. Oh well. The friend will still show up in the
+                    // list.
+                    memobj.setFriends(new DSet<FriendEntry>(_entries));
+
+                } else {
+                    memobj.startTransaction();
+                    try {
+                        for (FriendEntry entry : _entries) {
+                            memobj.addToFriends(entry);
+                        }
+                    } finally {
+                        memobj.commitTransaction();
+                    }
                 }
             }
-        } finally {
-            memobj.commitTransaction();
-        }
+
+            protected FriendEntry[] _entries;
+        });
     }
 
     // from interface MemberLocator.Observer
     public void memberLoggedOff (MemberObject memobj)
     {
+        IntSet friendIds = memobj.getLocal(MemberLocal.class).friendIds;
         // clear out our friend interest registrations
-        for (FriendEntry entry : memobj.friends) {
-            clearFriendInterest(memobj, entry.name.getMemberId());
+        for (Interator ii = friendIds.interator(); ii.hasNext(); ) {
+            clearFriendInterest(memobj, ii.nextInt());
         }
     }
 
     // from interface MsoyPeerManager.MemberObserver
     public void memberLoggedOn (String nodeName, MemberName member)
     {
-        updateOnlineStatus(member.getMemberId(), true);
+        final int memberId = member.getMemberId();
+        if (!_friendMap.containsKey(memberId)) {
+            return; // we don't care
+        }
+
+        _invoker.postUnit(new RepositoryUnit("load FriendEntry") {
+            public void invokePersist ()
+                throws Exception
+            {
+                _entries = _memberRepo.loadFriendEntries(Collections.singleton(memberId));
+            }
+
+            public void handleSuccess ()
+            {
+                if (_entries.length > 0) {
+                    memberLoggedOn(memberId, _entries[0]);
+                }
+            }
+
+            protected FriendEntry[] _entries;
+        });
     }
 
     // from interface MsoyPeerManager.MemberObserver
     public void memberLoggedOff (String nodeName, MemberName member)
     {
-        updateOnlineStatus(member.getMemberId(), false);
+        // TODO: maybe avoid when crossing nodes?
+        Integer key = member.getMemberId();
+        for (MemberObject watcher : _friendMap.get(key)) {
+            if (watcher.friends.containsKey(key)) {
+                watcher.removeFromFriends(key);
+            }
+        }
     }
 
     // from interface MsoyPeerManager.MemberObserver
@@ -109,17 +200,17 @@ public class FriendManager
         }
     }
 
-    protected void updateOnlineStatus (int memberId, boolean online)
+    /**
+     * Helper method to handle the result of the other memberLoggedOn.
+     */
+    protected void memberLoggedOn (Integer memberId, FriendEntry entry)
     {
         for (MemberObject watcher : _friendMap.get(memberId)) {
-            FriendEntry entry = watcher.friends.get(memberId);
-            if (entry == null) {
-                log.warning("Missing entry for registered watcher?",
-                    "watcher", watcher.who(), "friend", memberId);
-                continue;
-            }
-            if (entry.online != online) {
-                watcher.updateFriends(entry.toggleOnline());
+            if (watcher.friends.containsKey(memberId)) {
+                log.info("That's weird.");
+                watcher.updateFriends(entry);
+            } else {
+                watcher.addToFriends(entry);
             }
         }
     }
@@ -128,5 +219,7 @@ public class FriendManager
      * of the member in question. */
     protected Multimap<Integer,MemberObject> _friendMap = HashMultimap.create();
 
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyPeerManager _peerMan;
 }

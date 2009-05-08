@@ -63,23 +63,14 @@ public class MsoyScene extends SceneImpl
 
         if (!hasRights && allowSupport && member.tokens.isSupport()) {
             if (where != null) {
-                log.info("Allowing support+ to manage scene in which they otherwise wouldn't " +
-                    "have rights [where=" + where + ", sceneId=" + getId() +
-                    ", sceneName=\"" + getName() + "\", " + "support=" + member.who() + "].");
+                log.info("Allowing support+ to manage scene in which they don't have rights",
+                    "where", where, "sceneId", getId(), "sceneName", getName(),
+                    "support", member.who());
             }
             return true;
         }
 
         return hasRights;
-    }
-
-    /**
-     * Can the specified member enter the scene?
-     */
-    public boolean canEnter (MsoyBodyObject body)
-    {
-        return body.canEnterScene(_model.sceneId, _model.ownerId,
-                                  _model.ownerType, _model.accessControl);
     }
 
     /**

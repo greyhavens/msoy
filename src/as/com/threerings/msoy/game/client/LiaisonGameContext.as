@@ -177,9 +177,9 @@ public class LiaisonGameContext
     }
 
     // from GameContext
-    public function getOnlineFriends () :Array
+    public function getSortedFriends () :Array
     {
-        return _wctx.getMemberObject().getSortedOnlineFriends();
+        return _wctx.getMemberObject().getSortedFriends();
     }
 
     // from GameContext

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import java.util.Set;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
 
@@ -40,7 +42,8 @@ public class MsoyBodyObject extends BodyObject
      * Determines whether this body is allowed to enter the specified scene. By default all bodies
      * are allowed in all scenes. Only members are further restricted.
      */
-    public boolean canEnterScene (int sceneId, int ownerId, byte ownerType, byte accessControl)
+    public boolean canEnterScene (
+        int sceneId, int ownerId, byte ownerType, byte accessControl, Set<Integer> friendIds)
     {
         return true;
     }

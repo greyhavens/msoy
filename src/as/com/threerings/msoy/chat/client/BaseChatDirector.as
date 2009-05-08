@@ -39,7 +39,7 @@ public class BaseChatDirector extends ChatDirector
             _mctx.getControlBar().setFullOn();
             SubtitleGlyph.thumbsEnabled = true;
             displayFeedback(null, MessageBundle.taint("Easter eggs enabled:\n" +
-                " * Full-screen button.\n" +
+                " * Full-screen button (no chat, due to flash security).\n" +
                 " * Chat link hover pics.\n" +
                 "\n" +
                 "These experimental features may be removed in the future. Let us know if you " +

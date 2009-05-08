@@ -159,7 +159,7 @@ public class TableCreationPanel extends VBox
         _inviteAll.styleName = "lobbyLabel";
         // TODO: add with label to HBox
 
-        var onlineFriends :Array = _ctx.getOnlineFriends();
+        var onlineFriends :Array = _ctx.getSortedFriends();
         if (onlineFriends.length == 0) {
             addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
 

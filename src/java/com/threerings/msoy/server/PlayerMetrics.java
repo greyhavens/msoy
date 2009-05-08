@@ -1,9 +1,11 @@
 //
 // $Id$
 
-package com.threerings.msoy.data;
+package com.threerings.msoy.server;
 
 import com.threerings.io.Streamable;
+
+import com.threerings.msoy.data.MemberObject;
 
 /** Collection of player metrics objects, with serialization accessors. */
 public class PlayerMetrics
@@ -95,7 +97,8 @@ public class PlayerMetrics
                     // my room
                     this.timeInMyRoom += seconds;
 
-                } else if (player.friends.containsKey(_currentSceneOwnerId)) {
+                } else if (player.getLocal(MemberLocal.class).friendIds.contains(
+                        _currentSceneOwnerId)) {
                     // a friend's room
                     this.timeInFriendRooms += seconds;
 

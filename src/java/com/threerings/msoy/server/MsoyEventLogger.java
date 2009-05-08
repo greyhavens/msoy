@@ -22,7 +22,6 @@ import com.threerings.presents.server.ReportManager.Reporter;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;

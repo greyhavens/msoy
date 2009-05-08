@@ -12,7 +12,6 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.crowd.server.BodyLocal;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PlayerMetrics;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
@@ -55,6 +54,9 @@ public class MemberLocal extends BodyLocal
     /** A list of notifications that will be dispatched when the client's NotificationDirector asks
      * for them. Will be null once the deferred notifications have been dispatched. */
     public List<Notification> deferredNotifications;
+
+    /** The complete list of all your friends. */
+    public StreamableArrayIntSet friendIds;
 
     /** Rooms we've visited during our current Whirled Tour. */
     public StreamableArrayIntSet touredRooms;

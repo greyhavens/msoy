@@ -13,7 +13,10 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
+
 import com.threerings.io.Streamable;
+
+import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
@@ -128,6 +131,7 @@ public class MsoyClientResolver extends CrowdClientResolver
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
             local.stats = new StatSet();
             local.badges = new EarnedBadgeSet();
+            local.friendIds = new StreamableArrayIntSet();
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else if (_username instanceof LurkerName) {
@@ -135,6 +139,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             memobj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
             local.stats = new StatSet();
             local.badges = new EarnedBadgeSet();
+            local.friendIds = new StreamableArrayIntSet();
             local.inProgressBadges = new InProgressBadgeSet();
 
         } else {
@@ -226,7 +231,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // fill in this member's raw friends list; the friend manager will update it later
 //        resolutionStamps.add(System.currentTimeMillis() - startStamp);
         enforceConnected();
-        memobj.friends = new DSet<FriendEntry>(_memberRepo.loadAllFriends(member.memberId));
+        local.friendIds = _memberRepo.loadFriendIds(member.memberId);
 
         // load up this member's group memberships
 //        resolutionStamps.add(System.currentTimeMillis() - startStamp);

@@ -163,7 +163,7 @@ public class MemberObject extends MsoyBodyObject
     /** A cache of the user's 5 most recently touched avatars. */
     public var avatarCache :DSet;
 
-    /** The buddies of this player. */
+    /** The online friends of this player. */
     public var friends :DSet;
 
     /** The IM gateways available to this player. */
@@ -237,9 +237,9 @@ public class MemberObject extends MsoyBodyObject
     /**
      * Get a sorted list of friends.
      */
-    public function getSortedOnlineFriends () :Array
+    public function getSortedFriends () :Array
     {
-        return friends.toArray().filter(FriendEntry.isOnline).sort(PlayerEntry.sortByName);
+        return friends.toArray().sort(PlayerEntry.sortByName);
     }
 
     /**
@@ -248,14 +248,6 @@ public class MemberObject extends MsoyBodyObject
     public function getSortedGroups () :Array
     {
         return groups.toArray().sort(GroupMembership.sortByName);
-    }
-
-    /**
-     * Tests if this member has any friends online.
-     */
-    public function hasOnlineFriends () :Boolean
-    {
-        return friends.toArray().some(FriendEntry.isOnline);
     }
 
     /**
@@ -297,6 +289,14 @@ public class MemberObject extends MsoyBodyObject
     override public function getVisibleName () :Name
     {
         return memberName;
+    }
+
+    /**
+     * Convenience.
+     */
+    public function isOnlineFriend (memberId :int) :Boolean
+    {
+        return friends.containsKey(memberId);
     }
 
     /**

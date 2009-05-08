@@ -161,6 +161,7 @@ public class MemberLogic
                 memberId, FeedMessageType.FRIEND_ADDED_FRIEND, data);
 
             // add them to the friends list of both parties if/wherever they are online
+            // TODO: Review and optimize
             MemberCard ccard = _memberRepo.loadMemberCard(memberId, true);
             _peerMan.invokeNodeAction(new AddFriend(memberId, friend));
             _peerMan.invokeNodeAction(new AddFriend(friendId, ccard));
@@ -821,31 +822,30 @@ public class MemberLogic
     {
         public AddFriend (int memberId, MemberCard friend) {
             super(memberId);
-            _friendId = friend.name.getMemberId();
-            _friendName = friend.name.toString();
-            _friendPhoto = friend.photo;
-            _friendStatus = friend.headline;
+            _entry = new FriendEntry(
+                new VizMemberName(friend.name.toString(), friend.name.getMemberId(), friend.photo),
+                friend.headline);
         }
 
         public AddFriend () {
         }
 
         @Override protected void execute (final MemberObject memobj) {
-            VizMemberName friend = new VizMemberName(_friendName, _friendId, _friendPhoto);
-            boolean online = _peerMan.isMemberOnline(_friendId);
-            memobj.addToFriends(new FriendEntry(friend, _friendStatus, online));
-            _friendMan.registerFriendInterest(memobj, _friendId);
+            int friendId = _entry.name.getMemberId();
+            memobj.getLocal(MemberLocal.class).friendIds.add(friendId);
+            if (_peerMan.isMemberOnline(friendId)) {
+                memobj.addToFriends(_entry);
+            }
+            _friendMan.registerFriendInterest(memobj, friendId);
         }
 
-        protected int _friendId;
-        protected String _friendName;
-        protected MediaDesc _friendPhoto;
-        protected String _friendStatus;
+        protected FriendEntry _entry;
 
         @Inject protected transient MsoyPeerManager _peerMan;
         @Inject protected transient FriendManager _friendMan;
     }
 
+    // TODO: review, revamp
     protected static class RemoveFriend extends MemberNodeAction
     {
         public RemoveFriend (int memberId, int friendId) {
@@ -860,6 +860,7 @@ public class MemberLogic
             if (memobj.friends.containsKey(_friendId)) {
                 memobj.removeFromFriends(_friendId);
             }
+            memobj.getLocal(MemberLocal.class).friendIds.remove(_friendId);
             _friendMan.clearFriendInterest(memobj, _friendId);
         }
 

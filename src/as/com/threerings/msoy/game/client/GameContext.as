@@ -69,7 +69,7 @@ public interface GameContext extends ParlorContext
     /**
      * Returns an array of FriendEntry records for this player's online friends.
      */
-    function getOnlineFriends () :Array;
+    function getSortedFriends () :Array;
 
     /**
      * Retrieves the invite token that was passed to the game.

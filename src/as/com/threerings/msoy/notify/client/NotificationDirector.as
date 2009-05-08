@@ -190,12 +190,23 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
-            var online :String = entry.online ?
-                Msgs.NOTIFY.get("m.friend_visit", entry.name.getMemberId()) : "";
-            var notif :String = MessageBundle.tcompose("m.friend_added",
-                entry.name, entry.name.getMemberId(), online);
-            addGenericNotification(notif, Notification.PERSONAL, entry.name);
+            // if they weren't listed in the set, report them as newly coming online
+            if (!_membersLoggingOff.remove(entry)) {
+                addGenericNotification(
+                    MessageBundle.tcompose("m.friend_online", entry.name, entry.name.getMemberId()),
+                    Notification.BUTTSCRATCHING, entry.name);
+            }
         }
+
+// TODO: Restore new friend notification
+//        if (name == MemberObject.FRIENDS) {
+//            var entry :FriendEntry = event.getEntry() as FriendEntry;
+//            var online :String = entry.online ?
+//                Msgs.NOTIFY.get("m.friend_visit", entry.name.getMemberId()) : "";
+//            var notif :String = MessageBundle.tcompose("m.friend_added",
+//                entry.name, entry.name.getMemberId(), online);
+//            addGenericNotification(notif, Notification.PERSONAL, entry.name);
+//        }
     }
 
     // from interface SetListener
@@ -207,24 +218,7 @@ public class NotificationDirector extends BasicDirector
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
             var memberId :int = entry.name.getMemberId();
 
-            // display a message if they just signed on
-            if (entry.online != oldEntry.online) {
-                // show friends logging on in the notification area
-                if (entry.online) {
-                    // if they weren't listed in the set, report them as newly coming online
-                    if (!_membersLoggingOff.remove(entry)) {
-                        addGenericNotification(
-                            MessageBundle.tcompose("m.friend_online", entry.name, memberId),
-                            Notification.BUTTSCRATCHING, entry.name);
-                    }
-
-                } else {
-                    _membersLoggingOff.add(entry);
-                }
-            }
-
-            // they may have changed something else we'd like to know about.
-            if (MemberName.BY_DISPLAY_NAME(entry.name, oldEntry.name) != 0) {
+            if (entry.name.toString() != oldEntry.name.toString()) {
                 addGenericNotification(
                     MessageBundle.tcompose("m.friend_name_changed", entry.name, memberId,
                         oldEntry.name),
@@ -240,12 +234,9 @@ public class NotificationDirector extends BasicDirector
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         var name :String = event.getName();
+        // TODO: dear god fix this hackery
         if (name == MemberObject.FRIENDS) {
-            var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            addGenericNotification(
-                MessageBundle.tcompose("m.friend_removed", oldEntry.name,
-                    oldEntry.name.getMemberId()),
-                Notification.PERSONAL, oldEntry.name);
+            _membersLoggingOff.add(event.getOldEntry());
         }
     }
 
@@ -302,9 +293,7 @@ public class NotificationDirector extends BasicDirector
         if (memberId in _statusTimeouts) {
             clearTimeout(uint(_statusTimeouts[memberId]));
         }
-        _statusTimeouts[memberId] = setTimeout(function () :void {
-            reportStatusChange(memberId);
-        }, STATUS_UPDATE_DELAY);
+        _statusTimeouts[memberId] = setTimeout(reportStatusChange, STATUS_UPDATE_DELAY, memberId);
     }
 
     protected function reportStatusChange (memberId :int) :void
@@ -313,7 +302,7 @@ public class NotificationDirector extends BasicDirector
 
         var entry :FriendEntry = MemberObject(_mctx.getClient().getClientObject()).friends.get(
             memberId) as FriendEntry;
-        if ((entry != null) && entry.online) {
+        if (entry != null) {
             var statusString :String =
                 _mctx.getChatDirector().filter(entry.status, entry.name, false);
             if (!StringUtil.isBlank(statusString)) {
@@ -345,7 +334,7 @@ public class NotificationDirector extends BasicDirector
     /** Give notifications 15 minutes to be relevant. */
     protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60; // in seconds
 
-    protected static const STATUS_UPDATE_DELAY :int = 15 * 1000; // 15 ms
+    protected static const STATUS_UPDATE_DELAY :int = 15 * 1000; // 15 seconds
 
     protected var _mctx :MsoyContext;
 

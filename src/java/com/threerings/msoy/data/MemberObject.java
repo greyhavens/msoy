@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import java.util.Set;
+
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 import com.threerings.crowd.data.OccupantInfo;
@@ -168,7 +170,7 @@ public class MemberObject extends MsoyBodyObject
     /** A cache of the user's 5 most recently touched avatars. */
     public DSet<Avatar> avatarCache;
 
-    /** The friends of this player. */
+    /** The online friends of this player. */
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
 
     /** The IM gateways available to this player. */
@@ -242,9 +244,10 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
-     * Returns true if the specified member is our friend.
+     * Returns true if the specified member is our friend (and online). See MemberLocal for full
+     * friend check.
      */
-    public boolean isFriend (int memberId)
+    public boolean isOnlineFriend (int memberId)
     {
         return friends.containsKey(memberId);
     }
@@ -315,7 +318,7 @@ public class MemberObject extends MsoyBodyObject
         case UNAVAILABLE:
             return false;
         case FRIENDS_ONLY:
-            return friends.containsKey(communicatorId);
+            return isOnlineFriend(communicatorId);
         }
     }
 
@@ -379,7 +382,8 @@ public class MemberObject extends MsoyBodyObject
     }
 
     @Override // from MsoyBodyObject
-    public boolean canEnterScene (int sceneId, int ownerId, byte ownerType, byte accessControl)
+    public boolean canEnterScene (
+        int sceneId, int ownerId, byte ownerType, byte accessControl, Set<Integer> friendIds)
     {
         boolean hasRights = false;
 
@@ -395,7 +399,8 @@ public class MemberObject extends MsoyBodyObject
             case MsoySceneModel.ACCESS_EVERYONE: hasRights = true; break;
             case MsoySceneModel.ACCESS_OWNER_ONLY: hasRights = (getMemberId() == ownerId); break;
             case MsoySceneModel.ACCESS_OWNER_AND_FRIENDS:
-                hasRights = (getMemberId() == ownerId) || isFriend(ownerId);
+                hasRights = (getMemberId() == ownerId) ||
+                   ((friendIds != null) && friendIds.contains(ownerId));
                 break;
             }
         }

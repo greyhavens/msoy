@@ -408,14 +408,13 @@ public class MemberManager
         final MemberObject user = (MemberObject) caller;
 
         // ensure that the other member is a full friend
-        final FriendEntry entry = user.friends.get(memberId);
-        if (null == entry) {
+        if (!user.getLocal(MemberLocal.class).friendIds.contains(memberId)) {
             throw new InvocationException("e.not_a_friend");
         }
 
         final MemberLocation memloc = _peerMan.getMemberLocation(memberId);
         if (memloc == null) {
-            throw new InvocationException(MessageBundle.tcompose("e.not_online", entry.name));
+            throw new InvocationException("e.not_online");
         }
         listener.requestProcessed(memloc);
     }
@@ -723,8 +722,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void updateStatus (final ClientObject caller, final String status,
-                              final InvocationService.InvocationListener listener)
+    public void updateStatus (
+        ClientObject caller, String status, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;

@@ -52,7 +52,7 @@ public class PartyBoardInfoRenderer extends HBox
 
         var us :MemberObject = wctx.getMemberObject();
         _name.setStyle("fontWeight",
-            us.friends.containsKey(party.info.leaderId) ? "bold" : "normal");
+            us.isOnlineFriend(party.info.leaderId) ? "bold" : "normal");
 
         _join.setCommand(WorldController.JOIN_PARTY, party.info.id);
     }

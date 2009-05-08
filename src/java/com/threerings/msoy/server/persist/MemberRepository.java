@@ -76,6 +76,8 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
+
+import com.threerings.util.StreamableArrayIntSet;
 import com.threerings.util.TimeUtil;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -1143,9 +1145,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the member ids of the specified member's friends.
      */
-    public IntSet loadFriendIds (int memberId)
+    // TODO: make a version that just loads a list, and use that most every place
+    public StreamableArrayIntSet loadFriendIds (int memberId)
     {
-        IntSet memIds = new ArrayIntSet();
+        StreamableArrayIntSet memIds = new StreamableArrayIntSet();
         for (FriendshipRecord frec : findAll(FriendshipRecord.class, fullFriendWhere(memberId))) {
             memIds.add(frec.friendId);
         }
@@ -1197,18 +1200,17 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads the FriendEntry record for all friends of the specified member. The online status of
-     * each friend will be false.
+     * Loads the FriendEntry record for all the specified members.
      */
-    public List<FriendEntry> loadAllFriends (int memberId)
+    public FriendEntry[] loadFriendEntries (Collection<Integer> ids)
     {
-        IntSet ids = loadFriendIds(memberId);
-        // now load up member card records for these guys and convert them to friend entries
-        List<FriendEntry> friends = Lists.newArrayListWithCapacity(ids.size());
-        for (MemberCardRecord crec : loadMemberCards(ids)) {
-            friends.add(new FriendEntry(crec.toVizMemberName(), crec.headline, false));
+        List<MemberCardRecord> cards = loadMemberCards(ids);
+        FriendEntry[] entries = new FriendEntry[cards.size()];
+        int ii = 0;
+        for (MemberCardRecord crec : cards) {
+            entries[ii++] = new FriendEntry(crec.toVizMemberName(), crec.headline);
         }
-        return friends;
+        return entries;
     }
 
     /**

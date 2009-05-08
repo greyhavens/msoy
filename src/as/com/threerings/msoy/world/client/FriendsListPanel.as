@@ -85,7 +85,7 @@ public class FriendsListPanel extends FlyingPanel
     {
         // if we muted or unmuted a friend, refresh the display
         if ((name is MemberName) &&
-                _wctx.getMemberObject().friends.containsKey(MemberName(name).getMemberId())) {
+                _wctx.getMemberObject().isOnlineFriend(MemberName(name).getMemberId())) {
             _friendsList.refresh();
         }
     }
@@ -127,8 +127,7 @@ public class FriendsListPanel extends FlyingPanel
             return;
         }
 
-        _friendsList = new PlayerList(
-            FriendRenderer.createFactory(_wctx), PlayerEntry.sortByName, FriendEntry.isOnline);
+        _friendsList = new PlayerList(FriendRenderer.createFactory(_wctx), PlayerEntry.sortByName);
         addChild(_friendsList);
 
         // add a little separator

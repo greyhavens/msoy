@@ -32,6 +32,7 @@ import com.threerings.whirled.spot.server.SpotSceneRegistry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -281,7 +282,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
                 // first check access control on the remote scene
                 HostedRoom hr = nodeInfo.right;
-                if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl)) {
+                if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl,
+                        memobj.getLocal(MemberLocal.class).friendIds)) {
                     log.debug("Going to remote node", "who", mover.who(),
                         "where", sceneId + "@" + nodeInfo.left);
                     sendClientToNode(nodeInfo.left, memobj, listener);

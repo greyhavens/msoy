@@ -297,15 +297,14 @@ public class WorldController extends MsoyController
 
         // slap your friends in a menu
         var friends :Array = [];
-        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
+        for each (var fe :FriendEntry in me.getSortedFriends()) {
             var item :Object = {
                 label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
             checkChatChannelOpen(fe.name, item);
             friends.push(item);
         }
         if (friends.length == 0) {
-            friends.push({ label: Msgs.GENERAL.get("m.no_friends"),
-                        enabled: false });
+            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
         }
         menuData.push({ label: Msgs.GENERAL.get("l.friends"), children: friends });
 
@@ -1164,7 +1163,7 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
         } else {
-            const friend :FriendEntry = us.friends.get(memId) as FriendEntry;
+            const onlineFriend :Boolean = us.isOnlineFriend(memId);
 
             // commented out: we are normally constructed from separated names, so we lose the viz
 //            var icon :* = null;
@@ -1183,7 +1182,7 @@ public class WorldController extends MsoyController
 
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                              command: OPEN_CHANNEL, arg: name, enabled: !muted });
-            if ((friend != null) && friend.online) {
+            if (onlineFriend) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.visit_friend"),
                                  command: VISIT_MEMBER, arg: memId });
             }
@@ -1191,7 +1190,7 @@ public class WorldController extends MsoyController
                              command: GO_MEMBER_HOME, arg: memId });
             menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                              command: VIEW_MEMBER, arg: memId });
-            if (friend == null) {
+            if (!onlineFriend) { // TODO: this kinda sucks
                 menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
                                  command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
@@ -1561,7 +1560,7 @@ public class WorldController extends MsoyController
 
         // our friends
         var friends :Array = [];
-        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
+        for each (var fe :FriendEntry in me.getSortedFriends()) {
             friends.push({ label: fe.name.toString(),
                 command: VISIT_MEMBER, arg: fe.name.getMemberId() });
         }

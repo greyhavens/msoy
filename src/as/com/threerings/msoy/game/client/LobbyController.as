@@ -168,7 +168,7 @@ public class LobbyController extends Controller
      */
     public function countFriends (table :Table) :int
     {
-        var friendIds :Array = _gctx.getOnlineFriends().map(
+        var friendIds :Array = _gctx.getSortedFriends().map(
             function (f :FriendEntry) :int { return f.name.getMemberId() });
         var plobj :PlayerObject = _gctx.getPlayerObject();
         var friends :int = 0, ourId :int = plobj.memberName.getMemberId();
@@ -178,7 +178,7 @@ public class LobbyController extends Controller
                 continue;
             }
             var friendId :int = name.getMemberId();
-            if (friendIds.indexOf(friendId) >= 0 || friendId == ourId) {
+            if ((friendId == ourId) || (-1 != friendIds.indexOf(friendId))) {
                 friends++;
             }
         }
