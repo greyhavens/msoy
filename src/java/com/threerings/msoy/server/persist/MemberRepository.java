@@ -1663,7 +1663,7 @@ public class MemberRepository extends DepotRepository
     protected static final long ENTRY_VECTOR_EXPIRE = 14 * 24*60*60*1000L;
 
     /** A "like" pattern that matches permaguest accounts. */
-    protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestPattern("%");
+    protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestEmail("%");
 
     /** Period after which we expire "weak" permaguest accounts (those of low level). */
     protected static final long WEAK_PERMAGUEST_EXPIRE = 10 * 24*60*60*1000L;

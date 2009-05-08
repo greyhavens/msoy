@@ -16,7 +16,7 @@ public class MemberMailUtil
 
     /** Regulsr expression used to check if an email address is one assigned to a permaguest. */
     public static const PERMAGUEST_EMAIL_PATTERN :RegExp =
-        new RegExp(PERMAGUEST_EMAIL_PREFIX + "[0-9a-f]{32}.?" + PERMAGUEST_EMAIL_SUFFIX);
+        new RegExp(PERMAGUEST_EMAIL_PREFIX + "[0-9a-f]{32}" + PERMAGUEST_EMAIL_SUFFIX);
 
     /**
      * Checks if a username (email) matches <code>PERMAGUEST_EMAIL_PATTERN</code>.

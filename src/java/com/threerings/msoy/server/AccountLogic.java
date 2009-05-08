@@ -50,12 +50,6 @@ public class AccountLogic
     /** Password used when creating a permaguest account. */
     public static final String PERMAGUEST_PASSWORD = "";
 
-    // TODO: remove when @Inject can be used
-    public void init (MemberLogic memberLogic)
-    {
-        _memberLogic = memberLogic;
-    }
-
     /**
      * Returns the authentication domain to use for the supplied account name. We support
      * federation of authentication domains based on the domain of the address. For example, we
@@ -111,9 +105,6 @@ public class AccountLogic
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
 
-        // grab the dongle before we nuke the old account name
-        char dongle = MemberMailUtil.extractPermaguestDongle(mrec.accountName);
-
         // visitor id can't change, can it?
         String visitorId = checkCreateId(mrec.accountName, vinfo);
         if (visitorId != null && !visitorId.equals(mrec.visitorId)) {
@@ -161,15 +152,7 @@ public class AccountLogic
             log.warning("Failed to award coins for new account", "memberId", memberId, e);
         }
 
-        if (dongle == AUTO_FRIEND_DONGLE) {
-            try {
-                doAutoFriendRequest(mrec);
-            } catch (Exception e) {
-                log.warning("Failed to send auto friend request", "memberId", memberId, e);
-            }
-        }
-
-        log.info("Saved permaguest account", "memberId", mrec.memberId, "dongle", dongle);
+        log.info("Saved permaguest account", "memberId", mrec.memberId);
 
         return mrec;
     }
@@ -185,9 +168,8 @@ public class AccountLogic
         throws ServiceException
     {
         // TODO: handle affiliate.autoFriend
-        String seed = System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random();
-        char dongle = affiliate.autoFriend ? AUTO_FRIEND_DONGLE : 0;
-        String email = MemberMailUtil.makePermaguestEmail(StringUtil.md5hex(seed), dongle);
+        String email = MemberMailUtil.makePermaguestEmail(
+            StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()));
         String displayName = _serverMsgs.getBundle("server").get("m.permaguest_name");
         AccountData data = new AccountData(
             false, email, PERMAGUEST_PASSWORD, displayName,
@@ -385,10 +367,6 @@ public class AccountLogic
             // keep on keepin' on
         }
 
-        if (data.isRegistering && data.affiliate.autoFriend) {
-            doAutoFriendRequest(mrec);
-        }
-
         return mrec;
     }
 
@@ -534,17 +512,6 @@ public class AccountLogic
         }
     }
 
-    protected void doAutoFriendRequest (MemberRecord mrec)
-        throws ServiceException
-    {
-        log.info("Auto friend requested", "member", mrec.memberId,
-            "affiliate", mrec.affiliateMemberId);
-
-        if (mrec.affiliateMemberId > 0) {
-            _memberLogic.inviteToBeFriend(mrec.memberId, mrec.affiliateMemberId);
-        }
-    }
-
     protected static class AccountData
     {
         // mandatory bits
@@ -575,9 +542,6 @@ public class AccountLogic
         }
     }
 
-    // TODO: fix ABTestRecord so we can @Inject this
-    protected MemberLogic _memberLogic;
-
     @Inject protected AuthenticationDomain _defaultDomain;
     @Inject protected MailSender _mailer;
     @Inject protected MemberRepository _memberRepo;
@@ -592,6 +556,4 @@ public class AccountLogic
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
-
-    protected static final char AUTO_FRIEND_DONGLE = 'z';
 }
