@@ -23,7 +23,7 @@ window.FB_PostStory = function(bundleId, data, targetIds, body) {
   });
 };
 window.FB_PostTrophy = function(data, templateId, targetIds) {
-  FB_PostStory(new Number(templateId), data, targetIds, "");
+  FB_PostStory(parseInt(templateId), data, targetIds, "");
 };
 window.FB_Logout = function() {
   FB_WithInit(function() {
