@@ -185,16 +185,17 @@ public class ProfileServlet extends MsoyServiceServlet
     public void updateProfile (String displayName, boolean greeter, final Profile profile)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireAuthedUser();
+        int memberId = memrec.memberId;
 
         if (!ObjectUtil.equals(memrec.name, displayName)) {
             // this will hork with a ServiceException if the name is bogus
-            _memberLogic.setDisplayName(memrec.memberId, displayName, memrec.isSupport());
+            _memberLogic.setDisplayName(memberId, displayName, memrec.isSupport());
         }
 
         // don't let the user become a greeter if it is disabled
         if (!memrec.isGreeter() && greeter) {
-            int friendCount = _memberRepo.countFullFriends(memrec.memberId);
+            int friendCount = _memberRepo.countFullFriends(memberId);
             if (getGreeterStatus(memrec, friendCount) == GreeterStatus.DISABLED) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
@@ -203,26 +204,40 @@ public class ProfileServlet extends MsoyServiceServlet
         // TODO: whatever filtering and profanity checking that we want
 
         // load their old profile record for "first time configuration" purposes
-        final ProfileRecord orec = _profileRepo.loadProfile(memrec.memberId);
+        final ProfileRecord orec = _profileRepo.loadProfile(memberId);
 
         // stuff their updated profile data into the database
-        final ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
+        final ProfileRecord nrec = new ProfileRecord(memberId, profile);
         if (orec != null) {
             nrec.modifications = orec.modifications+1;
             nrec.realName = orec.realName;
         } else {
-            log.warning("Account missing old profile [id=" + memrec.memberId + "].");
+            log.warning("Account missing old profile", "id", memberId);
         }
         _profileRepo.storeProfile(nrec);
 
         // record that the user updated their profile
+        UserAction action = UserAction.createdProfile(memberId);
         if (nrec.modifications == 1) {
-            _moneyLogic.awardCoins(memrec.memberId, CoinAwards.CREATED_PROFILE, true,
-                                   UserAction.createdProfile(memrec.memberId));
+            _moneyLogic.awardCoins(memberId, CoinAwards.CREATED_PROFILE, true, action);
+
+            // now that the member has a name, try sending the affiliate a friend request
+            int affiliateId = memrec.affiliateMemberId;
+            if (memrec.isSet(MemberRecord.Flag.FRIEND_AFFILIATE) && affiliateId > 0 &&
+                _memberRepo.getFriendship(memberId, affiliateId) == Friendship.NOT_FRIENDS) {
+                try {
+                    _memberLogic.inviteToBeFriend(memberId, affiliateId);
+
+                } catch (Exception e) {
+                    log.warning("Failed to send affiliate friend request", "memberId", memberId,
+                        "affilateMemberId", affiliateId, e);
+                }
+            }
+
         } else {
-            _userActionRepo.logUserAction(UserAction.updatedProfile(memrec.memberId));
+            _userActionRepo.logUserAction(action);
         }
-        _eventLog.profileUpdated(memrec.memberId, memrec.visitorId);
+        _eventLog.profileUpdated(memberId, memrec.visitorId);
 
         final boolean photoChanged = !orec.getPhoto().equals(nrec.getPhoto());
         final boolean statusChanged = !ObjectUtil.equals(orec.headline, nrec.headline);
@@ -231,12 +246,12 @@ public class ProfileServlet extends MsoyServiceServlet
             memrec.setFlag(MemberRecord.Flag.GREETER, greeter);
             _memberRepo.storeFlags(memrec);
             // let the world servers know about the info change
-            MemberNodeActions.tokensChanged(memrec.memberId, memrec.toTokenRing());
+            MemberNodeActions.tokensChanged(memberId, memrec.toTokenRing());
         }
         if (statusChanged || photoChanged) {
             // let the world servers know about the info change
             // (the name is null, it's changed by other code, above.)
-            MemberNodeActions.infoChanged(memrec.memberId, null, nrec.getPhoto(), nrec.headline);
+            MemberNodeActions.infoChanged(memberId, null, nrec.getPhoto(), nrec.headline);
         }
     }
 
@@ -418,7 +433,7 @@ public class ProfileServlet extends MsoyServiceServlet
             final int gameId = entry.getIntKey();
             final GameRecord record = _mgameRepo.loadGameRecord(gameId);
             if (record == null) {
-                log.info("Player has rating for non-existent game [id=" + gameId + "].");
+                log.info("Player has rating for non-existent game", "id", gameId);
                 result.remove(entry.getValue());
             } else {
                 entry.getValue().gameName = record.name;

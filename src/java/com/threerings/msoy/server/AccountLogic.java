@@ -126,6 +126,10 @@ public class AccountLogic
         if (invite != null) {
             _memberRepo.updateAffiliateMemberId(memberId, invite.inviterId);
             mrec.affiliateMemberId = invite.inviterId;
+            if (mrec.isSet(MemberRecord.Flag.FRIEND_AFFILIATE)) {
+                mrec.setFlag(MemberRecord.Flag.FRIEND_AFFILIATE, false);
+                _memberRepo.storeFlags(mrec);
+            }
         }
 
         // tell panopticon that we "created" an account
@@ -400,6 +404,9 @@ public class AccountLogic
             mrec.affiliateMemberId = (data.invite == null) ?
                 data.affiliate.memberId : data.invite.inviterId;
             mrec.visitorId = checkCreateId(account.accountName, data.vinfo);
+            if (data.affiliate.memberId == mrec.affiliateMemberId && data.affiliate.autoFriend) {
+                mrec.setFlag(MemberRecord.Flag.FRIEND_AFFILIATE, true);
+            }
 
             // store their member record in the repository making them a real Whirled citizen
             _memberRepo.insertMember(mrec);
@@ -544,6 +551,7 @@ public class AccountLogic
 
     @Inject protected AuthenticationDomain _defaultDomain;
     @Inject protected MailSender _mailer;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;

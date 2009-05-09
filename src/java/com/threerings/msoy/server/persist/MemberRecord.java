@@ -74,8 +74,12 @@ public class MemberRecord extends PersistentRecord
          */
         SPANKED(1<<9),
 
+        /** If this user should automatically send a friend request to their affiliate when they
+         * register. */
+        FRIEND_AFFILIATE(1<<10),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 10);
+        UNUSED(1 << 11);
 
         public int getBit () {
             return _bit;
