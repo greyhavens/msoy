@@ -615,49 +615,39 @@ public class GroupRepository extends DepotRepository
     protected OrderBy buildOrderBy (byte sortBy, int tagId, WordSearch search)
     {
         // if no full text or tag search, return a subset of all records, order by query.sort
-        OrderBy orderBy;
         if (sortBy == GroupQuery.SORT_BY_NAME) {
-            orderBy = new OrderBy(
-                new SQLExpression[] { GroupRecord.NAME, GroupRecord.MEMBER_COUNT },
-                new Order[] { Order.ASC, Order.DESC });
+            return OrderBy.ascending(GroupRecord.NAME).thenDescending(GroupRecord.MEMBER_COUNT);
 
         } else if (sortBy == GroupQuery.SORT_BY_NUM_MEMBERS) {
-            orderBy = new OrderBy(
-                new SQLExpression[] { GroupRecord.MEMBER_COUNT, GroupRecord.NAME },
-                new Order[] { Order.DESC, Order.ASC });
+            return OrderBy.descending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
 
         } else if (sortBy == GroupQuery.SORT_BY_CREATED_DATE) {
-            orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE);
+            return OrderBy.ascending(GroupRecord.CREATION_DATE);
 
         } else if (tagId > 0) {
             // for a tag search, define 'relevance' as member count
-            orderBy = new OrderBy(
-                new SQLExpression[] { GroupRecord.MEMBER_COUNT, GroupRecord.NAME },
-                new Order[] { Order.DESC, Order.ASC });
+            return OrderBy.descending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
 
         } else if (search != null) {
             SQLOperator tagExistsExp = search.tagExistsExpression();
             if (tagExistsExp != null) {
                 // the rank is (1 + fts rank), boosted by 25% if there's a tag match
-                orderBy = OrderBy.descending(new Mul(
+                return OrderBy.descending(new Mul(
                     new Add(search.fullTextRank(), new ValueExp(1.0)),
                     new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0))));
 
             } else {
-                orderBy = new OrderBy(
-                    new SQLExpression[] {
-                        search.fullTextRank(), GroupRecord.MEMBER_COUNT, GroupRecord.NAME },
-                    new Order[] { Order.DESC, Order.DESC, Order.ASC });
+                return OrderBy.descending(search.fullTextRank()).
+                    thenDescending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
             }
 
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
-            orderBy = OrderBy.descending(new Add(
+            return OrderBy.descending(new Add(
                 new Div(new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay),
                 GroupRecord.MEMBER_COUNT));
         }
-        return orderBy;
     }
 
     /**
