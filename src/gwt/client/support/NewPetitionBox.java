@@ -10,16 +10,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -54,8 +54,8 @@ public class NewPetitionBox extends FlowPanel
                                 CSupport.msgs.newPetitionHelp()));
         create.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
-        KeyboardListenerAdapter clearer = new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+        KeyPressHandler clearer = new KeyPressHandler() {
+            public void onKeyPress (KeyPressEvent event) {
                 _status.setText("");
             }
         };
@@ -66,7 +66,7 @@ public class NewPetitionBox extends FlowPanel
             create.setWidget(row++, 1, _email = new TextBox());
             _email.setVisibleLength(SMALL_VISIBLE_COLUMNS);
             _email.setMaxLength(MAX_EMAIL_LENGTH);
-            _email.addKeyboardListener(clearer);
+            _email.addKeyPressHandler(clearer);
             create.setText(row, 0, CSupport.msgs.permaName());
             rowp.add(_permaname = new TextBox());
             rowp.add(new Label(CSupport.msgs.optional()));
@@ -98,11 +98,11 @@ public class NewPetitionBox extends FlowPanel
         // for some annoying reason textbox takes up more horizontal space than textarea
         _newsub.setVisibleLength(VISIBLE_COLUMNS);
         _newsub.setMaxLength(MAX_SUBJECT_LENGTH);
-        _newsub.addKeyboardListener(clearer);
+        _newsub.addKeyPressHandler(clearer);
 
         create.setText(row, 0, _ctx.cmsgs.message());
         create.setWidget(row++, 1, _newmsg = new TextArea());
-        _newmsg.addKeyboardListener(clearer);
+        _newmsg.addKeyPressHandler(clearer);
         _newmsg.setCharacterWidth(VISIBLE_COLUMNS);
         _newmsg.setVisibleLines(VISIBLE_ROWS);
 

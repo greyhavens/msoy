@@ -256,7 +256,7 @@ public class GameInvitePanel extends InvitePanel
         protected void downloadFriends ()
         {
             // pass a zero game id to include people who have already played
-            int gameId = _showAll.isChecked() ? 0 : _gameId;
+            int gameId = _showAll.getValue() ? 0 : _gameId;
 
             // get friend list from the server; fill in our grid
             _invitesvc.getFriends(gameId, ROWS * COLS, new InfoCallback<List<MemberCard>>() {
@@ -355,12 +355,12 @@ public class GameInvitePanel extends InvitePanel
 
         public boolean isSelected ()
         {
-            return _check.isChecked();
+            return _check.getValue();
         }
 
         public void select (boolean sel)
         {
-            _check.setChecked(sel);
+            _check.setValue(sel);
         }
 
         protected CheckBox _check;

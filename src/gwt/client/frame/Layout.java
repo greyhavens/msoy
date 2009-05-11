@@ -4,10 +4,7 @@
 package client.frame;
 
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import client.shell.Frame;
 
 /**
  * Handles the layout of our various frame elements (header, content, client).

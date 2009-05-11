@@ -8,12 +8,12 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -52,7 +52,7 @@ import client.util.ServiceUtil;
  * Displays detail information on a particular game.
  */
 public class GameDetailPanel extends SmartTable
-    implements TabListener
+    implements BeforeSelectionHandler<Integer>
 {
     public GameDetailPanel ()
     {
@@ -157,7 +157,7 @@ public class GameDetailPanel extends SmartTable
         }
 
         _tabs = new StyledTabPanel();
-        _tabs.addTabListener(this);
+        _tabs.addBeforeSelectionHandler(this);
         addWidget(_tabs, 3, null);
 
         // add the about/instructions tab
@@ -188,21 +188,15 @@ public class GameDetailPanel extends SmartTable
     }
 
     // from interface TabListener
-    public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)
+    public void onBeforeSelection (BeforeSelectionEvent<Integer> event)
     {
         // route tab selection through the URL
-        GameDetails tabCode = getTabCode(tabIndex);
+        GameDetails tabCode = getTabCode(event.getItem());
         if (tabCode == _seltab) {
-            return true;
+            event.cancel();
+            return;
         }
         Link.go(Pages.GAMES, NaviUtil.gameDetail(_gameId, tabCode));
-        return false;
-    }
-
-    // from interface TabListener
-    public void onTabSelected (SourcesTabEvents sender, int tabIndex)
-    {
-        // nada
     }
 
     protected void addTab (GameDetails ident, String title, Widget tab)

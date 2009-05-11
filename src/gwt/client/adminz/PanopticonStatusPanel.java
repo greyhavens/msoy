@@ -36,10 +36,9 @@ public class PanopticonStatusPanel extends SmartTable
     {
         addStyleName("panopticonStatus");
         
-        _nodeList = new ListBox();
+        _nodeList = new ListBox(true);
         _nodeList.setVisibleItemCount(10);
         _nodeList.addStyleName("nodeList");
-        _nodeList.setMultipleSelect(true);
         addWidget(_nodeList, 1, null);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         setText(0, 1, _msgs.panRestartDescription());

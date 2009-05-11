@@ -43,10 +43,10 @@ public abstract class Checklist<T> extends SmartTable
 
         // Select all checkbox
         final CheckBox selectAll = new CheckBox();
-        selectAll.setChecked(true);
+        selectAll.setValue(true);
         selectAll.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
-                selectAll(selectAll.isChecked());
+                selectAll(selectAll.getValue());
             }
         });
         setWidget(0, 0, selectAll, 1, "checklist-header");
@@ -54,8 +54,8 @@ public abstract class Checklist<T> extends SmartTable
         setRowEventListener(getRowFormatter().getElement(0), new EventListener() {
             public void onBrowserEvent (Event event) {
                 if (DOM.eventGetType(event) == Event.ONCLICK) {
-                    selectAll.setChecked(!selectAll.isChecked());
-                    selectAll(selectAll.isChecked());
+                    selectAll.setValue(!selectAll.getValue());
+                    selectAll(selectAll.getValue());
                 }
             }
         });
@@ -64,10 +64,10 @@ public abstract class Checklist<T> extends SmartTable
         int row = 1;
         for (final T item : items) {
             final CheckBox check = new CheckBox();
-            check.setChecked(true);
+            check.setValue(true);
             check.addClickHandler(new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    setItemSelected(item, check.isChecked());
+                    setItemSelected(item, check.getValue());
                 }
             });
             _checks.add(check);
@@ -80,8 +80,8 @@ public abstract class Checklist<T> extends SmartTable
             setRowEventListener(rowElement, new EventListener() {
                 public void onBrowserEvent (Event event) {
                     if (DOM.eventGetType(event) == Event.ONCLICK) {
-                        check.setChecked(!check.isChecked());
-                        setItemSelected(item, check.isChecked());
+                        check.setValue(!check.getValue());
+                        setItemSelected(item, check.getValue());
                     } else if (DOM.eventGetType(event) == Event.ONMOUSEOVER) {
                         rowElement.setClassName(originalStyleClass + " checklist-selected");
                     } else if (DOM.eventGetType(event) == Event.ONMOUSEOUT) {
@@ -104,7 +104,7 @@ public abstract class Checklist<T> extends SmartTable
     protected void selectAll (boolean selected)
     {
         for (CheckBox check : _checks) {
-            check.setChecked(selected);
+            check.setValue(selected);
         }
         if (selected) {
             _selectedItems.addAll(_items);

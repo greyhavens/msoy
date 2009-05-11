@@ -8,19 +8,19 @@ import java.util.Date;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -303,7 +303,7 @@ public class MsoyUI
     /**
      * Creates a text area with a listener and style instead of width/height
      */
-    public static TextArea createTextArea (String text, String style, ChangeListener listener)
+    public static TextArea createTextArea (String text, String style, ChangeHandler handler)
     {
         TextArea area = new TextArea();
         if (text != null) {
@@ -312,8 +312,8 @@ public class MsoyUI
         if (style != null) {
             area.addStyleName(style);
         }
-        if (listener != null) {
-            area.addChangeListener(listener);
+        if (handler != null) {
+            area.addChangeHandler(handler);
         }
         return area;
     }
@@ -687,7 +687,8 @@ public class MsoyUI
         // We need some click logic too because when focus is gained due to a click the selection
         // flashes, disappearing when the cursor appears
         TextBoxSelector listener = new TextBoxSelector();
-        textBox.addFocusListener(listener);
+        textBox.addFocusHandler(listener);
+        textBox.addBlurHandler(listener);
         textBox.addClickHandler(listener);
     }
 
@@ -804,15 +805,15 @@ public class MsoyUI
     }
 
     protected static class TextBoxSelector
-        implements FocusListener, ClickHandler
+        implements FocusHandler, ClickHandler, BlurHandler
     {
-        public void onFocus (Widget sender) {
+        public void onFocus (FocusEvent event) {
             _focus = true;
             _click = false;
-            TextBoxBase text = ((TextBoxBase)sender);
+            TextBoxBase text = ((TextBoxBase)event.getSource());
             text.setSelectionRange(0, text.getText().length());
         }
-        public void onLostFocus (Widget sender) {
+        public void onBlur (BlurEvent event) {
             _focus = false;
             _click = false;
         }

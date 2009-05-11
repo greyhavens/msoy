@@ -8,7 +8,8 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -17,7 +18,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
@@ -82,9 +82,9 @@ public class CatalogPanel extends SmartTable
         for (String label : SORT_LABELS) {
             _sortBox.addItem(label);
         }
-        _sortBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget widget) {
-                _query.sortBy = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
+        _sortBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                _query.sortBy = SORT_VALUES[((ListBox)event.getSource()).getSelectedIndex()];
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, 0));
             }
         });

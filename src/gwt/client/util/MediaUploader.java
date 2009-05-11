@@ -8,10 +8,7 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -73,14 +70,16 @@ public class MediaUploader extends FormPanel
         });
         controls.add(_upload);
 
-        addFormHandler(new FormHandler() {
-            public void onSubmit (FormSubmitEvent event) {
+        addSubmitHandler(new SubmitHandler() {
+            public void onSubmit (SubmitEvent event) {
                 // don't let them submit until they plug in a file...
                 if (_upload.getFilename().length() == 0) {
-                    event.setCancelled(true);
+                    event.cancel();
                 }
             }
-            public void onSubmitComplete (FormSubmitCompleteEvent event) {
+        });
+        addSubmitCompleteHandler(new SubmitCompleteHandler() {
+            public void onSubmitComplete (SubmitCompleteEvent event) {
                 String result = event.getResults();
                 result = (result == null) ? "" : result.trim();
                 if (result.length() > 0) {

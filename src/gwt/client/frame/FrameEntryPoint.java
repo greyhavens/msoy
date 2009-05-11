@@ -11,19 +11,16 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -51,7 +48,6 @@ import client.shell.LandingTestCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
-import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
@@ -69,7 +65,7 @@ import client.util.events.NameChangeEvent;
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame
+    implements EntryPoint, ValueChangeHandler<String>, Session.Observer, client.shell.Frame
 {
     // from interface EntryPoint
     public void onModuleLoad ()
@@ -98,7 +94,7 @@ public class FrameEntryPoint
         configureCallbacks(this);
 
         // wire ourselves up to the history-based navigation mechanism
-        History.addHistoryListener(this);
+        History.addValueChangeHandler(this);
         _currentToken = History.getToken();
 
         // validate our session which will dispatch a didLogon or didLogoff
@@ -150,8 +146,13 @@ public class FrameEntryPoint
         }
     }
 
-    // from interface HistoryListener
-    public void onHistoryChanged (String token)
+    // from interface ValueChangeHandler
+    public void onValueChange (ValueChangeEvent<String> event)
+    {
+        setToken(event.getValue());
+    }
+
+    public void setToken (String token)
     {
         _prevToken = _currentToken;
         _currentToken = token;
@@ -280,7 +281,7 @@ public class FrameEntryPoint
         } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else {
-            onHistoryChanged(_currentToken);
+            setToken(_currentToken);
         }
     }
 
@@ -291,7 +292,7 @@ public class FrameEntryPoint
         _page = null;
         // reload the current page (preserving our previous page token)
         String prevToken = _prevToken;
-        onHistoryChanged(_currentToken);
+        setToken(_currentToken);
         _prevToken = prevToken;
         // close the Flash client if it's open
         closeClient(true);
@@ -328,7 +329,7 @@ public class FrameEntryPoint
         // have to do with some of the weird-ass timer based hackery that GWT has to do to make the
         // whole browser history thing work at all
         if (token.equals(_currentToken)) {
-            onHistoryChanged(_currentToken);
+            setToken(_currentToken);
         } else {
             History.back();
             History.newItem(token);

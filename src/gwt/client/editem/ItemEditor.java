@@ -12,8 +12,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -742,7 +743,7 @@ public abstract class ItemEditor extends FlowPanel
         }
 
         // make sure they claim to own all of the media in the item
-        if (!_econfirm.isChecked()) {
+        if (!_econfirm.getValue()) {
             MsoyUI.error(_emsgs.mustConfirm());
             return;
         }
@@ -799,8 +800,8 @@ public abstract class ItemEditor extends FlowPanel
             });
 
         } else if (widget instanceof ListBox) {
-            ((ListBox)widget).addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
+            ((ListBox)widget).addChangeHandler(new ChangeHandler() {
+                public void onChange (ChangeEvent event) {
                     if (_item != null) {
                         binder.valueChanged();
                     }

@@ -98,7 +98,7 @@ public class GameEditor extends ItemEditor
                     } else if ("max_seats".equals(name)) {
                         _maxPlayers.setNumber(Integer.valueOf(option.getFirstChild().toString()));
                     } else if ("unwatchable".equals(name)) {
-                        _watchable.setChecked(false);
+                        _watchable.setValue(false);
                     }
                 }
                 option = option.getNextSibling();
@@ -119,7 +119,7 @@ public class GameEditor extends ItemEditor
         }
 
         // configure our noprogress checkbox
-        _noprogress.setChecked(xml.getElementsByTagName("noprogress").getLength() > 0);
+        _noprogress.setValue(xml.getElementsByTagName("noprogress").getLength() > 0);
 
         // disable min, max, watchable, auto 1p for non-seated games
         if (_gameType.getSelectedIndex() != GameType.SEATED.ordinal()) {
@@ -152,7 +152,7 @@ public class GameEditor extends ItemEditor
                 ((TextBox)bits[ii+1]).setText(elem.getFirstChild().toString());
             }
         }
-        _serverMPOnly.setChecked(xml.getElementsByTagName("agentmponly").getLength() > 0);
+        _serverMPOnly.setValue(xml.getElementsByTagName("agentmponly").getLength() > 0);
     }
 
     @Override // from ItemEditor
@@ -187,12 +187,12 @@ public class GameEditor extends ItemEditor
                     _minPlayers.setNumber(1);
                     _oldMax = _maxPlayers.getNumber().intValue();
                     _maxPlayers.setNumber(99);
-                    _oldWatch = _watchable.isChecked();
-                    _watchable.setChecked(true);
+                    _oldWatch = _watchable.getValue();
+                    _watchable.setValue(true);
                 } else {
                     _minPlayers.setNumber(_oldMin);
                     _maxPlayers.setNumber(_oldMax);
-                    _watchable.setChecked(_oldWatch);
+                    _watchable.setValue(_oldWatch);
                 }
                 // TODO: it would be nicer to just hide these
                 _minPlayers.setEnabled(isSeated);
@@ -212,7 +212,7 @@ public class GameEditor extends ItemEditor
         addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new NumberTextBox(false, 5));
         _maxPlayers.setNumber(1);
         addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
-        _watchable.setChecked(true);
+        _watchable.setValue(true);
 
         addSpacer();
         addRow(_emsgs.gameDefinition(), _extras = new TextArea());
@@ -299,7 +299,7 @@ public class GameEditor extends ItemEditor
         // add a toggle for disabling loading progress
         addSpacer();
         addRow(_emsgs.gameNoProgress(), _noprogress = new CheckBox());
-        _noprogress.setChecked(false);
+        _noprogress.setValue(false);
         addTip(_emsgs.gameNoProgressTip());
     }
 
@@ -386,7 +386,7 @@ public class GameEditor extends ItemEditor
         Element maxSeats = xml.createElement("max_seats");
         maxSeats.appendChild(xml.createTextNode(_maxPlayers.getNumber().toString()));
         match.appendChild(maxSeats);
-        if (!_watchable.isChecked()) {
+        if (!_watchable.getValue()) {
             match.appendChild(xml.createElement("unwatchable"));
         }
 
@@ -405,10 +405,10 @@ public class GameEditor extends ItemEditor
             // this is really what makes an avrg do its special thing
             xml.getFirstChild().appendChild(xml.createElement("avrg"));
         }
-        if (_noprogress.isChecked()) {
+        if (_noprogress.getValue()) {
             xml.getFirstChild().appendChild(xml.createElement("noprogress"));
         }
-        if (_serverMPOnly.isChecked()) {
+        if (_serverMPOnly.getValue()) {
             xml.getFirstChild().appendChild(xml.createElement("agentmponly"));
         }
 

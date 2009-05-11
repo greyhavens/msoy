@@ -10,7 +10,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,7 +20,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -77,8 +77,8 @@ public class ComposePanel extends FlowPanel
 
         _contents.setText(0, 1, _msgs.composeTo(), 1, "Label");
         _contents.setWidget(0, 2, _friendBox = new ListBox());
-        _friendBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        _friendBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 int idx = _friendBox.getSelectedIndex();
                 if (idx > 0) {
                     setRecipient(_friends.get(idx-1), false);

@@ -160,7 +160,7 @@ public class GroupEdit extends FlexTable
 
         if (CShell.isAdmin()) {
             addRow(_msgs.editOfficial(), _official = new CheckBox());
-            _official.setChecked(_group.official);
+            _official.setValue(_group.official);
         }
 
         HorizontalPanel footer = new HorizontalPanel();
@@ -246,7 +246,7 @@ public class GroupEdit extends FlexTable
             Group.Perm.MEMBER.ordinal() + _party.getSelectedIndex()];
         _group.threadPerm = Group.Perm.values()[_thread.getSelectedIndex()];
         _group.postPerm = Group.Perm.values()[_post.getSelectedIndex()];
-        _group.official = _official != null && _official.isChecked();
+        _group.official = _official != null && _official.getValue();
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];

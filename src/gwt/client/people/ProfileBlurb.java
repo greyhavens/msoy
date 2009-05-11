@@ -320,7 +320,7 @@ public class ProfileBlurb extends Blurb
 
         econtent.setText(row, 0, _msgs.eage());
         econtent.setWidget(row++, 1, _eshowAge = new CheckBox(""));
-        _eshowAge.setChecked(_profile.age > 0);
+        _eshowAge.setValue(_profile.age > 0);
 
         econtent.setText(row, 0, _msgs.elocation());
         econtent.setWidget(row++, 1, _elocation = MsoyUI.createTextBox(_profile.location, 255, 30));
@@ -328,7 +328,7 @@ public class ProfileBlurb extends Blurb
         if (_greeter != GreeterStatus.DISABLED) {
             econtent.setText(row, 0, _msgs.egreeterLabel());
             econtent.setWidget(row++, 1, _egreeter = new CheckBox(_msgs.egreeterTip()));
-            _egreeter.setChecked(_greeter == GreeterStatus.GREETER);
+            _egreeter.setValue(_greeter == GreeterStatus.GREETER);
         }
 
         econtent.setText(row, 0, _msgs.eawardLabel());
@@ -380,7 +380,7 @@ public class ProfileBlurb extends Blurb
         if (birthday != null) { // leave their old birthday if they booch it
             _profile.birthday = birthday;
         }
-        if (_eshowAge.isChecked() && _profile.birthday != null) {
+        if (_eshowAge.getValue() && _profile.birthday != null) {
             // this is not totally accurate, but it's only shown when a user completes their edit,
             // otherwise we compute their age on the server and we do so accurately
             long birthTime = DateUtil.toDate(_profile.birthday).getTime();
@@ -390,7 +390,7 @@ public class ProfileBlurb extends Blurb
         }
 
         if (_egreeter != null) {
-            _greeter = _egreeter.isChecked() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
+            _greeter = _egreeter.getValue() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
         }
 
         _profilesvc.updateProfile(name, _greeter == GreeterStatus.GREETER, _profile,

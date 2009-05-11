@@ -8,9 +8,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.FocusListenerAdapter;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -33,15 +36,15 @@ public class SearchBox extends HorizontalPanel
         _listener = listener;
 
         add(_input = new TextBox());
-        _input.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-                if (keyCode == KEY_ENTER) {
+        _input.addKeyPressHandler(new KeyPressHandler() {
+            public void onKeyPress (KeyPressEvent event) {
+                if (event.getCharCode() == KeyCodes.KEY_ENTER) {
                     doSearch();
                 }
             }
         });
-        _input.addFocusListener(new FocusListenerAdapter() {
-            public void onFocus (Widget sender) {
+        _input.addFocusHandler(new FocusHandler() {
+            public void onFocus (FocusEvent event) {
                 if (_input.getText().equals(_cmsgs.searchDefault())) {
                     _input.removeStyleName("Faded");
                     _input.setText("");

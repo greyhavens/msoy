@@ -5,18 +5,20 @@ package client.ui;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.FocusListener;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SourcesFocusEvents;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.DateUtil;
 
 public class DateFields extends HorizontalPanel
-    implements SourcesFocusEvents
+    implements HasAllFocusHandlers
 {
     public DateFields ()
     {
@@ -37,8 +39,8 @@ public class DateFields extends HorizontalPanel
         for (int ii = 0; ii < MONTHS.length; ii++) { // TODO: localize
             _month.addItem(MONTHS[ii]);
         }
-        _month.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        _month.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 populateDay(_month.getSelectedIndex());
             }
         });
@@ -92,20 +94,24 @@ public class DateFields extends HorizontalPanel
         _month.setFocus(focus);
     }
 
-    // from interface SourcesFocusEvents
-    public void addFocusListener (FocusListener listener)
+    // from interface HasAllFocusHandlers
+    public HandlerRegistration addFocusHandler (FocusHandler handler)
     {
-        _month.addFocusListener(listener);
-        _day.addFocusListener(listener);
-        _year.addFocusListener(listener);
+        return new AggregatedHandlerRegistration (new HandlerRegistration[] {
+            _month.addFocusHandler(handler),
+            _day.addFocusHandler(handler),
+            _year.addFocusHandler(handler)
+        });
     }
 
-    // from interface SourcesFocusEvents
-    public void removeFocusListener (FocusListener listener)
+    // from interface HasAllFocusHandlers
+    public HandlerRegistration addBlurHandler (BlurHandler handler)
     {
-        _month.removeFocusListener(listener);
-        _day.removeFocusListener(listener);
-        _year.removeFocusListener(listener);
+        return new AggregatedHandlerRegistration (new HandlerRegistration[] {
+            _month.addBlurHandler(handler),
+            _day.addBlurHandler(handler),
+            _year.addBlurHandler(handler)
+        });
     }
 
     protected void populateDay (int month)
@@ -116,6 +122,24 @@ public class DateFields extends HorizontalPanel
             _day.addItem(""+(ii+1));
         }
         _day.setSelectedIndex(Math.max(0, Math.min(selidx, DAYS[month]-1)));
+    }
+
+    protected static class AggregatedHandlerRegistration
+        implements HandlerRegistration
+    {
+        public AggregatedHandlerRegistration (HandlerRegistration[] others)
+        {
+            _others = others;
+        }
+
+        public void removeHandler ()
+        {
+            for (HandlerRegistration other : _others) {
+                other.removeHandler();
+            }
+        }
+
+        HandlerRegistration[] _others;
     }
 
     protected ListBox _month, _day, _year;

@@ -5,7 +5,8 @@ package client.groups;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -97,9 +98,9 @@ public class GalaxyPanel extends FlowPanel
         content.add(leftColumn);
 
         _sortBox = new ListBox();
-        _sortBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget widget) {
-                int sort = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
+        _sortBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                int sort = SORT_VALUES[((ListBox)event.getSource()).getSelectedIndex()];
                 // sort is only available with no search/tag action, and resets the page.
                 Link.go(Pages.GROUPS, Args.compose("", 0, "", sort));
             }

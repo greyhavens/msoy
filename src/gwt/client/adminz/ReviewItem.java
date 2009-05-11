@@ -8,12 +8,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -157,7 +157,7 @@ public class ReviewItem extends FlowPanel
      * Handle the deletion message and prompt.
      */
     protected class DeleteDialog extends BorderedDialog
-        implements KeyboardListener
+        implements KeyUpHandler
     {
         public DeleteDialog ()
         {
@@ -168,7 +168,7 @@ public class ReviewItem extends FlowPanel
             contents.setWidth("500px");
             contents.add(MsoyUI.createLabel(_msgs.reviewDeletionPrompt(), null));
             contents.add(_area = MsoyUI.createTextArea("", 50, 4));
-            _area.addKeyboardListener(this);
+            _area.addKeyUpHandler(this);
             setContents(contents);
 
             addButton(_yesButton = new Button(_msgs.reviewDeletionDo(), new ClickHandler () {
@@ -188,9 +188,7 @@ public class ReviewItem extends FlowPanel
             show();
         }
 
-        public void onKeyDown (Widget sender, char keyCode, int modifiers) { /* empty*/ }
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) { /* empty */ }
-        public void onKeyUp (Widget sender, char keyCode, int modifiers)
+        public void onKeyUp (KeyUpEvent event)
         {
             _yesButton.setEnabled(_area.getText().trim().length() > 0);
         }

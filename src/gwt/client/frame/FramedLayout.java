@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.shell.CShell;
 import client.util.FlashClients;
 
 /**

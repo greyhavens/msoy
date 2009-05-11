@@ -4,11 +4,11 @@
 package client.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.ShellMessages;
 
@@ -22,7 +22,7 @@ public class LimitedTextArea extends VerticalPanel
         _maxChars = maxChars;
 
         add(_area = new TextArea());
-        _area.addKeyboardListener(_limiter);
+        _area.addKeyUpHandler(_limiter);
         if (width > 0) {
             _area.setCharacterWidth(width);
         }
@@ -64,8 +64,8 @@ public class LimitedTextArea extends VerticalPanel
         _remaining.setText(_cmsgs.charRemaining(String.valueOf(_maxChars - text.length())));
     }
 
-    protected KeyboardListenerAdapter _limiter = new KeyboardListenerAdapter() {
-        public void onKeyUp (Widget sender, char keyCode, int modifiers) {
+    protected KeyUpHandler _limiter = new KeyUpHandler() {
+        public void onKeyUp (KeyUpEvent event) {
             updateRemaining();
         }
     };

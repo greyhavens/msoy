@@ -14,9 +14,11 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.FocusListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -85,9 +87,9 @@ public class GalleryDetailEditPanel extends AbsolutePanel
             TextBox name = MsoyUI.createTextBox(gallery.name, Gallery.MAX_NAME_LENGTH,
                 Gallery.MAX_NAME_LENGTH);
             name.addStyleName("Name");
-            name.addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
-                    gallery.name = ((TextBox) sender).getText();
+            name.addChangeHandler(new ChangeHandler() {
+                public void onChange (ChangeEvent event) {
+                    gallery.name = ((TextBox) event.getSource()).getText();
                     galleryData.hasUnsavedChanges = true;
                 }
             });
@@ -103,14 +105,14 @@ public class GalleryDetailEditPanel extends AbsolutePanel
         description.setText(gallery.description != null && gallery.description.length() > 0
             ? gallery.description : _pmsgs.galleryDescDefault());
         description.addStyleName("Description");
-        description.getTextArea().addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        description.getTextArea().addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 gallery.description = description.getText();
                 galleryData.hasUnsavedChanges = true;
             }
         });
-        description.getTextArea().addFocusListener(new FocusListenerAdapter() {
-            public void onFocus (Widget sender) {
+        description.getTextArea().addFocusHandler(new FocusHandler() {
+            public void onFocus (FocusEvent event) {
                 if (description.getTextArea().getText().equals(_pmsgs.galleryDescDefault())) {
                     description.getTextArea().setText("");
                 }

@@ -5,14 +5,14 @@ package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -129,8 +129,8 @@ public class DoListItemPopup extends VerticalPanel
                     pricingIndex = ii;
                 }
             }
-            ChangeListener tipper = new ChangeListener() {
-                public void onChange (Widget sender) {
+            ChangeHandler tipper = new ChangeHandler() {
+                public void onChange (ChangeEvent event) {
                     int pricing = getPricing();
                     _pricingTip.setText(_dmsgs.xlate("listingPricingTip" + pricing));
                     boolean showSalesTarget = (pricing == CatalogListing.PRICING_ESCALATE ||
@@ -139,7 +139,7 @@ public class DoListItemPopup extends VerticalPanel
                     _salesTarget.setVisible(showSalesTarget);
                 }
             };
-            _pricingBox.addChangeListener(tipper);
+            _pricingBox.addChangeHandler(tipper);
 
             pricing.setWidget(row, 2, _pricingTip = new Label(""), 2, "Blurb");
             pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
@@ -176,7 +176,7 @@ public class DoListItemPopup extends VerticalPanel
             if (pricingIndex != -1) {
                 _pricingBox.setSelectedIndex(pricingIndex);
             }
-            tipper.onChange(_pricingBox); // alas setSelectedIndex() doesn't do this, yay DHTML
+            tipper.onChange(null); // alas setSelectedIndex() doesn't do this, yay DHTML
         }
 
         // create buttons for listing and

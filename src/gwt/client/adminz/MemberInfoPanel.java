@@ -191,32 +191,32 @@ public class MemberInfoPanel extends SmartTable
         setWidget(row, 1, affiliateOf);
 
         final CheckBox charity = new CheckBox();
-        charity.setChecked(info.charity);
+        charity.setValue(info.charity);
         row = addWidget(charity, 1, "Label");
         setText(row, 1, "Make this member a charity");
 
         final CheckBox coreCharity = new CheckBox(
             "This charity can be selected randomly when a member " +
             "making a purchase has not already selected a charity.");
-        coreCharity.setChecked(info.coreCharity);
-        coreCharity.setEnabled(charity.isChecked());
+        coreCharity.setValue(info.coreCharity);
+        coreCharity.setEnabled(charity.getValue());
         setWidget(++row, 1, coreCharity);
 
         row = addText("Charity Description:", 1, "Label");
         final TextArea charityDescription = new TextArea();
         charityDescription.setText(info.charityDescription);
-        charityDescription.setEnabled(charity.isChecked());
+        charityDescription.setEnabled(charity.getValue());
         charityDescription.setStylePrimaryName("CharityDescription");
         setWidget(row, 1, charityDescription);
 
         charity.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
-                if (charity.isChecked()) {
+                if (charity.getValue()) {
                     coreCharity.setEnabled(true);
                     charityDescription.setEnabled(true);
                 } else {
                     coreCharity.setEnabled(false);
-                    coreCharity.setChecked(false);
+                    coreCharity.setValue(false);
                     charityDescription.setEnabled(false);
                     charityDescription.setText("");
                 }
@@ -225,14 +225,14 @@ public class MemberInfoPanel extends SmartTable
 
         setWidget(++row, 1, new Button("Update Charity Info",  new ClickHandler() {
             public void onClick (ClickEvent event) {
-                final boolean isCharity = charity.isChecked();
-                final boolean isCoreCharity = coreCharity.isChecked();
+                final boolean isCharity = charity.getValue();
+                final boolean isCoreCharity = coreCharity.getValue();
                 final String description = charityDescription.getText();
                 AsyncCallback<Void> callback = new InfoCallback<Void>() {
                     @Override public void onFailure (Throwable caught) {
                         super.onFailure(caught);
-                        charity.setChecked(info.charity);
-                        coreCharity.setChecked(info.coreCharity);
+                        charity.setValue(info.charity);
+                        coreCharity.setValue(info.coreCharity);
                         coreCharity.setEnabled(info.charity);
                         charityDescription.setText(info.charityDescription);
                         charityDescription.setEnabled(info.charity);

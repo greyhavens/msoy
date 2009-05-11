@@ -20,7 +20,7 @@ public class LevelPackEditor extends SubItemEditor
     {
         super.setItem(item);
         _pack = (LevelPack)item;
-        _premium.setChecked(_pack.premium);
+        _premium.setValue(_pack.premium);
     }
 
     @Override // from ItemEditor
@@ -63,7 +63,7 @@ public class LevelPackEditor extends SubItemEditor
         throws Exception
     {
         super.prepareItem();
-        _pack.premium = _premium.isChecked();
+        _pack.premium = _premium.getValue();
     }
 
     protected LevelPack _pack;

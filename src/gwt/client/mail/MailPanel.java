@@ -99,7 +99,7 @@ public class MailPanel extends FlowPanel
             CheckBox selall = new CheckBox(_cmsgs.selectAll());
             selall.addClickHandler(new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    boolean select = ((CheckBox)event.getSource()).isChecked();
+                    boolean select = ((CheckBox)event.getSource()).getValue();
                     for (ConvoWidget cw : _convos) {
                         cw.setSelected(select);
                     }
@@ -213,11 +213,11 @@ public class MailPanel extends FlowPanel
         }
 
         public boolean isSelected () {
-            return _select.isChecked();
+            return _select.getValue();
         }
 
         public void setSelected (boolean selected) {
-            _select.setChecked(selected);
+            _select.setValue(selected);
         }
 
         protected Conversation _convo;

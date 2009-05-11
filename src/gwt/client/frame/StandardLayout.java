@@ -5,8 +5,10 @@ package client.frame;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -192,12 +194,13 @@ public class StandardLayout extends Layout
     protected void setWindowResizerEnabled (boolean enabled)
     {
         if (!enabled && _resizer != null) {
-            Window.removeWindowResizeListener(_resizer);
+            _resizerRegistration.removeHandler();
             _resizer = null;
+            _resizerRegistration = null;
 
         } else if (enabled && _resizer == null) {
-            _resizer = new WindowResizeListener() {
-                public void onWindowResized (int width, int height) {
+            _resizer = new ResizeHandler() {
+                public void onResize (ResizeEvent event) {
                     if (_content != null) {
                         _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                     }
@@ -215,14 +218,15 @@ public class StandardLayout extends Layout
                     }
                 }
             };
-            Window.addWindowResizeListener(_resizer);
+            _resizerRegistration = Window.addResizeHandler(_resizer);
         }
     }
 
     protected Widget _iframe,  _content, _client, _noclient;
 
     /** Handles window resizes. */
-    protected WindowResizeListener _resizer;
+    protected ResizeHandler _resizer;
+    protected HandlerRegistration _resizerRegistration;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);

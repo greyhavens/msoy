@@ -3,11 +3,12 @@
 
 package client.ui;
 
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,13 +35,15 @@ public abstract class PopupMenu extends PopupPanel
     public void setTrigger (Label trigger)
     {
         trigger.addStyleName("LabelLink");
-        trigger.addMouseListener(new MouseListenerAdapter() {
-            public void onMouseDown (Widget sender, int x, int y) {
+        trigger.addMouseDownHandler(new MouseDownHandler() {
+            public void onMouseDown (MouseDownEvent event) {
+                Widget sender = (Widget)event.getSource();
                 clear();
                 _menu = new MenuBar(true);
                 addMenuItems();
                 add(_menu);
-                setPopupPosition(sender.getAbsoluteLeft() + x, sender.getAbsoluteTop() + y);
+                setPopupPosition(sender.getAbsoluteLeft() + event.getX(),
+                    sender.getAbsoluteTop() + event.getY());
                 show();
             }
         });

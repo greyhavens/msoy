@@ -249,7 +249,7 @@ public class CommentsPanel extends PagedGrid<Comment>
             addButton(new Button(_cmsgs.cancel(), onCancel()));
             addButton(new Button(_cmsgs.send(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    if (!_agree.isChecked()) {
+                    if (!_agree.getValue()) {
                         MsoyUI.errorNear(_cmsgs.commentMustNotBeAsshole(), _agree);
                         return;
                     }

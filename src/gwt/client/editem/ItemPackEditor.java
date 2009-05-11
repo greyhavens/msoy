@@ -28,7 +28,7 @@ public class ItemPackEditor extends SubItemEditor
 
         addSpacer();
         CheckBox box = new CheckBox();
-        box.setChecked(true);
+        box.setValue(true);
         box.setEnabled(false);
         addRow(_emsgs.packPremium(), box);
         addTip(_emsgs.ipackPremiumTip());

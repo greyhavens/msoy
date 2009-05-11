@@ -44,7 +44,7 @@ public class NewThreadPanel extends TableFooterPanel
                                         _mmsgs.ntpAnnounceTip(), "FlagTip"));
             addRow(_mmsgs.ntpAnnounce(), bits);
             // force announce to be checked for the global announce group
-            _announce.setChecked(isAnnounce);
+            _announce.setValue(isAnnounce);
             _announce.setEnabled(!isAnnounce);
 
             if (isAnnounce && CShell.isSupport()) {
@@ -82,7 +82,7 @@ public class NewThreadPanel extends TableFooterPanel
                 _spam.addClickHandler(new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         for (Button b : spambuts) {
-                            b.setEnabled(_spam.isChecked());
+                            b.setEnabled(_spam.getValue());
                         }
                     }
                 });
@@ -121,7 +121,7 @@ public class NewThreadPanel extends TableFooterPanel
                 return false;
             }
             @Override protected String getConfirmMessage () {
-                return (_spam != null && _spam.isChecked()) ? _mmsgs.ntpSpamConfirm() : null;
+                return (_spam != null && _spam.getValue()) ? _mmsgs.ntpSpamConfirm() : null;
             }
         };
         addFooterButton(submit);
@@ -159,13 +159,13 @@ public class NewThreadPanel extends TableFooterPanel
         }
 
         int flags = 0;
-        if (_announce != null && _announce.isChecked()) {
+        if (_announce != null && _announce.getValue()) {
             flags |= ForumThread.FLAG_ANNOUNCEMENT;
         }
-        if (_sticky != null && _sticky.isChecked()) {
+        if (_sticky != null && _sticky.getValue()) {
             flags |= ForumThread.FLAG_STICKY;
         }
-        boolean spam = (_spam != null && _spam.isChecked());
+        boolean spam = (_spam != null && _spam.getValue());
         _forumsvc.createThread(_groupId, flags, spam, subject, message, callback);
         return true;
     }

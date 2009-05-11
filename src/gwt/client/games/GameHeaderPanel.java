@@ -10,13 +10,13 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
@@ -50,9 +50,9 @@ public class GameHeaderPanel extends FlowPanel
         add(findGame);
         _findGameBox = new ListBox();
         _findGameBox.addItem("", "");
-        _findGameBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget widget) {
-                ListBox listBox = (ListBox) widget;
+        _findGameBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
+                ListBox listBox = (ListBox) event.getSource();
                 String selectedValue = listBox.getValue(listBox.getSelectedIndex());
                 if (!selectedValue.equals("")) {
                     Link.go(Pages.GAMES, Args.compose("d", selectedValue));

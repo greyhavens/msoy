@@ -28,14 +28,16 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
@@ -174,8 +176,8 @@ public class RichTextToolbar extends Composite
 
             // we only use these listeners for updating status, so don't hook them up unless at
             // least basic editing is supported.
-            richText.addKeyboardListener(listener);
-            richText.addClickHandler(listener);
+            richText.addKeyUpHandler(handler);
+            richText.addClickHandler(handler);
         }
     }
 
@@ -225,7 +227,7 @@ public class RichTextToolbar extends Composite
     protected ListBox createColorList (String caption)
     {
         ListBox lb = new ListBox();
-        lb.addChangeListener(listener);
+        lb.addChangeHandler(handler);
         lb.setVisibleItemCount(1);
 
         lb.addItem(caption);
@@ -241,7 +243,7 @@ public class RichTextToolbar extends Composite
     protected ListBox createFontList ()
     {
         ListBox lb = new ListBox();
-        lb.addChangeListener(listener);
+        lb.addChangeHandler(handler);
         lb.setVisibleItemCount(1);
 
         lb.addItem(strings.font(), "");
@@ -258,7 +260,7 @@ public class RichTextToolbar extends Composite
     protected ListBox createFontSizes ()
     {
         ListBox lb = new ListBox();
-        lb.addChangeListener(listener);
+        lb.addChangeHandler(handler);
         lb.setVisibleItemCount(1);
 
         lb.addItem(strings.size());
@@ -275,7 +277,7 @@ public class RichTextToolbar extends Composite
     protected ListBox createBlockFormats ()
     {
         ListBox lb = new ListBox();
-        lb.addChangeListener(listener);
+        lb.addChangeHandler(handler);
         lb.setVisibleItemCount(1);
 
         lb.addItem("Format");
@@ -293,7 +295,7 @@ public class RichTextToolbar extends Composite
     protected PushButton createPushButton (AbstractImagePrototype img, String tip)
     {
         PushButton pb = new PushButton(img.createImage());
-        pb.addClickHandler(listener);
+        pb.addClickHandler(handler);
         pb.setTitle(tip);
         return pb;
     }
@@ -301,7 +303,7 @@ public class RichTextToolbar extends Composite
     protected ToggleButton createToggleButton (AbstractImagePrototype img, String tip)
     {
         ToggleButton tb = new ToggleButton(img.createImage());
-        tb.addClickHandler(listener);
+        tb.addClickHandler(handler);
         tb.setTitle(tip);
         return tb;
     }
@@ -389,12 +391,13 @@ public class RichTextToolbar extends Composite
     }-*/;
 
     /**
-     * We use an inner EventListener class to avoid exposing event methods on the
+     * We use an inner EventHandler class to avoid exposing event methods on the
      * RichTextToolbar itself.
      */
-    protected class EventListener implements ClickHandler, ChangeListener, KeyboardListener
+    protected class EventHandler implements ClickHandler, ChangeHandler, KeyUpHandler
     {
-        public void onChange (Widget sender) {
+        public void onChange (ChangeEvent event) {
+            Widget sender = (Widget)event.getSource();
             if (sender == foreColors) {
                 basic.setForeColor(foreColors.getValue(foreColors.getSelectedIndex()));
                 foreColors.setSelectedIndex(0);
@@ -468,13 +471,8 @@ public class RichTextToolbar extends Composite
             }
         }
 
-        public void onKeyDown (Widget sender, char keyCode, int modifiers) {
-        }
-
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-        }
-
-        public void onKeyUp (Widget sender, char keyCode, int modifiers) {
+        public void onKeyUp (KeyUpEvent event) {
+            Widget sender = (Widget)event.getSource();
             if (sender == richText) {
                 // We use the RichTextArea's onKeyUp event to update the toolbar status.
                 // This will catch any cases where the user moves the cursur using the
@@ -487,7 +485,7 @@ public class RichTextToolbar extends Composite
     protected RichTextToolbarImages images = (RichTextToolbarImages)
         GWT.create(RichTextToolbarImages.class);
     protected Strings strings = (Strings) GWT.create(Strings.class);
-    protected EventListener listener = new EventListener();
+    protected EventHandler handler = new EventHandler();
 
     protected RichTextArea richText;
     protected RichTextArea.BasicFormatter basic;

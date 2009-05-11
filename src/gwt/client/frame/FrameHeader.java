@@ -10,12 +10,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -103,16 +105,16 @@ public class FrameHeader extends SmartTable
 
             _upImage = up.createImage();
             _upImage.addStyleName("actionLabel");
-            _upImage.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseEnter (Widget sender) {
+            _upImage.addMouseOverHandler(new MouseOverHandler() {
+                public void onMouseOver (MouseOverEvent event) {
                     setWidget(_overImage);
                 }
             });
 
             _overImage = over.createImage();
             _overImage.addStyleName("actionLabel");
-            _overImage.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseLeave (Widget sender) {
+            _overImage.addMouseOutHandler(new MouseOutHandler() {
+                public void onMouseOut (MouseOutEvent event) {
                     setWidget(_upImage);
                 }
             });
