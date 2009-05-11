@@ -28,6 +28,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
@@ -616,17 +617,23 @@ public class GroupRepository extends DepotRepository
         // if no full text or tag search, return a subset of all records, order by query.sort
         OrderBy orderBy;
         if (sortBy == GroupQuery.SORT_BY_NAME) {
-            orderBy = OrderBy.ascending(GroupRecord.NAME);
+            orderBy = new OrderBy(
+                new SQLExpression[] { GroupRecord.NAME, GroupRecord.MEMBER_COUNT },
+                new Order[] { Order.ASC, Order.DESC });
 
         } else if (sortBy == GroupQuery.SORT_BY_NUM_MEMBERS) {
-            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
+            orderBy = new OrderBy(
+                new SQLExpression[] { GroupRecord.MEMBER_COUNT, GroupRecord.NAME },
+                new Order[] { Order.DESC, Order.ASC });
 
         } else if (sortBy == GroupQuery.SORT_BY_CREATED_DATE) {
             orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE);
 
         } else if (tagId > 0) {
             // for a tag search, define 'relevance' as member count
-            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
+            orderBy = new OrderBy(
+                new SQLExpression[] { GroupRecord.MEMBER_COUNT, GroupRecord.NAME },
+                new Order[] { Order.DESC, Order.ASC });
 
         } else if (search != null) {
             SQLOperator tagExistsExp = search.tagExistsExpression();
@@ -637,7 +644,10 @@ public class GroupRepository extends DepotRepository
                     new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0))));
 
             } else {
-                orderBy = OrderBy.descending(search.fullTextRank());
+                orderBy = new OrderBy(
+                    new SQLExpression[] {
+                        search.fullTextRank(), GroupRecord.MEMBER_COUNT, GroupRecord.NAME },
+                    new Order[] { Order.DESC, Order.DESC, Order.ASC });
             }
 
         } else {
