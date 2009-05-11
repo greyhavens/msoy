@@ -95,7 +95,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Encapsulates information regarding a word search group froups: we look up each word as
      * a tag and we create a full-text query for it. The resulting Depot expressions are used
-     * both to filter and to rank 
+     * both to filter and to rank
      * search results.
      */
     public class WordSearch
@@ -104,12 +104,12 @@ public class GroupRepository extends DepotRepository
         {
             return _fts.match();
         }
-        
+
         public SQLOperator fullTextRank ()
         {
             return _fts.rank();
         }
-        
+
         public SQLOperator tagExistsExpression ()
         {
             if (_tagIds.size() == 0) {
@@ -121,7 +121,7 @@ public class GroupRepository extends DepotRepository
             return new Exists<GroupTagRecord>(new SelectClause<GroupTagRecord>(
                 GroupTagRecord.class, new String[] { TagRecord.TAG_ID.name }, where));
         }
-        
+
         protected WordSearch (String search)
         {
             // first split our search up into words
@@ -129,7 +129,7 @@ public class GroupRepository extends DepotRepository
             if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
                 searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
             }
-    
+
             // look up each word as a tag
             _tagIds = new ArrayIntSet();
             if (searchTerms.length > 0) {
@@ -140,7 +140,7 @@ public class GroupRepository extends DepotRepository
 
             _fts = new FullText(GroupRecord.class, GroupRecord.FTS_NBC, search);
         }
-        
+
         protected IntSet _tagIds;
         protected FullText _fts;
     }
@@ -150,9 +150,11 @@ public class GroupRepository extends DepotRepository
         super(ctx);
 
         _tagRepo = new TagRepository(_ctx) {
+            @Override
             protected TagRecord createTagRecord () {
                 return new GroupTagRecord();
             }
+            @Override
             protected TagHistoryRecord createTagHistoryRecord () {
                 return new GroupTagHistoryRecord();
             }
@@ -201,7 +203,7 @@ public class GroupRepository extends DepotRepository
             }
             tagId = tnr.tagId;
         }
-        
+
         WordSearch search = (query.search != null) ? new WordSearch(query.search) : null;
 
         List<QueryClause> clauses = buildSearchClauses(search, tagId);
@@ -227,7 +229,7 @@ public class GroupRepository extends DepotRepository
         }
 
         WordSearch search = (query.search != null) ? new WordSearch(query.search) : null;
-        
+
         List<QueryClause> clauses = buildSearchClauses(search, tagId);
         clauses.add(new FromOverride(GroupRecord.class));
         return load(CountRecord.class, clauses).count;
@@ -586,7 +588,7 @@ public class GroupRepository extends DepotRepository
     protected List<QueryClause> buildSearchClauses (WordSearch search, int tagId)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        
+
         List<SQLExpression> conditions = Lists.<SQLExpression>newArrayList(
             new Not(new Equals(GroupRecord.POLICY, Group.Policy.EXCLUSIVE)));
 
@@ -597,11 +599,11 @@ public class GroupRepository extends DepotRepository
                 wordBits.add(tagOp);
             }
             conditions.add(new Or(wordBits));
-            
+
         } else if (tagId > 0) {
             conditions.add(new Equals(_tagRepo.getTagColumn(TagRecord.TAG_ID), tagId));
             clauses.add(new Join(GroupRecord.GROUP_ID, _tagRepo.getTagColumn(TagRecord.TARGET_ID)));
-            
+
         }
         if (conditions.size() > 0) {
             clauses.add(new Where(new And(conditions)));
@@ -615,17 +617,17 @@ public class GroupRepository extends DepotRepository
         OrderBy orderBy;
         if (sortBy == GroupQuery.SORT_BY_NAME) {
             orderBy = OrderBy.ascending(GroupRecord.NAME);
-    
+
         } else if (sortBy == GroupQuery.SORT_BY_NUM_MEMBERS) {
             orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
-    
+
         } else if (sortBy == GroupQuery.SORT_BY_CREATED_DATE) {
             orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE);
-    
+
         } else if (tagId > 0) {
             // for a tag search, define 'relevance' as member count
             orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
-    
+
         } else if (search != null) {
             SQLOperator tagExistsExp = search.tagExistsExpression();
             if (tagExistsExp != null) {
@@ -637,7 +639,7 @@ public class GroupRepository extends DepotRepository
             } else {
                 orderBy = OrderBy.descending(search.fullTextRank());
             }
-    
+
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
