@@ -3,10 +3,14 @@
 
 package client.ui;
 
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.MouseListener;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * A widget for displaying and optionally registering input on a row of 5 stars, i.e. for ratings.
@@ -35,7 +39,10 @@ public class Stars extends FlowPanel
         for (int ii = 0; ii < 10; ii ++) {
             Image halfStar = new Image();
             if (_handler != null) {
-                halfStar.addMouseListener(new RatingMouseListener(ii/2+1));
+                RatingMouseHandler rhandler = new RatingMouseHandler(ii/2+1);
+                halfStar.addMouseUpHandler(rhandler);
+                halfStar.addMouseOutHandler(rhandler);
+                halfStar.addMouseMoveHandler(rhandler);
             }
             add(halfStar);
         }
@@ -71,41 +78,30 @@ public class Stars extends FlowPanel
     }
 
     // each half star gets a listener that knows which rating it translates to
-    protected class RatingMouseListener implements MouseListener
+    protected class RatingMouseHandler
+        implements MouseOutHandler, MouseMoveHandler, MouseUpHandler 
     {
-        public RatingMouseListener (int starIx)
+        public RatingMouseHandler (int starIx)
         {
             _ratingInterval = starIx;
         }
 
         // from interface MouseListener
-        public void onMouseEnter (Widget sender)
-        {
-            // we act on mouseMove
-        }
-
-        // from interface MouseListener
-        public void onMouseLeave (Widget sender)
+        public void onMouseOut (MouseOutEvent evnt)
         {
             updateStarImage(_rating);
             _handler.starMouseOff();
         }
 
         // from interface MouseListener
-        public void onMouseMove (Widget sender, int x, int y)
+        public void onMouseMove (MouseMoveEvent event)
         {
             updateStarImage(_ratingInterval);
             _handler.starMouseOn((byte) _ratingInterval);
         }
 
         // from interface MouseListener
-        public void onMouseDown (Widget sender, int x, int y)
-        {
-            // we act on mouseUp
-        }
-
-        // from interface MouseListener
-        public void onMouseUp (Widget sender, int x, int y)
+        public void onMouseUp (MouseUpEvent event)
         {
             _handler.starClicked((byte) _ratingInterval);
         }

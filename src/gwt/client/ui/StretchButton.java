@@ -4,13 +4,21 @@
 package client.ui;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Wraps a StretchPanel and provides it with dependant styles for button states.
+ * Wraps a StretchPanel and provides it with dependent styles for button states.
  */
 public class StretchButton extends FocusPanel
 {
@@ -43,21 +51,11 @@ public class StretchButton extends FocusPanel
         setWidget(_panel = new StretchPanel(styleName, content));
         setStyleName("stretchButton");
 
-        addMouseListener(new MouseListenerAdapter() {
-            @Override public void onMouseEnter (Widget sender) {
-                _panel.addStyleDependentName("up-hovering");
-            }
-            @Override public void onMouseLeave (Widget sender) {
-                _panel.removeStyleDependentName("up-hovering");
-                _panel.removeStyleDependentName("down-hovering");
-            }
-            @Override public void onMouseDown (Widget sender, int x, int y) {
-                _panel.addStyleDependentName("down-hovering");
-            }
-            @Override public void onMouseUp (Widget sender, int x, int y) {
-                _panel.removeStyleDependentName("down-hovering");
-            }
-        });
+        MouseHandler handler = new MouseHandler();
+        addMouseOverHandler(handler);
+        addMouseOutHandler(handler);
+        addMouseDownHandler(handler);
+        addMouseUpHandler(handler);
     }
 
     public void setContent (Widget content)
@@ -68,6 +66,24 @@ public class StretchButton extends FocusPanel
     public Widget getContent ()
     {
         return _panel.getContent();
+    }
+
+    protected class MouseHandler
+        implements MouseOverHandler, MouseOutHandler, MouseDownHandler, MouseUpHandler
+    {
+        public void onMouseOver (MouseOverEvent event) {
+            _panel.addStyleDependentName("up-hovering");
+        }
+        public void onMouseOut (MouseOutEvent event) {
+            _panel.removeStyleDependentName("up-hovering");
+            _panel.removeStyleDependentName("down-hovering");
+        }
+        public void onMouseDown (MouseDownEvent event) {
+            _panel.addStyleDependentName("down-hovering");
+        }
+        public void onMouseUp (MouseUpEvent event) {
+            _panel.removeStyleDependentName("down-hovering");
+        }
     }
 
     protected StretchPanel _panel;

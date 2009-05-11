@@ -40,7 +40,6 @@ public class WhirledInvitePanel extends InvitePanel
             done.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
             done.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             done.setWidth("100%");
-            String tip, button;
             if (FlashClients.clientExists()) {
                 done.add(MsoyUI.createLabel(_msgs.inviteCloseTip(), null));
                 done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteClose(),

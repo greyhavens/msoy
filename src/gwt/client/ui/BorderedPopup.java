@@ -3,7 +3,11 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+
+import com.google.gwt.event.shared.HandlerRegistration;
+
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -30,7 +34,7 @@ public class BorderedPopup extends PopupPanel
         super.setWidget(_widget = new BorderedWidget());
 
         // listen for our own closes and export that in a handy calldown method
-        addPopupListener(_closeListener);
+        _registration = addCloseHandler(_closeHandler);
 
         // start out with animation enabled for our first pop
         setAnimationEnabled(true);
@@ -47,9 +51,9 @@ public class BorderedPopup extends PopupPanel
     {
         if (_centerOnShow) {
             _centerOnShow = false;
-            removePopupListener(_closeListener);
+            _registration.removeHandler();
             center(); // this will show us
-            addPopupListener(_closeListener);
+            _registration = addCloseHandler(_closeHandler);
         } else {
             super.show();
         }
@@ -74,15 +78,16 @@ public class BorderedPopup extends PopupPanel
     {
         // if I could access 'impl' here, I wouldn't have to do this lame hack, but the GWT
         // engineers conveniently made it private, so I can't
-        removePopupListener(_closeListener);
+        _registration.removeHandler();
         hide();
         super.show();
-        addPopupListener(_closeListener);
+        _registration = addCloseHandler(_closeHandler);
     }
 
-    protected PopupListener _closeListener = new PopupListener() {
-        public void onPopupClosed (PopupPanel panel, boolean autoClosed) {
-            onClosed(autoClosed);
+    protected HandlerRegistration _registration;
+    protected CloseHandler<PopupPanel> _closeHandler = new CloseHandler<PopupPanel>() {
+        public void onClose (CloseEvent<PopupPanel> event) {
+            onClosed(event.isAutoClosed());
         }
     };
 

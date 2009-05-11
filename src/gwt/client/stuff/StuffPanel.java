@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -84,8 +85,8 @@ public class StuffPanel extends FlowPanel
         for (String element2 : FLABELS) {
             _filters.addItem(element2);
         }
-        _filters.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        _filters.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 showInventory(_mostRecentPage, null);
             }
         });

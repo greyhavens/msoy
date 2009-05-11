@@ -23,7 +23,7 @@ public class TrophySourceEditor extends SubItemEditor
         super.setItem(item);
         _tsource = (TrophySource)item;
         _order.setText("" + _tsource.sortOrder);
-        _secret.setChecked(_tsource.secret);
+        _secret.setValue(_tsource.secret);
     }
 
     @Override // from ItemEditor
@@ -85,7 +85,7 @@ public class TrophySourceEditor extends SubItemEditor
     {
         super.prepareItem();
         _tsource.sortOrder = _order.getNumber().intValue();
-        _tsource.secret = _secret.isChecked();
+        _tsource.secret = _secret.getValue();
     }
 
     protected TrophySource _tsource;

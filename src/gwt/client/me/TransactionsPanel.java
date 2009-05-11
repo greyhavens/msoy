@@ -4,11 +4,11 @@
 package client.me;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
@@ -53,8 +53,8 @@ public class TransactionsPanel extends FlowPanel
         for (String name : REPORT_NAMES) {
             reportBox.addItem(name);
         }
-        reportBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget widget) {
+        reportBox.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 Link.go(Pages.ME, Args.compose(MePage.TRANSACTIONS,
                         String.valueOf(reportBox.getSelectedIndex()+1),
                         String.valueOf(memberId)));

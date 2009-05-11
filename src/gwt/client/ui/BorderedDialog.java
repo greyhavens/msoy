@@ -3,15 +3,21 @@
 
 package client.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -56,7 +62,10 @@ public abstract class BorderedDialog extends BorderedPopup
     public void setHeaderTitle (String text)
     {
         Label label = MsoyUI.createLabel(text, "HeaderTitle");
-        label.addMouseListener(createDragListener());
+        DragHandler dragHandler = new DragHandler();
+        label.addMouseDownHandler(dragHandler);
+        label.addMouseUpHandler(dragHandler);
+        label.addMouseMoveHandler(dragHandler);
         _main.setWidget(0, 0, label);
     }
 
@@ -102,32 +111,31 @@ public abstract class BorderedDialog extends BorderedPopup
     }
 
     /** Creates the drag listener. */
-    protected MouseListenerAdapter createDragListener () {
-        return new MouseListenerAdapter() {
-            public void onMouseDown (Widget sender, int x, int y) {
-                _dragging = true;
-                DOM.setCapture(sender.getElement());
-                _dragStartX = x;
-                _dragStartY = y;
-            }
+    protected class DragHandler
+        implements MouseDownHandler, MouseUpHandler, MouseMoveHandler {
+        public void onMouseDown (MouseDownEvent event) {
+            _dragging = true;
+            DOM.setCapture(((Widget)event.getSource()).getElement());
+            _dragStartX = event.getX();
+            _dragStartY = event.getY();
+        }
 
-            public void onMouseMove (Widget sender, int x, int y) {
-                if (_dragging) {
-                    int absX = x + getAbsoluteLeft();
-                    int absY = y + getAbsoluteTop();
-                    setPopupPosition(absX - _dragStartX, absY - _dragStartY);
-                    updateFrame();
-                }
+        public void onMouseMove (MouseMoveEvent event) {
+            if (_dragging) {
+                int absX = event.getX() + getAbsoluteLeft();
+                int absY = event.getY() + getAbsoluteTop();
+                setPopupPosition(absX - _dragStartX, absY - _dragStartY);
+                updateFrame();
             }
+        }
 
-            public void onMouseUp (Widget sender, int x, int y) {
-                _dragging = false;
-                DOM.releaseCapture(sender.getElement());
-            }
+        public void onMouseUp (MouseUpEvent event) {
+            _dragging = false;
+            DOM.releaseCapture(((Widget)event.getSource()).getElement());
+        }
 
-            protected boolean _dragging;
-            protected int _dragStartX, _dragStartY;
-        };
+        protected boolean _dragging;
+        protected int _dragStartX, _dragStartY;
     }
 
     protected SmartTable _main;

@@ -3,11 +3,9 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
 
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -26,6 +24,8 @@ public class StyledTabPanel extends TabPanel
         // This animation is actually pretty damn slick, but given the bug we have to work around
         // below, I don't trust it to work on various browsers, etc.  Plus, who knows how it
         // performs on something other than FF3
+        // TODO: the hack appears no longer necessary in gwt 1.6 and has been removed, see if we
+        // can turn on the animation (performance notwithstanding).
         getDeckPanel().setAnimationEnabled(false);
     }
 
@@ -50,19 +50,5 @@ public class StyledTabPanel extends TabPanel
             tab.setWidget(0, 1, new InlineLabel(tabText, false, false, false));
         }
         super.add(w, tab.toString(), true);
-    }
-
-    @Override
-    public void onTabSelected (SourcesTabEvents sender, int tabIndex)
-    {
-        super.onTabSelected(sender, tabIndex);
-
-        // GWT 1.5.0 introduced a animation class in DeckPanel that doesn't seem to correctly
-        // call setVisible on the newly added Widget, which our widgets depend on.  Glancing at the
-        // code, it's not entirely clear why it doesn't get called, but to be sure it does not,
-        // unless we do it here.
-        DeckPanel deck = getDeckPanel();
-        // for some reason, getVisibleWidget returns the index, rather than the widget itself
-        deck.getWidget(deck.getVisibleWidget()).setVisible(true);
     }
 }

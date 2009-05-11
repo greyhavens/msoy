@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -275,17 +274,17 @@ public class ThreadPanel extends TitledListPanel
             main.setText(row, 0, _mmsgs.tfepAnnouncement());
             main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
             main.setWidget(row++, 1, _announce = new CheckBox());
-            _announce.setChecked(_thread.isAnnouncement());
+            _announce.setValue(_thread.isAnnouncement());
 
             main.setText(row, 0, _mmsgs.tfepSticky());
             main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
             main.setWidget(row++, 1, _sticky = new CheckBox());
-            _sticky.setChecked(_thread.isSticky());
+            _sticky.setValue(_thread.isSticky());
 
             main.setText(row, 0, _mmsgs.tfepLocked());
             main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
             main.setWidget(row++, 1, _locked = new CheckBox());
-            _locked.setChecked(_thread.isLocked());
+            _locked.setValue(_thread.isLocked());
             setContents(main);
 
             addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
@@ -297,9 +296,9 @@ public class ThreadPanel extends TitledListPanel
             Button update = new Button(_cmsgs.update());
             new ClickCallback<Void>(update) {
                 @Override protected boolean callService () {
-                    _flags |= (_announce.isChecked() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
-                    _flags |= (_sticky.isChecked() ? ForumThread.FLAG_STICKY : 0);
-                    _flags |= (_locked.isChecked() ? ForumThread.FLAG_LOCKED : 0);
+                    _flags |= (_announce.getValue() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
+                    _flags |= (_sticky.getValue() ? ForumThread.FLAG_STICKY : 0);
+                    _flags |= (_locked.getValue() ? ForumThread.FLAG_LOCKED : 0);
                     _forumsvc.updateThreadFlags(_thread.threadId, _flags, this);
                     return true;
                 }

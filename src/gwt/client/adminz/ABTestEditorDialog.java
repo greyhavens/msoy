@@ -7,8 +7,9 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -64,8 +65,8 @@ public class ABTestEditorDialog extends BorderedDialog
         contents.add(new FormElement(_msgs.abTestNameLabel(), name));
         name.setMaxLength(ABTest.MAX_NAME_LENGTH);
         name.setText(_test.name);
-        name.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        name.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 _test.name = name.getText().trim();
             }
         });
@@ -73,24 +74,24 @@ public class ABTestEditorDialog extends BorderedDialog
         final TextArea description = new TextArea();
         contents.add(new FormElement(_msgs.abTestDescriptionLabel(), description));
         description.setText(_test.description);
-        description.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        description.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 _test.description = description.getText().trim();
             }
         });
 
         final CheckBox enabled = new CheckBox();
         contents.add(new FormElement(_msgs.abTestEnabledLabel(), enabled));
-        enabled.setChecked(_test.enabled);
+        enabled.setValue(_test.enabled);
         enabled.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
-                if (!_test.enabled && enabled.isChecked()) {
+                if (!_test.enabled && enabled.getValue()) {
                     if (_test.started != null) {
                         MsoyUI.info(_msgs.abTestEnabledWarning());
                     }
                     _test.started = new Date();
                     _test.enabled = true;
-                } else if (_test.enabled && !enabled.isChecked()) {
+                } else if (_test.enabled && !enabled.getValue()) {
                     _test.ended = new Date();
                     _test.enabled = false;
                 }
@@ -103,8 +104,8 @@ public class ABTestEditorDialog extends BorderedDialog
         numGroups.setMaxLength(3);
         numGroups.setText(_test.numGroups+"");
         numGroups.setEnabled(_test.started == null);
-        numGroups.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        numGroups.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent event) {
                 try {
                     if (_started) {
                         numGroups.setText(_test.numGroups+"");
@@ -123,19 +124,19 @@ public class ABTestEditorDialog extends BorderedDialog
 
         final CheckBox onlyNewVisitors = new CheckBox();
         contents.add(new FormElement(_msgs.abTestOnlyNewVisitorsLabel(), onlyNewVisitors));
-        onlyNewVisitors.setChecked(_test.onlyNewVisitors);
+        onlyNewVisitors.setValue(_test.onlyNewVisitors);
         onlyNewVisitors.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
-                _test.onlyNewVisitors = onlyNewVisitors.isChecked();
+                _test.onlyNewVisitors = onlyNewVisitors.getValue();
             }
         });
 
         final CheckBox landingCookie = new CheckBox();
         contents.add(new FormElement(_msgs.abTestLandingCookieLabel(), landingCookie));
-        landingCookie.setChecked(_test.landingCookie);
+        landingCookie.setValue(_test.landingCookie);
         landingCookie.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
-                _test.landingCookie = landingCookie.isChecked();
+                _test.landingCookie = landingCookie.getValue();
             }
         });
 
