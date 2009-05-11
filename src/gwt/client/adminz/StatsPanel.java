@@ -8,19 +8,21 @@ import java.util.Comparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
+
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 
-import com.google.gwt.widgetideas.table.client.FixedWidthFlexTable;
-import com.google.gwt.widgetideas.table.client.FixedWidthGrid;
-import com.google.gwt.widgetideas.table.client.ScrollTable;
-import com.google.gwt.widgetideas.table.client.SortableGrid;
-import com.google.gwt.widgetideas.table.client.TableModel;
+import com.google.gwt.gen2.table.client.FixedWidthFlexTable;
+import com.google.gwt.gen2.table.client.FixedWidthGrid;
+import com.google.gwt.gen2.table.client.ScrollTable;
+import com.google.gwt.gen2.table.client.SortableGrid;
+import com.google.gwt.gen2.table.client.TableModelHelper.ColumnSortList;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -46,8 +48,8 @@ public class StatsPanel extends FlowPanel
         for (StatsModel.Type type : StatsModel.Type.values()) {
             _types.addItem(type.toString());
         }
-        _types.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        _types.addChangeHandler(new ChangeHandler() {
+            public void onChange (ChangeEvent sender) {
                 refresh();
             }
         });
@@ -81,12 +83,14 @@ public class StatsPanel extends FlowPanel
         header.setText(0, 0, model.getTitleHeader());
         for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
             header.setText(0, cc+1, model.getColumnHeader(cc));
-            header.getCellFormatter().setHorizontalAlignment(0, cc+1, HasAlignment.ALIGN_CENTER);
+            header.getFlexCellFormatter().setHorizontalAlignment(
+                0, cc+1, HasAlignment.ALIGN_CENTER);
         }
 
         // set up the table contents
         FixedWidthGrid data = new FixedWidthGrid();
         data.setCellSpacing(0);
+        data.resize(model.getRows(), model.getColumns() + 1);
 //         data.setColumnSorter(new StatsColumnSorter(model));
         for (int rr = 0, lr = model.getRows(); rr < lr; rr++) {
             data.setText(rr, 0, model.getRowTitle(rr));
@@ -98,9 +102,9 @@ public class StatsPanel extends FlowPanel
 
         // create our table
         ScrollTable table = new ScrollTable(data, header);
-        table.setSortingEnabled(true);
         table.setResizePolicy(ScrollTable.ResizePolicy.UNCONSTRAINED);
         table.setScrollPolicy(ScrollTable.ScrollPolicy.HORIZONTAL);
+        table.setSize("100%", "100%");
         int availwid = 700/*todo*/ - 11 - (model.getColumns()+1)*3; // border, colgap
         int colwid = Math.min(100, Math.max(DATA_WIDTH, (availwid-200)/model.getColumns()));
         table.setColumnWidth(0, Math.max(100, availwid - (model.getColumns() * colwid)));
@@ -118,8 +122,8 @@ public class StatsPanel extends FlowPanel
         }
 
         @Override // from SortableGrid.ColumnSorter
-        public void onSortColumn (SortableGrid grid, TableModel.ColumnSortList sortList,
-                                  SortableGrid.ColumnSorterCallback callback) {
+        public void onSortColumn(SortableGrid grid,
+            ColumnSortList sortList, SortableGrid.ColumnSorterCallback callback) {
             final int column = sortList.getPrimaryColumn()-1; // -1 accounts for row label
             final boolean ascending = sortList.isPrimaryAscending();
             Integer[] newIndexes = makeIndexes();
