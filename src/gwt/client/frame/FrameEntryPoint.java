@@ -452,7 +452,7 @@ public class FrameEntryPoint
     protected void setPage (Pages page)
     {
         // clear out any old content
-        clearContent(false);
+        clearContent(page == Pages.WORLD);
 
         // clear out any lingering dialog content
         clearDialog();
@@ -465,7 +465,6 @@ public class FrameEntryPoint
 
         // if we're displaying a world page, that's special
         if (page == Pages.WORLD) {
-            _layout.closeContent(true); // close any content that is around
             displayWorld(_pageToken);
             return;
         }
