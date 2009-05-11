@@ -15,7 +15,6 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.item.data.all.Decor;
 
 import static com.threerings.msoy.Log.log;

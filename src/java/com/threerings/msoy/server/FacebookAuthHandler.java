@@ -3,15 +3,12 @@
 
 package com.threerings.msoy.server;
 
-import java.net.URL;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-
-import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -22,8 +19,6 @@ import com.google.code.facebookapi.ProfileField;
 import com.google.code.facebookapi.schema.FriendsGetResponse;
 import com.google.code.facebookapi.schema.User;
 import com.google.code.facebookapi.schema.UsersGetInfoResponse;
-
-import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookCreds;

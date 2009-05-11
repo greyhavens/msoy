@@ -18,7 +18,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
@@ -30,7 +29,6 @@ import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.Friendship;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MemberLogic;

@@ -21,8 +21,6 @@ import com.threerings.msoy.notify.data.GameInviteNotification;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Manages most notifications to users.
  */

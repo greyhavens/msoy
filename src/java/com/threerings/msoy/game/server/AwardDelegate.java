@@ -11,8 +11,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
@@ -40,7 +38,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry.MetricType;

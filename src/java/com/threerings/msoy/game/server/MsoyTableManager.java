@@ -13,7 +13,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.game.data.GameObject;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 

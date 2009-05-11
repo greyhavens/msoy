@@ -22,7 +22,6 @@ import com.samskivert.util.StringUtil;
 import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
-import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -57,7 +56,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CoinAwards;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRepository;

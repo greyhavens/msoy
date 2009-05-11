@@ -30,7 +30,6 @@ import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -155,7 +154,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (final MemberObject memobj)
         throws Exception
     {
-        long startStamp = System.currentTimeMillis();
+//        long startStamp = System.currentTimeMillis();
 //        List<Long> resolutionStamps = Lists.newArrayList();
         enforceConnected();
 

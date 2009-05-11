@@ -20,8 +20,8 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
-import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.code.facebookapi.schema.FriendsGetResponse;
+// import com.google.code.facebookapi.FacebookJaxbRestClient;
+// import com.google.code.facebookapi.schema.FriendsGetResponse;
 // import com.google.code.facebookapi.schema.User;
 // import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
