@@ -11,7 +11,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.util.Name;
 
@@ -34,7 +33,6 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -43,6 +41,8 @@ import com.threerings.msoy.server.util.ServiceUnit;
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -84,20 +84,15 @@ public class MsoyManager
 
     // from interface MemberProvider
     public void emailShare (ClientObject caller, boolean isGame, String placeName, int placeId,
-                            String[] emails, String message, InvocationService.ConfirmListener cl)
+                            String[] emails, String message, boolean friend,
+                            InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
-        String page;
-        if (isGame) {
-            page = "world-game_g_" + placeId;
-        } else {
-            page = "world-s" + placeId;
-        }
-
-        // set them up with the affiliate info
-        String url = ServerConfig.getServerURL() + "welcome/" + memObj.getMemberId() +
-            "/" + StringUtil.encode(page);
-
+        Pages page = isGame ? Pages.GAMES : Pages.WORLD;
+        String args = Args.compose(isGame ? "d" : "s", placeId);
+        int memberId = memObj.getMemberId();
+        String url = friend ? page.makeFriendURL(memberId, args) :
+                              page.makeAffiliateURL(memberId, args);
         final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
         // username is their authentication username which is their email address
         final String from = memObj.username.toString();
@@ -107,7 +102,6 @@ public class MsoyManager
                 MailSender.By.HUMAN, recip, from, template, "inviter", memObj.memberName,
                 "name", placeName, "message", message, "link", url);
         }
-
         cl.requestProcessed();
     }
 

@@ -23,10 +23,12 @@ public interface MsoyService extends InvocationService
     void setHearingGroupChat (Client client, int groupId, boolean hear, ConfirmListener listener);
 
     /**
-     * Shares a scene by emailing offsite friends.
+     * Shares a scene or parlor game by emailing offsite friends.
+     * @param friend if set, the link that is sent will cookie the follower so that they send a
+     * friend request upon registration
      */
     void emailShare (Client client, boolean isGame, String placeName, int placeId,
-                     String[] emails, String message, ConfirmListener listener);
+                     String[] emails, String message, boolean friend, ConfirmListener listener);
 
     /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.

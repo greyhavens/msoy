@@ -31,12 +31,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static final int EMAIL_SHARE = 2;
 
     // from interface MsoyService
-    public void emailShare (Client arg1, boolean arg2, String arg3, int arg4, String[] arg5, String arg6, InvocationService.ConfirmListener arg7)
+    public void emailShare (Client arg1, boolean arg2, String arg3, int arg4, String[] arg5, String arg6, boolean arg7, InvocationService.ConfirmListener arg8)
     {
-        InvocationMarshaller.ConfirmMarshaller listener7 = new InvocationMarshaller.ConfirmMarshaller();
-        listener7.listener = arg7;
+        InvocationMarshaller.ConfirmMarshaller listener8 = new InvocationMarshaller.ConfirmMarshaller();
+        listener8.listener = arg8;
         sendRequest(arg1, EMAIL_SHARE, new Object[] {
-            Boolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, listener7
+            Boolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, Boolean.valueOf(arg7), listener8
         });
     }
 

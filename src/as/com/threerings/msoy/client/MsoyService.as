@@ -18,7 +18,7 @@ public interface MsoyService extends InvocationService
     function dispatchDeferredNotifications (arg1 :Client) :void;
 
     // from Java interface MsoyService
-    function emailShare (arg1 :Client, arg2 :Boolean, arg3 :String, arg4 :int, arg5 :TypedArray /* of class java.lang.String */, arg6 :String, arg7 :InvocationService_ConfirmListener) :void;
+    function emailShare (arg1 :Client, arg2 :Boolean, arg3 :String, arg4 :int, arg5 :TypedArray /* of class java.lang.String */, arg6 :String, arg7 :Boolean, arg8 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MsoyService
     function getABTestGroup (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void;

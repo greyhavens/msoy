@@ -43,7 +43,7 @@ public class MsoyDispatcher extends InvocationDispatcher<MsoyMarshaller>
 
         case MsoyMarshaller.EMAIL_SHARE:
             ((MsoyProvider)provider).emailShare(
-                source, ((Boolean)args[0]).booleanValue(), (String)args[1], ((Integer)args[2]).intValue(), (String[])args[3], (String)args[4], (InvocationService.ConfirmListener)args[5]
+                source, ((Boolean)args[0]).booleanValue(), (String)args[1], ((Integer)args[2]).intValue(), (String[])args[3], (String)args[4], ((Boolean)args[5]).booleanValue(), (InvocationService.ConfirmListener)args[6]
             );
             return;
 

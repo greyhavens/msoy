@@ -39,12 +39,12 @@ public class MsoyMarshaller extends InvocationMarshaller
     public static const EMAIL_SHARE :int = 2;
 
     // from interface MsoyService
-    public function emailShare (arg1 :Client, arg2 :Boolean, arg3 :String, arg4 :int, arg5 :TypedArray /* of class java.lang.String */, arg6 :String, arg7 :InvocationService_ConfirmListener) :void
+    public function emailShare (arg1 :Client, arg2 :Boolean, arg3 :String, arg4 :int, arg5 :TypedArray /* of class java.lang.String */, arg6 :String, arg7 :Boolean, arg8 :InvocationService_ConfirmListener) :void
     {
-        var listener7 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener7.listener = arg7;
+        var listener8 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener8.listener = arg8;
         sendRequest(arg1, EMAIL_SHARE, [
-            langBoolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, listener7
+            langBoolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, langBoolean.valueOf(arg7), listener8
         ]);
     }
 

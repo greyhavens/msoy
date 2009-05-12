@@ -22,7 +22,7 @@ public interface MsoyProvider extends InvocationProvider
     /**
      * Handles a {@link MsoyService#emailShare} request.
      */
-    void emailShare (ClientObject caller, boolean arg1, String arg2, int arg3, String[] arg4, String arg5, InvocationService.ConfirmListener arg6)
+    void emailShare (ClientObject caller, boolean arg1, String arg2, int arg3, String[] arg4, String arg5, boolean arg6, InvocationService.ConfirmListener arg7)
         throws InvocationException;
 
     /**
