@@ -21,6 +21,7 @@ import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import mx.controls.Button;
+import mx.controls.CheckBox;
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.RadioButton;
@@ -37,6 +38,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.io.TypedArray;
 import com.threerings.util.Command;
 import com.threerings.util.MailUtil;
+import com.threerings.util.Util;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.ui.CopyableText;
@@ -57,6 +59,11 @@ public class ShareDialog extends FloatingPanel
         title = Msgs.GENERAL.get(_inGame ? "t.share_game" : "t.share_room");
         showCloseButton = true;
 
+        _autoFriend = new CheckBox();
+        _autoFriend.label = Msgs.GENERAL.get("b.share_auto_friend");
+        _autoFriend.toolTip = Msgs.GENERAL.get("i.share_auto_friend_tip");
+        _autoFriend.selected = true;
+
         if (ctx.isRegistered()) {
             addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350));
             const affLink :CommandLinkButton = new CommandLinkButton(
@@ -64,6 +71,7 @@ public class ShareDialog extends FloatingPanel
                 Msgs.GENERAL.get("u.affiliates"));
             affLink.styleName = "underLink";
             addChild(affLink);
+            addChild(_autoFriend);
         }
 
         var tabs :TabNavigator = new TabNavigator();
@@ -84,7 +92,6 @@ public class ShareDialog extends FloatingPanel
             tabs.addChild(createStubBox());
         }
         addChild(tabs);
-
         open(false);
 
         // Hack to jiggle the text in the first tab, so that it all shows up.
@@ -97,11 +104,7 @@ public class ShareDialog extends FloatingPanel
     public function getEmbedCode (size :int) :String
     {
         var flashVars :String = VisitorInfo.makeFlashVars(_placeId, _inGame);
-        // include the "aff=<memberId>" flashvar to affiliate users to us... registered users only
-        if (_ctx.isRegistered()) {
-            var id :int = _ctx.getMyId();
-            flashVars += "&aff=" + getAutoFriend() ? -id : id;
-        }
+        flashVars = includeAffiliate(flashVars);
         if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
         }
@@ -210,15 +213,12 @@ public class ShareDialog extends FloatingPanel
     protected function createStubBox () :VBox
     {
         const roomOrGame :String = (_inGame ? "game" : "room");
-        var stubArgs :String = roomOrGame + "=" + _placeId;
-        stubArgs += "&aff=" + _ctx.getMyId();
-
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");
         box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 400));
         var stub :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload,
-            [ stubURL(stubArgs), "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
+            [ stubURL(roomOrGame), "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
         stub.styleName = "orangeButton";
         box.addChild(stub);
         _downloadBtns.push(stub);
@@ -243,7 +243,7 @@ public class ShareDialog extends FloatingPanel
                         return;
                     }
 
-                    startDownload(stubURL(stubArgs + "&vec=e.mochi.games." + _placeId) +
+                    startDownload(stubURL(roomOrGame, true) +
                         "&mochiId=" + encodeURIComponent(mochiIdField.text),
                         "Whirled-game-" + _placeId + "-mochi-stub.swf");
                 });
@@ -258,9 +258,14 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
-    protected function stubURL (args :String) :String
+    protected function stubURL (roomOrGame :String, mochi :Boolean = false) :String
     {
-        return DeploymentConfig.serverURL + "stubdlsvc?args=" + encodeURIComponent(args);
+        var stubArgs :String = roomOrGame + "=" + _placeId;
+        stubArgs = includeAffiliate(stubArgs);
+        if (mochi) {
+            stubArgs += "&vec=e.mochi.games." + _placeId;
+        }
+        return DeploymentConfig.serverURL + "stubdlsvc?args=" + encodeURIComponent(stubArgs);
     }
 
     protected function createContainer (key :String) :VBox
@@ -283,7 +288,17 @@ public class ShareDialog extends FloatingPanel
     {
         var box :VBox = createContainer("t.grab_link");
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.link_instruction")));
-        box.addChild(new CopyableText(createLink()));
+        var text :CopyableText;
+        function updateLink () :void {
+            if (text != null) {
+                box.removeChild(text);
+            }
+            box.addChild(text = new CopyableText(createLink()));
+        }
+        _autoFriend.addEventListener(Event.CHANGE, Util.adapt(function () :void {
+            updateLink();
+        }));
+        updateLink();
         return box;
     }
 
@@ -335,9 +350,12 @@ public class ShareDialog extends FloatingPanel
             checks.addChild(createSizeControl(ii));
         }
 
-        _sizeGroup.addEventListener(FlexEvent.VALUE_COMMIT, function (... ignored) :void {
+        function updateText () :void {
             code.text = getEmbedCode(_sizeGroup.selectedValue as int);
-        });
+        }
+
+        _sizeGroup.addEventListener(FlexEvent.VALUE_COMMIT, Util.adapt(updateText));
+        _autoFriend.addEventListener(Event.CHANGE, Util.adapt(updateText));
 
         var info :Label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_instruction"));
         info.width = 300;
@@ -488,17 +506,33 @@ public class ShareDialog extends FloatingPanel
     }
 
     /**
-     * Checks if the user has selected that link followers should automatically request friendship.
+     * Checks if the sharing link should cause followers to automatically request friendship.
      */
     protected function getAutoFriend () :Boolean
     {
-        // TODO: wire this up to a tick box. state change will need to refresh text inside boxes
-        return false;
+        return _autoFriend.selected;
+    }
+
+    /**
+     * Tacks on the "aff" argument for an embedded flash client.
+     */
+    protected function includeAffiliate (args :String) :String
+    {
+        // include the "aff=<memberId>" flashvar to affiliate users to us... registered users only
+        if (_ctx.isRegistered()) {
+            var id :int = _ctx.getMyId();
+            if (args.length > 0) {
+                args += "&";
+            }
+            args += "aff=" + getAutoFriend() ? -id : id;
+        }
+        return args;
     }
 
     protected var _inGame :Boolean;
     protected var _placeName :String;
     protected var _placeId :int;
+    protected var _autoFriend :CheckBox;
 
     /** We need to keep this in scope or the download will halt. */
     protected var _fileRef :FileReference;

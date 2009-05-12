@@ -208,6 +208,7 @@ public class GoServlet extends HttpServlet
         MediaDesc image;
         String title;
         String desc;
+        String gamePrefix;
 
         MessageBundle msgs = _serverMsgs.getBundle("server");
         try {
@@ -225,8 +226,9 @@ public class GoServlet extends HttpServlet
                 title = msgs.get("m.room_share_title", scene.name);
                 desc = msgs.get("m.room_share_desc");
 
-            } else if (path.startsWith(SHARE_GAME_PREFIX)) {
-                int gameId = Integer.parseInt(path.substring(SHARE_GAME_PREFIX.length()));
+            } else if (path.startsWith(gamePrefix = SHARE_GAME_PREFIX) ||
+                       path.startsWith(gamePrefix = GAME_DETAIL_PREFIX)) {
+                int gameId = Integer.parseInt(path.substring(gamePrefix.length()));
                 GameRecord game = _mgameRepo.loadGameRecord(gameId);
                 if (game == null) {
                     log.warning("Facebook requested share of nonexistant game?", "path", path);
@@ -359,8 +361,7 @@ public class GoServlet extends HttpServlet
     protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.getPath() + "-d_";
 
     protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.getPath() + "-s";
-    //protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_l_";
-    protected static final String SHARE_GAME_PREFIX = GAME_DETAIL_PREFIX;
+    protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_p_";
     protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
 
     protected static final String VEC_ARG = "vec";
