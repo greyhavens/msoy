@@ -275,6 +275,9 @@ public class GoServlet extends HttpServlet
         Object[] argArray = new Object[args.size()];
         args.toArray(argArray);
         outputGoogle(rsp, title, desc, upLink, argArray);
+        if (++_googlePages <= MAX_GOOGLE_PAGES_TO_LOG) {
+            log.info("Served google bot page", "title", title);
+        }
     }
 
     /**
@@ -357,6 +360,9 @@ public class GoServlet extends HttpServlet
         }
     }
 
+    /** Number of google bot pages served. */
+    protected int _googlePages;
+
     protected static final String ALL_GAMES_PREFIX = Pages.GAMES.getPath();
     protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.getPath() + "-d_";
 
@@ -365,6 +371,9 @@ public class GoServlet extends HttpServlet
     protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
 
     protected static final String VEC_ARG = "vec";
+
+    /** Maximum number of google bot pages to log. */
+    protected static final int MAX_GOOGLE_PAGES_TO_LOG = 50;
 
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
