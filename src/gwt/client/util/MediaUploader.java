@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartFileUpload;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -60,8 +60,8 @@ public class MediaUploader extends FormPanel
 
         _upload = new SmartFileUpload();
         _upload.setName(mediaId);
-        _upload.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
+        _upload.addValueChangeHandler(new ValueChangeHandler<String>() {
+            public void onValueChange (ValueChangeEvent<String> event) {
                 String toUpload = _upload.getFilename();
                 if (toUpload.length() > 0 && !toUpload.equals(_submitted)) {
                     submit();
