@@ -1148,11 +1148,12 @@ public class MemberRepository extends DepotRepository
     // TODO: make a version that just loads a list, and use that most every place
     public StreamableArrayIntSet loadFriendIds (int memberId)
     {
-        StreamableArrayIntSet memIds = new StreamableArrayIntSet();
-        for (FriendshipRecord frec : findAll(FriendshipRecord.class, fullFriendWhere(memberId))) {
-            memIds.add(frec.friendId);
+        List<FriendshipRecord> list = findAll(FriendshipRecord.class, fullFriendWhere(memberId));
+        int[] ids = new int[list.size()];
+        for (int ii = 0; ii < ids.length; ii++) {
+            ids[ii] = list.get(ii).friendId;
         }
-        return memIds;
+        return new StreamableArrayIntSet(ids);
     }
 
     /**
