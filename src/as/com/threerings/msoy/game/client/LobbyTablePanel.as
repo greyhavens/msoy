@@ -101,7 +101,7 @@ public class LobbyTablePanel extends VBox
         addChild(makeVBox(_title, _info));
 
         var shareLink :String = _gctx.getWorldContext().getMsoyController().createSharableLink(
-            "world-game_i_" + _lobj.game.gameId + "_" + memId, false);
+            "world-game_i_" + _lobj.game.gameId + "_" + memId, true);
 
         // display our invite verbiage
         var ititle :Label = FlexUtil.createLabel(Msgs.GAME.get("t.invite_link"), "lobbyTitle");
