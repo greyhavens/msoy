@@ -50,7 +50,7 @@ public enum Pages
      */
     public String makeURL (String args)
     {
-        return DeploymentConfig.serverURL + "go/" + makeToken(args);
+        return makeGoURL("go", -1, args);
     }
 
     /**
@@ -82,12 +82,19 @@ public enum Pages
      */
     public String makeAffiliateURL (int memberId, String args)
     {
-        String token = makeToken(args);
-        String url = DeploymentConfig.serverURL + "welcome/" + memberId;
-        if (this != LANDING || (args != null && args.length() > 0)) {
-            url += "/" + token;
-        }
-        return url;
+        return makeGoURL("welcome", memberId, args);
+    }
+
+    /**
+     * Creates a url that is compatible with mail readers and when followed will make the follower
+     * an affiliate of the given member and then redirect to the given page with the given args.
+     * If the follower eventually registers, a friend request will automatically be sent to the
+     * given member. The member id may be zero, in which case the link will only redirect with no
+     * affiliation or friending.
+     */
+    public String makeFriendURL (int memberId, String args)
+    {
+        return makeGoURL("friend", memberId, args);
     }
 
     /**
@@ -104,6 +111,19 @@ public enum Pages
     public Tabs getTab ()
     {
         return _tab;
+    }
+
+    protected String makeGoURL (String servlet, int memberId, String args)
+    {
+        String token = makeToken(args);
+        String url = DeploymentConfig.serverURL + servlet;
+        if (memberId != -1) {
+            url += "/" + memberId;
+        }
+        if (this != LANDING || (args != null && args.length() > 0)) {
+            url += "/" + token;
+        }
+        return url;
     }
 
     Pages (Tabs tab) {
