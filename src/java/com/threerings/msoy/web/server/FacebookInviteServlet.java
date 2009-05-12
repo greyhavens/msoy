@@ -126,7 +126,7 @@ public class FacebookInviteServlet extends HttpServlet
         // javascript variables - squirted below and referenced by the static script INVITE_JS
         Map<String, String> vars = new ImmutableMap.Builder<String, String>()
             .put("gameId", String.valueOf(gameId))
-            .put("acceptPath", Pages.WORLD.makeAffiliateURL(memberId, acceptPath))
+            .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, acceptPath))
             .put("acceptLabel", "Play " + gameName)
             .put("action", DeploymentConfig.serverURL + "fbinvite/done?gameId=" + gameId)
             .put("message", "I'm playing " + gameName + " on Whirled, join me!")

@@ -96,10 +96,10 @@ public class GameInvitePanel extends InvitePanel
 
         // build the invite url; this will be a play now link for lobbied games (type 0) or a
         // start-in-room link for avrgs (type 1)
-        final String iargs = (gameType == 1) ? 
+        final String iargs = (gameType == 1) ?
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token, roomId) :
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token);
-        final String url = Pages.WORLD.makeAffiliateURL(CShell.getMemberId(), iargs);
+        final String url = Pages.WORLD.makeFriendURL(CShell.getMemberId(), iargs);
 
         // game information
         SmartTable info = new SmartTable();

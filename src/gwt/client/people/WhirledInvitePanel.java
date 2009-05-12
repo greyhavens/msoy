@@ -32,7 +32,7 @@ public class WhirledInvitePanel extends InvitePanel
         add(new TongueBox(null, makeHeader("/images/people/share_header.png", introMsg)));
         add(new TongueBox(_msgs.inviteEmail(), new WhirledInviteEmailListPanel()));
         add(WidgetUtil.makeShim(20, 20));
-        String shareURL = ShareUtil.getAffiliateLandingURL(Pages.LANDING);
+        String shareURL = ShareUtil.getLandingURL(Pages.LANDING, true);
         add(new TongueBox(_msgs.inviteIM(), new IMPanel(shareURL)));
 
         if (justRegistered) {

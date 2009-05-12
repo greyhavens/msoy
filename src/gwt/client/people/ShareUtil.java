@@ -16,8 +16,10 @@ public class ShareUtil
     /**
      * Returns an affiliated link (for the current member) to the specified page.
      */
-    public static String getAffiliateLandingURL (Pages page, Object... args)
+    public static String getLandingURL (Pages page, boolean friend, Object... args)
     {
-        return page.makeAffiliateURL(CShell.creds.getMemberId(), Args.compose(args));
+        return friend ?
+            page.makeFriendURL(CShell.creds.getMemberId(), Args.compose(args)) :
+            page.makeAffiliateURL(CShell.creds.getMemberId(), Args.compose(args));
     }
 }
