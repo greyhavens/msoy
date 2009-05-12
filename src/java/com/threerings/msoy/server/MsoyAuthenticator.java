@@ -59,7 +59,7 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Verifies that an ident is valid.
      */
-    public static boolean isValidIdent (final String ident)
+    public static boolean isValidIdent (String ident)
     {
         if (ident == null || ident.length() != 48) {
             return false;
@@ -76,7 +76,7 @@ public class MsoyAuthenticator extends Authenticator
      *
      * @return the user's member record.
      */
-    public MemberRecord authenticateSession (String email, final String password)
+    public MemberRecord authenticateSession (String email, String password)
         throws ServiceException
     {
         try {
@@ -84,8 +84,8 @@ public class MsoyAuthenticator extends Authenticator
             email = email.toLowerCase();
 
             // validate their account credentials; make sure they're not banned
-            final AuthenticationDomain domain = _accountLogic.getDomain(email);
-            final Account account = domain.authenticateAccount(email, password);
+            AuthenticationDomain domain = _accountLogic.getDomain(email);
+            Account account = domain.authenticateAccount(email, password);
 
             // load up their member information
             MemberRecord mrec = _memberRepo.loadMember(account.accountName);
@@ -107,8 +107,8 @@ public class MsoyAuthenticator extends Authenticator
 
             return mrec;
 
-        } catch (final RuntimeException e) {
-            log.warning("Error authenticating user [who=" + email + "].", e);
+        } catch (RuntimeException e) {
+            log.warning("Error authenticating user", "who", email, e);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -182,19 +182,19 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     @Override // from Authenticator
-    protected void processAuthentication (final AuthingConnection conn, final AuthResponse rsp)
+    protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
         throws Exception
     {
-        final AuthRequest req = conn.getAuthRequest();
-        final MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
+        AuthRequest req = conn.getAuthRequest();
+        MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
         WorldCredentials creds = null;
 
         try {
             // make sure they've got the correct version
-            final String cvers = req.getVersion(), svers = DeploymentConfig.version;
+            String cvers = req.getVersion(), svers = DeploymentConfig.version;
             if (!svers.equals(cvers)) {
-                log.info("Refusing wrong version [creds=" + req.getCredentials() +
-                         ", cvers=" + cvers + ", svers=" + svers + "].");
+                log.info("Refusing wrong version",
+                    "creds", req.getCredentials(), "cvers", cvers, "svers", svers);
                 boolean haveNewer = (cvers != null) && (svers.compareTo(cvers) < 0);
                 throw new ServiceException(
                     haveNewer ? MsoyAuthCodes.NEWER_VERSION :
@@ -204,21 +204,21 @@ public class MsoyAuthenticator extends Authenticator
             // make sure they've sent valid credentials
             try {
                 creds = (WorldCredentials) req.getCredentials();
-            } catch (final ClassCastException cce) {
-                log.warning("Invalid creds " + req.getCredentials() + ".", cce);
+            } catch (ClassCastException cce) {
+                log.warning("Invalid creds", "creds", req.getCredentials(), cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
             if (creds == null) {
-                log.info("No credentials provided with auth request " + req + ".");
+                log.info("No credentials provided with auth request", "req", req);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
             // finish processing our authentication (the helper method helps simplify the code)
             rsp.authdata = processAuthentication(conn, creds, rdata);
 
-        } catch (final ServiceException se) {
+        } catch (ServiceException se) {
             rdata.code = se.getMessage();
-            log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
+            log.info("Rejecting authentication", "creds", creds, "code", rdata.code);
         }
     }
 
@@ -236,7 +236,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         if (creds.getUsername() != null) {
-            final String aname = creds.getUsername().toString().toLowerCase();
+            String aname = creds.getUsername().toString().toLowerCase();
             try {
                 return authenticateMember(creds, rdata, null, true, aname, creds.getPassword());
             } catch (ServiceException se) {
@@ -265,8 +265,8 @@ public class MsoyAuthenticator extends Authenticator
         return null;
     }
 
-    protected void authenticateGuest (final AuthingConnection conn, final WorldCredentials creds,
-                                      final MsoyAuthResponseData rdata, final int memberId)
+    protected void authenticateGuest (AuthingConnection conn, WorldCredentials creds,
+                                      MsoyAuthResponseData rdata, int memberId)
         throws ServiceException
     {
         if (!_runtime.server.nonAdminsAllowed) {
@@ -286,12 +286,12 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         // obtain the authentication domain appropriate to their account name
-        final AuthenticationDomain domain = _accountLogic.getDomain(accountName);
+        AuthenticationDomain domain = _accountLogic.getDomain(accountName);
 
         boolean newIdent = false;
         // see if we need to generate a new ident
         for (int ii = 0; ii < MAX_TRIES && StringUtil.isBlank(creds.ident); ii++) {
-            final String ident = generateIdent(accountName, ii);
+            String ident = generateIdent(accountName, ii);
             if (domain.isUniqueIdent(ident)) {
                 creds.ident = ident;
                 newIdent = true;
@@ -376,19 +376,19 @@ public class MsoyAuthenticator extends Authenticator
      * @return any warning message configured for this member or null.
      * @exception ServiceException thrown if the member is currently banned.
      */
-    protected String checkWarnAndBan (final int memberId)
+    protected String checkWarnAndBan (int memberId)
         throws ServiceException
     {
-        final MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
+        MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
         if (record == null) {
             return null;
         }
 
         if (record.banExpires != null) {
             // figure out how many hours are left on the temp ban
-            final Date now = new Date();
+            Date now = new Date();
             if (now.before(record.banExpires)) {
-                final int expires = (int)((record.banExpires.getTime() - now.getTime())/ONE_HOUR);
+                int expires = (int)((record.banExpires.getTime() - now.getTime())/ONE_HOUR);
                 throw new BannedException(MsoyAuthCodes.TEMP_BANNED, record.warning, expires);
             }
         }
@@ -420,10 +420,10 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Generate a new unique ident for this flash client.
      */
-    protected static String generateIdent (final String accountName, final int offset)
+    protected static String generateIdent (String accountName, int offset)
     {
-        final String seed = StringUtil.sha1hex(
-                Long.toHexString(System.currentTimeMillis() + offset*1000L) + accountName);
+        String seed = StringUtil.sha1hex(
+            Long.toHexString(System.currentTimeMillis() + offset*1000L) + accountName);
         return seed + generateIdentChecksum(seed);
     }
 
