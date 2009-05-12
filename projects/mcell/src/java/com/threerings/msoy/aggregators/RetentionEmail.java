@@ -148,8 +148,8 @@ public abstract class RetentionEmail
             // number sent by subject line
             eventData.put(subjLine + "Sent", sent.getCount(subjLine));
             // response rate (%) by subject line
-            float rate = (float)(respondents.getCount(subjLine)) / sent.getCount(subjLine);
-            eventData.put(subjLine + "Pct", (int)(rate * 100));
+            double rate = (double)(respondents.getCount(subjLine)) / sent.getCount(subjLine);
+            eventData.put(subjLine + "Pct", rate * 100);
         }
     }
 
