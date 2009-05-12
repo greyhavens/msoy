@@ -88,11 +88,10 @@ public class MsoyManager
                             InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
-        Pages page = isGame ? Pages.GAMES : Pages.WORLD;
-        String args = Args.compose(isGame ? "d" : "s", placeId);
+        String args = isGame ? Args.compose("game", "p", placeId) : ("s" + placeId);
         int memberId = memObj.getMemberId();
-        String url = friend ? page.makeFriendURL(memberId, args) :
-                              page.makeAffiliateURL(memberId, args);
+        String url = friend ? Pages.WORLD.makeFriendURL(memberId, args) :
+                              Pages.WORLD.makeAffiliateURL(memberId, args);
         final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
         // username is their authentication username which is their email address
         final String from = memObj.username.toString();
