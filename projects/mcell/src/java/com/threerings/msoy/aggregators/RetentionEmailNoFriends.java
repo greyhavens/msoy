@@ -14,7 +14,7 @@ import com.threerings.msoy.spam.server.SpamLogic.Bucket;
  * time of the mailing.
  */
 @Aggregator(output="msoy.RetentionEmailResponse_NoFriends")
-public class RetentionEmailNoFriends extends RetentionEmailNew
+public class RetentionEmailNoFriends extends RetentionEmailBucketed
 {
     /**
      * Creates a new aggregator for retention mailings to users with no friends or only inactive

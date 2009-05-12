@@ -21,12 +21,12 @@ import com.threerings.panopticon.efs.storev2.EventWriter;
  * Processes retention mail events from the advent of user buckets onwards. Subclasses provide
  * the list of buckets that we are interested in. Only aggregations of these buckets are stored.
  */
-public abstract class RetentionEmailNew extends RetentionEmail
+public abstract class RetentionEmailBucketed extends RetentionEmail
 {
     /**
      * Create a new aggregator that only output data from the given list of buckets.
      */
-    public RetentionEmailNew (List<Bucket> buckets)
+    public RetentionEmailBucketed (List<Bucket> buckets)
     {
         super(new int[] { 2009, Calendar.MAY, 1 },
             new int[] { 2100, Calendar.JANUARY, 1 }, Lists.transform(buckets, TO_NAME));

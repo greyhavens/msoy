@@ -14,7 +14,7 @@ import com.threerings.msoy.spam.server.SpamLogic.Bucket;
  * mailing.
  */
 @Aggregator(output="msoy.RetentionEmailResponse_Friends")
-public class RetentionEmailFriends extends RetentionEmailNew
+public class RetentionEmailFriends extends RetentionEmailBucketed
 {
     /**
      * Creates a new aggregator for retention mailings to users with friends.
