@@ -328,6 +328,9 @@ public class Preloader extends Sprite
         // if there's an affiliate, route them through /welcome/
         var p :Object = MsoyParameters.get();
         if (null != p["aff"]) {
+            // NOTE: p["aff"] may sometimes be negative. This is an internal encoding for the
+            // affiliate cookie, but since in flash we generally do not need to interpret the id
+            // directly, we just pass it along to the server via the welcome link.
             return DeploymentConfig.serverURL + "welcome/" + p["aff"] + "/" + token;
         } else {
             return DeploymentConfig.serverURL + "#" + token;
