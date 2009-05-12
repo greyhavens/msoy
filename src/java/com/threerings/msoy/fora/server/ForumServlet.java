@@ -563,6 +563,7 @@ public class ForumServlet extends MsoyServiceServlet
         message = HTMLSanitizer.sanitize(message);
 
         // now look for URL expansions
+        // TODO: preserve the affiliate servlet?
         StringBuffer expbuf = new StringBuffer();
         Matcher m = _urlPattern.matcher(message);
         while (m.find()) {
@@ -669,7 +670,7 @@ public class ForumServlet extends MsoyServiceServlet
         return (memrec == null) ? null : makeBoxedScene(token, memrec.homeSceneId);
     }
 
-    protected Pattern _urlPattern = Pattern.compile(
+    protected static final Pattern _urlPattern = Pattern.compile(
         "(" + Pattern.quote(ServerConfig.getServerURL()) +
         ")(welcome/[0-9]+/|friend/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
 
