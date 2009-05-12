@@ -21,7 +21,6 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.util.Link;
 
 /**
  * A wee dialog that pops up to allow the user to share whirled content on other
@@ -47,7 +46,7 @@ public class ShareDialog extends BorderedDialog
         SmartTable panel = new SmartTable();
         panel.setCellPadding(20);
 
-        String token = Link.createToken(info.page, info.args);
+        String token = info.page.makeToken(info.args);
         String goURL = URL.encodeComponent(DeploymentConfig.serverURL + "go/" + token);
         String welcURL = URL.encodeComponent(DeploymentConfig.serverURL + "welcome/" +
             (CShell.isGuest() ? "0" : CShell.getMemberId()) + "/" + token);

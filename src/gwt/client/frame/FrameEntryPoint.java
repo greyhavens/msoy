@@ -118,7 +118,7 @@ public class FrameEntryPoint
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
-                _closeToken = Link.createToken(Pages.WORLD, "h");
+                _closeToken = Pages.WORLD.makeToken("h");
                 if (_bar != null) {
                     _bar.setCloseVisible(true);
                 }

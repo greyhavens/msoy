@@ -31,7 +31,9 @@ public enum Pages
     WORLD(null);
 
     /**
-     * Extracts and returns the page from the supplied history token.
+     * Extracts and returns the page from the supplied history token. Does not return null.
+     * @throws IllegalArgumentException if the token is not formatted correctly or the page
+     * component does not exactly match a page name
      */
     public static Pages fromHistory (String historyToken)
     {
@@ -46,27 +48,27 @@ public enum Pages
      * used for URLs that are going to be sent off outside of Whirled. If that is not desired, use
      * {@link #makeLink}.
      */
-    public static String makeURL (Pages page, String args)
+    public String makeURL (String args)
     {
-        return DeploymentConfig.serverURL + "go/" + makeToken(page, args);
+        return DeploymentConfig.serverURL + "go/" + makeToken(args);
     }
 
     /**
      * Creates a link to the specified page and arguments. The link will start with /# and will not
      * be prefixed by the server URL. Prepend DeploymentConfig.serverURL if that is desired.
      */
-    public static String makeLink (Pages page, String args)
+    public String makeLink (String args)
     {
-        return "/#" + makeToken(page, args);
+        return "/#" + makeToken(args);
     }
 
     /**
      * Creates a link token for the specified page and arguments. This token can be passed to
      * History.newItem.
      */
-    public static String makeToken (Pages page, String args)
+    public String makeToken (String args)
     {
-        String token = (page == null) ? "" : page.getPath();
+        String token = getPath();
         if (args != null && args.length() > 0) {
             token = token + "-" + args;
         }
@@ -78,9 +80,14 @@ public enum Pages
      * an affiliate of the given member and then redirect to the given page with the given args.
      * The member id may be zero, in which case the link will only redirect with no affiliation.
      */
-    public static String makeAffiliateURL (int memberId, Pages page, String args)
+    public String makeAffiliateURL (int memberId, String args)
     {
-        return DeploymentConfig.serverURL + "welcome/" + memberId + "/" + makeToken(page, args);
+        String token = makeToken(args);
+        String url = DeploymentConfig.serverURL + "welcome/" + memberId;
+        if (this != LANDING || (args != null && args.length() > 0)) {
+            url += "/" + token;
+        }
+        return url;
     }
 
     /**

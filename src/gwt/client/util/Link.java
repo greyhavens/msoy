@@ -131,7 +131,10 @@ public class Link
      */
     public static String createToken (Pages page, String args)
     {
-        return Pages.makeToken(page, args);
+        if (page == null) {
+            page = Pages.LANDING;
+        }
+        return page.makeToken(args);
     }
 
     /**

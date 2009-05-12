@@ -224,7 +224,7 @@ public class SpamLogic
          */
         public String getMostRecentURL ()
         {
-            return Pages.makeURL(Pages.GROUPS, _thread.getMostRecentPostArgs());
+            return Pages.GROUPS.makeURL(_thread.getMostRecentPostArgs());
         }
 
         /**
@@ -232,7 +232,7 @@ public class SpamLogic
          */
         public String getFirstUnreadURL ()
         {
-            return Pages.makeURL(Pages.GROUPS, _thread.getFirstUnreadPostArgs());
+            return Pages.GROUPS.makeURL(_thread.getFirstUnreadPostArgs());
         }
 
         /**
@@ -240,7 +240,7 @@ public class SpamLogic
          */
         public String getGroupURL ()
         {
-            return Pages.makeURL(Pages.GROUPS, String.valueOf(_thread.group.getGroupId()));
+            return Pages.GROUPS.makeURL(String.valueOf(_thread.group.getGroupId()));
         }
 
         /**
@@ -776,7 +776,7 @@ public class SpamLogic
 
         protected static String link (Pages page, String args)
         {
-            return Pages.makeLink(page, args);
+            return page.makeLink(args);
         }
 
         protected static String imgStyle (Dimensions dim)

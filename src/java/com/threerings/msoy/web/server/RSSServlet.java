@@ -124,7 +124,7 @@ public class RSSServlet extends HttpServlet
         StringBuilder rss = new StringBuilder("<?xml version=\"1.0\"?>");
         rss.append("<rss version=\"2.0\"><channel>");
         rss.append("<title>").append(group.name).append("</title>");
-        rss.append("<link>").append(Pages.makeURL(Pages.GROUPS, Args.compose("f", group.groupId)));
+        rss.append("<link>").append(Pages.GROUPS.makeURL(Args.compose("f", group.groupId)));
         rss.append("</link>");
         rss.append("<description>").append(group.blurb).append("</description>");
         if (messages.size() > 0) {
@@ -141,14 +141,14 @@ public class RSSServlet extends HttpServlet
             rss.append("<item>");
             rss.append("<title>").append(thread.subject).append("</title>");
             rss.append("<link>");
-            rss.append(Pages.makeURL(Pages.GROUPS, Args.compose("t", thread.threadId)));
+            rss.append(Pages.GROUPS.makeURL(Args.compose("t", thread.threadId)));
             rss.append("</link>");
             rss.append("<description>");
             rss.append("<![CDATA[ ").append(MessageUtil.expandMessage(message.message));
             rss.append("]]></description>");
             rss.append("<pubDate>").append(_sdf.format(message.created)).append("</pubDate>");
             rss.append("<guid>");
-            rss.append(Pages.makeURL(Pages.GROUPS, Args.compose("t", thread.threadId)));
+            rss.append(Pages.GROUPS.makeURL(Args.compose("t", thread.threadId)));
             rss.append("</guid>");
             rss.append("</item>");
         }

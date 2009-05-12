@@ -52,7 +52,7 @@ public class ExternalFeeder
         // we need a release to fix trophy publishing, so be it.
         // TODO: remove hackery if and when Facebook realize the value of testing
         String mediaURL = event.getMediaURL();
-        String trophyURL = Pages.makeURL(Pages.GAMES, Args.compose(
+        String trophyURL = Pages.GAMES.makeURL(Args.compose(
             "vec", vector, event.getGameId(), "d", "t"));
         if (DeploymentConfig.facebookURLValidationHack) {
             mediaURL = "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png";

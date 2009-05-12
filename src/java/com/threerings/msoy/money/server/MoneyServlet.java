@@ -109,7 +109,7 @@ public class MoneyServlet extends MsoyServiceServlet
             MailSender.By.HUMAN, ServerConfig.getCashOutAddress(), "no-reply@whirled.com",
             "blingCashOutNotice", "memberId", mrec.memberId, "name", mrec.name,
             "server_url", DeploymentConfig.serverURL,
-            "url", Pages.makeURL(Pages.ADMINZ, "cashout")); // TODO: A more meaningful URL
+            "url", Pages.ADMINZ.makeURL("cashout")); // TODO: A more meaningful URL
 
         return result;
     }

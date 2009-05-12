@@ -100,7 +100,7 @@ public class GoServlet extends HttpServlet
                 for (int ii = 0; ii < args.getArgCount(); ii++) {
                     if (args.get(ii, "").equals(VEC_ARG)) {
                         vec = args.get(ii+1, (String)null);
-                        path = Pages.makeToken(page, args.recomposeWithout(ii, 2));
+                        path = page.makeToken(args.recomposeWithout(ii, 2));
                     }
                 }
                 if (vec == null) {
