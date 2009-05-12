@@ -7,7 +7,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 
+import com.threerings.presents.annotation.AnyThread;
+import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.ShutdownManager;
@@ -36,8 +41,16 @@ public class MoneyExchange
     /**
      * Initialize the money exchange once the database is ready to roll.
      */
+    @BlockingThread
     public void init ()
     {
+        // create the recalculating interval
+        _recalcInterval = new Interval(_invoker) {
+            public void expired () {
+                recalculateRate();
+            }
+        };
+
         recalculateRate();
         _runtime.money.addListener(_moneyListener);
     }
@@ -45,6 +58,7 @@ public class MoneyExchange
     /**
      * Get the current exchange rate, in terms of how many coins 1 bar is worth.
      */
+    @AnyThread
     public float getRate ()
     {
         return _rate;
@@ -53,18 +67,20 @@ public class MoneyExchange
     /**
      * Secure a price quote based on the current exchange rate.
      */
+    @AnyThread
     public PriceQuote secureQuote (Currency listedCurrency, int amount, boolean allowExchange)
     {
+        float rate = _rate; // lock in the rate for the remainder of this method
         switch (listedCurrency) {
         case COINS:
-            int bars = allowExchange ? coinsToBars(amount) : -1;
-            int change = allowExchange ? coinChange(amount, bars) : 0;
+            int bars = allowExchange ? coinsToBars(amount, rate) : -1;
+            int change = allowExchange ? coinChange(amount, bars, rate) : 0;
             return new PriceQuote(
-                listedCurrency, amount, bars, change, _rate, _runtime.money.barCost);
+                listedCurrency, amount, bars, change, rate, _runtime.money.barCost);
 
         case BARS:
-            int coins = allowExchange ? barsToCoins(amount) : -1;
-            return new PriceQuote(listedCurrency, coins, amount, 0, _rate, _runtime.money.barCost);
+            int coins = allowExchange ? barsToCoins(amount, rate) : -1;
+            return new PriceQuote(listedCurrency, coins, amount, 0, rate, _runtime.money.barCost);
 
         default:
             throw new RuntimeException("Error: listing not in bars or coins?");
@@ -74,19 +90,19 @@ public class MoneyExchange
     /**
      * Get the current bar price of the specified coin price.
      */
+    @AnyThread
     public int coinsToBars (int coins)
     {
-        // if the coin price is 0, the bar price is 0.
-        // but otherwise never let the bar price get below 1.
-        return (coins == 0) ? 0 : Math.max(1, ((int) Math.ceil(coins / _rate)));
+        return coinsToBars(coins, _rate);
     }
 
     /**
      * Get the current coin price of the specified bar price.
      */
+    @AnyThread
     public int barsToCoins (int bars)
     {
-        return (bars == 0) ? 0 : Math.max(1, ((int) Math.ceil(bars * _rate)));
+        return barsToCoins(bars, _rate);
     }
 
     /**
@@ -94,22 +110,25 @@ public class MoneyExchange
      * is made from it. Well, I just need this, and that's what I need it for, but some
      * renaming of this method and possible other cleanup would be great.
      */
+    @AnyThread
     public int barsToCoinsFloor (int bars)
     {
-        return (bars == 0) ? 0 : (int)Math.floor(bars * _rate);
+        return barsToCoinsFloor(bars, _rate);
     }
 
     /**
      * Get the coin change for the specified prices.
      */
+    @AnyThread
     public int coinChange (int coinPrice, int barPrice)
     {
-        return (int) (Math.floor(barPrice * _rate) - coinPrice);
+        return coinChange(coinPrice, barPrice, _rate);
     }
 
     /**
      * The specified sale has completed, factor it into the exchange rate.
      */
+    @BlockingThread
     public void processPurchase (PriceQuote quote, Currency purchaseCurrency, int txId)
     {
         if (purchaseCurrency == quote.getListedCurrency() || quote.getListedAmount() == 0) {
@@ -138,6 +157,7 @@ public class MoneyExchange
     }
 
     // from interface ShutdownManager.Shutdowner
+    @EventThread
     public void shutdown ()
     {
         _recalcInterval.cancel();
@@ -147,6 +167,7 @@ public class MoneyExchange
     /**
      * Recalculate the exchange rate.
      */
+    @BlockingThread
     protected void recalculateRate ()
     {
         int pool = _moneyRepo.getBarPool(_runtime.money.barPoolSize)[0];
@@ -163,9 +184,10 @@ public class MoneyExchange
      * Calculate the rate based on the number of bars in the pool. The more bars: the lower
      * the exchange rate.
      */
+    @AnyThread
     protected void calculateRate (int pool)
     {
-        final int barPoolTarget = _runtime.money.barPoolSize;
+        int barPoolTarget = _runtime.money.barPoolSize;
         if (pool <= 0) {
             _rate = Float.POSITIVE_INFINITY;
 
@@ -186,10 +208,37 @@ public class MoneyExchange
      * Adjust the desired bar pool size. This is called in direct reaction to adjusting
      * the runtime config.
      */
+    @BlockingThread
     protected void adjustDesiredBarPool (int delta)
     {
         _moneyRepo.adjustBarPool(delta);
         recalculateRate();
+    }
+
+    @AnyThread
+    protected static int coinsToBars (int coins, float rate)
+    {
+        // if the coin price is 0, the bar price is 0.
+        // but otherwise never let the bar price get below 1.
+        return (coins == 0) ? 0 : Math.max(1, ((int) Math.ceil(coins / rate)));
+    }
+
+    @AnyThread
+    protected static int barsToCoins (int bars, float rate)
+    {
+        return (bars == 0) ? 0 : Math.max(1, ((int) Math.ceil(bars * rate)));
+    }
+
+    @AnyThread
+    protected static int barsToCoinsFloor (int bars, float rate)
+    {
+        return (bars == 0) ? 0 : (int)Math.floor(bars * rate);
+    }
+
+    @AnyThread
+    protected static int coinChange (int coinPrice, int barPrice, float rate)
+    {
+        return (int) (Math.floor(barPrice * rate) - coinPrice);
     }
 
 //    protected void runTests ()
@@ -244,21 +293,20 @@ public class MoneyExchange
 //    }
 
     /** The interval to recalculate the exchange rate every minute,
+     * (because transactions can take place on other peers)
      * or null if we're shutting down. */
-    protected Interval _recalcInterval = new Interval() {
-        public void expired () {
-            recalculateRate();
-        }
-    };
+    protected Interval _recalcInterval;
 
     /** Listens for changes to the desired bar pool size and makes adjustments as necessary. */
     protected AttributeChangeListener _moneyListener = new AttributeChangeListener() {
+        @EventThread
         public void attributeChanged (AttributeChangedEvent event)
         {
-            if (MoneyConfigObject.BAR_POOL_SIZE.equals(event.getName())) {
+            String name = event.getName();
+            if (MoneyConfigObject.BAR_POOL_SIZE.equals(name)) {
                 if (-1 == event.getSourceOid()) {
                     // for server-originated changes, do no validation, just recompute our rate
-                    recalculateRate();
+                    _recalcInterval.schedule(0);
                     return;
                 }
 
@@ -270,8 +318,16 @@ public class MoneyExchange
 
                 } else {
                     // it's a normal, valid adjustment
-                    adjustDesiredBarPool(newValue - oldValue);
+                    final int adjustmentSize = newValue - oldValue;
+                    _invoker.postRunnable(new Runnable() {
+                        public void run () {
+                            adjustDesiredBarPool(adjustmentSize);
+                        }
+                    });
                 }
+
+            } else if (MoneyConfigObject.TARGET_EXCHANGE_RATE.equals(name)) {
+                _recalcInterval.schedule(0);
             }
         }
     };
@@ -280,6 +336,7 @@ public class MoneyExchange
     protected float _rate;
 
     // our dependencies
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected RuntimeConfig _runtime;
 
