@@ -97,13 +97,16 @@ public class ShareDialog extends FloatingPanel
     public function getEmbedCode (size :int) :String
     {
         var flashVars :String = VisitorInfo.makeFlashVars(_placeId, _inGame);
-        // include the "aff=<memberId>" flashvar to affiliate users to us
-        flashVars += "&aff=" + _ctx.getMyId();
+        // include the "aff=<memberId>" flashvar to affiliate users to us... registered users only
+        if (_ctx.isRegistered()) {
+            var id :int = _ctx.getMyId();
+            flashVars += "&aff=" + getAutoFriend() ? -id : id;
+        }
         if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
         }
 
-        const fullLink :String = _ctx.getMsoyController().createSharableLink("");
+        const fullLink :String = _ctx.getMsoyController().createSharableLink("", getAutoFriend());
         const swfUrl :String = DeploymentConfig.serverURL.replace(
             /(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
 
@@ -328,16 +331,8 @@ public class ShareDialog extends FloatingPanel
         box.addChild(checks);
 
         // the small scenes cannot host non-rooms, at least for now
-        if (!_inGame) {
-            for (var ii :int = 0; ii < EMBED_SIZES.length; ii++) {
-                checks.addChild(createSizeControl(ii));
-            }
-
-        } else {
-            // Games don't have all the options
-            for (var jj :int = 2; jj < EMBED_SIZES.length; jj++) {
-                checks.addChild(createSizeControl(jj));
-            }
+        for (var ii :int = _inGame ? 2 : 0; ii < EMBED_SIZES.length; ii++) {
+            checks.addChild(createSizeControl(ii));
         }
 
         _sizeGroup.addEventListener(FlexEvent.VALUE_COMMIT, function (... ignored) :void {
@@ -394,7 +389,7 @@ public class ShareDialog extends FloatingPanel
             // in the URLs we share on Digg
             return DeploymentConfig.serverURL + "go/" + page;
         } else {
-            return _ctx.getMsoyController().createSharableLink(page);
+            return _ctx.getMsoyController().createSharableLink(page, getAutoFriend());
         }
     }
 
@@ -490,6 +485,15 @@ public class ShareDialog extends FloatingPanel
         }
         // fall back to opening the URL in a new page
         _ctx.getMsoyController().handleViewUrl(shareURL);
+    }
+
+    /**
+     * Checks if the user has selected that link followers should automatically request friendship.
+     */
+    protected function getAutoFriend () :Boolean
+    {
+        // TODO: wire this up to a tick box. state change will need to refresh text inside boxes
+        return false;
     }
 
     protected var _inGame :Boolean;

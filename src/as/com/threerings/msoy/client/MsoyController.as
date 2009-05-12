@@ -219,11 +219,14 @@ public class MsoyController extends Controller
 
     /**
      * Creates a link to a page at www.whirled.com that we will be sharing (not following
-     * ourselves). This will have appropriate affiliate information included.
+     * ourselves). This will have appropriate affiliate information included. If the friend
+     * parameter is set, a friend request will be sent to the affiliate on behalf of the follower
+     * when the follower registers.
      */
-    public function createSharableLink (page :String) :String
+    public function createSharableLink (page :String, friend :Boolean) :String
     {
-        return DeploymentConfig.serverURL + "welcome/" + _mctx.getMyId() + "/" + page;
+        var servlet :String = friend ? "friend" : "welcome";
+        return DeploymentConfig.serverURL + servlet + "/" + _mctx.getMyId() + "/" + page;
     }
 
     /**
