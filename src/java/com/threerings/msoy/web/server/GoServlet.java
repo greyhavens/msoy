@@ -20,7 +20,6 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
@@ -48,7 +47,10 @@ import static com.threerings.msoy.Log.log;
  * Handles a simple request to redirect: /go/[page_tokens_and_args]
  *
  * <p> Or a request to redirect with an optional assignment of affiliate:
- * /welcome/[affiliate]/[page_tokens_and_args]
+ * /welcome/[affiliate]/[page_tokens_and_args]</p>
+ * 
+ * <p> Or a request to redirect with an optional assignment of affiliate and a friend request:
+ * /friend/[affiliate]/[page_tokens_and_args]</p>
  */
 public class GoServlet extends HttpServlet
 {
@@ -62,11 +64,12 @@ public class GoServlet extends HttpServlet
         }
 
         int affiliateId = 0;
-        boolean autoFriend = DeploymentConfig.devDeployment &&
-                             req.getRequestURI().startsWith("/friend/");
+        boolean autoFriend = req.getRequestURI().startsWith("/friend/");
         if (autoFriend || req.getRequestURI().startsWith("/welcome/")) {
             // the path will now either be "", "<affiliate>", or "<affiliate>/<token>".
             // <affiliate> may be 0 to indicate "no affiliate" (we just want the redirect).
+            // NOTE: we allow negative affiliate ids here and the AffiliateCookie will eventually
+            // convert these to "autoFriend" affiliates
             int nextSlash = path.indexOf("/");
             if (nextSlash == -1) {
                 affiliateId = parseAffiliate(path);
