@@ -13,7 +13,7 @@ import com.threerings.msoy.spam.server.SpamLogic.Bucket;
  * Processes retention mail events for users that had no friends or only inactive friends at the
  * time of the mailing.
  */
-@Aggregator(output="msoy.RetentionEmailResponse_NoFriends")
+@Aggregator(output="msoy.RetentionEmailResponse.NoFriends")
 public class RetentionEmailNoFriends extends RetentionEmailBucketed
 {
     /**

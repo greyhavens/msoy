@@ -17,7 +17,7 @@ import com.threerings.panopticon.efs.storev2.EventWriter;
  * mailings. This handles both cases by processing "default" buckets prior to 5/1/9 and "default"
  * subject lines prior to 4/4/9. This can be removed eventually.
  */
-@Aggregator(output="msoy.RetentionEmailResponse_Old")
+@Aggregator(output="msoy.RetentionEmailResponse.Old")
 public class RetentionEmailOld extends RetentionEmail
 {
     public RetentionEmailOld ()
