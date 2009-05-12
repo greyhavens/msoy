@@ -13,7 +13,7 @@ import com.threerings.msoy.spam.server.SpamLogic.Bucket;
  * Processes retention mail events for users that had some active friends at the time of the
  * mailing.
  */
-@Aggregator(output="msoy.RetentionEmailResponse_Friends")
+@Aggregator(output="msoy.RetentionEmailResponse.Friends")
 public class RetentionEmailFriends extends RetentionEmailBucketed
 {
     /**
