@@ -671,7 +671,7 @@ public class ForumServlet extends MsoyServiceServlet
 
     protected Pattern _urlPattern = Pattern.compile(
         "(" + Pattern.quote(ServerConfig.getServerURL()) +
-        ")(welcome/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
+        ")(welcome/[0-9]+/|friend/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
 
     // dependencies
     @Inject protected FeedRepository _feedRepo;
