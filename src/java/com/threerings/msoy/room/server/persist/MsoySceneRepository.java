@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -258,7 +259,7 @@ public class MsoySceneRepository extends DepotRepository
     public Object loadExtras (int sceneId, SceneModel model)
     {
         MsoySceneModel mmodel = (MsoySceneModel) model;
-        List<ItemIdent> memoryIds = Lists.newArrayList();
+        Set<ItemIdent> memoryIds = Sets.newHashSet();
         for (FurniData furni : mmodel.furnis) {
             if (furni.itemType != Item.NOT_A_TYPE) {
                 memoryIds.add(furni.getItemIdent());
