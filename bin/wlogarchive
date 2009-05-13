@@ -35,6 +35,7 @@ def downloadAndMerge (datestr, output):
 
     opened = []
     try:
+        print "Merging %d log files" % len(logs)
         for log in logs: opened.append(open(log))
         logutil.mergeLogs(opened, tags, output)
 
