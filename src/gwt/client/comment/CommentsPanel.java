@@ -154,8 +154,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean canComplain (Comment comment)
     {
-        return (_etype != Comment.TYPE_PROFILE_WALL) && CShell.isValidated() &&
-            (CShell.getMemberId() != comment.commentor.getMemberId());
+        return CShell.isValidated() && (CShell.getMemberId() != comment.commentor.getMemberId());
     }
 
     protected void postComment (String text)
