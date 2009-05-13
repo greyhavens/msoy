@@ -6,7 +6,6 @@ package client.frame;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Timer;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -146,10 +145,13 @@ public class StatusPanel extends SmartTable
                 _cmsgs.headerSignup(), Link.createListener(Pages.ACCOUNT, "create"));
             action.setStyleName("SignupButton");
             action.addStyleName("Button");
+            _promoButton = null;
         } else {
             action = new PushButton(
                 _cmsgs.statusInviteFriends(), Link.createListener(Pages.PEOPLE, "invites"));
             action.setStyleName("InviteFriends");
+            _promoButton = action;
+            _promoCount = 0;
         }
         setWidget(0, 0, action);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -179,6 +181,19 @@ public class StatusPanel extends SmartTable
     public void didLogoff ()
     {
         _creds = null;
+    }
+
+    public void tickPromo ()
+    {
+        if (_promoButton == null) {
+            return;
+        }
+        _promoCount = (_promoCount + 1) % 2;
+        if (_promoCount == 0) {
+            _promoButton.setText(_cmsgs.statusInviteFriends());
+        } else {
+            _promoButton.setText(_cmsgs.statusInviteFriendsGetBars());
+        }
     }
 
     protected static boolean isIncrease (StatusChangeEvent event)
@@ -282,7 +297,8 @@ public class StatusPanel extends SmartTable
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
     protected SimplePanel _namePanel = MsoyUI.createSimplePanel(null, "Name");
-    protected Timer _promoTimer;
+    PushButton _promoButton;
+    protected int _promoCount;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

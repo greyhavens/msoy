@@ -245,6 +245,9 @@ public class FrameEntryPoint
             setPageToken(_pageToken, _iframe.getElement());
         }
 
+        // let the frame header update promo text
+        _header.tickPromo();
+
         // convert the page to GA format and report it to Google Analytics
         _analytics.report(args.toPath(page));
     }
