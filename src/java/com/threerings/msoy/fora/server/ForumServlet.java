@@ -4,7 +4,6 @@
 package com.threerings.msoy.fora.server;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -566,7 +565,7 @@ public class ForumServlet extends MsoyServiceServlet
         // now look for URL expansions
         // TODO: preserve the affiliate servlet?
         StringBuffer expbuf = new StringBuffer();
-        Matcher m = _urlPattern.matcher(message);
+        Matcher m = _messageProcessingPattern.matcher(message);
         while (m.find()) {
             m.appendReplacement(expbuf, convertToken(m.group(3), m.group()));
         }
@@ -581,6 +580,10 @@ public class ForumServlet extends MsoyServiceServlet
 
     protected String convertToken (String token, String original)
     {
+        if (original.startsWith("<")) {
+            return original;
+        }
+
         int didx = token.indexOf("-");
         if (didx == -1) {
             return original; // hrm, bogosity
@@ -670,8 +673,8 @@ public class ForumServlet extends MsoyServiceServlet
         return (memrec == null) ? null : makeBoxedScene(token, memrec.homeSceneId);
     }
 
-    protected static final Pattern _urlPattern = Pattern.compile(
-        "(" + Pattern.quote(ServerConfig.getServerURL()) +
+    protected static final Pattern _messageProcessingPattern = Pattern.compile(
+        "<[^<>]+>|(" + Pattern.quote(ServerConfig.getServerURL()) +
         ")(welcome/[0-9]+/|friend/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
 
     // dependencies
