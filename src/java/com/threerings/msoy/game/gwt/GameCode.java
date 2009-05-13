@@ -19,6 +19,14 @@ public class GameCode
     /** Identifies the game splash media. */
     public static final String SPLASH_MEDIA = "splash";
 
+    /**
+     * For the given  XML game configuration string, checks if the game takes place in the world.
+     */
+    public static boolean detectIsInWorld (String config)
+    {
+        return (config != null) && (config.indexOf("<avrg/>") >= 0);
+    }
+
     /** This game's unique identifier. */
     public int gameId;
 

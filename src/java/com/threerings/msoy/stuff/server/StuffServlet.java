@@ -129,9 +129,6 @@ public class StuffServlet extends MsoyServiceServlet
         // update it with data from the supplied runtime record
         record.fromItem(item);
 
-        // make sure these modifications are copacetic
-        _itemLogic.validateItem(memrec.memberId, oldrec, record);
-
         // write it back to the database
         repo.updateOriginalItem(record);
 

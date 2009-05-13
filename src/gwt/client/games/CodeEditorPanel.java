@@ -285,6 +285,20 @@ public class CodeEditorPanel extends BaseEditorPanel
         return xml.toString();
     }
 
+// TODO
+//     /** Is the specified MediaDesc a valid game media? */
+//     protected boolean isValidGameMedia (MediaDesc desc)
+//     {
+//         // game media must be swfs. maybe we'll want remixable in the future?
+//         return desc.isSWF();
+//     }
+
+//     /** Checks mime type for use as a server agent. */
+//     protected boolean isValidServerAgentMedia (MediaDesc desc)
+//     {
+//         return desc.mimeType == MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY;
+//     }
+
     protected class CodeBox extends SmartTable
         implements MediaUploader.Listener
     {

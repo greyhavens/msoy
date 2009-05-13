@@ -45,10 +45,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.PlayerNodeAction;
-import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -74,7 +71,6 @@ import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FavoriteItemRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
@@ -271,9 +267,6 @@ public class ItemLogic
             ((SubItemRecord)record).initFromParent(prec);
         }
 
-        // validate any item specific stuff
-        validateItem(creatorId, null, record);
-
         // write the item to the database
         repo.insertOriginalItem(record, false);
 
@@ -281,31 +274,6 @@ public class ItemLogic
         itemUpdated(null, record);
 
         return record;
-    }
-
-    /**
-     * Ensures that the values specified in this item record are valid.
-     *
-     * @param memberId the member that is doing the updating or creating.
-     * @param orecord the unmodified record in the case of an update, null in the case of a create.
-     * @param nrecord the newly created or updated item.
-     *
-     * @exception ServiceException thrown if illegal or invalid data was detected in the item.
-     */
-    public void validateItem (int memberId, ItemRecord orecord, ItemRecord nrecord)
-        throws ServiceException
-    {
-        // member must be a manager of any group they assign to a game
-        if (nrecord instanceof GameRecord) {
-            GameRecord grec = (GameRecord)nrecord;
-            if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                if (grec.groupId != Game.NO_GROUP) {
-                    if (_groupRepo.getRank(grec.groupId, memberId).compareTo(Rank.MANAGER) < 0) {
-                        throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -366,30 +334,9 @@ public class ItemLogic
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
 
-//         // if this is a game, make sure it does not have listed sub-items (which will be lost if
-//         // the game is delisted and thus must first be delisted themselves)
-//         if (itemType == Item.GAME) {
-//             Item proto = listing.item.toItem();
-//             for (SubItem sproto : proto.getSubTypes()) {
-//                 ItemRepository<ItemRecord> srepo = getRepository(sproto.getType());
-//                 if (srepo.loadOriginalItemsBySuite(proto.getSuiteId()).size() > 0) {
-//                     throw new ServiceException(ItemCodes.E_NO_DELIST_LISTED_SUBITEM_HAVER);
-//                 }
-//             }
-//         }
-
         // remove the listing record and possibly the catalog master item
         if (getRepository(itemType).removeListing(listing)) {
             itemDeleted(listing.item);
-        }
-
-        // if this is a game record, let the game repository know it was delisted
-        if (listing.item instanceof GameRecord) {
-            try {
-                _mgameRepo.gameDelisted((GameRecord)listing.item);
-            } catch (Exception e) {
-                log.warning("Failed to note game delisting", "game", listing.item, e);
-            }
         }
     }
 
@@ -424,31 +371,9 @@ public class ItemLogic
                     MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId);
                 }
 
-            } else if (nrecord.getType() == Item.GAME) {
-                GameRecord grec = (GameRecord)nrecord;
-                if (nrecord.ownerId != 0 && // group changes only triggered for the original item
-                    (orecord == null || ((GameRecord)orecord).groupId != grec.groupId)) {
-                    if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
-                        _groupRepo.updateGroup(
-                            ((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
-                    }
-                    if (grec.groupId != Game.NO_GROUP) {
-                        _groupRepo.updateGroup(
-                            grec.groupId, GroupRecord.GAME_ID, Math.abs(grec.gameId));
-                    }
-                }
-
-                // if this is a newly created game, do some other game metadata business
-                if (orecord == null) {
-                    _mgameRepo.gameCreated(grec);
-                }
-
-                // notify any server hosting this game that its data is updated
-                _peerMan.invokeNodeAction(new GameUpdatedAction(grec.gameId));
-
             } else if (nrecord instanceof SubItemRecord &&
                        ((SubItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
-                int gameId = getGameId((SubItemRecord)nrecord);
+                int gameId = ((SubItemRecord)nrecord).suiteId;
                 if (gameId != 0) {
                     // notify any server hosting this game that its data is updated
                     _peerMan.invokeNodeAction(new GameUpdatedAction(gameId));
@@ -472,9 +397,6 @@ public class ItemLogic
         try {
             if (record.getType() == Item.AVATAR) {
                 MemberNodeActions.avatarDeleted(record.ownerId, record.itemId);
-
-            } else if (record.getType() == Item.GAME) {
-                _mgameRepo.gameDeleted((GameRecord)record);
             }
 
         } catch (Exception e) {
@@ -496,16 +418,13 @@ public class ItemLogic
         } else if (record instanceof SubItemRecord &&
                    ((SubItem)record.toItem()).getSuiteMasterType() == Item.GAME) {
             SubItemRecord srecord = (SubItemRecord)record;
-            // see if the owner of this game is playing a game right now (this lookup is cheaper
-            // than the subsequent getGameId() lookup)
-            if (_peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
-                int gameId = getGameId(srecord);
-                if (gameId != 0) {
-                    // notify the game that the user has purchased some game content
-                    _peerMan.invokeNodeAction(
-                        new ContentPurchasedAction(
-                            record.ownerId, gameId, srecord.getType(), srecord.ident));
-                }
+            // see if the owner of this game is playing a game right now
+            if (srecord.suiteId != 0 &&
+                _peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
+                // notify the game that the user has purchased some game content
+                _peerMan.invokeNodeAction(
+                    new ContentPurchasedAction(
+                        record.ownerId, srecord.suiteId, srecord.getType(), srecord.ident));
             }
         }
 
@@ -921,36 +840,6 @@ public class ItemLogic
         return repo;
     }
 
-    /**
-     * Looks up the id of the game to which the supplied sub-item record belongs.
-     */
-    protected int getGameId (SubItemRecord srecord)
-    {
-        // look up the gameId of the game to which these packs belong
-        int gameId = 0;
-        if (srecord.suiteId < 0) {
-            // listed sub-items have -catalogId as their suite id
-            CatalogRecord crec = _gameRepo.loadListing(-srecord.suiteId, true);
-            if (crec == null) {
-                log.warning("Unable to find catalog record for updated sub-item",
-                            "type", srecord.getType(), "suiteId", srecord.suiteId);
-            } else {
-                gameId = ((GameRecord)crec.item).gameId;
-            }
-
-        } else {
-            // original sub-items have itemId as their suite id
-            GameRecord grec = _gameRepo.loadOriginalItem(srecord.suiteId);
-            if (grec == null) {
-                log.warning("Unable to find original item for updated sub-item",
-                            "type", srecord.getType(), "suiteId", srecord.suiteId);
-            } else {
-                gameId = grec.gameId;
-            }
-        }
-        return gameId;
-    }
-
     /** Notifies other nodes when a game record is updated. */
     protected static class GameUpdatedAction extends GameNodeAction
     {
@@ -994,7 +883,6 @@ public class ItemLogic
     @Inject protected ItemListRepository _listRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
@@ -1006,7 +894,6 @@ public class ItemLogic
     @Inject protected DocumentRepository _documentRepo;
     @Inject protected FurnitureRepository _furniRepo;
     @Inject protected GameRepository _gameRepo;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected PetRepository _petRepo;

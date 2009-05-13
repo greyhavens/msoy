@@ -27,7 +27,7 @@ import com.threerings.messaging.amqp.AMQPMessageConfig;
 
 import com.threerings.presents.client.Client;
 
-import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.game.gwt.GameInfo;
 
 /**
  * Provides access to installation specific configuration. Properties that
@@ -260,7 +260,8 @@ public class ServerConfig
      */
     public static int getGameGroupId (int groupId)
     {
-        return (groupId == Game.NO_GROUP) ? config.getValue("default_game_group_id", 0) : groupId;
+        return (groupId == GameInfo.NO_GROUP) ?
+            config.getValue("default_game_group_id", 0) : groupId;
     }
 
     /**

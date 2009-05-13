@@ -144,35 +144,7 @@ public class GameRecord extends ItemRecord
         super.fromItem(item);
 
         Game game = (Game)item;
-        genre = game.genre;
-        config = game.config;
-        if (game.gameMedia != null) {
-            gameMediaHash = game.gameMedia.hash;
-            gameMimeType = game.gameMedia.mimeType;
-        } else {
-            gameMediaHash = null;
-        }
         // gameId = not user editable
-        if (game.shotMedia != null) {
-            shotMediaHash = game.shotMedia.hash;
-            shotMimeType = game.shotMedia.mimeType;
-        } else {
-            shotMediaHash = null;
-        }
-        if (game.splashMedia != null) {
-            splashMediaHash = game.splashMedia.hash;
-            splashMimeType = game.splashMedia.mimeType;
-        } else {
-            splashMediaHash = null;
-        }
-        if (game.serverMedia != null) {
-            serverMediaHash = game.serverMedia.hash;
-            serverMimeType = game.serverMedia.mimeType;
-        } else {
-            serverMediaHash = null;
-        }
-        groupId = game.groupId;
-        shopTag = game.shopTag;
     }
 
     @Override // from ItemRecord
@@ -197,15 +169,7 @@ public class GameRecord extends ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();
-        object.genre = genre;
-        object.config = config;
-        object.gameMedia = makeMediaDesc(gameMediaHash, gameMimeType);
         object.gameId = gameId;
-        object.shotMedia = makeMediaDesc(shotMediaHash, shotMimeType);
-        object.splashMedia = makeMediaDesc(splashMediaHash, splashMimeType);
-        object.serverMedia = makeMediaDesc(serverMediaHash, serverMimeType);
-        object.groupId = groupId;
-        object.shopTag = shopTag;
         return object;
     }
 

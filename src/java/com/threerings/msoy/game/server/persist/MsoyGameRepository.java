@@ -40,7 +40,6 @@ import com.samskivert.depot.operator.Logic.*;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRatingRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -54,6 +53,7 @@ import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -117,7 +117,7 @@ public class MsoyGameRepository extends DepotRepository
                     irec.gameId = drec.gameId;
                     irec.name = StringUtil.truncate(grec.name, GameInfo.MAX_NAME_LENGTH);
                     irec.genre = grec.genre;
-                    irec.isAVRG = Game.detectIsInWorld(grec.config);
+                    irec.isAVRG = GameCode.detectIsInWorld(grec.config);
                     irec.creatorId = grec.creatorId;
                     irec.description = StringUtil.truncate(
                         grec.description, GameInfo.MAX_DESCRIPTION_LENGTH);
@@ -384,75 +384,6 @@ public class MsoyGameRepository extends DepotRepository
     {
         code.lastUpdated = new Timestamp(System.currentTimeMillis());
         store(code);
-    }
-
-    /**
-     * Called by ItemLogic when a new original game item is created.
-     */
-    public void gameCreated (GameRecord item)
-    {
-// TODODO
-//         // sanity check
-//         if (item.isCatalogMaster() && item.gameId == 0) {
-//             log.warning("Listed game with no assigned game id " + item + ".");
-//         }
-
-//         // if this item did not yet have a game id, create a new game detail record and wire it up
-//         if (item.gameId == 0) {
-//             GameInfoRecord gdr = new GameInfoRecord();
-//             gdr.sourceItemId = item.itemId;
-//             gdr.payoutFactor = GameInfoRecord.DEFAULT_PAYOUT_FACTOR;
-//             gdr.flowToNextRecalc = GameInfoRecord.INITIAL_RECALC_FLOW;
-//             insert(gdr);
-//             // source games use -gameId to differentiate themselves from all non-source games
-// //             _gameRepo.updateGameId(item.itemId, -gdr.gameId);
-//             // fill the game id back into the newly created game record
-//             item.gameId = -gdr.gameId;
-
-//         } else if (item.isCatalogMaster()) {
-//             // update the game detail record with the new listed item id
-//             updatePartial(GameInfoRecord.class, item.gameId,
-//                           GameInfoRecord.LISTED_ITEM_ID, item.itemId);
-//         }
-    }
-
-    /**
-     * Called by ItemLogic when a game item is deleted.
-     */
-    public void gameDeleted (GameRecord item)
-    {
-// TODODO
-//         // if we're deleting an original item; we need to potentially delete or update its
-//         // associated game detail record
-//         GameInfoRecord gdr = null;
-//         if (item.itemId > 0) {
-//             if (item.gameId != 0) {
-//                 gdr = load(GameInfoRecord.class, Math.abs(item.gameId));
-//             }
-//             if (gdr != null) {
-//                 if (gdr.sourceItemId == item.itemId) {
-//                     gdr.sourceItemId = 0;
-//                     if (gdr.listedItemId == 0) {
-//                         purgeGame(gdr.gameId);
-//                     } else {
-//                         update(gdr);
-//                     }
-//                 }
-//                 // zeroing out listedItemId is handled in gameDelisted()
-//             }
-//         }
-    }
-
-    /**
-     * Called by ItemLogic when a game item is delisted.
-     *
-     * @param item the catalog master item that was delisted.
-     */
-    public void gameDelisted (GameRecord item)
-    {
-// TODODO
-//         // zero out the game detail record's listed game item id
-//         updatePartial(GameInfoRecord.class, item.gameId, GameInfoRecord.LISTED_ITEM_ID, 0);
     }
 
     /**

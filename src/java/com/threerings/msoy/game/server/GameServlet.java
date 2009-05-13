@@ -513,6 +513,10 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(code.gameId, mrec);
         _mgameRepo.updateGameCode(GameCodeRecord.fromGameCode(code));
+
+// TODO
+//         // notify any server hosting this game that its data is updated
+//         _peerMan.invokeNodeAction(new GameUpdatedAction(grec.gameId));
     }
 
     // from interface GameService
