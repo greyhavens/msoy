@@ -30,7 +30,6 @@ import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -38,7 +37,9 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -203,11 +204,11 @@ public class CommentServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        String link = ServerConfig.getServerURL();
+        String link;
         if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
-            link += "#shop-l_" + etype + "_" + eid;
+            link = Pages.SHOP.makeURL(Args.compose("l", etype, eid));
         } else if (etype == Comment.TYPE_ROOM) {
-            link += "#world-room_" + eid;
+            link = Pages.ROOMS.makeURL(Args.compose("room", eid));
         } else {
             link = null;
         }
