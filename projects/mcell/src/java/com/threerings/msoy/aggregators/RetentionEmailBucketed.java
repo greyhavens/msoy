@@ -37,7 +37,7 @@ public abstract class RetentionEmailBucketed extends RetentionEmail
         throws IOException
     {
         // the standard way of writing out the events. some subclasses may need to override this
-        OutputBuilder builder = new OutputBuilder();
+        SubjectLineOutputBuilder builder = new SubjectLineOutputBuilder();
         builder.build(key, getSubjectLines());
         builder.write(writer);
     }

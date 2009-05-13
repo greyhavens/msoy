@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.samskivert.util.CountHashMap;
 import com.threerings.msoy.aggregators.result.RetentionEmailLoginsResult;
 import com.threerings.msoy.aggregators.result.RetentionEmailResult;
+import com.threerings.msoy.aggregators.result.RetentionEmailResult.Mailing;
 import com.threerings.panopticon.aggregator.hadoop.Aggregator;
 import com.threerings.panopticon.aggregator.hadoop.JavaAggregator;
 import com.threerings.panopticon.aggregator.hadoop.KeyFactory;
@@ -83,15 +84,31 @@ public abstract class RetentionEmail
         return Collections.emptyList();
     }
 
-    protected class OutputBuilder
+    public void iterate (ResultProcessor processor)
     {
-        /** Number of emails sent, by subject line. */
-        public CountHashMap<String> sent = new CountHashMap<String>();
+        for (Mailing mailing : mailings.sent.values()) {
+            if (_buckets.contains(mailing.bucket)) {
+                processor.process(mailing, logins.memberIds.contains(mailing.memberId));
+            }
+        }
+    }
 
-        /** Number of people who logged in within the DAYS_TO_CONSIDER, by subject line */
-        public CountHashMap<String> respondents = new CountHashMap<String>();
+    protected static interface ResultProcessor
+    {
+        void process (Mailing mailing, boolean responded);
+    }
 
+    protected abstract class KeyedOutputBuilder<Key> implements ResultProcessor
+    {
         Map<String, Object> eventData = Maps.newHashMap();
+
+        /** Number of emails sent, by key. */
+        public CountHashMap<Key> sent = new CountHashMap<Key>();
+
+        /** Number of people who logged in within the DAYS_TO_CONSIDER, by key. */
+        public CountHashMap<Key> respondents = new CountHashMap<Key>();
+
+        abstract Key getColumnId (Mailing mailing);
 
         public void write (EventWriter writer)
             throws IOException
@@ -100,56 +117,43 @@ public abstract class RetentionEmail
             writer.write(new EventData(getOutputEventName(), eventData, props));
         }
 
-        public void build (Keys.LongKey key, String[] hardCodedSubjectLine)
+        protected void build (Keys.LongKey key, Key... columnIds)
         {
-            for (Map.Entry<String, Map<String, Set<Integer>>> entry :
-                mailings.sent.entrySet()) {
-                if (_buckets.contains(entry.getKey())) {
-                    addBucket(entry.getKey(), entry.getValue());
-                }
-            }
+            iterate(this);
 
             // create our standard output columns
             eventData.put("totalRespondents", respondents.getTotalCount());
             eventData.put("mailings", sent.getTotalCount());
             eventData.put("date", new Date(key.get()));
 
-            // and 3 output columns per subject line
-            for (String subjLine : hardCodedSubjectLine) {
-                addSubjectLineTotals(subjLine);
+            // and 3 output columns per key
+            for (Key id : columnIds) {
+                // number of responses by subject line
+                eventData.put(id + "Rsp", respondents.getCount(id));
+                // number sent by subject line
+                eventData.put(id + "Sent", sent.getCount(id));
+                // response rate (%) by subject line
+                int sentCount = sent.getCount(id);
+                double rate = sentCount == 0 ? 0 :
+                    (double)(respondents.getCount(id)) / sent.getCount(id);
+                eventData.put(id + "Pct", rate * 100);
             }
         }
 
-        public void addBucket (String bucket, Map<String, Set<Integer>> subjectLines)
+        @Override // from ResultIterator
+        public void process (Mailing mailing, boolean responded)
         {
-            for (Map.Entry<String, Set<Integer>> entry : subjectLines.entrySet()) {
-                addRecipients(entry.getKey(), entry.getValue());
+            sent.incrementCount(getColumnId(mailing), 1);
+            if (responded) {
+                respondents.incrementCount(getColumnId(mailing), 1);
             }
         }
+    }
 
-        public void addRecipients (String subjectLine, Set<Integer> recipients)
-        {
-            sent.incrementCount(subjectLine, recipients.size());
-            for (int memberId : recipients) {
-                addRecipient(subjectLine, memberId);
-            }
-        }
-
-        public void addRecipient (String subjectLine, int memberId)
-        {
-            int count = logins.memberIds.contains(memberId) ? 1 : 0;
-            respondents.incrementCount(subjectLine, count);
-        }
-
-        public void addSubjectLineTotals (String subjLine)
-        {
-            // number of responses by subject line
-            eventData.put(subjLine + "Rsp", respondents.getCount(subjLine));
-            // number sent by subject line
-            eventData.put(subjLine + "Sent", sent.getCount(subjLine));
-            // response rate (%) by subject line
-            double rate = (double)(respondents.getCount(subjLine)) / sent.getCount(subjLine);
-            eventData.put(subjLine + "Pct", rate * 100);
+    protected class SubjectLineOutputBuilder extends KeyedOutputBuilder<String>
+    {
+        public String getColumnId (Mailing mailing) {
+            return mailing.subject;
         }
     }
 

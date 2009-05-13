@@ -4,24 +4,52 @@
 package com.threerings.msoy.aggregators.result;
 
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
+import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.aggregator.result.StringInputNameResult;
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
+import com.threerings.panopticon.aggregator.result.field.FieldWritable;
 import com.threerings.panopticon.common.event.EventData;
 
 /**
- * Counts up all the members who were sent a retention email and outputs a map of the member id
- * to the date the email was sent.
+ * Processes all the original retention email events and outputs a map of member id to mailing
+ * data.
  */
 @StringInputNameResult(inputs="RetentionMailSent") // original msoy event
 public class RetentionEmailResult extends FieldAggregatedResult
 {
-    /** The members addressed, mapped by bucket, then subject line. */
-    public Map<String, Map<String, Set<Integer>>> sent = Maps.newHashMap();
+    /**
+     * Normalized msoy retention email event.
+     */
+    public static class Mailing extends FieldWritable
+        implements AggregatedResult<Mailing>
+    {
+        public String bucket;
+        public String subject;
+        public Boolean validated;
+        public Integer memberId;
+
+        public boolean init (EventData eventData) {
+            memberId = eventData.getInt("recipientId");
+            bucket = eventData.getDefaultString("bucket", "default");
+            subject = eventData.getDefaultString("subjectLine", "default");
+            validated = eventData.getDefaultBoolean("validated", false);
+            return false;
+        }
+
+        public void combine (Mailing value) {
+            throw new UnsupportedOperationException("Duplicate mailings to same memberId");
+        }
+
+        public boolean putData (Map<String, Object> result) {
+            throw new UnsupportedOperationException("Not for use by aggregator config");
+        }
+    }
+
+    /** The mailings, mapped by member id. */
+    public Map<Integer, Mailing> sent = Maps.newHashMap();
 
     public static boolean checkInputs (EventData eventData)
     {
@@ -31,17 +59,8 @@ public class RetentionEmailResult extends FieldAggregatedResult
     @Override // from FieldResult
     protected void doInit (EventData eventData)
     {
-        String bucket = eventData.getDefaultString("bucket", "default");
-        String subject = eventData.getDefaultString("subjectLine", "default");
-
-        Map<String, Set<Integer>> subjectLines = sent.get(bucket);
-        if (subjectLines == null) {
-            sent.put(bucket, subjectLines = Maps.newHashMap());
-        }
-        Set<Integer> memberIds = subjectLines.get(subject);
-        if (memberIds == null) {
-            subjectLines.put(subject, memberIds = Sets.newHashSet());
-        }
-        memberIds.add(eventData.getInt("recipientId"));
+        Mailing mailing = new Mailing();
+        mailing.init(eventData);
+        sent.put(mailing.memberId, mailing);
     }
 }

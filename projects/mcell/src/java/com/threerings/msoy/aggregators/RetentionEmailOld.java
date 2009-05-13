@@ -30,7 +30,7 @@ public class RetentionEmailOld extends RetentionEmail
     public void write (EventWriter writer, EventDataBuilder unused, LongKey key)
         throws IOException
     {
-        OutputBuilder builder = new OutputBuilder();
+        SubjectLineOutputBuilder builder = new SubjectLineOutputBuilder();
         builder.build(key, _subjectLines);
         builder.write(writer);
     }

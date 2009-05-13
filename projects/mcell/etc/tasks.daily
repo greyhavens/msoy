@@ -34,4 +34,5 @@ DailyExperience3
 # the results from retention mails only get interesting after about 5 days, so do them last
 com.threerings.msoy.aggregators.RetentionEmailFriends
 com.threerings.msoy.aggregators.RetentionEmailNoFriends
+com.threerings.msoy.aggregators.RetentionEmailValidation
 com.threerings.msoy.aggregators.RetentionEmailOld
