@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import com.threerings.presents.dobj.DSet;
@@ -81,11 +82,15 @@ public class EntityMemories
      */
     protected void setMemory (String key, byte[] newValue)
     {
+        boolean changed;
         if (newValue == null) {
-            memories.remove(key);
+            changed = (null != memories.remove(key));
         } else {
-            memories.put(key, newValue);
+            byte[] oldValue = memories.put(key, newValue);
+            changed = !Arrays.equals(oldValue, newValue);
         }
-        modified = true;
+        if (changed) {
+            modified = true;
+        }
     }
 }
