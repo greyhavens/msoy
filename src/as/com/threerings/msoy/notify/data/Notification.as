@@ -79,6 +79,9 @@ public /* abstract */ class Notification extends SimpleStreamableObject
         default:
             return 60;
 
+        case BUTTSCRATCHING:
+            return 30;
+
         case LOWEST:
             return 10;
         }

@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.notify.client {
 
+import flash.system.Capabilities;
+
 import flash.utils.Dictionary;
 import flash.utils.clearTimeout; // function
 import flash.utils.setTimeout; // function
 
 import com.threerings.util.ExpiringSet;
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
@@ -15,6 +18,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -69,15 +73,15 @@ public class NotificationDirector extends BasicDirector
         super(ctx);
         _mctx = ctx;
         _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
-        _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
-        _currentNotifications.addEventListener(ExpiringSet.ELEMENT_EXPIRED, notificationExpired);
+        _notifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME, notificationExpired);
+        _statusDelays = new ExpiringSet(STATUS_UPDATE_DELAY, statusDelayExpired);
 
         ctx.getControlBar().setNotificationDisplay(
             _notificationDisplay = new NotificationDisplay(ctx));
 
         // clear our display if we lose connection to the server
         ctx.getClient().addClientObserver(new ClientAdapter(null, null, null, null, null,
-            Util.adapt(_notificationDisplay.clearDisplay), null, null));
+            clearNotifications, null, null));
     }
 
     /**
@@ -122,14 +126,13 @@ public class NotificationDirector extends BasicDirector
 
         // we can't just store the notifications in the array, because some notifications may be
         // identical (bob invites you to play captions twice within 15 minutes);
-        _currentNotifications.add(_lastId++);
-        _notifications.push(notification);
+        _notifications.add(notification);
         _notificationDisplay.displayNotification(notification);
     }
 
     public function getCurrentNotifications () :Array
     {
-        return _notifications;
+        return _notifications.toArray();
     }
 
     /**
@@ -225,7 +228,7 @@ public class NotificationDirector extends BasicDirector
                     Notification.BUTTSCRATCHING, entry.name);
 
             } else if (entry.status != oldEntry.status) {
-                queueStatusChange(memberId);
+                _statusDelays.add(memberId);
             }
         }
     }
@@ -253,6 +256,16 @@ public class NotificationDirector extends BasicDirector
     }
 
     // from BasicDirector
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+
+        if (!event.isSwitchingServers()) {
+            clearNotifications();
+        }
+    }
+
+    // from BasicDirector
     override protected function clientObjectUpdated (client :Client) :void
     {
         super.clientObjectUpdated(client);
@@ -269,6 +282,12 @@ public class NotificationDirector extends BasicDirector
         msvc.dispatchDeferredNotifications(_ctx.getClient());
     }
 
+    protected function clearNotifications (... ignored) :void
+    {
+        _notifications.clear();
+        _notificationDisplay.clearDisplay();
+    }
+
     /**
      * Called once the user is logged on and the chat system is ready.
      * Display any notifications that we generate by inspecting the user object,
@@ -281,6 +300,12 @@ public class NotificationDirector extends BasicDirector
         if (newMail > 0) {
             notifyNewMail(newMail);
         }
+
+        // check their flash version
+        if (Capabilities.version.split(" ")[1].split(",")[0] < FLASH_UPGRADE_VERSION) {
+            // just show this in 1 seconds
+            setTimeout(addGenericNotification, 1 * 1000, "m.flash_upgrade", Notification.SYSTEM);
+        }
     }
 
     protected function notifyNewMail (count :int) :void
@@ -288,18 +313,9 @@ public class NotificationDirector extends BasicDirector
         addGenericNotification(MessageBundle.tcompose("m.new_mail", count), Notification.PERSONAL);
     }
 
-    protected function queueStatusChange (memberId :int) :void
+    protected function statusDelayExpired (event :ValueEvent) :void
     {
-        if (memberId in _statusTimeouts) {
-            clearTimeout(uint(_statusTimeouts[memberId]));
-        }
-        _statusTimeouts[memberId] = setTimeout(reportStatusChange, STATUS_UPDATE_DELAY, memberId);
-    }
-
-    protected function reportStatusChange (memberId :int) :void
-    {
-        delete _statusTimeouts[memberId];
-
+        var memberId :int = int(event.value);
         var entry :FriendEntry = MemberObject(_mctx.getClient().getClientObject()).friends.get(
             memberId) as FriendEntry;
         if (entry != null) {
@@ -318,23 +334,20 @@ public class NotificationDirector extends BasicDirector
     {
         // all we currently need to do is check if this list is empty, and if so, have the
         // display fade it out.
-        if (_currentNotifications.size() == 0) {
-            _notifications.length = 0;
+        if (_notifications.isEmpty()) {
             _notificationDisplay.clearDisplay();
-            return;
         }
-
-        // we'll always get one event per element, so we can just lop the oldest element off
-        _notifications.splice(0, 1);
     }
 
-    /** Give members 15 seconds to get back on before we announce that they're left */
+    /** Give members 15 seconds to get back on before we consider them a fresh logon. */
     protected static const MEMBER_EXPIRE_TIME :int = 15;
 
     /** Give notifications 15 minutes to be relevant. */
     protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60; // in seconds
 
     protected static const STATUS_UPDATE_DELAY :int = 15 * 1000; // 15 seconds
+
+    protected static const FLASH_UPGRADE_VERSION :int = 11;
 
     protected var _mctx :MsoyContext;
 
@@ -343,15 +356,13 @@ public class NotificationDirector extends BasicDirector
     /** An ExpiringSet to track members that may only be switching servers. */
     protected var _membersLoggingOff :ExpiringSet;
 
-    /** An ExpiringSet to track which notifications are relevant */
-    protected var _currentNotifications :ExpiringSet;
+    /** An ExpiringSet to hold our most recent notifications. */
+    protected var _notifications :ExpiringSet;
 
-    /** Tracks the timeout uint for each memberId, for displaying their status. */
-    protected var _statusTimeouts :Dictionary = new Dictionary();
+    /** Tracks when it's ok to show a status update for a member. */
+    protected var _statusDelays :ExpiringSet;
 
     protected var _didStartupNotifs :Boolean;
-    protected var _lastId :uint = 0;
-    protected var _notifications :Array = [];
     protected var _awardPanel :AwardPanel;
 }
 }
