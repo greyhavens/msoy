@@ -841,6 +841,10 @@ public class MemberManager
     {
         final Avatar prev = user.avatar;
 
+        log.info("AVAMEM: Setting avatar",
+            "memberId", user.getMemberId(), "oldAvatar", (prev == null) ? 0 : prev.itemId,
+            "newAvatar", (avatar == null) ? 0 : avatar.itemId);
+
         // now we need to make sure that the two avatars have a reasonable touched time
         user.startTransaction();
         try {
@@ -907,13 +911,13 @@ public class MemberManager
                 _memberRepo.configureAvatarId(
                     user.getMemberId(), (avatar == null) ? 0 : avatar.itemId);
             }
-            @Override public void handleFailure (final Exception pe) {
+            @Override public void handleFailure (Exception pe) {
                 log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
             }
         });
     }
 
-    protected void calculateLevelsForFlow (final int fromIndex)
+    protected void calculateLevelsForFlow (int fromIndex)
     {
         // This equation governs the total flow requirement for a given level (n):
         // flow(n) = flow(n-1) + ((n-1) * 17.8 - 49) * (3000 / 60)
