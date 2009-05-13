@@ -434,7 +434,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         var useSep :Boolean = (-1 == Capabilities.os.indexOf("Linux"));
 
         // add the About menu item
-        custom.push(MenuUtil.createControllerMenuItem(
+        custom.push(MenuUtil.createCommandContextMenuItem(
                         Msgs.GENERAL.get("b.about"),
                         MsoyController.ABOUT, null, useSep));
 

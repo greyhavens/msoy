@@ -123,7 +123,7 @@ public class MsoyMediaContainer extends MediaContainer
             // also under the mouse, we'll probably clobber each other's menu items.
             // There's no human-meaningful identifier we can inject in the string from just
             // the MediaDesc. Punting!
-            menuItems.push(MenuUtil.createControllerMenuItem(
+            menuItems.push(MenuUtil.createCommandContextMenuItem(
                 Msgs.GENERAL.get(isBleeped ? "b.unbleep_media" : "b.bleep_media"),
                 toggleBleeped, ctx));
         }

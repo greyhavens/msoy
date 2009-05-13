@@ -528,17 +528,17 @@ public class RoomObjectView extends RoomView
         if (ident != null) {
             var kind :String = Msgs.GENERAL.get(sprite.getDesc());
             if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
-                menuItems.push(MenuUtil.createControllerMenuItem(
+                menuItems.push(MenuUtil.createCommandContextMenuItem(
                     Msgs.GENERAL.get("b.view_item", kind), MsoyController.VIEW_ITEM, ident));
                 if (!_ctx.getMemberObject().isPermaguest()) {
-                    menuItems.push(MenuUtil.createControllerMenuItem(
+                    menuItems.push(MenuUtil.createCommandContextMenuItem(
                         Msgs.GENERAL.get("b.flag_item", kind), MsoyController.FLAG_ITEM, ident));
                 }
             }
 
             if (sprite.isBleepable()) {
                 var isBleeped :Boolean = sprite.isBleeped();
-                menuItems.push(MenuUtil.createControllerMenuItem(
+                menuItems.push(MenuUtil.createCommandContextMenuItem(
                     Msgs.GENERAL.get((isBleeped ? "b.unbleep_item" : "b.bleep_item"), kind),
                     sprite.toggleBleeped, _ctx));
             }

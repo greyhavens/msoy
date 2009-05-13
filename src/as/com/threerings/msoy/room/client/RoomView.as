@@ -672,7 +672,7 @@ public class RoomView extends Sprite
         if (sprite.getItemIdent() != null && (sprite is FurniSprite) && _ctrl.canManageRoom() &&
                 sprite.hasCustomConfigPanel()) {
             var kind :String = Msgs.GENERAL.get(sprite.getDesc());
-            menuItems.push(MenuUtil.createControllerMenuItem(
+            menuItems.push(MenuUtil.createCommandContextMenuItem(
                 Msgs.GENERAL.get("b.config_item", kind), _ctrl.showConfigPopup, sprite, false,
                 _ctrl.memoriesWillSave()));
         }
