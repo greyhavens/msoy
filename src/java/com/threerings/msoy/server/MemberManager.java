@@ -220,10 +220,13 @@ public class MemberManager
         });
         _cronLogic.scheduleEvery(1, new Runnable() {
             public void run () {
-                List<Integer> weakIds = _memberRepo.loadExpiredWeakPermaguestIds();
+                long now = System.currentTimeMillis();
+                List<Integer> weakIds = _memberRepo.loadExpiredWeakPermaguestIds(now);
                 if (!weakIds.isEmpty()) {
                     _memberLogic.deleteMembers(weakIds);
-                    log.info("Purged weak permaguests", "count", weakIds.size(), "ids", weakIds);
+                    int remaining = _memberRepo.countExpiredWeakPermaguestIds(now);
+                    log.info("Purged weak permaguests", "count", weakIds.size(),
+                        "remaining", remaining, "ids", weakIds);
                 }
             }
         });

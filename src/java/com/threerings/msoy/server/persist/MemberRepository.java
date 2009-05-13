@@ -1501,15 +1501,21 @@ public class MemberRepository extends DepotRepository
      * Returns the member ids of all permaguest accounts that have not logged in in the past 10
      * days and have not achieved at least level 5.
      */
-    public List<Integer> loadExpiredWeakPermaguestIds ()
+    public List<Integer> loadExpiredWeakPermaguestIds (long now)
     {
-        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - WEAK_PERMAGUEST_EXPIRE);
-        And bits = new And(new Like(MemberRecord.ACCOUNT_NAME, PERMA_PATTERN),
-                           new LessThan(MemberRecord.LEVEL, STRONG_PERMAGUEST_LEVEL),
-                           new LessThan(MemberRecord.LAST_SESSION, cutoff));
-        return Lists.transform(findAllKeys(MemberRecord.class, false, new Where(bits),
+        return Lists.transform(findAllKeys(MemberRecord.class, false, weakPermaguestWhere(now),
                                            new Limit(0, MAX_WEAK_ACCOUNTS)),
                                RecordFunctions.<MemberRecord>getIntKey());
+    }
+
+    /**
+     * Returns the number of permaguest accounts that have not logged in in the past 10 days and
+     * have not achieved at least level 5.
+     */
+    public int countExpiredWeakPermaguestIds (long now)
+    {
+        return load(CountRecord.class, weakPermaguestWhere(now),
+            new FromOverride(MemberRecord.class)).count;
     }
 
     /**
@@ -1562,6 +1568,15 @@ public class MemberRepository extends DepotRepository
         return new Where(new And(
             new Equals(FriendshipRecord.MEMBER_ID, memberId),
             new Equals(FriendshipRecord.VALID, true)));
+    }
+
+    protected Where weakPermaguestWhere (long now)
+    {
+        Timestamp cutoff = new Timestamp(now - WEAK_PERMAGUEST_EXPIRE);
+        And bits = new And(new Like(MemberRecord.ACCOUNT_NAME, PERMA_PATTERN),
+                           new LessThan(MemberRecord.LEVEL, STRONG_PERMAGUEST_LEVEL),
+                           new LessThan(MemberRecord.LAST_SESSION, cutoff));
+        return new Where(bits);
     }
 
     @Override // from DepotRepository
