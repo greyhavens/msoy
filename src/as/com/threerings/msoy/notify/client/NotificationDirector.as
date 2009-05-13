@@ -336,7 +336,7 @@ public class NotificationDirector extends BasicDirector
 
     protected static const STATUS_UPDATE_DELAY :int = 15; // 15 seconds
 
-    protected static const FLASH_UPGRADE_VERSION :int = 11;
+    protected static const FLASH_UPGRADE_VERSION :int = 10;
 
     protected var _mctx :MsoyContext;
 
