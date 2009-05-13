@@ -223,7 +223,7 @@ public class MemberManager
                 List<Integer> weakIds = _memberRepo.loadExpiredWeakPermaguestIds();
                 if (!weakIds.isEmpty()) {
                     _memberLogic.deleteMembers(weakIds);
-                    log.info("Purged " + weakIds.size() + " expired weak permaguests.");
+                    log.info("Purged weak permaguests", "count", weakIds.size(), "ids", weakIds);
                 }
             }
         });
