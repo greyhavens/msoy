@@ -82,15 +82,11 @@ public class EntityMemories
      */
     protected void setMemory (String key, byte[] newValue)
     {
-        boolean changed;
-        if (newValue == null) {
-            changed = (null != memories.remove(key));
-        } else {
-            byte[] oldValue = memories.put(key, newValue);
-            changed = !Arrays.equals(oldValue, newValue);
-        }
-        if (changed) {
-            modified = true;
+        byte[] oldValue = (newValue == null)
+            ? memories.remove(key)
+            : memories.put(key, newValue);
+        if (!modified) {
+            modified = !Arrays.equals(oldValue, newValue);
         }
     }
 }
