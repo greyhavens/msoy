@@ -3,6 +3,7 @@
 
 package client.issues;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -187,6 +188,11 @@ public class EditIssuePanel extends SmartTable
         setText(row, 0, _msgs.iOwner(), 1, "Label");
         setWidget(row++, 1, _ownerBox = new ListBox());
         _ownerBox.addItem(_msgs.iNoOwner());
+        if (_issue.owner != null) {
+            List<MemberName> tempNames = new ArrayList<MemberName>();
+            tempNames.add(_issue.owner);
+            setOwners(tempNames);
+        }
         _issuesvc.loadOwners(new InfoCallback<List<MemberName>>() {
             public void onSuccess (List<MemberName> owners) {
                 if (owners != null) {
