@@ -72,21 +72,6 @@ public class ItemUtil
     }
 
     /**
-     * Adds item specific buttons to be shown in the item detail in a member's inventory or in the
-     * catalog.
-     */
-    public static void addItemSpecificButtons (final Item item, HorizontalPanel panel)
-    {
-        if (item instanceof Game) {
-            panel.add(new Button(_cmsgs.detailPlay(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    Link.go(Pages.GAMES, Args.compose("d" , ((Game)item).gameId));
-                }
-            }));
-        }
-    }
-
-    /**
      * Creates a generic item viewer, mostly using the UberClient!
      */
     public static HTML createViewer (

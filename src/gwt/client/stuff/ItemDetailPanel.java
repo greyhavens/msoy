@@ -59,9 +59,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         // create our main interface
         init(detail);
 
-// TODO
-//         ItemUtil.addItemSpecificButtons(_item, _buttons);
-
         if (isRemixable()) {
             HorizontalPanel extras = new HorizontalPanel();
             extras.setStyleName("Extras");
@@ -74,17 +71,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (userOwnsItem() || CShell.isSupport()) {
             addOwnerButtons();
         }
-
-//         // if this item supports sub-items, add a tab for those item types
-//         SubItem[] types = _item.getSubTypes();
-//         for (int ii = 0; ii < types.length; ii++) {
-//             // if this is not an original item, only show salable subtypes
-//             if (_item.sourceId != 0 && !types[ii].isSalable()) {
-//                 continue;
-//             }
-//             addTabBelow(_dmsgs.xlate("pItemType" + types[ii].getType()),
-//                 new SubItemPanel(_models, _item.ownerId, types[ii].getType(), _item), false);
-//         }
     }
 
     // from DoListItemPopup.ListedListener
@@ -144,12 +130,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
-        if (isOriginalSubItem(_item)) {
-            SubItem sitem = (SubItem)_item;
-            Link.go(Pages.STUFF, Args.compose("d", sitem.getSuiteMasterType(), sitem.suiteId));
-        } else {
-            Link.go(Pages.STUFF, Args.compose(_item.getType(), _item.ownerId));
-        }
+        Link.go(Pages.STUFF, Args.compose(_item.getType(), _item.ownerId));
     }
 
     protected void addOwnerButtons ()
@@ -279,12 +260,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is an original subitem, provide a link to its original parent
-        if (isOriginalSubItem(_item)) {
+        if (_item instanceof SubItem) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            SubItem sitem = (SubItem)_item;
-            String args = Args.compose("d", sitem.getSuiteMasterType(), sitem.suiteId);
-            _details.add(createTipLink(_msgs.detailCanViewSuiteMaster(),
-                                       _msgs.detailViewSuiteMaster(), Pages.STUFF, args));
+            _details.add(createTipLink(_msgs.detailCanViewGame(), _msgs.detailViewGame(),
+                                       Pages.GAMES, Args.compose("d", ((SubItem)_item).suiteId)));
         }
 
         adjustForUsage();
@@ -385,11 +364,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         row.add(new InlineLabel(tip, true, false, true));
         row.add(Link.create(link, page, args));
         return row;
-    }
-
-    protected static boolean isOriginalSubItem (Item item)
-    {
-        return item instanceof SubItem && !item.isCatalogMaster() && !item.isCatalogClone();
     }
 
     protected InventoryModels _models;

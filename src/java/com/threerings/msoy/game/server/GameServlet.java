@@ -99,7 +99,7 @@ public class GameServlet extends MsoyServiceServlet
         }
         detail.info = info.toGameInfo(getGamePop(_memberMan.getPPSnapshot(), gameId));
         // this should never return null if loadGame() returns non-null
-        detail.metrics = _mgameRepo.loadGameMetrics(gameId).toGameMetrics();
+        detail.metrics = _mgameRepo.loadGameMetrics(info.gameId).toGameMetrics();
 
         // determine how many players can play this game
         int[] players = GameUtil.getMinMaxPlayers(
@@ -111,7 +111,8 @@ public class GameServlet extends MsoyServiceServlet
         detail.info.creator = _memberRepo.loadMemberName(info.creatorId);
         detail.instructions = _mgameRepo.loadInstructions(info.gameId);
         if (mrec != null) {
-            detail.memberRating = _mgameRepo.getRatingRepository().getRating(gameId, mrec.memberId);
+            detail.memberRating = _mgameRepo.getRatingRepository().getRating(
+                info.gameId, mrec.memberId);
         }
 
         return detail;
