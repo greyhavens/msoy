@@ -11,37 +11,51 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.GroupBy;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic.And;
-import com.samskivert.depot.operator.Logic.Or;
-import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.operator.Conditionals.*;
+import com.samskivert.depot.operator.Logic.*;
+import com.samskivert.depot.operator.SQLOperator;
 
-import com.threerings.msoy.server.persist.CountRecord;
-
+import com.threerings.msoy.comment.server.persist.CommentRepository;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.PrizeRepository;
+import com.threerings.msoy.item.server.persist.PropRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
+import com.threerings.msoy.server.persist.CountRecord;
+
+import com.threerings.msoy.game.data.all.GameGenre;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Handles the persistence side of everything about games except the actual item record which is
- * handled by {@link GameRepository}.
+ * Handles the persistence side of everything about games.
  */
 @Singleton
 public class MsoyGameRepository extends DepotRepository
@@ -54,74 +68,280 @@ public class MsoyGameRepository extends DepotRepository
      * {@link #purgeTraceLogs()} is called. */
     public static final int DAYS_TO_KEEP_LISTED_GAME_LOGS = 7;
 
+    /** Used by {@link #loadGenreCounts}. */
+    @Entity @Computed(shadowOf=GameInfoRecord.class)
+    public static class GenreCountRecord extends PersistentRecord
+    {
+        /** The genre in question. */
+        public byte genre;
+
+        /** The number of games in that genre .*/
+        @Computed(fieldDefinition="count(*)")
+        public int count;
+    }
+
     @Inject public MsoyGameRepository (PersistenceContext ctx)
     {
         super(ctx);
 
-        ctx.registerMigration(InstructionsRecord.class,
-            new SchemaMigration.Retype(2, InstructionsRecord.INSTRUCTIONS));
+        registerMigration(new DataMigration("2009_05_12_gameasaurus") {
+            @Override public void invoke () {
+                // create info records for all of our extant detail records
+                int migrated = 0;
+                IntIntMap suiteMigs = new IntIntMap();
+                for (GameDetailRecord drec : findAll(GameDetailRecord.class, CacheStrategy.NONE,
+                                                     Lists.<QueryClause>newArrayList())) {
+                    GameRecord sgrec = _gameRepo.loadItem(drec.sourceItemId);
+                    GameRecord lgrec = _gameRepo.loadItem(drec.listedItemId);
+                    if (sgrec == null) {
+                        log.warning("Missing source record, cannot migrate", "game", drec.gameId);
+                        continue;
+                    }
+                    GameRecord grec = (lgrec == null) ? sgrec : lgrec;
+
+                    GameInfoRecord irec = new GameInfoRecord();
+                    irec.gameId = drec.gameId;
+                    irec.name = grec.name;
+                    irec.genre = grec.genre;
+                    irec.isAVRG = Game.detectIsInWorld(grec.config);
+                    irec.creatorId = grec.creatorId;
+                    irec.description = grec.description;
+                    irec.thumbMediaHash = grec.thumbMediaHash;
+                    irec.thumbMimeType = grec.thumbMimeType;
+                    irec.thumbConstraint = grec.thumbConstraint;
+                    irec.shotMediaHash = grec.shotMediaHash;
+                    irec.shotMimeType = grec.shotMimeType;
+                    irec.groupId = grec.groupId;
+                    irec.shopTag = grec.shopTag;
+                    irec.ratingSum = grec.ratingSum;
+                    irec.ratingCount = grec.ratingCount;
+                    irec.integrated = (drec.lastPayout != null);
+                    store(irec);
+
+                    GameMetricsRecord mrec = new GameMetricsRecord();
+                    mrec.gameId = drec.gameId;
+                    mrec.gamesPlayed = drec.gamesPlayed;
+                    mrec.avgSingleDuration = drec.avgSingleDuration;
+                    mrec.avgMultiDuration = drec.avgMultiDuration;
+                    mrec.payoutFactor = drec.payoutFactor;
+                    mrec.flowToNextRecalc = drec.flowToNextRecalc;
+                    mrec.lastPayout = drec.lastPayout;
+                    store(mrec);
+
+                    GameCodeRecord screc = new GameCodeRecord();
+                    screc.gameId = drec.gameId;
+                    screc.isDevelopment = true;
+                    screc.config = sgrec.config;
+                    screc.clientMediaHash = sgrec.gameMediaHash;
+                    screc.clientMimeType = sgrec.gameMimeType;
+                    screc.serverMediaHash = sgrec.serverMediaHash;
+                    screc.serverMimeType = sgrec.serverMimeType;
+                    screc.splashMediaHash = sgrec.splashMediaHash;
+                    screc.splashMimeType = sgrec.splashMimeType;
+                    screc.lastUpdated = sgrec.lastTouched;
+                    store(screc);
+                    suiteMigs.put(sgrec.itemId, -drec.gameId);
+
+                    if (lgrec != null) {
+                        GameCodeRecord lcrec = new GameCodeRecord();
+                        lcrec.gameId = drec.gameId;
+                        lcrec.isDevelopment = false;
+                        lcrec.config = lgrec.config;
+                        lcrec.clientMediaHash = lgrec.gameMediaHash;
+                        lcrec.clientMimeType = lgrec.gameMimeType;
+                        lcrec.serverMediaHash = lgrec.serverMediaHash;
+                        lcrec.serverMimeType = lgrec.serverMimeType;
+                        lcrec.splashMediaHash = lgrec.splashMediaHash;
+                        lcrec.splashMimeType = lgrec.splashMimeType;
+                        lcrec.lastUpdated = lgrec.lastTouched;
+                        store(lcrec);
+                        suiteMigs.put(-lgrec.catalogId, drec.gameId);
+                    }
+
+                    migrated++;
+                }
+                log.info("Migrated " + migrated + " games to new Whirled order.");
+
+                // pass the buck to the various repositories to migrate the suites
+                _lpackRepo.migrateSuites(suiteMigs);
+                _ipackRepo.migrateSuites(suiteMigs);
+                _tsourceRepo.migrateSuites(suiteMigs);
+                _prizeRepo.migrateSuites(suiteMigs);
+                _propRepo.migrateSuites(suiteMigs);
+            }
+        });
+
+        registerMigration(new DataMigration("2009_05_12_gamecomments") {
+            @Override public void invoke () {
+                IntIntMap idmap = new IntIntMap();
+                Where where = new Where(new And(new GreaterThan(GameRecord.GAME_ID, 0),
+                                                new NotEquals(GameRecord.CATALOG_ID, 0)));
+                for (GameRecord game : findAll(GameRecord.class, where)) {
+                    idmap.put(game.catalogId, game.gameId);
+                }
+                _commentRepo.migrateGameComments(idmap);
+            }
+        });
     }
 
     /**
      * Returns the total number of listed games in the repository.
      */
-    public int getGameCount ()
+    public int loadGameCount ()
     {
-        Where where = new Where(new Conditionals.NotEquals(GameDetailRecord.LISTED_ITEM_ID, 0));
-        return load(CountRecord.class, new FromOverride(GameDetailRecord.class), where).count;
+        Where where = new Where(
+            new Equals(GameCodeRecord.IS_DEVELOPMENT, Boolean.FALSE));
+        return load(CountRecord.class, new FromOverride(GameCodeRecord.class), where).count;
     }
 
     /**
-     * Loads the appropriate {@link GameRecord} for the specified game id. If the id is negative,
-     * the source item record will be loaded, if positive, the listed item record will be loaded.
-     * May return null if the game id is unknown or no valid listed or source item record is
-     * available.
+     * Returns the {@link GameInfoRecord} for the specified game or null if the id is unknown.
      */
-    public GameRecord loadGameRecord (int gameId)
+    public GameInfoRecord loadGame (int gameId)
     {
-        return loadGameRecord(gameId, loadGameDetail(gameId), false);
+        return load(GameInfoRecord.class, Math.abs(gameId));
     }
 
     /**
-     * Returns the {@link GameDetailRecord} for the specified game or null if the id is unknown.
+     * Loads the code record for the specified game. If the id is negative, the development record
+     * will be loaded, if positive, the published record will be loaded. Returns a blank code
+     * record if the game has no record of the requested type.
      */
-    public GameDetailRecord loadGameDetail (int gameId)
+    public GameCodeRecord loadGameCode (int gameId, boolean skipCache)
     {
-        return load(GameDetailRecord.class, Math.abs(gameId));
-    }
-
-    /**
-     * Loads the appropriate {@link GameRecord} for the specified game detail.
-     */
-    public GameRecord loadGameRecord (int gameId, GameDetailRecord gdr, boolean skipCache)
-    {
-        if (gdr == null) {
-            return null;
+        CacheStrategy cache = skipCache ? CacheStrategy.NONE : CacheStrategy.BEST;
+        boolean isDevelopment = gameId < 0 ? true : false;
+        GameCodeRecord code = load(GameCodeRecord.class, cache,
+                                   GameCodeRecord.getKey(Math.abs(gameId), isDevelopment));
+        if (code == null) {
+            code = new GameCodeRecord();
+            code.gameId = Math.abs(gameId);
+            code.isDevelopment = isDevelopment;
         }
-        int itemId = GameRecord.isDeveloperVersion(gameId) ? gdr.sourceItemId : gdr.listedItemId;
-        if (skipCache) {
-            // if we need to skip the cache, we have to load things directly (making the assumption
-            // along the way that game records are original items, which they are)
-            return load(GameRecord.class, CacheStrategy.NONE, GameRecord.getKey(itemId));
+        return code;
+    }
+
+    /**
+     * Loads the metrics record for the specified game.
+     */
+    public GameMetricsRecord loadGameMetrics (int gameId)
+    {
+        return load(GameMetricsRecord.class, gameId);
+    }
+
+    /**
+     * Loads up the detail records for all games in the specified set that are published. The game
+     * records will be returned in arbitrary order.
+     */
+    public List<GameInfoRecord> loadPublishedGames (Collection<Integer> gameIds)
+    {
+        return findAll(
+            GameInfoRecord.class,
+            new Where(new And(new In(GameInfoRecord.GAME_ID, gameIds),
+                              new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN))));
+    }
+
+    /**
+     * Loads the count of how many published, integrated games we have in each genre.
+     */
+    public IntIntMap loadGenreCounts ()
+    {
+        IntIntMap counts = new IntIntMap();
+        for (GenreCountRecord gcr : findAll(
+                 GenreCountRecord.class,
+                 new Where(new And(new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN),
+                                   new Equals(GameInfoRecord.INTEGRATED, Boolean.TRUE))),
+                 new GroupBy(GameInfoRecord.GENRE))) {
+            counts.put(gcr.genre, gcr.count);
+        }
+        return counts;
+    }
+
+    /**
+     * Loads all listed game records in the specified genre, sorted from highest to lowest rating.
+     *
+     * @param genre the genre of game record to load or {@link GameGenre#ALL} to load all games.
+     * @param limit a limit to the number of records loaded or <= 0 to load all records.
+     */
+    public List<GameInfoRecord> loadGenre (byte genre, int limit)
+    {
+        return loadGenre(genre, limit, null);
+    }
+
+    /**
+     * Loads all game records in the specified genre, sorted from highest to lowest rating.
+     *
+     * @param genre the genre of game record to load or -1 to load all published games.
+     * @param limit a limit to the number of records loaded or <= 0 to load all records.
+     * @param search string to search for in the title, tags and description
+     */
+    public List<GameInfoRecord> loadGenre (byte genre, int limit, String search)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+
+        // build the where clause with genre and/or search string
+        List<SQLOperator> whereBits = Lists.newArrayList();
+        if (genre < 0) { // ALL == -1 but we want to avoid showing HIDDEN always
+            whereBits.add(new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN));
         } else {
-            return _gameRepo.loadItem(itemId);
+            whereBits.add(new Equals(GameInfoRecord.GENRE, genre));
         }
+
+// TODO: search name and description
+//         if (search != null && search.length() > 0) {
+//             whereBits.add(buildSearchClause(new WordSearch(search)));
+//         }
+
+        // filter out games that aren't integrated with Whirled
+        whereBits.add(new Equals(GameInfoRecord.INTEGRATED, Boolean.TRUE));
+        clauses.add(new Where(new And(whereBits)));
+
+        // sort by descending average rating
+        FunctionExp count = new FunctionExp(
+            "GREATEST", GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
+        clauses.add(OrderBy.descending(new Arithmetic.Div(GameInfoRecord.RATING_SUM, count)));
+
+        // add the limit if specified
+        if (limit > 0) {
+            clauses.add(new Limit(0, limit));
+        }
+
+        return findAll(GameInfoRecord.class, clauses);
     }
 
     /**
-     * Loads up the listed {@link GameRecord} records for all games in the specified set that have
-     * listed game records. Games which have no listed record are ommitted from the results. The
-     * game records will be returned in arbitrary order.
+     * Creates a new game using the data in the supplied info record. A GameMetricsRecord is also
+     * created for the new game.
      */
-    public List<GameRecord> loadListedGameRecords (Collection<Integer> gameIds)
+    public int createGame (GameInfoRecord info)
     {
-        Set<Integer> itemIds = Sets.newHashSet();
-        for (GameDetailRecord gdr : loadAll(GameDetailRecord.class, gameIds)) {
-            if (gdr.listedItemId != 0) {
-                itemIds.add(gdr.listedItemId);
-            }
-        }
-        return _gameRepo.loadItems(itemIds);
+        // insert the info record, which will generate a gameId for this game
+        insert(info);
+
+        GameMetricsRecord metrics = new GameMetricsRecord();
+        metrics.gameId = info.gameId;
+        metrics.payoutFactor = GameMetricsRecord.DEFAULT_PAYOUT_FACTOR;
+        metrics.flowToNextRecalc = GameMetricsRecord.INITIAL_RECALC_FLOW;
+        insert(metrics);
+
+        return info.gameId;
+    }
+
+    /**
+     * Updates the supplied game info record.
+     */
+    public void updateGameInfo (GameInfoRecord info)
+    {
+        update(info);
+    }
+
+    /**
+     * Updates the supplied game code record.
+     */
+    public void updateGameCode (GameCodeRecord code)
+    {
+        code.lastUpdated = new Timestamp(System.currentTimeMillis());
+        store(code);
     }
 
     /**
@@ -129,28 +349,29 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void gameCreated (GameRecord item)
     {
-        // sanity check
-        if (item.isCatalogMaster() && item.gameId == 0) {
-            log.warning("Listed game with no assigned game id " + item + ".");
-        }
+// TODODO
+//         // sanity check
+//         if (item.isCatalogMaster() && item.gameId == 0) {
+//             log.warning("Listed game with no assigned game id " + item + ".");
+//         }
 
-        // if this item did not yet have a game id, create a new game detail record and wire it up
-        if (item.gameId == 0) {
-            GameDetailRecord gdr = new GameDetailRecord();
-            gdr.sourceItemId = item.itemId;
-            gdr.payoutFactor = GameDetailRecord.DEFAULT_PAYOUT_FACTOR;
-            gdr.flowToNextRecalc = GameDetailRecord.INITIAL_RECALC_FLOW;
-            insert(gdr);
-            // source games use -gameId to differentiate themselves from all non-source games
-            _gameRepo.updateGameId(item.itemId, -gdr.gameId);
-            // fill the game id back into the newly created game record
-            item.gameId = -gdr.gameId;
+//         // if this item did not yet have a game id, create a new game detail record and wire it up
+//         if (item.gameId == 0) {
+//             GameInfoRecord gdr = new GameInfoRecord();
+//             gdr.sourceItemId = item.itemId;
+//             gdr.payoutFactor = GameInfoRecord.DEFAULT_PAYOUT_FACTOR;
+//             gdr.flowToNextRecalc = GameInfoRecord.INITIAL_RECALC_FLOW;
+//             insert(gdr);
+//             // source games use -gameId to differentiate themselves from all non-source games
+// //             _gameRepo.updateGameId(item.itemId, -gdr.gameId);
+//             // fill the game id back into the newly created game record
+//             item.gameId = -gdr.gameId;
 
-        } else if (item.isCatalogMaster()) {
-            // update the game detail record with the new listed item id
-            updatePartial(GameDetailRecord.class, item.gameId,
-                          GameDetailRecord.LISTED_ITEM_ID, item.itemId);
-        }
+//         } else if (item.isCatalogMaster()) {
+//             // update the game detail record with the new listed item id
+//             updatePartial(GameInfoRecord.class, item.gameId,
+//                           GameInfoRecord.LISTED_ITEM_ID, item.itemId);
+//         }
     }
 
     /**
@@ -158,25 +379,26 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void gameDeleted (GameRecord item)
     {
-        // if we're deleting an original item; we need to potentially delete or update its
-        // associated game detail record
-        GameDetailRecord gdr = null;
-        if (item.itemId > 0) {
-            if (item.gameId != 0) {
-                gdr = load(GameDetailRecord.class, Math.abs(item.gameId));
-            }
-            if (gdr != null) {
-                if (gdr.sourceItemId == item.itemId) {
-                    gdr.sourceItemId = 0;
-                    if (gdr.listedItemId == 0) {
-                        purgeGame(gdr.gameId);
-                    } else {
-                        update(gdr);
-                    }
-                }
-                // zeroing out listedItemId is handled in gameDelisted()
-            }
-        }
+// TODODO
+//         // if we're deleting an original item; we need to potentially delete or update its
+//         // associated game detail record
+//         GameInfoRecord gdr = null;
+//         if (item.itemId > 0) {
+//             if (item.gameId != 0) {
+//                 gdr = load(GameInfoRecord.class, Math.abs(item.gameId));
+//             }
+//             if (gdr != null) {
+//                 if (gdr.sourceItemId == item.itemId) {
+//                     gdr.sourceItemId = 0;
+//                     if (gdr.listedItemId == 0) {
+//                         purgeGame(gdr.gameId);
+//                     } else {
+//                         update(gdr);
+//                     }
+//                 }
+//                 // zeroing out listedItemId is handled in gameDelisted()
+//             }
+//         }
     }
 
     /**
@@ -186,8 +408,9 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void gameDelisted (GameRecord item)
     {
-        // zero out the game detail record's listed game item id
-        updatePartial(GameDetailRecord.class, item.gameId, GameDetailRecord.LISTED_ITEM_ID, 0);
+// TODODO
+//         // zero out the game detail record's listed game item id
+//         updatePartial(GameInfoRecord.class, item.gameId, GameInfoRecord.LISTED_ITEM_ID, 0);
     }
 
     /**
@@ -196,13 +419,13 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void updatePayoutFactor (int gameId, int newFactor, int flowToNextRecalc)
     {
-        updatePartial(GameDetailRecord.class, Math.abs(gameId),
-                      GameDetailRecord.PAYOUT_FACTOR, newFactor,
-                      GameDetailRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc);
+        updatePartial(GameMetricsRecord.class, Math.abs(gameId),
+                      GameMetricsRecord.PAYOUT_FACTOR, newFactor,
+                      GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc);
     }
 
     /**
-     * Records a {@link GamePlayRecord} for this game and updates its {@link GameDetailRecord} to
+     * Records a {@link GamePlayRecord} for this game and updates its {@link GameInfoRecord} to
      * reflect this gameplay.
      */
     public void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames,
@@ -219,12 +442,14 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED, playerGames);
-        SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
-        updateLiteral(GameDetailRecord.class, Math.abs(gprec.gameId),
-                      ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
-                                      GameDetailRecord.FLOW_TO_NEXT_RECALC, sub,
-                                      GameDetailRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
+        SQLExpression add = new Arithmetic.Add(GameMetricsRecord.GAMES_PLAYED, playerGames);
+        SQLExpression sub = new Arithmetic.Sub(GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
+        updateLiteral(GameMetricsRecord.class, Math.abs(gprec.gameId),
+                      ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
+                                      GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,
+                                      GameMetricsRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
+
+        // TODO: update GameInfoRecord.INTEGRATED
     }
 
     /**
@@ -237,9 +462,9 @@ public class MsoyGameRepository extends DepotRepository
     public Collection<GamePlayRecord> getGamePlaysBetween (long start, long end)
     {
         // where recorded >= {start} and recorded < {end}
-        Where where = new Where(new Logic.And(
-            new Conditionals.GreaterThanEquals(GamePlayRecord.RECORDED, new Timestamp(start)),
-            new Conditionals.LessThan(GamePlayRecord.RECORDED, new Timestamp(end))
+        Where where = new Where(new And(
+            new GreaterThanEquals(GamePlayRecord.RECORDED, new Timestamp(start)),
+            new LessThan(GamePlayRecord.RECORDED, new Timestamp(end))
         ));
 
         return findAll(GamePlayRecord.class, where);
@@ -247,7 +472,7 @@ public class MsoyGameRepository extends DepotRepository
 
     /**
      * Grinds through this game's recent gameplay data and computes an updated payout factor and
-     * new average game durations. Updates the {@link GameDetailRecord} with those values.
+     * new average game durations. Updates the {@link GameMetricsRecord} with those values.
      *
      * @return a triplet of new values for (payoutFactor, avgSingleDuration, avgMultiDuration).
      */
@@ -287,16 +512,16 @@ public class MsoyGameRepository extends DepotRepository
                  ", aph=" + awardedPerHour + ", payoutRatio=" + payoutRatio + "].");
 
         // update the detail record
-        updatePartial(GameDetailRecord.class, gameId,
-                      GameDetailRecord.PAYOUT_FACTOR, payoutFactor,
-                      GameDetailRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc,
-                      GameDetailRecord.AVG_SINGLE_DURATION, avgSingleDuration,
-                      GameDetailRecord.AVG_MULTI_DURATION, avgMultiDuration);
+        updatePartial(GameMetricsRecord.class, gameId,
+                      GameMetricsRecord.PAYOUT_FACTOR, payoutFactor,
+                      GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc,
+                      GameMetricsRecord.AVG_SINGLE_DURATION, avgSingleDuration,
+                      GameMetricsRecord.AVG_MULTI_DURATION, avgMultiDuration);
 
         // lastly, prune old gameplay records
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - THIRTY_DAYS);
         deleteAll(GamePlayRecord.class,
-                  new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED, cutoff)));
+                  new Where(new LessThan(GamePlayRecord.RECORDED, cutoff)));
 
         return new int[] { payoutFactor, avgSingleDuration, avgMultiDuration };
     }
@@ -379,14 +604,14 @@ public class MsoyGameRepository extends DepotRepository
 
         // Create conditionals for distinguishing dev from listed games
         ColumnExp gameId = GameTraceLogRecord.GAME_ID;
-        Conditionals.LessThan isDev = new Conditionals.LessThan(gameId, 0);
-        Conditionals.GreaterThan isListed = new Conditionals.GreaterThan(gameId, 0);
+        LessThan isDev = new LessThan(gameId, 0);
+        GreaterThan isListed = new GreaterThan(gameId, 0);
 
         // Perform deletion
         ColumnExp recorded = GameTraceLogRecord.RECORDED;
         int rows = deleteAll(GameTraceLogRecord.class, new Where(new Or(
-            new And(isDev, new Conditionals.LessThan(recorded, devCutoffTimestamp)),
-            new And(isListed, new Conditionals.LessThan(recorded, listedCutoffTimestamp)))));
+            new And(isDev, new LessThan(recorded, devCutoffTimestamp)),
+            new And(isListed, new LessThan(recorded, listedCutoffTimestamp)))));
 
         log.info("Deleted trace logs", "devCutoff", devCutoffTimestamp,
                  "listedCutoff", listedCutoffTimestamp, "rows", rows);
@@ -397,7 +622,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     protected void purgeGame (int gameId)
     {
-        delete(GameDetailRecord.class, gameId);
+        delete(GameInfoRecord.class, gameId);
         delete(InstructionsRecord.class, gameId);
         deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId));
         deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId));
@@ -406,13 +631,23 @@ public class MsoyGameRepository extends DepotRepository
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(GameDetailRecord.class);
+        classes.add(GameInfoRecord.class);
+        classes.add(GameCodeRecord.class);
+        classes.add(GameMetricsRecord.class);
         classes.add(GamePlayRecord.class);
         classes.add(InstructionsRecord.class);
         classes.add(GameTraceLogRecord.class);
     }
 
+    // TEMP
     @Inject protected GameRepository _gameRepo;
+    @Inject protected TrophySourceRepository _tsourceRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected PrizeRepository _prizeRepo;
+    @Inject protected PropRepository _propRepo;
+    @Inject protected CommentRepository _commentRepo;
+    // END TEMP
 
     /** We will not adjust a game's payout higher than 2x to bring it in line with our desired
      * payout rates to avoid potential abuse. Games that consistently award very low amounts can

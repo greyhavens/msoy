@@ -1,10 +1,14 @@
 <module>
+  <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="game"/>
   <inherits name="trophy"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
+  <source path="com/threerings/msoy/fora/gwt"/>
+  <source path="com/threerings/msoy/group/data/all"/>
+  <source path="com/threerings/msoy/group/gwt"/>
 
   <source path="client/comment"/>
   <source path="client/games"/>

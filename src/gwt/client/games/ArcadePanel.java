@@ -12,6 +12,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.ArcadeData;
+import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -45,7 +46,7 @@ public class ArcadePanel extends FlowPanel
     {
         clear();
         add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
-        _header.init(data.allGames);
+        _header.initWithCards(data.allGames);
 
         // show the top N games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
@@ -90,7 +91,7 @@ public class ArcadePanel extends FlowPanel
 
             // display 1-3 games
             for (int i = 0; i < genre.games.length; i++) {
-                GameInfo game = genre.games[i];
+                GameCard game = genre.games[i];
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
                 String clickArgs = Args.compose("d", game.gameId);
@@ -100,8 +101,9 @@ public class ArcadePanel extends FlowPanel
                     genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
                                                Pages.GAMES, clickArgs));
                     genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
-                    genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
-                                                     "Description"));
+// TODO: add players online
+//                     genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
+//                                                      "Description"));
                 } else {
                     genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
                                                Pages.GAMES, clickArgs));
@@ -124,7 +126,7 @@ public class ArcadePanel extends FlowPanel
      */
     protected static class TopGameWidget extends SmartTable
     {
-        public TopGameWidget (int index, GameInfo game) {
+        public TopGameWidget (int index, GameCard game) {
             super("TopGameWidget", 0, 0);
             setText(0, 0, index+"", 1, "Number");
             String args = Args.compose("d", game.gameId);
@@ -136,8 +138,8 @@ public class ArcadePanel extends FlowPanel
             } else {
                 FlowPanel bits = new FlowPanel();
                 bits.add(link);
-                bits.add(MsoyUI.createLabel(
-                             _msgs.featuredOnline(""+game.playersOnline), "tipLabel"));
+                bits.add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline),
+                                            "tipLabel"));
                 setWidget(0, 2, bits);
             }
         }

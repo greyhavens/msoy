@@ -17,6 +17,9 @@ public class MsoyGameDefinition extends GameDefinition
     /** If true, the game requires the LWJGL libraries. */
     public var lwjgl :Boolean;
 
+    /** TEMP: hack to allow us to only run the agent for multiplayer games. */
+    public var isAgentMPOnly :Boolean;
+
     /** We need this here to be able to communicate with the whirled code that will launch the
      *  agent on the server. */
     public var serverMedia :String;
@@ -62,6 +65,7 @@ public class MsoyGameDefinition extends GameDefinition
     {
         super.readObject(ins);
         lwjgl = ins.readBoolean();
+        isAgentMPOnly = ins.readBoolean();
         serverMedia = (ins.readField(String) as String);
         bureauId = (ins.readField(String) as String);
     }
@@ -71,6 +75,7 @@ public class MsoyGameDefinition extends GameDefinition
     {
         super.writeObject(out);
         out.writeBoolean(lwjgl);
+        out.writeBoolean(isAgentMPOnly);
         out.writeField(serverMedia);
         out.writeField(bureauId);
     }

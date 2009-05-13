@@ -16,7 +16,7 @@ import com.threerings.parlor.data.TableMarshaller;
 
 import com.whirled.game.data.GameDefinition;
 
-import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Represents a lobby for a particular game.
@@ -34,8 +34,8 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public static const GROUP_ID :String = "groupId";
     // AUTO-GENERATED: FIELDS END
 
-    /** The game we're matchmaking for. */
-    public var game :Game;
+    /** The game that we're matchmaking for. */
+    public var game :GameSummary;
 
     /** The parsed configuration info for this game. */
     public var gameDef :GameDefinition;
@@ -48,6 +48,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** The group to load up behind the lobby if not already in a room. */
     public var groupId :int;
+
+    /** The splash media for our game, or null. */
+    public var splashMedia :MediaDesc;
 
     // from TableLobbyObject
     public function getTables () :DSet
@@ -89,11 +92,12 @@ public class LobbyObject extends DObject implements TableLobbyObject
     {
         super.readObject(ins);
 
-        game = Game(ins.readObject());
+        game = GameSummary(ins.readObject());
         gameDef = GameDefinition(ins.readObject());
         tables = DSet(ins.readObject());
         tableService = TableMarshaller(ins.readObject());
-        groupId = (ins.readInt());
+        groupId = ins.readInt();
+        splashMedia = MediaDesc(ins.readObject());
     }
 }
 }

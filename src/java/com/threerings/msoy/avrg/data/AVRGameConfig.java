@@ -10,8 +10,8 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Configuration for an AVR game. This is basically BaseGameConfig + ParlorGameConfig,
@@ -27,14 +27,13 @@ public class AVRGameConfig extends PlaceConfig
     public MediaDesc thumbnail;
 
     /**
-     * Configures this config with information from the supplied {@link Game} item.
+     * Configures this config with information from the supplied game metadata.
      */
-    public void init (Game game, GameDefinition gameDef)
+    public void init (GameSummary game, GameDefinition gameDef)
     {
         this.name = game.name;
-        this.thumbnail = game.getThumbnailMedia();
+        this.thumbnail = game.thumbMedia;
         _gameId = game.gameId;
-        _suiteId = game.getSuiteId();
         _gameDef = gameDef;
     }
 
@@ -57,19 +56,8 @@ public class AVRGameConfig extends PlaceConfig
         return _gameDef;
     }
 
-    /**
-     * Returns the suiteId of the Game object.
-     */
-    public int getSuiteId ()
-    {
-        return _suiteId;
-    }
-
     /** Our game's unique id. */
     protected int _gameId;
-
-    /** Our game item's suiteId */
-    protected int _suiteId;
 
     /** Our game definition. */
     protected GameDefinition _gameDef;

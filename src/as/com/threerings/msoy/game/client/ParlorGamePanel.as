@@ -98,7 +98,7 @@ public class ParlorGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function getPlaceLogo () :MediaDesc
     {
-        return (_ctrl.getPlaceConfig() as ParlorGameConfig).game.getThumbnailMedia();
+        return (_ctrl.getPlaceConfig() as ParlorGameConfig).game.thumbMedia;
     }
 
     /**
@@ -121,7 +121,7 @@ public class ParlorGamePanel extends WhirledGamePanel
 
         _spinner = new GameLoadingDisplay(
             _gctx.getWorldContext().getTopPanel().getPlaceContainer(),
-            LobbyPlaceView.getLoadingMedia(config.game));
+            LobbyPlaceView.getLoadingMedia(config.splashMedia, config.game));
 
         super.willEnterPlace(plobj);
 

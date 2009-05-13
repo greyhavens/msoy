@@ -39,9 +39,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public static final byte PRIZE = registerItemType(Prize.class, 14);
     public static final byte PROP = registerItemType(Prop.class, 15);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
-    //
-    // Note: If the number of item types surpasses 31, we need to change the loadedInventory field
-    // of MemberObject to be a BitSet or something.
 
     /**
      * A canonical ordering of our item types for use in the catalog. Note that this does not
@@ -282,14 +279,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     /**
-     * Returns prototype item instances for all subtypes that can be created for this item.
-     */
-    public SubItem[] getSubTypes ()
-    {
-        return NO_SUBTYPES;
-    }
-
-    /**
      * Returns the id of the item of which this item is a clone, or this item's own item id if it
      * is an original item.
      */
@@ -322,16 +311,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public boolean isCatalogClone ()
     {
         return (sourceId != 0) && (catalogId != 0);
-    }
-
-    /**
-     * Returns the suite for which this item is the parent. If the item is a listed catalog master,
-     * the suite id will be its negated catalog listing id. If the item is a mutable original, the
-     * suite id will be its item id.
-     */
-    public int getSuiteId ()
-    {
-        return (isCatalogMaster() || isCatalogClone()) ? -catalogId : itemId;
     }
 
     /**
@@ -573,6 +552,4 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
     private static HashMap<Byte, Class<? extends Item>> _mapping;
     private static HashMap<Class<? extends Item>, Byte> _reverseMapping;
-
-    protected static final SubItem[] NO_SUBTYPES = {};
 }

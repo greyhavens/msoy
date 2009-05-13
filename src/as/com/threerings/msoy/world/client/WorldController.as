@@ -52,7 +52,6 @@ import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.game.client.GameGameService;
 import com.threerings.msoy.game.client.ParlorGamePanel;
-import com.threerings.msoy.game.data.ParlorGameConfig;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
@@ -1121,11 +1120,12 @@ public class WorldController extends MsoyController
         if (view is RoomView) {
             return RoomView(view).getRoomController().canManageRoom();
         }
-        const gameCfg :ParlorGameConfig = _wctx.getGameDirector().getGameConfig();
-        if (gameCfg != null) {
-            // in games, we can "manage" if we're the owner
-            return gameCfg.game.creatorId == _wctx.getMyId();
-        }
+// TODO!
+//         const gameCfg :ParlorGameConfig = _wctx.getGameDirector().getGameConfig();
+//         if (gameCfg != null) {
+//             // in games, we can "manage" if we're the owner
+//             return gameCfg.game.creatorId == _wctx.getMyId();
+//         }
         return false;
     }
 

@@ -75,16 +75,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             addOwnerButtons();
         }
 
-        // if this item supports sub-items, add a tab for those item types
-        SubItem[] types = _item.getSubTypes();
-        for (int ii = 0; ii < types.length; ii++) {
-            // if this is not an original item, only show salable subtypes
-            if (_item.sourceId != 0 && !types[ii].isSalable()) {
-                continue;
-            }
-            addTabBelow(_dmsgs.xlate("pItemType" + types[ii].getType()),
-                new SubItemPanel(_models, _item.ownerId, types[ii].getType(), _item), false);
-        }
+//         // if this item supports sub-items, add a tab for those item types
+//         SubItem[] types = _item.getSubTypes();
+//         for (int ii = 0; ii < types.length; ii++) {
+//             // if this is not an original item, only show salable subtypes
+//             if (_item.sourceId != 0 && !types[ii].isSalable()) {
+//                 continue;
+//             }
+//             addTabBelow(_dmsgs.xlate("pItemType" + types[ii].getType()),
+//                 new SubItemPanel(_models, _item.ownerId, types[ii].getType(), _item), false);
+//         }
     }
 
     // from DoListItemPopup.ListedListener

@@ -9,7 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -25,7 +25,7 @@ import client.ui.ThumbBox;
  */
 public class FeaturedGamePanel extends AbsolutePanel
 {
-    public FeaturedGamePanel (FeaturedGameInfo[] games)
+    public FeaturedGamePanel (GameInfo[] games)
     {
         setStyleName("featuredGame");
         _games = games;
@@ -35,9 +35,9 @@ public class FeaturedGamePanel extends AbsolutePanel
     protected void selectGame (final int index)
     {
         clear();
-        final FeaturedGameInfo game = _games[index];
+        final GameInfo game = _games[index];
 
-        add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE,
+        add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE,
                          Pages.GAMES, Args.compose("d", game.gameId)), 10, 37);
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "Online"), 10, 170);
@@ -64,7 +64,7 @@ public class FeaturedGamePanel extends AbsolutePanel
         add(PlayButton.create(game, "", PlayButton.Size.MEDIUM), 307, 160);
     }
 
-    protected FeaturedGameInfo[] _games;
+    protected GameInfo[] _games;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

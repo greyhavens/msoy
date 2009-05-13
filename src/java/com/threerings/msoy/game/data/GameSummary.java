@@ -6,8 +6,7 @@ package com.threerings.msoy.game.data;
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.game.gwt.GameInfo;
 
 /**
  * Contains metadata about a game for which a player is currently matchmaking.
@@ -24,8 +23,8 @@ public class GameSummary extends SimpleStreamableObject
     /** Whether or not this is an AVRGame. */
     public boolean avrGame;
 
-    /** The mime type of this game's client media (SWF or JAR). */
-    public byte gameMediaType;
+    /** The thumbnail media for the game we're summarizing. */
+    public MediaDesc thumbMedia;
 
     /** Used for unserialization. */
     public GameSummary ()
@@ -35,21 +34,20 @@ public class GameSummary extends SimpleStreamableObject
     /**
      * Creates a summary for the specified game.
      */
-    public GameSummary (Game game)
+    public GameSummary (GameInfo game)
     {
-        gameId = game.gameId;
-        name = game.name;
-        avrGame = game.isInWorld();
-        gameMediaType = game.gameMedia.mimeType;
-        _thumbMedia = game.getRawThumbnailMedia();
+        this(game.gameId, game.name, game.isAVRG, game.thumbMedia);
     }
 
     /**
-     * Returns the thumbnail media for the game we're summarizing.
+     * Creates a summary for the specified game.
      */
-    public MediaDesc getThumbMedia ()
+    public GameSummary (int gameId, String name, boolean isAVRG, MediaDesc thumbMedia)
     {
-        return _thumbMedia != null ? _thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
+        this.gameId = gameId;
+        this.name = name;
+        this.avrGame = isAVRG;
+        this.thumbMedia = thumbMedia;
     }
 
     @Override // from Object
@@ -71,7 +69,4 @@ public class GameSummary extends SimpleStreamableObject
             throw new RuntimeException(cnse); // not going to happen
         }
     }
-
-    /** The thumbnail of the game - used as a game icon */
-    protected MediaDesc _thumbMedia;
 }

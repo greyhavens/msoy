@@ -15,9 +15,6 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.TagCodes;
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.server.GameUtil;
 
 /**
  * Extends Item with game info.
@@ -114,53 +111,6 @@ public class GameRecord extends ItemRecord
     /** The tag used to identify (non-pack) items in this game's shop. */
     @Column(length=TagCodes.MAX_TAG_LENGTH, nullable=true)
     public String shopTag;
-
-    /**
-     * Returns true if the specified game is in development.
-     */
-    public static boolean isDeveloperVersion (int gameId)
-    {
-        return gameId < 0;
-    }
-
-    /**
-     * Returns true if this is game is in development
-     */
-    public boolean isDeveloperVersion ()
-    {
-        return isDeveloperVersion(gameId);
-    }
-
-    /**
-     * Creates a {@link GameInfo} record for this game.
-     */
-    public GameInfo toGameInfo ()
-    {
-        return toGameInfo(new GameInfo());
-    }
-
-    /**
-     * Populates and returns the supplied {@link GameInfo} record with this game's info.
-     */
-    public GameInfo toGameInfo (GameInfo info)
-    {
-        info.gameId = gameId;
-        info.name = name;
-        info.genre = genre;
-        info.thumbMedia = getThumbMediaDesc();
-        info.description = description;
-        if (info instanceof FeaturedGameInfo && shotMediaHash != null) {
-            ((FeaturedGameInfo)info).shotMedia = new MediaDesc(shotMediaHash, shotMimeType);
-        }
-        int[] players = GameUtil.getMinMaxPlayers((Game)toItem());
-        info.minPlayers = players[0];
-        info.maxPlayers = players[1];
-        info.rating = getRating();
-        info.ratingCount = ratingCount;
-        info.isInWorld = Game.detectIsInWorld(config);
-        info.groupId = groupId;
-        return info;
-    }
 
     @Override // from ItemRecord
     public void prepareForListing (ItemRecord oldListing)

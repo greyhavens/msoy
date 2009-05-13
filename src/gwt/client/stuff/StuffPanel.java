@@ -153,6 +153,9 @@ public class StuffPanel extends FlowPanel
 
     protected boolean isCatalogItem (byte type)
     {
+        if (type == Item.GAME) {
+            return false; // TEMP
+        }
         for (byte element2 : Item.SHOP_TYPES) {
             if (type == element2) {
                 return true;
@@ -173,7 +176,7 @@ public class StuffPanel extends FlowPanel
         _upload.add(new StretchButton(StretchButton.BLUE_THICK, _msgs.getStuffShop(),
             Link.createListener(Pages.SHOP, _type + "")), 10, 90);
         _upload.add(MsoyUI.createButton(MsoyUI.MEDIUM_THICK, _msgs.getStuffUpload(),
-            NaviUtil.onCreateItem(_type, (byte)0, 0)), 535, 90);
+            NaviUtil.onCreateItem(_type, 0)), 535, 90);
     }
 
     /**

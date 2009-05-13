@@ -50,10 +50,9 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -61,7 +60,6 @@ import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
@@ -490,12 +488,16 @@ public class AdminServlet extends MsoyServiceServlet
 
         BureauLauncherInfo[] infos = waiter.waitForResult();
 
-        Map<String, Game> games = Maps.newHashMap();
+        Map<String, GameInfoRecord> games = Maps.newHashMap();
         for (BureauLauncherInfo linfo : infos) {
             for (BureauInfo binfo : linfo.bureaus) {
-                binfo.game = games.get(binfo.bureauId);
-                if (binfo.game == null) {
-                    games.put(binfo.bureauId, binfo.game = resolveBureauGame(binfo.bureauId));
+                GameInfoRecord game = games.get(binfo.bureauId);
+                if (game == null) {
+                    games.put(binfo.bureauId, game = resolveBureauGame(binfo.bureauId));
+                }
+                if (game != null) {
+                    binfo.gameId = game.gameId;
+                    binfo.gameName = game.name;
                 }
             }
         }
@@ -690,34 +692,13 @@ public class AdminServlet extends MsoyServiceServlet
         _mailRepo.startConversation(recipientId, senderId, subject, body, null, true, true);
     }
 
-    protected Game resolveBureauGame (String bureauId)
+    protected GameInfoRecord resolveBureauGame (String bureauId)
     {
         final String prefix = BureauTypes.GAME_BUREAU_ID_PREFIX;
         if (!bureauId.startsWith(prefix)) {
             return null;
         }
-
-        int gameId = Integer.parseInt(bureauId.substring(prefix.length()));
-        GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
-        if (gdr == null) {
-            return null;
-        }
-
-        GameRecord item = null;
-        boolean isDevVersion = Game.isDevelopmentVersion(gameId);
-        if (isDevVersion) {
-            if (gdr.sourceItemId != 0) {
-                item = _gameRepo.loadItem(gdr.sourceItemId);
-            }
-        } else if (gdr.listedItemId != 0) {
-            item = _gameRepo.loadItem(gdr.listedItemId);
-        }
-
-        if (item == null) {
-            return null;
-        }
-
-        return (Game)item.toItem();
+        return _mgameRepo.loadGame(Integer.parseInt(bureauId.substring(prefix.length())));
     }
 
     protected static class RestartPanopticonAction extends NodeAction

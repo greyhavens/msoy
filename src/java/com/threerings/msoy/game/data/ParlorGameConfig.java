@@ -5,8 +5,10 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.util.ActionScript;
 import com.threerings.toybox.data.ToyBoxGameConfig;
+
 import com.whirled.game.data.GameDefinition;
-import com.threerings.msoy.item.data.all.Game;
+
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Configuration for a Parlor game. Parlor games take over the entire display and don't leverage
@@ -15,19 +17,23 @@ import com.threerings.msoy.item.data.all.Game;
 public class ParlorGameConfig extends ToyBoxGameConfig
     implements MsoyGameConfig
 {
-    /** The game item. */
-    public Game game;
+    /** Info on the game being played. */
+    public GameSummary game;
 
     /** The game's groupId, or 0 for none. */
     public int groupId;
 
+    /** This game's splash screen media or null. */
+    public MediaDesc splashMedia;
+
     /**
-     * Configures this config with information from the supplied {@link Game} item.
+     * Configures this config with information from the supplied game bits.
      */
-    public void init (Game game, GameDefinition gameDef, int groupId)
+    public void init (GameSummary game, GameDefinition gameDef, int groupId, MediaDesc splash)
     {
         this.game = game;
         this.groupId = groupId;
+        this.splashMedia = splash;
         _gameId = game.gameId;
         _gameDef = gameDef;
     }

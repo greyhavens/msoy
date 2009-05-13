@@ -43,6 +43,15 @@ public class GamesPage extends Page
             setContent(new GameGenrePanel(
                 (byte)args.get(1, (byte)-1), (byte)args.get(2, 0), args.get(3, null)));
 
+        } else if (action.equals("e")) {
+            EditGamePanel panel;
+            if (getContent() instanceof EditGamePanel) {
+                panel = (EditGamePanel)getContent();
+            } else {
+                setContent(_msgs.egTitle(), panel = new EditGamePanel());
+            }
+            panel.setGame(args.get(1, 0), args.get(2, -1));
+
         } else {
             setContent(new ArcadePanel());
         }

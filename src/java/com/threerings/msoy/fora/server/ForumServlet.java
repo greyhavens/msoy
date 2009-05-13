@@ -37,14 +37,13 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
@@ -646,10 +645,9 @@ public class ForumServlet extends MsoyServiceServlet
 
     protected String makeBoxedGame (String token, int gameId)
     {
-        GameRecord grec = _gameRepo.loadGameRecord(gameId);
+        GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         return (grec == null) ? null :
-            MessageUtil.makeBox(token, ((Game)grec.toItem()).getShotMedia(),
-                                MediaDesc.GAME_SHOT_SIZE, grec.name);
+            MessageUtil.makeBox(token, grec.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, grec.name);
     }
 
     protected String makeBoxedWhirled (String token, int groupId)
@@ -686,7 +684,7 @@ public class ForumServlet extends MsoyServiceServlet
     @Inject protected MailLogic _mailLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyGameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected SupportLogic _supportLogic;
 }

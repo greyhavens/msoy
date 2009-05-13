@@ -163,6 +163,6 @@ public interface CatalogService extends RemoteService
     /**
      * Loads the specified suite.
      */
-    SuiteResult loadSuite (byte itemType, int catalogId)
+    SuiteResult loadSuite (byte itemType, int suiteId)
         throws ServiceException;
 }

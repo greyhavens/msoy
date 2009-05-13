@@ -36,6 +36,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -53,7 +54,6 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
@@ -65,7 +65,6 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
@@ -619,7 +618,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public SuiteResult loadSuite (byte itemType, int catalogId)
+    public SuiteResult loadSuite (byte itemType, int suiteId)
         throws ServiceException
     {
         // NOTE: this method is expensive as fuck, but we cache the results on the client and
@@ -628,36 +627,38 @@ public class CatalogServlet extends MsoyServiceServlet
         // this turns out to be a big drain, we need to look into flagging a game as having or not
         // having each of the various subtypes (easier) and tagged types (much harder)
 
-        CatalogRecord crec = null;
-        // hack to avoid cluttering CatalogModels and CatalogService/Servlet/ServiceAsyc APIs
-        if (itemType == Item.NOT_A_TYPE) {
-            GameRecord grec = _mgameRepo.loadGameRecord(catalogId); // gameId
-            if (grec == null) {
-                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-            }
-            crec = _itemLogic.requireListing(Item.GAME, grec.catalogId, false);
-            crec.item = grec;
-        } else {
-            crec = _itemLogic.requireListing(itemType, catalogId, true);
+//         CatalogRecord crec = null;
+//         // hack to avoid cluttering CatalogModels and CatalogService/Servlet/ServiceAsyc APIs
+//         if (itemType == Item.NOT_A_TYPE) {
+//             GameInfoRecord grec = _mgameRepo.loadGame(catalogId); // gameId
+//             if (grec == null) {
+//                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+//             }
+//             crec = _itemLogic.requireListing(Item.GAME, grec.catalogId, false);
+//             crec.item = grec;
+//         } else {
+//             crec = _itemLogic.requireListing(itemType, catalogId, true);
+//         }
+//         Item master = crec.item.toItem();
+
+        // right now we only support game suites (where suiteId == gameId), oh the hackery
+        GameInfoRecord grec = _mgameRepo.loadGame(suiteId);
+        if (grec == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        Item master = crec.item.toItem();
 
         // configure the suite metadata
         SuiteResult info = new SuiteResult();
-        info.name = master.name;
-        info.suiteId = master.getSuiteId();
-        info.creatorId = master.creatorId;
-        if (master instanceof Game) {
-            info.suiteTag = ((Game)master).shopTag;
-        }
-
-        // add the master item to the listings for this suite
+        info.name = grec.name;
+        info.suiteId = suiteId;
+        info.creatorId = grec.creatorId;
+        info.suiteTag = grec.shopTag;
         info.listings = Lists.newArrayList();
-        info.listings.add(crec.toListingCard());
+//         info.listings.add(crec.toListingCard());
 
         // load up all subitems of the master
         MemberRecord mrec = getAuthedUser();
-        for (SubItem sitem : master.getSubTypes()) {
+        for (SubItem sitem : grec.getSuiteTypes()) {
             if (!sitem.isSalable()) {
                 continue;
             }
@@ -670,8 +671,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
         if (info.suiteTag != null) {
             // all tag repositories share the same name to id mapping
-            int tagId = _itemLogic.getRepository(
-                Item.PET).getTagRepository().getTagId(info.suiteTag);
+            int tagId = _itemLogic.getRepository(Item.PET).getTagRepository().getTagId(
+                info.suiteTag);
             if (tagId != 0) {
                 for (byte tagType : SUITE_TAG_TYPES) {
                     ItemRepository<ItemRecord> trepo = _itemLogic.getRepository(tagType);

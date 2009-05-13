@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**
@@ -20,9 +21,14 @@ public interface GameServiceAsync
     void loadGameDetail (int gameId, AsyncCallback<GameDetail> callback);
 
     /**
+     * The asynchronous version of {@link GameService#loadGameData}.
+     */
+    void loadGameData (int gameId, AsyncCallback<GameService.GameData> callback);
+
+    /**
      * The asynchronous version of {@link GameService#loadGameMetrics}.
      */
-    void loadGameMetrics (int gameId, AsyncCallback<GameMetrics> callback);
+    void loadGameMetrics (int gameId, AsyncCallback<GameDistribs> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameLogs}.
@@ -30,27 +36,20 @@ public interface GameServiceAsync
     void loadGameLogs (int gameId, AsyncCallback<GameLogs> callback);
 
     /**
-     * The asynchronous version of {@link GameService#updateGameInstructions}.
-     */
-    public void updateGameInstructions (int gameId, String instructions,
-                                        AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link GameService#resetGameScores}.
      */
-    public void resetGameScores (int gameId, boolean single, int gameMode,
-                                 AsyncCallback<Void> callback);
+    void resetGameScores (int gameId, boolean single, int gameMode, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameTrophies}.
      */
-    public void loadGameTrophies (int gameId, AsyncCallback<List<Trophy>> callback);
+    void loadGameTrophies (int gameId, AsyncCallback<List<Trophy>> callback);
 
     /**
      * The asynchronous version of {@link GameService#compareTrophies}.
      */
-    public void compareTrophies (int gameId, int[] memberIds,
-                                 AsyncCallback<GameService.CompareResult> callback);
+    void compareTrophies (int gameId, int[] memberIds,
+                          AsyncCallback<GameService.CompareResult> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadTrophyCase}.
@@ -60,8 +59,8 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadTopRanked}.
      */
-    public void loadTopRanked (int gameId, boolean onlyMyFriends,
-                               AsyncCallback<PlayerRating[][]> callback);
+    void loadTopRanked (int gameId, boolean onlyMyFriends,
+                        AsyncCallback<PlayerRating[][]> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadArcadeData}.
@@ -71,11 +70,31 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadGameGenre}.
      */
-    public void loadGameGenre (byte genre, byte sortMethod, String query,
-                               AsyncCallback<List<GameInfo>> callback);
+    void loadGameGenre (byte genre, byte sortMethod, String query,
+                        AsyncCallback<List<GameInfo>> callback);
 
     /**
-     * The asynchronous version of {@link GameService#loadTopGamesData}.
+     * The asynchronous version of {@link GameService#rateGame}.
      */
-    void loadTopGamesData (AsyncCallback<FeaturedGameInfo[]> callback);
+    void rateGame (int gameId, byte rating, AsyncCallback<RatingResult> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#updateGameInfo}.
+     */
+    void updateGameInfo (GameInfo info, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#updateGameInstructions}.
+     */
+    void updateGameInstructions (int gameId, String instructions, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#updateGameCode}.
+     */
+    void updateGameCode (GameCode code, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#publishGameCode}.
+     */
+    void publishGameCode (int gameId, AsyncCallback<Void> callback);
 }

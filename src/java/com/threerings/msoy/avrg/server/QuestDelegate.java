@@ -161,10 +161,11 @@ public class QuestDelegate extends PlayManagerDelegate
         }
 
         // payout factor depends on accumulated play time -- if we've yet to accumulate enough data
-        // for a calculation, guesstimate 5 mins
+        // for a calculation, guesstimate 5 mins (TODO: this should come from the default settings
+        // in GameMetricsRecord)
         int flowPerHour = _runtime.money.hourlyAVRGameFlowRate;
-        int payoutFactor = (_content.detail.payoutFactor == 0) ?
-            ((5 * flowPerHour) / 60) : _content.detail.payoutFactor;
+        int payoutFactor = (_content.metrics.payoutFactor == 0) ?
+            ((5 * flowPerHour) / 60) : _content.metrics.payoutFactor;
 
         // compute our quest payout; as a sanity check, cap it at one hour of payout
         int rawPayout = Math.round(payoutFactor * payoutLevel);
@@ -183,7 +184,7 @@ public class QuestDelegate extends PlayManagerDelegate
         }
 
         // we don't actually award coins if we're the development version of the game
-        final boolean actuallyAward = !_content.game.isDevelopmentVersion();
+        final boolean actuallyAward = !_content.isDevelopmentVersion;
 
         // note that they completed this task
         if (actuallyAward) {
@@ -208,7 +209,7 @@ public class QuestDelegate extends PlayManagerDelegate
             for (Player p : _players.values()) {
                 pendingCoins += p.coinsAccrued;
             }
-            if (pendingCoins >= _content.detail.flowToNextRecalc) {
+            if (pendingCoins >= _content.metrics.flowToNextRecalc) {
                 flushAllPlayers();
             }
         }
@@ -247,8 +248,8 @@ public class QuestDelegate extends PlayManagerDelegate
         // if we actually awarded coins or accrued time, update our game metrics
         if (totalAward > 0 || totalSecs > 0) {
             final int totalMins = Math.round(totalSecs / 60f);
-            _gameReg.updateGameMetrics(_content.detail, GameGameRegistry.MetricType.AVRG, totalMins,
-                                       totalTasks, totalAward);
+            _gameReg.updateGameMetrics(_content.metrics, GameGameRegistry.MetricType.AVRG,
+                                       totalMins, totalTasks, totalAward);
         }
     }
 
@@ -282,7 +283,7 @@ public class QuestDelegate extends PlayManagerDelegate
 
         // note time played and coins awarded for coin payout factor calculation purposes
         if (playerMins > 0 || player.coinsAccrued > 0) {
-            _gameReg.updateGameMetrics(_content.detail, GameGameRegistry.MetricType.AVRG,
+            _gameReg.updateGameMetrics(_content.metrics, GameGameRegistry.MetricType.AVRG,
                                        playerMins, player.tasksCompleted, player.coinsAccrued);
         }
 

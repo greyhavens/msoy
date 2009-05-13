@@ -11,9 +11,8 @@ public abstract class SubItem extends Item
     /** The maximum length of game identifiers (used by level and item packs and trophies). */
     public static final int MAX_IDENT_LENGTH = 32;
 
-    /** The identifier of the suite to which this sub-item belongs. This is either the negated
-     * catalogId of the listing for the primary item (if this and the primary item are listed) or
-     * the item id of the primary item (if this and the primary item are not listed). */
+    /** The identifier of the suite to which this sub-item belongs. For game-related subitems this
+     * is the game id. */
     public int suiteId;
 
     /** An identifier for this sub-item, used to identify it from code. */

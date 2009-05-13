@@ -22,7 +22,8 @@ import client.util.NaviUtil;
  */
 public class SubItemPanel extends PagedGrid<Item>
 {
-    public SubItemPanel (InventoryModels models, int memberId, byte type, Item parent)
+    public SubItemPanel (InventoryModels models, int memberId, byte type, int suiteId,
+                         boolean allowCreate)
     {
         super(ROWS, StuffPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
         addStyleName("subInventoryContents");
@@ -30,13 +31,13 @@ public class SubItemPanel extends PagedGrid<Item>
         _models = models;
         _memberId = memberId;
         _type = type;
-        _parent = parent;
+        _suiteId = suiteId;
 
         // we can't add this in addCustomControls as that happens in our superclass constructor
-        _create.addClickHandler(NaviUtil.onCreateItem(_type, _parent.getType(), _parent.itemId));
+        _create.addClickHandler(NaviUtil.onCreateItem(_type, suiteId));
 
         // if our parent is an original item, allow creation of subitems
-        _create.setVisible(_parent.sourceId == 0);
+        _create.setVisible(allowCreate);
     }
 
     @Override // from UIObject
@@ -46,8 +47,7 @@ public class SubItemPanel extends PagedGrid<Item>
         if (!visible || hasModel()) {
             return;
         }
-        _models.loadSubModel(_memberId, _type, _parent.getSuiteId(),
-            new InfoCallback<DataModel<Item>>() {
+        _models.loadSubModel(_memberId, _type, _suiteId, new InfoCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> model) {
                 setModel(model, 0);
             }
@@ -82,7 +82,7 @@ public class SubItemPanel extends PagedGrid<Item>
     protected InventoryModels _models;
     protected int _memberId;
     protected byte _type;
-    protected Item _parent;
+    protected int _suiteId;
     protected Button _create;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

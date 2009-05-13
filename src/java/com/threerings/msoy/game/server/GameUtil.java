@@ -8,8 +8,8 @@ import com.samskivert.util.StringUtil;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.xml.MsoyGameParser;
-import com.threerings.msoy.item.data.all.Game;
 
 import static com.threerings.msoy.Log.log;
 
@@ -21,7 +21,7 @@ public class GameUtil
     /**
      * Returns the minimum and maximum players for the supplied game.
      */
-    public static int[] getMinMaxPlayers (Game game)
+    public static int[] getMinMaxPlayers (GameCode game)
     {
         MsoyMatchConfig match = null;
         try {
@@ -42,5 +42,14 @@ public class GameUtil
             };
         }
         return new int[] { 1, 2 }; // arbitrary defaults
+    }
+
+    /**
+     * Returns true if the supplied id references a developer's in-progress original game rather
+     * than one listed in the catalog.
+     */
+    public static boolean isDevelopmentVersion (int gameId)
+    {
+        return (gameId < 0);
     }
 }

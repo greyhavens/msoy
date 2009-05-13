@@ -676,7 +676,7 @@ public class FrameEntryPoint
 
 //         case LaunchConfig.FLASH_SOLO:
 //             setFlashContent(
-//                     config.name, FlashClients.createSoloGameDefinition(config.gameMediaPath));
+//                     config.name, FlashClients.createSoloGameDefinition(config.clientMediaPath));
 //             break;
 
 //         case LaunchConfig.JAVA_SOLO:
@@ -778,7 +778,7 @@ public class FrameEntryPoint
 //             WidgetUtil.createApplet(
 //                 // here we explicitly talk directly to our game server (not via the public facing
 //                 // URL which is a virtual IP) so that Java's security policy works
-//                 "game", config.getGameURL(gjpath) + "," + config.getGameURL(config.gameMediaPath),
+//                 "game", config.getGameURL(gjpath) + "," + config.getGameURL(config.clientMediaPath),
 //                 "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
 //                 // TODO: allow games to specify their dimensions in their config
 //                 "100%", "600", false, args));

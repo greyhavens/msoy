@@ -11,8 +11,6 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains metadata about a game for which a player is currently matchmaking.
@@ -29,20 +27,12 @@ public class GameSummary extends SimpleStreamableObject
     /** Whether or not this is an AVRGame. */
     public var avrGame :Boolean;
 
-    /** The mime type of this game's client media (SWF or JAR). */
-    public var gameMediaType :int;
+    /** The thumbnail media for the game we're summarizing. */
+    public var thumbMedia :MediaDesc;
 
-    public function GameSummary (game :Game = null)
+    public function GameSummary ()
     {
         // only used for unserialization
-    }
-
-    /**
-     * Returns the thumbnail media for the game we're summarizing.
-     */
-    public function getThumbMedia () :MediaDesc
-    {
-        return _thumbMedia != null ? _thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
     }
 
     // documentation from Cloneable
@@ -52,7 +42,7 @@ public class GameSummary extends SimpleStreamableObject
         data.gameId = this.gameId;
         data.name = this.name;
         data.avrGame = this.avrGame;
-        data._thumbMedia = _thumbMedia;
+        data.thumbMedia = this.thumbMedia;
         return data;
     }
 
@@ -73,8 +63,7 @@ public class GameSummary extends SimpleStreamableObject
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
         avrGame = ins.readBoolean();
-        gameMediaType = ins.readByte();
-        _thumbMedia = MediaDesc(ins.readObject());
+        thumbMedia = MediaDesc(ins.readObject());
     }
 
     // documntation from Streamable
@@ -84,11 +73,7 @@ public class GameSummary extends SimpleStreamableObject
         out.writeInt(gameId);
         out.writeField(name);
         out.writeBoolean(avrGame);
-        out.writeByte(gameMediaType);
-        out.writeObject(_thumbMedia);
+        out.writeObject(thumbMedia);
     }
-
-    /** The thumbnail of the game - used as a game icon */
-    protected var _thumbMedia :MediaDesc;
 }
 }

@@ -94,15 +94,6 @@ public class LobbyController extends Controller
     }
 
     /**
-     * Returns the item id of the game managed by this lobby controller. Not valid until we've
-     * subscribed to our lobby object.
-     */
-    public function get gameItemId () :int
-    {
-        return _lobj.game.itemId;
-    }
-
-    /**
      * Returns the table director in use by this lobby.
      */
     public function get tableDir () :TableDirector
@@ -374,7 +365,9 @@ public class LobbyController extends Controller
         _tableDir.addSeatednessObserver(this);
 
         // replace the current view with the game's splash screen
-        setGameView(_lobj.game);
+        if (_displaySplash) {
+            _mctx.setPlaceView(new LobbyPlaceView(_lobj.splashMedia, _lobj.game));
+        }
 
         _waitForWorldLogon.execute(function () :void {
             // set up our starting panel mode
@@ -412,18 +405,6 @@ public class LobbyController extends Controller
     {
         // run anything that's been waiting on the member object
         _waitForWorldLogon.update();
-    }
-
-    /**
-     * Once the lobby object has been located, this function pulls out the splash media,
-     * and creates a new place view to display it.
-     */
-    protected function setGameView (game :Game) :void
-    {
-        if (!_displaySplash) {
-            return;
-        }
-        _mctx.setPlaceView(new LobbyPlaceView(game));
     }
 
     /** The provider of free cheese. */

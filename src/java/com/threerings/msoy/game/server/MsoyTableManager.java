@@ -16,7 +16,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 
-import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
@@ -54,7 +53,7 @@ public class MsoyTableManager extends TableManager
         super.notePlayerAdded(table, body);
 
         // mark this player as "in" this game if they're not already
-        _playerActions.updatePlayerGame((PlayerObject) body, new GameSummary(_lobj.game));
+        _playerActions.updatePlayerGame((PlayerObject) body, _lobj.game);
     }
 
     @Override

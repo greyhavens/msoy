@@ -27,6 +27,9 @@ public class Comment
     /** An entity type code indicating a comment on a member's profile. */
     public static final int TYPE_PROFILE_WALL = 65;
 
+    /** An entity type code indicating a comment on a game. */
+    public static final int TYPE_GAME = 66;
+
     /** The maximum length of comment text. */
     public static final int MAX_TEXT_LENGTH = 1024;
 

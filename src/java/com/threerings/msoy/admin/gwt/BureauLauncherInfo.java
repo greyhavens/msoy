@@ -6,7 +6,6 @@ package com.threerings.msoy.admin.gwt;
 import java.io.Serializable;
 
 import com.threerings.io.Streamable;
-import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Information about a bureau launcher.
@@ -38,8 +37,11 @@ public class BureauLauncherInfo
         /** Generic message. */
         public String message;
 
-        /** Game that this bureau is running (filled in by world server). */
-        public Game game;
+        /** Id of game that this bureau is running. */
+        public int gameId;
+
+        /** Name of game that this bureau is running. */
+        public String gameName;
 
         /**
          * Returns true if the bureau represented by this info was running.

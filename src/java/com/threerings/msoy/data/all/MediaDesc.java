@@ -456,6 +456,48 @@ public class MediaDesc implements Streamable, IsSerializable
         return new MediaDesc(hash, mimeType, constraint);
     }
 
+    /**
+     * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
+     * otherwise.
+     */
+    public static MediaDesc make (byte[] hash, byte mimeType, MediaDesc onNull)
+    {
+        return (hash == null) ? onNull : new MediaDesc(hash, mimeType);
+    }
+
+    /**
+     * Creates and returns a media descriptor if the supplied hash is non-null, returns onNull
+     * otherwise.
+     */
+    public static MediaDesc make (byte[] hash, byte mimeType, byte constraint, MediaDesc onNull)
+    {
+        return (hash == null) ? onNull : new MediaDesc(hash, mimeType, constraint);
+    }
+
+    /**
+     * Returns the supplied media descriptor's hash or null if the descriptor is null.
+     */
+    public static byte[] unmakeHash (MediaDesc desc)
+    {
+        return (desc == null) ? null : desc.hash;
+    }
+
+    /**
+     * Returns the supplied media descriptor's mime type or 0 if the descriptor is null.
+     */
+    public static byte unmakeMimeType (MediaDesc desc)
+    {
+        return (desc == null) ? INVALID_MIME_TYPE : desc.mimeType;
+    }
+
+    /**
+     * Returns the supplied media descriptor's constraint or 0 if the descriptor is null.
+     */
+    public static byte unmakeConstranit (MediaDesc desc)
+    {
+        return (desc == null) ? NOT_CONSTRAINED : desc.constraint;
+    }
+
     /** Used for unserialization. */
     public MediaDesc ()
     {

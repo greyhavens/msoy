@@ -71,7 +71,6 @@ import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.server.RoomManager;
 
-import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
@@ -135,7 +134,7 @@ public class AVRGameManager extends PlaceManager
 
     public int getGameId ()
     {
-        return _gameId;
+        return ((AVRGameConfig)_config).getGameId();
     }
 
     public AVRGameObject getGameObject ()
@@ -237,10 +236,6 @@ public class AVRGameManager extends PlaceManager
     {
         super.didStartup();
 
-        AVRGameConfig cfg = (AVRGameConfig)_config;
-
-        _gameId = cfg.getGameId();
-
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setAvrgService(addDispatcher(new AVRGameDispatcher(this)));
         _gameObj.setContentService(addDispatcher(new ContentDispatcher(this)));
@@ -301,7 +296,7 @@ public class AVRGameManager extends PlaceManager
         AVRGameConfig cfg = (AVRGameConfig)_config;
         MsoyGameDefinition def = (MsoyGameDefinition) cfg.getGameDefinition();
 
-        _gameAgentObj = createGameAgentObject(_gameId, def);
+        _gameAgentObj = createGameAgentObject(getGameId(), def);
         if (_gameAgentObj == null) {
             // if there is no agent, force a call to agentReady
             _lifecycleObserver.avrGameReady(this);
@@ -412,7 +407,7 @@ public class AVRGameManager extends PlaceManager
             @Override
             public void invokePersist () throws Exception {
                 // read the records
-                _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+                _stateRecs = _repo.getPlayerGameState(getGameId(), playerId);
             }
             @Override
             public void handleSuccess () {
@@ -461,7 +456,7 @@ public class AVRGameManager extends PlaceManager
         if (!PropertySpaceHelper.isPersistent(propName)) {
             // if it isn't, it's an internal error (or a client bypassing our controls)
             log.warning("Attempted to set non-persistent offline property",
-                        "gameId", _gameId, "playerId", playerId, "name", propName);
+                        "gameId", getGameId(), "playerId", playerId, "name", propName);
             listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             return;
         }
@@ -471,7 +466,7 @@ public class AVRGameManager extends PlaceManager
         if (offlineProps == null) {
             // if we don't, it's an internal error (or a client bypassing our controls)
             log.warning("Attempted to set offline property on unknown player",
-                        "gameId", _gameId, "playerId", playerId, "name", propName);
+                        "gameId", getGameId(), "playerId", playerId, "name", propName);
             listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             return;
         }
@@ -482,7 +477,7 @@ public class AVRGameManager extends PlaceManager
             listener.requestProcessed();
 
         } catch (PropertySpaceObject.PropertySetException pse) {
-            log.warning("Failed to apply offline property set", "gameId", _gameId,
+            log.warning("Failed to apply offline property set", "gameId", getGameId(),
                         "playerId", playerId, "name", propName, pse);
         }
     }
@@ -564,8 +559,7 @@ public class AVRGameManager extends PlaceManager
 
     public void joinGame (final int playerId, final AVRService.AVRGameJoinListener listener)
     {
-        AVRGameConfig config = (AVRGameConfig)getConfig();
-        int gameId = config.getGameId();
+        int gameId = getGameId();
         final PropertySpaceObject offlineProps = _offlineProps.remove(playerId);
         final PlayerObject player = _locator.lookupPlayer(playerId);
         final boolean resolveOwnership = player != null &&
@@ -582,11 +576,11 @@ public class AVRGameManager extends PlaceManager
             return;
         }
 
-        _invoker.postUnit(new ContentOwnershipUnit(gameId, config.getSuiteId(), playerId) {
+        _invoker.postUnit(new ContentOwnershipUnit(gameId, playerId) {
             @Override public void invokePersist () throws Exception {
                 // read the game state records from store
                 if (offlineProps == null) {
-                    _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+                    _stateRecs = _repo.getPlayerGameState(getGameId(), playerId);
                 }
 
                 if (resolveOwnership) {
@@ -615,7 +609,7 @@ public class AVRGameManager extends PlaceManager
             }
 
             @Override public void handleFailure (Exception pe) {
-                log.warning("Unable to resolve player state", "gameId", _gameId,
+                log.warning("Unable to resolve player state", "gameId", getGameId(),
                             "player", playerId, pe);
                 listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             }
@@ -652,7 +646,7 @@ public class AVRGameManager extends PlaceManager
         }
 
         if (content != null && player.isActive()) {
-            int gameId = ((AVRGameConfig)getConfig()).getGameId();
+            int gameId = getGameId();
             player.startTransaction();
             try {
                 for (GameContentOwnership ownership : content) {
@@ -679,13 +673,13 @@ public class AVRGameManager extends PlaceManager
                 _locmgr.moveTo(player, _gameObj.getOid());
 
             } catch (InvocationException pe) {
-                log.warning("Move to AVRGameObject failed", "gameId", _gameId, pe);
+                log.warning("Move to AVRGameObject failed", "gameId", getGameId(), pe);
                 listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
                 return;
             }
 
         } else {
-            log.debug("Player shift-reloaded AVRG", "playerId", playerId, "gameId", _gameId);
+            log.debug("Player shift-reloaded AVRG", "playerId", playerId, "gameId", getGameId());
         }
         listener.avrgJoined(_gameObj.getOid(), (AVRGameConfig) _config);
     }
@@ -770,7 +764,7 @@ public class AVRGameManager extends PlaceManager
         // note that this player is playing this game (note that we don't have to clear the player
         // game because that is done automatically when the player logs off of the game server)
         _playerActions.updatePlayerGame(
-            player, new GameSummary(_contentDelegate.getContent().game));
+            player, _contentDelegate.getContent().game.toGameSummary());
     }
 
     @Override
@@ -903,7 +897,7 @@ public class AVRGameManager extends PlaceManager
                     throws Exception {
                     for (Map.Entry<String, byte[]> entry : state.entrySet()) {
                         _repo.storePlayerState(new PlayerGameStateRecord(
-                            _gameId, playerId, entry.getKey(), entry.getValue()));
+                            getGameId(), playerId, entry.getKey(), entry.getValue()));
                     }
                 }
             });
@@ -917,7 +911,7 @@ public class AVRGameManager extends PlaceManager
     public String where ()
     {
         StringBuilder buf = new StringBuilder();
-        buf.append(_gameId);
+        buf.append(getGameId());
         if (_gameObj != null) {
             buf.append(", oid=").append(_gameObj.getOid());
         }
@@ -1058,9 +1052,6 @@ public class AVRGameManager extends PlaceManager
             playerLeftScene(memberId);
         }
     };
-
-    /** The gameId of this particular AVRG. */
-    protected int _gameId;
 
     /** The distributed object that both clients and the agent sees. */
     protected AVRGameObject _gameObj;

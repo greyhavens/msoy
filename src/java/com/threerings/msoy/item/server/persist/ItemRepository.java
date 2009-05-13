@@ -19,9 +19,11 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -333,6 +335,34 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
         return findAll(getItemClass(), where);
     }
+
+// TEMP
+    public void migrateSuites (IntIntMap migs)
+    {
+        log.info("Migrating suites for " + getItemClass().getName());
+
+        // we need to generate a map of suiteId -> itemIds so that we can migrate everything based
+        // on itemId to avoid collisions while we're in the process of migrating suites because our
+        // old suite number space and our new number space could overlap
+        Multimap<Integer, Integer> migmap = HashMultimap.create();
+        for (IntIntMap.IntIntEntry entry : migs.entrySet()) {
+            int sourceSuiteId = entry.getIntKey();
+            int destSuiteId = entry.getIntValue();
+            for (Key<T> key : findAllKeys(
+                     getItemClass(), false,
+                     new Where(new Equals(getItemColumn(SubItemRecord.SUITE_ID), sourceSuiteId)))) {
+                migmap.put(destSuiteId, (Integer)key.getValues()[0]);
+            }
+        }
+
+        // now go through and "set suiteId = S where itemId in (IIDS)"
+        for (Map.Entry<Integer, Collection<Integer>> entry : migmap.asMap().entrySet()) {
+            updatePartial(getItemClass(),
+                          new Where(new In(getItemColumn(ItemRecord.ITEM_ID), entry.getValue())),
+                          null, getItemColumn(SubItemRecord.SUITE_ID), entry.getKey());
+        }
+    }
+// END TEMP
 
     /**
      * Loads all original items with the specified suite.

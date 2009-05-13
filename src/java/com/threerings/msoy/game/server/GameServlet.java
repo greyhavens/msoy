@@ -17,7 +17,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntListUtil;
@@ -32,10 +31,7 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
@@ -44,25 +40,31 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.GameCard;
+import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameDistribs;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameLogs;
-import com.threerings.msoy.game.gwt.GameMetrics.TilerSummary;
-import com.threerings.msoy.game.gwt.GameMetrics;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.GameCodeRecord;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -88,83 +90,80 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
 
-        GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
-        if (gdr == null) {
+        GameDetail detail = new GameDetail();
+        detail.gameId = gameId;
+
+        GameInfoRecord info = _mgameRepo.loadGame(gameId);
+        if (info == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        GameDetail detail = gdr.toGameDetail();
-
-        GameRecord item = null;
-        boolean isDevVersion = Game.isDevelopmentVersion(gameId);
-        if (isDevVersion) {
-            if (gdr.sourceItemId != 0) {
-                item = _gameRepo.loadItem(gdr.sourceItemId);
-            }
-        } else if (gdr.listedItemId != 0) {
-            item = _gameRepo.loadItem(gdr.listedItemId);
-        }
-        if (item == null) {
-            if (isDevVersion) {
-                log.warning("Game missing source item?", "gameId", gameId, "gdr", gdr);
-            }
-            return null;
-        }
-        detail.item = (Game)item.toItem();
-
-        // fill in various other metadata
-        detail.creator = _memberRepo.loadMemberName(item.creatorId);
-        detail.instructions = _mgameRepo.loadInstructions(gdr.gameId);
-        if (!isDevVersion) {
-            detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, detail.item);
-        }
-
-        // fill in the current number of players if any
-        detail.playingNow = getGamePop(_memberMan.getPPSnapshot(), gameId);
+        detail.info = info.toGameInfo(getGamePop(_memberMan.getPPSnapshot(), gameId));
+        // this should never return null if loadGame() returns non-null
+        detail.metrics = _mgameRepo.loadGameMetrics(gameId).toGameMetrics();
 
         // determine how many players can play this game
-        int[] players = GameUtil.getMinMaxPlayers(detail.item);
+        int[] players = GameUtil.getMinMaxPlayers(
+            _mgameRepo.loadGameCode(gameId, false).toGameCode());
         detail.minPlayers = players[0];
         detail.maxPlayers = players[1];
+
+        // fill in other metadata
+        detail.info.creator = _memberRepo.loadMemberName(info.creatorId);
+        detail.instructions = _mgameRepo.loadInstructions(info.gameId);
+// TODO!
+//         detail.member = _itemLogic.getMemberItemInfo(mrec, detail.item);
 
         return detail;
     }
 
     // from interface GameService
-    public GameMetrics loadGameMetrics (int gameId)
+    public GameData loadGameData (int gameId)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        requireIsGameOwner(gameId, mrec);
+        GameInfoRecord info = requireIsGameCreator(gameId, mrec);
+        GameData data = new GameData();
+        data.info = info.toGameInfo(0);
+        data.code = _mgameRepo.loadGameCode(-info.gameId, false).toGameCode();
+        return data;
+    }
 
-        GameMetrics metrics = new GameMetrics();
+    // from interface GameService
+    public GameDistribs loadGameMetrics (int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        requireIsGameCreator(gameId, mrec);
+
+        GameDistribs metrics = new GameDistribs();
         metrics.gameId = gameId;
 
-        metrics.singleDistributions = Maps.newHashMap();
+        metrics.singleDistribs = Maps.newHashMap();
         for (Map.Entry<Integer, Percentiler> entry :
                  _ratingRepo.loadPercentiles(-gameId).entrySet()) {
             Percentiler tiler = entry.getValue();
 
-            TilerSummary summary = new TilerSummary();
+            GameDistribs.TilerSummary summary = new GameDistribs.TilerSummary();
             summary.totalCount = tiler.getRecordedCount();
             summary.counts = tiler.getCounts();
             summary.scores = tiler.getRequiredScores();
             summary.maxScore = tiler.getMaxScore();
 
-            metrics.singleDistributions.put(entry.getKey(), summary);
+            metrics.singleDistribs.put(entry.getKey(), summary);
         }
 
-        metrics.multiDistributions = Maps.newHashMap();
+        metrics.multiDistribs = Maps.newHashMap();
         for (Map.Entry<Integer, Percentiler> entry :
                  _ratingRepo.loadPercentiles(gameId).entrySet()) {
             Percentiler tiler = entry.getValue();
 
-            TilerSummary summary = new TilerSummary();
+            GameDistribs.TilerSummary summary = new GameDistribs.TilerSummary();
             summary.totalCount = tiler.getRecordedCount();
             summary.counts = tiler.getCounts();
             summary.scores = tiler.getRequiredScores();
             summary.maxScore = tiler.getMaxScore();
 
-            metrics.multiDistributions.put(entry.getKey(), summary);
+            metrics.multiDistribs.put(entry.getKey(), summary);
         }
 
         return metrics;
@@ -175,7 +174,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        requireIsGameOwner(Game.getListedId(gameId), mrec);
+        requireIsGameCreator(gameId, mrec);
 
         GameLogs logs = new GameLogs();
         logs.gameId = gameId;
@@ -192,25 +191,11 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void updateGameInstructions (int gameId, String instructions)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-        requireIsGameOwner(gameId, mrec);
-
-        // trust not the user; they are prone to evil
-        instructions = HTMLSanitizer.sanitize(instructions);
-
-        // now that we've confirmed that they're allowed, update the instructions
-        _mgameRepo.updateInstructions(gameId, instructions);
-    }
-
-    // from interface GameService
     public void resetGameScores (int gameId, boolean single, int gameMode)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        requireIsGameOwner(gameId, mrec);
+        requireIsGameCreator(gameId, mrec);
 
         // wipe the percentiler in the database
         _ratingRepo.deletePercentile(single ? -gameId : gameId, gameMode);
@@ -224,7 +209,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        GameRecord grec = _mgameRepo.loadGameRecord(gameId);
+        GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
@@ -238,14 +223,14 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser();
         int callerId = (mrec == null) ? 0 : mrec.memberId;
 
-        GameRecord grec = _mgameRepo.loadGameRecord(gameId);
+        GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         if (grec == null) {
             return null;
         }
 
         CompareResult result = new CompareResult();
         result.gameName = grec.name;
-        result.gameThumb = grec.getThumbMediaDesc();
+        result.gameThumb = grec.getThumbMedia();
 
         // load up the trophy and earned information
         result.whenEarneds = new Long[memberIds.length][];
@@ -288,7 +273,7 @@ public class GameServlet extends MsoyServiceServlet
             tcase.shelves[ii++] = shelf;
 
             shelf.gameId = gameId;
-            GameRecord grec = _mgameRepo.loadGameRecord(shelf.gameId);
+            GameInfoRecord grec = _mgameRepo.loadGame(shelf.gameId);
             if (grec == null) {
                 shelf.name = "???"; // the game was delisted or deleted, oh well
             } else {
@@ -369,73 +354,36 @@ public class GameServlet extends MsoyServiceServlet
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
         // load the top N (where N is large) games and build everything from that list
-        Map<Integer, GameRecord> games = Maps.newLinkedHashMap();
-        for (GameRecord grec : _gameRepo.loadGenre((byte)-1, ARCADE_RAW_COUNT)) {
+        Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
+        for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
             games.put(grec.gameId, grec);
         }
 
         // determine the "featured" games
-        List<FeaturedGameInfo> featured = Lists.newArrayList();
-        ArrayIntSet have = new ArrayIntSet();
-        for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
-            GameDetailRecord detail = _mgameRepo.loadGameDetail(card.placeId);
-            // popular places never has in-development games
-            GameRecord game = games.get(detail.listedItemId);
-            if (game == null) {
-                game = _gameRepo.loadItem(detail.listedItemId);
-            }
-            if (game != null) {
-                featured.add(_gameLogic.toFeaturedGameInfo(game, detail, card.population));
-                have.add(game.gameId);
-            }
-            if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                break;
-            }
-        }
-        if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-            for (GameRecord game : games.values()) {
-                if (!have.contains(game.gameId)) {
-                    GameDetailRecord detail = _mgameRepo.loadGameDetail(game.gameId);
-                    featured.add(_gameLogic.toFeaturedGameInfo(game, detail, 0));
-                }
-                if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                    break;
-                }
-            }
-        }
-        data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
+        data.featuredGames = _gameLogic.loadTopGames(pps, false);
 
         // list of the top-200 games alphabetically (only include name and id)
         data.allGames = Lists.newArrayList();
-        for (GameRecord game : games.values()) {
-            GameInfo gameInfo = new GameInfo();
-            gameInfo.gameId = game.gameId;
-            gameInfo.name = game.name;
-            data.allGames.add(gameInfo);
+        for (GameInfoRecord game : games.values()) {
+            data.allGames.add(game.toGameCard(0)); // playersOnline not needed here
         }
-        Collections.sort(data.allGames, SORT_BY_NAME);
+        Collections.sort(data.allGames, GameCard.BY_NAME);
 
-        // list of top 10 games by ranking (include name, id & media)
+        // list of top N games by ranking
         data.topGames = Lists.newArrayList();
-        for (GameRecord game : games.values()) {
-            GameInfo gameInfo = new GameInfo();
-            // we only want some of the game info here, so we don't use GameRecord.toGameInfo
-            gameInfo.gameId = game.gameId;
-            gameInfo.name = game.name;
-            gameInfo.thumbMedia = game.getThumbMediaDesc();
-            gameInfo.playersOnline = getGamePop(pps, game.gameId);
-            data.topGames.add(gameInfo);
+        for (GameInfoRecord game : games.values()) {
+            data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
             if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
                 break;
             }
         }
 
         // load up our genre counts
-        IntIntMap genreCounts = _gameRepo.loadGenreCounts();
+        IntIntMap genreCounts = _mgameRepo.loadGenreCounts();
 
         // load information about the genres
         List<ArcadeData.Genre> genres = Lists.newArrayList();
-        for (byte gcode : Game.GENRES) {
+        for (byte gcode : GameGenre.GENRES) {
             ArcadeData.Genre genre = new ArcadeData.Genre();
             genre.genre = gcode;
             genre.gameCount = Math.max(0, genreCounts.get(gcode));
@@ -444,13 +392,11 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // filter out all the games in this genre
-            List<GameInfo> ggames = Lists.newArrayList();
-            for (GameRecord grec : games.values()) {
+            List<GameCard> ggames = Lists.newArrayList();
+            for (GameInfoRecord grec : games.values()) {
                 // games rated less than 3 don't get on the main page
                 if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
-                    GameInfo info = grec.toGameInfo();
-                    info.playersOnline = getGamePop(pps, grec.gameId);
-                    ggames.add(info);
+                    ggames.add(grec.toGameCard(getGamePop(pps, grec.gameId)));
                     // stop when we've got 3*HIGHLIGHTED_GAMES
                     if (ggames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
                         break;
@@ -460,16 +406,16 @@ public class GameServlet extends MsoyServiceServlet
 
             // shuffle those and then sort them by players online
             Collections.shuffle(ggames);
-            Collections.sort(ggames, new Comparator<GameInfo>() {
-                public int compare (GameInfo one, GameInfo two) {
+            Collections.sort(ggames, new Comparator<GameCard>() {
+                public int compare (GameCard one, GameCard two) {
                     return Comparators.compare(two.playersOnline, one.playersOnline);
                 }
             });
 
             // finally take N from that shuffled list as the games to show
-            List<GameInfo> hgames = ggames.subList(
+            List<GameCard> hgames = ggames.subList(
                 0, Math.min(ggames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
-            genre.games = hgames.toArray(new GameInfo[hgames.size()]);
+            genre.games = hgames.toArray(new GameCard[hgames.size()]);
 
             genres.add(genre);
         }
@@ -485,14 +431,12 @@ public class GameServlet extends MsoyServiceServlet
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
         // load up all the games in this genre
-        List<GameRecord> games = _gameRepo.loadGenre(genre, -1, query);
+        List<GameInfoRecord> games = _mgameRepo.loadGenre(genre, -1, query);
 
         // convert them to game info objects
         List<GameInfo> infos = Lists.newArrayList();
-        for (GameRecord grec : games) {
-            GameInfo info = grec.toGameInfo();
-            info.playersOnline = getGamePop(pps, grec.gameId);
-            infos.add(info);
+        for (GameInfoRecord grec : games) {
+            infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
         }
 
         // sort by the preferred sort method (sorted by rating within groups)
@@ -502,10 +446,6 @@ public class GameServlet extends MsoyServiceServlet
             Collections.sort(infos, SORT_BY_NEWEST);
         } else if (sortMethod == GameInfo.SORT_BY_NAME) {
             Collections.sort(infos, SORT_BY_NAME);
-        } else if (sortMethod == GameInfo.SORT_BY_MULTIPLAYER) {
-            Collections.sort(infos, SORT_BY_MULTIPLAYER);
-        } else if (sortMethod == GameInfo.SORT_BY_SINGLE_PLAYER) {
-            Collections.sort(infos, SORT_BY_SINGLE_PLAYER);
         } else if (sortMethod == GameInfo.SORT_BY_GENRE) {
             Collections.sort(infos, SORT_BY_GENRE);
         } else if (sortMethod == GameInfo.SORT_BY_PLAYERS_ONLINE) {
@@ -516,10 +456,72 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public FeaturedGameInfo[] loadTopGamesData ()
+    public RatingResult rateGame (int gameId, byte rating)
         throws ServiceException
     {
-        return _gameLogic.loadTopGames(_memberMan.getPPSnapshot());
+        return null; // TODO!
+    }
+
+    // from interface GameService
+    public void updateGameInfo (GameInfo info)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        GameInfoRecord grec = requireIsGameCreator(info.gameId, mrec);
+
+        // handle group fiddling
+        if (info.groupId != grec.groupId) {
+            // member must be a manager of any group they assign to a game
+            if (info.groupId != GameInfo.NO_GROUP) {
+                if (_groupRepo.getRank(info.groupId, mrec.memberId).compareTo(
+                        GroupMembership.Rank.MANAGER) < 0) {
+                    throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+                }
+                _groupRepo.updateGroup(info.groupId, GroupRecord.GAME_ID, info.gameId);
+            }
+            // clear out the game from the old group
+            if (grec.groupId != GameInfo.NO_GROUP) {
+                _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID, 0);
+            }
+        }
+
+        // write the updated game info record to the repository
+        grec.update(info);
+        _mgameRepo.updateGameInfo(grec);
+    }
+
+    // from interface GameService
+    public void updateGameInstructions (int gameId, String instructions)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        requireIsGameCreator(gameId, mrec);
+
+        // trust not the user; they are prone to evil
+        instructions = HTMLSanitizer.sanitize(instructions);
+
+        // now that we've confirmed that they're allowed, update the instructions
+        _mgameRepo.updateInstructions(gameId, instructions);
+    }
+
+    // from interface GameService
+    public void updateGameCode (GameCode code)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        requireIsGameCreator(code.gameId, mrec);
+        _mgameRepo.updateGameCode(GameCodeRecord.fromGameCode(code));
+    }
+
+    // from interface GameService
+    public void publishGameCode (int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        requireIsGameCreator(gameId, mrec);
+        GameCodeRecord code = _mgameRepo.loadGameCode(-Math.abs(gameId), true);
+        code.isDevelopment = false;
+        _mgameRepo.updateGameCode(code);
     }
 
     protected PlayerRating[] toRatingResult (
@@ -536,30 +538,32 @@ public class GameServlet extends MsoyServiceServlet
         return result;
     }
 
-    protected void requireIsGameOwner (int gameId, MemberRecord mrec)
+    protected GameInfoRecord requireIsGameCreator (int gameId, MemberRecord mrec)
         throws ServiceException
     {
         // load the source record
-        GameRecord grec = _mgameRepo.loadGameRecord(Game.getDevelopmentId(gameId));
+        GameInfoRecord grec = _mgameRepo.loadGame(gameId);
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        // verify that the member in question owns the game or is an admin
-        if (grec.ownerId != mrec.memberId && !mrec.isAdmin()) {
+        // verify that the member in question created the game or is an admin
+        if (grec.creatorId != mrec.memberId && !mrec.isAdmin()) {
             throw new ServiceException(InvocationCodes.E_ACCESS_DENIED);
         }
+        return grec;
     }
 
     /**
      * Helper function for {@link #loadGameTrophies} and {@link #compareTrophies}.
      */
-    protected List<Trophy> loadTrophyInfo (GameRecord grec, int callerId,
+    protected List<Trophy> loadTrophyInfo (GameInfoRecord grec, int callerId,
                                            int[] earnerIds, Long[][] whenEarneds)
         throws ServiceException
     {
         TrophySourceRepository tsrepo = _trophySourceRepo;
 
-        int gameSuiteId = grec.toItem().getSuiteId();
+// TODODODODODODODODODODODO
+        int gameSuiteId = grec.gameId;
 
         // load up the (listed) trophy source records for this game
         Map<String,Trophy> trophies = Maps.newHashMap();
@@ -654,11 +658,11 @@ public class GameServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected GameLogic _gameLogic;
-    @Inject protected GameRepository _gameRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;
@@ -675,32 +679,6 @@ public class GameServlet extends MsoyServiceServlet
     protected static Comparator<GameInfo> SORT_BY_NAME = new Comparator<GameInfo>() {
         public int compare (GameInfo c1, GameInfo c2) {
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting {@link GameInfo}, with multiplayer games first. */
-    protected static Comparator<GameInfo> SORT_BY_MULTIPLAYER = new Comparator<GameInfo>() {
-        public int compare (GameInfo c1, GameInfo c2) {
-            if (c1.maxPlayers == 1 && c2.maxPlayers > 1) {
-                return 1;
-            }
-            else if (c1.maxPlayers > 1 && c2.maxPlayers == 1) {
-                return -1;
-            }
-            return 0;
-        }
-    };
-
-    /** Compartor for sorting {@link GameInfo}, with single player games first. */
-    protected static Comparator<GameInfo> SORT_BY_SINGLE_PLAYER = new Comparator<GameInfo>() {
-        public int compare (GameInfo c1, GameInfo c2) {
-            if (c1.minPlayers == 1 && c2.minPlayers > 1) {
-                return -1;
-            }
-            else if (c1.minPlayers > 1 && c2.minPlayers == 1) {
-                return 1;
-            }
-            return 0;
         }
     };
 

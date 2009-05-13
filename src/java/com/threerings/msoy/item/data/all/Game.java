@@ -10,39 +10,6 @@ import com.threerings.msoy.data.all.MediaDesc;
  */
 public class Game extends Item
 {
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_OTHER = 0;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_WORD = 1;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_CARD_BOARD = 2;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_PUZZLE = 3;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_STRATEGY = 4;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_ACTION_ARCADE = 5;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_ADVENTURE_RPG = 6;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_SPORTS_RACING = 7;
-
-    /** A {@link #genre} constant. */
-    public static final byte GENRE_MMO_WHIRLED = 8;
-
-    /** All game genres, in display order. */
-    public static final byte[] GENRES = {
-        GENRE_ACTION_ARCADE, GENRE_MMO_WHIRLED, GENRE_STRATEGY, GENRE_PUZZLE, GENRE_ADVENTURE_RPG,
-        GENRE_WORD, GENRE_CARD_BOARD, GENRE_SPORTS_RACING, GENRE_OTHER
-    };
-
     /** Identifies our lobby background table media. */
     public static final String TABLE_MEDIA = "table";
 
@@ -91,15 +58,6 @@ public class Game extends Item
     public String shopTag;
 
     /**
-     * Returns true if the specified game is a developer's in-progress original game rather than
-     * one listed in the catalog.
-     */
-    public static boolean isDevelopmentVersion (int gameId)
-    {
-        return (gameId < 0);
-    }
-
-    /**
      * Returns the id of the listed item for the given game id. Note this does not check to see
      * if the listing exists.
      */
@@ -125,15 +83,6 @@ public class Game extends Item
     }
 
     /**
-     * Returns true if this is a developer's in-progress original game rather than one listed in
-     * the catalog.
-     */
-    public boolean isDevelopmentVersion ()
-    {
-        return isDevelopmentVersion(gameId);
-    }
-
-    /**
      * Returns this game's screenshot media. Falls back to its thumbnail media in the absence of a
      * screenshot.
      */
@@ -146,16 +95,6 @@ public class Game extends Item
     public byte getType ()
     {
         return GAME;
-    }
-
-    @Override // from Item
-    public SubItem[] getSubTypes ()
-    {
-        return (isInWorld() ?
-                new SubItem[] {
-                    new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), new Prop() } :
-                new SubItem[] {
-                    new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), });
     }
 
     @Override // from Item
@@ -185,14 +124,6 @@ public class Game extends Item
     public boolean isInWorld ()
     {
         return detectIsInWorld(config);
-    }
-
-    /**
-     * TEMP: hack to allow us to only run the agent for multiplayer games.
-     */
-    public boolean isAgentMPOnly ()
-    {
-        return (config != null) && (config.indexOf("<agentmponly/>") >= 0);
     }
 
     @Override

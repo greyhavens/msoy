@@ -35,12 +35,9 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GamePlayRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
@@ -193,8 +190,8 @@ public class BlingPoolDistributor
         }
 
         // Load up all of the games for which we're going to award bling.
-        Map<Integer, GameRecord> gameMap = new HashMap<Integer, GameRecord>();
-        for (GameRecord game : _mgameRepo.loadListedGameRecords(gameIds)) {
+        Map<Integer, GameInfoRecord> gameMap = new HashMap<Integer, GameInfoRecord>();
+        for (GameInfoRecord game : _mgameRepo.loadPublishedGames(gameIds)) {
             gameMap.put(game.gameId, game);
         }
 
@@ -237,7 +234,7 @@ public class BlingPoolDistributor
      * @param game The game that bling will be awarded for.
      * @param amount The amount of centibling to award.
      */
-    protected void awardBling (int gameId, GameRecord game, int amount)
+    protected void awardBling (int gameId, GameInfoRecord game, int amount)
     {
         if (game == null) {
             log.info("Unable to award bling to no longer listed game",
@@ -250,13 +247,13 @@ public class BlingPoolDistributor
             _repo.accumulateAndStoreTransaction(
                 game.creatorId, Currency.BLING, amount, TransactionType.BLING_POOL,
                 MessageBundle.tcompose("m.game_plays_bling_awarded", game.gameId, game.name),
-                new ItemIdent(Item.GAME, game.itemId), true);
+                null, true); // TODO: create a "game" subject type?
             // Note: we do not need to post the transaction as a node action, because
             // bling is not part of a user's runtime money.
 
         } catch (MoneyRepository.NoSuchMemberException nsme) {
             log.warning("Invalid game creator. Bling award cancelled.",
-                "game", game.itemId, "creator", game.creatorId, "bling", amount);
+                "game", game.gameId, "creator", game.creatorId, "bling", amount);
         }
     }
 

@@ -19,11 +19,8 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
@@ -72,9 +69,8 @@ public class FacebookInviteServlet extends HttpServlet
                     return;
                 }
     
-                GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
-                GameRecord grec = gdr == null ? null : _gameRepo.loadItem(gdr.listedItemId);
-                String gameName = grec == null ? null : grec.name;
+                GameInfoRecord game = _mgameRepo.loadGame(gameId);
+                String gameName = (game == null) ? null : game.name;
                 if (gameName == null) {
                     rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
@@ -231,7 +227,6 @@ public class FacebookInviteServlet extends HttpServlet
     }
 
     // dependencies
-    @Inject protected GameRepository _gameRepo;
     @Inject protected MemberHelper _mhelper;
     @Inject protected MsoyEventLogger _logger;
     @Inject protected MsoyGameRepository _mgameRepo;

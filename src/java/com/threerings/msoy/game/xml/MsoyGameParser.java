@@ -12,10 +12,9 @@ import org.xml.sax.SAXException;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 
-import com.threerings.msoy.item.data.all.Game;
-
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.gwt.GameCode;
 
 import com.threerings.parlor.game.data.GameConfig;
 
@@ -36,22 +35,28 @@ public class MsoyGameParser extends WhirledGameParser
                 ((MsoyGameDefinition)digester.peek()).lwjgl = true;
             }
         });
+        _digester.addRule("game/agentmponly", new Rule() {
+            public void begin (String namespace, String name, Attributes attrs)
+                throws Exception {
+                ((MsoyGameDefinition)digester.peek()).isAgentMPOnly = true;
+            }
+        });
     }
 
     /**
-     * Parses a game definition from the supplied {@link Game} object.
+     * Parses a game definition from the supplied {@link GameCode} object.
      *
      * @exception IOException thrown if an error occurs reading the file.
      * @exception SAXException thrown if an error occurs parsing the XML.
      */
-    public GameDefinition parseGame (Game game)
+    public GameDefinition parseGame (GameCode code)
         throws IOException, SAXException
     {
-        MsoyGameDefinition gameDef = (MsoyGameDefinition)parseGame(new StringReader(game.config));
-        gameDef.setMediaPath(game.gameMedia.getMediaPath());
-        if (game.serverMedia != null) {
-            gameDef.setServerMediaPath(game.serverMedia.getMediaPath());
-            gameDef.setBureauId(String.valueOf(game.gameId));
+        MsoyGameDefinition gameDef = (MsoyGameDefinition)parseGame(new StringReader(code.config));
+        gameDef.setMediaPath(code.clientMedia.getMediaPath());
+        if (code.serverMedia != null) {
+            gameDef.setServerMediaPath(code.serverMedia.getMediaPath());
+            gameDef.setBureauId(String.valueOf(code.gameId));
         }
         return gameDef;
     }

@@ -273,7 +273,7 @@ class TableIcon extends Sprite
         _gameSummary = gameSummary;
         var iconSize :int = gameSummary.avrGame ? MediaDesc.HALF_THUMBNAIL_SIZE
                                                 : MediaDesc.THUMBNAIL_SIZE;
-        _gameThumb = ScalingMediaContainer.createView(gameSummary.getThumbMedia(), iconSize);
+        _gameThumb = ScalingMediaContainer.createView(gameSummary.thumbMedia, iconSize);
         _gameThumb.x = _gameThumb.maxW / -2; // position with 0 at center
         addChild(_gameThumb);
 

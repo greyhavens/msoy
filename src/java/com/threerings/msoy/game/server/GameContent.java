@@ -7,23 +7,30 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.GameMetricsRecord;
 
 /**
- * Contains the gobs of game metadata that we load when a lobby or an AVRG is resolved and
- * pass along to games once they are created.
+ * Contains the gobs of game metadata that we load when a lobby or an AVRG is resolved and pass
+ * along to games once they are created.
  */
 public class GameContent
 {
-    public Game game;
+    public boolean isDevelopmentVersion;
 
-    public GameDetailRecord detail;
+    public int suiteId;
+
+    public GameInfoRecord game;
+
+    public GameMetricsRecord metrics;
+
+    public GameCode code;
 
     public List<LevelPack> lpacks = Lists.newArrayList();
 

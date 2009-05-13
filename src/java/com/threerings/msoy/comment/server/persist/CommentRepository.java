@@ -31,10 +31,12 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.util.IntIntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.server.persist.CountRecord;
 
 import static com.threerings.msoy.Log.log;
@@ -49,6 +51,21 @@ public class CommentRepository extends DepotRepository
     {
         super(ctx);
     }
+
+// TEMP
+    public void migrateGameComments (IntIntMap migrations)
+    {
+        int migrated = 0;
+        for (IntIntMap.IntIntEntry entry : migrations.entrySet()) {
+            migrated += updatePartial(CommentRecord.class,
+                                      new Where(CommentRecord.ENTITY_TYPE, Item.GAME,
+                                                CommentRecord.ENTITY_ID, entry.getIntKey()), null,
+                                      CommentRecord.ENTITY_TYPE, Comment.TYPE_GAME,
+                                      CommentRecord.ENTITY_ID, entry.getIntValue());
+        }
+        log.info("Migrated " + migrated + " game comments.");
+    }
+// ENDTEMP
 
     /**
      * Loads the most recent comments for the specified entity type and identifier.

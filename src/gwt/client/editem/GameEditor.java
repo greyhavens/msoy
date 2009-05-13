@@ -23,6 +23,7 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -68,8 +69,8 @@ public class GameEditor extends ItemEditor
         }
 
         // configure our genre
-        for (int ii = 0; ii < Game.GENRES.length; ii++) {
-            if (Game.GENRES[ii] == _game.genre) {
+        for (int ii = 0; ii < GameGenre.GENRES.length; ii++) {
+            if (GameGenre.GENRES[ii] == _game.genre) {
                 _genre.setSelectedIndex(ii);
                 break;
             }
@@ -167,7 +168,7 @@ public class GameEditor extends ItemEditor
     protected void addExtras ()
     {
         _genre = new ListBox();
-        for (byte genre : Game.GENRES) {
+        for (byte genre : GameGenre.GENRES) {
             _genre.addItem(_dmsgs.xlate("genre" + genre));
         }
         addRow(_emsgs.gameGenre(), _genre);
@@ -363,7 +364,7 @@ public class GameEditor extends ItemEditor
         super.prepareItem();
 
         // configure our genre
-        _game.genre = Game.GENRES[_genre.getSelectedIndex()];
+        _game.genre = GameGenre.GENRES[_genre.getSelectedIndex()];
 
         // convert our configuration information back to an XML document
         Document xml = XMLParser.createDocument();

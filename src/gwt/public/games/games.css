@@ -771,3 +771,10 @@
   color: #b4ddf9;
   margin: 0 5px 0 5px;
 }
+
+.editGame .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #154D72;
+  font-size: 24px;
+}

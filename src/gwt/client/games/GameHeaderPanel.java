@@ -3,9 +3,6 @@
 
 package client.games;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -21,10 +18,11 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.shell.DynamicLookup;
@@ -79,42 +77,32 @@ public class GameHeaderPanel extends FlowPanel
         searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
         search.add(searchBox);
         search.add(MsoyUI.createImageButton("GoButton", searchListener));
-    }
-
-    /**
-     * After data is received, display the genre header and the data grid
-     */
-    protected void init (List<GameInfo> games)
-    {
-        // make a copy of the list of games sorted by name for the dropdown
-        List<GameInfo> gamesByName = new ArrayList<GameInfo>();
-        gamesByName.addAll(games);
-        Collections.sort(gamesByName, SORT_GAMEINFO_BY_NAME);
-        for (GameInfo gameInfo : gamesByName) {
-            String gameName = gameInfo.name;
-            _findGameBox.addItem(gameName, gameInfo.gameId+"");
-        }
 
         // add a link to the genre links
         FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
         add(genreLinks);
-        for (int i = 0; i < Game.GENRES.length; i++) {
-            byte genreCode = Game.GENRES[i];
-            genreLinks.add(Link.create(_dmsgs.xlate("genre" + genreCode),
-                Pages.GAMES, Args.compose("g", genreCode)));
-            if (i+1 < Game.GENRES.length) {
+        for (byte gcode : GameGenre.GENRES) {
+            if (genreLinks.getWidgetCount() > 0) {
                 genreLinks.add(new InlineLabel("|"));
             }
+            genreLinks.add(Link.create(_dmsgs.xlate("genre" + gcode), Pages.GAMES,
+                                       Args.compose("g", gcode)));
         }
     }
 
-    /** Compartor for sorting {@link GameInfo}, by name. */
-    protected static Comparator<GameInfo> SORT_GAMEINFO_BY_NAME = new Comparator<GameInfo>() {
-        public int compare (GameInfo info1, GameInfo info2) {
-            return info1.name.toString().toLowerCase().compareTo(
-                info2.name.toString().toLowerCase());
+    protected void initWithCards (List<GameCard> games)
+    {
+        for (GameCard game : games) {
+            _findGameBox.addItem(game.name, game.gameId+"");
         }
-    };
+    }
+
+    protected void initWithInfos (List<GameInfo> games)
+    {
+        for (GameInfo game : games) {
+            _findGameBox.addItem(game.name, game.gameId+"");
+        }
+    }
 
     /** Dropdown of all games */
     protected ListBox _findGameBox;

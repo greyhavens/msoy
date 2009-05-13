@@ -32,9 +32,9 @@ import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
+import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.room.data.RoomCodes;
@@ -170,8 +170,8 @@ public class GoServlet extends HttpServlet
         if (ALL_GAMES_PREFIX.equals(path)) {
             List<Object> args = Lists.newArrayList();
             // load the top 100 games
-            for (GameRecord game : _gameRepo.loadGenre((byte)-1, 100)) {
-                args.add(getImage(game));
+            for (GameInfoRecord game : _mgameRepo.loadGenre(GameGenre.ALL, 100)) {
+                args.add(game.getShotMedia());
                 args.add(GAME_DETAIL_PREFIX + game.gameId);
                 args.add(game.name);
             }
@@ -180,14 +180,14 @@ public class GoServlet extends HttpServlet
 
         } else if (path.startsWith(GAME_DETAIL_PREFIX)) {
             int gameId = Integer.parseInt(path.substring(GAME_DETAIL_PREFIX.length()));
-            GameRecord game = _mgameRepo.loadGameRecord(gameId);
+            GameInfoRecord game = _mgameRepo.loadGame(gameId);
             if (game == null) {
                 outputGoogle(rsp, "No such game", "No such game", ALL_GAMES_PREFIX,
                     GAME_DETAIL_PREFIX + (gameId - 1), "previous game",
                     GAME_DETAIL_PREFIX + (gameId + 1), "next game");
             } else {
                 outputGoogle(rsp, game.name, game.description, ALL_GAMES_PREFIX,
-                    getImage(game),
+                    game.getShotMedia(),
                     GAME_DETAIL_PREFIX + (gameId - 1), "previous game",
                     GAME_DETAIL_PREFIX + (gameId + 1), "next game");
             }
@@ -229,12 +229,12 @@ public class GoServlet extends HttpServlet
             } else if (path.startsWith(gamePrefix = SHARE_GAME_PREFIX) ||
                        path.startsWith(gamePrefix = GAME_DETAIL_PREFIX)) {
                 int gameId = Integer.parseInt(path.substring(gamePrefix.length()));
-                GameRecord game = _mgameRepo.loadGameRecord(gameId);
+                GameInfoRecord game = _mgameRepo.loadGame(gameId);
                 if (game == null) {
                     log.warning("Facebook requested share of nonexistant game?", "path", path);
                     return false;
                 }
-                image = getImage(game);
+                image = game.getShotMedia();
                 title = msgs.get("m.game_share_title", game.name);
                 desc = game.description;
 
@@ -348,18 +348,6 @@ public class GoServlet extends HttpServlet
         return input.replace('\"', '\'');
     }
 
-    /**
-     * Get the best image we've got for the game: snapshot, then thumbnail.
-     */
-    protected static MediaDesc getImage (GameRecord game)
-    {
-        if (game.shotMediaHash != null) {
-            return new MediaDesc(game.shotMediaHash, game.shotMimeType);
-        } else {
-            return game.getThumbMediaDesc();
-        }
-    }
-
     /** Number of google bot pages served. */
     protected int _googlePages;
 
@@ -379,7 +367,6 @@ public class GoServlet extends HttpServlet
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected GameRepository _gameRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected ServerMessages _serverMsgs;

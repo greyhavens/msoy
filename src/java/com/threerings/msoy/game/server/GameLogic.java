@@ -33,9 +33,6 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 
@@ -44,10 +41,12 @@ import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.ArcadeData;
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.WorldGameRegistry;
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
@@ -66,26 +65,25 @@ public class GameLogic
         throws ServiceException
     {
         // load up the metadata for this game
-        GameRecord grec = _mgameRepo.loadGameRecord(gameId);
-        if (grec == null) {
+        GameInfoRecord game = _mgameRepo.loadGame(gameId);
+        if (game == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-
-        Game game = (Game)grec.toItem();
+        GameCode code = _mgameRepo.loadGameCode(gameId, false).toGameCode();
 
         // create a launch config record for the game
         final LaunchConfig config = new LaunchConfig();
-        config.gameId = game.gameId;
+        config.gameId = gameId;
 
         MsoyMatchConfig match;
         try {
-            if (StringUtil.isBlank(game.config)) {
+            if (StringUtil.isBlank(code.config)) {
                 // fall back to a sensible default for our legacy games
                 match = new MsoyMatchConfig();
                 match.minSeats = match.startSeats = 1;
                 match.maxSeats = 2;
             } else {
-                MsoyGameDefinition def = (MsoyGameDefinition)new MsoyGameParser().parseGame(game);
+                MsoyGameDefinition def = (MsoyGameDefinition)new MsoyGameParser().parseGame(code);
                 config.lwjgl = def.lwjgl;
                 match = (MsoyMatchConfig)def.match;
             }
@@ -95,9 +93,9 @@ public class GameLogic
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
 
-        switch (game.gameMedia.mimeType) {
+        switch (code.clientMedia.mimeType) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            config.type = game.isInWorld() ?
+            config.type = game.isAVRG ?
                 LaunchConfig.FLASH_IN_WORLD : LaunchConfig.FLASH_LOBBIED;
             break;
         case MediaDesc.APPLICATION_JAVA_ARCHIVE:
@@ -107,13 +105,13 @@ public class GameLogic
             break;
         default:
             log.warning("Requested config for game of unknown media type " +
-                        "[id=" + gameId + ", media=" + game.gameMedia + "].");
+                        "[id=" + gameId + ", media=" + code.clientMedia + "].");
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
         // we have to proxy game jar files through the game server due to the applet sandbox
-        config.gameMediaPath = (game.gameMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
-            game.gameMedia.getProxyMediaPath() : game.gameMedia.getMediaPath();
+        config.clientMediaPath = (code.clientMedia.mimeType == MediaDesc.APPLICATION_JAVA_ARCHIVE) ?
+            code.clientMedia.getProxyMediaPath() : code.clientMedia.getMediaPath();
         config.name = game.name;
         config.httpPort = ServerConfig.httpPort;
 
@@ -153,55 +151,46 @@ public class GameLogic
 
     /**
      * Loads and returns data on the top games. Used on the landing and arcade pages.
-     * Games that do not payout flow, and those with a ranking less than 4 stars not included.
+     *
+     * @param filter if true, games that are not integrated, and those with a ranking less than 4
+     * stars not included.
      */
-    public FeaturedGameInfo[] loadTopGames (PopularPlacesSnapshot pps)
+    public GameInfo[] loadTopGames (PopularPlacesSnapshot pps, boolean filter)
     {
         // determine the games people are playing right now
-        List<FeaturedGameInfo> featured = Lists.newArrayList();
+        List<GameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
-            GameDetailRecord detail = _mgameRepo.loadGameDetail(card.placeId);
-            GameRecord game = _mgameRepo.loadGameRecord(card.placeId, detail, false);
-            if (game != null && game.getRating() >= 4 && detail.gamesPlayed > 0) {
-                featured.add(toFeaturedGameInfo(game, detail, card.population));
-                have.add(game.gameId);
+            GameInfoRecord info = _mgameRepo.loadGame(card.placeId);
+            if (info != null && (!filter || (info.getRating() >= 4 && info.integrated))) {
+                featured.add(info.toGameInfo(card.population));
+                have.add(info.gameId);
             }
             if (have.size() == ArcadeData.FEATURED_GAME_COUNT) {
                 break;
             }
         }
 
-        // pad the featured games with ones nobody is playing
+        // pad the featured games with ones no one is playing
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-            for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
-                if (!have.contains(game.gameId) && game.getRating() >= 4) {
-                    GameDetailRecord detail = _mgameRepo.loadGameDetail(game.gameId);
-                    if (detail.gamesPlayed > 0) {
-                        featured.add(toFeaturedGameInfo(game, detail, 0));
-                    }
+            for (GameInfoRecord info : _mgameRepo.loadGenre(
+                     GameGenre.ALL, ArcadeData.FEATURED_GAME_COUNT)) {
+                if (!have.contains(info.gameId) &&
+                    (!filter || (info.getRating() >= 4 && info.integrated))) {
+                    featured.add(info.toGameInfo(0));
                 }
                 if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
                     break;
                 }
             }
         }
-        return featured.toArray(new FeaturedGameInfo[featured.size()]);
-    }
 
-    /**
-     * Creates a {@link FeaturedGameInfo} record for the supplied game.
-     */
-    public FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
-    {
-        FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
-        info.avgDuration = detail.getAverageDuration();
-        int[] players = GameUtil.getMinMaxPlayers((Game)game.toItem());
-        info.minPlayers = players[0];
-        info.maxPlayers = players[1];
-        info.playersOnline = pop;
-        info.creator = _memberRepo.loadMemberName(game.creatorId);
-        return info;
+        // resolve our creator names
+        for (GameInfo info : featured) {
+            info.creator = _memberRepo.loadMemberName(info.creator.getMemberId());
+        }
+
+        return featured.toArray(new GameInfo[featured.size()]);
     }
 
     /**
@@ -277,7 +266,6 @@ public class GameLogic
         @Inject protected transient GameGameRegistry _gameReg;
     }
 
-    @Inject protected GameRepository _gameRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyGameRepository _mgameRepo;

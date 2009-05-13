@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.server;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -72,13 +71,11 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.BatchInvoker;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
@@ -113,7 +110,8 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.GameMetricsRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -129,16 +127,8 @@ public class GameGameRegistry
     implements ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver,
                AVRGameManager.LifecycleObserver, LobbyProvider, AVRProvider, GameGameProvider
 {
-    /**
-     * When updating metrics, there are these 3 modes.
-     * @see GameGameRegistry#updateGameMetrics
-     */
-    public enum MetricType
-    {
-        SINGLE_PLAYER,
-        MULTI_PLAYER,
-        AVRG
-    }
+    /** Used by {@link #updateGameMetrics}. */
+    public enum MetricType { SINGLE_PLAYER, MULTI_PLAYER, AVRG }
 
     @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
@@ -207,7 +197,7 @@ public class GameGameRegistry
         if (config instanceof ParlorGameConfig) {
             // parlor games only flush logs when the game ends
             minLogInterval = maxLogInterval = 0;
-        } else if (Game.isDevelopmentVersion(config.getGameId())) {
+        } else if (content.isDevelopmentVersion) {
             // write dev logs at least every two minutes but at most one per minute
             minLogInterval = 1;
             maxLogInterval = 2;
@@ -373,9 +363,9 @@ public class GameGameRegistry
      * Called when a game was successfully finished with a payout.  Right now just logs the results
      * for posterity.
      */
-    public void gameDidPayout (int memberId, Game game, int payout, int secondsPlayed)
+    public void gameDidPayout (int memberId, GameInfoRecord game, int payout, int secondsPlayed)
     {
-        _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
+        _eventLog.gamePlayed(game.genre, game.gameId, 0, payout, secondsPlayed, memberId);
     }
 
     /**
@@ -397,7 +387,7 @@ public class GameGameRegistry
                     throw new InvocationException("e.trophy_already_awarded");
                 }
 
-                if (!Game.isDevelopmentVersion(trophy.gameId)) {
+                if (!GameUtil.isDevelopmentVersion(trophy.gameId)) {
                     // publish the trophy earning event to the member's feed
                     _feedRepo.publishMemberMessage(
                         trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
@@ -446,30 +436,30 @@ public class GameGameRegistry
      * single player and multiplayer game plays. AVR games are always stored as multiplayer, but
      * use a different payout rate.
      */
-    public void updateGameMetrics (final GameDetailRecord detail, MetricType type,
+    public void updateGameMetrics (final GameMetricsRecord metrics, MetricType type,
                                    int minutesPlayed, final int gamesPlayed, final int coinsAwarded)
     {
         // update our in-memory record to reflect this gameplay
-        detail.flowToNextRecalc -= coinsAwarded;
-        detail.gamesPlayed += gamesPlayed;
+        metrics.flowToNextRecalc -= coinsAwarded;
+        metrics.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
         final int hourlyRate = (type == MetricType.AVRG) ? _runtime.money.hourlyAVRGameFlowRate
                                                          : _runtime.money.hourlyGameFlowRate;
         final boolean isMultiplayer = (type != MetricType.SINGLE_PLAYER);
         final int newFlowToNextRecalc;
-        if (detail.flowToNextRecalc <= 0) {
+        if (metrics.flowToNextRecalc <= 0) {
             newFlowToNextRecalc =
                 Math.round(hourlyRate * _runtime.money.payoutFactorReassessment/60f) +
-                detail.flowToNextRecalc;
-            detail.flowToNextRecalc = newFlowToNextRecalc;
+                metrics.flowToNextRecalc;
+            metrics.flowToNextRecalc = newFlowToNextRecalc;
         } else {
             newFlowToNextRecalc = 0;
         }
 
         // record this gameplay for future game metrics tracking and blah blah
-        final int gameId = detail.gameId, playerMins = Math.max(minutesPlayed, 1);
-        _batchInvoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
+        final int gameId = metrics.gameId, playerMins = Math.max(minutesPlayed, 1);
+        _batchInvoker.postUnit(new RepositoryUnit("updateGameMetrics(" + gameId + ")") {
             @Override public void invokePersist () throws Exception {
                 // note that game were played
                 _mgameRepo.noteGamePlayed(
@@ -481,11 +471,11 @@ public class GameGameRegistry
                 }
             }
             @Override public void handleSuccess () {
-                // update the in-memory detail record if we changed things
+                // update the in-memory metrics record if we changed things
                 if (_newData != null) {
-                    detail.payoutFactor = _newData[0];
-                    detail.avgSingleDuration = _newData[1];
-                    detail.avgMultiDuration = _newData[2];
+                    metrics.payoutFactor = _newData[0];
+                    metrics.avgSingleDuration = _newData[1];
+                    metrics.avgMultiDuration = _newData[2];
                 }
             }
             @Override // from Invoker.Unit
@@ -523,7 +513,7 @@ public class GameGameRegistry
     {
         // shutdown our active lobbies
         for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
-            lobbyDidShutdown(lmgr.getGame().gameId);
+            lobbyDidShutdown(lmgr.getGameId());
         }
 
         for (AVRGameManager amgr : _avrgManagers.values()) {
@@ -667,102 +657,11 @@ public class GameGameRegistry
                     reportFailure(MsoyGameCodes.E_NO_SUCH_GAME);
                     return;
                 }
-
-                MsoyGameDefinition def;
                 try {
-                    def = (MsoyGameDefinition)new MsoyGameParser().parseGame(_content.game);
-
-                } catch (IOException ioe) {
-                    log.warning("Error parsing game config", "game", _content.game, ioe);
-                    reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
-                    return;
-
-                } catch (SAXException saxe) {
-                    log.warning("Error parsing game config", "game", _content.game, saxe);
-                    reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
-                    return;
-
+                    finishActivateGame(gameId, _content, _agentStateRecs, _gameStateRecs);
+                } catch (InvocationException ie) {
+                    reportFailure(ie.getMessage());
                 }
-
-                if (StringUtil.isBlank(def.getServerMediaPath(gameId))) {
-                    log.info("AVRG missing server agent code", "game", gameId);
-                    reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
-                    return;
-                }
-
-                log.info("Setting up AVRG manager", "game", _content.game);
-
-                AVRGameConfig config = new AVRGameConfig();
-                config.init(_content.game, def);
-
-                List<PlaceManagerDelegate> delegates = createGameDelegates(config, _content);
-
-                // set up the global property space
-                final Map<String, byte[]> initialGameState = new HashMap<String, byte[]>();
-                for (GameStateRecord record : _gameStateRecs) {
-                    initialGameState.put(record.datumKey, record.datumValue);
-                }
-                delegates.add(new PropertySpaceDelegate() {
-                    @Override
-                    protected Map<String, byte[]> initialStateFromStore () {
-                        return initialGameState;
-                    }
-                    @Override
-                    protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
-                        // the map should be quite safe to pass to another thread
-                        _invoker.postUnit(new WriteOnlyUnit("shutdown") {
-                            @Override public void invokePersist () throws Exception {
-                                for (Map.Entry<String, byte[]> entry : state.entrySet()) {
-                                    _avrgRepo.storeState(new GameStateRecord(
-                                        gameId, entry.getKey(), entry.getValue()));
-                                }
-                            }
-                        });
-                    }
-                });
-
-                // set up the agent-private property space
-                final Map<String, byte[]> initialAgentState = new HashMap<String, byte[]>();
-                for (AgentStateRecord record : _agentStateRecs) {
-                    initialAgentState.put(record.datumKey, record.datumValue);
-                }
-                delegates.add(new AgentPropertySpaceDelegate() {
-                    @Override
-                    protected Map<String, byte[]> initialStateFromStore () {
-                        return initialAgentState;
-                    }
-                    @Override
-                    protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
-                        // the map should be quite safe to pass to another thread
-                        _invoker.postUnit(new WriteOnlyUnit("shutdown") {
-                            @Override public void invokePersist () throws Exception {
-                                for (Map.Entry<String, byte[]> entry : state.entrySet()) {
-                                    _avrgRepo.storeAgentState(new AgentStateRecord(
-                                        gameId, entry.getKey(), entry.getValue()));
-                                }
-                            }
-                        });
-                    }
-                });
-
-                AVRGameManager mgr;
-                try {
-                    mgr = (AVRGameManager)_placeReg.createPlace(config, delegates);
-                    _gameContent.put(gameId, _content);
-
-                } catch (Exception e) {
-                    log.warning("Failed to create AVRGameObject", "game", gameId, e);
-                    reportFailure(MsoyGameCodes.E_INTERNAL_ERROR);
-                    return;
-                }
-
-// TODO: now handled in MsoyGameDefinition
-//                mgr.getGameObject().setGameMedia(_content.game.gameMedia);
-                mgr.setLifecycleObserver(GameGameRegistry.this);
-
-                // now start up the agent, then wait for the avrGameReady callback
-                mgr.startAgent();
-                // TODO: add a timeout?
             }
 
             @Override
@@ -1043,6 +942,96 @@ public class GameGameRegistry
         return lmgr.getLobbyObject().getOid();
     }
 
+    protected void finishActivateGame (final int gameId, GameContent content,
+                                       List<AgentStateRecord> arecs, List<GameStateRecord> grecs)
+        throws InvocationException
+    {
+        MsoyGameDefinition def;
+        try {
+            def = (MsoyGameDefinition)new MsoyGameParser().parseGame(content.code);
+        } catch (IOException ioe) {
+            log.warning("Error parsing game config", "game", content.game, ioe);
+            throw new InvocationException(MsoyGameCodes.E_BAD_GAME_CONTENT);
+        } catch (SAXException saxe) {
+            log.warning("Error parsing game config", "game", content.game, saxe);
+            throw new InvocationException(MsoyGameCodes.E_BAD_GAME_CONTENT);
+        }
+
+        if (StringUtil.isBlank(def.getServerMediaPath(gameId))) {
+            log.info("AVRG missing server agent code", "game", gameId);
+            throw new InvocationException(MsoyGameCodes.E_BAD_GAME_CONTENT);
+        }
+
+        log.info("Setting up AVRG manager", "game", content.game);
+
+        AVRGameConfig config = new AVRGameConfig();
+        config.init(content.game.toGameSummary(), def);
+
+        List<PlaceManagerDelegate> delegates = createGameDelegates(config, content);
+
+        // set up the global property space
+        final Map<String, byte[]> initialGameState = Maps.newHashMap();
+        for (GameStateRecord record : grecs) {
+            initialGameState.put(record.datumKey, record.datumValue);
+        }
+        delegates.add(new PropertySpaceDelegate() {
+            @Override
+            protected Map<String, byte[]> initialStateFromStore () {
+                return initialGameState;
+            }
+            @Override
+            protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
+                // the map should be quite safe to pass to another thread
+                _invoker.postUnit(new WriteOnlyUnit("shutdown") {
+                    @Override public void invokePersist () throws Exception {
+                        for (Map.Entry<String, byte[]> entry : state.entrySet()) {
+                            _avrgRepo.storeState(
+                                new GameStateRecord(gameId, entry.getKey(), entry.getValue()));
+                        }
+                    }
+                });
+            }
+        });
+
+        // set up the agent-private property space
+        final Map<String, byte[]> initialAgentState = Maps.newHashMap();
+        for (AgentStateRecord record : arecs) {
+            initialAgentState.put(record.datumKey, record.datumValue);
+        }
+        delegates.add(new AgentPropertySpaceDelegate() {
+            @Override
+            protected Map<String, byte[]> initialStateFromStore () {
+                return initialAgentState;
+            }
+            @Override
+            protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
+                // the map should be quite safe to pass to another thread
+                _invoker.postUnit(new WriteOnlyUnit("shutdown") {
+                    @Override public void invokePersist () throws Exception {
+                        for (Map.Entry<String, byte[]> entry : state.entrySet()) {
+                            _avrgRepo.storeAgentState(new AgentStateRecord(
+                                gameId, entry.getKey(), entry.getValue()));
+                        }
+                    }
+                });
+            }
+        });
+
+        try {
+            AVRGameManager mgr = (AVRGameManager)_placeReg.createPlace(config, delegates);
+            mgr.setLifecycleObserver(GameGameRegistry.this);
+            // now we can cache our game content
+            _gameContent.put(gameId, content);
+            // finally start up the agent, then wait for the avrGameReady callback
+            mgr.startAgent();
+            // TODO: add a timeout?
+
+        } catch (Exception e) {
+            log.warning("Failed to create AVR game manager", "game", gameId, e);
+            throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     /**
      * Returns the oid of the game being played by the specified player or 0.
      */
@@ -1102,34 +1091,26 @@ public class GameGameRegistry
     protected GameContent assembleGameContent (int gameId)
     {
         GameContent content = new GameContent();
-        content.detail = _mgameRepo.loadGameDetail(gameId);
-        GameRecord rec = _mgameRepo.loadGameRecord(gameId, content.detail, true);
-        if (rec != null) {
-            content.game = (Game)rec.toItem();
-            int suiteId = content.game.getSuiteId();
-            // load up our level and item packs
-            for (LevelPackRecord record : _lpackRepo.loadOriginalItemsBySuite(suiteId)) {
-                content.lpacks.add((LevelPack)record.toItem());
-            }
-            for (ItemPackRecord record :
-                     _ipackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
-                content.ipacks.add((ItemPack)record.toItem());
-            }
-
-            // load up our trophy source items
-            Set<TrophySourceRecord> tsrecs = Sets.newTreeSet(TrophySourceRecord.BY_SORT_ORDER);
-            tsrecs.addAll(_tsourceRepo.loadOriginalItemsBySuite(suiteId));
-            List<String> debugIdents = Lists.newArrayList();
-            for (TrophySourceRecord record : tsrecs) {
-                content.tsources.add((TrophySource)record.toItem());
-                debugIdents.add(record.ident);
-            }
-            log.info("Loaded trophy sources for game", "game", gameId, "trophies", debugIdents);
-
-            // load up our prize items
-            for (PrizeRecord record : _prizeRepo.loadOriginalItemsBySuite(suiteId)) {
-                content.prizes.add((Prize)record.toItem());
-            }
+        content.isDevelopmentVersion = GameUtil.isDevelopmentVersion(gameId);
+        content.game = _mgameRepo.loadGame(gameId);
+        content.metrics = _mgameRepo.loadGameMetrics(gameId);
+        content.code = _mgameRepo.loadGameCode(gameId, true).toGameCode();
+        // load up our level and item packs
+        for (LevelPackRecord record : _lpackRepo.loadOriginalItemsBySuite(gameId)) {
+            content.lpacks.add((LevelPack)record.toItem());
+        }
+        for (ItemPackRecord record : _ipackRepo.loadOriginalItemsBySuite(gameId)) {
+            content.ipacks.add((ItemPack)record.toItem());
+        }
+        // load up our trophy source items
+        Set<TrophySourceRecord> tsrecs = Sets.newTreeSet(TrophySourceRecord.BY_SORT_ORDER);
+        tsrecs.addAll(_tsourceRepo.loadOriginalItemsBySuite(gameId));
+        for (TrophySourceRecord record : tsrecs) {
+            content.tsources.add((TrophySource)record.toItem());
+        }
+        // load up our prize items
+        for (PrizeRecord record : _prizeRepo.loadOriginalItemsBySuite(gameId)) {
+            content.prizes.add((Prize)record.toItem());
         }
         return content;
     }

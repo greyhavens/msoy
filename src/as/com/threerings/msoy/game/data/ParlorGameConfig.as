@@ -12,7 +12,6 @@ import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.WhirledGameConfig;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.ParlorGameController;
 
 /**
@@ -21,11 +20,14 @@ import com.threerings.msoy.game.client.ParlorGameController;
 public class ParlorGameConfig extends WhirledGameConfig
     implements MsoyGameConfig
 {
-    /** The game item. */
-    public var game :Game;
+    /** Info on the game being played. */
+    public var game :GameSummary;
 
     /** The game's groupId, or 0 for none. */
     public var groupId :int;
+
+    /** The splash screen media, or null if we have none. */
+    public var splashMedia :MediaDesc;
 
     public function ParlorGameConfig ()
     {
@@ -33,12 +35,11 @@ public class ParlorGameConfig extends WhirledGameConfig
     }
 
     /**
-     * Configures this config with information from the supplied {@link Game} item.
+     * Configures this config with bare bones info.
      */
-    public function init (game :Game, gameDef :GameDefinition, groupId :int) :void
+    public function init (game :GameSummary, gameDef :GameDefinition) :void
     {
         this.game = game;
-        this.groupId = groupId;
         _gameId = game.gameId;
         _gameDef = gameDef;
     }
@@ -52,15 +53,16 @@ public class ParlorGameConfig extends WhirledGameConfig
     // from interface MsoyGameConfig
     public function getThumbnail () :MediaDesc
     {
-        return game.getThumbnailMedia();
+        return game.thumbMedia;
     }
 
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        game = Game(ins.readObject());
+        game = GameSummary(ins.readObject());
         groupId = ins.readInt();
+        splashMedia = MediaDesc(ins.readObject());
     }
 
     // from interface Streamable
@@ -69,6 +71,7 @@ public class ParlorGameConfig extends WhirledGameConfig
         super.writeObject(out);
         out.writeObject(game);
         out.writeInt(groupId);
+        out.writeObject(splashMedia);
     }
 
     // from BaseGameConfig

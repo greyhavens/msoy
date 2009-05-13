@@ -40,17 +40,16 @@ import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.server.PlayerNodeActions;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRepository;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.mail.server.MailLogic;
@@ -401,19 +400,17 @@ public class MemberLogic
         if (games.size() < desiredGameCount) {
             for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
                 if (!haveGames.contains(place.placeId)) {
-                    GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                    if (Game.detectIsInWorld(game.config)) {
-                        if (game.groupId != 0) {
-                            games.add(new HomePageItem(
-                                HomePageItem.ACTION_AVR_GAME,
-                                new AVRGameNavItemData(game.gameId, game.name, game.groupId),
-                                game.getThumbMediaDesc()));
-                        }
+                    GameInfoRecord game = _mgameRepo.loadGame(place.placeId);
+                    if (game.isAVRG && game.groupId != 0) {
+                        games.add(new HomePageItem(
+                                      HomePageItem.ACTION_AVR_GAME,
+                                      new AVRGameNavItemData(game.gameId, game.name, game.groupId),
+                                      game.getThumbMedia()));
                     } else {
                         games.add(new HomePageItem(
-                            HomePageItem.ACTION_GAME,
-                            new BasicNavItemData(game.gameId, game.name),
-                            game.getThumbMediaDesc()));
+                                      HomePageItem.ACTION_GAME,
+                                      new BasicNavItemData(game.gameId, game.name),
+                                      game.getThumbMedia()));
                     }
                     haveGames.add(game.gameId);
                 }
@@ -432,19 +429,19 @@ public class MemberLogic
 
         // If we don't have enough games, pull from the list of all games.
         if (curItem < items.length) {
-            for (GameRecord game : _gameRepo.loadGenre((byte)-1, items.length)) {
+            for (GameInfoRecord game : _mgameRepo.loadGenre(GameGenre.ALL, items.length)) {
                 if (!haveGames.contains(game.gameId)) {
-                    if (Game.detectIsInWorld(game.config)) {
+                    if (game.isAVRG) {
                         if (game.groupId != 0) {
                             items[curItem++] = new HomePageItem(
                                 HomePageItem.ACTION_AVR_GAME, new AVRGameNavItemData(
                                     game.gameId, game.name, game.groupId),
-                                    game.getThumbMediaDesc());
+                                    game.getThumbMedia());
                         }
                     } else {
                         items[curItem++] = new HomePageItem(
                             HomePageItem.ACTION_GAME, new BasicNavItemData(
-                                game.gameId, game.name), game.getThumbMediaDesc());
+                                game.gameId, game.name), game.getThumbMedia());
                     }
                 }
                 if (curItem == items.length) {
@@ -696,11 +693,11 @@ public class MemberLogic
             }
             case HomePageItem.ACTION_GAME:
             case HomePageItem.ACTION_AVR_GAME:
-                GameRecord game = _msoyGameRepo.loadGameRecord(se.experience.data);
+                GameInfoRecord game = _mgameRepo.loadGame(se.experience.data);
                 if (game == null) {
                     continue;
                 }
-                media = game.getThumbMediaDesc();
+                media = game.getThumbMedia();
                 if (se.experience.action == HomePageItem.ACTION_GAME) {
                     data = new BasicNavItemData(game.gameId, game.name);
                 } else {
@@ -844,14 +841,13 @@ public class MemberLogic
     @Inject protected ABTestRepository _testRepo;
     @Inject protected BadgeLogic _badgeLogic;
     @Inject protected FeedRepository _feedRepo;
-    @Inject protected GameRepository _gameRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MsoyGameRepository _msoyGameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected PlayerNodeActions _playerActions;

@@ -66,7 +66,7 @@ public class ContentDelegate extends PlayManagerDelegate
             public void invokePersistent () throws Exception {
                 int deleteId = 0;
                 for (ItemPackRecord ipack : _ipackRepo.loadClonedItems(
-                         plobj.getMemberId(), _content.game.getSuiteId())) {
+                         plobj.getMemberId(), _content.suiteId)) {
                     // pick the first item pack with a matching ident to delete; they're all
                     // exactly the same
                     if (ipack.ident.equals(ident)) {

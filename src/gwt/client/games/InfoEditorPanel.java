@@ -1,0 +1,129 @@
+//
+// $Id$
+
+package client.games;
+
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.item.data.all.Item;
+
+import client.ui.LimitedTextArea;
+import client.ui.MsoyUI;
+import client.util.ClickCallback;
+import client.util.InfoCallback;
+import client.util.ServiceUtil;
+
+/**
+ * Allows for creation and editing of basic game info.
+ */
+public class InfoEditorPanel extends BaseEditorPanel
+{
+    public InfoEditorPanel (final GameInfo info)
+    {
+        final TextBox name = MsoyUI.createTextBox(info.name, GameInfo.MAX_NAME_LENGTH, 40);
+        addRow(_msgs.egName(), name, new Command() {
+            public void execute () {
+                info.name = name.getText().trim();
+            }
+        });
+
+        final ListBox genbox = new ListBox();
+        for (byte genre : GameGenre.GENRES) {
+            genbox.addItem(_dmsgs.xlate("genre" + genre));
+        }
+        genbox.setSelectedIndex(info.genre);
+        addRow(_msgs.egGenre(), genbox, new Command() {
+            public void execute () {
+                info.genre = (byte)genbox.getSelectedIndex();
+            }
+        });
+
+        final LimitedTextArea descrip = new LimitedTextArea(GameInfo.MAX_DESCRIPTION_LENGTH, 40, 3);
+        descrip.setText(info.description);
+        addRow(_msgs.egDescrip(), descrip, new Command() {
+            public void execute () {
+                info.description = descrip.getText();
+            }
+        });
+
+        final ListBox grbox = new ListBox();
+        grbox.addItem(_msgs.egGroupNone(), ""+GameInfo.NO_GROUP);
+        addRow(_msgs.egGroup(), grbox, new Command() {
+            public void execute () {
+                info.groupId = Integer.parseInt(grbox.getValue(grbox.getSelectedIndex()));
+            }
+        });
+        addTip(_msgs.egGroupTip());
+
+        final TextBox shopTag = MsoyUI.createTextBox(info.shopTag, 20, 20);
+        addRow(_msgs.egShopTag(), shopTag, new Command() {
+            public void execute () {
+                info.shopTag = shopTag.getText().trim();
+            }
+        });
+        addTip(_msgs.egShopTagTip());
+
+        final MediaBox tbox = new MediaBox(
+            MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, info.thumbMedia);
+        addRow(_msgs.egThumb(), tbox, new Command() {
+            public void execute () {
+                info.thumbMedia = tbox.getMedia();
+            }
+        });
+        addTip(_msgs.egThumbTip());
+
+        final MediaBox sbox = new MediaBox(
+            MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia);
+        addRow(_msgs.egShot(), sbox, new Command() {
+            public void execute () {
+                info.shotMedia = sbox.getMedia();
+            }
+        });
+        addTip(_msgs.egShotTip());
+
+        // add our confirmation ui and update interface
+        Button save = addSaveRow();
+
+        // wire up saving the game on click
+        new ClickCallback<Void>(save) {
+            protected boolean callService () {
+                if (!bindChanges()) {
+                    return false;
+                }
+                _gamesvc.updateGameInfo(info, this);
+                return true;
+            }
+            protected boolean gotResult (Void result) {
+                MsoyUI.info(_msgs.egGameInfoUpdated());
+                return true;
+            }
+        };
+
+        // load up the list of groups that can be associated with this game
+        _groupsvc.getGameGroups(info.gameId, new InfoCallback<List<GroupMembership>>() {
+            public void onSuccess (List<GroupMembership> groups) {
+                for (GroupMembership group : groups) {
+                    grbox.addItem(""+group.group, ""+group.group.getGroupId());
+                    if (group.group.getGroupId() == info.groupId) {
+                        grbox.setSelectedIndex(grbox.getItemCount()-1);
+                    }
+                }
+            }
+        });
+    }
+
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+}

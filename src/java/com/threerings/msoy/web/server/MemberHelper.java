@@ -33,8 +33,8 @@ import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -255,7 +255,7 @@ public class MemberHelper
     protected MemberCard.InGame getGameStatus (MsoyNodeObject mnobj, int memberId)
     {
         MemberGame game = mnobj.memberGames.get(memberId);
-        if (game == null || Game.isDevelopmentVersion(game.gameId)) {
+        if (game == null || GameUtil.isDevelopmentVersion(game.gameId)) {
             return null; // don't show developer versions of games
         }
         MemberCard.InGame status = game.avrGame ?

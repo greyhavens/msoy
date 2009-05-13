@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -24,9 +23,7 @@ public class ListingBox extends ItemBox
 {
     public static ListingBox newBox (ListingCard card)
     {
-        // games link to the game shop instead of to the game item
-        String action = (card.itemType == Item.GAME) ? "s" : "l";
-        return new ListingBox(card, Args.compose(action, card.itemType, card.catalogId));
+        return new ListingBox(card, Args.compose("l", card.itemType, card.catalogId));
     }
 
     public static ListingBox newSubBox (ListingCard card)

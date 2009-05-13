@@ -38,9 +38,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRecord;
-
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.peer.data.HostedGame;
@@ -52,6 +49,7 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.room.data.MemberInfo;
@@ -210,7 +208,7 @@ public class WorldGameRegistry
         String name = "inviteFriends(" + gameId + ", " + StringUtil.toString(friendIds) + ")";
         _invoker.postUnit(new RepositoryUnit(name) {
             public void invokePersist () throws Exception {
-                GameRecord grec = _mgameRepo.loadGameRecord(gameId);
+                GameInfoRecord grec = _mgameRepo.loadGame(gameId);
                 if (grec == null) {
                     throw new Exception("No record for game."); // the standard logging is good
                 }
@@ -268,8 +266,7 @@ public class WorldGameRegistry
         // we're going to need the Game item to finish resolution
         _invoker.postUnit(new RepositoryUnit("resolveGame") {
             public void invokePersist () throws Exception {
-                GameRecord grec = _mgameRepo.loadGameRecord(gameId);
-                _game = (grec == null) ? null : (Game)grec.toItem();
+                _game = _mgameRepo.loadGame(gameId);
             }
             public void handleSuccess () {
                 if (_game == null) {
@@ -283,11 +280,11 @@ public class WorldGameRegistry
                 log.warning("Failed to resolve game", "game", gameId, e);
                 resolver.fail();
             }
-            protected Game _game;
+            protected GameInfoRecord _game;
         });
     }
 
-    protected void hostGame (Game game, GameResolver resolver)
+    protected void hostGame (GameInfoRecord game, GameResolver resolver)
     {
         if (!_games.add(game.gameId)) {
             log.warning("Requested to host game that we're already hosting?", "game", game.gameId);

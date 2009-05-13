@@ -50,6 +50,7 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -61,7 +62,6 @@ import com.threerings.msoy.group.server.persist.MedalRepository;
 
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
@@ -419,7 +419,7 @@ public class ProfileServlet extends MsoyServiceServlet
                 result.add(rrec);
                 map.put(rrec.gameId, rrec);
             }
-            if (GameRecord.isDeveloperVersion(record.gameId)) {
+            if (record.gameId < 0) {
                 rrec.singleRating = record.rating;
             } else {
                 rrec.multiRating = record.rating;
@@ -429,13 +429,13 @@ public class ProfileServlet extends MsoyServiceServlet
         // now load up and fill in the game details
         for (final IntMap.IntEntry<GameRating> entry : map.intEntrySet()) {
             final int gameId = entry.getIntKey();
-            final GameRecord record = _mgameRepo.loadGameRecord(gameId);
+            final GameInfoRecord record = _mgameRepo.loadGame(gameId);
             if (record == null) {
                 log.info("Player has rating for non-existent game", "id", gameId);
                 result.remove(entry.getValue());
             } else {
                 entry.getValue().gameName = record.name;
-                entry.getValue().gameThumb = record.getThumbMediaDesc();
+                entry.getValue().gameThumb = record.getThumbMedia();
             }
         }
 

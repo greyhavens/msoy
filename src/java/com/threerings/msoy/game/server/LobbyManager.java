@@ -29,13 +29,10 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRepository;
-
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTableConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
@@ -85,14 +82,6 @@ public class LobbyManager
     }
 
     /**
-     * Returns the metadata record for the game hosted by this lobby.
-     */
-    public Game getGame ()
-    {
-        return _content.game;
-    }
-
-    /**
      * Return the ID of the game for which we're the lobby.
      */
     public int getGameId ()
@@ -126,13 +115,11 @@ public class LobbyManager
         // parse the game definition
         GameDefinition gameDef;
         try {
-            gameDef = new MsoyGameParser().parseGame(content.game);
+            gameDef = new MsoyGameParser().parseGame(content.code);
         } catch (Exception e) {
-            log.warning("Error parsing game definition [id=" + content.game.gameId +
-                ", err=" + e + "].");
-            // however, we do not want to put the kibosh on the update. If someone
-            // booches their game, we want the lobby to *fail fast*, not fail the next time
-            // the server reboots...
+            log.warning("Error parsing game definition", "id", content.game.gameId, "err", e);
+            // however, we do not want to put the kibosh on the update. If someone booches their
+            // game, we want the lobby to *fail fast*, not fail the next time the server reboots...
             gameDef = null;
         }
 
@@ -142,21 +129,21 @@ public class LobbyManager
         // update the lobby object
         _lobj.startTransaction();
         try {
-            _lobj.setGame(_content.game);
+            _lobj.setGame(_content.game.toGameSummary());
             _lobj.setGameDef(gameDef);
             _lobj.setGroupId(ServerConfig.getGameGroupId(_content.game.groupId));
+            _lobj.setSplashMedia(_content.code.splashMedia);
         } finally {
             _lobj.commitTransaction();
         }
     }
 
     /**
-     * Initialize the specified config.
-     * Exposed to allow MsoyTableManager to call it.
+     * Initializes the supplied config. Exposed to allow MsoyTableManager to call it.
      */
     public void initConfig (ParlorGameConfig config)
     {
-        config.init(_lobj.game, _lobj.gameDef, ServerConfig.getGameGroupId(_lobj.game.groupId));
+        config.init(_lobj.game, _lobj.gameDef, _lobj.groupId, _lobj.splashMedia);
     }
 
     /**
@@ -331,7 +318,6 @@ public class LobbyManager
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected GameRepository _gameRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _plreg;
     @Inject protected GameGameRegistry _ggreg;

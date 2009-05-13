@@ -27,7 +27,7 @@ public class ArcadeData
         public int gameCount;
 
         /** The highlighted games in this genre. */
-        public GameInfo[] games;
+        public GameCard[] games;
     }
 
     /** The number of featured games we show on the Arcade page. */
@@ -37,7 +37,7 @@ public class ArcadeData
     public static int TOP_GAME_COUNT = 20;
 
     /** Info on the featured games. */
-    public FeaturedGameInfo[] featuredGames;
+    public GameInfo[] featuredGames;
 
     /**
      * Information about each game genre.
@@ -45,14 +45,12 @@ public class ArcadeData
     public List<Genre> genres;
 
     /**
-     * List of all games ordered by name
-     * Only need name and id
+     * List of all games ordered by name.
      */
-    public List<GameInfo> allGames;
+    public List<GameCard> allGames;
 
     /**
-     * List of top X games ordered by rank
-     * TOnly need name, id and media
+     * List of top X games ordered by rank.
      */
-    public List<GameInfo> topGames;
+    public List<GameCard> topGames;
 }

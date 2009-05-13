@@ -155,9 +155,9 @@ public class BureauInfoPanel extends VerticalPanel
         for (BureauInfo binfo : binfos) {
             col = 0;
             table.setText(row, col++, binfo.bureauId);
-            if (binfo.game != null) {
-                String args = Args.compose("d", binfo.game.gameId);
-                Widget link = Link.create(binfo.game.name, "Name", Pages.GAMES, args, false);
+            if (binfo.gameId != 0) {
+                String args = Args.compose("d", binfo.gameId);
+                Widget link = Link.create(binfo.gameName, "Name", Pages.GAMES, args, false);
                 table.setWidget(row, col++, link);
             } else {
                 table.setText(row, col++, "");

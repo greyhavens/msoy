@@ -13,7 +13,7 @@ import com.threerings.parlor.data.TableMarshaller;
 
 import com.whirled.game.data.GameDefinition;
 
-import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Represents a lobby for a particular game.
@@ -42,11 +42,13 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** The field name of the <code>groupId</code> field. */
     public static final String GROUP_ID = "groupId";
+
+    /** The field name of the <code>splashMedia</code> field. */
+    public static final String SPLASH_MEDIA = "splashMedia";
     // AUTO-GENERATED: FIELDS END
 
-    /** The game that we're matchmaking for. If the game is mutable, this may be updated while the
-     * lobby is resolved. */
-    public Game game;
+    /** The game that we're matchmaking for. */
+    public GameSummary game;
 
     /** The parsed configuration info for this game. */
     public GameDefinition gameDef;
@@ -59,6 +61,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** The group to load up behind the lobby if not already in a room. */
     public int groupId;
+
+    /** The splash media for our game, or null. */
+    public MediaDesc splashMedia;
 
     /** If set on the server, will be called with subscriber updates. */
     public transient SubscriberListener subscriberListener;
@@ -110,9 +115,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setGame (Game value)
+    public void setGame (GameSummary value)
     {
-        Game ovalue = this.game;
+        GameSummary ovalue = this.game;
         requestAttributeChange(
             GAME, value, ovalue);
         this.game = value;
@@ -211,6 +216,22 @@ public class LobbyObject extends DObject implements TableLobbyObject
         requestAttributeChange(
             GROUP_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.groupId = value;
+    }
+
+    /**
+     * Requests that the <code>splashMedia</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setSplashMedia (MediaDesc value)
+    {
+        MediaDesc ovalue = this.splashMedia;
+        requestAttributeChange(
+            SPLASH_MEDIA, value, ovalue);
+        this.splashMedia = value;
     }
     // AUTO-GENERATED: METHODS END
 }

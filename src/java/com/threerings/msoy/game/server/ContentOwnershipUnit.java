@@ -15,7 +15,6 @@ import com.google.common.collect.Lists;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
@@ -26,12 +25,11 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 public abstract class ContentOwnershipUnit extends RepositoryUnit
 {
-    public ContentOwnershipUnit (int gameId, int suiteId, int memberId)
+    public ContentOwnershipUnit (int gameId, int memberId)
     {
         super("contentOwnershipResolution");
 
         _gameId = gameId;
-        _suiteId = suiteId;
         _memberId = memberId;
     }
 
@@ -41,13 +39,13 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
         _content = Lists.newArrayList();
         Iterable<LevelPackRecord> lrecords;
         Iterable<ItemPackRecord> irecords;
-        if (Game.isDevelopmentVersion(_gameId)) {
+        if (GameUtil.isDevelopmentVersion(_gameId)) {
             // only the game creator will appear to "own" premium level packs (or any item
             // packs since all item packs are premium); however a crafty creator could
             // create extra item or premium level packs and give them to a tester and the
             // tester will then also appear to own said premium content
-            lrecords = getLpackRepo().loadOriginalItems(_memberId, _suiteId);
-            irecords = getIpackRepo().loadOriginalItems(_memberId, _suiteId);
+            lrecords = getLpackRepo().loadOriginalItems(_memberId, _gameId);
+            irecords = getIpackRepo().loadOriginalItems(_memberId, _gameId);
             // filter out non-premium level packs (which will generally show up in the
             // creator's inventory) since those normally wouldn't be owned
             lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
@@ -56,8 +54,8 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
                 }
             });
         } else {
-            lrecords = getLpackRepo().loadClonedItems(_memberId, _suiteId);
-            irecords = getIpackRepo().loadClonedItems(_memberId, _suiteId);
+            lrecords = getLpackRepo().loadClonedItems(_memberId, _gameId);
+            irecords = getIpackRepo().loadClonedItems(_memberId, _gameId);
         }
         Iterables.addAll(_content, summarize(GameData.LEVEL_DATA, lrecords));
         Iterables.addAll(_content, summarize(GameData.ITEM_DATA, irecords));
@@ -90,7 +88,6 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
     protected abstract TrophyRepository getTrophyRepo ();
 
     protected int _gameId;
-    protected int _suiteId;
     protected int _memberId;
     protected List<GameContentOwnership> _content;
 }

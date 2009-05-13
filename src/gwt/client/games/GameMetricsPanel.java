@@ -19,8 +19,7 @@ import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.game.gwt.GameDetail;
-import com.threerings.msoy.game.gwt.GameMetrics;
-import com.threerings.msoy.game.gwt.GameMetrics.TilerSummary;
+import com.threerings.msoy.game.gwt.GameDistribs;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
@@ -31,7 +30,7 @@ import client.util.ClickCallback;
 import client.util.ServiceUtil;
 
 /**
- * Displays the metrics like score distributions for a particular game.
+ * Displays the score distributions for a particular game.
  */
 public class GameMetricsPanel extends VerticalPanel
 {
@@ -50,8 +49,8 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(_msgs.gmpLoading(), "Header"));
-        _gamesvc.loadGameMetrics(_detail.gameId, new AsyncCallback<GameMetrics>() {
-            public void onSuccess (GameMetrics metrics) {
+        _gamesvc.loadGameMetrics(_detail.gameId, new AsyncCallback<GameDistribs>() {
+            public void onSuccess (GameDistribs metrics) {
                 gotMetrics(metrics);
             }
             public void onFailure (Throwable caught) {
@@ -61,25 +60,25 @@ public class GameMetricsPanel extends VerticalPanel
         });
     }
 
-    protected void gotMetrics (GameMetrics metrics)
+    protected void gotMetrics (GameDistribs metrics)
     {
         _metrics = metrics;
         clear();
 
         int shown = 0;
-        shown += addMetrics(metrics.singleDistributions, true);
-        shown += addMetrics(metrics.multiDistributions, false);
+        shown += addMetrics(metrics.singleDistribs, true);
+        shown += addMetrics(metrics.multiDistribs, false);
 
         if (shown == 0) {
             add(new Label(_msgs.gmpNoMetrics()));
         }
     }
 
-    protected int addMetrics (Map<Integer, TilerSummary> metricList, boolean single)
+    protected int addMetrics (Map<Integer, GameDistribs.TilerSummary> metrics, boolean single)
     {
         int count = 0;
-        for (Map.Entry<Integer, TilerSummary> entry : metricList.entrySet()) {
-            TilerSummary summary = entry.getValue();
+        for (Map.Entry<Integer, GameDistribs.TilerSummary> entry : metrics.entrySet()) {
+            GameDistribs.TilerSummary summary = entry.getValue();
             if (summary.totalCount > 0) {
                 int gameMode = entry.getKey();
 
@@ -230,7 +229,7 @@ public class GameMetricsPanel extends VerticalPanel
     }
 
     protected GameDetail _detail;
-    protected GameMetrics _metrics;
+    protected GameDistribs _metrics;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)

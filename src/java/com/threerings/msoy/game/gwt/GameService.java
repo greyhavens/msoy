@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
 
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -39,32 +40,39 @@ public interface GameService extends RemoteService
         public Long[][] whenEarneds;
     }
 
+    /** Return result for {@link #loadGameData}. */
+    public static class GameData implements IsSerializable
+    {
+        public GameInfo info;
+        public GameCode code;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/gamesvc";
 
     /**
      * Loads the details for the specified game.
      */
-    public GameDetail loadGameDetail (int gameId)
+    GameDetail loadGameDetail (int gameId)
+        throws ServiceException;
+
+    /**
+     * Loads the metadata for the specified game (used by the game editor). Caller must be the game
+     * owner or support+.
+     */
+    GameData loadGameData (int gameId)
         throws ServiceException;
 
     /**
      * Loads the metrics for the specified game. Caller must be an admin or the owner of the game.
      */
-    public GameMetrics loadGameMetrics (int gameId)
+    GameDistribs loadGameMetrics (int gameId)
         throws ServiceException;
 
     /**
      * Loads the logs for the specified game. Caller must be an admin or the owner of the game.
      */
-    public GameLogs loadGameLogs (int gameId)
-        throws ServiceException;
-
-    /**
-     * Updates the instructions for the specified game. The caller must be the owner of the game's
-     * source item.
-     */
-    public void updateGameInstructions (int gameId, String instructions)
+    GameLogs loadGameLogs (int gameId)
         throws ServiceException;
 
     /**
@@ -74,26 +82,26 @@ public interface GameService extends RemoteService
      * @param single if true the single player scores will be reset, if false the multiplayer
      * scores will be reset.
      */
-    public void resetGameScores (int gameId, boolean single, int gameMode)
+    void resetGameScores (int gameId, boolean single, int gameMode)
         throws ServiceException;
 
     /**
      * Loads and returns the trophies awarded by the specified game. Filling in when they were
      * earned by the caller if possible.
      */
-    public List<Trophy> loadGameTrophies (int gameId)
+    List<Trophy> loadGameTrophies (int gameId)
         throws ServiceException;
 
     /**
      * Compares the trophy earnings for the specified set of members in the specified game.
      */
-    public CompareResult compareTrophies (int gameId, int[] memberIds)
+    CompareResult compareTrophies (int gameId, int[] memberIds)
         throws ServiceException;
 
     /**
      * Loads all trophies owned by the specified member.
      */
-    public TrophyCase loadTrophyCase (int memberId)
+    TrophyCase loadTrophyCase (int memberId)
         throws ServiceException;
 
     /**
@@ -105,24 +113,49 @@ public interface GameService extends RemoteService
      * @return two arrays, the first the single-player rankings for this game, the second its
      * multiplayer rankings.
      */
-    public PlayerRating[][] loadTopRanked (int gameId, boolean onlyMyFriends)
+    PlayerRating[][] loadTopRanked (int gameId, boolean onlyMyFriends)
         throws ServiceException;
 
     /**
      * Loads up information for the arcade.
      */
-    public ArcadeData loadArcadeData ()
+    ArcadeData loadArcadeData ()
         throws ServiceException;
 
     /**
      * Loads up information on the specified game genre.
      */
-    public List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
+    List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
         throws ServiceException;
 
     /**
-     * Loads up information for the landing page top games.
+     * Awards a game a rating from 1 to 5.
      */
-    public FeaturedGameInfo[] loadTopGamesData ()
+    RatingResult rateGame (int gameId, byte rating)
+        throws ServiceException;
+
+    /**
+     * Updates the metadata for the supplied game.
+     */
+    void updateGameInfo (GameInfo info)
+        throws ServiceException;
+
+    /**
+     * Updates the instructions for the specified game. The caller must be the owner of the game's
+     * source item.
+     */
+    void updateGameInstructions (int gameId, String instructions)
+        throws ServiceException;
+
+    /**
+     * Updates the development code for the supplied game.
+     */
+    void updateGameCode (GameCode code)
+        throws ServiceException;
+
+    /**
+     * Publishes the specified game's development code.
+     */
+    void publishGameCode (int gameId)
         throws ServiceException;
 }

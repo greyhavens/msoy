@@ -96,7 +96,7 @@ public class GameGenrePanel extends FlowPanel
     protected void init (byte genre, List<GameInfo> games)
     {
         // set the dropdown list of all games
-        _header.init(games);
+        _header.initWithInfos(games);
 
         // add the games to the page
         add(new GameGenreGrid(games));
@@ -235,8 +235,6 @@ public class GameGenrePanel extends FlowPanel
         GameInfo.SORT_BY_RATING,
         GameInfo.SORT_BY_NEWEST,
         GameInfo.SORT_BY_NAME,
-        GameInfo.SORT_BY_MULTIPLAYER,
-        GameInfo.SORT_BY_SINGLE_PLAYER,
         GameInfo.SORT_BY_GENRE,
         GameInfo.SORT_BY_PLAYERS_ONLINE
     };

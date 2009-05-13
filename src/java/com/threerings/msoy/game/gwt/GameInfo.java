@@ -6,6 +6,7 @@ package com.threerings.msoy.game.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Contains summary information for a game being displayed on the arcade page.
@@ -22,41 +23,53 @@ public class GameInfo
     /** Alternate sort by name */
     public static final byte SORT_BY_NAME = 2;
 
-    /** Alternate sort with [23456]+ player games first */
-    public static final byte SORT_BY_MULTIPLAYER = 3;
-
-    /** Alternate sort with 1+ player games first */
-    public static final byte SORT_BY_SINGLE_PLAYER = 4;
-
     /** Alternate sort by category */
-    public static final byte SORT_BY_GENRE = 5;
+    public static final byte SORT_BY_GENRE = 3;
 
     /** Alternate sort by # people playing */
-    public static final byte SORT_BY_PLAYERS_ONLINE = 6;
+    public static final byte SORT_BY_PLAYERS_ONLINE = 4;
 
-    /** The unique identifier for this game. */
+    /** The maximum allowed length for game names. */
+    public static final int MAX_NAME_LENGTH = 64;
+
+    /** The maximum allowed length for game descriptions. */
+    public static final int MAX_DESCRIPTION_LENGTH = 200;
+
+    /** Value of {@link #groupId} when there is no associated group. */
+    public static final int NO_GROUP = 0;
+
+    /** Identifies the game splash media. */
+    public static final String SPLASH_MEDIA = "splash";
+
+    /** The id of the game in question. */
     public int gameId;
 
-    /** The game's human readable name. */
+    /** The name of the game in question. */
     public String name;
 
-    /** The genre code for this game. */
+    /** This game's genre. */
     public byte genre;
 
-    /** This game's thumbnail icon. */
-    public MediaDesc thumbMedia;
+    /** True if this is an AVRG, false if it's a parlor game. */
+    public boolean isAVRG;
 
-    /** This game's description. */
+    /** The name of the creator of this game. */
+    public MemberName creator;
+
+    /** A more detailed description of the game. */
     public String description;
 
-    /** The number of players currently playing this game. */
-    public int playersOnline;
+    /** The game's thumbnail media (will never be null). */
+    public MediaDesc thumbMedia;
 
-    /** The minimum number of players for this game. */
-    public int minPlayers;
+    /** The game screenshot media (will never be null). */
+    public MediaDesc shotMedia;
 
-    /** The maximum number of players for this game or Integer.MAX_VALUE if it's a party game. */
-    public int maxPlayers;
+    /** Optional group associated with this game; 0 means no group */
+    public int groupId;
+
+    /** The tag used to identify items in this game's shop. */
+    public String shopTag;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;
@@ -64,9 +77,17 @@ public class GameInfo
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
 
-    /** Whether this game takes place in whirled rooms as opposed to being lobbied. */
-    public boolean isInWorld;
+    /** Whether or not we believe that this game is integrated with the Whirled API. */
+    public boolean integrated;
 
-    /** The group (whirled) associated with this game. */
-    public int groupId;
+    /** The number of players currently playing this game. */
+    public int playersOnline;
+
+    /**
+     * Returns true if the specified member is the creator of this game.
+     */
+    public boolean isCreator (int memberId)
+    {
+        return creator.getMemberId() == memberId;
+    }
 }

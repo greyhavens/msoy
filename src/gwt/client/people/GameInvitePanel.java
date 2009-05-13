@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
@@ -36,13 +36,12 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.util.ClickCallback;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
-
 import client.ui.MsoyUI;
 import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
+import client.util.ClickCallback;
+import client.util.InfoCallback;
+import client.util.ServiceUtil;
 
 /**
  * Panel for inviting friends to come and play a game, usually issued by a game API call that
@@ -105,10 +104,10 @@ public class GameInvitePanel extends InvitePanel
         SmartTable info = new SmartTable();
         info.setWidth("100%");
         info.setStyleName("gameInfo");
-        info.setWidget(0, 0, new ThumbBox(detail.item.getThumbnailMedia(),
+        info.setWidget(0, 0, new ThumbBox(detail.info.thumbMedia,
                                           MediaDesc.THUMBNAIL_SIZE), 1, "thumbnail");
         info.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        info.setText(0, 1, _msgs.gameInviteIntro(detail.item.name), 1, "Intro");
+        info.setText(0, 1, _msgs.gameInviteIntro(detail.info.name), 1, "Intro");
         info.setText(1, 0, _msgs.gameInviteTip(), 1, null);
         add(info);
 
@@ -140,12 +139,12 @@ public class GameInvitePanel extends InvitePanel
         });
         addMethodButton("Whirled", new InviteMethodCreator() {
             public Widget create () {
-                return new WhirledFriendsPanel(message, detail.gameId, detail.item.name, iargs);
+                return new WhirledFriendsPanel(message, detail.gameId, detail.info.name, iargs);
             }
         });
         addMethodButton("Facebook", new InviteMethodCreator() {
             public Widget create () {
-                showFBInvitePopup(detail.item.gameId, message, iargs);
+                showFBInvitePopup(detail.gameId, message, iargs);
                 return null;
             }
         });

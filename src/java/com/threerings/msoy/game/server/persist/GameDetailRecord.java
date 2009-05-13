@@ -14,9 +14,6 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.util.StringUtil;
-
-import com.threerings.msoy.game.gwt.GameDetail;
 
 /**
  * Contains details on a single game "title" including the development and published game item ids
@@ -78,42 +75,6 @@ public class GameDetailRecord extends PersistentRecord
     /** When this game last paid out coins, or null if has never paid out. */
     @Column(nullable=true)
     public Timestamp lastPayout;
-
-    /**
-     * Returns the current payout factor for this game, in [0, 1).
-     */
-    public float getPayoutFactor ()
-    {
-        return this.payoutFactor / 256f;
-    }
-
-    /**
-     * Creates a runtime record from this persistent record.
-     */
-    public GameDetail toGameDetail ()
-    {
-        GameDetail detail = new GameDetail();
-        detail.gameId = gameId;
-        detail.sourceItemId = sourceItemId;
-        detail.averageDuration = getAverageDuration();
-        detail.gamesPlayed = gamesPlayed;
-        detail.lastPayout = (lastPayout != null) ? lastPayout.getTime() : 0;
-        return detail;
-    }
-
-    /**
-     * Returns the reported average duration of this game in seconds (greater of single and multi).
-     */
-    public int getAverageDuration ()
-    {
-        return Math.max(1, Math.max(avgSingleDuration, avgMultiDuration));
-    }
-
-    @Override // from Object
-    public String toString ()
-    {
-        return StringUtil.fieldsToString(this);
-    }
 
     // AUTO-GENERATED: METHODS START
     /**

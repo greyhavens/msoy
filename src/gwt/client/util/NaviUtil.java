@@ -21,9 +21,9 @@ import client.ui.MsoyUI;
  */
 public class NaviUtil extends SharedNaviUtil
 {
-    public static ClickHandler onCreateItem (byte type, byte ptype, int pitemId)
+    public static ClickHandler onCreateItem (byte type, int suiteId)
     {
-        final String args = Args.compose("c", type, ptype, pitemId);
+        final String args = Args.compose("c", type, suiteId);
         return new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (MsoyUI.requireRegistered()) {

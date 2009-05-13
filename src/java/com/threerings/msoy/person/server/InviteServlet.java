@@ -20,23 +20,22 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.server.persist.GameDetailRecord;
-import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
-import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.persist.GameInvitationRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.spam.server.persist.SpamRepository;
+import com.threerings.msoy.server.util.MailSender;
+
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.server.GameUtil;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Invitation;
@@ -48,9 +47,10 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.mail.gwt.GameInvitePayload;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.person.gwt.InvitationResults;
+import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.person.gwt.ProfileCodes;
-import com.threerings.msoy.person.gwt.InviteService;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -184,23 +184,19 @@ public class InviteServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        boolean isDevVersion = Game.isDevelopmentVersion(gameId);
-        if (isDevVersion) {
+        if (GameUtil.isDevelopmentVersion(gameId)) {
             // TODO: this is not really an end-user exception and could arguably be done in the
             // client. At least let the creator know something is wrong for now
             throw new ServiceException("e.game_not_listed");
         }
 
-        GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
+        GameInfoRecord gdr = _mgameRepo.loadGame(gameId);
         if (gdr == null) {
             throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
         }
-
-        if (gdr.listedItemId == 0) {
-            throw new ServiceException("e.game_not_listed"); // TODO
+        if (gdr.genre == GameGenre.HIDDEN) {
+            throw new ServiceException("e.game_not_published"); // TODO
         }
-
-        String gameName = _gameRepo.loadItem(gdr.listedItemId).name;
 
         InvitationResults ir = new InvitationResults();
         ir.results = new String[addresses.size()];
@@ -211,9 +207,8 @@ public class InviteServlet extends MsoyServiceServlet
                 contact.name = null;
             }
             try {
-                sendGameInvite(gameName, gameId, mrec, contact.email, contact.name, from,
-                    url, customMessage);
-
+                sendGameInvite(gdr.name, gameId, mrec, contact.email, contact.name, from,
+                               url, customMessage);
             } catch (ServiceException se) {
                 ir.results[ii] = se.getMessage();
             }
@@ -266,9 +261,9 @@ public class InviteServlet extends MsoyServiceServlet
         Set<Integer> friendIds = _memberRepo.loadFriendIds(memrec.memberId);
 
         // if requested, remove friends that have already saved some progress in the game
-        GameRecord grec;
-        if (gameId != 0 && (grec = _mgameRepo.loadGameRecord(gameId)) != null) {
-            if (Game.detectIsInWorld(grec.config)) {
+        GameInfoRecord grec;
+        if (gameId != 0 && (grec = _mgameRepo.loadGame(gameId)) != null) {
+            if (grec.isAVRG) {
                 friendIds.removeAll(_avrGameRepo.getPropertiedMembers(gameId, friendIds));
             } else {
                 friendIds.removeAll(_gameCookieRepo.getCookiedPlayers(gameId, friendIds));
@@ -425,7 +420,6 @@ public class InviteServlet extends MsoyServiceServlet
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _webmailCleared = System.currentTimeMillis();
 
-    @Inject protected GameRepository _gameRepo;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailSender _mailer;
     @Inject protected MsoyGameRepository _mgameRepo;

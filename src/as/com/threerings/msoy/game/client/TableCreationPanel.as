@@ -32,13 +32,11 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.ui.SimpleGrid;
 
-import com.threerings.msoy.item.data.all.Game;
-
 import com.threerings.msoy.party.client.PartyDirector;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 
 /**
  * Displays an interface for creating a new game table.
@@ -49,7 +47,6 @@ public class TableCreationPanel extends VBox
     {
         _ctx = ctx;
         _ctrl = ctrl;
-        _game = lobj.game;
         _gameDef = lobj.gameDef;
     }
 
@@ -144,9 +141,7 @@ public class TableCreationPanel extends VBox
             new MsoyTableConfigurator(plparam, wparam, pvparam, tableName);
         tconfigger.init(_ctx, gconf);
 
-        var config :ParlorGameConfig = new ParlorGameConfig();
-        config.init(_game, _gameDef, _game.groupId); // groupId might be 0 instead of the fallback
-        gconf.setGameConfig(config);
+        gconf.setGameConfig(new ParlorGameConfig());
 
         _configBox = gconf.getContainer();
         _configBox.percentWidth = 100;
@@ -209,11 +204,6 @@ public class TableCreationPanel extends VBox
 
     protected var _ctx :GameContext;
     protected var _ctrl :LobbyController;
-
-    /** The game item, for configuration reference. */
-    protected var _game :Game;
-
-    /** The game item, for configuration reference. */
     protected var _gameDef :GameDefinition;
 
     protected var _configBox :Container;

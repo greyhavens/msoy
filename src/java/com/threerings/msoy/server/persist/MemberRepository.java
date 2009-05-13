@@ -1250,7 +1250,7 @@ public class MemberRepository extends DepotRepository
      * Makes the specified members friends.
      *
      * @param memberId The id of the member performing this action.
-     * @param otherId The id of the other member.
+     * @param friendId The id of the other member.
      *
      * @return the member card for the invited friend, or null if the invited friend no longer
      * exists.

@@ -231,7 +231,7 @@ public class AwardDelegate extends RatingDelegate
 
         // compute our flow per minute
         float minuteRate = _runtime.money.hourlyGameFlowRate / 60f;
-        _flowPerMinute = Math.round(minuteRate * _content.detail.getPayoutFactor());
+        _flowPerMinute = Math.round(minuteRate * _content.metrics.getPayoutFactor());
     }
 
     @Override
@@ -273,7 +273,7 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // record that games were played and potentially update our payout factor
-        _gameReg.updateGameMetrics(_content.detail, isMultiplayer() ? MetricType.MULTI_PLAYER :
+        _gameReg.updateGameMetrics(_content.metrics, isMultiplayer() ? MetricType.MULTI_PLAYER :
             MetricType.SINGLE_PLAYER, totalMinutes, _totalTrackedGames, _totalAwardedFlow);
     }
 
@@ -285,7 +285,7 @@ public class AwardDelegate extends RatingDelegate
         PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
 
         // potentially create a flow record for this occupant
-        if (!_flowRecords.containsKey(plobj.getMemberId()) && plobj != null) {
+        if (plobj != null && !_flowRecords.containsKey(plobj.getMemberId())) {
             FlowRecord record = new FlowRecord(plobj);
             _flowRecords.put(plobj.getMemberId(), record);
             // if we're currently tracking, note that they're "starting" immediately
@@ -351,7 +351,7 @@ public class AwardDelegate extends RatingDelegate
         // we're currently not persisting any stats for in-development games,
         // nor games that didn't last long enough to be rated
         int gameSecs = TimeUtil.elapsedSeconds(_startStamp, System.currentTimeMillis());
-        if (_content.game.isDevelopmentVersion() || (gameSecs < minimumRatedDuration())) {
+        if (_content.isDevelopmentVersion || (gameSecs < minimumRatedDuration())) {
             return;
         }
 
@@ -363,7 +363,7 @@ public class AwardDelegate extends RatingDelegate
             // track unique games played
             // Note: commented out because we don't have a badge for this right now
             /*_gameReg.addToSetStat(
-                memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
+                memberId, StatType.UNIQUE_GAMES_PLAYED, _content.game.gameId);*/
 
             if (isMultiplayer()) {
                 // track multiplayer game wins
@@ -534,7 +534,7 @@ public class AwardDelegate extends RatingDelegate
         log.info("Awarding flow", "game", where(), "type", payoutType, "to", players.values());
 
         // finally, award the flow and report it to the player
-        boolean actuallyAward = !_content.game.isDevelopmentVersion();
+        boolean actuallyAward = !_content.isDevelopmentVersion;
         for (Player player : players.values()) {
             FlowRecord record = _flowRecords.get(player.name.getMemberId());
             if (record == null) {
@@ -579,7 +579,7 @@ public class AwardDelegate extends RatingDelegate
     protected float getAverageGameDuration (int playerSeconds)
     {
         int avgSeconds = isMultiplayer() ?
-            _content.detail.avgMultiDuration : _content.detail.avgSingleDuration;
+            _content.metrics.avgMultiDuration : _content.metrics.avgSingleDuration;
         // if we have average duration data for this game, use it
         if (avgSeconds > 0) {
             return avgSeconds / 60f;
@@ -728,7 +728,7 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // see if we even care
-        if (record.getTotalAward() == 0 || _content.game.isDevelopmentVersion()) {
+        if (record.getTotalAward() == 0 || _content.isDevelopmentVersion) {
             return;
         }
 
@@ -761,8 +761,7 @@ public class AwardDelegate extends RatingDelegate
     protected boolean shouldRateGame ()
     {
         // don't rate games involving guests, and don't rate non-published games
-        return !_gameInvolvedGuest && !_content.game.isDevelopmentVersion() &&
-            super.shouldRateGame();
+        return !_gameInvolvedGuest && !_content.isDevelopmentVersion && super.shouldRateGame();
     }
 
     protected void payoutCoins (int memberId, int coinAward, int secondsPlayed)

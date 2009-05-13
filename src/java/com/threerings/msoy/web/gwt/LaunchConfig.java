@@ -39,7 +39,7 @@ public class LaunchConfig
     public String name;
 
     /** The path (relative to the resource URL) for the game client media (SWF or JAR). */
-    public String gameMediaPath;
+    public String clientMediaPath;
 
     /** The game server to which the game should connect. */
     public String gameServer;

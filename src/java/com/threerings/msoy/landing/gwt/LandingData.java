@@ -4,7 +4,7 @@
 package com.threerings.msoy.landing.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
 
@@ -21,7 +21,7 @@ public class LandingData
     public GroupCard[] featuredWhirleds;
 
     /** Top featured game information */
-    public FeaturedGameInfo[] topGames;
+    public GameInfo[] topGames;
 
     /** Top featured avatar information */
     public ListingCard[] topAvatars;

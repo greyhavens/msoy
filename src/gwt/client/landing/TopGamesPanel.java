@@ -18,11 +18,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.game.GameBitsPanel;
 import client.game.GameNamePanel;
 import client.game.PlayButton;
 import client.ui.MsoyUI;
@@ -44,11 +43,11 @@ public class TopGamesPanel extends AbsolutePanel
     /**
      * Called when the list of featured games has been fetched.
      */
-    public void setGames (FeaturedGameInfo[] games)
+    public void setGames (GameInfo[] games)
     {
         // take the first 5 featured games maximum
         if (games.length > 5) {
-           _games = new FeaturedGameInfo[5];
+           _games = new GameInfo[5];
            for (int i = 0; i < 5; i++) {
                _games[i] = games[i];
            }
@@ -89,7 +88,7 @@ public class TopGamesPanel extends AbsolutePanel
      */
     protected Widget createGameListItem (final int index)
     {
-        FeaturedGameInfo game = _games[index];
+        GameInfo game = _games[index];
 
         // Outer panel with onclick - change the game
         FocusPanel gamePanel = new FocusPanel();
@@ -130,7 +129,7 @@ public class TopGamesPanel extends AbsolutePanel
      */
     protected void showGame (final int index)
     {
-        final FeaturedGameInfo game = _games[index];
+        final GameInfo game = _games[index];
 
         // select the game being shown
         for (int i = 0; i < _games.length; i++) {
@@ -147,16 +146,13 @@ public class TopGamesPanel extends AbsolutePanel
 
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        left.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE,
+        left.add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE,
                               Pages.GAMES, Args.compose("d", game.gameId)));
 
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));
             left.add(MsoyUI.createLabel(_msgs.topGamesOnline("" + game.playersOnline), "Online"));
         }
-
-        left.add(WidgetUtil.makeShim(10, 10));
-        left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0, 0));
 
         // left and right arrows
         left.add(WidgetUtil.makeShim(10, 10));
@@ -203,7 +199,7 @@ public class TopGamesPanel extends AbsolutePanel
     }
 
     /** Game data */
-    protected FeaturedGameInfo[] _games;
+    protected GameInfo[] _games;
 
     /** Game list table; every row is a game whose class changes when selected */
     protected SmartTable _topGamesTable;

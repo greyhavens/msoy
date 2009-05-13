@@ -27,7 +27,7 @@ import client.util.MediaUtil;
 import client.util.ServiceUtil;
 
 /**
- * Displays the trophies
+ * Displays the trophies.
  */
 public class GameTrophyPanel extends PagedGrid<Trophy>
 {

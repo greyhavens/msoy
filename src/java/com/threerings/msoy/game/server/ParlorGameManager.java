@@ -28,12 +28,11 @@ import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.data.MsoyUserObject;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
-import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -214,7 +213,7 @@ public class ParlorGameManager extends WhirledGameManager
         // game because that is done automatically when the player logs off of the game server)
         PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
         if (plobj != null) {
-            _playerActions.updatePlayerGame(plobj, new GameSummary(getGame()));
+            _playerActions.updatePlayerGame(plobj, ((ParlorGameConfig)getGameConfig()).game);
         }
     }
 
@@ -223,24 +222,25 @@ public class ParlorGameManager extends WhirledGameManager
     {
         // TEMP: hack to prevent agent creation if we're a single player game and this game is
         // configured to use its agent only for multiplayer games
-        return (getGame().isAgentMPOnly() && !isMultiplayer()) ? null : super.createAgent();
+        ParlorGameConfig config = (ParlorGameConfig)getGameConfig();
+        boolean isAgentMPOnly = ((MsoyGameDefinition)config.getGameDefinition()).isAgentMPOnly;
+        return (isAgentMPOnly && !isMultiplayer()) ? null : super.createAgent();
     }
 
     @Override // from WhirledGameManager
     protected void resolveContentOwnership (BodyObject body, final ResultListener<Void> listener)
     {
         final PlayerObject plobj = (PlayerObject)body;
-        final Game game = getGame();
-        if (plobj.isContentResolved(game.gameId) || plobj.isContentResolving(game.gameId)) {
+        final int gameId = getGameId();
+        if (plobj.isContentResolved(gameId) || plobj.isContentResolving(gameId)) {
             listener.requestCompleted(null);
             return;
         }
 
-        final GameContentOwnership resolving =  new GameContentOwnership(game.gameId,
+        final GameContentOwnership resolving =  new GameContentOwnership(gameId,
             GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVING);
         plobj.addToGameContent(resolving);
-        _invoker.postUnit(
-            new ContentOwnershipUnit(game.gameId, game.getSuiteId(), plobj.getMemberId()) {
+        _invoker.postUnit(new ContentOwnershipUnit(gameId, plobj.getMemberId()) {
             @Override public void handleSuccess() {
                 if (!plobj.isActive()) {
                     listener.requestCompleted(null);
@@ -254,7 +254,7 @@ public class ParlorGameManager extends WhirledGameManager
                 } finally {
                     plobj.removeFromGameContent(resolving);
                     plobj.addToGameContent(
-                        new GameContentOwnership(game.gameId, GameData.RESOLUTION_MARKER,
+                        new GameContentOwnership(gameId, GameData.RESOLUTION_MARKER,
                                                  WhirledPlayerObject.RESOLVED));
                     plobj.commitTransaction();
                 }
@@ -276,11 +276,6 @@ public class ParlorGameManager extends WhirledGameManager
                 return "Failed to resolve content [game=" + where() + ", who=" + plobj.who() + "].";
             }
         });
-    }
-
-    protected Game getGame ()
-    {
-        return ((ParlorGameConfig)getGameConfig()).game;
     }
 
     /** A casted reference to the GameObject. */

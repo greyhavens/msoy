@@ -24,7 +24,7 @@ import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.game.server.GameUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -90,7 +90,7 @@ public class TrophyRepository extends DepotRepository
      */
     public void removeDevelopmentTrophies (int gameId, int memberId)
     {
-        if (!Game.isDevelopmentVersion(gameId)) {
+        if (!GameUtil.isDevelopmentVersion(gameId)) {
             log.warning("Attempted to remove trophies for a non-development game", "gameId",
                 gameId, "memberId", memberId);
             return;

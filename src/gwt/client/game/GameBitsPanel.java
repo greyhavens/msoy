@@ -6,7 +6,6 @@ package client.game;
 import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -21,10 +20,9 @@ public class GameBitsPanel extends SmartTable
 {
     /**
      * @param gamesPlayed If > 0 will display the total # of games played
-     * @param originalItemId If > 0 and player is support, show link to original item
      */
-    public GameBitsPanel (int minPlayers, int maxPlayers, int avgTime, int gamesPlayed,
-                          int originalItemId)
+    public GameBitsPanel (int gameId, int creatorId, int minPlayers, int maxPlayers,
+                          int avgTime, int gamesPlayed)
     {
         super("gameBits", 0, 0);
 
@@ -47,9 +45,9 @@ public class GameBitsPanel extends SmartTable
             setText(row++, 1, ""+gamesPlayed);
         }
 
-        if (originalItemId != 0 && CShell.isSupport()) {
-            String args = Args.compose("d", Item.GAME, originalItemId);
-            setWidget(row++, 0, Link.create(_msgs.bitsSeeOriginal(), Pages.STUFF, args), 2, null);
+        if (CShell.getMemberId() == creatorId || CShell.isSupport()) {
+            setWidget(row++, 0, Link.create(_msgs.bitsEdit(), Pages.GAMES,
+                                            Args.compose("e", gameId)), 2, null);
         }
     }
 

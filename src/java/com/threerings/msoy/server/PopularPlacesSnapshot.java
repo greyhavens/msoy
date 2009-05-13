@@ -20,6 +20,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.peer.data.NodeObject;
 
+import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MemberGame;
@@ -27,7 +28,6 @@ import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.room.data.MsoySceneModel;
 
 import com.threerings.msoy.server.persist.MemberRepository; // just for a @link
@@ -196,7 +196,7 @@ public class PopularPlacesSnapshot
                 for (MemberGame mg : mnobj.memberGames) {
                     seenIds.add(mg.memberId);
 
-                    if (!Game.isDevelopmentVersion(mg.gameId)) {
+                    if (!GameUtil.isDevelopmentVersion(mg.gameId)) {
                         HostedPlace game = mnobj.hostedGames.get(mg.gameId);
                         if (game != null) {
                             // map games by game id

@@ -27,12 +27,11 @@ public class PlayButton
 
     public static Widget create (GameInfo info, String noGroupMessage, Size size)
     {
-        return create(info.gameId, info.minPlayers, info.maxPlayers,
-                      info.isInWorld, info.groupId, noGroupMessage, size);
+        return create(info.gameId, info.isAVRG, info.groupId, noGroupMessage, size);
     }
 
-    public static Widget create (int gameId, int minPlayers, int maxPlayers,
-                                 boolean inWorld, int groupId, String noGroupMessage, Size size)
+    public static Widget create (int gameId, boolean inWorld, int groupId, String noGroupMessage,
+                                 Size size)
     {
         String args;
         if (inWorld) {
