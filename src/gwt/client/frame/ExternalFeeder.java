@@ -3,8 +3,10 @@
 
 package client.frame;
 
+import java.util.Date;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.gwt.ABTestUtil;
+import com.threerings.msoy.web.gwt.ABTestCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -39,8 +41,8 @@ public class ExternalFeeder
         // the test group to the entry vector so the results can be viewed in the entry vector
         // table
         String[] templateConfig = DeploymentConfig.facebookTrophyTemplateConfig.split(",");
-        int testGroup = ABTestUtil.getGroup(CShell.frame.getVisitorInfo().id, "trophy pseudo test",
-            templateConfig.length / 2);
+        int testGroup = new ABTestCard("trophy pseudo test", new Date(),
+            templateConfig.length / 2, false).getGroup(CShell.frame.getVisitorInfo());
         String vector = "v.fbtrophy" + templateConfig[(testGroup - 1) / 2];
         String templateId = templateConfig[(testGroup - 1) / 2 + 1];
 

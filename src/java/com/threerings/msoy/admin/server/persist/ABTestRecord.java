@@ -16,6 +16,7 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.admin.gwt.ABTest;
+import com.threerings.msoy.web.gwt.ABTestCard;
 
 /**
  * Contains details on a single game "title" including the development and published game item ids
@@ -108,6 +109,14 @@ public class ABTestRecord extends PersistentRecord
         ended = (test.ended != null) ? new Timestamp(test.ended.getTime()) : null;
         enabled = test.enabled;
         landingCookie = test.landingCookie;
+    }
+
+    /**
+     * Returns a client-consumable version of this test.
+     */
+    public ABTestCard toCard ()
+    {
+        return new ABTestCard(name, started, numGroups, onlyNewVisitors);
     }
 
     // AUTO-GENERATED: METHODS START

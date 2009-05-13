@@ -1,7 +1,7 @@
 package client.shell;
 
 import com.threerings.gwt.util.CookieUtil;
-import com.threerings.msoy.web.gwt.ABTestUtil;
+import com.threerings.msoy.web.gwt.ABTestCard;
 import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
@@ -11,15 +11,11 @@ import com.threerings.msoy.web.gwt.CookieNames;
 public class LandingTestCookie
 {
     /**
-     * Gets the group assigned to the given visitor id for the given test name. Note that this
-     * should only be called by new users, i.e. when the landing page is being accessed and there
-     * is no previous member cookie.
-     * @return the group (>=1) or -1 if the test is not active
+     * Gets the landing test of the given name, or null if it is not found.
      */
-    public static int getGroup (String testName, String visitorId)
+    public static ABTestCard getTest (String testName)
     {
-        int numGroups = ABTestUtil.getNumGroups(get(), testName);
-        return numGroups == 0 ? -1 : ABTestUtil.getGroup(visitorId, testName, numGroups);
+        return ABTestCard.unflatten(get(), testName);
     }
 
     /**

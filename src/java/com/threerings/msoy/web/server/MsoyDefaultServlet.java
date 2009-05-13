@@ -21,7 +21,6 @@ import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.web.gwt.ABTestUtil;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.server.VisitorCookie;
 
@@ -86,7 +85,7 @@ public class MsoyDefaultServlet extends DefaultServlet
             // assigned to when the visitor id is calculated.
             StringBuilder cookieValue = new StringBuilder();
             for (ABTestRecord test : _abTestRepo.loadTestsWithLandingCookies()) {
-                ABTestUtil.encodeTest(cookieValue, test.name, test.numGroups);
+                test.toCard().flatten(cookieValue);
             }
             rsp.addCookie(new Cookie(CookieNames.LANDING_TEST, cookieValue.toString()));
             log.info("Sending landing cookie", "value", cookieValue);

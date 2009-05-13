@@ -28,7 +28,6 @@ import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.gwt.ABTestUtil;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -271,13 +270,8 @@ public class MemberLogic
             return -1;
         }
 
-        // do affiliate, etc match the requirements for the test
-        if (!eligibleForABTest(test, info)) {
-            return -1;
-        }
-
         // generate the group number based on trackingID + testName
-        int group = ABTestUtil.getGroup(info.id, testName, test.numGroups);
+        int group = test.toCard().getGroup(info);
 
         // optionally log an event to say the group was assigned
         if (logEvent && group >= 0) {
@@ -623,19 +617,6 @@ public class MemberLogic
         if (!disableIds.isEmpty()) {
             _memberRepo.disableMembers(disableIds);
         }
-    }
-
-    /**
-     * Return true if the visitor's attributes match those required by the given a/b test
-     */
-    protected boolean eligibleForABTest (ABTestRecord test, VisitorInfo info)
-    {
-        // test runs only on new users and visitor is returning
-        // (visitor may have been in a group during a previous session!)
-        if (test.onlyNewVisitors == true && test.started.after(info.getCreationTime())) {
-            return false;
-        }
-        return true;
     }
 
     /**

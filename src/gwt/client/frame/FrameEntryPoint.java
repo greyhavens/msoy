@@ -28,6 +28,7 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.ABTestCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
@@ -207,8 +208,8 @@ public class FrameEntryPoint
 
         // do different things for new users on landing
         if (page == Pages.LANDING && args.get(0, "").equals("") && newUser) {
-            String testName = "2009 04 landing";
-            int landingGroup = LandingTestCookie.getGroup(testName, getVisitorInfo().id);
+            ABTestCard test = LandingTestCookie.getTest("2009 04 landing");
+            int landingGroup = test == null ? -1 : test.getGroup(getVisitorInfo());
             switch (landingGroup) {
             case 1:  // group A: go home
                 page = Pages.WORLD;
@@ -221,7 +222,7 @@ public class FrameEntryPoint
             }
             // log the result to the server
             if (landingGroup > 0) {
-                _membersvc.logLandingABTestGroup(getVisitorInfo(), testName, landingGroup,
+                _membersvc.logLandingABTestGroup(getVisitorInfo(), test.name, landingGroup,
                     new NoopAsyncCallback());
                 CShell.log("Displaying alternate page", "page", page, "args", args,
                     "group", landingGroup);
