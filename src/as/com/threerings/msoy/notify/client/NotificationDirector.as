@@ -329,12 +329,12 @@ public class NotificationDirector extends BasicDirector
     }
 
     /** Give members 15 seconds to get back on before we consider them a fresh logon. */
-    protected static const MEMBER_EXPIRE_TIME :int = 15;
+    protected static const MEMBER_EXPIRE_TIME :int = 15; // seconds
 
     /** Give notifications 15 minutes to be relevant. */
     protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60; // in seconds
 
-    protected static const STATUS_UPDATE_DELAY :int = 15 * 1000; // 15 seconds
+    protected static const STATUS_UPDATE_DELAY :int = 15; // 15 seconds
 
     protected static const FLASH_UPGRADE_VERSION :int = 11;
 
