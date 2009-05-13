@@ -545,7 +545,8 @@ public class MemberLogic
                 UserAction.receivedFriendAward(payMemberId, friendId));
 
         } catch (DuplicateKeyException dke) {
-            log.warning("Friend payment triggered twice?", "friend", friendId, "payee", payMemberId);
+            log.warning("Friend payment triggered twice?", "friend", friendId,
+                        "payee", payMemberId);
         }
     }
 
@@ -587,6 +588,7 @@ public class MemberLogic
             _mailRepo.purgeMembers(purgeIds);
             _medalRepo.purgeMembers(purgeIds);
             _memberRepo.purgeMembers(purgeIds);
+            _mgameRepo.purgeMembers(purgeIds);
             _moneyRepo.purgeMembers(purgeIds);
             _profileRepo.purgeMembers(purgeIds);
             _sceneRepo.purgeMembers(purgeIds);

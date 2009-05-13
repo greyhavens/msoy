@@ -110,8 +110,9 @@ public class GameServlet extends MsoyServiceServlet
         // fill in other metadata
         detail.info.creator = _memberRepo.loadMemberName(info.creatorId);
         detail.instructions = _mgameRepo.loadInstructions(info.gameId);
-// TODO!
-//         detail.member = _itemLogic.getMemberItemInfo(mrec, detail.item);
+        if (mrec != null) {
+            detail.memberRating = _mgameRepo.getRatingRepository().getRating(gameId, mrec.memberId);
+        }
 
         return detail;
     }
@@ -459,7 +460,8 @@ public class GameServlet extends MsoyServiceServlet
     public RatingResult rateGame (int gameId, byte rating)
         throws ServiceException
     {
-        return null; // TODO!
+        MemberRecord mrec = requireAuthedUser();
+        return _mgameRepo.getRatingRepository().rate(gameId, mrec.memberId, rating).left;
     }
 
     // from interface GameService

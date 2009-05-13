@@ -5,8 +5,6 @@ package com.threerings.msoy.game.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.gwt.MemberItemInfo;
-
 /**
  * Contains information displayed on a game's detail page.
  */
@@ -28,12 +26,12 @@ public class GameDetail
     /** This game's play metrics. */
     public GameMetrics metrics;
 
-    /** Contains member rating and favorite information about the game. */
-    public MemberItemInfo member = new MemberItemInfo();
-
     /** The minimum number of players for this game. */
     public int minPlayers;
 
     /** The maximum number of players for this game. */
     public int maxPlayers;
+
+    /** The item's rating given by a member. */
+    public byte memberRating;
 }

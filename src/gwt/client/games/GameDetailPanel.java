@@ -88,8 +88,7 @@ public class GameDetailPanel extends SmartTable
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         shot.add(new ThumbBox(info.shotMedia, MediaDesc.GAME_SHOT_SIZE));
         shot.add(WidgetUtil.makeShim(5, 5));
-        Rating rating = new Rating(
-            info.rating, info.ratingCount, detail.member.memberRating, false) {
+        Rating rating = new Rating(info.rating, info.ratingCount, detail.memberRating, false) {
             @Override protected void handleRate (
                 byte newRating , InfoCallback<RatingResult> callback) {
                 _gamesvc.rateGame(_gameId, newRating, callback);
@@ -98,11 +97,6 @@ public class GameDetailPanel extends SmartTable
         shot.add(rating);
         HorizontalPanel mbits = new HorizontalPanel();
         mbits.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        if (!CShell.isGuest()) {
-// TODO!
-//             mbits.add(new FavoriteIndicator(game, detail.member));
-//             mbits.add(WidgetUtil.makeShim(10, 10));
-        }
         mbits.add(MsoyUI.makeShareButton(
                       Pages.GAMES, Args.compose("d", _gameId), _dmsgs.xlate("itemType" + Game.GAME),
                       info.name, info.description, info.shotMedia));

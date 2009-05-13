@@ -41,6 +41,7 @@ import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRatingRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
@@ -49,8 +50,11 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.PropRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -84,6 +88,16 @@ public class MsoyGameRepository extends DepotRepository
     {
         super(ctx);
 
+        _ratingRepo = new RatingRepository(
+            ctx, GameInfoRecord.GAME_ID, GameInfoRecord.RATING_SUM, GameInfoRecord.RATING_COUNT) {
+            @Override protected Class<? extends PersistentRecord> getTargetClass () {
+                return GameInfoRecord.class;
+            }
+            @Override protected Class<RatingRecord> getRatingClass () {
+                return coerceRating(MsoyGameRatingRecord.class);
+            }
+        };
+
         registerMigration(new DataMigration("2009_05_12_gameasaurus") {
             @Override public void invoke () {
                 // create info records for all of our extant detail records
@@ -101,11 +115,12 @@ public class MsoyGameRepository extends DepotRepository
 
                     GameInfoRecord irec = new GameInfoRecord();
                     irec.gameId = drec.gameId;
-                    irec.name = grec.name;
+                    irec.name = StringUtil.truncate(grec.name, GameInfo.MAX_NAME_LENGTH);
                     irec.genre = grec.genre;
                     irec.isAVRG = Game.detectIsInWorld(grec.config);
                     irec.creatorId = grec.creatorId;
-                    irec.description = grec.description;
+                    irec.description = StringUtil.truncate(
+                        grec.description, GameInfo.MAX_DESCRIPTION_LENGTH);
                     irec.thumbMediaHash = grec.thumbMediaHash;
                     irec.thumbMimeType = grec.thumbMimeType;
                     irec.thumbConstraint = grec.thumbConstraint;
@@ -182,6 +197,33 @@ public class MsoyGameRepository extends DepotRepository
                 _commentRepo.migrateGameComments(idmap);
             }
         });
+
+        registerMigration(new DataMigration("2009_05_12_gameratings") {
+            @Override public void invoke () {
+                IntIntMap idMap = new IntIntMap();
+                for (GameDetailRecord drec : findAll(GameDetailRecord.class, CacheStrategy.NONE,
+                                                     Lists.<QueryClause>newArrayList())) {
+                    idMap.put(drec.listedItemId, drec.gameId);
+                }
+                for (GameRatingRecord grr : findAll(GameRatingRecord.class, CacheStrategy.NONE,
+                                                    Lists.<QueryClause>newArrayList())) {
+                    MsoyGameRatingRecord mgrr = new MsoyGameRatingRecord();
+                    if (!idMap.containsKey(grr.targetId)) {
+                        log.warning("Missing mapping for rating record", "itemId", grr.targetId);
+                    } else {
+                        mgrr.targetId = idMap.get(grr.targetId);
+                        mgrr.memberId = grr.memberId;
+                        mgrr.rating = grr.rating;
+                        store(mgrr);
+                    }
+                }
+            }
+        });
+    }
+
+    public RatingRepository getRatingRepository ()
+    {
+        return _ratingRepo;
     }
 
     /**
@@ -569,6 +611,16 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // delete all game ratings by these members
+        _ratingRepo.purgeMembers(memberIds);
+    }
+
+    /**
      * Delete all old development and listed logs using the default time limits
      * {@link #DAYS_TO_KEEP_DEV_GAME_LOGS} and {@link #DAYS_TO_KEEP_LISTED_GAME_LOGS}.
      */
@@ -638,6 +690,8 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(InstructionsRecord.class);
         classes.add(GameTraceLogRecord.class);
     }
+
+    protected RatingRepository _ratingRepo;
 
     // TEMP
     @Inject protected GameRepository _gameRepo;
