@@ -33,32 +33,25 @@ public class TextUtil
     {
         defaultFormat = defaultFormat || ChatOverlay.createChatFormat();
 
-        // parse the text into an array with urls at odd elements
-        var array :Array = StringUtil.parseURLs(text);
-
-        // insert the appropriate format before each element
-        for (var ii :int = array.length - 1; ii >= 0; ii--) {
+        var bits :Array = parseSpecial
+            ?  parseSpecialLinks(text, defaultFormat, useDefaultColor)
+            : [ defaultFormat, text ];
+        var retval :Array = [];
+        var lastFmt :TextFormat;
+        for (var ii :int = 0; ii < bits.length; ii++) {
             if (ii % 2 == 0) {
-                // normal text at even-numbered elements...
-                if (parseSpecial) {
-                    var specialBits :Array =
-                        parseSpecialLinks(String(array[ii]), defaultFormat, useDefaultColor);
-                    specialBits.unshift(ii, 1);
-                    array.splice.apply(array, specialBits);
-
-                } else {
-                    // just insert the default format before the text
-                    array.splice(ii, 0, defaultFormat);
-                }
-
+                lastFmt = TextFormat(bits[ii]);
             } else {
-                // links at the odd indexes
-                array.splice(ii, 0,
-                    createLinkFormat(String(array[ii]), defaultFormat, useDefaultColor));
+                var links :Array = StringUtil.parseURLs(String(bits[ii]));
+                for (var jj :int = 0; jj < links.length; jj++) {
+                    retval.push((jj % 2 == 0)
+                        ? lastFmt
+                        : createLinkFormat(String(links[jj]), defaultFormat, useDefaultColor),
+                        links[jj]);
+                }
             }
         }
-
-        return array;
+        return retval;
     }
 
     /**
