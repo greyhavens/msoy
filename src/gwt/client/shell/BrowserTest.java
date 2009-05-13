@@ -32,25 +32,42 @@ public class BrowserTest
             return null;
         }
 
-        String browserType = getBrowserType();
-
-        final String message;
-
-        if (browserType.equals(SUPPORTED_MSIE) || browserType.equals(SUPPORTED_FIREFOX)) {
-            message = null;
-        }
-        else if (browserType.equals(SAFARI)) {
-            message = _cmsgs.browserUnsupported();
-        }
-        else if (browserType.equals(OLD_MSIE)) {
+        String message;
+        String agent = getUserAgent().toLowerCase();
+        // old MSIE
+        if (agent.contains("msie 6.0")) {
             message = _cmsgs.browserOldMsie();
-        }
-        else if (browserType.equals(OLD_FIREFOX)) {
-            // TODO implement once the number of ff2 users is under 10%
-            //message = _cmsgs.browserOldFirefox();
+
+        // MSIE 8, needs "compatability view" for now.
+        } else if (agent.contains("msie 8")) {
+            message = _cmsgs.browserMsie8();
+
+        // newer MSIE, but not too new!
+        } else if (agent.contains("msie")) {
             message = null;
-        }
-        else {
+
+        // safari
+        } else if (agent.contains("webkit")) {
+            message = _cmsgs.browserUnsupported();
+
+        // opera
+        } else if (agent.contains("opera")) {
+            message = _cmsgs.browserUnsupported();
+
+        // lump all gecko browsers into firefox
+        } else if (agent.contains("gecko")) {
+            // this is a little weird, but we're trying to parse this with limited GWT regex supp.
+//            if (!agent.contains(" rv:") || agent.contains(" rv:0") ||
+//                    (agent.contains(" rv:1") && !agent.contains(" rv:1.9"))) {
+//                // TODO implement once the number of ff2 users is under 10%
+//                //message = _cmsgs.browserOldFirefox();
+//                message = null;
+//            } else {
+                message = null;
+//            }
+
+        // all else
+        } else {
             message = _cmsgs.browserUnsupported();
         }
 
@@ -80,52 +97,13 @@ public class BrowserTest
     }
 
     /**
-     * Determine which browser is being used.  Native javascript will return one of:
-     * old_msie, supported_msie(7.0+), old_firefox, supported_firefox(3.0+), safari, opera, unknown.
+     * Return the browser useragent.
      */
-    private static native String getBrowserType() /*-{
-            var ua = navigator.userAgent.toLowerCase();
-
-            if (ua.indexOf("msie 6.0") != -1) {
-                return "old_msie";
-            }
-
-            // assume anything that isn't ie6 is newer
-            else if (ua.indexOf("msie") != -1) {
-                return "supported_msie";
-            }
-
-            else if (ua.indexOf("webkit") != -1) {
-                return "safari";
-            }
-
-            else if (ua.indexOf("opera") != -1) {
-                return "opera";
-            }
-
-            // lump all gecko browsers into firefox
-            else if (ua.indexOf("gecko") != -1) {
-                var result = /rv:([0-9]+)\.([0-9]+)/.exec(ua);
-                if (result && result.length == 3) {
-                    var version = (parseInt(result[1]) * 10) + parseInt(result[2]);
-                    if (version >= 19)
-                       return "supported_firefox";
-                }
-                return "old_firefox";
-            }
-
-            return "unknown";
+    private static native String getUserAgent () /*-{
+        return navigator.userAgent;
     }-*/;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
-    protected static final String OLD_MSIE = "old_msie";
-    protected static final String SUPPORTED_MSIE = "supported_msie";
-    protected static final String OLD_FIREFOX = "old_firefox";
-    protected static final String SUPPORTED_FIREFOX = "supported_firefox";
-    protected static final String SAFARI = "safari";
-    protected static final String OPERA = "opera";
-    protected static final String UNKNOWN = "unknown";
-
-    protected static final String TEST_SEEN_COOKIE = "BrowserTest_seen";
+    protected static final String TEST_SEEN_COOKIE = "BrowserTest_seen_2";
 }
