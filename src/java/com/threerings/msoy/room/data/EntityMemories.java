@@ -85,8 +85,6 @@ public class EntityMemories
         byte[] oldValue = (newValue == null)
             ? memories.remove(key)
             : memories.put(key, newValue);
-        if (!modified) {
-            modified = !Arrays.equals(oldValue, newValue);
-        }
+        modified = modified || !Arrays.equals(oldValue, newValue);
     }
 }
