@@ -5,8 +5,6 @@ package com.threerings.msoy.notify.client {
 
 import flash.system.Capabilities;
 
-import flash.utils.Dictionary;
-import flash.utils.clearTimeout; // function
 import flash.utils.setTimeout; // function
 
 import com.threerings.util.ExpiringSet;
@@ -73,7 +71,7 @@ public class NotificationDirector extends BasicDirector
         super(ctx);
         _mctx = ctx;
         _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
-        _notifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME, notificationExpired);
+        _notifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
         _statusDelays = new ExpiringSet(STATUS_UPDATE_DELAY, statusDelayExpired);
 
         ctx.getControlBar().setNotificationDisplay(
@@ -327,15 +325,6 @@ public class NotificationDirector extends BasicDirector
                         statusString),
                     Notification.BUTTSCRATCHING, entry.name);
             }
-        }
-    }
-
-    protected function notificationExpired (event :ValueEvent) :void
-    {
-        // all we currently need to do is check if this list is empty, and if so, have the
-        // display fade it out.
-        if (_notifications.isEmpty()) {
-            _notificationDisplay.clearDisplay();
         }
     }
 
