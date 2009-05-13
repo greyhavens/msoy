@@ -25,6 +25,8 @@ public class BrowserTest
      */
     public static Widget getWarningDialog (ClickHandler continueClicked)
     {
+        // TEMP: clear old cookie
+        CookieUtil.clear("/", "BrowserTest_seen");
         // if they already have a cookie, don't show a message
         String cookie = CookieUtil.get(TEST_SEEN_COOKIE);
 
@@ -105,5 +107,5 @@ public class BrowserTest
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
-    protected static final String TEST_SEEN_COOKIE = "BrowserTest_seen_2";
+    protected static final String TEST_SEEN_COOKIE = "BrowserTest_seen2";
 }
