@@ -4,6 +4,7 @@
 package com.threerings.msoy.comment.server;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -215,8 +216,9 @@ public class CommentServlet extends MsoyServiceServlet
             link = null;
         }
 
+        String text = "[" + new Date(posted) + "]\n" + record.text;
         _supportLogic.addMessageComplaint(
-            mrec.getName(), record.memberId, record.text, subject, link);
+            mrec.getName(), record.memberId, text, subject, link);
     }
 
     /**

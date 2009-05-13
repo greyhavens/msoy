@@ -4,6 +4,7 @@
 package com.threerings.msoy.fora.server;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -458,8 +459,9 @@ public class ForumServlet extends MsoyServiceServlet
         if (fmr == null) {
             throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
         }
+        String message = "[" + fmr.created + "]\n" + fmr.message;
         _supportLogic.addMessageComplaint(
-            mrec.getName(), fmr.posterId, fmr.message, complaint,
+            mrec.getName(), fmr.posterId, message, complaint,
             Pages.GROUPS.makeURL(Args.compose("t", fmr.threadId)));
     }
 
