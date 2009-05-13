@@ -32,6 +32,6 @@ public class GameDetail
     /** The maximum number of players for this game. */
     public int maxPlayers;
 
-    /** The item's rating given by a member. */
+    /** The rating given to this game by the requester, if any. */
     public byte memberRating;
 }
