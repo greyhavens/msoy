@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -54,13 +55,6 @@ public interface GameService extends RemoteService
      * Loads the details for the specified game.
      */
     GameDetail loadGameDetail (int gameId)
-        throws ServiceException;
-
-    /**
-     * Loads the metadata for the specified game (used by the game editor). Caller must be the game
-     * owner or support+.
-     */
-    GameData loadGameData (int gameId)
         throws ServiceException;
 
     /**
@@ -132,6 +126,20 @@ public interface GameService extends RemoteService
      * Awards a game a rating from 1 to 5.
      */
     RatingResult rateGame (int gameId, byte rating)
+        throws ServiceException;
+
+    /**
+     * Loads the metadata for the specified game (used by the game editor). Caller must be the game
+     * owner or support+.
+     */
+    GameData loadGameData (int gameId)
+        throws ServiceException;
+
+    /**
+     * Loads a game's original subitems (level pack, prize, etc.). Caller must be the game owner or
+     * support+.
+     */
+    List<Item> loadGameItems (int gameId, byte type)
         throws ServiceException;
 
     /**

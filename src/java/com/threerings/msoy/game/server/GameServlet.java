@@ -31,7 +31,10 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
@@ -116,18 +119,6 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         return detail;
-    }
-
-    // from interface GameService
-    public GameData loadGameData (int gameId)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-        GameInfoRecord info = requireIsGameCreator(gameId, mrec);
-        GameData data = new GameData();
-        data.info = info.toGameInfo(0);
-        data.code = _mgameRepo.loadGameCode(-info.gameId, false).toGameCode();
-        return data;
     }
 
     // from interface GameService
@@ -466,6 +457,33 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public GameData loadGameData (int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        GameInfoRecord info = requireIsGameCreator(gameId, mrec);
+        GameData data = new GameData();
+        data.info = info.toGameInfo(0);
+        data.code = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false).toGameCode();
+        return data;
+    }
+
+    // from interface GameService
+    public List<Item> loadGameItems (int gameId, byte type)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        GameInfoRecord info = requireIsGameCreator(gameId, mrec);
+
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
+        List<Item> items = Lists.newArrayList();
+        items.addAll(Lists.transform(repo.loadOriginalItemsBySuite(GameInfo.toDevId(info.gameId)),
+                                     new ItemRecord.ToItem<Item>()));
+        Collections.sort(items);
+        return items;
+    }
+
+    // from interface GameService
     public void updateGameInfo (GameInfo info)
         throws ServiceException
     {
@@ -526,7 +544,7 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(gameId, mrec);
-        GameCodeRecord code = _mgameRepo.loadGameCode(-Math.abs(gameId), true);
+        GameCodeRecord code = _mgameRepo.loadGameCode(GameInfo.toDevId(gameId), true);
         code.isDevelopment = false;
         _mgameRepo.updateGameCode(code);
     }
@@ -555,7 +573,7 @@ public class GameServlet extends MsoyServiceServlet
         }
         // verify that the member in question created the game or is an admin
         if (grec.creatorId != mrec.memberId && !mrec.isAdmin()) {
-            throw new ServiceException(InvocationCodes.E_ACCESS_DENIED);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         return grec;
     }

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * The asynchronous (client-side) version of {@link GameService}.
@@ -19,11 +20,6 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#loadGameDetail}.
      */
     void loadGameDetail (int gameId, AsyncCallback<GameDetail> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadGameData}.
-     */
-    void loadGameData (int gameId, AsyncCallback<GameService.GameData> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameMetrics}.
@@ -77,6 +73,16 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#rateGame}.
      */
     void rateGame (int gameId, byte rating, AsyncCallback<RatingResult> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadGameData}.
+     */
+    void loadGameData (int gameId, AsyncCallback<GameService.GameData> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadGameItems}.
+     */
+    void loadGameItems (int gameId, byte type, AsyncCallback<List<Item>> callback);
 
     /**
      * The asynchronous version of {@link GameService#updateGameInfo}.

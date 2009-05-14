@@ -41,6 +41,15 @@ public class GameInfo
     /** Identifies the game splash media. */
     public static final String SPLASH_MEDIA = "splash";
 
+    /**
+     * Obtains the "development" version of the supplied gameId. This is used as the suiteId for
+     * original game sub-items and in some other places.
+     */
+    public static int toDevId (int gameId)
+    {
+        return -Math.abs(gameId);
+    }
+
     /** The id of the game in question. */
     public int gameId;
 

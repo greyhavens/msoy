@@ -50,7 +50,7 @@ public class GamesPage extends Page
             } else {
                 setContent(_msgs.egTitle(), panel = new EditGamePanel());
             }
-            panel.setGame(args.get(1, 0), args.get(2, -1));
+            panel.setGame(args.get(1, 0), args.get(2, 0));
 
         } else {
             setContent(new ArcadePanel());

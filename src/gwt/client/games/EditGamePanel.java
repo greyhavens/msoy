@@ -18,6 +18,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
+import client.shell.DynamicLookup;
 import client.ui.StyledTabPanel;
 import client.util.InfoCallback;
 import client.util.Link;
@@ -71,26 +72,13 @@ public class EditGamePanel extends FlowPanel
                 return new CodeEditorPanel(data.code);
             }
         });
-        addTab(_msgs.egTabTrophies(), new LazyPanel() {
-            protected Widget createWidget () {
-                return createSubItemPanel(Item.TROPHY_SOURCE, data);
-            }
-        });
-        addTab(_msgs.egTabIPacks(), new LazyPanel() {
-            protected Widget createWidget () {
-                return createSubItemPanel(Item.ITEM_PACK, data);
-            }
-        });
-        addTab(_msgs.egTabLPacks(), new LazyPanel() {
-            protected Widget createWidget () {
-                return createSubItemPanel(Item.LEVEL_PACK, data);
-            }
-        });
-        addTab(_msgs.egTabPrizes(), new LazyPanel() {
-            protected Widget createWidget () {
-                return createSubItemPanel(Item.PRIZE, data);
-            }
-        });
+        for (final byte type : SUBITEM_TYPES) {
+            addTab(_dmsgs.get("pItemType" + type), new LazyPanel() {
+                protected Widget createWidget () {
+                    return new GameItemEditorPanel(data.info.gameId, type);
+                }
+            });
+        }
 
         // select the desired tab
         _tabs.selectTab(tabIdx);
@@ -109,17 +97,14 @@ public class EditGamePanel extends FlowPanel
         _tabs.add(panel, label);
     }
 
-    protected Widget createSubItemPanel (byte itemType, GameService.GameData data)
-    {
-        SmartTable panel = new SmartTable();
-        panel.setText(0, 0, "Sub-item " + itemType);
-        return panel;
-    }
-
     protected int _gameId;
     protected StyledTabPanel _tabs;
 
+    protected static final byte[] SUBITEM_TYPES = {
+        Item.TROPHY_SOURCE, Item.ITEM_PACK, Item.LEVEL_PACK, Item.PRIZE };
+
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
