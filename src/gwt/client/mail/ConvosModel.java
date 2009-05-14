@@ -11,7 +11,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
+import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
+import client.util.events.StatusChangeListener;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
@@ -23,24 +25,33 @@ import com.threerings.msoy.mail.gwt.MailServiceAsync;
  */
 public class ConvosModel extends ServiceBackedDataModel<Conversation, MailService.ConvosResult>
 {
+    public ConvosModel ()
+    {
+        FlashEvents.addListener(new StatusChangeListener() {
+            public void statusChanged (StatusChangeEvent event) {
+                if (event.getType() == StatusChangeEvent.MAIL) {
+                    int newUnread = event.getValue();
+                    if (_unreadCount != newUnread) {
+                        // do a partial reset, so that we request new mail next change
+                        _count = -1;
+                        _unreadCount = newUnread;
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * Notes that we've read the specified conversation.
      */
     public void markConversationRead (int convoId)
     {
-        int unread = 0;
-        for (Conversation convo : _pageItems) {
-            if (convo.conversationId == convoId) {
-                convo.hasUnread = false;
-            } else if (convo.hasUnread) {
-                unread++;
-            }
+        Conversation convo = findConversation(convoId);
+        if (convo != null && convo.hasUnread) {
+            convo.hasUnread = false;
+            _unreadCount--;
+            dispatchUnread();
         }
-
-        // TODO: fix this. Fucking broken. The unread count on the first page is not our
-        // total unread count.
-//        // now dispatch an event indicating our new unread mail count
-//        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
     }
 
     /**
@@ -64,6 +75,10 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
         Conversation convo = findConversation(convoId);
         if (convo != null) {
             removeItem(convo);
+            if (convo.hasUnread) {
+                _unreadCount--;
+                dispatchUnread();
+            }
         }
     }
 
@@ -79,19 +94,32 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
 
     @Override // from ServiceBackedDataModel
     protected void callFetchService (int start, int count, boolean needCount,
-                                     AsyncCallback<MailService.ConvosResult> callback) {
+                                     AsyncCallback<MailService.ConvosResult> callback)
+    {
         _mailsvc.loadConversations(start, count, needCount, callback);
     }
 
     @Override // from ServiceBackedDataModel
-    protected int getCount (MailService.ConvosResult result) {
+    protected int getCount (MailService.ConvosResult result)
+    {
+        _unreadCount = result.unreadConvoCount;
+        dispatchUnread();
         return result.totalConvoCount;
     }
 
     @Override // from ServiceBackedDataModel
-    protected List<Conversation> getRows (MailService.ConvosResult result) {
+    protected List<Conversation> getRows (MailService.ConvosResult result)
+    {
         return result.convos;
     }
+
+    protected void dispatchUnread ()
+    {
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, _unreadCount, 0));
+    }
+
+    /** The total number of unread conversations, on all pages. */
+    protected int _unreadCount;
 
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);

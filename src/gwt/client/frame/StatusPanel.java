@@ -98,14 +98,6 @@ public class StatusPanel extends SmartTable
         });
     }
 
-//    /**
-//     * Called to forcibly set our unread mail count when FlashEvents aren't available.
-//     */
-//    public void notifyUnreadMailCount (int unread)
-//    {
-//        _mail.setCount(unread);
-//    }
-
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
@@ -118,8 +110,8 @@ public class StatusPanel extends SmartTable
         FlowPanel links = MsoyUI.createFlowPanel("Links");
         if (!permaguest) {
             links.add(_mail);
-            CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL,
-                data.newMailCount, 0));
+            CShell.frame.dispatchEvent(
+                new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
             links.add(MsoyUI.createLabel("|", "Spacer"));
             _namePanel.setWidget(Link.memberView(_creds.name));
             links.add(_namePanel);
@@ -213,7 +205,7 @@ public class StatusPanel extends SmartTable
         }
 
         public void setCount (int count) {
-            _mailLabel.setText(String.valueOf(count));
+            _mailLabel.setText("(" + String.valueOf(count) + ")");
             _mailImage.setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
         }
 

@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -122,7 +124,7 @@ public class MailPanel extends FlowPanel
                             _convoIds.add(cw.getConvoId());
                         }
                     }
-                    if (_convoIds.size() == 0) {
+                    if (_convoIds.isEmpty()) {
                         return false;
                     }
                     _mailsvc.deleteConversations(_convoIds, this);
@@ -137,6 +139,27 @@ public class MailPanel extends FlowPanel
                 }
                 protected List<Integer> _convoIds;
             };
+        }
+
+        @Override 
+        public void displayPage (int page, boolean forceRefresh)
+        {
+            int reqPage = page;
+            while (page > 0 && (page * _resultsPerPage >= _model.getItemCount())) {
+                page--;
+            }
+            if (reqPage != page) {
+                // jump to a new page
+                final String pageArg = "" + page;
+                DeferredCommand.addCommand(new Command() {
+                    public void execute () {
+                        Link.go(Pages.MAIL, pageArg);
+                    }
+                });
+
+            } else {
+                super.displayPage(page, forceRefresh);
+            }
         }
 
         @Override // from PagedGrid

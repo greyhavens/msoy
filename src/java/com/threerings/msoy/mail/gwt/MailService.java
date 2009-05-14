@@ -23,6 +23,9 @@ public interface MailService extends RemoteService
         /** The total conversation count for this player (if requested). */
         public int totalConvoCount;
 
+        /** The number of unread conversations (if requested). */
+        public int unreadConvoCount;
+
         /** The conversations. */
         public List<Conversation> convos;
     }

@@ -74,6 +74,7 @@ public class MailServlet extends MsoyServiceServlet
         ConvosResult result = new ConvosResult();
         if (needCount) {
             result.totalConvoCount = _mailRepo.loadConversationCount(memrec.memberId);
+            result.unreadConvoCount = _mailRepo.loadUnreadConvoCount(memrec.memberId);
         }
         result.convos = convos;
         return result;
