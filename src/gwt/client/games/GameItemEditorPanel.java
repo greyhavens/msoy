@@ -7,8 +7,11 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -56,6 +59,7 @@ public class GameItemEditorPanel extends SmartTable
             setText(row, col++, _msgs.gieName(), 1, "Header");
             col++; // for [view]
             col++; // for [edit]
+            setText(row, col++, _msgs.giePublished(), 1, "Header");
             if (items.get(0) instanceof SubItem) {
                 setText(row, col++, _msgs.gieIdent(), 1, "Header");
             }
@@ -78,6 +82,7 @@ public class GameItemEditorPanel extends SmartTable
             setText(row, col++, item.name, 1, null);
             setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1, null);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
+            setText(row, col++, (item.catalogId == 0) ? "" : _msgs.gieIsPublished());
             if (item instanceof SubItem) {
                 setText(row, col++, ((SubItem)item).ident);
             }
@@ -98,9 +103,15 @@ public class GameItemEditorPanel extends SmartTable
         }
 
         // add a button for creating these subitems; TODO: fancy this up and add links to the wiki
+        HorizontalPanel bits = new HorizontalPanel();
+        bits.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+        bits.add(MsoyUI.createHTML(_dmsgs.get("editorWikiLink" + itemType), "Tip"));
+        bits.add(WidgetUtil.makeShim(10, 10));
         String cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
-        setWidget(row, 0, MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),
-                                              Link.createListener(Pages.STUFF, cargs)));
+        bits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),
+                                     Link.createListener(Pages.STUFF, cargs)));
+        setWidget(row, 0, bits, getRowCount() == 0 ? 1 : getCellCount(0), null);
+        getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_CENTER);
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);

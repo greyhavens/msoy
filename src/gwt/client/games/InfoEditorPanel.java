@@ -58,6 +58,8 @@ public class InfoEditorPanel extends BaseEditorPanel
             }
         });
 
+        addSpacer();
+
         final ListBox grbox = new ListBox();
         grbox.addItem(_msgs.egGroupNone(), ""+GameInfo.NO_GROUP);
         addRow(_msgs.egGroup(), grbox, new Command() {
@@ -75,23 +77,25 @@ public class InfoEditorPanel extends BaseEditorPanel
         });
         addTip(_msgs.egShopTagTip());
 
+        addSpacer();
+
         final MediaBox tbox = new MediaBox(
             MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, info.thumbMedia);
-        addRow(_msgs.egThumb(), tbox, new Command() {
+        addRow(_msgs.egThumb(), _msgs.egThumbTip(), tbox, new Command() {
             public void execute () {
                 info.thumbMedia = tbox.getMedia();
             }
         });
-        addTip(_msgs.egThumbTip());
 
         final MediaBox sbox = new MediaBox(
             MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia);
-        addRow(_msgs.egShot(), sbox, new Command() {
+        addRow(_msgs.egShot(), _msgs.egShotTip(), sbox, new Command() {
             public void execute () {
                 info.shotMedia = sbox.getMedia();
             }
         });
-        addTip(_msgs.egShotTip());
+
+        addSpacer();
 
         // add our confirmation ui and update interface
         Button save = addSaveRow();

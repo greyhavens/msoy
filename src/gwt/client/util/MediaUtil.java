@@ -66,6 +66,7 @@ public class MediaUtil extends SharedMediaUtil
                 view.setWidth(dims.width);
                 view.setHeight(dims.height);
             }
+
         } else {
             view = new Image(UNKNOWN_DESC.getMediaPath());
         }

@@ -19,6 +19,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.ui.MsoyUI;
 import client.ui.StyledTabPanel;
 import client.util.InfoCallback;
 import client.util.Link;
@@ -32,7 +33,7 @@ public class EditGamePanel extends FlowPanel
     public EditGamePanel ()
     {
         setStyleName("editGame");
-        // TODO: add loading display
+        add(MsoyUI.createNowLoading());
     }
 
     public void setGame (int gameId, final int tabIdx)
@@ -54,9 +55,9 @@ public class EditGamePanel extends FlowPanel
     {
         clear();
 
-        SmartTable header = new SmartTable(0, 10);
+        SmartTable header = new SmartTable("Header", 0, 10);
         header.setText(0, 0, data.info.name, 1, "Title");
-        // TODO: add thumbnail if we've got one
+        header.setWidget(0, 1, MsoyUI.createHTML(_msgs.egTip(), null), 1, "Tip");
         add(header);
 
         // add our giant tab list of doom

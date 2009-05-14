@@ -10,25 +10,19 @@ import com.threerings.msoy.data.all.MediaDesc;
  */
 public class SharedMediaUtil
 {
-    /**
-     * Represents the size of an html image (<img/>).
-     */
+    /** Represents the size of an html image (&lt;img/&gt;). */
     public static class Dimensions
     {
-        /**
-         * Creates a new size.
-         */
-        public Dimensions (String width, String height)
-        {
+        /** The width of the image. */
+        public final String width;
+
+        /** The height of the image. */
+        public final String height;
+
+        public Dimensions (String width, String height) {
             this.width = width;
             this.height = height;
         }
-
-        /** The width of the image. */
-        public String width;
-
-        /** The height of the image. */
-        public String height;
     }
 
     /**
@@ -39,23 +33,21 @@ public class SharedMediaUtil
     {
         switch (desc.constraint) {
         case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
-            if (width < MediaDesc.THUMBNAIL_WIDTH) {
-                return new Dimensions(width + "px", "auto");
-            }
-            break;
+            return (width < MediaDesc.THUMBNAIL_WIDTH) ?
+                new Dimensions(width + "px", "auto") : null;
 
         case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
-            if (height < MediaDesc.THUMBNAIL_HEIGHT) {
-                return new Dimensions("auto", height + "px");
-            }
-            break;
+            return (height < MediaDesc.THUMBNAIL_HEIGHT) ?
+                new Dimensions("auto", height + "px") : null;
 
         case MediaDesc.HORIZONTALLY_CONSTRAINED:
             return new Dimensions(width + "px", "auto");
 
         case MediaDesc.VERTICALLY_CONSTRAINED:
             return new Dimensions("auto", height + "px");
+
+        default:
+            return null;
         }
-        return null;
     }
 }

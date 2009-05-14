@@ -42,6 +42,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.PlayerNodeAction;
@@ -238,7 +239,7 @@ public class ItemLogic
         if (item instanceof SubItem) {
             int gameId = ((SubItem)item).suiteId;
             GameInfoRecord grec = _mgameRepo.loadGame(gameId);
-            if (grec == null || grec.gameId != gameId) {
+            if (grec == null || GameInfo.toDevId(grec.gameId) != gameId) {
                 log.warning("Requested to create game item with invalid parent", "who", creatorId,
                             "item", item);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);

@@ -85,13 +85,14 @@ public class CodeEditorPanel extends BaseEditorPanel
             }
         });
 
+        addSpacer();
+
         final CodeBox ccbox = new CodeBox(Item.MAIN_MEDIA, code.clientMedia);
-        addRow(_msgs.egClientCode(), ccbox, new Command() {
+        addRow(_msgs.egClientCode(), _msgs.egClientCodeTip(), ccbox, new Command() {
             public void execute () {
                 code.clientMedia = ccbox.getMedia();
             }
         });
-        addTip(_msgs.egClientCodeTip());
 
         final CheckBox noprogress = new CheckBox(_msgs.egNoProgressText());
         noprogress.setValue(config.noprogress);
@@ -102,13 +103,15 @@ public class CodeEditorPanel extends BaseEditorPanel
         });
         addTip(_msgs.egNoProgressTip());
 
+        addSpacer();
+
         final CodeBox scbox = new CodeBox(GameCode.SERVER_CODE_MEDIA, code.serverMedia);
-        addRow(_msgs.egServerCode(), scbox, new Command() {
+        addRow(_msgs.egServerCode(), _msgs.egServerCodeTip(), scbox, new Command() {
             public void execute () {
                 code.serverMedia = scbox.getMedia();
             }
         });
-        addTip(_msgs.egServerCodeTip());
+        addTip(_msgs.egServerCodeNote());
 
         final TextBox sclass = MsoyUI.createTextBox(config.serverClass, 255, 40);
         addRow(_msgs.egServerClass(), sclass, new Command() {
@@ -125,14 +128,23 @@ public class CodeEditorPanel extends BaseEditorPanel
             }
         });
 
+        addSpacer();
+
         final MediaBox spbox = new MediaBox(
-            MediaDesc.SNAPSHOT_FULL_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia);
-        addRow(_msgs.egSplash(), spbox, new Command() {
+            MediaDesc.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
+            public void setMedia (MediaDesc media) {
+                if (media != null) {
+                    // we do some fakery here to keep the splash media sanely scaled
+                    media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                }
+                super.setMedia(media);
+            }
+        };
+        addRow(_msgs.egSplash(), _msgs.egSplashTip(), spbox, new Command() {
             public void execute () {
                 code.splashMedia = spbox.getMedia();
             }
         });
-        addTip(_msgs.egSplashTip());
 
         // add a special binder that recreates our XML configuration from the POJO
         _binders.add(new Command() {
@@ -141,6 +153,8 @@ public class CodeEditorPanel extends BaseEditorPanel
                 code.config = formatConfig(config);
             }
         });
+
+        addSpacer();
 
         // add our confirmation ui and update interface
         Button save = addSaveRow();

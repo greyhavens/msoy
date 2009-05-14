@@ -12,6 +12,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,9 +41,23 @@ public class BaseEditorPanel extends SmartTable
 
     protected int addRow (String name, Widget widget, Command binder)
     {
-        int row = addText(name, 1, "nowrapLabel");
+        return addRow(name, null, widget, binder);
+    }
+
+    protected int addRow (String name, String tip, Widget widget, Command binder)
+    {
+        int row;
+        if (tip == null) {
+            row = addText(name, 1, "nowrapLabel");
+        } else {
+            FlowPanel bits = MsoyUI.createFlowPanel("Label");
+            bits.add(MsoyUI.createLabel(name, "nowrapLabel"));
+            bits.add(MsoyUI.createLabel(tip, "tipLabel"));
+            row = addWidget(bits, 1, null);
+        }
         getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         setWidget(row, 1, widget);
+        getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
         _binders.add(binder);
         return row;
     }
@@ -50,8 +65,13 @@ public class BaseEditorPanel extends SmartTable
     protected int addTip (String text)
     {
         int row = getRowCount();
-        setText(row, 1, text, 1, "Tip");
+        setText(row, 1, text, 1, "tipLabel");
         return row;
+    }
+
+    protected void addSpacer ()
+    {
+        addWidget(WidgetUtil.makeShim(10, 10), 2, null);
     }
 
     protected Button addSaveRow ()

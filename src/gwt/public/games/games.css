@@ -772,11 +772,27 @@
   margin: 0 5px 0 5px;
 }
 
+.editGame .Header {
+  width: 100%;
+}
+
+.editGame .Header .Title, .editGame .Tip, .editGame .Tip a {
+  color: #154D72;
+}
+
 .editGame .Title {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: bold;
-  color: #154D72;
   font-size: 24px;
+  white-space: nowrap;
+}
+
+.editGame .Tip {
+  font-size: 13px;
+}
+
+.baseEditor .Label .tipLabel {
+  width: 130px;
 }
 
 .gameItemEditor {
@@ -792,5 +808,5 @@
 }
 
 .gameItemEditor .Header {
-  text-decoration: underline;
+  font-weight: bold;
 }
