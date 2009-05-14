@@ -9,10 +9,10 @@ package com.threerings.msoy.game.data.all;
 public class GameGenre
 {
     /** Used when loading games by genre. */
-    public static final byte ALL = -1;
+    public static final byte ALL = Byte.MIN_VALUE;
 
     /** A genre constant. */
-    public static final byte HIDDEN = Byte.MIN_VALUE;
+    public static final byte HIDDEN = -1;
 
     /** A genre constant. */
     public static final byte OTHER = 0;

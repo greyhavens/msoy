@@ -52,6 +52,24 @@ public interface GameService extends RemoteService
     public static final String ENTRY_POINT = "/gamesvc";
 
     /**
+     * Loads up information for the arcade.
+     */
+    ArcadeData loadArcadeData ()
+        throws ServiceException;
+
+    /**
+     * Loads up information on the specified game genre.
+     */
+    List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
+        throws ServiceException;
+
+    /**
+     * Loads up the games created by the caller.
+     */
+    List<GameInfo> loadMyGames ()
+        throws ServiceException;
+
+    /**
      * Loads the details for the specified game.
      */
     GameDetail loadGameDetail (int gameId)
@@ -108,18 +126,6 @@ public interface GameService extends RemoteService
      * multiplayer rankings.
      */
     PlayerRating[][] loadTopRanked (int gameId, boolean onlyMyFriends)
-        throws ServiceException;
-
-    /**
-     * Loads up information for the arcade.
-     */
-    ArcadeData loadArcadeData ()
-        throws ServiceException;
-
-    /**
-     * Loads up information on the specified game genre.
-     */
-    List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
         throws ServiceException;
 
     /**

@@ -45,7 +45,7 @@ public class ArcadePanel extends FlowPanel
     protected void init (final ArcadeData data)
     {
         clear();
-        add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
+        add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, "Featured Games"));
         _header.initWithCards(data.allGames);
 
         // show the top N games

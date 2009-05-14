@@ -65,6 +65,7 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
             }
             addLink(null, "New Games", Pages.GAMES, Args.compose("g", -1, 1));
+            addLink(null, "My Games", Pages.GAMES, "mine");
             break;
 
         case ROOMS:

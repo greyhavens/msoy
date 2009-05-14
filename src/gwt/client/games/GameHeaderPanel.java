@@ -34,8 +34,7 @@ import client.util.Link;
  */
 public class GameHeaderPanel extends FlowPanel
 {
-    public GameHeaderPanel (
-        final byte genre, final byte sortMethod, final String query, String titleText)
+    public GameHeaderPanel (final byte genre, final byte sortMethod, String titleText)
     {
         setStyleName("gameHeaderPanel");
         _genre = genre;
@@ -63,19 +62,14 @@ public class GameHeaderPanel extends FlowPanel
         FlowPanel search = MsoyUI.createFlowPanel("Search");
         search.add(MsoyUI.createLabel(_msgs.genreSearch(), "Title"));
         add(search);
-        final TextBox searchBox = new TextBox();
-        searchBox.setVisibleLength(20);
-        if (query != null) {
-            searchBox.setText(query);
-        }
+        _searchBox = MsoyUI.createTextBox("", 30, 20);
         ClickHandler searchListener = new ClickHandler() {
             public void onClick (ClickEvent event) {
-                String newQuery = searchBox.getText().trim();
-                Link.go(Pages.GAMES, Args.compose("g", genre, sortMethod, newQuery));
+                Link.go(Pages.GAMES, Args.compose("g", genre, sortMethod, getQuery()));
             }
         };
-        searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
-        search.add(searchBox);
+        _searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
+        search.add(_searchBox);
         search.add(MsoyUI.createImageButton("GoButton", searchListener));
 
         // add a link to the genre links
@@ -88,6 +82,16 @@ public class GameHeaderPanel extends FlowPanel
             genreLinks.add(Link.create(_dmsgs.xlate("genre" + gcode), Pages.GAMES,
                                        Args.compose("g", gcode)));
         }
+    }
+
+    public void setQuery (String query)
+    {
+        _searchBox.setText(query);
+    }
+
+    public String getQuery ()
+    {
+        return _searchBox.getText().trim();
     }
 
     protected void initWithCards (List<GameCard> games)
@@ -104,11 +108,9 @@ public class GameHeaderPanel extends FlowPanel
         }
     }
 
-    /** Dropdown of all games */
-    protected ListBox _findGameBox;
-
-    /** Genre ID or -1 for All Games page */
     protected byte _genre;
+    protected ListBox _findGameBox;
+    protected TextBox _searchBox;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

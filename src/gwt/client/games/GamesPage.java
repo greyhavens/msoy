@@ -5,6 +5,7 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
@@ -41,7 +42,10 @@ public class GamesPage extends Page
 
         } else if (action.equals("g")) {
             setContent(new GameGenrePanel(
-                (byte)args.get(1, (byte)-1), (byte)args.get(2, 0), args.get(3, null)));
+                (byte)args.get(1, GameGenre.ALL), (byte)args.get(2, 0), args.get(3, null)));
+
+        } else if (action.equals("mine")) {
+            setContent(new MyGamesPanel((byte)args.get(2, 0)));
 
         } else if (action.equals("e")) {
             EditGamePanel panel;

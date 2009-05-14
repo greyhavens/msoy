@@ -563,10 +563,10 @@
 }
 
 /* ------------------------------------
-   GENRE GAMES LIST / ALL GAMES PAGE
+   GameListPanel
 -------------------------------------*/
 
-.gameGenre {
+.gameList {
   background-color: #1d5884;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -575,37 +575,37 @@
   color: #407a9f;
 }
 
-.gameGenre .Games {
+.gameList .Games {
   margin: 20px 10px 0 10px;
   width: 665px;
 }
 
-.gameGenre .Games .Header {
+.gameList .Games .Header {
   background-position: top center;
 }
 
-.gameGenre .Games .Header .TopLeft,
-.gameGenre .Games .Header .TopRight {
+.gameList .Games .Header .TopLeft,
+.gameList .Games .Header .TopRight {
   background-color: #1d5884;
   height: 29px;
 }
 
-.gameGenre .Games .Header .SortBy {
+.gameList .Games .Header .SortBy {
   padding-right: 5px;
   width: 50px;
 }
 
-.gameGenre .Games .Header td.Info {
+.gameList .Games .Header td.Info {
   width: 450px;
 }
 
-.gameGenre .Games .Titles {
+.gameList .Games .Titles {
   background-color: #FFFFFF;
   height: 25px;
   border-bottom: solid #aac4d1 1px;
 }
 
-.gameGenre .Games .Titles div {
+.gameList .Games .Titles div {
   position: absolute;
   margin-top: 5px;
   color: #000000;
@@ -614,41 +614,41 @@
   font-weight: bold;
 }
 
-.gameGenre .Games .Titles .NameTitle {
+.gameList .Games .Titles .NameTitle {
   left: 108px;
 }
 
-.gameGenre .Games .Titles .RatingTitle {
+.gameList .Games .Titles .RatingTitle {
   left: 310px;
 }
 
-.gameGenre .Games .Titles .CategoryTitle {
+.gameList .Games .Titles .CategoryTitle {
   left: 410px;
 }
 
-.gameGenre .Games .Titles .NowPlayingTitle {
+.gameList .Games .Titles .NowPlayingTitle {
   left: 505px;
 }
 
-.gameGenre .GameInfoPanel {
+.gameList .GameInfoPanel {
   background-color: #FFFFFF;
   width: 100%;
   padding: 5px 0;
 }
 
-.gameGenre .Alternating .GameInfoPanel {
+.gameList .Alternating .GameInfoPanel {
   background-color: #ddeef8;
 }
 
-.gameGenre .GameInfoPanel .Thumbnail {
+.gameList .GameInfoPanel .Thumbnail {
   width: 90px;
 }
 
-.gameGenre .GameInfoPanel .NameDesc {
+.gameList .GameInfoPanel .NameDesc {
   width: 200px;
 }
 
-.gameGenre .GameInfoPanel .Name {
+.gameList .GameInfoPanel .Name {
   width: 180px;
   white-space: nowrap;
   overflow: hidden;
@@ -658,41 +658,41 @@
   margin-bottom: 5px;
 }
 
-.gameGenre .GameInfoPanel .Description {
+.gameList .GameInfoPanel .Description {
   font-size: 11px;
   width: 180px;
   height: 45px;
   overflow: hidden;
 }
 
-.gameGenre .GameInfoPanel .Rating {
+.gameList .GameInfoPanel .Rating {
   width: 95px;
 }
 
-.gameGenre .GameInfoPanel .Rating .NumRatings {
+.gameList .GameInfoPanel .Rating .NumRatings {
   font-size: 11px;
   color: #000000;
   font-style: italic;
 }
 
-.gameGenre .GameInfoPanel .Category {
+.gameList .GameInfoPanel .Category {
   width: 100px;
 }
 
-.gameGenre .GameInfoPanel .NowPlaying {
+.gameList .GameInfoPanel .NowPlaying {
   text-align: center;
 }
 
-.gameGenre .GameInfoPanel .PlayButtons {
+.gameList .GameInfoPanel .PlayButtons {
   width: 100px;
 }
 
-.gameGenre .GameInfoPanel .PlayButtons .PlaySingleButton .html-face {
+.gameList .GameInfoPanel .PlayButtons .PlaySingleButton .html-face {
   font-size: 12px;
   padding-top: 3px;
 }
 
-.gameGenre .GameInfoPanel .PlayButtons .PlayMultiButton .html-face {
+.gameList .GameInfoPanel .PlayButtons .PlayMultiButton .html-face {
   font-size: 10px;
   padding-top: 5px;
 }

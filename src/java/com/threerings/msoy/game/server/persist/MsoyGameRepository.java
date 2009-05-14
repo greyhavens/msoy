@@ -221,54 +221,12 @@ public class MsoyGameRepository extends DepotRepository
         });
     }
 
+    /**
+     * Returns the repository used to manage game ratings.
+     */
     public RatingRepository getRatingRepository ()
     {
         return _ratingRepo;
-    }
-
-    /**
-     * Returns the total number of listed games in the repository.
-     */
-    public int loadGameCount ()
-    {
-        Where where = new Where(
-            new Equals(GameCodeRecord.IS_DEVELOPMENT, Boolean.FALSE));
-        return load(CountRecord.class, new FromOverride(GameCodeRecord.class), where).count;
-    }
-
-    /**
-     * Returns the {@link GameInfoRecord} for the specified game or null if the id is unknown.
-     */
-    public GameInfoRecord loadGame (int gameId)
-    {
-        return load(GameInfoRecord.class, Math.abs(gameId));
-    }
-
-    /**
-     * Loads the code record for the specified game. If the id is negative, the development record
-     * will be loaded, if positive, the published record will be loaded. Returns a blank code
-     * record if the game has no record of the requested type.
-     */
-    public GameCodeRecord loadGameCode (int gameId, boolean skipCache)
-    {
-        CacheStrategy cache = skipCache ? CacheStrategy.NONE : CacheStrategy.BEST;
-        boolean isDevelopment = gameId < 0 ? true : false;
-        GameCodeRecord code = load(GameCodeRecord.class, cache,
-                                   GameCodeRecord.getKey(Math.abs(gameId), isDevelopment));
-        if (code == null) {
-            code = new GameCodeRecord();
-            code.gameId = Math.abs(gameId);
-            code.isDevelopment = isDevelopment;
-        }
-        return code;
-    }
-
-    /**
-     * Loads the metrics record for the specified game.
-     */
-    public GameMetricsRecord loadGameMetrics (int gameId)
-    {
-        return load(GameMetricsRecord.class, gameId);
     }
 
     /**
@@ -329,10 +287,10 @@ public class MsoyGameRepository extends DepotRepository
             whereBits.add(new Equals(GameInfoRecord.GENRE, genre));
         }
 
+        if (!StringUtil.isBlank(search)) {
 // TODO: search name and description
-//         if (search != null && search.length() > 0) {
 //             whereBits.add(buildSearchClause(new WordSearch(search)));
-//         }
+        }
 
         // filter out games that aren't integrated with Whirled
         whereBits.add(new Equals(GameInfoRecord.INTEGRATED, Boolean.TRUE));
@@ -349,6 +307,49 @@ public class MsoyGameRepository extends DepotRepository
         }
 
         return findAll(GameInfoRecord.class, clauses);
+    }
+
+    /**
+     * Returns all games by the specified creator (hidden and published).
+     */
+    public List<GameInfoRecord> loadGamesByCreator (int creatorId)
+    {
+        return findAll(GameInfoRecord.class, new Where(GameInfoRecord.CREATOR_ID, creatorId));
+    }
+
+    /**
+     * Returns the {@link GameInfoRecord} for the specified game or null if the id is unknown.
+     */
+    public GameInfoRecord loadGame (int gameId)
+    {
+        return load(GameInfoRecord.class, Math.abs(gameId));
+    }
+
+    /**
+     * Loads the code record for the specified game. If the id is negative, the development record
+     * will be loaded, if positive, the published record will be loaded. Returns a blank code
+     * record if the game has no record of the requested type.
+     */
+    public GameCodeRecord loadGameCode (int gameId, boolean skipCache)
+    {
+        CacheStrategy cache = skipCache ? CacheStrategy.NONE : CacheStrategy.BEST;
+        boolean isDevelopment = gameId < 0 ? true : false;
+        GameCodeRecord code = load(GameCodeRecord.class, cache,
+                                   GameCodeRecord.getKey(Math.abs(gameId), isDevelopment));
+        if (code == null) {
+            code = new GameCodeRecord();
+            code.gameId = Math.abs(gameId);
+            code.isDevelopment = isDevelopment;
+        }
+        return code;
+    }
+
+    /**
+     * Loads the metrics record for the specified game.
+     */
+    public GameMetricsRecord loadGameMetrics (int gameId)
+    {
+        return load(GameMetricsRecord.class, gameId);
     }
 
     /**

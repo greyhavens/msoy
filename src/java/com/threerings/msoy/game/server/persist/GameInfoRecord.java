@@ -61,7 +61,7 @@ public class GameInfoRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
@@ -84,7 +84,7 @@ public class GameInfoRecord extends PersistentRecord
     public boolean isAVRG;
 
     /** The id of the member that created this game. */
-    public int creatorId;
+    @Index public int creatorId;
 
     /** A more detailed description of the game. */
     @Column(length=GameInfo.MAX_DESCRIPTION_LENGTH)

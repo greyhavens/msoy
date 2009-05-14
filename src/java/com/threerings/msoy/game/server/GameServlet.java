@@ -88,6 +88,113 @@ public class GameServlet extends MsoyServiceServlet
     implements GameService
 {
     // from interface GameService
+    public ArcadeData loadArcadeData ()
+        throws ServiceException
+    {
+        ArcadeData data = new ArcadeData();
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+
+        // load the top N (where N is large) games and build everything from that list
+        Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
+        for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
+            games.put(grec.gameId, grec);
+        }
+
+        // determine the "featured" games
+        data.featuredGames = _gameLogic.loadTopGames(pps, false);
+
+        // list of the top-200 games alphabetically (only include name and id)
+        data.allGames = Lists.newArrayList();
+        for (GameInfoRecord game : games.values()) {
+            data.allGames.add(game.toGameCard(0)); // playersOnline not needed here
+        }
+        Collections.sort(data.allGames, GameCard.BY_NAME);
+
+        // list of top N games by ranking
+        data.topGames = Lists.newArrayList();
+        for (GameInfoRecord game : games.values()) {
+            data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
+            if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
+                break;
+            }
+        }
+
+        // load up our genre counts
+        IntIntMap genreCounts = _mgameRepo.loadGenreCounts();
+
+        // load information about the genres
+        List<ArcadeData.Genre> genres = Lists.newArrayList();
+        for (byte gcode : GameGenre.GENRES) {
+            ArcadeData.Genre genre = new ArcadeData.Genre();
+            genre.genre = gcode;
+            genre.gameCount = Math.max(0, genreCounts.get(gcode));
+            if (genre.gameCount == 0) {
+                continue;
+            }
+
+            // filter out all the games in this genre
+            List<GameCard> ggames = Lists.newArrayList();
+            for (GameInfoRecord grec : games.values()) {
+                // games rated less than 3 don't get on the main page
+                if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
+                    ggames.add(grec.toGameCard(getGamePop(pps, grec.gameId)));
+                    // stop when we've got 3*HIGHLIGHTED_GAMES
+                    if (ggames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
+                        break;
+                    }
+                }
+            }
+
+            // shuffle those and then sort them by players online
+            Collections.shuffle(ggames);
+            Collections.sort(ggames, new Comparator<GameCard>() {
+                public int compare (GameCard one, GameCard two) {
+                    return Comparators.compare(two.playersOnline, one.playersOnline);
+                }
+            });
+
+            // finally take N from that shuffled list as the games to show
+            List<GameCard> hgames = ggames.subList(
+                0, Math.min(ggames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
+            genre.games = hgames.toArray(new GameCard[hgames.size()]);
+
+            genres.add(genre);
+        }
+        data.genres = genres;
+
+        return data;
+    }
+
+    // from interface GameService
+    public List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
+        throws ServiceException
+    {
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        List<GameInfo> infos = Lists.newArrayList();
+        for (GameInfoRecord grec : _mgameRepo.loadGenre(genre, -1, query)) {
+            infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
+        }
+        Comparator<GameInfo> comp = _sorts.get(sortMethod);
+        if (comp != null) {
+            Collections.sort(infos, comp);
+        }
+        return infos;
+    }
+
+    // from interface GameService
+    public List<GameInfo> loadMyGames ()
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        List<GameInfo> infos = Lists.newArrayList();
+        for (GameInfoRecord grec : _mgameRepo.loadGamesByCreator(mrec.memberId)) {
+            infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
+        }
+        return infos;
+    }
+
+    // from interface GameService
     public GameDetail loadGameDetail (int gameId)
         throws ServiceException
     {
@@ -340,115 +447,6 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public ArcadeData loadArcadeData ()
-        throws ServiceException
-    {
-        ArcadeData data = new ArcadeData();
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-
-        // load the top N (where N is large) games and build everything from that list
-        Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
-        for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
-            games.put(grec.gameId, grec);
-        }
-
-        // determine the "featured" games
-        data.featuredGames = _gameLogic.loadTopGames(pps, false);
-
-        // list of the top-200 games alphabetically (only include name and id)
-        data.allGames = Lists.newArrayList();
-        for (GameInfoRecord game : games.values()) {
-            data.allGames.add(game.toGameCard(0)); // playersOnline not needed here
-        }
-        Collections.sort(data.allGames, GameCard.BY_NAME);
-
-        // list of top N games by ranking
-        data.topGames = Lists.newArrayList();
-        for (GameInfoRecord game : games.values()) {
-            data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
-            if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
-                break;
-            }
-        }
-
-        // load up our genre counts
-        IntIntMap genreCounts = _mgameRepo.loadGenreCounts();
-
-        // load information about the genres
-        List<ArcadeData.Genre> genres = Lists.newArrayList();
-        for (byte gcode : GameGenre.GENRES) {
-            ArcadeData.Genre genre = new ArcadeData.Genre();
-            genre.genre = gcode;
-            genre.gameCount = Math.max(0, genreCounts.get(gcode));
-            if (genre.gameCount == 0) {
-                continue;
-            }
-
-            // filter out all the games in this genre
-            List<GameCard> ggames = Lists.newArrayList();
-            for (GameInfoRecord grec : games.values()) {
-                // games rated less than 3 don't get on the main page
-                if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
-                    ggames.add(grec.toGameCard(getGamePop(pps, grec.gameId)));
-                    // stop when we've got 3*HIGHLIGHTED_GAMES
-                    if (ggames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
-                        break;
-                    }
-                }
-            }
-
-            // shuffle those and then sort them by players online
-            Collections.shuffle(ggames);
-            Collections.sort(ggames, new Comparator<GameCard>() {
-                public int compare (GameCard one, GameCard two) {
-                    return Comparators.compare(two.playersOnline, one.playersOnline);
-                }
-            });
-
-            // finally take N from that shuffled list as the games to show
-            List<GameCard> hgames = ggames.subList(
-                0, Math.min(ggames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
-            genre.games = hgames.toArray(new GameCard[hgames.size()]);
-
-            genres.add(genre);
-        }
-        data.genres = genres;
-
-        return data;
-    }
-
-    // from interface GameService
-    public List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
-        throws ServiceException
-    {
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-
-        // load up all the games in this genre
-        List<GameInfoRecord> games = _mgameRepo.loadGenre(genre, -1, query);
-
-        // convert them to game info objects
-        List<GameInfo> infos = Lists.newArrayList();
-        for (GameInfoRecord grec : games) {
-            infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
-        }
-
-        // sort by the preferred sort method (sorted by rating within groups)
-        if (sortMethod == GameInfo.SORT_BY_RATING) {
-            // do nothing, this is the default from the repository
-        } else if (sortMethod == GameInfo.SORT_BY_NEWEST) {
-            Collections.sort(infos, SORT_BY_NEWEST);
-        } else if (sortMethod == GameInfo.SORT_BY_NAME) {
-            Collections.sort(infos, SORT_BY_NAME);
-        } else if (sortMethod == GameInfo.SORT_BY_GENRE) {
-            Collections.sort(infos, SORT_BY_GENRE);
-        } else if (sortMethod == GameInfo.SORT_BY_PLAYERS_ONLINE) {
-            Collections.sort(infos, SORT_BY_PLAYERS_ONLINE);
-        }
-
-        return infos;
-    }
-
-    // from interface GameService
     public RatingResult rateGame (int gameId, byte rating)
         throws ServiceException
     {
@@ -693,33 +691,29 @@ public class GameServlet extends MsoyServiceServlet
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected TrophySourceRepository _trophySourceRepo;
 
-    /** Comparator for sorting {@link GameInfo}, by gameId. */
-    protected static Comparator<GameInfo> SORT_BY_NEWEST = new Comparator<GameInfo>() {
-        public int compare (GameInfo c1, GameInfo c2) {
-            return c2.gameId - c1.gameId;
-        }
-    };
-
-    /** Comparator for sorting {@link GameInfo}, by name. */
-    protected static Comparator<GameInfo> SORT_BY_NAME = new Comparator<GameInfo>() {
-        public int compare (GameInfo c1, GameInfo c2) {
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting {@link GameInfo}, by genre. */
-    protected static Comparator<GameInfo> SORT_BY_GENRE = new Comparator<GameInfo>() {
-        public int compare (GameInfo c1, GameInfo c2) {
-            return c2.genre - c1.genre;
-        }
-    };
-
-    /** Compartor for sorting {@link GameInfo}, by # of players online. */
-    protected static Comparator<GameInfo> SORT_BY_PLAYERS_ONLINE = new Comparator<GameInfo>() {
-        public int compare (GameInfo c1, GameInfo c2) {
-            return c2.playersOnline - c1.playersOnline;
-        }
-    };
+    protected static Map<Byte, Comparator<GameInfo>> _sorts = Maps.newHashMap();
+    static {
+        _sorts.put(GameInfo.SORT_BY_NEWEST, new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c2.gameId - c1.gameId;
+            }
+        });
+        _sorts.put(GameInfo.SORT_BY_NAME, new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+            }
+        });
+        _sorts.put(GameInfo.SORT_BY_GENRE, new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c2.genre - c1.genre;
+            }
+        });
+        _sorts.put(GameInfo.SORT_BY_PLAYERS_ONLINE, new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c2.playersOnline - c1.playersOnline;
+            }
+        });
+    }
 
     protected static final int MAX_RANKINGS = 10;
     protected static final int ARCADE_RAW_COUNT = 200;

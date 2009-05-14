@@ -17,6 +17,22 @@ import com.threerings.msoy.item.data.all.Item;
 public interface GameServiceAsync
 {
     /**
+     * The asynchronous version of {@link GameService#loadArcadeData}.
+     */
+    void loadArcadeData (AsyncCallback<ArcadeData> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadGameGenre}.
+     */
+    void loadGameGenre (byte genre, byte sortMethod, String query,
+                        AsyncCallback<List<GameInfo>> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadMyGames}.
+     */
+    void loadMyGames (AsyncCallback<List<GameInfo>> callback);
+
+    /**
      * The asynchronous version of {@link GameService#loadGameDetail}.
      */
     void loadGameDetail (int gameId, AsyncCallback<GameDetail> callback);
@@ -57,17 +73,6 @@ public interface GameServiceAsync
      */
     void loadTopRanked (int gameId, boolean onlyMyFriends,
                         AsyncCallback<PlayerRating[][]> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadArcadeData}.
-     */
-    void loadArcadeData (AsyncCallback<ArcadeData> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadGameGenre}.
-     */
-    void loadGameGenre (byte genre, byte sortMethod, String query,
-                        AsyncCallback<List<GameInfo>> callback);
 
     /**
      * The asynchronous version of {@link GameService#rateGame}.

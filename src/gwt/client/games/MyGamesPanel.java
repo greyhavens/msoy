@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -18,17 +19,15 @@ import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
- * Displays games in a particular genre, or of all genres for the "All Games" page.
- * For genre pages it displays a featured game; for "All Games" page displays a search.
+ * Displays the games created by the caller.
  */
-public class GameGenrePanel extends GameListPanel
+public class MyGamesPanel extends GameListPanel
 {
-    public GameGenrePanel (byte genre, byte sortMethod, String query)
+    public MyGamesPanel (byte sortMethod)
     {
-        super(genre, sortMethod);
+        super(GameGenre.ALL, sortMethod);
 
-        _header.setQuery(query);
-        _gamesvc.loadGameGenre(genre, sortMethod, query, new InfoCallback<List<GameInfo>>() {
+        _gamesvc.loadMyGames(new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
                 init(games);
             }
@@ -37,7 +36,7 @@ public class GameGenrePanel extends GameListPanel
 
     protected void onSortChanged (byte sortMethod)
     {
-        Link.go(Pages.GAMES, Args.compose("g", _genre, sortMethod, _header.getQuery()));
+        Link.go(Pages.GAMES, Args.compose("mine", sortMethod));
     }
 
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
