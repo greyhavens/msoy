@@ -37,8 +37,10 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
             }
         }
 
-        // now dispatch an event indicating our new unread mail count
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
+        // TODO: fix this. Fucking broken. The unread count on the first page is not our
+        // total unread count.
+//        // now dispatch an event indicating our new unread mail count
+//        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
     }
 
     /**
