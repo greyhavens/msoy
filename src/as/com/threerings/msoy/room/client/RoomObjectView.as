@@ -14,7 +14,6 @@ import com.threerings.util.HashMap;
 import com.threerings.util.ImmutableProxyObject;
 import com.threerings.util.Name;
 import com.threerings.util.ValueEvent;
-import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -824,7 +823,6 @@ public class RoomObjectView extends RoomView
     protected function handleMusicMetadata (event :ValueEvent) :void
     {
         var metadata :Object = new ImmutableProxyObject(event.value);
-        log.debug("Got music metadata: Keys: " + Util.keys(metadata).join());
         for each (var entity :MsoySprite in _entities.values()) {
             entity.processMusicId3(metadata);
         }
