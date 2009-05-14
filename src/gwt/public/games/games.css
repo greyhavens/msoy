@@ -731,9 +731,7 @@
 .gameHeaderPanel .FindGame .Title,
 .gameHeaderPanel .Search .Title {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
   width: 120px;
-  color: #a6cae2;
   margin-bottom: 3px;
 }
 
@@ -760,13 +758,32 @@
 .gameHeaderPanel .GenreLinks {
   width: 100%;
   text-align: center;
-  color: #b4ddf9;
+}
+
+.gameHeaderPanel .Title, .gameHeaderPanel a, .gameHeaderPanel .CreateTip, .gameHeaderPanel .DevTip {
+  color: #B4DDF9;
   font-size: 12px;
 }
 
 .gameHeaderPanel .GenreLinks a {
-  color: #b4ddf9;
   margin: 0 5px 0 5px;
+}
+
+.gameHeaderPanel .CreateTip {
+  position: absolute;
+  top: 10px;
+  left: 310px;
+  width: 260px;
+}
+
+.gameHeaderPanel .CreateTip, .gameHeaderPanel .DevTip {
+  text-align: center;
+}
+
+.gameHeaderPanel .orangeButton {
+  position: absolute;
+  top: 10px;
+  left: 580px;
 }
 
 .editGame .Header {

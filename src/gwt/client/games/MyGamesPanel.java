@@ -32,7 +32,11 @@ public class MyGamesPanel extends GameListPanel
         FlowPanel header = MsoyUI.createFlowPanel("gameHeaderPanel");
         FlowPanel absbits = MsoyUI.createFlowPanel("Absolute");
         absbits.add(MsoyUI.createLabel(_msgs.myGames(), "GenreTitle"));
+        absbits.add(MsoyUI.createHTML(_msgs.myGamesCreateTip(), "CreateTip"));
+        absbits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.myGamesCreate(),
+                                        Link.createListener(Pages.GAMES, "create")));
         header.add(absbits);
+        header.add(MsoyUI.createLabel(_msgs.myGamesDevTip(), "DevTip"));
         add(header);
 
         _gamesvc.loadMyGames(new InfoCallback<List<GameInfo>>() {
