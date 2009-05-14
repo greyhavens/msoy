@@ -1105,8 +1105,8 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Determine what the friendship status is between one member and another.
-     * NOTE: this does not presently return Friendship.INVITEE,
-     * just NOT_FRIENDS, INVITED, or FRIENDS.
+     * NOTE: this does not return Friendship.INVITEE, because that requires
+     * looking up the friendId's relationship with us.
      */
     public Friendship getFriendship (int memberId, int friendId)
     {
@@ -1117,9 +1117,11 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Determine the full friendship status between two members.
+     * Determine the two-way friendship status between two members.
+     * You only need to call this method if you need to know if the memberId may
+     * have been invited by the friendId; otheriwse please call getFriendship().
      */
-    public Friendship getFullFriendship (int memberId, int friendId)
+    public Friendship getTwoWayFriendship (int memberId, int friendId)
     {
         Friendship fr = getFriendship(memberId, friendId);
         if (fr == Friendship.NOT_FRIENDS) {
@@ -1184,20 +1186,6 @@ public class MemberRepository extends DepotRepository
             ships.put(frec.friendId, frec.valid ? Friendship.FRIENDS : Friendship.INVITED);
         }
         return ships;
-    }
-
-    /**
-     * Loads the ids of all members who are flagged as "greeters". Most recently online greeters
-     * are first in the array.
-     * TODO: write com.samskivert.util.IntList and use that instead of List<Integer>
-     */
-    public List<Integer> loadGreeterIds ()
-    {
-        List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Where(GREETER_FLAG_IS_SET));
-        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
-        return Lists.transform(findAllKeys(MemberRecord.class, false, clauses),
-                               RecordFunctions.<MemberRecord>getIntKey());
     }
 
     /**
@@ -1273,6 +1261,9 @@ public class MemberRepository extends DepotRepository
         return other;
     }
 
+    /**
+     * Note that a friendship invitation has been extended. "Fan".
+     */
     public void noteFriendInvitationSent (int memberId, int friendId)
     {
         store(new FriendshipRecord(memberId, friendId, false));
@@ -1289,6 +1280,20 @@ public class MemberRepository extends DepotRepository
         // but keep the friend marked as liking us, if and only if they already had a record
         Key<FriendshipRecord> friendKey = FriendshipRecord.getKey(friendId, memberId);
         updatePartial(FriendshipRecord.class, friendKey, friendKey, FriendshipRecord.VALID, false);
+    }
+
+    /**
+     * Loads the ids of all members who are flagged as "greeters". Most recently online greeters
+     * are first in the array.
+     * TODO: write com.samskivert.util.IntList and use that instead of List<Integer>
+     */
+    public List<Integer> loadGreeterIds ()
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(GREETER_FLAG_IS_SET));
+        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
+        return Lists.transform(findAllKeys(MemberRecord.class, false, clauses),
+                               RecordFunctions.<MemberRecord>getIntKey());
     }
 
     /**

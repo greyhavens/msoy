@@ -61,7 +61,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser();
-        return _memberRepo.getFullFriendship(memrec.memberId, memberId);
+        return _memberRepo.getTwoWayFriendship(memrec.memberId, memberId);
     }
 
     // from interface WebMemberService

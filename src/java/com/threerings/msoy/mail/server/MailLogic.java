@@ -108,8 +108,8 @@ public class MailLogic
         throws ServiceException
     {
         if (attachment instanceof FriendInvitePayload) {
-            Friendship friendship = _memberRepo.getFullFriendship(sender.memberId, recip.memberId);
-            switch (friendship) {
+            Friendship fr = _memberRepo.getTwoWayFriendship(sender.memberId, recip.memberId);
+            switch (fr) {
             default:
                 break; // it's all good, proceed
 
