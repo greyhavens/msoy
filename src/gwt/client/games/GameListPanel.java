@@ -57,27 +57,6 @@ public abstract class GameListPanel extends FlowPanel
                 onSortChanged(SORT_VALUES[_sortBox.getSelectedIndex()]);
             }
         });
-
-        String titleText;
-        if (genre >= 0) {
-            String genreTitle = _dmsgs.xlate("genre" + genre);
-            titleText = (genreTitle.indexOf("/") != -1) ? genreTitle : _msgs.genreWrap(genreTitle);
-        } else {
-            titleText = _msgs.genreAllGames();
-        }
-        add(_header = new GameHeaderPanel(genre, sortMethod, titleText));
-    }
-
-    /**
-     * After data is received, displays the genre header and the data grid
-     */
-    protected void init (List<GameInfo> games)
-    {
-        // set the dropdown list of all games
-        _header.initWithInfos(games);
-
-        // add the games to the page
-        add(new GameGrid(games));
     }
 
     protected abstract void onSortChanged (byte sortMethod);
@@ -103,13 +82,14 @@ public abstract class GameListPanel extends FlowPanel
             return _msgs.genreNoGames();
         }
 
-        /**
-         * Add the sort box and header row
-         */
+        @Override
+        protected boolean displayNavi (int items) {
+            return true;
+        }
+
         @Override
         protected void addCustomControls (FlexTable controls) {
-            controls.setWidget(
-                0, 0, new InlineLabel(_msgs.genreSortBy(), false, false, false));
+            controls.setWidget(0, 0, new InlineLabel(_msgs.genreSortBy(), false, false, false));
             controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
             controls.setWidget(0, 1, _sortBox);
 
@@ -123,49 +103,37 @@ public abstract class GameListPanel extends FlowPanel
             headers.add(createTitle("Rating", "RatingTitle", GameInfo.SORT_BY_NAME));
             headers.add(createTitle("Category", "CategoryTitle", GameInfo.SORT_BY_GENRE));
             headers.add(createTitle("Now Playing", "NowPlayingTitle",
-                GameInfo.SORT_BY_PLAYERS_ONLINE));
+                                    GameInfo.SORT_BY_PLAYERS_ONLINE));
         }
 
-        /**
-         * Creates a title for display in the grid header that performs a sort action onclick
-         */
-        protected Widget createTitle (String text, String styleName, byte sortMethod) {
-            Widget link = Link.create(text, Pages.GAMES, Args.compose("g", _genre, sortMethod));
-            link.addStyleName(styleName);
-            return link;
+        protected Widget createTitle (String text, String styleName, final byte sortMethod) {
+            return MsoyUI.createActionLabel(text, styleName, new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    onSortChanged(sortMethod);
+                }
+            });
         }
 
-        /**
-         * Alternate row styles
-         */
         @Override
-        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit)
-        {
+        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit) {
             if (row % 2 == 1) {
                 formatter.addStyleName(row, col, "Alternating");
             }
         }
 
-        /**
-         * One row of the grid with details on a single game.
-         */
         protected class GameInfoPanel extends SmartTable
         {
-            public GameInfoPanel (final GameInfo game)
-            {
+            public GameInfoPanel (final GameInfo game) {
                 setStyleName("GameInfoPanel");
                 int col = 0;
 
-                ClickHandler gameClick = new ClickHandler() {
-                    public void onClick (ClickEvent event) {
-                        Link.go(Pages.GAMES, Args.compose("d", game.gameId));
-                    }
-                };
+                String args = Args.compose("d", game.gameId);
                 setWidget(0, col++, MediaUtil.createMediaView(
-                    game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, gameClick), 1, "Thumbnail");
+                              game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
+                              Link.createListener(Pages.GAMES, args)), 1, "Thumbnail");
 
                 FlowPanel name = new FlowPanel();
-                name.add(MsoyUI.createActionLabel(game.name, "Name", gameClick));
+                name.add(Link.create(game.name, Pages.GAMES, args));
                 name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80),
                          "Description"));
                 setWidget(0, col++, name, 1, "NameDesc");
@@ -183,9 +151,6 @@ public abstract class GameListPanel extends FlowPanel
             }
         }
     }
-
-    /** Header area with title, games dropdown and search */
-    protected GameHeaderPanel _header;
 
     /** Dropdown of sort methods */
     protected ListBox _sortBox;

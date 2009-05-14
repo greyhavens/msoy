@@ -34,17 +34,19 @@ import client.util.Link;
  */
 public class GameHeaderPanel extends FlowPanel
 {
-    public GameHeaderPanel (final byte genre, final byte sortMethod, String titleText)
+    public GameHeaderPanel (String titleText, final byte genre, final byte sortMethod)
     {
         setStyleName("gameHeaderPanel");
         _genre = genre;
 
-        add(MsoyUI.createLabel(titleText, "GenreTitle"));
+        FlowPanel absbits = MsoyUI.createFlowPanel("Absolute");
+        add(absbits);
+        absbits.add(MsoyUI.createLabel(titleText, "GenreTitle"));
 
         // find a game fast dropdown box
         FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
         findGame.add(MsoyUI.createLabel(_msgs.genreFindGame(), "Title"));
-        add(findGame);
+        absbits.add(findGame);
         _findGameBox = new ListBox();
         _findGameBox.addItem("", "");
         _findGameBox.addChangeHandler(new ChangeHandler() {
@@ -61,7 +63,7 @@ public class GameHeaderPanel extends FlowPanel
         // search for games
         FlowPanel search = MsoyUI.createFlowPanel("Search");
         search.add(MsoyUI.createLabel(_msgs.genreSearch(), "Title"));
-        add(search);
+        absbits.add(search);
         _searchBox = MsoyUI.createTextBox("", 30, 20);
         ClickHandler searchListener = new ClickHandler() {
             public void onClick (ClickEvent event) {

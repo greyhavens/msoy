@@ -576,7 +576,7 @@
 }
 
 .gameList .Games {
-  margin: 20px 10px 0 10px;
+  margin: 15px 10px 0px 10px;
   width: 665px;
 }
 
@@ -701,8 +701,8 @@
    GAMES PAGES HEADER
 -------------------------------------*/
 
-.gameHeaderPanel {
-  height: 80px;
+.gameHeaderPanel .Absolute {
+  height: 59px;
 }
 
 .gameHeaderPanel .GenreTitle {
@@ -762,9 +762,6 @@
   text-align: center;
   color: #b4ddf9;
   font-size: 12px;
-  position: absolute;
-  left: 0;
-  top: 65px;
 }
 
 .gameHeaderPanel .GenreLinks a {

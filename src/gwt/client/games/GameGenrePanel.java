@@ -27,10 +27,20 @@ public class GameGenrePanel extends GameListPanel
     {
         super(genre, sortMethod);
 
+        String titleText;
+        if (genre >= 0) {
+            String genreTitle = _dmsgs.xlate("genre" + genre);
+            titleText = (genreTitle.indexOf("/") != -1) ? genreTitle : _msgs.genreWrap(genreTitle);
+        } else {
+            titleText = _msgs.genreAllGames();
+        }
+        add(_header = new GameHeaderPanel(titleText, genre, sortMethod));
         _header.setQuery(query);
+
         _gamesvc.loadGameGenre(genre, sortMethod, query, new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
-                init(games);
+                _header.initWithInfos(games); // set the dropdown list of all games
+                add(new GameGrid(games));
             }
         });
     }
@@ -39,6 +49,9 @@ public class GameGenrePanel extends GameListPanel
     {
         Link.go(Pages.GAMES, Args.compose("g", _genre, sortMethod, _header.getQuery()));
     }
+
+    /** Header area with title, games dropdown and search */
+    protected GameHeaderPanel _header;
 
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);

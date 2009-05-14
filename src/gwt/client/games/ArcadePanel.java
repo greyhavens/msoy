@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -45,7 +46,7 @@ public class ArcadePanel extends FlowPanel
     protected void init (final ArcadeData data)
     {
         clear();
-        add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, "Featured Games"));
+        add(_header = new GameHeaderPanel("Featured Games", GameGenre.ALL, GameInfo.SORT_BY_NAME));
         _header.initWithCards(data.allGames);
 
         // show the top N games

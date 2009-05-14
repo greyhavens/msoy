@@ -6,6 +6,7 @@ package client.games;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -14,6 +15,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -27,9 +29,15 @@ public class MyGamesPanel extends GameListPanel
     {
         super(GameGenre.ALL, sortMethod);
 
+        FlowPanel header = MsoyUI.createFlowPanel("gameHeaderPanel");
+        FlowPanel absbits = MsoyUI.createFlowPanel("Absolute");
+        absbits.add(MsoyUI.createLabel(_msgs.myGames(), "GenreTitle"));
+        header.add(absbits);
+        add(header);
+
         _gamesvc.loadMyGames(new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
-                init(games);
+                add(new GameGrid(games));
             }
         });
     }
