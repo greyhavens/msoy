@@ -213,7 +213,7 @@ public class StatusPanel extends SmartTable
         }
 
         public void setCount (int count) {
-            _mailLabel.setText("(" + String.valueOf(count) + ")");
+            _mailLabel.setText(String.valueOf(count));
             _mailImage.setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
         }
 
