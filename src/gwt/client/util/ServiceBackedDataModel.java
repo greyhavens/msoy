@@ -128,11 +128,16 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
     protected abstract void callFetchService (
         int start, int count, boolean needCount, AsyncCallback<R> callback);
 
-    /** Returns the count from the service result. */
+    /**
+     * Returns the count from the service result.
+     */
     protected abstract int getCount (R result);
 
-    /** Returns the list of row items from the service result. */
+    /**
+     * Returns the list of row items from the service result.
+     */
     protected abstract List<T> getRows (R result);
+
 
     /** The count of items in our model, filled in by the first call to {@link #doFetchRows}. */
     protected int _count = -1;

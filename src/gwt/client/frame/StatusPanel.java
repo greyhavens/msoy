@@ -98,13 +98,13 @@ public class StatusPanel extends SmartTable
         });
     }
 
-    /**
-     * Called to forcibly set our unread mail count when FlashEvents aren't available.
-     */
-    public void notifyUnreadMailCount (int unread)
-    {
-        _mail.setCount(unread);
-    }
+//    /**
+//     * Called to forcibly set our unread mail count when FlashEvents aren't available.
+//     */
+//    public void notifyUnreadMailCount (int unread)
+//    {
+//        _mail.setCount(unread);
+//    }
 
     // from interface Session.Observer
     public void didLogon (SessionData data)
@@ -206,9 +206,9 @@ public class StatusPanel extends SmartTable
     {
         public MailDisplay () {
             addStyleName("Mail");
-            add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png",
-                Link.createListener(Pages.MAIL, "")));
-            add(_mailLabel = MsoyUI.createActionLabel("(0)", Link.createListener(Pages.MAIL, "")));
+            ClickHandler handler = Link.createListener(Pages.MAIL, "");
+            add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png", handler);
+            add(_mailLabel = MsoyUI.createActionLabel("", handler);
             setCount(0);
         }
 
