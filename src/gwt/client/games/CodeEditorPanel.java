@@ -17,8 +17,6 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.item.data.all.Item;
@@ -27,7 +25,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.util.ClickCallback;
-import client.util.MediaUploader;
 import client.util.StringUtil;
 
 /**
@@ -90,7 +87,7 @@ public class CodeEditorPanel extends BaseEditorPanel
         final CodeBox ccbox = new CodeBox(Item.MAIN_MEDIA, code.clientMedia);
         addRow(_msgs.egClientCode(), _msgs.egClientCodeTip(), ccbox, new Command() {
             public void execute () {
-                code.clientMedia = ccbox.getMedia();
+                code.clientMedia = checkClientMedia(ccbox.getMedia());
             }
         });
 
@@ -108,7 +105,7 @@ public class CodeEditorPanel extends BaseEditorPanel
         final CodeBox scbox = new CodeBox(GameCode.SERVER_CODE_MEDIA, code.serverMedia);
         addRow(_msgs.egServerCode(), _msgs.egServerCodeTip(), scbox, new Command() {
             public void execute () {
-                code.serverMedia = scbox.getMedia();
+                code.serverMedia = checkServerMedia(scbox.getMedia());
             }
         });
         addTip(_msgs.egServerCodeNote());
@@ -142,7 +139,7 @@ public class CodeEditorPanel extends BaseEditorPanel
         };
         addRow(_msgs.egSplash(), _msgs.egSplashTip(), spbox, new Command() {
             public void execute () {
-                code.splashMedia = spbox.getMedia();
+                code.splashMedia = checkImageMedia(_msgs.egSplash(), spbox.getMedia());
             }
         });
 
@@ -297,47 +294,6 @@ public class CodeEditorPanel extends BaseEditorPanel
         }
 
         return xml.toString();
-    }
-
-// TODO
-//     /** Is the specified MediaDesc a valid game media? */
-//     protected boolean isValidGameMedia (MediaDesc desc)
-//     {
-//         // game media must be swfs. maybe we'll want remixable in the future?
-//         return desc.isSWF();
-//     }
-
-//     /** Checks mime type for use as a server agent. */
-//     protected boolean isValidServerAgentMedia (MediaDesc desc)
-//     {
-//         return desc.mimeType == MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY;
-//     }
-
-    protected class CodeBox extends SmartTable
-        implements MediaUploader.Listener
-    {
-        public CodeBox (String mediaId, MediaDesc media) {
-            super("codeBox", 0, 0);
-            setMedia(media);
-            setWidget(1, 0, new MediaUploader(mediaId, this));
-        }
-
-        public void setMedia (MediaDesc media) {
-            _media = media;
-            setText(0, 0, (media == null) ? "" : media.toString());
-        }
-
-        public MediaDesc getMedia () {
-            return _media;
-        }
-
-        // from MediaUploader.Listener
-        public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
-            setMedia(desc);
-            mediaModified();
-        }
-
-        protected MediaDesc _media;
     }
 
     protected enum GameType

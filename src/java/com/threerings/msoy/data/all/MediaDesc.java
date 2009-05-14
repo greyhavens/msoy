@@ -493,7 +493,7 @@ public class MediaDesc implements Streamable, IsSerializable
     /**
      * Returns the supplied media descriptor's constraint or 0 if the descriptor is null.
      */
-    public static byte unmakeConstranit (MediaDesc desc)
+    public static byte unmakeConstraint (MediaDesc desc)
     {
         return (desc == null) ? NOT_CONSTRAINED : desc.constraint;
     }

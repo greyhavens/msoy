@@ -482,6 +482,34 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public int createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        GameInfoRecord grec = new GameInfoRecord();
+        grec.name = name; // TODO: validate, sigh
+        grec.genre = GameGenre.HIDDEN;
+        grec.creatorId = mrec.memberId;
+        grec.description = "";
+        grec.isAVRG = isAVRG;
+        grec.thumbMediaHash = MediaDesc.unmakeHash(thumbMedia);
+        grec.thumbMimeType = MediaDesc.unmakeMimeType(thumbMedia);
+        grec.thumbConstraint = MediaDesc.unmakeConstraint(thumbMedia);
+        _mgameRepo.createGame(grec);
+
+        GameCodeRecord crec = new GameCodeRecord();
+        crec.gameId = grec.gameId;
+        crec.isDevelopment = true;
+        crec.config = "";
+        crec.clientMediaHash = MediaDesc.unmakeHash(clientCode);
+        crec.clientMimeType = MediaDesc.unmakeMimeType(clientCode);
+        _mgameRepo.updateGameCode(crec);
+
+        return grec.gameId;
+    }
+
+    // from interface GameService
     public void updateGameInfo (GameInfo info)
         throws ServiceException
     {

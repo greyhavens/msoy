@@ -162,7 +162,7 @@ public class GameLogic
         ArrayIntSet have = new ArrayIntSet();
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
             GameInfoRecord info = _mgameRepo.loadGame(card.placeId);
-            if (info != null && (!filter || (info.getRating() >= 4 && info.integrated))) {
+            if (info != null && info.genre != GameGenre.HIDDEN && (!filter || canFeature(info))) {
                 featured.add(info.toGameInfo(card.population));
                 have.add(info.gameId);
             }
@@ -175,8 +175,8 @@ public class GameLogic
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
             for (GameInfoRecord info : _mgameRepo.loadGenre(
                      GameGenre.ALL, ArcadeData.FEATURED_GAME_COUNT)) {
-                if (!have.contains(info.gameId) &&
-                    (!filter || (info.getRating() >= 4 && info.integrated))) {
+                if (!have.contains(info.gameId) && info.genre != GameGenre.HIDDEN && 
+                    (!filter || canFeature(info))) {
                     featured.add(info.toGameInfo(0));
                 }
                 if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
@@ -236,6 +236,11 @@ public class GameLogic
         _peerMan.invokeNodeAction(new FlushCoinsAction(memberId));
     }
 
+    protected static boolean canFeature (GameInfoRecord grec)
+    {
+        return grec.integrated && grec.getRating() >= MIN_FEATURED_RATING;
+    }
+
     protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
         implements WorldGameService.LocationListener
     {
@@ -272,4 +277,6 @@ public class GameLogic
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected WorldGameRegistry _gameReg;
+
+    protected static final byte MIN_FEATURED_RATING = 4;
 }

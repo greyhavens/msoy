@@ -214,7 +214,7 @@ public class GameInfoRecord extends PersistentRecord
         this.description = info.description;
         this.thumbMediaHash = MediaDesc.unmakeHash(info.thumbMedia);
         this.thumbMimeType = MediaDesc.unmakeMimeType(info.thumbMedia);
-        this.thumbConstraint = MediaDesc.unmakeConstranit(info.thumbMedia);
+        this.thumbConstraint = MediaDesc.unmakeConstraint(info.thumbMedia);
         this.shotMediaHash = MediaDesc.unmakeHash(info.shotMedia);
         this.shotMimeType = MediaDesc.unmakeMimeType(info.shotMedia);
         this.groupId = info.groupId;

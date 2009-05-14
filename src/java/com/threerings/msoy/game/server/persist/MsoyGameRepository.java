@@ -336,12 +336,7 @@ public class MsoyGameRepository extends DepotRepository
         boolean isDevelopment = gameId < 0 ? true : false;
         GameCodeRecord code = load(GameCodeRecord.class, cache,
                                    GameCodeRecord.getKey(Math.abs(gameId), isDevelopment));
-        if (code == null) {
-            code = new GameCodeRecord();
-            code.gameId = Math.abs(gameId);
-            code.isDevelopment = isDevelopment;
-        }
-        return code;
+        return (code == null) ? GameCodeRecord.createBlank(gameId, isDevelopment) : code;
     }
 
     /**
@@ -356,7 +351,7 @@ public class MsoyGameRepository extends DepotRepository
      * Creates a new game using the data in the supplied info record. A GameMetricsRecord is also
      * created for the new game.
      */
-    public int createGame (GameInfoRecord info)
+    public void createGame (GameInfoRecord info)
     {
         // insert the info record, which will generate a gameId for this game
         insert(info);
@@ -366,8 +361,6 @@ public class MsoyGameRepository extends DepotRepository
         metrics.payoutFactor = GameMetricsRecord.DEFAULT_PAYOUT_FACTOR;
         metrics.flowToNextRecalc = GameMetricsRecord.INITIAL_RECALC_FLOW;
         insert(metrics);
-
-        return info.gameId;
     }
 
     /**

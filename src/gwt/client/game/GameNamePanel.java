@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.data.all.GameGenre;
 
 import client.shell.DynamicLookup;
 import client.ui.CreatorLabel;
@@ -23,7 +24,9 @@ public class GameNamePanel extends VerticalPanel
     {
         setStyleName("gameName");
         add(MsoyUI.createLabel(name, "Name"));
-        add(MsoyUI.createLabel(_dmsgs.xlate("genre" + genre), "Genre"));
+        if (genre != GameGenre.HIDDEN) {
+            add(MsoyUI.createLabel(_dmsgs.xlate("genre" + genre), "Genre"));
+        }
         add(WidgetUtil.makeShim(5, 5));
         add(new CreatorLabel(creator));
         add(MsoyUI.createLabel(descrip, "Descrip"));

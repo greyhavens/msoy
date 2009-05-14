@@ -149,6 +149,14 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
+     * Creates a new game with the supplied basic configuration.
+     *
+     * @return the id of the newly created game.
+     */
+    int createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode)
+        throws ServiceException;
+
+    /**
      * Updates the metadata for the supplied game.
      */
     void updateGameInfo (GameInfo info)

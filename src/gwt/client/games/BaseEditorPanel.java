@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
@@ -115,6 +116,46 @@ public class BaseEditorPanel extends SmartTable
         }
     }
 
+    protected String checkName (String name)
+    {
+        if (name.length() == 0 || name.length() > GameInfo.MAX_NAME_LENGTH) {
+            throw new ConfigException(_msgs.errInvalidName(""+GameInfo.MAX_NAME_LENGTH));
+        }
+        return name;
+    }
+
+    protected MediaDesc checkImageMedia (String type, MediaDesc desc)
+    {
+        if (desc != null && !desc.isImage()) {
+            throw new ConfigException(_msgs.errInvalidImage(type));
+        }
+        return desc;
+    }
+
+    protected MediaDesc requireImageMedia (String type, MediaDesc desc)
+    {
+        if (desc == null || !desc.isImage()) {
+            throw new ConfigException(_msgs.errInvalidImage(type));
+        }
+        return desc;
+    }
+
+    protected MediaDesc checkClientMedia (MediaDesc desc)
+    {
+        if (desc == null || !desc.isSWF()) {
+            throw new ConfigException(_msgs.errInvalidClientCode());
+        }
+        return desc;
+    }
+
+    protected MediaDesc checkServerMedia (MediaDesc desc)
+    {
+        if (desc == null || desc.mimeType != MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY) {
+            throw new ConfigException(_msgs.errInvalidServerCode());
+        }
+        return desc;
+    }
+
     protected class MediaBox extends SmartTable
         implements MediaUploader.Listener
     {
@@ -146,6 +187,33 @@ public class BaseEditorPanel extends SmartTable
         }
 
         protected int _size;
+        protected MediaDesc _media;
+    }
+
+    protected class CodeBox extends SmartTable
+        implements MediaUploader.Listener
+    {
+        public CodeBox (String mediaId, MediaDesc media) {
+            super("codeBox", 0, 0);
+            setMedia(media);
+            setWidget(1, 0, new MediaUploader(mediaId, this));
+        }
+
+        public void setMedia (MediaDesc media) {
+            _media = media;
+            setText(0, 0, (media == null) ? "" : media.toString());
+        }
+
+        public MediaDesc getMedia () {
+            return _media;
+        }
+
+        // from MediaUploader.Listener
+        public void mediaUploaded (String name, MediaDesc desc, int width, int height) {
+            setMedia(desc);
+            mediaModified();
+        }
+
         protected MediaDesc _media;
     }
 

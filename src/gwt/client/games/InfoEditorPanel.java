@@ -35,7 +35,7 @@ public class InfoEditorPanel extends BaseEditorPanel
         final TextBox name = MsoyUI.createTextBox(info.name, GameInfo.MAX_NAME_LENGTH, 40);
         addRow(_msgs.egName(), name, new Command() {
             public void execute () {
-                info.name = name.getText().trim();
+                info.name = checkName(name.getText().trim());
             }
         });
 
@@ -83,7 +83,7 @@ public class InfoEditorPanel extends BaseEditorPanel
             MediaDesc.THUMBNAIL_SIZE, Item.THUMB_MEDIA, info.thumbMedia);
         addRow(_msgs.egThumb(), _msgs.egThumbTip(), tbox, new Command() {
             public void execute () {
-                info.thumbMedia = tbox.getMedia();
+                info.thumbMedia = requireImageMedia(_msgs.egThumb(), tbox.getMedia());
             }
         });
 
@@ -91,7 +91,7 @@ public class InfoEditorPanel extends BaseEditorPanel
             MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia);
         addRow(_msgs.egShot(), _msgs.egShotTip(), sbox, new Command() {
             public void execute () {
-                info.shotMedia = sbox.getMedia();
+                info.shotMedia = checkImageMedia(_msgs.egShot(), sbox.getMedia());
             }
         });
 

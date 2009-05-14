@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
@@ -88,6 +89,12 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#loadGameItems}.
      */
     void loadGameItems (int gameId, byte type, AsyncCallback<List<Item>> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#createGame}.
+     */
+    void createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode,
+                     AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link GameService#updateGameInfo}.
