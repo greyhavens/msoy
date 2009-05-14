@@ -778,3 +778,19 @@
   color: #154D72;
   font-size: 24px;
 }
+
+.gameItemEditor {
+  width: 100%;
+}
+
+.gameItemEditor .Row {
+  border-bottom: 1px solid #000000;
+}
+
+.gameItemEditor .AltRow {
+  background: #DDDDDD;
+}
+
+.gameItemEditor .Header {
+  text-decoration: underline;
+}

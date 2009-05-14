@@ -34,7 +34,7 @@ public class GameItemEditorPanel extends SmartTable
 {
     public GameItemEditorPanel (int gameId, byte itemType)
     {
-        super("gameItemEditor", 0, 10);
+        super("gameItemEditor", 5, 0);
         _itemType = itemType;
 
         setText(0, 0, "Loading...");
@@ -56,6 +56,8 @@ public class GameItemEditorPanel extends SmartTable
         int col = 0;
         setText(0, col++, ""); // clear out Loading...
         setText(0, col++, "Name", 1, "Header");
+        col++; // for [view]
+        col++; // for [edit]
         if (items.get(0) instanceof SubItem) {
             setText(0, col++, "Ident", 1, "Header");
         }
@@ -66,6 +68,7 @@ public class GameItemEditorPanel extends SmartTable
         } else if (items.get(0) instanceof Prize) {
             setText(0, col++, "Prize", 1, "Header");
         }
+        getRowFormatter().setStyleName(0, "Row");
 
         int row = 1;
         for (Item item : items) {
@@ -73,8 +76,10 @@ public class GameItemEditorPanel extends SmartTable
             String eargs = Args.compose("e", item.getType(), item.itemId);
             col = 0;
             setWidget(row, col++, MediaUtil.createMediaView(
-                          item.getThumbnailMedia(), MediaDesc.QUARTER_THUMBNAIL_SIZE), 1, null);
-            setWidget(row, col++, Link.create(item.name, Pages.STUFF, dargs), 1, null);
+                          item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1, null);
+            setText(row, col++, item.name, 1, null);
+            setWidget(row, col++, Link.create("view", Pages.STUFF, dargs), 1, null);
+            setWidget(row, col++, Link.create("edit", Pages.STUFF, eargs));
             if (item instanceof SubItem) {
                 setText(row, col++, ((SubItem)item).ident);
             }
@@ -85,9 +90,12 @@ public class GameItemEditorPanel extends SmartTable
             } else if (item instanceof Prize) {
                 Prize prize = (Prize)item;
                 String pargs = Args.compose("l", prize.targetType, prize.targetCatalogId);
-                setWidget(row, col++, Link.create("[view]", Pages.SHOP, pargs));
+                setWidget(row, col++, Link.create("target", Pages.SHOP, pargs));
             }
-            setWidget(row, col++, Link.create("[edit]", Pages.STUFF, eargs));
+            getRowFormatter().setStyleName(row, "Row");
+            if (row % 2 == 1) {
+                getRowFormatter().addStyleName(row, "AltRow");
+            }
             row++;
         }
     }
