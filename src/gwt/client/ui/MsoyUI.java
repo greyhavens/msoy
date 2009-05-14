@@ -177,11 +177,14 @@ public class MsoyUI
     /**
      * Creates a FlowPanel with the provided style
      */
-    public static FlowPanel createFlowPanel (String styleName)
+    public static FlowPanel createFlowPanel (String styleName, Widget... contents)
     {
         FlowPanel panel = new FlowPanel();
         if (styleName != null) {
             panel.addStyleName(styleName);
+        }
+        for (Widget child : contents) {
+            panel.add(child);
         }
         return panel;
     }
