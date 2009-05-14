@@ -65,7 +65,10 @@ public class ShareDialog extends FloatingPanel
         _autoFriend.selected = true;
 
         if (ctx.isRegistered()) {
-            addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350));
+            var sharing :Text = FlexUtil.createText("", 400, "shareDialogHeader");
+            var barURL :String = DeploymentConfig.serverURL + "images/ui/bars_small.png";
+            sharing.htmlText = Msgs.GENERAL.get("m.sharing", barURL);
+            addChild(sharing);
             const affLink :CommandLinkButton = new CommandLinkButton(
                 Msgs.GENERAL.get("b.sharing"), MsoyController.VIEW_URL,
                 Msgs.GENERAL.get("u.affiliates"));
