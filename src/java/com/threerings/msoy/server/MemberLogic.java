@@ -77,7 +77,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
@@ -523,11 +522,6 @@ public class MemberLogic
         // check they are affiliated
         int payMemberId = mrec.affiliateMemberId;
         if (payMemberId == 0) {
-            return;
-        }
-
-        // check they are friends w/affiliate
-        if (_memberRepo.getFullFriendship(payMemberId, friendId) != Friendship.FRIENDS) {
             return;
         }
 
