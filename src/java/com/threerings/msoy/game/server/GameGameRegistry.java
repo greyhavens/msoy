@@ -197,7 +197,7 @@ public class GameGameRegistry
         if (config instanceof ParlorGameConfig) {
             // parlor games only flush logs when the game ends
             minLogInterval = maxLogInterval = 0;
-        } else if (content.isDevelopmentVersion) {
+        } else if (content.isDevelopmentVersion()) {
             // write dev logs at least every two minutes but at most one per minute
             minLogInterval = 1;
             maxLogInterval = 2;
@@ -965,7 +965,7 @@ public class GameGameRegistry
         log.info("Setting up AVRG manager", "game", content.game);
 
         AVRGameConfig config = new AVRGameConfig();
-        config.init(content.game.toGameSummary(), def);
+        config.init(content.gameId, content.game.toGameSummary(), def);
 
         List<PlaceManagerDelegate> delegates = createGameDelegates(config, content);
 
@@ -1091,10 +1091,10 @@ public class GameGameRegistry
     protected GameContent assembleGameContent (int gameId)
     {
         GameContent content = new GameContent();
-        content.isDevelopmentVersion = GameUtil.isDevelopmentVersion(gameId);
+        content.gameId = gameId;
         content.game = _mgameRepo.loadGame(gameId);
-        content.metrics = _mgameRepo.loadGameMetrics(gameId);
         content.code = _mgameRepo.loadGameCode(gameId, true).toGameCode();
+        content.metrics = _mgameRepo.loadGameMetrics(gameId);
         // load up our level and item packs
         for (LevelPackRecord record : _lpackRepo.loadOriginalItemsBySuite(gameId)) {
             content.lpacks.add((LevelPack)record.toItem());

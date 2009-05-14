@@ -49,7 +49,7 @@ public class ContentDelegate extends PlayManagerDelegate
 
         // make sure they have at least one copy of this item pack
         GameContentOwnership gco = plobj.gameContent.get(
-            new GameContentOwnership(_content.game.gameId, GameData.ITEM_DATA, ident));
+            new GameContentOwnership(_content.gameId, GameData.ITEM_DATA, ident));
         if (gco == null || gco.count < 1) {
             listener.requestFailed("e.missing_item_pack"); // checked on client, shouldn't happen
         }
@@ -66,7 +66,7 @@ public class ContentDelegate extends PlayManagerDelegate
             public void invokePersistent () throws Exception {
                 int deleteId = 0;
                 for (ItemPackRecord ipack : _ipackRepo.loadClonedItems(
-                         plobj.getMemberId(), _content.suiteId)) {
+                         plobj.getMemberId(), _content.gameId)) {
                     // pick the first item pack with a matching ident to delete; they're all
                     // exactly the same
                     if (ipack.ident.equals(ident)) {

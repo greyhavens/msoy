@@ -349,7 +349,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public GameMetricsRecord loadGameMetrics (int gameId)
     {
-        return load(GameMetricsRecord.class, gameId);
+        return load(GameMetricsRecord.class, Math.abs(gameId));
     }
 
     /**

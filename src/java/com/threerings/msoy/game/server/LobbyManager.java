@@ -86,7 +86,7 @@ public class LobbyManager
      */
     public int getGameId ()
     {
-        return _content.game.gameId;
+        return _content.gameId;
     }
 
     /**
@@ -117,7 +117,7 @@ public class LobbyManager
         try {
             gameDef = new MsoyGameParser().parseGame(content.code);
         } catch (Exception e) {
-            log.warning("Error parsing game definition", "id", content.game.gameId, "err", e);
+            log.warning("Error parsing game definition", "id", content.gameId, "err", e);
             // however, we do not want to put the kibosh on the update. If someone booches their
             // game, we want the lobby to *fail fast*, not fail the next time the server reboots...
             gameDef = null;
@@ -143,7 +143,7 @@ public class LobbyManager
      */
     public void initConfig (ParlorGameConfig config)
     {
-        config.init(_lobj.game, _lobj.gameDef, _lobj.groupId, _lobj.splashMedia);
+        config.init(_content.gameId, _lobj.game, _lobj.gameDef, _lobj.groupId, _lobj.splashMedia);
     }
 
     /**

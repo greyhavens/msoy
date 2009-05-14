@@ -29,11 +29,11 @@ public class AVRGameConfig extends PlaceConfig
     /**
      * Configures this config with information from the supplied game metadata.
      */
-    public void init (GameSummary game, GameDefinition gameDef)
+    public void init (int gameId, GameSummary game, GameDefinition gameDef)
     {
         this.name = game.name;
         this.thumbnail = game.thumbMedia;
-        _gameId = game.gameId;
+        _gameId = gameId;
         _gameDef = gameDef;
     }
 

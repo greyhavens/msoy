@@ -29,12 +29,13 @@ public class ParlorGameConfig extends ToyBoxGameConfig
     /**
      * Configures this config with information from the supplied game bits.
      */
-    public void init (GameSummary game, GameDefinition gameDef, int groupId, MediaDesc splash)
+    public void init (int gameId, GameSummary game, GameDefinition gameDef,
+                      int groupId, MediaDesc splash)
     {
         this.game = game;
         this.groupId = groupId;
         this.splashMedia = splash;
-        _gameId = game.gameId;
+        _gameId = gameId;
         _gameDef = gameDef;
     }
 

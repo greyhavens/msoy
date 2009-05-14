@@ -63,7 +63,6 @@ public class TrophyDelegate extends PlayManagerDelegate
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject) verifyWritePermission(caller, playerId);
-        final int gameId = _content.game.gameId;
 
         // locate the trophy source record in question
         TrophySource source = null;
@@ -79,7 +78,7 @@ public class TrophyDelegate extends PlayManagerDelegate
         }
 
         // if the player already has this trophy, ignore the request
-        if (plobj.ownsGameContent(gameId, GameData.TROPHY_DATA, ident)) {
+        if (plobj.ownsGameContent(_content.gameId, GameData.TROPHY_DATA, ident)) {
             log.info("Game requested to award already held trophy", "game", where(),
                      "who", plobj.who(), "ident", ident);
             return;
@@ -88,12 +87,12 @@ public class TrophyDelegate extends PlayManagerDelegate
         // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
         // store the trophy to the database, we won't tell them that they earned it and they'll be
         // able to earn it again next time
-        plobj.addToGameContent(new GameContentOwnership(
-            gameId, GameData.TROPHY_DATA, source.ident));
+        plobj.addToGameContent(
+            new GameContentOwnership(_content.gameId, GameData.TROPHY_DATA, source.ident));
 
         // create the persistent record we will shortly store
         TrophyRecord trophy = new TrophyRecord();
-        trophy.gameId = gameId;
+        trophy.gameId = _content.gameId;
         trophy.memberId = plobj.getMemberId();
         trophy.ident = source.ident;
         trophy.name = source.name;
@@ -136,8 +135,7 @@ public class TrophyDelegate extends PlayManagerDelegate
         }
 
         // if the player has already earned this prize during this session, ignore the request
-        final int gameId = _content.game.gameId;
-        if (plobj.ownsGameContent(gameId, GameData.PRIZE_MARKER, ident)) {
+        if (plobj.ownsGameContent(_content.gameId, GameData.PRIZE_MARKER, ident)) {
             log.info("Game requested to award already earned prize", "game", where(),
                      "who", plobj.who(), "ident", ident);
             return;
@@ -146,11 +144,11 @@ public class TrophyDelegate extends PlayManagerDelegate
         // add the prize to the runtime set now to avoid repeat-call freakoutery; if the prize
         // award fails for other wacky reasons, they'll just have to re-earn it later
         plobj.addToGameContent(
-            new GameContentOwnership(gameId, GameData.PRIZE_MARKER, prize.ident));
+            new GameContentOwnership(_content.gameId, GameData.PRIZE_MARKER, prize.ident));
 
         // pass the buck to the item manager
-        _itemMan.awardPrize(
-            plobj.getMemberId(), gameId, _content.game.name, prize, new ResultListener<Item>() {
+        _itemMan.awardPrize(plobj.getMemberId(), _content.gameId, _content.game.name, prize,
+                            new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, item);
             }

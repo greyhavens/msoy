@@ -51,7 +51,7 @@ public class QuestDelegate extends PlayManagerDelegate
     {
         // keep our game content around for later
         _content = content;
-        _gameId = _content.game.gameId;
+        _gameId = _content.gameId;
     }
 
     /**
@@ -184,7 +184,7 @@ public class QuestDelegate extends PlayManagerDelegate
         }
 
         // we don't actually award coins if we're the development version of the game
-        final boolean actuallyAward = !_content.isDevelopmentVersion;
+        final boolean actuallyAward = !_content.isDevelopmentVersion();
 
         // note that they completed this task
         if (actuallyAward) {

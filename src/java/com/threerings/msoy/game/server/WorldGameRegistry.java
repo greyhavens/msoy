@@ -273,7 +273,7 @@ public class WorldGameRegistry
                     log.warning("Requested to resolve unknown game", "game", gameId);
                     resolver.fail();
                 } else {
-                    hostGame(_game, resolver);
+                    hostGame(gameId, _game.name, resolver);
                 }
             }
             public void handleFailure (Exception e) {
@@ -284,13 +284,13 @@ public class WorldGameRegistry
         });
     }
 
-    protected void hostGame (GameInfoRecord game, GameResolver resolver)
+    protected void hostGame (int gameId, String name, GameResolver resolver)
     {
-        if (!_games.add(game.gameId)) {
-            log.warning("Requested to host game that we're already hosting?", "game", game.gameId);
+        if (!_games.add(gameId)) {
+            log.warning("Requested to host game that we're already hosting?", "game", gameId);
         } else {
-            log.info("Hosting game", "game", game.gameId, "name", game.name);
-            _peerMan.gameDidStartup(game.gameId, game.name);
+            log.info("Hosting game", "game", gameId, "name", name);
+            _peerMan.gameDidStartup(gameId, name);
         }
         // this will notify the waiting listeners, release our lock and clean itself up
         resolver.finish(ServerConfig.serverHost, ServerConfig.serverPorts[0]);

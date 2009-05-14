@@ -13,6 +13,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
 import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameMetricsRecord;
 
@@ -22,9 +23,7 @@ import com.threerings.msoy.game.server.persist.GameMetricsRecord;
  */
 public class GameContent
 {
-    public boolean isDevelopmentVersion;
-
-    public int suiteId;
+    public int gameId;
 
     public GameInfoRecord game;
 
@@ -39,4 +38,9 @@ public class GameContent
     public List<TrophySource> tsources = Lists.newArrayList();
 
     public List<Prize> prizes = Lists.newArrayList();
+
+    public boolean isDevelopmentVersion ()
+    {
+        return GameUtil.isDevelopmentVersion(gameId);
+    }
 }
