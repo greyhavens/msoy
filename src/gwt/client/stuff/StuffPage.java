@@ -5,12 +5,14 @@ package client.stuff;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -155,10 +157,15 @@ public class StuffPage extends Page
             public void editComplete (Item item) {
                 if (item != null) {
                     _models.itemUpdated(item);
-                    String args = BULK_TYPES.contains(item.getType()) ?
-                        Args.compose(item.getType(), item.ownerId) :
-                        Args.compose("d", item.getType(), item.itemId);
-                    Link.go(Pages.STUFF, args);
+                    if (BULK_TYPES.contains(item.getType())) {
+                        Link.go(Pages.STUFF, Args.compose(item.getType(), item.ownerId));
+                    } else if (GAME_TYPES.containsKey(item.getType())) {
+                        int gameId = Math.abs(((SubItem)item).suiteId);
+                        int tabIdx = GAME_TYPES.get(item.getType());
+                        Link.go(Pages.GAMES, Args.compose("e", gameId, tabIdx));
+                    } else {
+                        Link.go(Pages.STUFF, Args.compose("d", item.getType(), item.itemId));
+                    }
                 } else {
                     History.back();
                 }
@@ -211,7 +218,7 @@ public class StuffPage extends Page
     }
 
     protected InventoryModels _models = new InventoryModels();
-    protected HashMap<Byte, StuffPanel> _stuffPanels = new HashMap<Byte, StuffPanel>();
+    protected Map<Byte, StuffPanel> _stuffPanels = new HashMap<Byte, StuffPanel>();
     protected ItemDetail _detail;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
@@ -226,5 +233,14 @@ public class StuffPage extends Page
         BULK_TYPES.add(Item.DOCUMENT);
         BULK_TYPES.add(Item.AUDIO);
         BULK_TYPES.add(Item.VIDEO);
+    }
+
+    /** A mapping from game sub-item type to tab index. Oh so fragile! */
+    protected static final Map<Byte, Integer> GAME_TYPES = new HashMap<Byte, Integer>();
+    static {
+        GAME_TYPES.put(Item.TROPHY_SOURCE, 2);
+        GAME_TYPES.put(Item.ITEM_PACK, 3);
+        GAME_TYPES.put(Item.LEVEL_PACK, 4);
+        GAME_TYPES.put(Item.PRIZE, 5);
     }
 }
