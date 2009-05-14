@@ -31,7 +31,6 @@ import com.threerings.msoy.ui.skins.CommentButton;
 import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.utils.Base64Encoder;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -46,6 +45,7 @@ import com.threerings.msoy.game.data.MsoyUserIdentifier;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
+import com.threerings.msoy.game.util.GameUtil;
 
 /**
  * An even dispatched when the user has entered or left any game, or entered or left any table
@@ -201,7 +201,7 @@ public class GameDirector extends BasicDirector
             MediaWrapper.createView(icon, MediaDesc.QUARTER_THUMBNAIL_SIZE));
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
             icon: StyleManager.getStyleDeclaration(".controlBarGameButton").getStyle("image")});
-        if (_liaison.gameGroupId != Game.NO_GROUP) {
+        if (_liaison.gameGroupId != GameUtil.NO_GROUP) {
             menuData.push({label: Msgs.GAME.get("b.gameGroup"),
                 command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
             menuData.push({label :Msgs.GAME.get("b.game_whirled"),
@@ -216,7 +216,7 @@ public class GameDirector extends BasicDirector
             icon: CommentButton });
         menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
-        if (Game.isDevelopmentVersion(_liaison.gameId) && !(_liaison is AVRGameLiaison)) {
+        if (GameUtil.isDevelopmentVersion(_liaison.gameId) && !(_liaison is AVRGameLiaison)) {
             menuData.push({label: Msgs.GAME.get("b.gameRemoveTrophies"), command: removeTrophies});
         }
         if (_liaison is AVRGameLiaison) {
@@ -281,7 +281,7 @@ public class GameDirector extends BasicDirector
      */
     public function removeTrophies () :void
     {
-        if (!Game.isDevelopmentVersion(_liaison.gameId)) {
+        if (!GameUtil.isDevelopmentVersion(_liaison.gameId)) {
             log.warning("Asked to remove copies from a non-development game", "gameId",
                 _liaison.gameId);
             return;

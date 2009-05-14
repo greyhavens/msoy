@@ -34,10 +34,10 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
-import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
+import com.threerings.msoy.game.util.GameUtil;
 
 /**
  * Coordinates the view for MSOY games.
@@ -57,7 +57,7 @@ public class ParlorGamePanel extends WhirledGamePanel
         _gctx = gctx;
 
         const cfg :ParlorGameConfig = ctrl.getPlaceConfig() as ParlorGameConfig;
-        if (cfg.groupId != Game.NO_GROUP) {
+        if (cfg.groupId != GameUtil.NO_GROUP) {
             _goBtn = new CommandButton(Msgs.GAME.get("b.game_whirled"),
                 MsoyController.GO_GROUP_HOME, cfg.groupId);
         } else {

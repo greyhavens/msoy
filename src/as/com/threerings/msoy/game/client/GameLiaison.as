@@ -46,12 +46,12 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.util.GameUtil;
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**
@@ -448,7 +448,7 @@ public class GameLiaison
         _wctx.getWorldController().removePlaceExitHandler(onPlaceExit);
 
         // if this is a development version of the game or no trophies were earned, no trophy popup
-        if (_trophies.length == 0 || Game.isDevelopmentVersion(_gameId)) {
+        if (_trophies.length == 0 || GameUtil.isDevelopmentVersion(_gameId)) {
             return true;
         }
 
