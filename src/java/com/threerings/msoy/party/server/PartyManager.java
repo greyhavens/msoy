@@ -404,7 +404,8 @@ public class PartyManager
         if (room != null) {
             setStatus(room.right.name, PartyCodes.STATUS_TYPE_SCENE);
         } else {
-            setStatus("unknown", PartyCodes.STATUS_TYPE_USER); // we see this we can investigate
+            // we see this, we can investigate
+            setStatus("unknown: " + _partyObj.sceneId, PartyCodes.STATUS_TYPE_USER);
         }
     }
 
