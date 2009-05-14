@@ -189,11 +189,7 @@ public class GameServlet extends MsoyServiceServlet
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         List<GameInfo> infos = Lists.newArrayList();
         for (GameInfoRecord grec : _mgameRepo.loadGamesByCreator(mrec.memberId)) {
-            GameInfo info = grec.toGameInfo(getGamePop(pps, grec.gameId));
-            // we want to convert all the game ids to the development version so that the "My
-            // Games" page shows details on and plays the development versions of the games
-            info.gameId = GameInfo.toDevId(info.gameId);
-            infos.add(info);
+            infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
         }
         return infos;
     }

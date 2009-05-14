@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -15,6 +16,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.game.PlayButton;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
@@ -41,7 +43,13 @@ public class MyGamesPanel extends GameListPanel
 
         _gamesvc.loadMyGames(new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
-                add(new GameGrid(games));
+                add(new GameGrid(games) {
+                    protected Widget createPlay (GameInfo game) {
+                        // we want our play buttons to play the development version
+                        return PlayButton.create(GameInfo.toDevId(game.gameId), game.isAVRG,
+                                                 game.groupId, "", PlayButton.Size.SMALL);
+                    }
+                });
             }
         });
     }

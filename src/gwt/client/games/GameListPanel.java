@@ -106,6 +106,13 @@ public abstract class GameListPanel extends FlowPanel
                                     GameInfo.SORT_BY_PLAYERS_ONLINE));
         }
 
+        @Override
+        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit) {
+            if (row % 2 == 1) {
+                formatter.addStyleName(row, col, "Alternating");
+            }
+        }
+
         protected Widget createTitle (String text, String styleName, final byte sortMethod) {
             return MsoyUI.createActionLabel(text, styleName, new ClickHandler() {
                 public void onClick (ClickEvent event) {
@@ -114,11 +121,8 @@ public abstract class GameListPanel extends FlowPanel
             });
         }
 
-        @Override
-        protected void formatCell (HTMLTable.CellFormatter formatter, int row, int col, int limit) {
-            if (row % 2 == 1) {
-                formatter.addStyleName(row, col, "Alternating");
-            }
+        protected Widget createPlay (GameInfo game) {
+            return PlayButton.create(game, "", PlayButton.Size.SMALL);
         }
 
         protected class GameInfoPanel extends SmartTable
@@ -146,8 +150,7 @@ public abstract class GameListPanel extends FlowPanel
                 setText(0, col++, _dmsgs.xlate("genre" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
-                setWidget(0, col++, PlayButton.create(game, "", PlayButton.Size.SMALL),
-                          1, "PlayButtons");
+                setWidget(0, col++, createPlay(game), 1, "PlayButtons");
             }
         }
     }
