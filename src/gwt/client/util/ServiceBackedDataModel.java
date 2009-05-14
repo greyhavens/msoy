@@ -77,8 +77,12 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
     // from interface DataModel
     public void doFetchRows (int start, int count, final AsyncCallback<List<T>> callback)
     {
-        if (_pageOffset == start && _pageCount == count) {
+        // if we have data, and are requesting the same data we have...
+        if ((_count >= 0) && (_pageOffset == start) && (_pageCount == count) &&
+                // and we're either on the last page or have enough items for the page requested..
+                ((start + _pageCount > _count) || (_pageItems.size() == count))) {
             callback.onSuccess(_pageItems);
+
         } else {
             callFetchService(
                 _pageOffset = start, _pageCount = count, _count < 0, new AsyncCallback<R>() {
