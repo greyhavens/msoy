@@ -207,8 +207,8 @@ public class StatusPanel extends SmartTable
         public MailDisplay () {
             addStyleName("Mail");
             ClickHandler handler = Link.createListener(Pages.MAIL, "");
-            add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png", handler);
-            add(_mailLabel = MsoyUI.createActionLabel("", handler);
+            add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png", handler));
+            add(_mailLabel = MsoyUI.createActionLabel("", handler));
             setCount(0);
         }
 
