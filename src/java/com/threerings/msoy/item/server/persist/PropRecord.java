@@ -58,23 +58,6 @@ public class PropRecord extends SubItemRecord
         return Item.PROP;
     }
 
-    @Override // from SubItemRecord
-    public void initFromParent (ItemRecord parent)
-    {
-        super.initFromParent(parent);
-        // our game id comes from our parent
-        gameId = ((GameRecord)parent).gameId;
-    }
-
-    @Override // from ItemRecord
-    public void prepareForListing (ItemRecord oldListing)
-    {
-        super.prepareForListing(oldListing);
-        // the original from which this game is being listed will have -gameId as its game
-        // identifier because it is an original; all non-originals will use the positive id
-        gameId = Math.abs(gameId);
-    }
-
     @Override // from ItemRecord
     public void fromItem (Item item)
     {

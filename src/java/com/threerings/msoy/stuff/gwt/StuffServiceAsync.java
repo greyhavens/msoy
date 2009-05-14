@@ -25,7 +25,7 @@ public interface StuffServiceAsync
     /**
      * The asynchronous version of {@link StuffService#createItem}.
      */
-    void createItem (Item item, ItemIdent parent, AsyncCallback<Item> callback);
+    void createItem (Item item, AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link StuffService#updateItem}.

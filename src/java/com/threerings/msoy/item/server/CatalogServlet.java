@@ -349,23 +349,6 @@ public class CatalogServlet extends MsoyServiceServlet
         final ItemRecord master = originalItem;
         master.prepareForListing(null);
 
-        // if this item has a suite id (it's part of another item's suite), we need to configure
-        // its listed suite as the catalog id of the suite master item
-        if (originalItem instanceof SubItemRecord) {
-            SubItem sitem = (SubItem)originalItem.toItem();
-            ItemRepository<ItemRecord> mrepo = _itemLogic.getRepository(sitem.getSuiteMasterType());
-            ItemRecord suiteMaster = mrepo.loadOriginalItem(
-                ((SubItemRecord)originalItem).suiteId);
-            if (suiteMaster == null) {
-                log.warning("Failed to locate suite master item", "item", item);
-                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
-            }
-            if (suiteMaster.catalogId == 0) {
-                throw new ServiceException(ItemCodes.E_SUPER_ITEM_NOT_LISTED);
-            }
-            ((SubItemRecord)master).suiteId = -suiteMaster.catalogId;
-        }
-
         // process the payment of the listing fee and create the listing if it succeeds
         final long now = System.currentTimeMillis();
         final Currency fcurrency = currency;
@@ -627,20 +610,6 @@ public class CatalogServlet extends MsoyServiceServlet
         // this turns out to be a big drain, we need to look into flagging a game as having or not
         // having each of the various subtypes (easier) and tagged types (much harder)
 
-//         CatalogRecord crec = null;
-//         // hack to avoid cluttering CatalogModels and CatalogService/Servlet/ServiceAsyc APIs
-//         if (itemType == Item.NOT_A_TYPE) {
-//             GameInfoRecord grec = _mgameRepo.loadGame(catalogId); // gameId
-//             if (grec == null) {
-//                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-//             }
-//             crec = _itemLogic.requireListing(Item.GAME, grec.catalogId, false);
-//             crec.item = grec;
-//         } else {
-//             crec = _itemLogic.requireListing(itemType, catalogId, true);
-//         }
-//         Item master = crec.item.toItem();
-
         // right now we only support game suites (where suiteId == gameId), oh the hackery
         GameInfoRecord grec = _mgameRepo.loadGame(suiteId);
         if (grec == null) {
@@ -654,7 +623,6 @@ public class CatalogServlet extends MsoyServiceServlet
         info.creatorId = grec.creatorId;
         info.suiteTag = grec.shopTag;
         info.listings = Lists.newArrayList();
-//         info.listings.add(crec.toListingCard());
 
         // load up all subitems of the master
         MemberRecord mrec = getAuthedUser();

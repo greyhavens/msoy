@@ -52,16 +52,12 @@ public interface StuffService extends RemoteService
      * Requests that the supplied item be created and inserted into the creating user's inventory.
      *
      * @return the newly created item.
-     *
-     * @exception ServiceException thrown if there is any problem creating the item.
      */
-    Item createItem (Item item, ItemIdent parent)
+    Item createItem (Item item)
         throws ServiceException;
 
     /**
      * Requests that the supplied item be updated based on user provided changes.
-     *
-     * @exception ServiceException thrown if there is a problem updating the item.
      */
     void updateItem (Item item)
         throws ServiceException;

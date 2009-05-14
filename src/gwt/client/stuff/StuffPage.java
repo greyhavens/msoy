@@ -115,10 +115,7 @@ public class StuffPage extends Page
                 });
             } else {
                 editor.setItem(editor.createBlankItem());
-                byte ptype = (byte)args.get(2, 0);
-                if (ptype != 0) {
-                    editor.setParentItem(new ItemIdent(ptype, args.get(3, 0)));
-                }
+                editor.setGameId(args.get(2, 0)); // must be called after setItem()
             }
             setContent(editor);
 

@@ -250,11 +250,11 @@ public abstract class ItemEditor extends FlowPanel
     }
 
     /**
-     * Configures the parent item to use when creating an item that is part of an item suite.
+     * Configures the game id to use when creating a game subitem.
      */
-    public void setParentItem (ItemIdent parentItem)
+    public void setGameId (int gameId)
     {
-        _parentItem = parentItem;
+        // by default we do nothing
     }
 
     /**
@@ -749,7 +749,7 @@ public abstract class ItemEditor extends FlowPanel
         }
 
         if (_item.itemId == 0) {
-            _stuffsvc.createItem(_item, _parentItem, new InfoCallback<Item>() {
+            _stuffsvc.createItem(_item, new InfoCallback<Item>() {
                 public void onSuccess (Item item) {
                     editComplete(item, true);
                 }
@@ -891,7 +891,6 @@ public abstract class ItemEditor extends FlowPanel
     protected EditorHost _parent;
 
     protected Item _item;
-    protected ItemIdent _parentItem;
 
     protected TextBox _name;
     protected LimitedTextArea _description;

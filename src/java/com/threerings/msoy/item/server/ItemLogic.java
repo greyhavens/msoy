@@ -45,7 +45,8 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.PlayerNodeAction;
-import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -213,25 +214,15 @@ public class ItemLogic
 
     /**
      * Creates a new item and inserts it into the appropriate repository.
+     *
+     * @return the newly inserted {@link ItemRecord}.
      */
     public ItemRecord createItem (int creatorId, Item item)
         throws ServiceException
     {
-        return createItem(creatorId, item, null);
-    }
-
-    /**
-     * Creates a new item and inserts it into the appropriate repository.
-     *
-     * @return the newly inserted {@link ItemRecord}.
-     */
-    public ItemRecord createItem (int creatorId, Item item, ItemIdent parent)
-        throws ServiceException
-    {
         // validate the item
         if (!item.isConsistent()) {
-            log.warning("Got inconsistent item for upload? [from=" + creatorId +
-                        ", item=" + item + "].");
+            log.warning("Got inconsistent item for upload?", "from", creatorId, "item", item);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -243,28 +234,18 @@ public class ItemLogic
         record.creatorId = creatorId;
         record.ownerId = creatorId;
 
-        // determine this item's suite id if it is a subitem
+        // if this is a subitem, validate its suite id
         if (item instanceof SubItem) {
-            if (parent == null) {
-                log.warning("Requested to create sub-item with no parent [who=" + creatorId +
-                            ", item=" + item + "].");
+            int gameId = ((SubItem)item).suiteId;
+            GameInfoRecord grec = _mgameRepo.loadGame(gameId);
+            if (grec == null || grec.gameId != gameId) {
+                log.warning("Requested to create game item with invalid parent", "who", creatorId,
+                            "item", item);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            ItemRepository<ItemRecord> prepo = getRepository(parent.type);
-            ItemRecord prec = prepo.loadItem(parent.itemId);
-            if (prec == null) {
-                log.warning("Requested to make item with missing parent [who=" + creatorId +
-                            ", parent=" + parent + ", item=" + item + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            if (grec.creatorId != creatorId) {
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
-            if (prec.ownerId != creatorId) {
-                log.warning("Requested to make item with invalid parent [who=" + creatorId +
-                            ", parent=" + prec + ", item=" + item + "].");
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-            }
-
-            // if everything is kosher, we can initialize the subitem with info from its parent
-            ((SubItemRecord)record).initFromParent(prec);
         }
 
         // write the item to the database
@@ -883,6 +864,7 @@ public class ItemLogic
     @Inject protected ItemListRepository _listRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;

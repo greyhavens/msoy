@@ -23,6 +23,12 @@ public abstract class SubItemEditor extends ItemEditor
     }
 
     @Override // from ItemEditor
+    public void setGameId (int gameId)
+    {
+        _subi.suiteId = gameId;
+    }
+
+    @Override // from ItemEditor
     protected void addInfo ()
     {
         super.addInfo();

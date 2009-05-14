@@ -58,24 +58,13 @@ public abstract class SubItemRecord extends ItemRecord
     /** An identifier for this level pack, used by the game code. */
     public String ident;
 
-    /**
-     * Configures this sub-item with any information that it needs from its parent.
-     */
-    public void initFromParent (ItemRecord parent)
-    {
-        // the suite id is the item id of the parent; when we get listed it will get adjusted
-        suiteId = parent.itemId;
-    }
-
     @Override // from ItemRecord
     public void prepareForListing (ItemRecord oldListing)
     {
         super.prepareForListing(oldListing);
 
-        if (oldListing != null) {
-            // inherit our suite id from the old item
-            suiteId = ((SubItemRecord)oldListing).suiteId;
-        }
+        // we need to flip from the dev game id to the published game id
+        suiteId = Math.abs(suiteId);
     }
 
     @Override // from ItemRecord
@@ -93,6 +82,7 @@ public abstract class SubItemRecord extends ItemRecord
         super.fromItem(item);
 
         SubItem sitem = (SubItem)item;
+        suiteId = sitem.suiteId;
         ident = sitem.ident;
     }
 }

@@ -72,12 +72,12 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public Item createItem (Item item, ItemIdent parent)
+    public Item createItem (Item item)
         throws ServiceException
     {
         MemberRecord memrec = requireRegisteredUser();
 
-        item = _itemLogic.createItem(memrec.memberId, item, parent).toItem();
+        item = _itemLogic.createItem(memrec.memberId, item).toItem();
 
         // Some items have a stat that may need updating
         if (item instanceof Avatar) {
