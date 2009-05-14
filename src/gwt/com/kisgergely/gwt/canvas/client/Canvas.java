@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.SourcesMouseEvents;
  * @author Gergely Kis (kisg@kisgergely.com)
  *
  */
+@SuppressWarnings("all")
 public class Canvas extends FocusWidget implements SourcesMouseEvents {
 
 	private static final String DEFAULT_STYLE_NAME = "gwt-Canvas"; 

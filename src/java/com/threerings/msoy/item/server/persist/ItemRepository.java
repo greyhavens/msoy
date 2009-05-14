@@ -533,7 +533,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Mark the specified items as being used in the specified way.
      */
-    public void markItemUsage (Collection<Integer> itemIds, byte usageType, int location)
+    public void markItemUsage (Collection<Integer> itemIds, Item.UsedAs usageType, int location)
     {
         Class<T> iclass = getItemClass();
         Class<CloneRecord> cclass = getCloneClass();

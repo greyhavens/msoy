@@ -57,7 +57,7 @@ public class PlaylistRenderer extends HBox
         _playBtn.enabled = !isPlayingNow;
         _thumbnail.setMediaDesc(audio.getThumbnailMedia());
         updateName();
-        if (audio.used != Item.UNUSED) {
+        if (audio.used.forAnything()) {
             _name.toolTip = Msgs.WORLD.get("i.manager_music");
         } else {
             var info :MemberInfo = roomObj.getMemberInfo(audio.ownerId);

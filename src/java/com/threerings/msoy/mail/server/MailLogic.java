@@ -29,7 +29,6 @@ import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.spam.server.SpamUtil;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -328,7 +327,7 @@ public class MailLogic
             errmsg = "Trying to gift non-existent item";
         } else if (item.ownerId != senderId) {
             errmsg = "Trying to gift un-owned item";
-        } else if (item.used != Item.UNUSED) {
+        } else if (item.used.forAnything()) {
             errmsg = "Trying to gift in-use item";
         }
         if (errmsg != null) {

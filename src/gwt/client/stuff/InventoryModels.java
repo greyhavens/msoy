@@ -176,7 +176,7 @@ public class InventoryModels
     {
         Item item = findItem(event.getItemType(), event.getItemId());
         if (item != null) {
-            item.used = event.getUsage();
+            item.used = Item.UsedAs.fromByte(event.getUsage());
             item.location = event.getLocation();
             // TODO: update lastTouched time locally?
 

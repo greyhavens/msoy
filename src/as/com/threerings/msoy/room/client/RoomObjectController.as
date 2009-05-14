@@ -50,6 +50,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
@@ -1031,23 +1032,23 @@ public class RoomObjectController extends RoomController
             if (newId != oldId) {
                 if (newId != 0) {
                     _wdctx.getWorldClient().itemUsageChangedToGWT(
-                        Item.DECOR, newId, Item.USED_AS_BACKGROUND, _scene.getId());
+                        Item.DECOR, newId, Item_UsedAs.BACKGROUND, _scene.getId());
                 }
                 if (oldId != 0) {
                     _wdctx.getWorldClient().itemUsageChangedToGWT(
-                        Item.DECOR, oldId, Item.UNUSED, 0);
+                        Item.DECOR, oldId, Item_UsedAs.NOTHING, 0);
                 }
             }
 
         } else if (update is FurniUpdate_Add) {
             data = (update as FurniUpdate_Add).data;
             _wdctx.getWorldClient().itemUsageChangedToGWT(
-                data.itemType, data.itemId, Item.USED_AS_FURNITURE, _scene.getId());
+                data.itemType, data.itemId, Item_UsedAs.FURNITURE, _scene.getId());
 
         } else if (update is FurniUpdate_Remove) {
             data = (update as FurniUpdate_Remove).data;
             _wdctx.getWorldClient().itemUsageChangedToGWT(
-                data.itemType, data.itemId, Item.UNUSED, 0);
+                data.itemType, data.itemId, Item_UsedAs.NOTHING, 0);
         }
 
         super.sceneUpdated(update);

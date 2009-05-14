@@ -456,7 +456,7 @@ public class RoomManager extends SpotSceneManager
             } finally {
                 _roomObj.commitTransaction();
             }
-            if (current.used == Item.UNUSED) {
+            if (!current.used.forAnything()) {
                 listener.requestProcessed(); // if the item's not in use, we're done
                 return;
             }
@@ -465,7 +465,7 @@ public class RoomManager extends SpotSceneManager
                     "song", current);
                 // but, clear it anyway...
             }
-            _itemMan.updateItemUsage(Item.AUDIO, Item.USED_AS_BACKGROUND, who.getMemberId(),
+            _itemMan.updateItemUsage(Item.AUDIO, Item.UsedAs.BACKGROUND, who.getMemberId(),
                 _scene.getId(), audioItemId, 0, new ConfirmAdapter(listener));
             return;
         }
@@ -1391,7 +1391,7 @@ public class RoomManager extends SpotSceneManager
             Decor decor = msoyScene.getDecor();
             if (decor.itemId != up.decor.itemId) { // modified?
                 _itemMan.updateItemUsage(
-                    Item.DECOR, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
+                    Item.DECOR, Item.UsedAs.BACKGROUND, memberId, _scene.getId(),
                     decor.itemId, up.decor.itemId, new ComplainingListener<Void>(
                         log, "Unable to update decor usage"));
                 if (decor.itemId != 0) {
@@ -1421,7 +1421,7 @@ public class RoomManager extends SpotSceneManager
             // mark this item as no longer in use
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
-                data.itemType, Item.UNUSED, memberId, _scene.getId(),
+                data.itemType, Item.UsedAs.NOTHING, memberId, _scene.getId(),
                 data.itemId, 0, new ComplainingListener<Void>(
                     log, "Unable to clear furni item usage"));
 
@@ -1434,7 +1434,7 @@ public class RoomManager extends SpotSceneManager
             // mark this item as in use
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
-                data.itemType, Item.USED_AS_FURNITURE, memberId, _scene.getId(),
+                data.itemType, Item.UsedAs.FURNITURE, memberId, _scene.getId(),
                 0, data.itemId, new ComplainingListener<Void>(
                     log, "Unable to set furni item usage"));
 
@@ -1693,7 +1693,7 @@ public class RoomManager extends SpotSceneManager
         }
 
         final boolean realManager = isStrictlyManager(who);
-        if (!realManager && (item.used == Item.UNUSED)) {
+        if (!realManager && (!item.used.forAnything())) {
             // we need to make no changes to usage: so just do it!
             addToPlaylist3(who, item, listener);
 
@@ -1701,15 +1701,15 @@ public class RoomManager extends SpotSceneManager
             int oldItemId = realManager ? 0 : item.itemId;
             int newItemId = realManager ? item.itemId : 0;
             // we need to update the item usage
-            _itemMan.updateItemUsage(Item.AUDIO, Item.USED_AS_BACKGROUND, who.getMemberId(),
+            _itemMan.updateItemUsage(Item.AUDIO, Item.UsedAs.BACKGROUND, who.getMemberId(),
                 _scene.getId(), oldItemId, newItemId,
                 new ConfirmAdapter(listener) {
                     @Override public void requestCompleted (Void nothing) {
                         if (realManager) {
-                            item.used = Item.USED_AS_BACKGROUND;
+                            item.used = Item.UsedAs.BACKGROUND;
                             item.location = _scene.getId();
                         } else {
-                            item.used = Item.UNUSED;
+                            item.used = Item.UsedAs.NOTHING;
                             item.location = 0;
                         }
                         addToPlaylist3(who, item, listener);

@@ -303,9 +303,9 @@ public class StuffServlet extends MsoyServiceServlet
             _memberRepo.loadMemberName(record.creatorId); // normal lookup
         detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, detail.item);
         switch (detail.item.used) {
-        case Item.USED_AS_FURNITURE:
-        case Item.USED_AS_PET:
-        case Item.USED_AS_BACKGROUND:
+        case FURNITURE:
+        case PET:
+        case BACKGROUND:
             detail.useLocation = _sceneRepo.identifyScene(detail.item.location);
             break;
         }

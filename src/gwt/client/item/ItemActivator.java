@@ -43,7 +43,7 @@ public class ItemActivator extends FlowPanel
     {
         if ((_item != null) && (_item.getType() == event.getItemType()) &&
                 (_item.itemId == event.getItemId())) {
-            update(event.getUsage(), event.getLocation());
+            update(Item.UsedAs.fromByte(event.getUsage()), event.getLocation());
         }
     }
 
@@ -64,11 +64,11 @@ public class ItemActivator extends FlowPanel
         FlashEvents.removeListener(this);
     }
 
-    protected void update (byte usedAs, int location)
+    protected void update (Item.UsedAs usedAs, int location)
     {
         // TODO: do this in one place?
         boolean hasClient = FlashClients.clientExists();
-        boolean isUsed = (usedAs != Item.UNUSED);
+        boolean isUsed = usedAs.forAnything();
         boolean usedHere;
 
         switch (usedAs) {
@@ -76,13 +76,13 @@ public class ItemActivator extends FlowPanel
             usedHere = false;
             break;
 
-        case Item.USED_AS_AVATAR:
+        case AVATAR:
             usedHere = isUsed;
             break;
 
-        case Item.USED_AS_FURNITURE:
-        case Item.USED_AS_PET:
-        case Item.USED_AS_BACKGROUND:
+        case FURNITURE:
+        case PET:
+        case BACKGROUND:
             // TODO: getSceneId out so it's retrieved in one place and shared?
             usedHere = hasClient && (location == FlashClients.getSceneId());
             break;

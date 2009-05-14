@@ -4,8 +4,11 @@
 package com.threerings.msoy.item.data.all;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.samskivert.depot.ByteEnum;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -77,23 +80,56 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
         AVATAR, PET, FURNITURE, TOY, DECOR
     };
 
-    /** A 'used' constant value to indicate that the item is unused. */
-    public static final byte UNUSED = (byte) 0;
+    /**
+     * Enumerates the ways in which an item can be used, stored in the {@link #used} member.
+     */
+    public enum UsedAs
+        implements ByteEnum
+    {
+        /** Indicates that the item is unused. */
+        NOTHING(0),
 
-    /** A 'used' constant value to indicate that the item is placed as furniture. The 'location'
-     * field will contain the sceneId. */
-    public static final byte USED_AS_FURNITURE = (byte) 1;
+        /** Indicates that the item is placed as furniture. The 'location' field will contain the
+         * sceneId. */
+        FURNITURE(1),
 
-    /** A 'used' constant value to indicate that the item is used as an avatar. */
-    public static final byte USED_AS_AVATAR = (byte) 2;
+        /** Indicates that the item is used as an avatar. */
+        AVATAR(2),
 
-    /** A 'used' constant value to indicate that the item is used as a pet let out in a room.
-     * The 'location' field will contain the sceneId. */
-    public static final byte USED_AS_PET = (byte) 3;
+        /** Indicates that the item is used as a pet let out in a room. The 'location' field will
+         * contain the sceneId.*/
+        PET(3),
 
-    /** A 'used' constant value to indicate that the item is used in a scene as background
-     *  bitmap or music (as appropriate). The 'location' field will contain the sceneId. */
-    public static final byte USED_AS_BACKGROUND = (byte) 4;
+        /** Indicates that the item is used in a scene as background bitmap or music (as
+         * appropriate). The 'location' field will contain the sceneId. */
+        BACKGROUND(4);
+
+        public static UsedAs fromByte (byte value)
+        {
+            return _usedLookup.get(value);
+        }
+
+        public byte toByte ()
+        {
+            return _value;
+        }
+
+        public boolean forAnything ()
+        {
+            return this != NOTHING;
+        }
+
+        UsedAs (int value)
+        {
+            _value = (byte)value;
+            if (_usedLookup == null) {
+                _usedLookup = new HashMap<Byte, UsedAs>();
+            }
+            _usedLookup.put(_value, this);
+        }
+
+        protected byte _value;
+    }
 
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String FURNI_MEDIA = "furni";
@@ -150,8 +186,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
 
-    /** A code indicating where this item is being used. */
-    public byte used;
+    /** Indicates where this item is being used. */
+    public UsedAs used = UsedAs.NOTHING;
 
     /** A number, interpreted along with 'used' that identifies the location at which this item is
      * being used. */
@@ -326,7 +362,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public boolean isUsed ()
     {
-        return (used != UNUSED);
+        return (used != UsedAs.NOTHING);
     }
 
     /**
@@ -552,4 +588,5 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
     private static HashMap<Byte, Class<? extends Item>> _mapping;
     private static HashMap<Class<? extends Item>, Byte> _reverseMapping;
+    protected static Map<Byte, UsedAs> _usedLookup;
 }

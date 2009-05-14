@@ -170,7 +170,7 @@ public class ItemManager
     public void updateItemUsage (int memberId, Avatar oldAvatar, Avatar newAvatar,
                                  ResultListener<Void> lner)
     {
-        updateItemUsage(Item.AVATAR, Item.USED_AS_AVATAR, memberId, memberId,
+        updateItemUsage(Item.AVATAR, Item.UsedAs.AVATAR, memberId, memberId,
                         (oldAvatar != null) ? oldAvatar.itemId : 0,
                         (newAvatar != null) ? newAvatar.itemId : 0, lner);
     }
@@ -183,8 +183,8 @@ public class ItemManager
      * question.
      */
     public void updateItemUsage (
-        final byte itemType, final byte itemUseType, final int memberId, final int locationId,
-        final int oldItemId, final int newItemId, ResultListener<Void> lner)
+        final byte itemType, final Item.UsedAs itemUseType, final int memberId,
+        final int locationId, final int oldItemId, final int newItemId, ResultListener<Void> lner)
     {
         if (oldItemId == newItemId) {
             lner.requestCompleted(null); // mr. no-op
@@ -199,7 +199,7 @@ public class ItemManager
         _invoker.postUnit(new RepositoryListenerUnit<Void>("updateItemUsage", lner) {
             public Void invokePersistResult () throws Exception {
                 if (oldItemId != 0) {
-                    repo.markItemUsage(Collections.singleton(oldItemId), Item.UNUSED, 0);
+                    repo.markItemUsage(Collections.singleton(oldItemId), Item.UsedAs.NOTHING, 0);
                 }
                 if (newItemId != 0) {
                     repo.markItemUsage(Collections.singleton(newItemId), itemUseType, locationId);
@@ -466,7 +466,7 @@ public class ItemManager
                     lner.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
-                if ((result.used == Item.USED_AS_FURNITURE) || (result.getType() == Item.DECOR) ||
+                if ((result.used == Item.UsedAs.FURNITURE) || (result.getType() == Item.DECOR) ||
                         (result.getType() == Item.AUDIO)) {
                     ((MsoySceneRegistry)_sceneReg).reclaimItem(
                         result.location, user.getMemberId(), item, new ConfirmAdapter(lner));

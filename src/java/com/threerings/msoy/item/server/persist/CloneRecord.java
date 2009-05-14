@@ -9,6 +9,7 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.*; // for Depot annotations
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.money.data.all.Currency;
 
 @Entity
@@ -57,8 +58,8 @@ public abstract class CloneRecord extends PersistentRecord
     /** The amount (of the above currency) paid for this item. */
     public int amountPaid;
 
-    /** How this item is being used (see Item.USED_AS_FURNITURE). */
-    public byte used;
+    /** How this item is being used. */
+    public Item.UsedAs used = Item.UsedAs.NOTHING;
 
     /** Where it's being used. */
     @Index(name="ixLocation")

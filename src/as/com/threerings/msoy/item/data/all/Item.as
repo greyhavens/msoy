@@ -81,24 +81,6 @@ public /*abstract*/ class Item
     /** The type constant for a {@link Prop} item. */
     public static const PROP :int = ItemTypes.PROP;
 
-    /** A 'used' constant value to indicate that the item is unused. */
-    public static const UNUSED :int = 0;
-
-    /** A 'used' constant value to indicate that the item is placed
-     * as furniture. The 'location' field will contain the sceneId. */
-    public static const USED_AS_FURNITURE :int = 1;
-
-    /** A 'used' constant value to indicate that the item is used as an avatar. */
-    public static const USED_AS_AVATAR :int = 2;
-
-    /** A 'used' constant value to indicate that the item is used as a pet let out in a room.
-     * The 'location' field will contain the sceneId. */
-    public static const USED_AS_PET :int = 3;
-
-    /** A 'used' constant value to indicate that the item is used in a scene as background
-     *  bitmap or music (as appropriate). The 'location' field will contain the sceneId. */
-    public static const USED_AS_BACKGROUND :int = 4;
-
     /** Identifies our thumbnail media. */
     public static const THUMB_MEDIA :String = "thumb";
 
@@ -140,7 +122,7 @@ public /*abstract*/ class Item
     public var ratingCount :int;
 
     /** A code indicating where this item is being used. */
-    public var used :int;
+    public var used :Item_UsedAs = Item_UsedAs.NOTHING;
 
     /** A number, interpreted along with 'used' that identifies the location at which this item is
      * being used. */
@@ -290,7 +272,7 @@ public /*abstract*/ class Item
      */
     public function isUsed () :Boolean
     {
-        return (used != UNUSED);
+        return used.forAnything();
     }
 
     /**
@@ -400,7 +382,7 @@ public /*abstract*/ class Item
         out.writeInt(catalogId);
         out.writeFloat(rating);
         out.writeInt(ratingCount);
-        out.writeByte(used);
+        out.writeObject(used);
         out.writeInt(location);
         out.writeDouble(lastTouched);
         out.writeField(name);
@@ -421,7 +403,7 @@ public /*abstract*/ class Item
         catalogId = ins.readInt();
         rating = ins.readFloat();
         ratingCount = ins.readInt();
-        used = ins.readByte();
+        used = ins.readObject() as Item_UsedAs;
         location = ins.readInt();
         lastTouched = ins.readDouble();
         name = (ins.readField(String) as String);

@@ -273,7 +273,7 @@ public class ItemLogic
         if (item.ownerId != deleter.memberId) {
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
-        if (item.used != 0) {
+        if (item.used.forAnything()) {
             throw new ServiceException(ItemCodes.E_ITEM_IN_USE);
         }
         if (item.isListedOriginal()) {

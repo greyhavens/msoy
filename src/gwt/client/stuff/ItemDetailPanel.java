@@ -140,7 +140,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         boolean listedOriginal = _item.isListedOriginal();
         boolean canEditAndList = userCreatedItem() || CShell.isSupport();
         boolean remixable = isRemixable();
-        boolean used = (_item.used != Item.UNUSED);
+        boolean used = _item.used.forAnything();
         boolean isRoomType = (-1 != ArrayUtil.indexOf(Item.ROOM_TYPES, _item.getType()));
 
         // add a button for deleting this item
@@ -271,7 +271,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
     protected void adjustForUsage ()
     {
-        boolean unused = (_item.used == Item.UNUSED);
+        boolean unused = !_item.used.forAnything();
         _deleteBtn.setEnabled(unused);
         if (_giftBits != null) {
             _giftBits.clear();
@@ -291,9 +291,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected String getUsageMessage ()
     {
         switch (_item.used) {
-        case Item.USED_AS_FURNITURE:
-        case Item.USED_AS_PET:
-        case Item.USED_AS_BACKGROUND:
+        case FURNITURE:
+        case PET:
+        case BACKGROUND:
             return _msgs.detailInUseInRoom("" + _item.location, _detail.useLocation);
 
         default:

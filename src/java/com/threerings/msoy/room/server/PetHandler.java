@@ -163,7 +163,7 @@ public class PetHandler
                 }
             }
             stopFollowing();
-            updateUsage(Item.UNUSED, 0);
+            updateUsage(Item.UsedAs.NOTHING, 0);
             shutdown(false);
             break;
 
@@ -173,7 +173,7 @@ public class PetHandler
 
         case Pet.ORDER_GO_HOME:
             stopFollowing();
-            updateUsage(Item.USED_AS_PET, owner.homeSceneId);
+            updateUsage(Item.UsedAs.PET, owner.homeSceneId);
             if (_petobj.getSceneId() == owner.homeSceneId) {
                 // we're already home, yay!
             } else if (_sceneReg.getSceneManager(owner.homeSceneId) != null) {
@@ -195,7 +195,7 @@ public class PetHandler
             // potentially stop following our owner
             stopFollowing();
             // note that we want to autoload in this room
-            updateUsage(Item.USED_AS_PET, ((RoomManager)plmgr).getScene().getId());
+            updateUsage(Item.UsedAs.PET, ((RoomManager)plmgr).getScene().getId());
             break;
 
         default:
@@ -287,7 +287,7 @@ public class PetHandler
     /**
      * Update the marked usage and location of the pet we handle.
      */
-    protected void updateUsage (final byte usageType, final int location)
+    protected void updateUsage (final Item.UsedAs usageType, final int location)
     {
         final int itemId = _petobj.pet.itemId;
         _invoker.postUnit(new WriteOnlyUnit("updatePetUsage(" + itemId + ")") {

@@ -47,6 +47,7 @@ import com.threerings.msoy.avrg.client.AVRGameBackend;
 
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.client.MsoyClient;
@@ -345,7 +346,7 @@ public class RoomObjectView extends RoomView
             if (audio.ownerId == _ctx.getMyId()) {
                 // always assume that if we're present to see a remove, it's unused
                 _ctx.getMsoyClient().itemUsageChangedToGWT(
-                    Item.AUDIO, audio.itemId, Item.UNUSED, 0);
+                    Item.AUDIO, audio.itemId, Item_UsedAs.NOTHING, 0);
             }
         }
     }
@@ -735,7 +736,7 @@ public class RoomObjectView extends RoomView
         if (occupant is PetSprite) {
             var ident :ItemIdent = occupant.getItemIdent();
             (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
-                Item.PET, ident.itemId, Item.USED_AS_PET, _scene.getId());
+                Item.PET, ident.itemId, Item_UsedAs.PET, _scene.getId());
         }
     }
 
@@ -755,7 +756,7 @@ public class RoomObjectView extends RoomView
         // if this occupant is a pet, notify GWT that we've removed a pet from the room.
         if (sprite is PetSprite) {
             (_ctx.getClient() as WorldClient).itemUsageChangedToGWT(
-                Item.PET, sprite.getItemIdent().itemId, Item.UNUSED, 0);
+                Item.PET, sprite.getItemIdent().itemId, Item_UsedAs.NOTHING, 0);
         }
     }
 

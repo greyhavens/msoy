@@ -45,6 +45,8 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.notify.data.Notification;
 
+import com.threerings.msoy.item.data.all.Item_UsedAs;
+
 /**
  * Dispatched when the client is minimized or unminimized.
  *
@@ -209,9 +211,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     /**
      * Helper to dispatch item usage changes to GWT.
      */
-    public function itemUsageChangedToGWT (itemType :int, itemId :int, usage :int, loc :int) :void
+    public function itemUsageChangedToGWT (itemType :int, itemId :int, usage :Item_UsedAs,
+                                           loc :int) :void
     {
-        dispatchEventToGWT("itemUsageChanged", [ itemType, itemId, usage, loc ]);
+        // TODO: can the dispatch handle Enum types? We'd have to change it on the GWT side too
+        dispatchEventToGWT("itemUsageChanged", [ itemType, itemId, usage.toInt(), loc ]);
     }
 
     /**

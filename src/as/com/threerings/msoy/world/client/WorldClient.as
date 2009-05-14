@@ -429,6 +429,7 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Item_UsedAs;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
@@ -449,12 +450,13 @@ class AvatarUpdateNotifier implements AttributeChangeListener
             var value :Object = event.getValue();
             if (value is Avatar) {
                 _wctx.getMsoyClient().itemUsageChangedToGWT(
-                    Item.AVATAR, (value as Avatar).itemId, Item.USED_AS_AVATAR, _wctx.getMyId());
+                    Item.AVATAR, (value as Avatar).itemId, Item_UsedAs.AVATAR,
+                    _wctx.getMyId());
             }
             value = event.getOldValue();
             if (value is Avatar) {
                 _wctx.getMsoyClient().itemUsageChangedToGWT(
-                    Item.AVATAR, (value as Avatar).itemId, Item.UNUSED, 0);
+                    Item.AVATAR, (value as Avatar).itemId, Item_UsedAs.NOTHING, 0);
             }
         }
     }

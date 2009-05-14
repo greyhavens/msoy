@@ -117,8 +117,8 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
 
-    /** How this item is being used (see {@link Item#USED_AS_FURNITURE}). */
-    public byte used;
+    /** How this item is being used. */
+    public Item.UsedAs used = Item.UsedAs.NOTHING;
 
     /** Where it's being used. */
     @Index(name="locationIndex")
@@ -207,7 +207,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     {
         itemId = 0;
         ownerId = 0;
-        used = 0;
+        used = Item.UsedAs.NOTHING;
         location = 0;
 
         if (oldListing != null) {
@@ -254,7 +254,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             }
         }
 
-        // copy our itemId to parent, and take the clone's itemId
+        // copy our itemId to source, and take the clone's itemId
         this.sourceId = this.itemId;
         this.itemId = clone.itemId;
 
