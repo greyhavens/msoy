@@ -677,7 +677,7 @@ public class RoomObjectController extends RoomController
                     _roomView.setInitialFurniLocation(furni);
                     if (item is Game) {
                         var game :Game = (item as Game);
-                        furni.actionType = game.isInWorld() ?
+                        furni.actionType = game.isAVRG ?
                             FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
                         furni.actionData = String(game.gameId) + ":" + game.name;
                     }

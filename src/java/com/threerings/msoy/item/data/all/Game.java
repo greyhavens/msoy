@@ -10,9 +10,11 @@ import com.threerings.msoy.data.all.MediaDesc;
  */
 public class Game extends Item
 {
-    /** A unique identifier assigned to this game and preserved across new versions of the game
-     * item so that ratings and lobbies and content packs all reference the same "game". */
+    /** A unique identifier assigned to this game. */
     public int gameId;
+
+    /** True if this is an AVR game, false if it's a Parlor game. */
+    public boolean isAVRG;
 
     @Override // from Item
     public byte getType ()

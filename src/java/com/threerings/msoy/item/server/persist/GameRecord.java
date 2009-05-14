@@ -16,6 +16,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.TagCodes;
 
+import com.threerings.msoy.game.gwt.GameCode;
+
 /**
  * Extends Item with game info.
  */
@@ -145,6 +147,7 @@ public class GameRecord extends ItemRecord
 
         Game game = (Game)item;
         // gameId = not user editable
+        game.isAVRG = GameCode.detectIsInWorld(config);
     }
 
     @Override // from ItemRecord
