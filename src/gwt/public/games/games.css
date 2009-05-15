@@ -268,7 +268,7 @@
   overflow: hidden;
 }
 
-.gameEntry .Descrip {
+.gameEntry .Online {
   font-size: 10px;
   color: #AABDC8;
 }
@@ -364,7 +364,6 @@
 
 .arcade .GenreBox {
   width: 210px;
-  height: 185px;
   float: left;
   margin: 10px 0 0 10px;
   background-color: #FFFFFF;
@@ -390,10 +389,11 @@
 
 .arcade .GenreBox .GenreGame {
   height: 37px;
+  padding-top: 5px;
 }
 
 .arcade .GenreBox .GenreGame .thumbBox {
-  margin: 0 5px 5px 25px;
+  margin: 0px 5px 0px 25px;
   float: left;
   border: solid #CCCCCC 1px;
 }
@@ -401,41 +401,15 @@
 .arcade .GenreBox .GenreGame .Name {
   color: #1a5984;
   width: 115px;
-  float: left;
   white-space: nowrap;
   overflow: hidden;
-  margin-top: 10px;
   font-size: 13px;
-}
-
-.arcade .GenreBox .First {
-  height: 70px;
-}
-
-.arcade .GenreBox .First  .thumbBox {
-  margin: 5px 5px 5px 5px;
-  border: none;
-}
-
-.arcade .GenreBox .First  .Name {
-  margin-top: 5px;
-  color: #000000;
-  width: 115px;
-}
-
-.arcade .GenreBox .First .Description {
-  font-size: 11px;
-  float: left;
-  overflow: hidden;
-  width: 115px;
-  height: 45px;
-  color: #acbdc7;
 }
 
 .arcade .BrowseGenres .ViewAll {
   font-size: 11px;
   text-align: right;
-  padding-right: 10px;
+  padding: 0px 10px 5px 0px;
 }
 
 .arcade .BrowseGenres .ViewAll a {

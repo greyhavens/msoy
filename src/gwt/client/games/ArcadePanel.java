@@ -83,38 +83,24 @@ public class ArcadePanel extends FlowPanel
         public GenreBox (ArcadeData.Genre genre) {
             setStyleName("GenreBox");
 
-            ClickHandler onClick = Link.createListener(
-                Pages.GAMES, Args.compose("g", genre.genre));
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
+            ClickHandler onClick = Link.createListener(Pages.GAMES, Args.compose("g", genre.genre));
             header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre" + genre.genre), onClick));
 
-            // display 1-3 games
             for (int i = 0; i < genre.games.length; i++) {
                 GameCard game = genre.games[i];
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
                 String clickArgs = Args.compose("d", game.gameId);
-                // display the first larger than the rest
-                if (i == 0) {
-                    genreGame.addStyleName("First");
-                    genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
-                                               Pages.GAMES, clickArgs));
-                    genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
-// TODO: add players online
-//                     genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
-//                                                      "Description"));
-                } else {
-                    genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
-                                               Pages.GAMES, clickArgs));
-                    genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
+                genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+                                           Pages.GAMES, clickArgs));
+                genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
+                if (game.playersOnline > 0) {
+                    genreGame.add(MsoyUI.createLabel(
+                                      _msgs.featuredOnline(""+game.playersOnline), "Online"));
                 }
-            }
-
-            // pad the games area with blank game boxes
-            for (int i = genre.games.length; i < ArcadeData.Genre.HIGHLIGHTED_GAMES; i++) {
-                add(MsoyUI.createFlowPanel("GenreGame"));
             }
 
             add(Link.create(_msgs.genreMore(""+genre.gameCount), "ViewAll",
