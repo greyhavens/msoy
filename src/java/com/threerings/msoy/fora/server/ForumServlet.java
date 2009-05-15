@@ -460,7 +460,7 @@ public class ForumServlet extends MsoyServiceServlet
         String message = "[" + fmr.created + "]\n" + fmr.message;
         _supportLogic.addMessageComplaint(
             mrec.getName(), fmr.posterId, message, complaint,
-            Pages.GROUPS.makeURL(Args.compose("t", fmr.threadId)));
+            Pages.GROUPS.makeURL("t", fmr.threadId));
     }
 
     // from interface ForumService

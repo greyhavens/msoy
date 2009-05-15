@@ -142,7 +142,6 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
      */
     protected abstract List<T> getRows (R result);
 
-
     /** The count of items in our model, filled in by the first call to {@link #doFetchRows}. */
     protected int _count = -1;
 

@@ -21,7 +21,6 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -46,8 +45,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         addStyleName("dottedGrid");
 
         _detail = detail;
-        String args = Args.compose("w", "g", ""+_detail.group.groupId);
-        _invite.addClickHandler(Link.createListener(Pages.MAIL, args));
+        _invite.addClickHandler(Link.createListener(Pages.MAIL, "w", "g", _detail.group.groupId));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
         setModel(new PagedServiceDataModel<GroupMemberCard, PagedResult<GroupMemberCard>>(){

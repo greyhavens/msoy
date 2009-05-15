@@ -9,7 +9,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.trophy.TrophyGrid;
@@ -37,8 +36,7 @@ public class TrophiesBlurb extends Blurb
         TrophyGrid.populateTrophyGrid(grid, tvec);
         setContent(grid);
 
-        setFooterLink(_msgs.seeAll(), Pages.GAMES,
-                      Args.compose("t", pdata.name.getMemberId()));
+        setFooterLink(_msgs.seeAll(), Pages.GAMES, "t", pdata.name.getMemberId());
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

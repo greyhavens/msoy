@@ -3,7 +3,6 @@
 
 package client.people;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -18,8 +17,7 @@ public class ShareUtil
      */
     public static String getLandingURL (Pages page, boolean friend, Object... args)
     {
-        return friend ?
-            page.makeFriendURL(CShell.creds.getMemberId(), Args.compose(args)) :
-            page.makeAffiliateURL(CShell.creds.getMemberId(), Args.compose(args));
+        return friend ? page.makeFriendURL(CShell.creds.getMemberId(), args) :
+            page.makeAffiliateURL(CShell.creds.getMemberId(), args);
     }
 }

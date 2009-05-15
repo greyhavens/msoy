@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
@@ -36,7 +35,7 @@ public class MedalsBlurb extends Blurb
         }
         setContent(medals);
 
-        setFooterLink(_msgs.seeAll(), Pages.ME, Args.compose("medals", pdata.name.getMemberId()));
+        setFooterLink(_msgs.seeAll(), Pages.ME, "medals", pdata.name.getMemberId());
     }
 
     protected static class SimpleMedalDisplay extends VerticalPanel

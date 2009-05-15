@@ -23,7 +23,6 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -84,8 +83,7 @@ public class DoListItemPopup extends VerticalPanel
             add(MsoyUI.createLabel(firstTime ? _imsgs.doListNeedsDescrip() :
                                    _imsgs.doUpdateNeedsDescrip(), "Blurb"));
             add(MsoyUI.createLabel(item.description, "Descrip"));
-            add(Link.create("Edit description...", Pages.STUFF,
-                            Args.compose("e", item.getType(), item.itemId)));
+            add(Link.create("Edit description...", Pages.STUFF, "e", item.getType(), item.itemId));
         }
 
         // add a rating interface

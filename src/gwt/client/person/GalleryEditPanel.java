@@ -45,7 +45,6 @@ import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 /**
@@ -119,11 +118,9 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         Button cancelButton = new Button("Cancel", new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (_newGallery) {
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.GALLERIES,
-                        CShell.getMemberId()));
+                    Link.go(Pages.PEOPLE, GalleryActions.GALLERIES, CShell.getMemberId());
                 } else {
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW,
-                        _galleryData.gallery.galleryId));
+                    Link.go(Pages.PEOPLE, GalleryActions.VIEW, _galleryData.gallery.galleryId);
                 }
             }
         });
@@ -211,7 +208,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 public void onClick (ClickEvent event) {
                     // save the gallery before leaving this page
                     saveGallery(false, null);
-                    Link.go(Pages.STUFF, Args.compose("c", "" + Item.PHOTO));
+                    Link.go(Pages.STUFF, "c", Item.PHOTO);
                 }
             }), 210, 395);
     }
@@ -259,8 +256,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             saveButton.setEnabled(true);
         }
         if (backToView) {
-            Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW,
-                _galleryData.gallery.galleryId));
+            Link.go(Pages.PEOPLE, GalleryActions.VIEW, _galleryData.gallery.galleryId);
         }
     }
 

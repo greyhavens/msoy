@@ -27,7 +27,6 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.BorderedDialog;
@@ -56,7 +55,7 @@ public class ReviewItem extends FlowPanel
         HorizontalPanel nameCreator = new HorizontalPanel();
         nameCreator.setSpacing(4);
         String itemName = _item != null ? _item.name : "Unknown";
-        nameCreator.add(Link.create(itemName, Pages.STUFF, Args.compose("d", type, id)));
+        nameCreator.add(Link.create(itemName, Pages.STUFF, "d", type, id));
         nameCreator.add(MsoyUI.createLabel(" by ", null));
         if (detail != null) {
             nameCreator.add(Link.memberView(detail.creator));
@@ -70,7 +69,7 @@ public class ReviewItem extends FlowPanel
         add(flaggedAs);
 
         // transactions link
-        add(Link.create("Transactions", Pages.ADMINZ, Args.compose("review", type, id)));
+        add(Link.create("Transactions", Pages.ADMINZ, "review", type, id));
 
         // then a row of action buttons
         RowPanel line = new RowPanel();

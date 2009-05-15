@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -52,7 +51,7 @@ public class FriendsBlurb extends Blurb
         }
 
         setFooterLink(_msgs.seeAllFriends("" + pdata.totalFriendCount),
-                      Pages.PEOPLE, Args.compose("f", pdata.name.getMemberId()));
+                      Pages.PEOPLE, "f", pdata.name.getMemberId());
     }
 
     protected class FriendWidget extends FlowPanel

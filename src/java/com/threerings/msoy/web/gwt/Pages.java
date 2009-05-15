@@ -48,7 +48,7 @@ public enum Pages
      * used for URLs that are going to be sent off outside of Whirled. If that is not desired, use
      * {@link #makeLink}.
      */
-    public String makeURL (String args)
+    public String makeURL (Object... args)
     {
         return makeGoURL("go", -1, args);
     }
@@ -57,7 +57,7 @@ public enum Pages
      * Creates a link to the specified page and arguments. The link will start with /# and will not
      * be prefixed by the server URL. Prepend DeploymentConfig.serverURL if that is desired.
      */
-    public String makeLink (String args)
+    public String makeLink (Object... args)
     {
         return "/#" + makeToken(args);
     }
@@ -66,11 +66,11 @@ public enum Pages
      * Creates a link token for the specified page and arguments. This token can be passed to
      * History.newItem.
      */
-    public String makeToken (String args)
+    public String makeToken (Object... args)
     {
         String token = getPath();
-        if (args != null && args.length() > 0) {
-            token = token + "-" + args;
+        if (args.length > 0) {
+            token = token + "-" + Args.compose(args);
         }
         return token;
     }
@@ -80,7 +80,7 @@ public enum Pages
      * an affiliate of the given member and then redirect to the given page with the given args.
      * The member id may be zero, in which case the link will only redirect with no affiliation.
      */
-    public String makeAffiliateURL (int memberId, String args)
+    public String makeAffiliateURL (int memberId, Object... args)
     {
         return makeGoURL("welcome", memberId, args);
     }
@@ -92,7 +92,7 @@ public enum Pages
      * given member. The member id may be zero, in which case the link will only redirect with no
      * affiliation or friending.
      */
-    public String makeFriendURL (int memberId, String args)
+    public String makeFriendURL (int memberId, Object... args)
     {
         return makeGoURL("friend", memberId, args);
     }
@@ -113,14 +113,14 @@ public enum Pages
         return _tab;
     }
 
-    protected String makeGoURL (String servlet, int memberId, String args)
+    protected String makeGoURL (String servlet, int memberId, Object... args)
     {
         String token = makeToken(args);
         String url = DeploymentConfig.serverURL + servlet;
         if (memberId != -1) {
             url += "/" + memberId;
         }
-        if (this != LANDING || (args != null && args.length() > 0)) {
+        if (this != LANDING || args.length > 0) {
             url += "/" + token;
         }
         return url;

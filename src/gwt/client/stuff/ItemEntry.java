@@ -5,7 +5,6 @@ package client.stuff;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.IdentGameItem;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ItemActivator;
@@ -19,9 +18,8 @@ public class ItemEntry extends ItemBox
 {
     public ItemEntry (Item item)
     {
-        super(item.getThumbnailMedia(), ItemUtil.getName(item, true), Pages.STUFF,
-              Args.compose("d", ""+item.getType(), ""+item.itemId),
-              item.getPrimaryMedia().isRemixable());
+        super(item.getThumbnailMedia(), ItemUtil.getName(item, true),
+              item.getPrimaryMedia().isRemixable(), Pages.STUFF, "d", item.getType(), item.itemId);
 
         if (item.itemId > 0) { // if this item is an original, style it slightly differently
             getFlexCellFormatter().addStyleName(1, 0, "Original");

@@ -123,11 +123,10 @@ public class GameDetailPanel extends SmartTable
         // add "Discussions" (if appropriate) and "Shop" button
         Widget buttons = null;
         if (info.groupId > 0) {
-            ClickHandler onClick = Link.createListener(
-                Pages.GROUPS, Args.compose("f", info.groupId));
+            ClickHandler onClick = Link.createListener(Pages.GROUPS, "f", info.groupId);
             buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
         }
-        ClickHandler onShop = Link.createListener(Pages.SHOP, Args.compose("g", Math.abs(_gameId)));
+        ClickHandler onShop = Link.createListener(Pages.SHOP, "g", Math.abs(_gameId));
         PushButton shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onShop);
         buttons = (buttons == null) ? (Widget)shop : MsoyUI.createButtonPair(buttons, shop);
         setWidget(2, 0, buttons);

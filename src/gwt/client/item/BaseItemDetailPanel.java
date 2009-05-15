@@ -26,7 +26,6 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -102,8 +101,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         if (_item instanceof Game) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            String args = Args.compose("d" , ((Game)_item).gameId);
-            _details.add(Link.create(_imsgs.bidPlay(), Pages.GAMES, args));
+            _details.add(Link.create(_imsgs.bidPlay(), Pages.GAMES, "d" , ((Game)_item).gameId));
         }
 
         // add our tag business at the bottom

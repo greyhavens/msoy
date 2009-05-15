@@ -20,7 +20,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -165,8 +164,7 @@ public class InterestsBlurb extends Blurb
                 panel.add(new InlineLabel(",", false, false, true));
             }
             String interest = ivec[ii].trim();
-            panel.add(Link.create(interest, Pages.PEOPLE,
-                Args.compose("search", "0", interest)));
+            panel.add(Link.create(interest, Pages.PEOPLE, "search", "0", interest));
         }
 
         return panel;

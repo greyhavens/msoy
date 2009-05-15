@@ -117,7 +117,7 @@ public class StatusPanel extends SmartTable
             links.add(_namePanel);
             links.add(MsoyUI.createLabel("|", "Spacer"));
         }
-        links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
+        links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP));
         links.add(MsoyUI.createLabel("|", "Spacer"));
         if (permaguest) {
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogon(),

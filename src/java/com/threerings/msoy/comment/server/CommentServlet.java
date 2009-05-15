@@ -38,7 +38,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -207,11 +206,11 @@ public class CommentServlet extends MsoyServiceServlet
 
         String link;
         if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
-            link = Pages.SHOP.makeURL(Args.compose("l", etype, eid));
+            link = Pages.SHOP.makeURL("l", etype, eid);
         } else if (etype == Comment.TYPE_ROOM) {
-            link = Pages.ROOMS.makeURL(Args.compose("room", eid));
+            link = Pages.ROOMS.makeURL("room", eid);
         } else if (etype == Comment.TYPE_PROFILE_WALL) {
-            link = Pages.PEOPLE.makeURL(Args.compose(eid));
+            link = Pages.PEOPLE.makeURL(eid);
         } else {
             link = null;
         }

@@ -73,13 +73,13 @@ public class GameItemEditorPanel extends SmartTable
         }
 
         for (Item item : items) {
-            String dargs = Args.compose("d", item.getType(), item.itemId);
-            String eargs = Args.compose("e", item.getType(), item.itemId);
             int col = 0;
             setWidget(row, col++, MediaUtil.createMediaView(
                           item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1, null);
             setText(row, col++, item.name, 1, null);
+            String dargs = Args.compose("d", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1, null);
+            String eargs = Args.compose("e", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
             setText(row, col++, (item.catalogId == 0) ? "" : _msgs.gieIsPublished());
             if (item instanceof IdentGameItem) {

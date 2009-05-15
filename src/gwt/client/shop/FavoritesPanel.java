@@ -16,7 +16,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.SideBar;
@@ -44,15 +43,14 @@ public class FavoritesPanel extends HorizontalPanel
                 return type == itemType;
             }
             public Widget createLink (String name, byte type) {
-                return Link.create(
-                    name, Pages.SHOP, Args.compose(ShopPage.FAVORITES, memberId, type));
+                return Link.create(name, Pages.SHOP, ShopPage.FAVORITES, memberId, type);
             }
         }, true, null));
         add(WidgetUtil.makeShim(10, 10));
 
         ListingGrid faves = new ListingGrid(HEADER_HEIGHT) {
             @Override protected void displayPageFromClick (int page) {
-                Link.go(Pages.SHOP, Args.compose(ShopPage.FAVORITES, memberId, itemType, page));
+                Link.go(Pages.SHOP, ShopPage.FAVORITES, memberId, itemType, page);
             }
             @Override protected String getEmptyMessage () {
                 return _msgs.noFavorites();

@@ -12,7 +12,6 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
@@ -41,7 +40,7 @@ public class StampsBlurb extends Blurb
         }
         setContent(stamps);
 
-        setFooterLink(_msgs.seeAll(), Pages.ME, Args.compose("passport", pdata.name.getMemberId()));
+        setFooterLink(_msgs.seeAll(), Pages.ME, "passport", pdata.name.getMemberId());
     }
 
     protected static class SimpleBadgeDisplay extends VerticalPanel

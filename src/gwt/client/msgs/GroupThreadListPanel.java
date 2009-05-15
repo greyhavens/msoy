@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 /**
@@ -52,7 +51,7 @@ public class GroupThreadListPanel extends ThreadListPanel
         _startThread = new Button(_mmsgs.tlpStartNewThread(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (MsoyUI.requireValidated()) {
-                    Link.go(Pages.GROUPS, Args.compose("p", _groupId));
+                    Link.go(Pages.GROUPS, "p", _groupId);
                 }
             }
         });

@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
@@ -70,7 +69,7 @@ public class CreateGamePanel extends BaseEditorPanel
                 return true;
             }
             protected boolean gotResult (Integer gameId) {
-                Link.go(Pages.GAMES, Args.compose("e", gameId));
+                Link.go(Pages.GAMES, "e", gameId);
                 return true;
             }
         };

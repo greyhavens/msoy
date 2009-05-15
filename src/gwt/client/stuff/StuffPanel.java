@@ -23,7 +23,6 @@ import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.SideBar;
@@ -71,10 +70,10 @@ public class StuffPanel extends FlowPanel
         _searchBox = new SearchBox(new SearchBox.Listener() {
             public void search (String query) {
                 String type = searchTypes.getValue(searchTypes.getSelectedIndex());
-                Link.go(Pages.STUFF, Args.compose(type, _memberId, 0, query));
+                Link.go(Pages.STUFF, type, _memberId, 0, query);
             }
             public void clearSearch () {
-                Link.go(Pages.STUFF, Args.compose(_type, _memberId, 0));
+                Link.go(Pages.STUFF, _type, _memberId, 0);
             }
         });
         _search.add(_searchBox);
@@ -203,7 +202,7 @@ public class StuffPanel extends FlowPanel
                     return itemType == _type;
                 }
                 public Widget createLink (String name, byte itemType) {
-                    return Link.create(name, Pages.STUFF, Args.compose(itemType, _memberId));
+                    return Link.create(name, Pages.STUFF, itemType, _memberId);
                 }
             }, Item.STUFF_TYPES, null));
             row.add(_contents);

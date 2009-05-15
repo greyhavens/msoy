@@ -25,7 +25,6 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.images.msgs.MsgsImages;
@@ -260,9 +259,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             final int memberId = CShell.getMemberId();
             final boolean isPoster = (memberId == _message.poster.name.getMemberId());
             if (!isPoster) {
-                String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
                 info.add(makeInfoImage(_images.sendmail(), _mmsgs.inlineMail(),
-                                       Link.createListener(Pages.MAIL, args)));
+                                       Link.createListener(Pages.MAIL, "w", "m",
+                                                           _message.poster.name.getMemberId())));
             }
 
             FlowPanel toolBar = MsoyUI.createFlowPanel("ToolBar");
@@ -299,17 +298,16 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             }
 
             if (_message.issueId > 0) {
-                ClickHandler viewClick = Link.createListener(
-                    Pages.ISSUES, Args.compose("i", _message.issueId));
+                ClickHandler viewClick = Link.createListener(Pages.ISSUES, "i", _message.issueId);
                 toolBar.add(makeInfoImage(_images.view_issue(), _mmsgs.inlineIssue(), viewClick));
 
             } else if (CShell.isSupport()) {
-                ClickHandler newClick = Link.createListener(
-                    Pages.ISSUES, Args.compose("create", _message.messageId));
-                toolBar.add(makeInfoImage(_images.new_issue(), _mmsgs.inlineNewIssue(), newClick));
-                String aargs = Args.compose("assign", _message.messageId, _page);
+                toolBar.add(makeInfoImage(_images.new_issue(), _mmsgs.inlineNewIssue(),
+                                          Link.createListener(
+                                              Pages.ISSUES, "create", _message.messageId)));
                 toolBar.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
-                                          Link.createListener(Pages.GROUPS, aargs)));
+                                          Link.createListener(
+                                              Pages.GROUPS, "assign", _message.messageId, _page)));
             }
         }
 

@@ -465,7 +465,6 @@ public class CanvasRenderingContext2D {
 	ctx.isPointInPath(x, y);
 	}-*/;
 
-
 	private native void drawImageImpl(Element elem, float dx, float dy) /*-{
 	var ctx = this.@com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D::jsCtx;
 	ctx.drawImage(elem, dx, dy);	

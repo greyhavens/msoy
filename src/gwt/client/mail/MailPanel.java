@@ -26,7 +26,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -226,7 +225,7 @@ public class MailPanel extends FlowPanel
 
             Widget link = Link.create(
                 (convo.subject.length() == 0) ? _msgs.mailNoSubject() : convo.subject,
-                Pages.MAIL, Args.compose("c", convo.conversationId));
+                Pages.MAIL, "c", convo.conversationId);
             setWidget(0, 3, link, 1, "Subject");
             setText(1, 1, convo.lastSnippet, 1, "Snippet");
         }

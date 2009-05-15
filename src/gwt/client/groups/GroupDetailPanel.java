@@ -27,7 +27,6 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ShopUtil;
@@ -172,8 +171,8 @@ public class GroupDetailPanel extends FlowPanel
 
         // link to the game for this group
         if (_detail.group.gameId != 0) {
-            actions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(), Link.createListener(
-                Pages.GAMES, Args.compose("d", "" + _detail.group.gameId))));
+            actions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(),
+                            Link.createListener(Pages.GAMES, "d", _detail.group.gameId)));
         }
 
         if (_detail.myRank == Rank.NON_MEMBER) {
@@ -206,9 +205,8 @@ public class GroupDetailPanel extends FlowPanel
 
         // invite others to it
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
-            String args = Args.compose("w", "g", "" + _detail.group.groupId);
-            actions.add(MsoyUI.createActionLabel(
-                            _msgs.detailInvite(), Link.createListener(Pages.MAIL, args)));
+            actions.add(MsoyUI.createActionLabel(_msgs.detailInvite(),
+                            Link.createListener(Pages.MAIL, "w", "g", _detail.group.groupId)));
         }
 
         // shop

@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.LogonPanel;
@@ -168,11 +167,11 @@ public class SplitLandingPanel extends FlowPanel
         _featuredGame.clear();
         _featuredGame.add(MsoyUI.createActionImage(
             "/images/landing/split_game_" + index + ".png", GAME_NAMES[index],
-            Link.createListener(Pages.GAMES, Args.compose("d", GAME_IDS[index]))), 10, 0);
+            Link.createListener(Pages.GAMES, "d", GAME_IDS[index])), 10, 0);
         _featuredGame.add(MsoyUI.createLabel(GAME_NAMES[index], "Name"), 220, 0);
         _featuredGame.add(MsoyUI.createLabel(GAME_DESCRIPTIONS[index], "Description"), 220, 30);
         _featuredGame.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.splitGamesPlay(),
-            Link.createListener(Pages.GAMES, Args.compose("d", GAME_IDS[index]))), 220, 104);
+            Link.createListener(Pages.GAMES, "d", GAME_IDS[index])), 220, 104);
     }
 
     protected void selectRoom (int index)

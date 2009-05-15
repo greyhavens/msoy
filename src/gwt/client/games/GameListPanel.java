@@ -23,7 +23,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.PlayButton;
@@ -129,13 +128,12 @@ public abstract class GameListPanel extends FlowPanel
                 setStyleName("GameInfoPanel");
                 int col = 0;
 
-                String args = Args.compose("d", game.gameId);
                 setWidget(0, col++, MediaUtil.createMediaView(
                               game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
-                              Link.createListener(Pages.GAMES, args)), 1, "Thumbnail");
+                              Link.createListener(Pages.GAMES, "d", game.gameId)), 1, "Thumbnail");
 
                 FlowPanel name = new FlowPanel();
-                name.add(Link.create(game.name, Pages.GAMES, args));
+                name.add(Link.create(game.name, Pages.GAMES, "d", game.gameId));
                 name.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 80),
                          "Description"));
                 setWidget(0, col++, name, 1, "NameDesc");

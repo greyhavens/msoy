@@ -17,7 +17,6 @@ import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -117,9 +116,8 @@ public class GroupsBlurb extends Blurb
     {
         public GroupWidget (final GroupCard card) {
             setStyleName("Group");
-            String args = Args.compose("d", card.name.getGroupId());
-            add(new ThumbBox(card.getLogo(), Pages.GROUPS, args));
-            add(Link.create(card.name.toString(), Pages.GROUPS, args));
+            add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", card.name.getGroupId()));
+            add(Link.create(card.name.toString(), Pages.GROUPS, "d", card.name.getGroupId()));
         }
     }
 

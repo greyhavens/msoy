@@ -20,7 +20,7 @@ import client.ui.ClickBox;
  */
 public class ItemBox extends ClickBox
 {
-    public ItemBox (MediaDesc media, String name, Pages page, String args, boolean remixable)
+    public ItemBox (MediaDesc media, String name, boolean remixable, Pages page, Object... args)
     {
         super(media, name, page, args);
         addStyleName("itemBox");

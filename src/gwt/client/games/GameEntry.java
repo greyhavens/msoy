@@ -11,7 +11,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
@@ -29,7 +28,7 @@ public class GameEntry extends SmartTable
 
         ClickHandler onClick = new ClickHandler() {
             public void onClick (ClickEvent event) {
-                Link.go(Pages.GAMES, Args.compose("d", game.gameId));
+                Link.go(Pages.GAMES, "d", game.gameId);
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(

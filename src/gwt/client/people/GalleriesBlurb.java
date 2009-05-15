@@ -64,7 +64,7 @@ public class GalleriesBlurb extends Blurb
         if (pdata.galleries != null && pdata.galleries.size() > NUM_GALLERIES) {
             footerLinks.add(WidgetUtil.makeShim(10, 10));
             footerLinks.add(Link.create(_msgs.seeAll(), Pages.PEOPLE,
-                Args.compose(GalleryActions.GALLERIES, _name.getMemberId())));
+                GalleryActions.GALLERIES, _name.getMemberId()));
         }
         setFooter(footerLinks);
     }

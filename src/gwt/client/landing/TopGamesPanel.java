@@ -19,7 +19,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.GameNamePanel;
@@ -147,7 +146,7 @@ public class TopGamesPanel extends AbsolutePanel
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         left.add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE,
-                              Pages.GAMES, Args.compose("d", game.gameId)));
+                              Pages.GAMES, "d", game.gameId));
 
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));

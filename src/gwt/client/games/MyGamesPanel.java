@@ -13,7 +13,6 @@ import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.PlayButton;
@@ -56,7 +55,7 @@ public class MyGamesPanel extends GameListPanel
 
     protected void onSortChanged (byte sortMethod)
     {
-        Link.go(Pages.GAMES, Args.compose("mine", sortMethod));
+        Link.go(Pages.GAMES, "mine", sortMethod);
     }
 
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)

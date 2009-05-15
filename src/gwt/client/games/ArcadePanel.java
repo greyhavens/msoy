@@ -17,7 +17,6 @@ import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
@@ -86,25 +85,24 @@ public class ArcadePanel extends FlowPanel
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
-            ClickHandler onClick = Link.createListener(Pages.GAMES, Args.compose("g", genre.genre));
+            ClickHandler onClick = Link.createListener(Pages.GAMES, "g", genre.genre);
             header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre" + genre.genre), onClick));
 
             for (int i = 0; i < genre.games.length; i++) {
                 GameCard game = genre.games[i];
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
-                String clickArgs = Args.compose("d", game.gameId);
                 genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
-                                           Pages.GAMES, clickArgs));
-                genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
+                                           Pages.GAMES, "d", game.gameId));
+                genreGame.add(Link.create(game.name, "Name", Pages.GAMES, "d", game.gameId));
                 if (game.playersOnline > 0) {
                     genreGame.add(MsoyUI.createLabel(
                                       _msgs.featuredOnline(""+game.playersOnline), "Online"));
                 }
             }
 
-            add(Link.create(_msgs.genreMore(""+genre.gameCount), "ViewAll",
-                            Pages.GAMES, Args.compose("g", genre.genre), false));
+            add(Link.createBlock(_msgs.genreMore(""+genre.gameCount), "ViewAll",
+                                 Pages.GAMES, "g", genre.genre));
         }
     }
 
@@ -116,10 +114,9 @@ public class ArcadePanel extends FlowPanel
         public TopGameWidget (int index, GameCard game) {
             super("TopGameWidget", 0, 0);
             setText(0, 0, index+"", 1, "Number");
-            String args = Args.compose("d", game.gameId);
             setWidget(0, 1, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
-                                         Pages.GAMES, args));
-            Widget link = Link.create(game.name, "Name", Pages.GAMES, args, false);
+                                         Pages.GAMES, "d", game.gameId));
+            Widget link = Link.createBlock(game.name, "Name", Pages.GAMES, "d", game.gameId);
             if (game.playersOnline == 0) {
                 setWidget(0, 2, link, 1, "Info");
             } else {

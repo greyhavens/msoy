@@ -41,9 +41,7 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.game.data.GameAuthName;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.GameNodeActions;
 import com.threerings.msoy.game.server.PlayerNodeActions;

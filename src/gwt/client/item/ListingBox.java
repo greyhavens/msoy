@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
@@ -23,18 +22,18 @@ public class ListingBox extends ItemBox
 {
     public static ListingBox newBox (ListingCard card)
     {
-        return new ListingBox(card, Args.compose("l", card.itemType, card.catalogId));
+        return new ListingBox(card, "l", card.itemType, card.catalogId);
     }
 
     public static ListingBox newSubBox (ListingCard card)
     {
         // sub-boxes always link to the item itself
-        return new ListingBox(card, Args.compose("l", card.itemType, card.catalogId));
+        return new ListingBox(card, "l", card.itemType, card.catalogId);
     }
 
-    protected ListingBox (ListingCard card, String args)
+    protected ListingBox (ListingCard card, Object... args)
     {
-        super(card.thumbMedia, card.name, Pages.SHOP, args, card.remixable);
+        super(card.thumbMedia, card.name, card.remixable, Pages.SHOP, args);
 
         String cname = _imsgs.itemBy(card.creator.toString());
         addLabel(MsoyUI.createLabel(cname, "Creator"));

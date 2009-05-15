@@ -10,7 +10,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ItemMessages;
@@ -46,9 +45,8 @@ public class AvatarPanel extends FlowPanel
         public AvatarBox (ListingCard card) {
             super("AvatarBox", 0, 0);
 
-            String args = Args.compose("l", "" + card.itemType, "" + card.catalogId);
             setWidget(0, 0, new ThumbBox(card.thumbMedia, MediaDesc.THUMBNAIL_SIZE, Pages.SHOP,
-                args), 1, "Thumb");
+                                         "l", card.itemType, card.catalogId), 1, "Thumb");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, MsoyUI.createLabel(card.name, "Name"));
             setWidget(1, 0, MsoyUI.createLabel(_imsgs.itemBy(card.creator.toString()), "Creator"));

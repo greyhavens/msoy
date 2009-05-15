@@ -15,7 +15,6 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -52,9 +51,8 @@ public class TrophyComparePanel extends SmartTable
             return;
         }
 
-        String args = Args.compose("d", gameId);
-        setWidget(0, 0, new ThumbBox(result.gameThumb, Pages.GAMES, args));
-        setWidget(1, 0, Link.create(result.gameName, "Game", Pages.GAMES, args));
+        setWidget(0, 0, new ThumbBox(result.gameThumb, Pages.GAMES, "d", gameId));
+        setWidget(1, 0, Link.create(result.gameName, "Game", Pages.GAMES, "d", gameId));
         centerCell(0, 0);
         centerCell(1, 0);
 

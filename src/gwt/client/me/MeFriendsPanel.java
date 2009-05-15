@@ -24,7 +24,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -81,7 +80,7 @@ public class MeFriendsPanel extends FlowPanel
             public void onClick (ClickEvent event) {
                 String query = search.getText().trim();
                 if (query.length() > 0) {
-                    Link.go(Pages.PEOPLE, Args.compose("search", "0", query));
+                    Link.go(Pages.PEOPLE, "search", "0", query);
                 }
             }
         };
@@ -127,8 +126,8 @@ public class MeFriendsPanel extends FlowPanel
                 int gameId = ((MemberCard.InGame)card.status).gameId;
                 FlowPanel game = getPlacePanel(
                     games, gameId, ((MemberCard.InGame)card.status).gameName, true);
-                String args = Args.compose("game", "j", gameId, card.name.getMemberId());
-                Widget member = makeMemberWidget(card, size, Pages.WORLD, args);
+                Widget member = makeMemberWidget(
+                    card, size, Pages.WORLD, "game", "j", gameId, card.name.getMemberId());
                 member.addStyleName("MemberGame");
                 game.add(member);
             }
@@ -157,7 +156,7 @@ public class MeFriendsPanel extends FlowPanel
         return place;
     }
 
-    protected Widget makeMemberWidget (MemberCard card, int size, Pages page, String args)
+    protected Widget makeMemberWidget (MemberCard card, int size, Pages page, Object... args)
     {
         SmartTable member = new SmartTable("Member", 0, 0);
         member.setWidget(0, 0, new ThumbBox(card.photo, size, page, args), 1, "Photo");

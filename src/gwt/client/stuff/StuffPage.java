@@ -92,8 +92,7 @@ public class StuffPage extends Page
                             // We didn't have access to that specific item, but have been given
                             // the catalog id for the prototype.
                             ItemIdent id = result.ident;
-                            Link.replace(
-                                Pages.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
+                            Link.replace(Pages.SHOP, "l", id.type, id.itemId);
                         }
                     }
                 });
@@ -143,8 +142,8 @@ public class StuffPage extends Page
 
         // add a sub-navi link for our active item type
         if (type != Item.NOT_A_TYPE) {
-            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.STUFF, Args.compose(
-                type, memberId), 1);
+            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.STUFF,
+                                    Args.compose(type, memberId), 1);
         }
     }
 
@@ -155,13 +154,13 @@ public class StuffPage extends Page
                 if (item != null) {
                     _models.itemUpdated(item);
                     if (BULK_TYPES.contains(item.getType())) {
-                        Link.go(Pages.STUFF, Args.compose(item.getType(), item.ownerId));
+                        Link.go(Pages.STUFF, item.getType(), item.ownerId);
                     } else if (GAME_TYPES.containsKey(item.getType())) {
                         int gameId = Math.abs(((IdentGameItem)item).gameId);
                         int tabIdx = GAME_TYPES.get(item.getType());
-                        Link.go(Pages.GAMES, Args.compose("e", gameId, tabIdx));
+                        Link.go(Pages.GAMES, "e", gameId, tabIdx);
                     } else {
-                        Link.go(Pages.STUFF, Args.compose("d", item.getType(), item.itemId));
+                        Link.go(Pages.STUFF, "d", item.getType(), item.itemId);
                     }
                 } else {
                     History.back();

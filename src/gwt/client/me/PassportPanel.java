@@ -29,7 +29,6 @@ import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Award.AwardType;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -171,7 +170,7 @@ public class PassportPanel extends FlowPanel
             FlowPanel medals = new FlowPanel();
             _contents.add(new TongueBox(null, group.toString(), medals, new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    Link.go(Pages.GROUPS, Args.compose("d", group.getGroupId()));
+                    Link.go(Pages.GROUPS, "d", group.getGroupId());
                 }
             }));
             for (final Award award : _data.medals.get(group)) {

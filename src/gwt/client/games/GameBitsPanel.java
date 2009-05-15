@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.gwt.GameDetail;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.GameMessages;
@@ -44,8 +43,8 @@ public class GameBitsPanel extends SmartTable
         }
 
         if (CShell.getMemberId() == detail.info.creator.getMemberId() || CShell.isSupport()) {
-            setWidget(row++, 0, Link.create(_msgs.bitsEdit(), Pages.GAMES,
-                                            Args.compose("e", detail.info.gameId)), 2, null);
+            setWidget(row++, 0, Link.create(_msgs.bitsEdit(), Pages.GAMES, "e", detail.info.gameId),
+                      2, null);
         }
     }
 

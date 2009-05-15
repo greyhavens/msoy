@@ -145,11 +145,10 @@ public class EditSurveyPanel extends VerticalPanel
                     HorizontalPanel links = new HorizontalPanel();
                     links.setSpacing(5);
                     links.add(Link.create(_msgs.edit(), Pages.ADMINZ,
-                        Args.compose("survey", "e", item.surveyId)));
+                                          "survey", "e", item.surveyId));
                     links.add(Link.create(_msgs.results(), Pages.ADMINZ,
-                        Args.compose("survey", "r", item.surveyId)));
-                    links.add(Link.create(_msgs.view(), Pages.ME,
-                        Args.compose("survey", item.surveyId)));
+                                          "survey", "r", item.surveyId));
+                    links.add(Link.create(_msgs.view(), Pages.ME, "survey", item.surveyId));
                     row.add(links);
                     // TODO: action link to delete a survey
                     return row;
@@ -174,7 +173,7 @@ public class EditSurveyPanel extends VerticalPanel
             add(table);
 
             // link to add a new survey (id 0)
-            add(Link.create(_msgs.addNew(), "addNew", Pages.ADMINZ, Args.compose("survey", "e", 0)));
+            add(Link.create(_msgs.addNew(), "addNew", Pages.ADMINZ, "survey", "e", 0));
         }
     }
 
@@ -279,7 +278,7 @@ public class EditSurveyPanel extends VerticalPanel
                     _cache.surveyUpdated(result);
                     // reload if this is a brand new survey. otherwise just set it
                     if (_result.survey.surveyId == 0) {
-                        Link.replace(Pages.ADMINZ, Args.compose("survey", "e", result.surveyId));
+                        Link.replace(Pages.ADMINZ, "survey", "e", result.surveyId);
                     } else {
                         _result.survey = result;
                     }
@@ -300,7 +299,7 @@ public class EditSurveyPanel extends VerticalPanel
 
                 // link to create a new question
                 add(Link.create(_msgs.addNewQuestion(), "addNew", Pages.ADMINZ,
-                    Args.compose("survey", "e", _result.survey.surveyId, -1)));
+                    "survey", "e", _result.survey.surveyId, -1));
             }
         }
 
@@ -343,8 +342,8 @@ public class EditSurveyPanel extends VerticalPanel
 
             // edit link
             int index = _result.getQuestionIndex(item);
-            row.add(Link.create(_msgs.edit(), Pages.ADMINZ, Args.compose("survey", "e",
-                _result.survey.surveyId, index)));
+            row.add(Link.create(_msgs.edit(), Pages.ADMINZ,
+                                "survey", "e", _result.survey.surveyId, index));
 
             // last column is controls to rearrange or delete questions
             HorizontalPanel alterBox = new HorizontalPanel();
@@ -574,7 +573,7 @@ public class EditSurveyPanel extends VerticalPanel
                 protected boolean gotResult (SurveyQuestion result) {
                     // let the cache know we've changed things
                     _cache.questionUpdated(_survey, _questionIndex, result);
-                    Link.replace(Pages.ADMINZ, Args.compose("survey", "e", _survey.surveyId));
+                    Link.replace(Pages.ADMINZ, "survey", "e", _survey.surveyId);
                     return true;
                 }
             };

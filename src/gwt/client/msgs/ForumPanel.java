@@ -14,7 +14,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.images.msgs.MsgsImages;
@@ -176,7 +175,7 @@ public class ForumPanel extends TitledListPanel
         MsoyUI.info(_mmsgs.msgNewThreadPosted());
         _fmodels.newThreadPosted(thread);
         // go back to page 0 so the new thread will show up
-        Link.go(Pages.GROUPS, Args.compose("f", _groupId));
+        Link.go(Pages.GROUPS, "f", _groupId);
     }
 
     protected void newThreadCanceled (int groupId)

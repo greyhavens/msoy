@@ -23,7 +23,6 @@ import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.comment.CommentsPanel;
@@ -88,7 +87,7 @@ public class RoomDetailPanel extends SmartTable
                 public void onClick (ClickEvent event) {
                     _roomsvc.canGiftRoom(detail.info.sceneId, new InfoCallback<Void>() {
                         public void onSuccess (Void nada) {
-                            Link.go(Pages.MAIL, Args.compose("w", "r", detail.info.sceneId));
+                            Link.go(Pages.MAIL, "w", "r", detail.info.sceneId);
                         }
                     });
                 }

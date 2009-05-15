@@ -10,7 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.InfoCallback;
@@ -47,7 +46,7 @@ public class GameGenrePanel extends GameListPanel
 
     protected void onSortChanged (byte sortMethod)
     {
-        Link.go(Pages.GAMES, Args.compose("g", _genre, sortMethod, _header.getQuery()));
+        Link.go(Pages.GAMES, "g", _genre, sortMethod, _header.getQuery());
     }
 
     /** Header area with title, games dropdown and search */

@@ -17,7 +17,6 @@ import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.images.slideshow.SlideshowImages;
@@ -201,8 +200,8 @@ public class GalleryPhotoPanel extends FlowPanel
     public void gotoPhotoIndex (int photoIndex)
     {
         Photo photo = photoIndex >= 0 ? _galleryData.photos.get(photoIndex) : null;
-        Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW_PHOTO,
-            _galleryData.gallery.galleryId, photo == null ? 0 : photo.itemId));
+        Link.go(Pages.PEOPLE, GalleryActions.VIEW_PHOTO,
+                _galleryData.gallery.galleryId, photo == null ? 0 : photo.itemId);
     }
 
     /**

@@ -14,7 +14,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Friendship;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -94,8 +93,7 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // if we're not a guest, we can send them mail
             if (isNotMe && !CShell.isGuest()) {
-                onClick = Link.createListener(
-                    Pages.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
+                onClick = Link.createListener(Pages.MAIL, "w", "m", card.name.getMemberId());
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
                 extras.setWidget(row++, 1,

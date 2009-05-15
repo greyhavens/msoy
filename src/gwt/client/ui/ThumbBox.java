@@ -28,12 +28,12 @@ public class ThumbBox extends SimplePanel
         this(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size), null);
     }
 
-    public ThumbBox (MediaDesc desc, Pages page, String args)
+    public ThumbBox (MediaDesc desc, Pages page, Object... args)
     {
         this(desc, MediaDesc.THUMBNAIL_SIZE, page, args);
     }
 
-    public ThumbBox (MediaDesc desc, int size, Pages page, String args)
+    public ThumbBox (MediaDesc desc, int size, Pages page, Object... args)
     {
         this(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size),
              Link.createListener(page, args));

@@ -24,7 +24,6 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.BaseItemDetailPanel;
@@ -77,7 +76,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     public void itemListed (Item item, boolean updated)
     {
         // reload the page
-        Link.replace(Pages.STUFF, Args.compose("d", _item.getType(), _item.itemId));
+        Link.replace(Pages.STUFF, "d", _item.getType(), _item.itemId);
     }
 
     // from interface ItemUsageListener
@@ -130,7 +129,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
-        Link.go(Pages.STUFF, Args.compose(_item.getType(), _item.ownerId));
+        Link.go(Pages.STUFF, _item.getType(), _item.ownerId);
     }
 
     protected void addOwnerButtons ()
@@ -196,9 +195,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
             // if the item is listed, add a biggish UI for updating the listing and pricing
             if (listedOriginal) {
-                String args = Args.compose("l", _item.getType(), _item.catalogId);
                 _details.add(createTipLink(_msgs.detailUplistTip(), _msgs.detailViewListing(),
-                                           Pages.SHOP, args));
+                                           Pages.SHOP, "l", _item.getType(), _item.catalogId));
 
                 // add a button for listing or updating the item
                 buttons = new RowPanel();
@@ -263,7 +261,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (_item instanceof GameItem) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(createTipLink(_msgs.detailCanViewGame(), _msgs.detailViewGame(),
-                                       Pages.GAMES, Args.compose("d", ((GameItem)_item).gameId)));
+                                       Pages.GAMES, "d", ((GameItem)_item).gameId));
         }
 
         adjustForUsage();
@@ -276,9 +274,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (_giftBits != null) {
             _giftBits.clear();
             if (unused) {
-                String args = Args.compose("w", "i", _item.getType(), _item.itemId);
                 _giftBits.add(createTipLink(_msgs.detailGiftTip(), _msgs.detailGift(),
-                                            Pages.MAIL, args));
+                                            Pages.MAIL, "w", "i", _item.getType(), _item.itemId));
             } else {
                 _giftBits.add(new Label(_msgs.detailGiftDisabled()));
             }
@@ -338,7 +335,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 _detail.item = item;
 
                 // redisplay the item detail with the reverted version.
-                Link.replace(Pages.STUFF, Args.compose("d", item.getType(), item.itemId, "revert"));
+                Link.replace(Pages.STUFF, "d", item.getType(), item.itemId, "revert");
                 return false;
             }
         };
@@ -358,7 +355,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     /**
      * Creates a line of text followed inline by a link.
      */
-    protected FlowPanel createTipLink (String tip, String link, Pages page, String args)
+    protected FlowPanel createTipLink (String tip, String link, Pages page, Object... args)
     {
         FlowPanel row = new FlowPanel();
         row.add(new InlineLabel(tip, true, false, true));

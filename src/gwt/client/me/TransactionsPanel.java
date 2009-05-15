@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -55,9 +54,7 @@ public class TransactionsPanel extends FlowPanel
         }
         reportBox.addChangeHandler(new ChangeHandler() {
             public void onChange (ChangeEvent event) {
-                Link.go(Pages.ME, Args.compose(MePage.TRANSACTIONS,
-                        String.valueOf(reportBox.getSelectedIndex()+1),
-                        String.valueOf(memberId)));
+                Link.go(Pages.ME, MePage.TRANSACTIONS, reportBox.getSelectedIndex()+1, memberId);
             }
         });
         reportBox.setSelectedIndex(reportIndex-1);

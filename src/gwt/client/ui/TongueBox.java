@@ -112,7 +112,7 @@ public class TongueBox extends SmartTable
         }
     }
 
-    public void setFooterLink (String text, Pages page, String args)
+    public void setFooterLink (String text, Pages page, Object... args)
     {
         setFooter(Link.create(text, page, args));
     }

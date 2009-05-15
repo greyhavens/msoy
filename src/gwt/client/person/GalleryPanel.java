@@ -22,7 +22,6 @@ import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryListData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 /**
@@ -54,9 +53,8 @@ public class GalleryPanel extends FlowPanel
         add(galleries);
         for (int i = 0; i < data.galleries.size(); i++) {
             Gallery gallery = data.galleries.get(i);
-            String args = Args.compose(GalleryActions.VIEW, gallery.galleryId);
             Widget click = new ClickBox(gallery.thumbMedia, getGalleryLabel(gallery, data.owner),
-                Pages.PEOPLE, args);
+                Pages.PEOPLE, GalleryActions.VIEW, gallery.galleryId);
             galleries.add(click);
         }
 

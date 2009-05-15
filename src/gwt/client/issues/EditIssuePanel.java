@@ -23,7 +23,6 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -158,7 +157,7 @@ public class EditIssuePanel extends SmartTable
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
-                    Link.go(Pages.GROUPS, Args.compose("t", _threadId, _page, _messageId));
+                    Link.go(Pages.GROUPS, "t", _threadId, _page, _messageId);
                     return false;
                 }
             };

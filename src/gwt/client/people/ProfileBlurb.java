@@ -34,7 +34,6 @@ import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -83,11 +82,10 @@ public class ProfileBlurb extends Blurb
 
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
-        String mepics = Args.compose("pgallery", _name.getMemberId());
         ClickHandler onClick = null;
-        onClick = Link.createListener(Pages.PEOPLE, mepics);
+        onClick = Link.createListener(Pages.PEOPLE, "pgallery", _name.getMemberId());
         photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
-        photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, mepics));
+        photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, "pgallery", _name.getMemberId()));
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
@@ -128,8 +126,7 @@ public class ProfileBlurb extends Blurb
             info.addWidget(awardBox, 1, null);
 
             String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
-            ClickHandler clicker =
-                Link.createListener(Pages.ME, Args.compose(page, _name.getMemberId()));
+            ClickHandler clicker = Link.createListener(Pages.ME, page, _name.getMemberId());
 
             if (award.type == AwardType.BADGE) {
                 String hexCode = Integer.toHexString(award.awardId);
@@ -164,8 +161,7 @@ public class ProfileBlurb extends Blurb
             String since = MsoyUI.formatDate(new Date(_profile.memberSince));
             if (CShell.isSupport()) {
                 addDetail(dbits, _msgs.memberSince(),
-                          Link.create(since, Pages.ADMINZ,
-                                      Args.compose("info", _name.getMemberId())));
+                          Link.create(since, Pages.ADMINZ, "info", _name.getMemberId()));
             } else {
                 addDetail(dbits, _msgs.memberSince(), since);
             }
@@ -187,13 +183,13 @@ public class ProfileBlurb extends Blurb
             addFriendButton();
             if (!CShell.isGuest()) {
                 addButton(_buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
-                    Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
+                    Pages.MAIL, "w", "m", ""+_name.getMemberId());
             }
         }
         addButton(_buttons, "/images/profile/visithome.png", _msgs.visitHome(),
                   Pages.WORLD, "m" + _name.getMemberId());
         addButton(_buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
-                  Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
+                  Pages.PEOPLE, "rooms", _name.getMemberId());
         addButton(_buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
         if (CShell.isAdmin()) {
@@ -229,7 +225,8 @@ public class ProfileBlurb extends Blurb
         }
     }
 
-    protected void addButton (FlowPanel buttons, String path, String text, Pages page, String args)
+    protected void addButton (FlowPanel buttons, String path, String text,
+                              Pages page, Object... args)
     {
         buttons.add(Link.createImage(path, text, page, args));
         Widget link = Link.create(text, page, args);

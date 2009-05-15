@@ -10,7 +10,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.game.PlayButton;
@@ -37,8 +36,8 @@ public class FeaturedGamePanel extends AbsolutePanel
         clear();
         final GameInfo game = _games[index];
 
-        add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE,
-                         Pages.GAMES, Args.compose("d", game.gameId)), 10, 37);
+        add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId),
+            10, 37);
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "Online"), 10, 170);
         }

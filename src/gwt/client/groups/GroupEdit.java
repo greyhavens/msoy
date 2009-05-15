@@ -166,7 +166,7 @@ public class GroupEdit extends FlexTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(_cancel = new Button(_cmsgs.cancel(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                Link.go(Pages.GROUPS, _group.groupId == 0 ? "" :
+                Link.go(Pages.GROUPS, (_group.groupId == 0) ? "" :
                         Args.compose("d", _group.groupId));
             }
         }));
@@ -203,7 +203,7 @@ public class GroupEdit extends FlexTable
                 public void addMenuItems (final String tag, PopupMenu menu) {
                     menu.addMenuItem(_msgs.detailTagLink(), new Command() {
                         public void execute () {
-                            Link.go(Pages.GROUPS, Args.compose("tag", "0", tag));
+                            Link.go(Pages.GROUPS, "tag", "0", tag);
                         }
                     });
                 }
@@ -262,7 +262,7 @@ public class GroupEdit extends FlexTable
         if (commitEdits()) {
             _groupsvc.updateGroup(_group, _extras, new InfoCallback<Void>(_submit) {
                 public void onSuccess (Void result) {
-                    Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(_group.groupId), "r"));
+                    Link.go(Pages.GROUPS, "d", _group.groupId, "r");
                 }
             });
         }
@@ -276,8 +276,7 @@ public class GroupEdit extends FlexTable
                 public void onSuccess (PriceQuote quote) {
                     init(quote, new AsyncCallback<Group>() {
                         public void onSuccess (Group group) {
-                            Link.go(Pages.GROUPS,
-                                Args.compose("d", String.valueOf(group.groupId), "r"));
+                            Link.go(Pages.GROUPS, "d", group.groupId, "r");
                         }
                         public void onFailure (Throwable t) {} /* not used */
                     });

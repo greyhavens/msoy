@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
 
@@ -38,58 +37,58 @@ public class SubNaviPanel extends FlowPanel
         switch (tab) {
         case ME:
             if (CShell.isGuest()) {
-                addLink(null, "Home", Pages.LANDING, "");
+                addLink(null, "Home", Pages.LANDING);
             } else {
-                addLink(null, "Me", Pages.ME, "");
+                addLink(null, "Me", Pages.ME);
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
-                addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
+                addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
                 if (CShell.isRegistered()) {
-                    addLink(null, "Friends", Pages.PEOPLE, "");
+                    addLink(null, "Friends", Pages.PEOPLE);
                     addLink(null, "Account", Pages.ACCOUNT, "edit");
                 }
                 if (CShell.isSupport()) {
-                    addLink(null, "Admin", Pages.ADMINZ, "");
+                    addLink(null, "Admin", Pages.ADMINZ);
                 }
             }
             break;
 
         case STUFF:
             if (CShell.isMember()) {
-                addLink(null, "My Stuff", Pages.STUFF, "");
+                addLink(null, "My Stuff", Pages.STUFF);
             }
             break;
 
         case GAMES:
-            addLink(null, "Games", Pages.GAMES, "");
+            addLink(null, "Games", Pages.GAMES);
             if (CShell.isMember()) {
-                addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
+                addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
             }
             addLink(null, "My Games", Pages.GAMES, "m");
-            addLink(null, "New Games", Pages.GAMES, Args.compose("g", -1, 1));
+            addLink(null, "New Games", Pages.GAMES, "g", -1, 1);
             break;
 
         case ROOMS:
-            addLink(null, "Rooms", Pages.ROOMS, "");
+            addLink(null, "Rooms", Pages.ROOMS);
             if (CShell.isMember()) {
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
-                addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
+                addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
             }
             break;
 
         case GROUPS:
-            addLink(null, "Groups", Pages.GROUPS, "");
+            addLink(null, "Groups", Pages.GROUPS);
             if (CShell.isRegistered()) {
                 addLink(null, "My Groups", Pages.GROUPS, "mygroups");
                 addLink(null, "My Discussions", Pages.GROUPS, "unread");
                 if (CShell.isSupport()) {
-                    addLink(null, "Issues", Pages.ISSUES, "");
+                    addLink(null, "Issues", Pages.ISSUES);
                     addLink(null, "My Issues", Pages.ISSUES, "mine");
                 }
             }
             break;
 
         case SHOP:
-            addLink(null, "Shop", Pages.SHOP, "");
+            addLink(null, "Shop", Pages.SHOP);
             addLink(null, "My Favorites", Pages.SHOP, "f");
             if (CShell.isRegistered()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
@@ -98,9 +97,9 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case HELP:
-            addLink(null, "Help", Pages.HELP, "");
-            addLink(null, "Contact Us", Pages.SUPPORT, "");
-            addLink(null, "Report Bug", Pages.GROUPS, Args.compose("f", 72));
+            addLink(null, "Help", Pages.HELP);
+            addLink(null, "Contact Us", Pages.SUPPORT);
+            addLink(null, "Report Bug", Pages.GROUPS, "f", 72);
             if (CShell.isSupport()) {
                 addLink(null, "Admin", Pages.SUPPORT, "admin");
             }
@@ -118,12 +117,12 @@ public class SubNaviPanel extends FlowPanel
         add(MsoyUI.createActionLabel(label, "external", listener));
     }
 
-    public void addLink (String iconPath, String label, Pages page, String args)
+    public void addLink (String iconPath, String label, Pages page, Object... args)
     {
-        addLink(iconPath, label, page, args, true);
+        addLink(iconPath, label, true, page, args);
     }
 
-    public void addLink (String iconPath, String label, Pages page, String args, boolean sep)
+    public void addLink (String iconPath, String label, boolean sep, Pages page, Object... args)
     {
         addSeparator(sep);
         if (iconPath != null) {

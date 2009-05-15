@@ -87,8 +87,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         if (!CShell.isGuest() && isRemixable()) {
             extras.add(new ConfigButton(false, _msgs.listingRemix(),
-                Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
-                    _item.getType(), _item.itemId, _listing.catalogId))));
+                Link.createListener(Pages.SHOP, ShopPage.REMIX, _item.getType(), _item.itemId,
+                                    _listing.catalogId)));
         }
         extras.add(_configBtn = new ConfigButton(true, _msgs.listingConfig(), new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -122,9 +122,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 public void onClick (ClickEvent event) {
                     DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
                         public void itemListed (Item item, boolean updated) {
-                            Link.replace(Pages.SHOP, Args.compose(
-                                "l", _item.getType(), _listing.catalogId,
-                                "repriced_from_" + _listing.quote.getListedAmount()));
+                            Link.replace(Pages.SHOP, "l", _item.getType(), _listing.catalogId,
+                                         "repriced_from_" + _listing.quote.getListedAmount());
                         }
                     });
                 }
@@ -149,9 +148,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
-                String args = Args.compose("d", ""+_item.getType(), ""+_listing.originalItemId);
                 controls.add(createSeparator());
-                controls.add(Link.create(_msgs.listingViewOrig(), Pages.STUFF, args));
+                controls.add(Link.create(_msgs.listingViewOrig(), Pages.STUFF,
+                                         "d", _item.getType(), _listing.originalItemId));
             }
 
             _details.add(controls);

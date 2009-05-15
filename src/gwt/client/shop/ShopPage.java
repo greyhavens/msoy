@@ -128,7 +128,7 @@ public class ShopPage extends Page
             // called only when the remixer exits
             public void remixComplete (Item item) {
                 if (item != null) {
-                    Link.go(Pages.STUFF, Args.compose("d", item.getType(), item.itemId));
+                    Link.go(Pages.STUFF, "d", item.getType(), item.itemId);
                 } else {
                     History.back();
                 }

@@ -30,7 +30,6 @@ import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -71,8 +70,8 @@ public class MemberInfoPanel extends SmartTable
         setWidget(1, 0, Link.transactionsView("Transaction history", info.name.getMemberId()));
         setWidget(2, 0, new Anchor(BillingUtil.getUserStatusPage(info.accountName, info.permaName),
             "Billing Transactions", "_blank"));
-        setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF, Args.compose(Item.AVATAR,
-            info.name.getMemberId())));
+        setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF,
+                                    Item.AVATAR, info.name.getMemberId()));
 
         row = addText("Display name:", 1, "Label");
         final TextBox dispName = MsoyUI.createTextBox(
@@ -258,7 +257,7 @@ public class MemberInfoPanel extends SmartTable
 
     protected static Widget infoLink (MemberName name)
     {
-        return Link.create("" + name, Pages.ADMINZ, Args.compose("info", name.getMemberId()));
+        return Link.create("" + name, Pages.ADMINZ, "info", name.getMemberId());
     }
 
     protected static class AffiliateOfGrid extends PagedGrid<MemberName>

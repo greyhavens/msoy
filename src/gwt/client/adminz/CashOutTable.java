@@ -30,7 +30,6 @@ import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 public class CashOutTable extends PagedGrid<CashOutEntry>
@@ -105,8 +104,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             SmartTable extras = new SmartTable("Extras", 0, 5);
             Button btn = new Button(_msgs.coEntryTransactionsButton());
             btn.addStyleName("sideButton");
-            btn.addClickHandler(Link.createListener(Pages.ME, Args.compose("transactions", "3",
-                String.valueOf(item.memberId))));
+            btn.addClickHandler(Link.createListener(Pages.ME, "transactions", "3", item.memberId));
             extras.addWidget(btn, 0, null);
             btn = new Button(_msgs.coEntryCashOutButton());
             btn.addStyleName("sideButton");

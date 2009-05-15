@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.game.data.all.GameGenre;
@@ -54,7 +53,7 @@ public class GameHeaderPanel extends FlowPanel
                 ListBox listBox = (ListBox) event.getSource();
                 String selectedValue = listBox.getValue(listBox.getSelectedIndex());
                 if (!selectedValue.equals("")) {
-                    Link.go(Pages.GAMES, Args.compose("d", selectedValue));
+                    Link.go(Pages.GAMES, "d", selectedValue);
                 }
             }
         });
@@ -67,7 +66,7 @@ public class GameHeaderPanel extends FlowPanel
         _searchBox = MsoyUI.createTextBox("", 30, 20);
         ClickHandler searchListener = new ClickHandler() {
             public void onClick (ClickEvent event) {
-                Link.go(Pages.GAMES, Args.compose("g", genre, sortMethod, getQuery()));
+                Link.go(Pages.GAMES, "g", genre, sortMethod, getQuery());
             }
         };
         _searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
@@ -81,8 +80,7 @@ public class GameHeaderPanel extends FlowPanel
             if (genreLinks.getWidgetCount() > 0) {
                 genreLinks.add(new InlineLabel("|"));
             }
-            genreLinks.add(Link.create(_dmsgs.xlate("genre" + gcode), Pages.GAMES,
-                                       Args.compose("g", gcode)));
+            genreLinks.add(Link.create(_dmsgs.xlate("genre" + gcode), Pages.GAMES, "g", gcode));
         }
     }
 

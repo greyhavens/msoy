@@ -40,7 +40,6 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCode;

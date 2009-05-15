@@ -26,7 +26,6 @@ import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.group.gwt.MyGroupCard;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -54,8 +53,8 @@ public class MyGroups extends AbsolutePanel
         }
         _sortBox.addChangeHandler(new ChangeHandler() {
             public void onChange (ChangeEvent event) {
-                byte newSortMethod = SORT_VALUES[((ListBox)event.getSource()).getSelectedIndex()];
-                Link.go(Pages.GROUPS, Args.compose("mygroups", newSortMethod));
+                Link.go(Pages.GROUPS, "mygroups",
+                        SORT_VALUES[((ListBox)event.getSource()).getSelectedIndex()]);
             }
         });
 
@@ -137,14 +136,14 @@ public class MyGroups extends AbsolutePanel
                 SimplePanel logoBox = new SimplePanel();
                 logoBox.setStyleName("LogoBox");
                 logoBox.setWidget(new ThumbBox(card.getLogo(), Pages.GROUPS,
-                                               Args.compose("d", card.name.getGroupId())));
+                                               "d", card.name.getGroupId()));
                 add(logoBox);
 
                 // name links to group
                 FlowPanel name = new FlowPanel();
                 name.setStyleName("Name");
                 Widget nameText = Link.create(
-                    card.name.toString(), Pages.GROUPS, Args.compose("d", card.name.getGroupId()));
+                    card.name.toString(), Pages.GROUPS, "d", card.name.getGroupId());
                 nameText.addStyleName("inline");
                 name.add(nameText);
                 // display a star beside name if player is a manager of this group
@@ -168,8 +167,7 @@ public class MyGroups extends AbsolutePanel
                 if (card.latestThread != null) {
 
                     Widget latestThreadSubject = Link.create(
-                        card.latestThread.subject, Pages.GROUPS,
-                        Args.compose("t", card.latestThread.threadId));
+                        card.latestThread.subject, Pages.GROUPS, "t", card.latestThread.threadId);
                     latestThreadSubject.setStyleName("LatestThreadSubject");
                     add(latestThreadSubject);
 
@@ -204,11 +202,11 @@ public class MyGroups extends AbsolutePanel
 
                 // #threads and #posts link to discussions
                 Widget numThreads = Link.create(
-                    card.numThreads+"", Pages.GROUPS, Args.compose("f", card.name.getGroupId()));
+                    card.numThreads+"", Pages.GROUPS, "f", card.name.getGroupId());
                 numThreads.addStyleName("NumThreads");
                 add(numThreads);
                 Widget numPosts = Link.create(
-                    card.numPosts+"", Pages.GROUPS, Args.compose("f", card.name.getGroupId()));
+                    card.numPosts+"", Pages.GROUPS, "f", card.name.getGroupId());
                 numPosts.addStyleName("NumPosts");
                 add(numPosts);
             }

@@ -27,7 +27,6 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 /**
@@ -156,9 +155,8 @@ public class BureauInfoPanel extends VerticalPanel
             col = 0;
             table.setText(row, col++, binfo.bureauId);
             if (binfo.gameId != 0) {
-                String args = Args.compose("d", binfo.gameId);
-                Widget link = Link.create(binfo.gameName, "Name", Pages.GAMES, args, false);
-                table.setWidget(row, col++, link);
+                table.setWidget(row, col++, Link.create(binfo.gameName, "Name",
+                                                        Pages.GAMES, "d", binfo.gameId));
             } else {
                 table.setText(row, col++, "");
             }

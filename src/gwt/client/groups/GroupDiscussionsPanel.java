@@ -19,7 +19,6 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.gwt.GroupDetail;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -83,8 +82,7 @@ public class GroupDiscussionsPanel extends FlowPanel
             date.setStyleName("Date");
             add(date);
 
-            Widget subject = Link.create(
-                thread.subject, Pages.GROUPS, Args.compose("t", thread.threadId));
+            Widget subject = Link.create(thread.subject, Pages.GROUPS, "t", thread.threadId);
             subject.setStyleName("Subject");
             add(subject);
 
@@ -117,8 +115,7 @@ public class GroupDiscussionsPanel extends FlowPanel
                 // 0 or 2+ replies
                 repliesText = _msgs.discussionReplies("" + (thread.posts-1));
             }
-            Widget replies = Link.create(
-                repliesText, Pages.GROUPS, Args.compose("t", thread.threadId));
+            Widget replies = Link.create(repliesText, Pages.GROUPS, "t", thread.threadId);
             replies.setStyleName("Replies");
             add(replies);
         }

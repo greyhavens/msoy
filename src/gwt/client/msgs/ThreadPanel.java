@@ -23,7 +23,6 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.ShellMessages;
@@ -75,7 +74,7 @@ public class ThreadPanel extends TitledListPanel
         _thread = thread;
         _theader.setText(0, 2, _thread.subject);
         _theader.setWidget(0, 1, Link.create(""+_thread.group, Pages.GROUPS,
-                                             Args.compose("f", _thread.group.getGroupId())));
+                                             "f", _thread.group.getGroupId()));
     }
 
     public void editFlags ()

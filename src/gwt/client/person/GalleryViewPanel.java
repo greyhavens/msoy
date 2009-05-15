@@ -120,10 +120,9 @@ public class GalleryViewPanel extends FlowPanel
             if (_profileMemberId != 0) {
                 if (_profileMemberId == CShell.getMemberId()) {
                     error.add(new HTML(_pmsgs.galleryProfileNoPhotosSelf()));
-                    final String args = Args.compose(GalleryActions.CREATE_PROFILE,
-                        _profileMemberId);
-                    final ClickHandler listener = Link.createListener(Pages.PEOPLE, args);
-                    error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
+                    error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(),
+                                  Link.createListener(Pages.PEOPLE, GalleryActions.CREATE_PROFILE,
+                                                      _profileMemberId)));
                 } else {
                     error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
                 }
@@ -134,9 +133,8 @@ public class GalleryViewPanel extends FlowPanel
         } else if (galleryData.photos == null || galleryData.photos.size() == 0) {
             if (galleryData.owner.getMemberId() == CShell.getMemberId()) {
                 error.add(new HTML(_pmsgs.galleryNoPhotosSelf()));
-                final String args = Args.compose(GalleryActions.EDIT,
+                final ClickHandler listener = Link.createListener(Pages.PEOPLE, GalleryActions.EDIT,
                     galleryData.gallery.galleryId);
-                final ClickHandler listener = Link.createListener(Pages.PEOPLE, args);
                 error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
             } else {
                 error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
@@ -166,15 +164,13 @@ public class GalleryViewPanel extends FlowPanel
             }));
         actions.add(new Label("|"));
 
-        final String viewGalleriesArgs = Args.compose(GalleryActions.GALLERIES,
-            _galleryData.owner.getMemberId());
         actions.add(MsoyUI.createActionLabel(_pmsgs.galleryViewAll(),
-            Link.createListener(Pages.PEOPLE, viewGalleriesArgs)));
+            Link.createListener(Pages.PEOPLE, GalleryActions.GALLERIES,
+                                _galleryData.owner.getMemberId())));
         if (galleryData.owner.getMemberId() == CShell.getMemberId()) {
             actions.add(new Label("|"));
-            final String args = Args.compose(GalleryActions.EDIT,
+            final ClickHandler editListener = Link.createListener(Pages.PEOPLE, GalleryActions.EDIT,
                 _galleryData.gallery.galleryId);
-            final ClickHandler editListener = Link.createListener(Pages.PEOPLE, args);
             actions.add(MsoyUI.createActionLabel(_pmsgs.galleryEditButton(), editListener));
             actions.add(new Label("|"));
 
@@ -187,8 +183,7 @@ public class GalleryViewPanel extends FlowPanel
                 }
                 @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_pmsgs.galleryDeleted());
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.GALLERIES,
-                        CShell.getMemberId()));
+                    Link.go(Pages.PEOPLE, GalleryActions.GALLERIES, CShell.getMemberId());
                     return false;
                 }
             };

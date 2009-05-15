@@ -72,8 +72,7 @@ public class ShopPanel extends FlowPanel
         SearchBox searchBox = new SearchBox(new SearchBox.Listener() {
             public void search (String query) {
                 String type = searchTypes.getValue(searchTypes.getSelectedIndex());
-                Link.go(Pages.SHOP, Args.compose(type, CatalogQuery.SORT_BY_NEW_AND_HOT, "s"
-                    + query));
+                Link.go(Pages.SHOP, type, CatalogQuery.SORT_BY_NEW_AND_HOT, "s" + query);
             }
             public void clearSearch () {
                 String type = searchTypes.getValue(searchTypes.getSelectedIndex());
@@ -180,7 +179,7 @@ public class ShopPanel extends FlowPanel
 
     protected static String makeShopArgs (ListingCard card)
     {
-        return Args.compose("l", "" + card.itemType, "" + card.catalogId);
+        return Args.compose("l", card.itemType, card.catalogId);
     }
 
     protected static class TopListingBox extends SmartTable

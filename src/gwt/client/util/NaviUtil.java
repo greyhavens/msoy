@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.msoy.money.data.all.ReportType;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
@@ -21,13 +20,12 @@ import client.ui.MsoyUI;
  */
 public class NaviUtil extends SharedNaviUtil
 {
-    public static ClickHandler onCreateItem (byte type, int suiteId)
+    public static ClickHandler onCreateItem (final byte type, final int suiteId)
     {
-        final String args = Args.compose("c", type, suiteId);
         return new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (MsoyUI.requireRegistered()) {
-                    Link.go(Pages.STUFF, args);
+                    Link.go(Pages.STUFF, "c", type, suiteId);
                 }
             }
         };
@@ -35,17 +33,17 @@ public class NaviUtil extends SharedNaviUtil
 
     public static ClickHandler onEditItem (byte type, int itemId)
     {
-        return Link.createListener(Pages.STUFF, Args.compose("e", type, itemId));
+        return Link.createListener(Pages.STUFF, "e", type, itemId);
     }
 
     public static ClickHandler onRemixItem (byte type, int itemId)
     {
-        return Link.createListener(Pages.STUFF, Args.compose("r", type, itemId));
+        return Link.createListener(Pages.STUFF, "r", type, itemId);
     }
 
     public static ClickHandler onViewTransactions (ReportType report)
     {
-        return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
+        return Link.createListener(Pages.ME, "transactions", report.toIndex());
     }
 
     public static ClickHandler onGoBack ()

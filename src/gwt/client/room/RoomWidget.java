@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.room.gwt.RoomInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
@@ -52,7 +51,7 @@ public class RoomWidget extends FlowPanel
             thumbnail, Link.createListener(Pages.WORLD, "s" + sceneId));
         thumb.setTitle(_msgs.rwThumbTip());
         add(thumb);
-        Widget nameLink = Link.create(name, Pages.ROOMS, Args.compose("room", sceneId));
+        Widget nameLink = Link.create(name, Pages.ROOMS, "room", sceneId);
         nameLink.setTitle(_msgs.rwNameTip());
         add(nameLink);
     }

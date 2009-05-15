@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
@@ -103,8 +102,7 @@ public class DesignWinnersPanel extends FlowPanel
         Widget thumb = SceneUtil.createSceneThumbView(room.thumbnail, Link.createListener(
             Pages.WORLD, "s" + room.sceneId));
         panel.add(thumb);
-        Widget name = Link.create(room.name, Pages.ROOMS, Args.compose("room", room.sceneId));
-        panel.add(name);
+        panel.add(Link.create(room.name, Pages.ROOMS, "room", room.sceneId));
         return panel;
     }
 

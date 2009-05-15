@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.person.FriendsFeedPanel;
@@ -56,8 +55,7 @@ public class MyWhirled extends FlowPanel
                 rbits.add(makeQuickLink("My Blocklist", Pages.PEOPLE, "blocklist"));
                 rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
                 rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
-                rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE,
-                                        Args.compose("invites", "links")));
+                rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE, "invites", "links"));
                 rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
                 String empty = data.friendCount > 0 ?
@@ -110,10 +108,10 @@ public class MyWhirled extends FlowPanel
         });
     }
 
-    protected Widget makeQuickLink (String label, Pages page, String args)
+    protected Widget makeQuickLink (String label, Pages page, Object... args)
     {
         // TODO: add a little bullet to the left
-        return Link.create(label, null, page, args, false);
+        return Link.createBlock(label, null, page, args);
     }
 
     protected final NowLoadingWidget _nowLoading;

@@ -8,7 +8,6 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ListingBox;
@@ -30,8 +29,7 @@ public class FavoritesBlurb extends Blurb
         }
         setContent(grid);
 
-        setFooterLink(_msgs.seeMoreFavorites(), Pages.SHOP,
-            Args.compose("f", pdata.name.getMemberId()));
+        setFooterLink(_msgs.seeMoreFavorites(), Pages.SHOP, "f", pdata.name.getMemberId());
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

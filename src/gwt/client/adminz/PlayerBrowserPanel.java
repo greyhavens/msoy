@@ -24,7 +24,6 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -58,8 +57,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     // we're keeping the same history token, just need to grab parent info.
                     displayPlayersInvitedBy(_childList.getResult().memberId);
                 } else {
-                    int memberId = _parentList.getResult().memberId;
-                    Link.go(Pages.ADMINZ, Args.compose("browser", memberId));
+                    Link.go(Pages.ADMINZ, "browser", _parentList.getResult().memberId);
                 }
             }
         }));
@@ -75,8 +73,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     // nothing to do
                     return;
                 }
-                int memberId = _playerLists.get(index +1).getResult().memberId;
-                Link.go(Pages.ADMINZ, Args.compose("browser", memberId));
+                Link.go(Pages.ADMINZ, "browser", _playerLists.get(index +1).getResult().memberId);
             }
         }));
         _forwardButton.setEnabled(false);
@@ -272,7 +269,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickHandler(
-                    Link.createListener(Pages.ADMINZ, Args.compose("browser", member.memberId)));
+                    Link.createListener(Pages.ADMINZ, "browser", member.memberId));
                 nameLabel.addStyleName("Clickable");
                 _memberIds.put(member.memberId, nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);

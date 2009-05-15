@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.TrophyCase;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -61,8 +60,7 @@ public class TrophyCasePanel extends VerticalPanel
             TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
             int ownerId = tcase.owner.getMemberId();
             if (!CShell.isGuest() && CShell.getMemberId() != ownerId) {
-                String args = Args.compose("ct", ""+shelf.gameId, ""+ownerId);
-                box.setFooterLink(_msgs.caseCompare(), Pages.GAMES, args);
+                box.setFooterLink(_msgs.caseCompare(), Pages.GAMES, "ct", shelf.gameId, ownerId);
             }
             add(box);
         }

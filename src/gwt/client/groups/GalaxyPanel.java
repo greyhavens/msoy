@@ -57,9 +57,9 @@ public class GalaxyPanel extends FlowPanel
         ClickHandler doSearch = new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (_searchInput.getText().equals("")) {
-                    Link.go(Pages.GROUPS, "");
+                    Link.go(Pages.GROUPS);
                 } else {
-                    Link.go(Pages.GROUPS, Args.compose(ACTION_SEARCH, 0, _searchInput.getText()));
+                    Link.go(Pages.GROUPS, ACTION_SEARCH, 0, _searchInput.getText());
                 }
             }
         };
@@ -102,7 +102,7 @@ public class GalaxyPanel extends FlowPanel
             public void onChange (ChangeEvent event) {
                 int sort = SORT_VALUES[((ListBox)event.getSource()).getSelectedIndex()];
                 // sort is only available with no search/tag action, and resets the page.
-                Link.go(Pages.GROUPS, Args.compose("", 0, "", sort));
+                Link.go(Pages.GROUPS, "", 0, "", sort);
             }
         });
 
@@ -113,7 +113,7 @@ public class GalaxyPanel extends FlowPanel
                     : (_query.tag != null ? ACTION_TAG : "");
                 String arg = _query.search != null ? _query.search
                     : (_query.tag != null ? _query.tag : "");
-                Link.go(Pages.GROUPS, Args.compose(action, page, arg, _query.sort));
+                Link.go(Pages.GROUPS, action, page, arg, _query.sort);
             }
             protected Widget createWidget (GroupCard card) {
                 return createGroupWidget(card);
@@ -178,8 +178,8 @@ public class GalaxyPanel extends FlowPanel
             if (query.tag != null && query.tag.equals(tag.toLowerCase())) {
                 tagStyle = "SelectedLink";
             }
-            _categoryLinks.add(Link.create(tag, tagStyle, Pages.GROUPS, Args.compose(ACTION_TAG,
-                0, tag.toLowerCase(), false)));
+            _categoryLinks.add(Link.create(tag, tagStyle, Pages.GROUPS, ACTION_TAG,
+                                           0, tag.toLowerCase(), false));
         }
         _categoryLinks.add(Link.create(_msgs.galaxyCategoryAll(), "Link", Pages.GROUPS, ""));
 
@@ -247,12 +247,12 @@ public class GalaxyPanel extends FlowPanel
     protected Widget createQuickGroupWidget (GroupCard group)
     {
         FloatPanel widget = new FloatPanel("Group");
-        String goArgs = Args.compose("d", group.name.getGroupId());
-        widget.add(new ThumbBox(group.getLogo(), MediaDesc.QUARTER_THUMBNAIL_SIZE, Pages.GROUPS,
-            goArgs));
-        widget.add(Link.create(group.name.toString(), "Name", Pages.GROUPS, goArgs));
-        widget.add(Link.create(_msgs.galaxyMyGroupsDiscussions(), "Discussions", Pages.GROUPS,
-            Args.compose("f", group.name.getGroupId())));
+        widget.add(new ThumbBox(group.getLogo(), MediaDesc.QUARTER_THUMBNAIL_SIZE,
+                                Pages.GROUPS, "d", group.name.getGroupId()));
+        widget.add(Link.create(group.name.toString(), "Name",
+                               Pages.GROUPS, "d", group.name.getGroupId()));
+        widget.add(Link.create(_msgs.galaxyMyGroupsDiscussions(), "Discussions",
+                               Pages.GROUPS, "f", group.name.getGroupId()));
         return widget;
     }
 
@@ -264,18 +264,18 @@ public class GalaxyPanel extends FlowPanel
         FlowPanel widget = MsoyUI.createFlowPanel("Group");
 
         FloatPanel logoAndName = new FloatPanel("LogoAndName");
-        String goArgs = Args.compose("d", group.name.getGroupId());
-        logoAndName.add(new ThumbBox(group.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GROUPS,
-            goArgs));
-        logoAndName.add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs));
+        logoAndName.add(new ThumbBox(group.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE,
+                                     Pages.GROUPS, "d", group.name.getGroupId()));
+        logoAndName.add(Link.create(group.name.toString(), "GroupName",
+                                    Pages.GROUPS, "d", group.name.getGroupId()));
 
         widget.add(logoAndName);
         widget.add(MsoyUI.createLabel(_msgs.galaxyMemberCount(group.memberCount + " "),
-            "MemberCount"));
+                                      "MemberCount"));
         widget.add(Link.create(_msgs.galaxyPeopleInRooms(group.population + ""), "InRooms",
-            Pages.WORLD, "s" + group.homeSceneId));
+                               Pages.WORLD, "s" + group.homeSceneId));
         widget.add(Link.create(_msgs.galaxyThreadCount(group.threadCount + ""), "ThreadCount",
-            Pages.GROUPS, Args.compose("f", group.name.getGroupId())));
+                               Pages.GROUPS, "f", group.name.getGroupId()));
         return widget;
     }
 
