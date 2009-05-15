@@ -215,10 +215,9 @@ class TableList extends List
     override protected function drawRowBackground(
         s :Sprite, rowIndex :int, y :Number, height :Number, color :uint, dataIndex :int) :void
     {
-        if (rowIndex % 2 == 1) {
-            return;
-        } else {
+        if (rowIndex % 2 == 0) {
             super.drawRowBackground(s, rowIndex, y, height, color, dataIndex);
         }
+        // else: don't draw the background
     }
 }

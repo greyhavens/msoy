@@ -3,17 +3,10 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.events.MouseEvent;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Label;
-import mx.controls.ToolTip;
-
-import mx.events.ToolTipEvent;
-
-import mx.managers.ToolTipManager;
 
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
@@ -32,6 +25,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.InfoTipper;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -87,10 +81,7 @@ public class TableSummaryPanel extends HBox
         } else {
             _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
         }
-        // We use "errorString" instead of "toolTip" to make an "error" tooltip, which
-        // doesn't go away when clicked. We style this tip in the show handler, so it
-        // doesn't end up looking like a an error. Lordy.
-        _infoTipper.errorString = createInfoTip(table);
+        _tipper.setTip(createInfoTip(table));
 
         // if the game is in progress
         if (table.gameOid != -1) {
@@ -135,13 +126,8 @@ public class TableSummaryPanel extends HBox
 
         var infoBox :HBox = new HBox();
         infoBox.percentWidth = 100;
-        _infoTipper = new CommandButton(Msgs.GAME.get("b.info"), function () :void {});
-        _infoTipper.addEventListener(MouseEvent.ROLL_OVER, handleTipperRoll);
-        _infoTipper.addEventListener(MouseEvent.ROLL_OUT, handleTipperRoll);
-        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_SHOW, handleTipShow);
-        _infoTipper.styleName = "orangeButton";
-        _infoTipper.scaleY = .8;
-        infoBox.addChild(_infoTipper);
+        _tipper = new InfoTipper();
+        infoBox.addChild(_tipper);
         infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
 
         addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
@@ -187,29 +173,10 @@ public class TableSummaryPanel extends HBox
         return info;
     }
 
-    protected function handleTipperRoll (event :MouseEvent) :void
-    {
-        const show :Boolean = (event.type == MouseEvent.ROLL_OVER);
-        // when we hover over the _infoTipper, show tips immediately, else: restore normal time
-        ToolTipManager.showDelay = show ? 0 : 500;
-        ToolTipManager.hideDelay = show ? Infinity : 10000;
-        _infoTipper.enabled = !show;
-    }
-
-    protected function handleTipShow (event :ToolTipEvent) :void
-    {
-        var tip :ToolTip = ToolTip(event.toolTip);
-        tip.styleName = "gameInfoTip";
-        // text must be jiggled, otherwise the tip won't size properly after the style change
-        // fawking flex
-        tip.text = tip.text; // this is enough jiggling
-        tip.validateNow();
-    }
-
     protected var _icon :MediaWrapper;
     protected var _title :Label;
     protected var _info :Label;
-    protected var _infoTipper :CommandButton;
+    protected var _tipper :InfoTipper;
     protected var _action :CommandButton;
 }
 }
