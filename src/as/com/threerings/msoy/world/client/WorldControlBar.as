@@ -43,9 +43,9 @@ public class WorldControlBar extends ControlBar
     public var friendsBtn :CommandButton;
 
     /** Brings up the recent places grid. */
-    //public var homePageGridBtn :CommandButton;
+    public var homePageGridBtn :CommandButton;
 
-   /** Handles the two party-related popups. */
+    /** Handles the two party-related popups. */
     public var partyBtn :CommandButton;
 
     public var foolsBtn :CommandButton;
@@ -57,6 +57,23 @@ public class WorldControlBar extends ControlBar
     {
         super(ctx);
         _wctx = ctx;
+    }
+
+    /**
+     * Lets us know we are in the A/B group that gets to see the home page grid.
+     */
+    public function showHomePageGrid () :void
+    {
+        if (homePageGridBtn == null) {
+            homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
+            homePageGridBtn.toggle = true;
+            homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+                return new HomePageDialog(_wctx);
+            }, homePageGridBtn));
+            addButton(homePageGridBtn, isNotInViewer, GLOBAL_PRIORITY);
+            updateUI();
+        }
+        homePageGridBtn.activate();
     }
 
     // from ControlBar
@@ -85,12 +102,6 @@ public class WorldControlBar extends ControlBar
             return new FriendsListPanel(_wctx);
         }, friendsBtn));
 
-        //homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
-        //homePageGridBtn.toggle = true;
-        //homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-        //    return new HomePageDialog(_wctx);
-        //}, homePageGridBtn));
-
         partyBtn = createButton("controlBarPartyButton", "i.party");
         partyBtn.toggle = true;
         partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
@@ -108,7 +119,9 @@ public class WorldControlBar extends ControlBar
     override protected function checkControls (... ignored) :void
     {
         const isLoggedOn :Boolean = _ctx.getClient().isLoggedOn();
-        //homePageGridBtn.enabled = isLoggedOn;
+        if (homePageGridBtn != null) {
+            homePageGridBtn.enabled = isLoggedOn;
+        }
         friendsBtn.enabled = isLoggedOn;
         partyBtn.enabled = isLoggedOn;
 
@@ -133,7 +146,6 @@ public class WorldControlBar extends ControlBar
             return isNotInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
         }
 
-        //addButton(homePageGridBtn, isNotInViewer, GLOBAL_PRIORITY);
         addButton(zoomBtn, UberClient.isViewer, GLOBAL_PRIORITY);
         addButton(friendsBtn, showFriends, GLOBAL_PRIORITY);
         addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);

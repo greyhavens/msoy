@@ -37,7 +37,7 @@ public class HomePageItem extends SimpleStreamableObject
      * id, and the name is the room's name. */
     public static final byte ACTION_ROOM = 5;
 
-    /** View a GWT page. The data is an instance of {@link BasicNavItemData}. */
+    /** View a GWT page. The data is an instance of {@link GwtPageNavItemData}. */
     public static final byte ACTION_GWT_PAGE = 6;
 
     /** Go to your inbox. The data is ignored. */

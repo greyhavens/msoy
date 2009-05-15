@@ -38,7 +38,7 @@ public class HomePageItem
     /** Go to a room. The data is an <code>Integer</code> scene id. */
     public static const ACTION_ROOM :int = 5;
 
-    /** View a GWT page. The data is a string url. */
+    /** View a GWT page. The data is a <code>GwtPageNavItemData</code>. */
     public static const ACTION_GWT_PAGE :int = 6;
 
     /** Go to your inbox. The data is ignored. */

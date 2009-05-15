@@ -1053,17 +1053,15 @@ public class WorldController extends MsoyController
 
         } else {
             // display the My Whirled Places grid (and also fall through and go home)
-            //if (null != params["myplaces"]) {
-            //    var ctrlBar :WorldControlBar = (_wctx.getControlBar() as WorldControlBar);
-            //    if (ctrlBar != null && ctrlBar.homePageGridBtn.enabled) {
-            //        if (_wctx.getMemberObject().hasOnlineFriends()) { // also excludes guests
-            //            ctrlBar.friendsBtn.activate();
-            //        }
-            //        if (Prefs.getGridAutoshow()) {
-            //            ctrlBar.homePageGridBtn.activate();
-            //        }
-            //    }
-            //}
+            // Note this only happens when we are in a specific A/B test group and get here via
+            // the landing page. If the user reloads the client from some other url, the home page
+            // grid will no longer be accessible. Se la vi.
+            if (null != params["myplaces"]) {
+                var ctrlBar :WorldControlBar = (_wctx.getControlBar() as WorldControlBar);
+                if (ctrlBar != null) {
+                    ctrlBar.showHomePageGrid();
+                }
+            }
 
             // go to our home scene (this doe the right thing for guests as well)
             _wctx.getSceneDirector().moveTo(_wctx.getMemberObject().getHomeSceneId());

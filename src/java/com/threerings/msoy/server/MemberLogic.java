@@ -28,7 +28,9 @@ import com.whirled.game.server.persist.GameCookieRepository;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -69,6 +71,7 @@ import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
+import com.threerings.msoy.data.GwtPageNavItemData;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
@@ -335,6 +338,25 @@ public class MemberLogic
      */
     public HomePageItem[] getHomePageGridItems (
         int memberId, final MemberExperience[] rawExperiences, boolean onTour, short badgesVersion)
+    {
+        // HACK for A/B testing!
+        // TODO: measure test results and change this
+        return new HomePageItem[] {
+            makeGwtPageItem("Play Games", "games_page", Pages.GAMES),
+            makeGwtPageItem("Join Groups", "groups_page", Pages.GROUPS),
+            makeGwtPageItem("Browse The Shop", "shop_page", Pages.SHOP),
+            makeGameItem(827), // corpse craft
+            makeGameItem(1918), // bang heroes
+            makeGameItem(1692), // vampires
+            EXPLORE_ITEM,
+            makeGwtPageItem("Invite Friends", "invite_friends", Pages.PEOPLE, "invites"),
+            makeGwtPageItem("My Home Page", "me_page", Pages.ME)
+        };
+    }
+
+    // TODO: measure the effectiveness of the HPG and reimplement more efficiently
+    public HomePageItem[] getHomePageGridItems_Unhacked (
+            int memberId, final MemberExperience[] rawExperiences, boolean onTour, short badgesVersion)
     {
         HomePageItem[] items = new HomePageItem[MWP_COUNT];
         int curItem = 0;
@@ -714,6 +736,29 @@ public class MemberLogic
             }
         }
         return items;
+    }
+
+    protected HomePageItem makeGwtPageItem (
+        String name, String imagePath, Pages page, Object... args)
+    {
+        return new HomePageItem(HomePageItem.ACTION_GWT_PAGE,
+            new GwtPageNavItemData(name, page.getPath(), Args.compose(args)),
+            new StaticMediaDesc(MediaDesc.IMAGE_PNG, "icon", imagePath));
+    }
+
+    protected HomePageItem makeGameItem (int gameId)
+    {
+        GameInfoRecord game = _mgameRepo.loadGame(gameId);
+        if (game == null) {
+            return new HomePageItem(HomePageItem.ACTION_NONE, null, null);
+        }
+        if (game.isAVRG && game.groupId != 0) {
+            return new HomePageItem(HomePageItem.ACTION_AVR_GAME,
+                new AVRGameNavItemData(game.gameId, game.name, game.groupId), game.getThumbMedia());
+        } else {
+            return new HomePageItem(HomePageItem.ACTION_GAME, new BasicNavItemData(
+                game.gameId, game.name), game.getThumbMedia());
+        }
     }
 
     /**

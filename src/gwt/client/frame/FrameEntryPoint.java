@@ -213,7 +213,7 @@ public class FrameEntryPoint
             switch (landingGroup) {
             case 1:  // group A: go home
                 page = Pages.WORLD;
-                args = Args.fromToken("places");
+                args = Args.fromToken("hplaces");
                 break;
             case 2:  // group B: register NOW
                 page = Pages.LANDACC;
@@ -572,13 +572,17 @@ public class FrameEntryPoint
             // join a group chat
             displayWorldClient("groupChat=" + action.substring(1), null);
 
-        } else if (action.startsWith("h")) {
+        } else if (action.equals("h")) {
             // go to our home
             displayWorldClient("memberHome=" + CShell.getMemberId(), null);
 
-        } else { // action == "places" or anything else
+        } else if (action.equals("hplaces")) {
             // just logon and show the myplaces dialog, don't go anywhere
             displayWorldClient("myplaces=true", null);
+
+        } else { // (action == "places" or anything else)
+            // just logon and go home for now
+            displayWorldClient("memberHome=" + CShell.getMemberId(), null);
         }
     }
 

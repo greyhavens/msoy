@@ -23,9 +23,10 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
+import com.threerings.msoy.data.GwtPageNavItemData;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
@@ -33,7 +34,7 @@ import com.threerings.msoy.ui.ScalingMediaContainer;
  * The "My Whirled Places" 3x3 grid of recent games and rooms you have visited, plus stamps and
  * special actions like the Whirled Tour.  Displayed when landing in your home room.
  */
-public class HomePageDialog extends FloatingPanel
+public class HomePageDialog extends FlyingPanel
 {
     public static var log :Log = Log.getLog(HomePageDialog);
 
@@ -42,7 +43,7 @@ public class HomePageDialog extends FloatingPanel
         super(ctx);
         _wctx = ctx;
 
-        title = Msgs.GENERAL.get("t.home_page");
+        title = Msgs.HOME_PAGE_GRID.get("t.home_page");
         showCloseButton = true;
         setStyle("paddingTop", EDGE_MARGIN);
         setStyle("paddingLeft", EDGE_MARGIN);
@@ -149,7 +150,11 @@ public class HomePageDialog extends FloatingPanel
 
         cell.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
             itemClicked(item);
-            close();
+            // TODO: figure out which HP items make sense to close and which don't
+            // for now, leave open only for gwt page views
+            if (item.getAction() != HomePageItem.ACTION_GWT_PAGE) {
+                close();
+            }
         });
 
         cell.addEventListener(MouseEvent.ROLL_OVER, function (evt :MouseEvent) :void {
@@ -194,7 +199,10 @@ public class HomePageDialog extends FloatingPanel
             return Msgs.HOME_PAGE_GRID.get("b.play_game", name);
 
         case HomePageItem.ACTION_EXPLORE:
-            return Msgs.WORLD.get("b.start_tour");
+            return Msgs.HOME_PAGE_GRID.get("b.whirled_tour");
+
+        case HomePageItem.ACTION_GWT_PAGE:
+            return GwtPageNavItemData(item.getNavItemData()).getName();
 
         default:
             return name;
@@ -215,6 +223,7 @@ public class HomePageDialog extends FloatingPanel
 
     protected function itemClicked (item :HomePageItem) :void
     {
+        // TODO: what's this for? looks important
         var trackingDetails :String;
         switch (item.getAction()) {
 
@@ -251,6 +260,10 @@ public class HomePageDialog extends FloatingPanel
             trackingDetails = "tour"
             startTour();
             break;
+
+        case HomePageItem.ACTION_GWT_PAGE:
+            var pageItemData :GwtPageNavItemData = GwtPageNavItemData(item.getNavItemData());
+            _wctx.getWorldController().displayPage(pageItemData.getPage(), pageItemData.getArgs());
 
         default:
             trackingDetails = "UNKNOWN"
@@ -314,8 +327,8 @@ public class HomePageDialog extends FloatingPanel
 
     protected static const ROWS :int = 3;
     protected static const COLUMNS :int = 3;
-    protected static const IMAGE_WIDTH :int = 120;
-    protected static const IMAGE_HEIGHT :int = 90;
+    protected static const IMAGE_WIDTH :int = 100;
+    protected static const IMAGE_HEIGHT :int = 75;
     protected static const LABEL_HEIGHT :int = 40;
     protected static const CELL_WIDTH :int = IMAGE_WIDTH;
     protected static const CELL_HEIGHT :int = IMAGE_HEIGHT + LABEL_HEIGHT;
