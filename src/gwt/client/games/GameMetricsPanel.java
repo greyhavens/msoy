@@ -38,15 +38,6 @@ public class GameMetricsPanel extends VerticalPanel
     {
         setStyleName("gameMetrics");
         _detail = detail;
-    }
-
-    @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _metrics != null) {
-            return;
-        }
 
         add(MsoyUI.createLabel(_msgs.gmpLoading(), "Header"));
         _gamesvc.loadGameMetrics(_detail.gameId, new AsyncCallback<GameDistribs>() {
@@ -62,7 +53,6 @@ public class GameMetricsPanel extends VerticalPanel
 
     protected void gotMetrics (GameDistribs metrics)
     {
-        _metrics = metrics;
         clear();
 
         int shown = 0;
@@ -229,7 +219,6 @@ public class GameMetricsPanel extends VerticalPanel
     }
 
     protected GameDetail _detail;
-    protected GameDistribs _metrics;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)

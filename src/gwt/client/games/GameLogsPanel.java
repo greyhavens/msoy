@@ -32,15 +32,6 @@ public class GameLogsPanel extends VerticalPanel
     {
         setStyleName("gameLogs");
         _gameId = gameId;
-    }
-
-    @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _gotLogs) {
-            return;
-        }
 
         add(MsoyUI.createLabel(_msgs.glpLoading(), "Header"));
         _gamesvc.loadGameLogs(_gameId, new AsyncCallback<GameLogs>() {
@@ -56,8 +47,6 @@ public class GameLogsPanel extends VerticalPanel
 
     protected void gotLogs (GameLogs logs)
     {
-        _gotLogs = true;
-
         clear();
 
         if (logs.logIds.length == 0) {
@@ -100,7 +89,6 @@ public class GameLogsPanel extends VerticalPanel
     }
 
     protected int _gameId;
-    protected boolean _gotLogs;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)

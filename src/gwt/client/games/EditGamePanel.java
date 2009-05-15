@@ -20,7 +20,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.ui.StyledTabPanel;
+import client.ui.NaviTabPanel;
 import client.util.InfoCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -39,19 +39,20 @@ public class EditGamePanel extends FlowPanel
     public void setGame (int gameId, final int tabIdx)
     {
         if (_gameId == gameId) {
-            _tabs.selectTab(tabIdx);
+            _tabs.activateTab(tabIdx);
             return;
         }
 
         _gameId = gameId;
         _gamesvc.loadGameData(gameId, new InfoCallback<GameService.GameData>() {
             public void onSuccess (GameService.GameData data) {
-                init(data, tabIdx);
+                init(data);
+                _tabs.activateTab(tabIdx);
             }
         });
     }
 
-    protected void init (final GameService.GameData data, int tabIdx)
+    protected void init (final GameService.GameData data)
     {
         clear();
 
@@ -61,7 +62,11 @@ public class EditGamePanel extends FlowPanel
         add(header);
 
         // add our giant tab list of doom
-        add(_tabs = new StyledTabPanel());
+        add(_tabs = new NaviTabPanel(Pages.GAMES) {
+            protected String getTabArgs (int tabIdx) {
+                return Args.compose("e", _gameId, tabIdx);
+            }
+        });
 
         addTab(_msgs.egTabInfo(), new LazyPanel() {
             protected Widget createWidget () {
@@ -91,17 +96,6 @@ public class EditGamePanel extends FlowPanel
                 }
             });
         }
-
-        // select the desired tab
-        _tabs.selectTab(tabIdx);
-
-        // route tab selection through the URL
-        _tabs.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-            public void onBeforeSelection (BeforeSelectionEvent<Integer> event) {
-                CShell.log("Going to tab " + event.getItem());
-                Link.go(Pages.GAMES, Args.compose("e", _gameId, event.getItem()));
-            }
-        });
     }
 
     protected void addTab (String label, LazyPanel panel)
@@ -110,7 +104,7 @@ public class EditGamePanel extends FlowPanel
     }
 
     protected int _gameId;
-    protected StyledTabPanel _tabs;
+    protected NaviTabPanel _tabs;
 
     protected static final byte[] SUBITEM_TYPES = {
         Item.TROPHY_SOURCE, Item.ITEM_PACK, Item.LEVEL_PACK, Item.PRIZE };

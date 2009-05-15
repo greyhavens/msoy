@@ -4,7 +4,6 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -18,6 +17,7 @@ import com.threerings.msoy.game.gwt.PlayerRating;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
 
@@ -29,17 +29,7 @@ public class TopRankingPanel extends VerticalPanel
     public TopRankingPanel (int gameId, boolean onlyMyFriends)
     {
         setStyleName("topRankingPanel");
-        _gameId = gameId;
         _onlyMyFriends = onlyMyFriends;
-    }
-
-    @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _gameId == 0) {
-            return;
-        }
 
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
         if (_onlyMyFriends && CShell.isGuest()) {
@@ -47,17 +37,12 @@ public class TopRankingPanel extends VerticalPanel
             return;
         }
 
-        addNote(_msgs.trpLoading());
-        _gamesvc.loadTopRanked(_gameId, _onlyMyFriends, new AsyncCallback<PlayerRating[][]>() {
+        add(MsoyUI.createNowLoading());
+        _gamesvc.loadTopRanked(gameId, _onlyMyFriends, new InfoCallback<PlayerRating[][]>() {
             public void onSuccess (PlayerRating[][] topRanked) {
                 gotRankings(topRanked);
             }
-            public void onFailure (Throwable caught) {
-                CShell.log("getTopRanked failed", caught);
-                addNote(CShell.serverError(caught));
-            }
         });
-        _gameId = 0; // note that we've asked for our data
     }
 
     protected void gotRankings (PlayerRating[][] results)
@@ -141,7 +126,6 @@ public class TopRankingPanel extends VerticalPanel
         add(MsoyUI.createLabel(text, "Note"));
     }
 
-    protected int _gameId;
     protected boolean _onlyMyFriends;
     protected SmartTable _grid;
 

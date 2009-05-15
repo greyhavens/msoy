@@ -34,22 +34,12 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
     public GameTrophyPanel (int gameId)
     {
         super(50, 2, NAV_ON_BOTTOM);
-        _gameId = gameId;
         addStyleName("gameTrophyPanel");
         addStyleName("dottedGrid");
         add(new Label(_msgs.gameTrophyLoading()));
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_TOP);
-    }
 
-    @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (!visible || _gameId == 0) {
-            return;
-        }
-
-        _gamesvc.loadGameTrophies(_gameId, new AsyncCallback<List<Trophy>>() {
+        _gamesvc.loadGameTrophies(gameId, new AsyncCallback<List<Trophy>>() {
             public void onSuccess (List<Trophy> result) {
                 setModel(new SimpleDataModel<Trophy>(result), 0);
             }
@@ -58,7 +48,6 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
                 add(new Label(CShell.serverError(caught)));
             }
         });
-        _gameId = 0; // note that we've asked for our data
     }
 
     @Override // from PagedGrid
@@ -109,8 +98,6 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
             getFlexCellFormatter().setRowSpan(0, 0, getRowCount());
         }
     }
-
-    protected int _gameId;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)

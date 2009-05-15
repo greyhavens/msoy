@@ -8,11 +8,10 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LazyPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,8 +38,8 @@ import client.game.PlayButton;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
+import client.ui.NaviTabPanel;
 import client.ui.Rating;
-import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
 import client.util.InfoCallback;
 import client.util.Link;
@@ -51,7 +50,6 @@ import client.util.ServiceUtil;
  * Displays detail information on a particular game.
  */
 public class GameDetailPanel extends SmartTable
-    implements BeforeSelectionHandler<Integer>
 {
     public GameDetailPanel ()
     {
@@ -76,9 +74,9 @@ public class GameDetailPanel extends SmartTable
         }
     }
 
-    public void setGameDetail (GameDetail detail)
+    public void setGameDetail (final GameDetail detail)
     {
-        GameInfo info = detail.info;
+        final GameInfo info = detail.info;
         CShell.frame.setTitle(info.name);
 
         // keep our requested game id around
@@ -139,45 +137,57 @@ public class GameDetailPanel extends SmartTable
         getFlexCellFormatter().setRowSpan(0, 0, 3);
         getFlexCellFormatter().setRowSpan(1, 1, 2);
 
-        _tabs = new StyledTabPanel();
-        _tabs.addBeforeSelectionHandler(this);
+        _tabs = new NaviTabPanel(Pages.GAMES) {
+            protected String getTabArgs (int tabIdx) {
+                return NaviUtil.gameDetail(_gameId, getTabCode(tabIdx));
+            }
+        };
         addWidget(_tabs, 3, null);
 
         // add the about/instructions tab
         addTab(GameDetails.INSTRUCTIONS, _msgs.tabInstructions(), new InstructionsPanel(detail));
 
         // add comments tab
-        addTab(GameDetails.COMMENTS, _msgs.tabComments(),
-               new CommentsPanel(Comment.TYPE_GAME, info.gameId, true));
+        addTab(GameDetails.COMMENTS, _msgs.tabComments(), new LazyPanel() {
+            protected Widget createWidget () {
+                return new CommentsPanel(Comment.TYPE_GAME, info.gameId, true);
+            }
+        });
 
         // add trophies tab, passing in the potentially negative gameId
-        addTab(GameDetails.TROPHIES, _msgs.tabTrophies(), new GameTrophyPanel(_gameId));
+        addTab(GameDetails.TROPHIES, _msgs.tabTrophies(), new LazyPanel() {
+            protected Widget createWidget () {
+                return new GameTrophyPanel(_gameId);
+            }
+        });
 
         // add top rankings tabs
         if (!CShell.isGuest()) {
-            addTab(GameDetails.MYRANKINGS, _msgs.tabMyRankings(),
-                   new TopRankingPanel(info.gameId, true));
+            addTab(GameDetails.MYRANKINGS, _msgs.tabMyRankings(), new LazyPanel() {
+                protected Widget createWidget () {
+                    return new TopRankingPanel(info.gameId, true);
+                }
+            });
         }
-        addTab(GameDetails.TOPRANKINGS, _msgs.tabTopRankings(),
-               new TopRankingPanel(info.gameId, false));
+        addTab(GameDetails.TOPRANKINGS, _msgs.tabTopRankings(), new LazyPanel() {
+            protected Widget createWidget () {
+                return new TopRankingPanel(info.gameId, false);
+            }
+        });
 
         // if we're the creator of the game or an admin, add the metrics and logs tabs
         if (info.isCreator(CShell.getMemberId()) || CShell.isAdmin()) {
-            addTab(GameDetails.METRICS, _msgs.tabMetrics(), new GameMetricsPanel(detail));
-            addTab(GameDetails.LOGS, _msgs.tabLogs(), new GameLogsPanel(_gameId));
+            addTab(GameDetails.METRICS, _msgs.tabMetrics(), new LazyPanel() {
+                protected Widget createWidget () {
+                    return new GameMetricsPanel(detail);
+                }
+            });
+            addTab(GameDetails.LOGS, _msgs.tabLogs(), new LazyPanel() {
+                protected Widget createWidget  () {
+                    return new GameLogsPanel(_gameId);
+                }
+            });
         }
-    }
-
-    // from interface TabListener
-    public void onBeforeSelection (BeforeSelectionEvent<Integer> event)
-    {
-        // route tab selection through the URL
-        GameDetails tabCode = getTabCode(event.getItem());
-        if (tabCode == _seltab) {
-            event.cancel();
-            return;
-        }
-        Link.go(Pages.GAMES, NaviUtil.gameDetail(_gameId, tabCode));
     }
 
     protected void addTab (GameDetails ident, String title, Widget tab)
@@ -189,13 +199,7 @@ public class GameDetailPanel extends SmartTable
     protected void selectTab (GameDetails tab)
     {
         Integer tosel = _tabmap.get(tab);
-        if (tosel == null) {
-            _seltab = getTabCode(0);
-            _tabs.selectTab(0);
-        } else {
-            _seltab = tab;
-            _tabs.selectTab(tosel.intValue());
-        }
+        _tabs.activateTab(tosel == null ? 0 : tosel);
     }
 
     protected GameDetails getTabCode (int tabIndex)
@@ -205,12 +209,11 @@ public class GameDetailPanel extends SmartTable
                 return entry.getKey();
             }
         }
-        return GameDetails.INSTRUCTIONS;
+        return null;
     }
 
-    protected StyledTabPanel _tabs;
+    protected NaviTabPanel _tabs;
     protected int _gameId;
-    protected GameDetails _seltab;
     protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

@@ -57,6 +57,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         _entityId = entityId;
 
         add(new Label(_cmsgs.loadingComments()));
+        setModel(new CommentModel(), 0);
     }
 
     public void showPostPopup ()
@@ -66,15 +67,6 @@ public class CommentsPanel extends PagedGrid<Comment>
         }
         _post.setEnabled(false);
         new PostPanel().show();
-    }
-
-    @Override // from UIObject
-    public void setVisible (boolean visible)
-    {
-        super.setVisible(visible);
-        if (visible && _model == null) {
-            setModel(new CommentModel(), 0);
-        }
     }
 
     @Override // from PagedGrid
@@ -214,8 +206,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         return comment.length() >= 8;
     }
 
-    protected class CommentModel
-        extends PagedServiceDataModel<Comment, PagedResult<Comment>>
+    protected class CommentModel extends PagedServiceDataModel<Comment, PagedResult<Comment>>
     {
         @Override
         protected void callFetchService (int start, int count, boolean needCount,
