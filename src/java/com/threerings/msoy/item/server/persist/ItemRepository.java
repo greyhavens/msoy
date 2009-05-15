@@ -105,7 +105,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Encapsulates information regarding a word search, for catalog items or stuff: we look up
      * each word as a tag, we look up each word as one or more creators, and we create a full-
-     * text query for it. The resulting Depot expressions are used both to filter and to rank 
+     * text query for it. The resulting Depot expressions are used both to filter and to rank
      * search results.
      */
     public class WordSearch
@@ -114,12 +114,12 @@ public abstract class ItemRepository<T extends ItemRecord>
         {
             return _fts.match();
         }
-        
+
         public SQLOperator fullTextRank ()
         {
             return _fts.rank();
         }
-        
+
         public SQLOperator tagExistsExpression (ColumnExp itemColumn)
         {
             if (_tagIds.size() == 0) {
@@ -131,7 +131,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             return new Exists<TagRecord>(new SelectClause<TagRecord>(
                 getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID.name }, where));
         }
-        
+
         public SQLOperator madeByExpression ()
         {
             if (_memberIds.size() == 0) {
@@ -139,7 +139,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
             return new In(getItemColumn(ItemRecord.CREATOR_ID), _memberIds);
         }
-    
+
         protected WordSearch (String search)
         {
             // first split our search up into words
@@ -147,7 +147,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
                 searchTerms = ArrayUtil.splice(searchTerms, 0, 1);
             }
-    
+
             // look up each word as a tag
             _tagIds = new ArrayIntSet();
             if (searchTerms.length > 0) {
@@ -161,10 +161,10 @@ public abstract class ItemRepository<T extends ItemRecord>
             for (String term : searchTerms) {
                 _memberIds.addAll(_memberRepo.findMembersByExactDisplayName(term, 100));
             }
-            
+
             _fts = new FullText(getItemClass(), ItemRecord.FTS_ND, search);
         }
-        
+
         protected IntSet _tagIds;
         protected IntSet _memberIds;
         protected FullText _fts;
@@ -242,6 +242,34 @@ public abstract class ItemRepository<T extends ItemRecord>
         });
         // END TEMP
     }
+
+// TEMP
+    public void migrateSuites (IntIntMap migs)
+    {
+        log.info("Migrating suites for " + getItemClass().getName());
+
+        // we need to generate a map of suiteId -> itemIds so that we can migrate everything based
+        // on itemId to avoid collisions while we're in the process of migrating suites because our
+        // old suite number space and our new number space could overlap
+        Multimap<Integer, Integer> migmap = HashMultimap.create();
+        for (IntIntMap.IntIntEntry entry : migs.entrySet()) {
+            int sourceSuiteId = entry.getIntKey();
+            int destSuiteId = entry.getIntValue();
+            Where where = new Where(new Equals(getItemColumn(GameItemRecord.SUITE_ID),
+                                               sourceSuiteId));
+            for (Key<T> key : findAllKeys(getItemClass(), false, where)) {
+                migmap.put(destSuiteId, (Integer)key.getValues()[0]);
+            }
+        }
+
+        // now go through and "set suiteId = S where itemId in (IIDS)"
+        for (Map.Entry<Integer, Collection<Integer>> entry : migmap.asMap().entrySet()) {
+            updatePartial(getItemClass(),
+                          new Where(new In(getItemColumn(ItemRecord.ITEM_ID), entry.getValue())),
+                          null, getItemColumn(GameItemRecord.SUITE_ID), entry.getKey());
+        }
+    }
+// END TEMP
 
     /**
      * Returns the item type constant for the type of item handled by this repository.
@@ -322,72 +350,45 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Loads all original items owned by the specified member in the specified suite.
+     * Loads all original items owned by the specified member.
      */
-    public List<T> loadOriginalItems (int ownerId, int suiteId)
+    public List<T> loadOriginals (int ownerId)
     {
-        Where where;
-        if (suiteId == 0) {
-            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId);
-        } else {
-            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId,
-                              getItemColumn(GameItemRecord.SUITE_ID), suiteId);
-        }
-        return findAll(getItemClass(), where);
+        return findAll(getItemClass(), new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId));
     }
-
-// TEMP
-    public void migrateSuites (IntIntMap migs)
-    {
-        log.info("Migrating suites for " + getItemClass().getName());
-
-        // we need to generate a map of suiteId -> itemIds so that we can migrate everything based
-        // on itemId to avoid collisions while we're in the process of migrating suites because our
-        // old suite number space and our new number space could overlap
-        Multimap<Integer, Integer> migmap = HashMultimap.create();
-        for (IntIntMap.IntIntEntry entry : migs.entrySet()) {
-            int sourceSuiteId = entry.getIntKey();
-            int destSuiteId = entry.getIntValue();
-            Where where = new Where(new Equals(getItemColumn(GameItemRecord.SUITE_ID),
-                                               sourceSuiteId));
-            for (Key<T> key : findAllKeys(getItemClass(), false, where)) {
-                migmap.put(destSuiteId, (Integer)key.getValues()[0]);
-            }
-        }
-
-        // now go through and "set suiteId = S where itemId in (IIDS)"
-        for (Map.Entry<Integer, Collection<Integer>> entry : migmap.asMap().entrySet()) {
-            updatePartial(getItemClass(),
-                          new Where(new In(getItemColumn(ItemRecord.ITEM_ID), entry.getValue())),
-                          null, getItemColumn(GameItemRecord.SUITE_ID), entry.getKey());
-        }
-    }
-// END TEMP
 
     /**
-     * Loads all original items with the specified suite.
+     * Loads all original game items for the specified game.
      */
-    public List<T> loadOriginalItemsBySuite (int suiteId)
+    public List<T> loadGameOriginals (int gameId)
     {
-        // TODO: This shouldn't need a conservative cache strategy, just debugging
-        // TODO: by process of elimination.
-        return findAll(getItemClass(), CacheStrategy.NONE, Lists.newArrayList(
-                           new Where(getItemColumn(GameItemRecord.SUITE_ID), suiteId)));
+        return findAll(getItemClass(), new Where(getItemColumn(GameItemRecord.SUITE_ID), gameId));
+    }
+
+    /**
+     * Loads all original game items for the specified game owned by the specified member.
+     */
+    public List<T> loadGameOriginals (int gameId, int ownerId)
+    {
+        return findAll(getItemClass(), new Where(getItemColumn(GameItemRecord.SUITE_ID), gameId,
+                                                 getItemColumn(ItemRecord.OWNER_ID), ownerId));
     }
 
     /**
      * Loads all cloned items owned by the specified member.
      */
-    public List<T> loadClonedItems (int ownerId, int suiteId)
+    public List<T> loadClones (int ownerId)
     {
-        Where where;
-        if (suiteId == 0) {
-            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
-        } else {
-            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId,
-                              getItemColumn(GameItemRecord.SUITE_ID), suiteId);
-        }
-        return loadClonedItems(where);
+        return loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId));
+    }
+
+    /**
+     * Loads all cloned game items for the specified game owned by the specified member.
+     */
+    public List<T> loadGameClones (int gameId, int ownerId)
+    {
+        return loadClonedItems(new Where(getItemColumn(GameItemRecord.SUITE_ID), gameId,
+                                         getCloneColumn(CloneRecord.OWNER_ID), ownerId));
     }
 
     /**
@@ -396,12 +397,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findItems (int ownerId, String query)
     {
-        WordSearch queryContext = new WordSearch(query);
+        WordSearch queryContext = buildWordSearch(query);
         List<SQLOperator> matches = Lists.newArrayList();
 
         // original items only match on the text and creator (they cannot be tagged)
-        addTextMatchClause(matches, queryContext);
-        addCreatorMatchClause(matches, queryContext);
+        if (queryContext != null) {
+            addTextMatchClause(matches, queryContext);
+            addCreatorMatchClause(matches, queryContext);
+        }
 
         // locate all matching original items
         List<T> results = findAll(getItemClass(), new Where(
@@ -409,7 +412,9 @@ public abstract class ItemRepository<T extends ItemRecord>
                     makeSearchClause(matches))));
 
         // now add the tag match as cloned items can match tags
-        addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), queryContext);
+        if (queryContext != null) {
+            addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), queryContext);
+        }
 
         // add all matching cloned items
         results.addAll(loadClonedItems(new Where(
@@ -667,8 +672,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Counts all items in the catalog that match the supplied query terms.
      */
-    public int countListings (
-        boolean mature, WordSearch search, int tag, int creator, Float minRating, int suiteId)
+    public int countListings (boolean mature, WordSearch search, int tag, int creator,
+                              Float minRating)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(getCatalogClass()));
@@ -677,10 +682,18 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // see if there's any where bits to turn into an actual where clause
         List<SQLOperator> whereBits = Lists.newArrayList();
-        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
+        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0);
 
         // finally fetch all the catalog records of interest
         return load(CountRecord.class, clauses).count;
+    }
+
+    /**
+     * A simplified method for loading the top catalog records.
+     */
+    public List<CatalogRecord> loadCatalog (byte sortBy, int rows)
+    {
+        return loadCatalog(sortBy, false, null, 0, 0, null, 0, 0, rows);
     }
 
     /**
@@ -694,7 +707,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CatalogRecord> loadCatalog (
         byte sortBy, boolean mature, WordSearch context, int tag, int creator,
-        Float minRating, int suiteId, int offset, int rows)
+        Float minRating, int gameId, int offset, int rows)
     {
         LinkedList<QueryClause> clauses = Lists.newLinkedList();
         clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
@@ -749,8 +762,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // see if there's any where bits to turn into an actual where clause
         boolean significantlyConstrained = addSearchClause(
-            clauses, whereBits, mature, context, tag, creator, minRating, suiteId);
-        
+            clauses, whereBits, mature, context, tag, creator, minRating, gameId);
+
         // finally fetch all the catalog records of interest and resolve their item bits
         List<CatalogRecord> records = findAllWithOffset(getCatalogClass(),
             (!significantlyConstrained && sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT) ?
@@ -764,20 +777,20 @@ public abstract class ItemRepository<T extends ItemRecord>
      * A request for N records of at offset O of a certain query is mapped to one or possibly
      * several database queries whose offsets always fall on even {@link #FIND_ALL_CHUNK}
      * integer boundaries, and which generally retrieve fairly large numbers of results.
-     * 
+     *
      * Or, in language that someone might actually understand, illustrated with an example,
      * where we pretend that FIND_ALL_CHUNK is 20:
-     * 
+     *
      *  - Someone looks at the three first result pages of a search, resulting in identical
      *    requests for data with offsets 0, 8 and 16, all with limit 8.
      *  - To satisfy the first two, we request 20 records beginning at offset 0.
      *  - To satisfy the third, we additionally request 20 records beginning at offset 20.
-     *  
+     *
      *  What's the gain? Caching is vital, obviously; in practice we end up doing two database
      *  requests instead of three, and the idea is that requesting 20 records costs pretty much
      *  the same as requesting 8. In practice, FIND_ALL_CHUNK is larger, so the caching gain is
      *  higher.
-     * 
+     *
      * This algorithm requires a collection-query-friendly cache strategy, and makes sense mostly
      * for queries whose execution cost is dominated by an expensive OrderBy operation.
      */
@@ -789,7 +802,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             throw new IllegalArgumentException(
                 "This algorithm should only be used for cached collection queries.");
         }
-        
+
         List<V> results = Lists.newArrayList();
         Limit limit = null;
 
@@ -806,10 +819,10 @@ public abstract class ItemRepository<T extends ItemRecord>
             // and insert a new one, always fetching FIND_ALL_CHUNK items
             limit = new Limit(chunkOffset, FIND_ALL_CHUNK);
             clauses.add(0, limit);
-            
+
             // fetch the chunk from the database (or from the cache, hopefully)
             List<V> chunk = findAll(pClass, strategy, clauses);
-            
+
             // figure out how much of the data we read is going to be included in our original
             // request, taking into account that we did not necessarily get a full chunk back
             int relevantInChunk = Math.min(Math.max(0, chunk.size() - queryIxInChunk), toRead);
@@ -820,18 +833,18 @@ public abstract class ItemRepository<T extends ItemRecord>
                 toRead -= relevantInChunk;
                 queryIx += relevantInChunk;
             }
-            
+
             if (chunk.size() < FIND_ALL_CHUNK) {
                 // regardless of the original toRead limit, if we read less than a complete chunk,
                 // the stream is dry, and we're definitely done -- this is also going to be true
                 // anytime relevantInChunk is zero
-                toRead = 0; 
+                toRead = 0;
             }
         } while (toRead > 0);
 
         return results;
     }
-    
+
     /**
      * Loads up the specified catalog records.
      */
@@ -1296,7 +1309,11 @@ public abstract class ItemRepository<T extends ItemRecord>
             matches.add(op);
         }
     }
-    
+
+    /**
+     * Creates a word search record for the supplied query. This is expensive and involves database
+     * lookups, so beware. Returns null if the query is blank.
+     */
     public WordSearch buildWordSearch (String query)
     {
         if (query != null && query.trim().length() > 0) {
@@ -1304,7 +1321,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
         return null;
     }
-    
+
     /**
      * Searches for any tags that match the search string and matches all catalog master items that
      * are tagged with those tags.
@@ -1350,10 +1367,10 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     protected boolean addSearchClause (
         List<QueryClause> clauses, List<SQLOperator> whereBits, boolean mature,
-        WordSearch queryContext, int tag, int creator, Float minRating, int suiteId)
+        WordSearch queryContext, int tag, int creator, Float minRating, int gameId)
     {
         boolean significantlyConstrained = false;
-        
+
         // add our search clauses if we have a search string
         if (queryContext != null) {
             whereBits.add(buildSearchClause(queryContext));
@@ -1383,8 +1400,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             whereBits.add(new GreaterThanEquals(getRatingExpression(), minRating));
         }
 
-        if (suiteId != 0 && isGameItem()) {
-            whereBits.add(new Equals(getItemColumn(GameItemRecord.SUITE_ID), suiteId));
+        if (gameId != 0 && GameItemRecord.class.isAssignableFrom(getItemClass())) {
+            whereBits.add(new Equals(getItemColumn(GameItemRecord.SUITE_ID), gameId));
             significantlyConstrained = true;
         }
 
@@ -1406,7 +1423,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         exprs.add(getRatingExpression());
         orders.add(OrderBy.Order.DESC);
     }
-    
+
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
@@ -1454,18 +1471,18 @@ public abstract class ItemRepository<T extends ItemRecord>
             // tag factors below have something non-zero to work with when there is no full
             // text hit at all
             new Arithmetic.Add(new ValueExp(0.1), context.fullTextRank()),
-            
+
             // adjust the FTS rank by (5 + rating), which means a 5-star item is rated
             // (approximately) twice as high rated as a 1-star item
             new Arithmetic.Add(new ValueExp(1.0), getRatingExpression()),
-            
+
             // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            new Arithmetic.Add(new ValueExp(3.0), new FunctionExp("LOG", 
+            new Arithmetic.Add(new ValueExp(3.0), new FunctionExp("LOG",
                 new Arithmetic.Add(new ValueExp(1.0), getCatalogColumn(CatalogRecord.PURCHASES)))),
         };
-        
-        SQLOperator tagExistsExp = 
+
+        SQLOperator tagExistsExp =
             context.tagExistsExpression(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID));
         if (tagExistsExp != null) {
             // if there is a tag match, immediately boost relevance by 25%
@@ -1486,7 +1503,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         exprs.add(getRatingExpression());
         orders.add(OrderBy.Order.DESC);
     }
-    
+
     protected void addOrderByFavorites (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
         exprs.add(getCatalogColumn(CatalogRecord.FAVORITE_COUNT));
@@ -1547,14 +1564,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         classes.add(getItemClass());
         classes.add(getCloneClass());
         classes.add(getCatalogClass());
-    }
-
-    /**
-     * Checks whether the Item class for this repository is a GameItemRecord.
-     */
-    protected boolean isGameItem ()
-    {
-        return GameItemRecord.class.isAssignableFrom(getItemClass());
     }
 
     /**
@@ -1665,5 +1674,5 @@ public abstract class ItemRepository<T extends ItemRecord>
     /** How many catalog records to actually request from the database when using our fancy
      * chunking algorithm. Larger values reduce DB load; excessively high ones will over-fill
      * the cache heap with unrequested result sets. */
-    protected static final int FIND_ALL_CHUNK = 100; 
+    protected static final int FIND_ALL_CHUNK = 100;
 }

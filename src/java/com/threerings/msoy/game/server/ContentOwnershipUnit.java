@@ -40,12 +40,12 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
         Iterable<LevelPackRecord> lrecords;
         Iterable<ItemPackRecord> irecords;
         if (GameUtil.isDevelopmentVersion(_gameId)) {
-            // only the game creator will appear to "own" premium level packs (or any item
-            // packs since all item packs are premium); however a crafty creator could
-            // create extra item or premium level packs and give them to a tester and the
-            // tester will then also appear to own said premium content
-            lrecords = getLpackRepo().loadOriginalItems(_memberId, _gameId);
-            irecords = getIpackRepo().loadOriginalItems(_memberId, _gameId);
+            // only the game creator will appear to "own" premium level packs (or any item packs
+            // since all item packs are premium); however a crafty creator could create extra item
+            // or premium level packs and give them to a tester and the tester will then also
+            // appear to own said premium content
+            lrecords = getLpackRepo().loadGameOriginals(_gameId, _memberId);
+            irecords = getIpackRepo().loadGameOriginals(_gameId, _memberId);
             // filter out non-premium level packs (which will generally show up in the
             // creator's inventory) since those normally wouldn't be owned
             lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
@@ -54,8 +54,8 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
                 }
             });
         } else {
-            lrecords = getLpackRepo().loadClonedItems(_memberId, _gameId);
-            irecords = getIpackRepo().loadClonedItems(_memberId, _gameId);
+            lrecords = getLpackRepo().loadGameClones(_gameId, _memberId);
+            irecords = getIpackRepo().loadGameClones(_gameId, _memberId);
         }
         Iterables.addAll(_content, summarize(GameData.LEVEL_DATA, lrecords));
         Iterables.addAll(_content, summarize(GameData.ITEM_DATA, irecords));

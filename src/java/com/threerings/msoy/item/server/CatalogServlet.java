@@ -122,7 +122,6 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
         CatalogResult result = new CatalogResult();
         List<ListingCard> list = Lists.newArrayList();
 
@@ -132,15 +131,16 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
         int tagId = (query.tag != null) ? repo.getTagRepository().getTagId(query.tag) : 0;
 
+        // build our word search once and share it for loadCatalog() and countListings()
         ItemRepository<ItemRecord>.WordSearch context = repo.buildWordSearch(query.search);
-        
+
         // fetch catalog records and loop over them
-        list.addAll(Lists.transform(
-                        repo.loadCatalog(query.sortBy, showMature(mrec), context, tagId,
-                                         query.creatorId, null, query.suiteId, offset, rows),
-                        CatalogRecord.TO_CARD));
+        list.addAll(Lists.transform(repo.loadCatalog(query.sortBy, showMature(mrec), context, tagId,
+                                                     query.creatorId, null, 0, offset, rows),
+                                    CatalogRecord.TO_CARD));
 
         // resolve the creator names for these listings
         _itemLogic.resolveCardNames(list);
@@ -148,7 +148,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // if they want the total number of matches, compute that as well
         if (includeCount) {
             result.listingCount = repo.countListings(
-                showMature(mrec), context, tagId, query.creatorId, null, query.suiteId);
+                showMature(mrec), context, tagId, query.creatorId, null);
         }
         result.listings = list;
 

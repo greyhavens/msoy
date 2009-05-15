@@ -474,7 +474,7 @@ public class GameServlet extends MsoyServiceServlet
 
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         List<Item> items = Lists.newArrayList();
-        items.addAll(Lists.transform(repo.loadOriginalItemsBySuite(GameInfo.toDevId(info.gameId)),
+        items.addAll(Lists.transform(repo.loadGameOriginals(GameInfo.toDevId(info.gameId)),
                                      new ItemRecord.ToItem<Item>()));
         Collections.sort(items);
         return items;
@@ -612,12 +612,9 @@ public class GameServlet extends MsoyServiceServlet
     {
         TrophySourceRepository tsrepo = _trophySourceRepo;
 
-// TODODODODODODODODODODODO
-        int gameSuiteId = grec.gameId;
-
         // load up the (listed) trophy source records for this game
         Map<String,Trophy> trophies = Maps.newHashMap();
-        List<TrophySourceRecord> trecords = tsrepo.loadOriginalItemsBySuite(gameSuiteId);
+        List<TrophySourceRecord> trecords = tsrepo.loadGameOriginals(grec.gameId);
         for (TrophySourceRecord record : trecords) {
             Trophy trophy = new Trophy();
             trophy.gameId = grec.gameId;

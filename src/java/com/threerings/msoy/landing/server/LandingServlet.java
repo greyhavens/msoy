@@ -10,13 +10,12 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ExpiringReference;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -79,12 +78,8 @@ public class LandingServlet extends MsoyServiceServlet
         data.topGames = _gameLogic.loadTopGames(pps, true);
 
         // select the top rated avatars
-        ItemRepository<?> repo = _itemLogic.getAvatarRepository();
-        List<ListingCard> cards = Lists.newArrayList();
-        for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false, null, 0,
-                                                   0, null, 0, 0, ShopData.TOP_ITEM_COUNT)) {
-            cards.add(crec.toListingCard());
-        }
+        List<ListingCard> cards = _itemLogic.loadCatalog(
+            Item.AVATAR, CatalogQuery.SORT_BY_RATING, ShopData.TOP_ITEM_COUNT);
         _itemLogic.resolveCardNames(cards);
         data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
 

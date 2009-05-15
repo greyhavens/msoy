@@ -207,8 +207,8 @@ public class StuffServlet extends MsoyServiceServlet
         List<Item> items = Lists.newArrayList();
         Function<ItemRecord, Item> toItem = new ItemRecord.ToItem<Item>();
         if (StringUtil.isBlank(query)) {
-            items.addAll(Lists.transform(repo.loadOriginalItems(memberId, 0), toItem));
-            items.addAll(Lists.transform(repo.loadClonedItems(memberId, 0), toItem));
+            items.addAll(Lists.transform(repo.loadOriginals(memberId), toItem));
+            items.addAll(Lists.transform(repo.loadClones(memberId), toItem));
         } else {
             items.addAll(Lists.transform(repo.findItems(memberId, query), toItem));
         }

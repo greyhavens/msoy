@@ -18,7 +18,6 @@ public abstract class GameItemEditor extends ItemEditor
         _gitem = (GameItem)item;
     }
 
-
     @Override // from ItemEditor
     public void setGameId (int gameId)
     {

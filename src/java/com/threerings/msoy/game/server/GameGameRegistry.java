@@ -1096,20 +1096,20 @@ public class GameGameRegistry
         content.code = _mgameRepo.loadGameCode(gameId, true).toGameCode();
         content.metrics = _mgameRepo.loadGameMetrics(gameId);
         // load up our level and item packs
-        for (LevelPackRecord record : _lpackRepo.loadOriginalItemsBySuite(gameId)) {
+        for (LevelPackRecord record : _lpackRepo.loadGameOriginals(gameId)) {
             content.lpacks.add((LevelPack)record.toItem());
         }
-        for (ItemPackRecord record : _ipackRepo.loadOriginalItemsBySuite(gameId)) {
+        for (ItemPackRecord record : _ipackRepo.loadGameOriginals(gameId)) {
             content.ipacks.add((ItemPack)record.toItem());
         }
         // load up our trophy source items
         Set<TrophySourceRecord> tsrecs = Sets.newTreeSet(TrophySourceRecord.BY_SORT_ORDER);
-        tsrecs.addAll(_tsourceRepo.loadOriginalItemsBySuite(gameId));
+        tsrecs.addAll(_tsourceRepo.loadGameOriginals(gameId));
         for (TrophySourceRecord record : tsrecs) {
             content.tsources.add((TrophySource)record.toItem());
         }
         // load up our prize items
-        for (PrizeRecord record : _prizeRepo.loadOriginalItemsBySuite(gameId)) {
+        for (PrizeRecord record : _prizeRepo.loadGameOriginals(gameId)) {
             content.prizes.add((Prize)record.toItem());
         }
         return content;

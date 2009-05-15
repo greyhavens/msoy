@@ -42,7 +42,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
@@ -645,11 +644,9 @@ public class SpamLogic
 
         // load up items from new & hot and staff picks (x2), no dupes
         Set<ListingCard> resultSet = Sets.newHashSet();
-        resultSet.addAll(Lists.transform(_itemLogic.getRepository(itemType).loadCatalog(
-            CatalogQuery.SORT_BY_NEW_AND_HOT, false, null, 0, 0, null, 0, 0, count),
-            CatalogRecord.TO_CARD));
-        resultSet.addAll(_itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(memberIds,
-            count * 2, itemType)));
+        resultSet.addAll(_itemLogic.loadCatalog(itemType, CatalogQuery.SORT_BY_NEW_AND_HOT, count));
+        resultSet.addAll(_itemLogic.resolveFavorites(
+                             _faveRepo.loadRecentFavorites(memberIds, count * 2, itemType)));
 
         // get a random subset into a list
         List<ListingCard> result;
