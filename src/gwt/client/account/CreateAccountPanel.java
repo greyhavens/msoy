@@ -81,18 +81,38 @@ public class CreateAccountPanel extends FlowPanel
             }
         },
 
-        /** Standard text, logon last, does not dispatch the session data after creation. */
-        VALIDATION_TEST {
+        /** Standard text, logon last, shows a "wait for validation" message. */
+        VALIDATION_TEST_V1 {
             public String getIntro () {
                 return _msgs.createCoins();
             }
             public boolean logonOnBottom () {
                 return true;
             }
+            public boolean forceValidate () {
+                return true;
+            }
+        },
+
+        /** Same as above but nicer banner. */
+        VALIDATION_TEST_V2 {
+            public String getIntro () {
+                return _msgs.createCoins();
+            }
+            public boolean logonOnBottom () {
+                return true;
+            }
+            public boolean forceValidate () {
+                return true;
+            }
         };
 
         public abstract String getIntro ();
         public abstract boolean logonOnBottom ();
+        public boolean forceValidate ()
+        {
+            return false;
+        }
     }
 
     /**
@@ -104,7 +124,8 @@ public class CreateAccountPanel extends FlowPanel
 
         add(WidgetUtil.makeShim(15, 15));
 
-        add(new Image("/images/account/create_bg_top.png"));
+        add(new Image(mode == Mode.VALIDATION_TEST_V2 ? "/images/account/register_banner.jpg" :
+            "/images/account/create_bg_top.png"));
         final FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
@@ -213,7 +234,7 @@ public class CreateAccountPanel extends FlowPanel
                     RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
 
                 setStatus(_msgs.creatingAccount());
-                _usersvc.register(DeploymentConfig.version, info, mode == Mode.VALIDATION_TEST,
+                _usersvc.register(DeploymentConfig.version, info, mode.forceValidate(),
                                   this);
                 return true;
             }
@@ -223,7 +244,7 @@ public class CreateAccountPanel extends FlowPanel
                     ConversionTrackingUtil.createAdWordsTracker(),
                     ConversionTrackingUtil.createBeacon(session.entryVector)}; 
 
-                if (mode == Mode.VALIDATION_TEST) {
+                if (mode.forceValidate()) {
                     // they are going to be clicking a link in an email and starting a new session
                     // in a new window, so just set the status and leave the button disabled.
                     // TODO: this may not be the right time to set the trackers
