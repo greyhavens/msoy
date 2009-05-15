@@ -80,8 +80,8 @@ public class StandardLayout extends Layout
         RootPanel.get(PAGE).add(_content);
         RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
 
-        // on frameless pages, we don't listen for resize as the iframe is height 100%, otherwise do
-        setWindowResizerEnabled(_content == iframe);
+        // on frameless pages, we don't listen for resize because the iframe is height 100%
+        setWindowResizerEnabled(_content != iframe);
     }
 
     @Override // from Layout
