@@ -287,18 +287,20 @@ public class MsoyGameRepository extends DepotRepository
         }
 
         if (!StringUtil.isBlank(search)) {
-// TODO: search name and description
-//             whereBits.add(buildSearchClause(new WordSearch(search)));
+            FullText fts = new FullText(GameInfoRecord.class, GameInfoRecord.FTS_ND, search);
+            whereBits.add(fts.match());
+            clauses.add(OrderBy.descending(fts.rank()));
+
+        } else {
+            // if we have no search ranking, sort by descending average rating
+            FunctionExp count = new FunctionExp(
+                "GREATEST", GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
+            clauses.add(OrderBy.descending(new Arithmetic.Div(GameInfoRecord.RATING_SUM, count)));
         }
 
         // filter out games that aren't integrated with Whirled
         whereBits.add(new Equals(GameInfoRecord.INTEGRATED, Boolean.TRUE));
         clauses.add(new Where(new And(whereBits)));
-
-        // sort by descending average rating
-        FunctionExp count = new FunctionExp(
-            "GREATEST", GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
-        clauses.add(OrderBy.descending(new Arithmetic.Div(GameInfoRecord.RATING_SUM, count)));
 
         // add the limit if specified
         if (limit > 0) {

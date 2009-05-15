@@ -7,11 +7,11 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.FullTextIndex;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
-import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
@@ -35,8 +35,9 @@ import com.threerings.msoy.game.gwt.GameInfo;
  * Contains details on a single game "title" including the development and published game item ids
  * and other metrics.
  */
-@Entity
-@TableGenerator(name="gameId", pkColumnValue="GAME_ID")
+@Entity(fullTextIndices={
+    @FullTextIndex(name=GameInfoRecord.FTS_ND, fields={ "name", "description" })
+})
 public class GameInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -61,13 +62,16 @@ public class GameInfoRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
 
     /** The quantity of flow to be awarded before our first recalc. */
     public static final int INITIAL_RECALC_FLOW = 6000;
+
+    /** The identifier for the full text search index on {@link #name} + {@link #description}. */
+    public static final String FTS_ND = "ND";
 
     /** The unique identifier for this game. */ // TODO: nix initialValue after migration
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=2500)
