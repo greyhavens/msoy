@@ -66,17 +66,17 @@ public class EditGamePanel extends FlowPanel
             }
         });
 
-        addTab(_msgs.egTabInfo(), new LazyPanel() {
+        _tabs.add(new LazyPanel() {
             protected Widget createWidget () {
                 return new InfoEditorPanel(data.info);
             }
-        });
-        addTab(_msgs.egTabCode(), new LazyPanel() {
+        }, _msgs.egTabInfo());
+        _tabs.add(new LazyPanel() {
             protected Widget createWidget () {
                 return new CodeEditorPanel(data.devCode);
             }
-        });
-        addTab(_msgs.egTabPublish(), new LazyPanel() {
+        }, _msgs.egTabCode());
+        _tabs.add(new LazyPanel() {
             protected Widget createWidget () {
                 return new PublishPanel(data);
             }
@@ -86,19 +86,14 @@ public class EditGamePanel extends FlowPanel
                 }
                 super.setVisible(visible);
             }
-        });
+        }, _msgs.egTabPublish());
         for (final byte type : SUBITEM_TYPES) {
-            addTab(_dmsgs.get("pItemType" + type), new LazyPanel() {
+            _tabs.add(new LazyPanel() {
                 protected Widget createWidget () {
                     return new GameItemEditorPanel(data.info.gameId, type);
                 }
-            });
+            }, _dmsgs.get("pItemType" + type));
         }
-    }
-
-    protected void addTab (String label, LazyPanel panel)
-    {
-        _tabs.add(panel, label);
     }
 
     protected int _gameId;
