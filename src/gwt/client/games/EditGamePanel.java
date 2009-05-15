@@ -70,7 +70,18 @@ public class EditGamePanel extends FlowPanel
         });
         addTab(_msgs.egTabCode(), new LazyPanel() {
             protected Widget createWidget () {
-                return new CodeEditorPanel(data.code);
+                return new CodeEditorPanel(data.devCode);
+            }
+        });
+        addTab(_msgs.egTabPublish(), new LazyPanel() {
+            protected Widget createWidget () {
+                return new PublishPanel(data);
+            }
+            @Override public void setVisible (boolean visible) {
+                if (!visible) {
+                    setWidget(null); // clear out our panel when we change tabs
+                }
+                super.setVisible(visible);
             }
         });
         for (final byte type : SUBITEM_TYPES) {

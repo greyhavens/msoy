@@ -63,7 +63,7 @@ public class GameCodeRecord extends PersistentRecord
         code.gameId = Math.abs(gameId);
         code.isDevelopment = isDevelopment;
         code.config = "";
-        code.lastUpdated = new Timestamp(System.currentTimeMillis());
+        code.lastUpdated = new Timestamp(0L);
         return code;
     }
 

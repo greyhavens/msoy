@@ -462,7 +462,8 @@ public class GameServlet extends MsoyServiceServlet
         GameInfoRecord info = requireIsGameCreator(gameId, mrec);
         GameData data = new GameData();
         data.info = info.toGameInfo(0);
-        data.code = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false).toGameCode();
+        data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false).toGameCode();
+        data.pubCode = _mgameRepo.loadGameCode(info.gameId, false).toGameCode();
         return data;
     }
 

@@ -97,10 +97,7 @@ public class InfoEditorPanel extends BaseEditorPanel
 
         addSpacer();
 
-        // add our confirmation ui and update interface
         Button save = addSaveRow();
-
-        // wire up saving the game on click
         new ClickCallback<Void>(save) {
             protected boolean callService () {
                 if (!bindChanges()) {

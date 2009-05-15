@@ -45,7 +45,8 @@ public interface GameService extends RemoteService
     public static class GameData implements IsSerializable
     {
         public GameInfo info;
-        public GameCode code;
+        public GameCode devCode;
+        public GameCode pubCode;
     }
 
     /** The entry point for this service. */

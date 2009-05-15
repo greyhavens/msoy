@@ -166,6 +166,7 @@ public class CodeEditorPanel extends BaseEditorPanel
                 return true;
             }
             protected boolean gotResult (Void result) {
+                code.lastUpdated = System.currentTimeMillis();
                 MsoyUI.info(_msgs.egGameCodeUpdated());
                 return true;
             }
