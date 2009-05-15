@@ -82,20 +82,7 @@ public class CreateAccountPanel extends FlowPanel
         },
 
         /** Standard text, logon last, shows a "wait for validation" message. */
-        VALIDATION_TEST_V1 {
-            public String getIntro () {
-                return _msgs.createCoins();
-            }
-            public boolean logonOnBottom () {
-                return true;
-            }
-            public boolean forceValidate () {
-                return true;
-            }
-        },
-
-        /** Same as above but nicer banner. */
-        VALIDATION_TEST_V2 {
+        VALIDATION_TEST {
             public String getIntro () {
                 return _msgs.createCoins();
             }
@@ -122,8 +109,8 @@ public class CreateAccountPanel extends FlowPanel
     {
         setStyleName("createAccount");
 
-        // no shim and different banner for V2
-        if (mode == Mode.VALIDATION_TEST_V2) {
+        // no shim and different banner for validation
+        if (mode == Mode.VALIDATION_TEST) {
             add(new Image("/images/account/register_banner.jpg"));
         } else {
             add(WidgetUtil.makeShim(15, 15));

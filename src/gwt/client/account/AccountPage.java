@@ -50,10 +50,7 @@ public class AccountPage extends Page
                 CShell.isPermaguest() ? Mode.PERMAGUEST : Mode.NORMAL));
 
         } else if (action.equals("reg") && !CShell.isMember()) {
-            setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST_V1));
-
-        } else if (action.equals("regb") && !CShell.isMember()) {
-            setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST_V2));
+            setContent(_msgs.createTitle(), new CreateAccountPanel(Mode.VALIDATION_TEST));
 
         } else if (action.equals("regv") && CShell.isMember()) {
             // validation received, show a quick message and move on to #people-confprof

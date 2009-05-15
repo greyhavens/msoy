@@ -208,7 +208,7 @@ public class FrameEntryPoint
 
         // do different things for new users on landing
         if (page == Pages.LANDING && args.get(0, "").equals("") && newUser) {
-            ABTestCard test = LandingTestCookie.getTest("2009 04 landing");
+            ABTestCard test = LandingTestCookie.getTest("2009 05 landing");
             int landingGroup = test == null ? -1 : test.getGroup(getVisitorInfo());
             switch (landingGroup) {
             case 1:  // group A: go home
