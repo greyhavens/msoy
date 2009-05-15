@@ -45,7 +45,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         addStyleName("dottedGrid");
 
         _detail = detail;
-        _invite.addClickHandler(Link.createListener(Pages.MAIL, "w", "g", _detail.group.groupId));
+        _invite.addClickHandler(Link.createHandler(Pages.MAIL, "w", "g", _detail.group.groupId));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
         setModel(new PagedServiceDataModel<GroupMemberCard, PagedResult<GroupMemberCard>>(){

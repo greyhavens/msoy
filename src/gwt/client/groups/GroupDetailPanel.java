@@ -151,16 +151,16 @@ public class GroupDetailPanel extends FlowPanel
         FloatPanel buttons = new FloatPanel("Buttons");
         leftPanel.add(buttons);
         PushButton enterButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.detailEnter(),
-            Link.createListener(Pages.WORLD, "s" + _group.homeSceneId));
+            Link.createHandler(Pages.WORLD, "s" + _group.homeSceneId));
         enterButton.addStyleName("EnterButton");
         buttons.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
-            _msgs.detailForums(), Link.createListener(
+            _msgs.detailForums(), Link.createHandler(
                 Pages.GROUPS, GroupsPage.Nav.FORUM.composeArgs(_group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         buttons.add(discussionsButton);
         PushButton medalsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
-            _msgs.detailViewMedals(), Link.createListener(
+            _msgs.detailViewMedals(), Link.createHandler(
                 Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_group.groupId)));
         medalsButton.addStyleName("MedalsButton");
         buttons.add(medalsButton);
@@ -172,7 +172,7 @@ public class GroupDetailPanel extends FlowPanel
         // link to the game for this group
         if (_detail.group.gameId != 0) {
             actions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(),
-                            Link.createListener(Pages.GAMES, "d", _detail.group.gameId)));
+                            Link.createHandler(Pages.GAMES, "d", _detail.group.gameId)));
         }
 
         if (_detail.myRank == Rank.NON_MEMBER) {
@@ -206,7 +206,7 @@ public class GroupDetailPanel extends FlowPanel
         // invite others to it
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
             actions.add(MsoyUI.createActionLabel(_msgs.detailInvite(),
-                            Link.createListener(Pages.MAIL, "w", "g", _detail.group.groupId)));
+                            Link.createHandler(Pages.MAIL, "w", "g", _detail.group.groupId)));
         }
 
         // shop
@@ -214,7 +214,7 @@ public class GroupDetailPanel extends FlowPanel
             String args = ShopUtil.composeArgs(
                 _extras.catalogItemType, _extras.catalogTag, null, 0);
             actions.add(MsoyUI.createActionLabel(
-                            _msgs.detailShop(), Link.createListener(Pages.SHOP, args)));
+                            _msgs.detailShop(), Link.createHandler(Pages.SHOP, args)));
         }
 
         // read charter
@@ -231,7 +231,7 @@ public class GroupDetailPanel extends FlowPanel
 
             String args = GroupsPage.Nav.EDIT.composeArgs(_group.groupId);
             managerActions.add(MsoyUI.createActionLabel(
-                _msgs.detailEdit(), "inline", Link.createListener(Pages.GROUPS, args)));
+                _msgs.detailEdit(), "inline", Link.createHandler(Pages.GROUPS, args)));
 
             managerActions.add(new InlineLabel(" | "));
             managerActions.add(MsoyUI.createActionLabel(

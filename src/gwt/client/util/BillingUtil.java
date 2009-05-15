@@ -33,11 +33,11 @@ public class BillingUtil
 
         } else if (CShell.isPermaguest()) {
             MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
-                              Link.createListener(Pages.ACCOUNT, "create"));
+                              Link.createHandler(Pages.ACCOUNT, "create"));
 
         } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
             MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
-                              Link.createListener(Pages.ACCOUNT, "config"));
+                              Link.createHandler(Pages.ACCOUNT, "config"));
 
         } else {
             Window.open(LANDING + "?initUsername=" + URL.encodeComponent(CShell.creds.accountName),

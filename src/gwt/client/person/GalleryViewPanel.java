@@ -121,7 +121,7 @@ public class GalleryViewPanel extends FlowPanel
                 if (_profileMemberId == CShell.getMemberId()) {
                     error.add(new HTML(_pmsgs.galleryProfileNoPhotosSelf()));
                     error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(),
-                                  Link.createListener(Pages.PEOPLE, GalleryActions.CREATE_PROFILE,
+                                  Link.createHandler(Pages.PEOPLE, GalleryActions.CREATE_PROFILE,
                                                       _profileMemberId)));
                 } else {
                     error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
@@ -133,7 +133,7 @@ public class GalleryViewPanel extends FlowPanel
         } else if (galleryData.photos == null || galleryData.photos.size() == 0) {
             if (galleryData.owner.getMemberId() == CShell.getMemberId()) {
                 error.add(new HTML(_pmsgs.galleryNoPhotosSelf()));
-                final ClickHandler listener = Link.createListener(Pages.PEOPLE, GalleryActions.EDIT,
+                final ClickHandler listener = Link.createHandler(Pages.PEOPLE, GalleryActions.EDIT,
                     galleryData.gallery.galleryId);
                 error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
             } else {
@@ -165,11 +165,11 @@ public class GalleryViewPanel extends FlowPanel
         actions.add(new Label("|"));
 
         actions.add(MsoyUI.createActionLabel(_pmsgs.galleryViewAll(),
-            Link.createListener(Pages.PEOPLE, GalleryActions.GALLERIES,
+            Link.createHandler(Pages.PEOPLE, GalleryActions.GALLERIES,
                                 _galleryData.owner.getMemberId())));
         if (galleryData.owner.getMemberId() == CShell.getMemberId()) {
             actions.add(new Label("|"));
-            final ClickHandler editListener = Link.createListener(Pages.PEOPLE, GalleryActions.EDIT,
+            final ClickHandler editListener = Link.createHandler(Pages.PEOPLE, GalleryActions.EDIT,
                 _galleryData.gallery.galleryId);
             actions.add(MsoyUI.createActionLabel(_pmsgs.galleryEditButton(), editListener));
             actions.add(new Label("|"));

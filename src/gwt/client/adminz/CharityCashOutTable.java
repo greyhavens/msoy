@@ -91,7 +91,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
             SmartTable extras = new SmartTable("Extras", 0, 5);
             Button btn = new Button(_msgs.coEntryTransactionsButton());
             btn.addStyleName("sideButton");
-            btn.addClickHandler(Link.createListener(Pages.ME, "transactions", "3", item.memberId));
+            btn.addClickHandler(Link.createHandler(Pages.ME, "transactions", "3", item.memberId));
             extras.addWidget(btn, 0, null);
             btn = new Button(_msgs.coEntryCashOutButton());
             btn.addStyleName("sideButton");

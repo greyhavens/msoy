@@ -59,7 +59,7 @@ public class PlayButton
             break;
         }
 
-        play.addClickHandler(Link.createListener(Pages.WORLD, args));
+        play.addClickHandler(Link.createHandler(Pages.WORLD, args));
         return play;
     }
 

@@ -269,7 +269,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickHandler(
-                    Link.createListener(Pages.ADMINZ, "browser", member.memberId));
+                    Link.createHandler(Pages.ADMINZ, "browser", member.memberId));
                 nameLabel.addStyleName("Clickable");
                 _memberIds.put(member.memberId, nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);

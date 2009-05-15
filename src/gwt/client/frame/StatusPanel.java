@@ -121,7 +121,7 @@ public class StatusPanel extends SmartTable
         links.add(MsoyUI.createLabel("|", "Spacer"));
         if (permaguest) {
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogon(),
-                                               Link.createListener(Pages.ACCOUNT, "logon")));
+                                               Link.createHandler(Pages.ACCOUNT, "logon")));
         } else {
             links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
@@ -134,13 +134,13 @@ public class StatusPanel extends SmartTable
         PushButton action;
         if (permaguest) {
             action = new PushButton(
-                _cmsgs.headerSignup(), Link.createListener(Pages.ACCOUNT, "create"));
+                _cmsgs.headerSignup(), Link.createHandler(Pages.ACCOUNT, "create"));
             action.setStyleName("SignupButton");
             action.addStyleName("Button");
             _promoButton = null;
         } else {
             action = new PushButton(
-                _cmsgs.statusInviteFriends(), Link.createListener(Pages.PEOPLE, "invites"));
+                _cmsgs.statusInviteFriends(), Link.createHandler(Pages.PEOPLE, "invites"));
             action.setStyleName("InviteFriends");
             _promoButton = action;
             _promoCount = 0;
@@ -198,7 +198,7 @@ public class StatusPanel extends SmartTable
     {
         public MailDisplay () {
             addStyleName("Mail");
-            ClickHandler handler = Link.createListener(Pages.MAIL, "");
+            ClickHandler handler = Link.createHandler(Pages.MAIL, "");
             add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png", handler));
             add(_mailLabel = MsoyUI.createActionLabel("", handler));
             setCount(0);
@@ -239,7 +239,7 @@ public class StatusPanel extends SmartTable
             level.add(new Image("/images/header/symbol_level.png"));
             level.add(_levelLabel = new Label("0"));
             FocusPanel levelFocus = new FocusPanel(level);
-            levelFocus.addClickHandler(Link.createListener(Pages.ME, "passport"));
+            levelFocus.addClickHandler(Link.createHandler(Pages.ME, "passport"));
             setWidget(0, idx++, levelFocus);
 
             getFlexCellFormatter().setWidth(0, idx++, "12px"); // gap!

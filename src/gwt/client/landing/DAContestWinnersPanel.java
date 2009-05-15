@@ -29,7 +29,7 @@ public class DAContestWinnersPanel extends FlowPanel
 
         AbsolutePanel header = MsoyUI.createAbsolutePanel("Header");
         header.add(MsoyUI.createActionImage(
-            "/images/landing/contests/dawinners_whirled_logo.png", Link.createListener(
+            "/images/landing/contests/dawinners_whirled_logo.png", Link.createHandler(
                 Pages.LANDING, "")), 5, 5);
         header.add(new Image("/images/landing/contests/dawinners_ooo_presents.png"), 350, 0);
         header.add(MsoyUI.createHTML(_msgs.dawinnersIntro(), "Intro"), 20, 250);
@@ -39,19 +39,19 @@ public class DAContestWinnersPanel extends FlowPanel
         FloatPanel winners = new FloatPanel(null);
         FlowPanel winner1 = MsoyUI.createFlowPanel("Winner1");
         winner1.add(MsoyUI.createActionImage("/images/landing/contests/dawinners_winner_1.png",
-            Link.createListener(Pages.WORLD, "s" + WINNER_IDS[0])));
+            Link.createHandler(Pages.WORLD, "s" + WINNER_IDS[0])));
         winner1.add(MsoyUI.createHTML(_msgs.dawinnersWinner1(), null));
         winners.add(winner1);
 
         FlowPanel winner2 = MsoyUI.createFlowPanel("Winner2");
         winner2.add(MsoyUI.createActionImage("/images/landing/contests/dawinners_winner_2.png",
-            Link.createListener(Pages.WORLD, "s" + WINNER_IDS[1])));
+            Link.createHandler(Pages.WORLD, "s" + WINNER_IDS[1])));
         winner2.add(MsoyUI.createHTML(_msgs.dawinnersWinner2(), null));
         winners.add(winner2);
 
         FlowPanel winner3 = MsoyUI.createFlowPanel("Winner3");
         winner3.add(MsoyUI.createActionImage("/images/landing/contests/dawinners_winner_3.png",
-            Link.createListener(Pages.WORLD, "s" + WINNER_IDS[2])));
+            Link.createHandler(Pages.WORLD, "s" + WINNER_IDS[2])));
         winner3.add(MsoyUI.createHTML(_msgs.dawinnersWinner3(), null));
         winners.add(winner3);
         content.add(new WideContentBox(winners));
@@ -63,22 +63,22 @@ public class DAContestWinnersPanel extends FlowPanel
         FlowPanel honorable = MsoyUI.createFlowPanel(null);
         FloatPanel honorableTop = new FloatPanel("HonorableTop");
         honorableTop.add(MsoyUI.createActionImage(
-            "/images/landing/contests/dawinners_honorable_1.png", Link.createListener(
+            "/images/landing/contests/dawinners_honorable_1.png", Link.createHandler(
                 Pages.WORLD, "s" + HONORABLE_IDS[0])));
         honorableTop.add(MsoyUI.createActionImage(
-            "/images/landing/contests/dawinners_honorable_2.png", Link.createListener(
+            "/images/landing/contests/dawinners_honorable_2.png", Link.createHandler(
                 Pages.WORLD, "s" + HONORABLE_IDS[1])));
         honorableTop.add(MsoyUI.createActionImage(
-            "/images/landing/contests/dawinners_honorable_3.png", Link.createListener(
+            "/images/landing/contests/dawinners_honorable_3.png", Link.createHandler(
                 Pages.WORLD, "s" + HONORABLE_IDS[2])));
         honorable.add(honorableTop);
 
         FloatPanel honorableBottom = new FloatPanel("HonorableBottom");
         honorableBottom.add(MsoyUI.createActionImage(
-            "/images/landing/contests/dawinners_honorable_4.png", Link.createListener(
+            "/images/landing/contests/dawinners_honorable_4.png", Link.createHandler(
                 Pages.WORLD, "s" + HONORABLE_IDS[3])));
         honorableBottom.add(MsoyUI.createActionImage(
-            "/images/landing/contests/dawinners_honorable_5.png", Link.createListener(
+            "/images/landing/contests/dawinners_honorable_5.png", Link.createHandler(
                 Pages.WORLD, "s" + HONORABLE_IDS[4])));
         honorable.add(honorableBottom);
 

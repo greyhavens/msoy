@@ -55,7 +55,7 @@ public class LandingPanel extends SimplePanel
         }
 
         // join now
-        ClickHandler onJoin = Link.createListener(Pages.ACCOUNT, "create");
+        ClickHandler onJoin = Link.createHandler(Pages.ACCOUNT, "create");
         content.add(MsoyUI.createImageButton("JoinButton", onJoin), 475, 0);
 
         // logon box

@@ -71,11 +71,11 @@ public class MedalListPanel extends FlowPanel
         medalList.addStyleName("MedalList");
         HorizontalPanel title = new HorizontalPanel();
         title.setStyleName("MedalTitle");
-        title.add(MsoyUI.createActionLabel(_groupName.toString(), "GroupName", Link.createListener(
+        title.add(MsoyUI.createActionLabel(_groupName.toString(), "GroupName", Link.createHandler(
             Pages.GROUPS, GroupsPage.Nav.DETAIL.composeArgs(_groupName.getGroupId()))));
         if (CShell.isSupport() || _rank == Rank.MANAGER) {
             title.add(MsoyUI.createActionLabel(
-                _msgs.medalListAddMedal(), "AddMedal", Link.createListener(
+                _msgs.medalListAddMedal(), "AddMedal", Link.createHandler(
                     Pages.GROUPS, GroupsPage.Nav.CREATEMEDAL.composeArgs(_groupId))));
         }
         medalList.add(title);
@@ -116,7 +116,7 @@ public class MedalListPanel extends FlowPanel
                 ownerWidget.setStyleName("OwnerWidget");
                 ownerWidget.add(MediaUtil.createMediaView(
                     owner.getPhoto(), MediaDesc.THUMBNAIL_SIZE,
-                    Link.createListener(Pages.PEOPLE, ""+owner.getMemberId())));
+                    Link.createHandler(Pages.PEOPLE, ""+owner.getMemberId())));
                 ownerWidget.add(Link.create(owner.toString(), "OwnerLink", Pages.PEOPLE,
                     ""+owner.getMemberId(), false));
                 _ownerWidgets.add(ownerWidget);
@@ -168,7 +168,7 @@ public class MedalListPanel extends FlowPanel
             add(MsoyUI.createLabel(medal.name, "Name"));
             add(MsoyUI.createLabel(medal.description, "Description"));
             if (CShell.isSupport() || _rank == Rank.MANAGER) {
-                add(MsoyUI.createActionLabel(_msgs.medalListEdit(), "Edit", Link.createListener(
+                add(MsoyUI.createActionLabel(_msgs.medalListEdit(), "Edit", Link.createHandler(
                     Pages.GROUPS, GroupsPage.Nav.EDITMEDAL.composeArgs(medal.medalId))));
             }
         }

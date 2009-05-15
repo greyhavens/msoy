@@ -160,14 +160,14 @@ public class FrameHeader extends SmartTable
         public SignOrLogonPanel () {
             super(0, 0);
             PushButton signup = new PushButton(
-                _cmsgs.headerSignup(), Link.createListener(Pages.ACCOUNT, "create"));
+                _cmsgs.headerSignup(), Link.createHandler(Pages.ACCOUNT, "create"));
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
             PushButton logon = new PushButton(
-                _cmsgs.headerLogon(), Link.createListener(Pages.ACCOUNT, "create"));
+                _cmsgs.headerLogon(), Link.createHandler(Pages.ACCOUNT, "create"));
             logon.setStyleName("LogonButton");
             logon.addStyleName("Button");
             setWidget(0, 2, logon);

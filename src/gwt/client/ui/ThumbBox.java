@@ -36,7 +36,7 @@ public class ThumbBox extends SimplePanel
     public ThumbBox (MediaDesc desc, int size, Pages page, Object... args)
     {
         this(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size),
-             Link.createListener(page, args));
+             Link.createHandler(page, args));
     }
 
     public ThumbBox (MediaDesc desc, int width, int height, ClickHandler onClick)

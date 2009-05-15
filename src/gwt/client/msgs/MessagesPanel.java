@@ -260,7 +260,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             final boolean isPoster = (memberId == _message.poster.name.getMemberId());
             if (!isPoster) {
                 info.add(makeInfoImage(_images.sendmail(), _mmsgs.inlineMail(),
-                                       Link.createListener(Pages.MAIL, "w", "m",
+                                       Link.createHandler(Pages.MAIL, "w", "m",
                                                            _message.poster.name.getMemberId())));
             }
 
@@ -298,15 +298,15 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             }
 
             if (_message.issueId > 0) {
-                ClickHandler viewClick = Link.createListener(Pages.ISSUES, "i", _message.issueId);
+                ClickHandler viewClick = Link.createHandler(Pages.ISSUES, "i", _message.issueId);
                 toolBar.add(makeInfoImage(_images.view_issue(), _mmsgs.inlineIssue(), viewClick));
 
             } else if (CShell.isSupport()) {
                 toolBar.add(makeInfoImage(_images.new_issue(), _mmsgs.inlineNewIssue(),
-                                          Link.createListener(
+                                          Link.createHandler(
                                               Pages.ISSUES, "create", _message.messageId)));
                 toolBar.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
-                                          Link.createListener(
+                                          Link.createHandler(
                                               Pages.GROUPS, "assign", _message.messageId, _page)));
             }
         }

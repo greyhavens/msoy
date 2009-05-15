@@ -25,10 +25,10 @@ public class CreatorsPanel extends SimplePanel
         content.setStyleName("Content");
         setWidget(content);
 
-        ClickHandler onStart = Link.createListener(Pages.ACCOUNT, "create");
+        ClickHandler onStart = Link.createHandler(Pages.ACCOUNT, "create");
         content.add(MsoyUI.createImageButton("GetStartedButton", onStart), 342, 381);
 
-        ClickHandler onInfo = Link.createListener(Pages.ACCOUNT, "create");
+        ClickHandler onInfo = Link.createHandler(Pages.ACCOUNT, "create");
         content.add(MsoyUI.createActionImage("/images/landing/creators_info.jpg", onInfo), 15, 504);
 
         content.add(new LandingCopyright(), 0, 1085);

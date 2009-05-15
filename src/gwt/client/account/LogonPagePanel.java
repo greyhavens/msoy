@@ -28,7 +28,7 @@ public class LogonPagePanel extends FlowPanel
         // add a link to accout creation
         add(MsoyUI.createLabel(_msgs.lpCreateHeader(), "Header"));
         add(tagButton(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpCreate(),
-                                          Link.createListener(Pages.ACCOUNT, "create"))));
+                                          Link.createHandler(Pages.ACCOUNT, "create"))));
     }
 
     protected Widget tagButton (Widget widget)

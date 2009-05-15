@@ -108,7 +108,7 @@ public class GameItemEditorPanel extends SmartTable
         bits.add(WidgetUtil.makeShim(10, 10));
         String cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
         bits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),
-                                     Link.createListener(Pages.STUFF, cargs)));
+                                     Link.createHandler(Pages.STUFF, cargs)));
         setWidget(row, 0, bits, getRowCount() == 0 ? 1 : getCellCount(0), null);
         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_CENTER);
     }

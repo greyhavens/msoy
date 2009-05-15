@@ -27,9 +27,9 @@ public class DesignContestPanel extends FlowPanel
         AbsolutePanel header = MsoyUI.createAbsolutePanel("Header");
         content.add(header);
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_whirled_logo.png",
-            Link.createListener(Pages.LANDING, "")), 20, 10);
+            Link.createHandler(Pages.LANDING, "")), 20, 10);
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_join_now.png",
-            Link.createListener(Pages.ACCOUNT, "create")), 750, 0);
+            Link.createHandler(Pages.ACCOUNT, "create")), 750, 0);
 
         // instructions etc in white boxes
         content.add(
@@ -40,7 +40,7 @@ public class DesignContestPanel extends FlowPanel
         FlowPanel enterPanel = MsoyUI.createFlowPanel(null);
         enterPanel.add(MsoyUI.createHTML(_msgs.designconEnterText(), null));
         enterPanel.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.designconSignup(), 
-            Link.createListener(Pages.ACCOUNT, "create")));
+            Link.createHandler(Pages.ACCOUNT, "create")));
         content.add(new WideContentBox(_msgs.designconEnterTitle(), enterPanel, true));
 
         content.add(

@@ -96,7 +96,7 @@ public class IssueListPanel extends PagedGrid<Issue>
         controls.setWidget(0, 0, _refresh);
 
         // add a button for creating a new issue (might later get hidden)
-        _create = new Button(_msgs.newIssue(), Link.createListener(Pages.ISSUES, "create"));
+        _create = new Button(_msgs.newIssue(), Link.createHandler(Pages.ISSUES, "create"));
         controls.setWidget(0, 1, _create);
     }
 

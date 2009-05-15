@@ -87,41 +87,41 @@ class BadgeDisplay extends AwardDisplay
 
         switch (badge.badgeCode) {
         case BadgeCodes.FRIENDLY:
-            return Link.createListener(Pages.GROUPS, "");
+            return Link.createHandler(Pages.GROUPS, "");
 
         case BadgeCodes.MAGNET:
-            return Link.createListener(Pages.PEOPLE, "invites");
+            return Link.createHandler(Pages.PEOPLE, "invites");
 
         case BadgeCodes.FIXTURE:
-            return Link.createListener(Pages.GROUPS, "");
+            return Link.createHandler(Pages.GROUPS, "");
 
         case BadgeCodes.EXPLORER:
-            return Link.createListener(Pages.ROOMS, "");
+            return Link.createHandler(Pages.ROOMS, "");
 
         case BadgeCodes.GAMER: // same as below
         case BadgeCodes.CONTENDER: // same as below
         case BadgeCodes.COLLECTOR:
-            return Link.createListener(Pages.GAMES, "");
+            return Link.createHandler(Pages.GAMES, "");
 
         case BadgeCodes.CHARACTER_DESIGNER:
-            return Link.createListener(Pages.STUFF, "" + Item.AVATAR);
+            return Link.createHandler(Pages.STUFF, "" + Item.AVATAR);
 
         case BadgeCodes.FURNITURE_BUILDER:
-            return Link.createListener(Pages.STUFF, "" + Item.FURNITURE);
+            return Link.createHandler(Pages.STUFF, "" + Item.FURNITURE);
 
         case BadgeCodes.LANDSCAPE_PAINTER:
-            return Link.createListener(Pages.STUFF, "" + Item.DECOR);
+            return Link.createHandler(Pages.STUFF, "" + Item.DECOR);
 
         case BadgeCodes.PROFESSIONAL:
-            return Link.createListener(Pages.SHOP, "");
+            return Link.createHandler(Pages.SHOP, "");
 
         case BadgeCodes.ARTISAN:
-            return Link.createListener(Pages.SHOP, "");
+            return Link.createHandler(Pages.SHOP, "");
 
         case BadgeCodes.JUDGE: // same as below
         case BadgeCodes.OUTSPOKEN: // same as below
         case BadgeCodes.SHOPPER:
-            return Link.createListener(Pages.SHOP, "");
+            return Link.createHandler(Pages.SHOP, "");
         }
 
         return null;

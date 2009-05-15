@@ -64,7 +64,7 @@ public class SplitLandingPanel extends FlowPanel
 
         // join now
         header.add(MsoyUI.createActionImage("/images/landing/join_now_button.png",
-            Link.createListener(Pages.ACCOUNT, "create")), 50, 60);
+            Link.createHandler(Pages.ACCOUNT, "create")), 50, 60);
 
         // logon box
         final FlowPanel logon = new FlowPanel();
@@ -167,11 +167,11 @@ public class SplitLandingPanel extends FlowPanel
         _featuredGame.clear();
         _featuredGame.add(MsoyUI.createActionImage(
             "/images/landing/split_game_" + index + ".png", GAME_NAMES[index],
-            Link.createListener(Pages.GAMES, "d", GAME_IDS[index])), 10, 0);
+            Link.createHandler(Pages.GAMES, "d", GAME_IDS[index])), 10, 0);
         _featuredGame.add(MsoyUI.createLabel(GAME_NAMES[index], "Name"), 220, 0);
         _featuredGame.add(MsoyUI.createLabel(GAME_DESCRIPTIONS[index], "Description"), 220, 30);
         _featuredGame.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.splitGamesPlay(),
-            Link.createListener(Pages.GAMES, "d", GAME_IDS[index])), 220, 104);
+            Link.createHandler(Pages.GAMES, "d", GAME_IDS[index])), 220, 104);
     }
 
     protected void selectRoom (int index)
@@ -179,11 +179,11 @@ public class SplitLandingPanel extends FlowPanel
         _featuredRoom.clear();
         _featuredRoom.add(MsoyUI.createActionImage(
             "/images/landing/split_room_" + index + ".png", ROOM_NAMES[index],
-            Link.createListener(Pages.WORLD, "s" + ROOM_IDS[index])), 10, 0);
+            Link.createHandler(Pages.WORLD, "s" + ROOM_IDS[index])), 10, 0);
         _featuredRoom.add(MsoyUI.createLabel(ROOM_NAMES[index], "Name"), 220, 0);
         _featuredRoom.add(MsoyUI.createLabel(ROOM_DESCRIPTIONS[index], "Description"), 220, 30);
         _featuredRoom.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.splitRoomsVisit(),
-            Link.createListener(Pages.WORLD, "s" + ROOM_IDS[index])), 220, 104);
+            Link.createHandler(Pages.WORLD, "s" + ROOM_IDS[index])), 220, 104);
     }
 
     protected AbsolutePanel _featuredGame;

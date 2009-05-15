@@ -130,7 +130,7 @@ public abstract class GameListPanel extends FlowPanel
 
                 setWidget(0, col++, MediaUtil.createMediaView(
                               game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
-                              Link.createListener(Pages.GAMES, "d", game.gameId)), 1, "Thumbnail");
+                              Link.createHandler(Pages.GAMES, "d", game.gameId)), 1, "Thumbnail");
 
                 FlowPanel name = new FlowPanel();
                 name.add(Link.create(game.name, Pages.GAMES, "d", game.gameId));

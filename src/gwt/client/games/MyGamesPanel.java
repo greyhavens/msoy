@@ -35,7 +35,7 @@ public class MyGamesPanel extends GameListPanel
         absbits.add(MsoyUI.createLabel(_msgs.myGames(), "GenreTitle"));
         absbits.add(MsoyUI.createHTML(_msgs.myGamesCreateTip(), "CreateTip"));
         absbits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.myGamesCreate(),
-                                        Link.createListener(Pages.GAMES, "c")));
+                                        Link.createHandler(Pages.GAMES, "c")));
         header.add(absbits);
         header.add(MsoyUI.createLabel(_msgs.myGamesDevTip(), "DevTip"));
         add(header);

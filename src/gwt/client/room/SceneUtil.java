@@ -60,7 +60,7 @@ public class SceneUtil
         });
 
         PushButton enterButton = MsoyUI.createImageButton("enterButton",
-            Link.createListener(Pages.WORLD, "s" + sceneId));
+            Link.createHandler(Pages.WORLD, "s" + sceneId));
 
         panel.add(enterButton);
         panel.add(liveButton);

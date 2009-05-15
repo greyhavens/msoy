@@ -57,17 +57,17 @@ public class DesignWinnersPanel extends FlowPanel
         // 1st place stands alone
         AbsolutePanel first = MsoyUI.createAbsolutePanel("Winners");
         first.add(MsoyUI.createActionImage("/images/rooms/design_winners_1st.png",
-            _msgs.designwinnersEnter(winners.get(0).name), Link.createListener(Pages.WORLD, "s"
+            _msgs.designwinnersEnter(winners.get(0).name), Link.createHandler(Pages.WORLD, "s"
                 + winners.get(0).sceneId)), 30, 20);
         add(first);
 
         // 2nd and 3rd place are side by side
         AbsolutePanel secondthird = MsoyUI.createAbsolutePanel("Winners");
         secondthird.add(MsoyUI.createActionImage("/images/rooms/design_winners_2nd.png",
-            _msgs.designwinnersEnter(winners.get(1).name), Link.createListener(Pages.WORLD, "s"
+            _msgs.designwinnersEnter(winners.get(1).name), Link.createHandler(Pages.WORLD, "s"
                 + winners.get(1).sceneId)), 35, 25);
         secondthird.add(MsoyUI.createActionImage("/images/rooms/design_winners_3rd.png",
-            _msgs.designwinnersEnter(winners.get(2).name), Link.createListener(Pages.WORLD, "s"
+            _msgs.designwinnersEnter(winners.get(2).name), Link.createHandler(Pages.WORLD, "s"
                 + winners.get(2).sceneId)), 325, 25);
         add(secondthird);
 
@@ -99,7 +99,7 @@ public class DesignWinnersPanel extends FlowPanel
     protected Widget makeHonorableMention (RoomInfo room)
     {
         FlowPanel panel = MsoyUI.createFlowPanel("HonorableMention");
-        Widget thumb = SceneUtil.createSceneThumbView(room.thumbnail, Link.createListener(
+        Widget thumb = SceneUtil.createSceneThumbView(room.thumbnail, Link.createHandler(
             Pages.WORLD, "s" + room.sceneId));
         panel.add(thumb);
         panel.add(Link.create(room.name, Pages.ROOMS, "room", room.sceneId));

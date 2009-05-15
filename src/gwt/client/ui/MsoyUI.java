@@ -774,7 +774,7 @@ public class MsoyUI
             return true;
         }
         infoAction(_cmsgs.requiresRegistered(), _cmsgs.goRegister(),
-                   Link.createListener(Pages.ACCOUNT, "create"));
+                   Link.createHandler(Pages.ACCOUNT, "create"));
         return false;
     }
 
@@ -791,7 +791,7 @@ public class MsoyUI
             return false;
         } else {
             infoAction(_cmsgs.requiresValidated(), _cmsgs.goValidate(),
-                       Link.createListener(Pages.ACCOUNT, "edit"));
+                       Link.createHandler(Pages.ACCOUNT, "edit"));
             return false;
         }
     }

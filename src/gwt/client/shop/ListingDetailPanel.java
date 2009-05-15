@@ -87,7 +87,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         if (!CShell.isGuest() && isRemixable()) {
             extras.add(new ConfigButton(false, _msgs.listingRemix(),
-                Link.createListener(Pages.SHOP, ShopPage.REMIX, _item.getType(), _item.itemId,
+                Link.createHandler(Pages.SHOP, ShopPage.REMIX, _item.getType(), _item.itemId,
                                     _listing.catalogId)));
         }
         extras.add(_configBtn = new ConfigButton(true, _msgs.listingConfig(), new ClickHandler() {

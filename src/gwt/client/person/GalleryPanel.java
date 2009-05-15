@@ -61,7 +61,7 @@ public class GalleryPanel extends FlowPanel
         // add a create gallery button if player is looking at their own galleries
         if (CShell.getMemberId() == data.owner.getMemberId()) {
             PushButton create = MsoyUI.createButton(MsoyUI.LONG_THIN,
-                _pmsgs.galleryCreate(), Link.createListener(Pages.PEOPLE, GalleryActions.CREATE));
+                _pmsgs.galleryCreate(), Link.createHandler(Pages.PEOPLE, GalleryActions.CREATE));
             create.addStyleName("CreateButton");
             add(create);
         }

@@ -36,10 +36,10 @@ public class SearchControls extends SmartTable
         PushButton action;
         if (CShell.isGuest()) {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchJoin(),
-                                         Link.createListener(Pages.ACCOUNT, "create"));
+                                         Link.createHandler(Pages.ACCOUNT, "create"));
         } else {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchInvite(),
-                                         Link.createListener(Pages.PEOPLE, "invites"));
+                                         Link.createHandler(Pages.PEOPLE, "invites"));
         }
         setWidget(0, 0, action, 1, "Action");
         getFlexCellFormatter().setRowSpan(0, 0, 3);

@@ -93,14 +93,14 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // if we're not a guest, we can send them mail
             if (isNotMe && !CShell.isGuest()) {
-                onClick = Link.createListener(Pages.MAIL, "w", "m", card.name.getMemberId());
+                onClick = Link.createHandler(Pages.MAIL, "w", "m", card.name.getMemberId());
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
                 extras.setWidget(row++, 1,
                     MsoyUI.createActionLabel(_msgs.mlSendMail(), onClick));
             }
 
-            onClick = Link.createListener(Pages.WORLD, "m" + card.name.getMemberId());
+            onClick = Link.createHandler(Pages.WORLD, "m" + card.name.getMemberId());
             extras.setWidget(row, 0,
                 MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
             extras.setWidget(row++, 1,

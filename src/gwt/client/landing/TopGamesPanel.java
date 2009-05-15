@@ -183,7 +183,7 @@ public class TopGamesPanel extends AbsolutePanel
         right.add(PlayButton.create(game, "", PlayButton.Size.MEDIUM));
 
         // more games button
-        right.add(MsoyUI.createImageButton("MoreGames", Link.createListener(Pages.GAMES, "")));
+        right.add(MsoyUI.createImageButton("MoreGames", Link.createHandler(Pages.GAMES, "")));
 
         gameInfoTable.setWidget(0, 2, right);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);

@@ -173,7 +173,7 @@ public class StuffPanel extends FlowPanel
         _upload.add(MsoyUI.createHTML(_dmsgs.xlate("getStuffCreate" + _type), "GetStuffCreate"),
             360, 85);
         _upload.add(new StretchButton(StretchButton.BLUE_THICK, _msgs.getStuffShop(),
-            Link.createListener(Pages.SHOP, _type + "")), 10, 90);
+            Link.createHandler(Pages.SHOP, _type + "")), 10, 90);
         _upload.add(MsoyUI.createButton(MsoyUI.MEDIUM_THICK, _msgs.getStuffUpload(),
             NaviUtil.onCreateItem(_type, 0)), 535, 90);
     }

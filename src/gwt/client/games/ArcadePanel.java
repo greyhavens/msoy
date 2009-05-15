@@ -71,7 +71,7 @@ public class ArcadePanel extends FlowPanel
             browseGenres.add(new GenreBox(genre));
         }
         browseGenres.add(MsoyUI.createActionLabel("View all games", "ViewAllGames",
-                                                  Link.createListener(Pages.GAMES, "g")));
+                                                  Link.createHandler(Pages.GAMES, "g")));
     }
 
     /**
@@ -85,7 +85,7 @@ public class ArcadePanel extends FlowPanel
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
-            ClickHandler onClick = Link.createListener(Pages.GAMES, "g", genre.genre);
+            ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", genre.genre);
             header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre" + genre.genre), onClick));
 
             for (int i = 0; i < genre.games.length; i++) {

@@ -53,7 +53,7 @@ public class ItemBuyPanel extends BuyPanel<Item>
     {
         if (CShell.isGuest()) {
             MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
-                Link.createListener(Pages.ACCOUNT, "create"));
+                Link.createHandler(Pages.ACCOUNT, "create"));
             return false;
 
         } else {

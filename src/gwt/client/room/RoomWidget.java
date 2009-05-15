@@ -48,7 +48,7 @@ public class RoomWidget extends FlowPanel
         setStyleName("Room");
 
         Widget thumb = SceneUtil.createSceneThumbView(
-            thumbnail, Link.createListener(Pages.WORLD, "s" + sceneId));
+            thumbnail, Link.createHandler(Pages.WORLD, "s" + sceneId));
         thumb.setTitle(_msgs.rwThumbTip());
         add(thumb);
         Widget nameLink = Link.create(name, Pages.ROOMS, "room", sceneId);

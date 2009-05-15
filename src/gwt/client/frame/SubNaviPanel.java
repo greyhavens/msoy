@@ -126,7 +126,7 @@ public class SubNaviPanel extends FlowPanel
     {
         addSeparator(sep);
         if (iconPath != null) {
-            add(MsoyUI.createActionImage(iconPath, Link.createListener(page, args)));
+            add(MsoyUI.createActionImage(iconPath, Link.createHandler(page, args)));
             add(new HTML("&nbsp;"));
         }
         add(Link.create(label, page, args));
@@ -145,7 +145,7 @@ public class SubNaviPanel extends FlowPanel
     public Image addImageLink (String path, String tip, Pages page, String args)
     {
         addSeparator(true);
-        Image icon = MsoyUI.createActionImage(path, Link.createListener(page, args));
+        Image icon = MsoyUI.createActionImage(path, Link.createHandler(page, args));
         icon.setTitle(tip);
         add(icon);
         return icon;

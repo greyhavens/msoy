@@ -83,7 +83,7 @@ public class ProfileBlurb extends Blurb
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
         ClickHandler onClick = null;
-        onClick = Link.createListener(Pages.PEOPLE, "pgallery", _name.getMemberId());
+        onClick = Link.createHandler(Pages.PEOPLE, "pgallery", _name.getMemberId());
         photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
         photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, "pgallery", _name.getMemberId()));
 
@@ -126,7 +126,7 @@ public class ProfileBlurb extends Blurb
             info.addWidget(awardBox, 1, null);
 
             String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
-            ClickHandler clicker = Link.createListener(Pages.ME, page, _name.getMemberId());
+            ClickHandler clicker = Link.createHandler(Pages.ME, page, _name.getMemberId());
 
             if (award.type == AwardType.BADGE) {
                 String hexCode = Integer.toHexString(award.awardId);

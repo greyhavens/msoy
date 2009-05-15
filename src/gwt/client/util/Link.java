@@ -138,9 +138,9 @@ public class Link
     }
 
     /**
-     * Creates a click listener that navigates to the supplied page when activated.
+     * Creates a click handler that navigates to the supplied page when activated.
      */
-    public static ClickHandler createListener (final Pages page, final Object... args)
+    public static ClickHandler createHandler (final Pages page, final Object... args)
     {
         return new ClickHandler() {
             public void onClick (ClickEvent event) {

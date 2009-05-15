@@ -33,17 +33,17 @@ public class NaviUtil extends SharedNaviUtil
 
     public static ClickHandler onEditItem (byte type, int itemId)
     {
-        return Link.createListener(Pages.STUFF, "e", type, itemId);
+        return Link.createHandler(Pages.STUFF, "e", type, itemId);
     }
 
     public static ClickHandler onRemixItem (byte type, int itemId)
     {
-        return Link.createListener(Pages.STUFF, "r", type, itemId);
+        return Link.createHandler(Pages.STUFF, "r", type, itemId);
     }
 
     public static ClickHandler onViewTransactions (ReportType report)
     {
-        return Link.createListener(Pages.ME, "transactions", report.toIndex());
+        return Link.createHandler(Pages.ME, "transactions", report.toIndex());
     }
 
     public static ClickHandler onGoBack ()

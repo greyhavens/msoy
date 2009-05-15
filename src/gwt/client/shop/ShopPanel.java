@@ -160,7 +160,7 @@ public class ShopPanel extends FlowPanel
         right.add(new ThumbBox(card.thumbMedia, Pages.SHOP, makeShopArgs(card)));
         right.add(WidgetUtil.makeShim(10, 10));
         right.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.shopBuy(),
-                                      Link.createListener(Pages.SHOP, makeShopArgs(card))));
+                                      Link.createHandler(Pages.SHOP, makeShopArgs(card))));
 
         SmartTable contents = new SmartTable("FeatListingBox", 0, 0);
         contents.setWidget(0, 0, left);

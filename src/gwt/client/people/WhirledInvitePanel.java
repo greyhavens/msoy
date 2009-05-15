@@ -51,7 +51,7 @@ public class WhirledInvitePanel extends InvitePanel
             } else {
                 done.add(MsoyUI.createLabel(_msgs.inviteDoneTip(), null));
                 done.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteNext(),
-                                             Link.createListener(Pages.WORLD, "h")));
+                                             Link.createHandler(Pages.WORLD, "h")));
             }
             add(WidgetUtil.makeShim(20, 20));
             add(new TongueBox(_msgs.inviteDone(), done));
