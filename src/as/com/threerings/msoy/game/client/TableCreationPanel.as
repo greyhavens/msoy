@@ -47,7 +47,7 @@ public class TableCreationPanel extends VBox
     {
         _ctx = ctx;
         _ctrl = ctrl;
-        _gameDef = lobj.gameDef;
+        _lobj = lobj;
     }
 
     protected function friendToggled (event :Event) :void
@@ -105,7 +105,7 @@ public class TableCreationPanel extends VBox
         var wparam :ToggleParameter = null;
         var pvparam :ToggleParameter = null;
 
-        var match :MsoyMatchConfig = (_gameDef.match as MsoyMatchConfig);
+        var match :MsoyMatchConfig = (_lobj.gameDef.match as MsoyMatchConfig);
         switch (match.getMatchType()) {
         case GameConfig.PARTY:
             // plparam stays with zeros
@@ -141,7 +141,9 @@ public class TableCreationPanel extends VBox
             new MsoyTableConfigurator(plparam, wparam, pvparam, tableName);
         tconfigger.init(_ctx, gconf);
 
-        gconf.setGameConfig(new ParlorGameConfig());
+        var config :ParlorGameConfig = new ParlorGameConfig();
+        config.init(_lobj.game, _lobj.gameDef);
+        gconf.setGameConfig(config);
 
         _configBox = gconf.getContainer();
         _configBox.percentWidth = 100;
@@ -204,7 +206,7 @@ public class TableCreationPanel extends VBox
 
     protected var _ctx :GameContext;
     protected var _ctrl :LobbyController;
-    protected var _gameDef :GameDefinition;
+    protected var _lobj :LobbyObject;
 
     protected var _configBox :Container;
     protected var _friendsGrid :SimpleGrid;
