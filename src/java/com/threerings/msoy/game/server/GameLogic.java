@@ -233,7 +233,7 @@ public class GameLogic
         // now we know they can't afford whatever they're looking at and they're playing a game, so
         // we have to go ahead and ship an action off to the game's world host and have it tell its
         // game server to flush this member's pending coin earnings
-        _peerMan.invokeNodeAction(new FlushCoinsAction(memberId));
+        _playerActions.flushCoins(memberId);
     }
 
     protected static boolean canFeature (GameInfoRecord grec)
@@ -257,24 +257,11 @@ public class GameLogic
         }
     }
 
-    /** Helper action for {@link #maybeFlushCoinEarnings}. */
-    protected static class FlushCoinsAction extends PlayerNodeAction
-    {
-        public FlushCoinsAction (int playerId) {
-            super(playerId);
-        }
-        public FlushCoinsAction () {
-        }
-        protected void execute (PlayerObject plobj) {
-            _gameReg.flushCoinEarnings(plobj);
-        }
-        @Inject protected transient GameGameRegistry _gameReg;
-    }
-
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected WorldGameRegistry _gameReg;
 

@@ -6,6 +6,8 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.presents.peer.data.NodeObject;
+
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.BodyManager;
 
@@ -13,9 +15,11 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -49,6 +53,41 @@ public class PlayerNodeActions
     public void gameContentPurchased (int playerId, int gameId, byte itemType, String ident)
     {
         _peerMan.invokeNodeAction(new ContentPurchasedAction(playerId, gameId, itemType, ident));
+    }
+
+    public void flushCoins (int playerId)
+    {
+        _peerMan.invokeNodeAction(new FlushCoinsAction(playerId));
+    }
+
+    protected static abstract class PlayerNodeAction extends MsoyPeerManager.NodeAction
+    {
+        public PlayerNodeAction (int playerId) {
+            _playerId = playerId;
+        }
+
+        public PlayerNodeAction () {
+        }
+
+        @Override // from PeerManager.NodeAction
+        public boolean isApplicable (NodeObject nodeobj) {
+            return ((MsoyNodeObject)nodeobj).clients.containsKey(GameAuthName.makeKey(_playerId));
+        }
+
+        @Override // from PeerManager.NodeAction
+        protected void execute () {
+            PlayerObject plobj = _locator.lookupPlayer(_playerId);
+            if (plobj != null) {
+                execute(plobj);
+            } // if not, oh well, they went away
+        }
+
+        protected abstract void execute (PlayerObject plobj);
+
+        protected int _playerId;
+
+        /** Used to look up member objects. */
+        @Inject protected transient PlayerLocator _locator;
     }
 
     /** Handles updating a player's game. */
@@ -115,6 +154,22 @@ public class PlayerNodeActions
         protected int _gameId;
         protected byte _itemType;
         protected String _ident;
+        @Inject protected transient GameGameRegistry _gameReg;
+    }
+
+    protected static class FlushCoinsAction extends PlayerNodeAction
+    {
+        public FlushCoinsAction (int playerId) {
+            super(playerId);
+        }
+
+        public FlushCoinsAction () {
+        }
+
+        protected void execute (PlayerObject plobj) {
+            _gameReg.flushCoinEarnings(plobj);
+        }
+
         @Inject protected transient GameGameRegistry _gameReg;
     }
 
