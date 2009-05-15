@@ -15,7 +15,7 @@ import client.ui.NumberTextBox;
 /**
  * A class for creating and editing {@link TrophySource} digital items.
  */
-public class TrophySourceEditor extends SubItemEditor
+public class TrophySourceEditor extends IdentGameItemEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)

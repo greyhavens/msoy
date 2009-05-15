@@ -8,7 +8,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 /**
  * Contains the runtime data for a TrophySource item.
  */
-public class TrophySource extends SubItem
+public class TrophySource extends IdentGameItem
 {
     /** The required width for a trophy image. */
     public static final int TROPHY_WIDTH = 60;
@@ -52,7 +52,7 @@ public class TrophySource extends SubItem
         return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (_thumbMedia != null);
     }
 
-    @Override // from SubItem
+    @Override // from IdentGameItem
     public boolean isSalable ()
     {
         return false;

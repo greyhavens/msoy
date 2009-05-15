@@ -10,7 +10,7 @@ import com.threerings.msoy.item.data.all.Prop;
 /**
  * A class for creating and editing {@link Prop} digital items.
  */
-public class PropEditor extends SubItemEditor
+public class PropEditor extends IdentGameItemEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)

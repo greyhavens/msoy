@@ -16,7 +16,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
@@ -36,23 +35,20 @@ public class InventoryModels
     public static class Stuff extends SimpleDataModel<Item>
     {
         public final byte type;
-        public final int suiteId;
         public final String query;
 
         public Stuff (List<Item> items, Key key) {
-            this(items, key.type, key.suiteId, key.query);
+            this(items, key.type, key.query);
         }
 
-        public Stuff (List<Item> items, byte type, int suiteId, String query) {
+        public Stuff (List<Item> items, byte type, String query) {
             super(items);
             this.type = type;
-            this.suiteId = suiteId;
             this.query = query;
         }
 
         public boolean matches (Item item) {
-            return item.getType() == type &&
-                suiteId == (item instanceof SubItem ? ((SubItem)item).suiteId : 0);
+            return item.getType() == type;
         }
 
         public String makeArgs (int memberId, int page)
@@ -62,11 +58,11 @@ public class InventoryModels
         }
 
         public String toString () {
-            return "[type=" + type + ", suiteId=" + suiteId + ", query=" + query + "]";
+            return "[type=" + type + ", query=" + query + "]";
         }
 
         protected SimpleDataModel<Item> createFilteredModel (List<Item> items) {
-            return new Stuff(items, type, suiteId, query);
+            return new Stuff(items, type, query);
         }
     }
 
@@ -101,7 +97,7 @@ public class InventoryModels
      */
     public SimpleDataModel<Item> getModel (int memberId, byte type, String query)
     {
-        return _models.get(new Key(memberId, type, 0, query));
+        return _models.get(new Key(memberId, type, query));
     }
 
     /**
@@ -111,16 +107,7 @@ public class InventoryModels
     public void loadModel (int memberId, byte type, String query,
         AsyncCallback<DataModel<Item>> cb)
     {
-        loadModel(new Key(memberId, type, 0, query), cb);
-    }
-
-    /**
-     * Loads a data model for sub-items of the specified type with the specified parent.
-     */
-    public void loadSubModel (int memberId, byte type, int suiteId,
-        AsyncCallback<DataModel<Item>> cb)
-    {
-        loadModel(new Key(memberId, type, suiteId, null), cb);
+        loadModel(new Key(memberId, type, query), cb);
     }
 
     /**
@@ -204,35 +191,29 @@ public class InventoryModels
                 cb.onFailure(caught);
             }
         };
-        if (key.suiteId != 0) {
-            _stuffsvc.loadSubInventory(key.memberId, key.type, key.suiteId, callback);
-        } else {
-            _stuffsvc.loadInventory(key.memberId, key.type, key.query, callback);
-        }
+        _stuffsvc.loadInventory(key.memberId, key.type, key.query, callback);
     }
 
     protected static class Key {
         public final int memberId;
         public final byte type;
-        public final int suiteId;
         public final String query;
 
-        public Key (int memberId, byte type, int suiteId, String query)
+        public Key (int memberId, byte type, String query)
         {
             this.memberId = memberId;
             this.type = type;
-            this.suiteId = suiteId;
             this.query = (query != null && query.length() == 0) ? null : query;
         }
 
         public int hashCode() {
-            return memberId ^ type ^ suiteId ^ (query == null ? 0 : query.hashCode());
+            return memberId ^ type ^ (query == null ? 0 : query.hashCode());
         }
 
         public boolean equals (Object other) {
             Key okey = (Key)other;
-            return memberId == okey.memberId && type == okey.type && (suiteId == okey.suiteId)
-                && ((query != null && query.equals(okey.query)) || query == okey.query);
+            return memberId == okey.memberId && type == okey.type &&
+                ((query != null && query.equals(okey.query)) || query == okey.query);
         }
     }
 

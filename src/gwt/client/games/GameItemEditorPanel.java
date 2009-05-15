@@ -19,7 +19,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -59,7 +59,7 @@ public class GameItemEditorPanel extends SmartTable
             col++; // for [view]
             col++; // for [edit]
             setText(row, col++, _msgs.giePublished(), 1, "Header");
-            if (items.get(0) instanceof SubItem) {
+            if (items.get(0) instanceof IdentGameItem) {
                 setText(row, col++, _msgs.gieIdent(), 1, "Header");
             }
             if (items.get(0) instanceof TrophySource) {
@@ -82,8 +82,8 @@ public class GameItemEditorPanel extends SmartTable
             setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1, null);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
             setText(row, col++, (item.catalogId == 0) ? "" : _msgs.gieIsPublished());
-            if (item instanceof SubItem) {
-                setText(row, col++, ((SubItem)item).ident);
+            if (item instanceof IdentGameItem) {
+                setText(row, col++, ((IdentGameItem)item).ident);
             }
             if (item instanceof TrophySource) {
                 setText(row, col++, ((TrophySource)item).secret ? _msgs.gieIsSecret() : "");

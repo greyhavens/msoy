@@ -3,23 +3,22 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.depot.Key;
-import com.samskivert.depot.annotation.TableGenerator;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 
 /**
- * Contains the persistent data for a LevelPack item.
+ * A base class for items that are associated with a game.
  */
-@TableGenerator(name="itemId", pkColumnValue="LEVELPACK")
-public class LevelPackRecord extends IdentGameItemRecord
+@Entity
+public abstract class GameItemRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    public static final Class<LevelPackRecord> _R = LevelPackRecord.class;
-    public static final ColumnExp PREMIUM = colexp(_R, "premium");
-    public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final Class<GameItemRecord> _R = GameItemRecord.class;
     public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
@@ -42,20 +41,26 @@ public class LevelPackRecord extends IdentGameItemRecord
     public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
-    /** Update this version if you change fields specific to this derived class. */
-    public static final int ITEM_VERSION = 3;
+    // TODO: migrate suiteId to gameId after the other major migration is done
 
-    /** This combines {@link #ITEM_VERSION} with {@link #BASE_SCHEMA_VERSION} to create a version
-     * that allows us to make ItemRecord-wide changes and specific derived class changes. */
-    public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
-
-    /** Whether or not this level pack is premium. See {@link LevelPack#premium}. */
-    public boolean premium;
+    /** The game to which this item belongs. See {@link GameItem#gameId}. */
+    @Index(name="ixSuiteId") public int suiteId;
 
     @Override // from ItemRecord
-    public byte getType ()
+    public void prepareForListing (ItemRecord oldListing)
     {
-        return Item.LEVEL_PACK;
+        super.prepareForListing(oldListing);
+
+        // we need to flip from the dev game id to the published game id
+        suiteId = Math.abs(suiteId);
+    }
+
+    @Override // from ItemRecord
+    public Item toItem ()
+    {
+        GameItem item = (GameItem)super.toItem();
+        item.gameId = suiteId;
+        return item;
     }
 
     @Override // from ItemRecord
@@ -63,29 +68,7 @@ public class LevelPackRecord extends IdentGameItemRecord
     {
         super.fromItem(item);
 
-        LevelPack pack = (LevelPack)item;
-        premium = pack.premium;
+        GameItem sitem = (GameItem)item;
+        suiteId = sitem.gameId;
     }
-
-    @Override // from ItemRecord
-    protected Item createItem ()
-    {
-        LevelPack object = new LevelPack();
-        object.premium = premium;
-        return object;
-    }
-
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link LevelPackRecord}
-     * with the supplied key values.
-     */
-    public static Key<LevelPackRecord> getKey (int itemId)
-    {
-        return new Key<LevelPackRecord>(
-                LevelPackRecord.class,
-                new ColumnExp[] { ITEM_ID },
-                new Comparable[] { itemId });
-    }
-    // AUTO-GENERATED: METHODS END
 }

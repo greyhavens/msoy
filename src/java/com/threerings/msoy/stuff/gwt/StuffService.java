@@ -89,14 +89,6 @@ public interface StuffService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all items in a player's inventory of the specified type for the specified suite.
-     * Support+ will also get all original subitems for an original parent so that their inventory
-     * display looks like the inventory display of the parent item creator.
-     */
-    List<Item> loadSubInventory (int memberId, byte type, int suiteId)
-        throws ServiceException;
-
-    /**
      * Loads the details of a particular item.
      */
     Item loadItem (ItemIdent item)

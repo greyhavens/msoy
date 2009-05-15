@@ -14,13 +14,13 @@ import com.threerings.msoy.item.data.all.Prop;
  * Contains the persistent data for a Prop item.
  */
 @TableGenerator(name="itemId", pkColumnValue="PROP")
-public class PropRecord extends SubItemRecord
+public class PropRecord extends IdentGameItemRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<PropRecord> _R = PropRecord.class;
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

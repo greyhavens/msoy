@@ -17,7 +17,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -259,11 +259,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(_giftBits = new FlowPanel());
         }
 
-        // if this item is an original subitem, provide a link to its original parent
-        if (_item instanceof SubItem) {
+        // if this item is a game item, provide a link to its game
+        if (_item instanceof GameItem) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(createTipLink(_msgs.detailCanViewGame(), _msgs.detailViewGame(),
-                                       Pages.GAMES, Args.compose("d", ((SubItem)_item).suiteId)));
+                                       Pages.GAMES, Args.compose("d", ((GameItem)_item).gameId)));
         }
 
         adjustForUsage();

@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.ItemPack;
 /**
  * A class for creating and editing {@link ItemPack} digital items.
  */
-public class ItemPackEditor extends SubItemEditor
+public class ItemPackEditor extends IdentGameItemEditor
 {
     @Override // from ItemEditor
     public Item createBlankItem ()

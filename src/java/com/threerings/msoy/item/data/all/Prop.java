@@ -9,7 +9,7 @@ import com.threerings.msoy.data.all.MediaDesc;
  * Contains the runtime data for a Prop item. A prop is smart furniture that is associated with an
  * AVRG.
  */
-public class Prop extends SubItem
+public class Prop extends IdentGameItem
 {
     /** The id of the game with which we're associated. */
     public int gameId;

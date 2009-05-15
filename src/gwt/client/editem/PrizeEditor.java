@@ -15,7 +15,7 @@ import client.ui.NumberTextBox;
 /**
  * A class for creating and editing {@link Prize} digital items.
  */
-public class PrizeEditor extends SubItemEditor
+public class PrizeEditor extends IdentGameItemEditor
 {
     @Override // from ItemEditor
     public Item createBlankItem ()

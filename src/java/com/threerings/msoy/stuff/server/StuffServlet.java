@@ -34,7 +34,6 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CloneRecord;
@@ -219,48 +218,6 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadSubInventory (int memberId, byte type, int suiteId)
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser();
-        if (memrec.memberId != memberId && !memrec.isSupport()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
-
-        // make sure they supplied a valid item type
-        if (Item.getClassForType(type) == null) {
-            log.warning("Requested to load inventory for invalid item type",
-                        "who", who(memrec), "type", type);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        // first load things up normally
-        List<Item> items = Lists.newArrayList();
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-        Function<ItemRecord, Item> toItem = new ItemRecord.ToItem<Item>();
-        items.addAll(Lists.transform(repo.loadOriginalItems(memberId, suiteId), toItem));
-        boolean hasOriginals = (items.size() > 0);
-        items.addAll(Lists.transform(repo.loadClonedItems(memberId, suiteId), toItem));
-
-        // if we found no originals owned by the caller and the suite id references an original
-        // item and the caller is support+ then we want to do some jiggery pokery to load up the
-        // originals owned by the parent item's owner; this allows support+ to see an item with
-        // subitems as the owner sees it which is useful and reduces confusion
-        if (!hasOriginals && suiteId > 0 && memrec.isSupport()) {
-            // load up the parent item (parent item id is the suite id in this case)
-            ItemRecord parent =
-                _itemLogic.getRepository(getSuiteMasterType(type)).loadItem(suiteId);
-            if (parent != null) {
-                items.addAll(
-                    Lists.transform(repo.loadOriginalItems(parent.ownerId, suiteId), toItem));
-            }
-        }
-
-        Collections.sort(items);
-        return items;
-    }
-
-    // from interface StuffService
     public Item loadItem (ItemIdent item)
         throws ServiceException
     {
@@ -369,26 +326,6 @@ public class StuffServlet extends MsoyServiceServlet
             }
         });
         return rec.toItem();
-    }
-
-    /**
-     * Helpy helper function.
-     */
-    protected static byte getSuiteMasterType (byte type)
-        throws ServiceException
-    {
-        // determine the master type for this subitem type
-        Item proto = null;
-        try {
-            proto = Item.getClassForType(type).newInstance();
-        } catch (Exception e) {
-            // no problem, we'll fail below
-        }
-        if (!(proto instanceof SubItem)) {
-            log.warning("Requested suite master for non-SubItem type", "type", type);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-        return ((SubItem)proto).getSuiteMasterType();
     }
 
     // our dependencies

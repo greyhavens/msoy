@@ -56,7 +56,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -625,7 +625,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // load up all subitems of the master
         MemberRecord mrec = getAuthedUser();
-        for (SubItem sitem : grec.getSuiteTypes()) {
+        for (IdentGameItem sitem : grec.getSuiteTypes()) {
             if (!sitem.isSalable()) {
                 continue;
             }

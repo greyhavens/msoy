@@ -6,22 +6,21 @@ package com.threerings.msoy.item.server.persist;
 import com.google.common.base.Function;
 
 import com.samskivert.depot.annotation.Entity;
-import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 
 /**
  * Contains additional fields required by sub-items.
  */
 @Entity
-public abstract class SubItemRecord extends ItemRecord
+public abstract class IdentGameItemRecord extends GameItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    public static final Class<SubItemRecord> _R = SubItemRecord.class;
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final Class<IdentGameItemRecord> _R = IdentGameItemRecord.class;
     public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
@@ -44,34 +43,20 @@ public abstract class SubItemRecord extends ItemRecord
     // AUTO-GENERATED: FIELDS END
 
     /** A function that extracts {@link #ident}. */
-    public static Function<SubItemRecord, String> GET_IDENT =
-        new Function<SubItemRecord, String>() {
-        public String apply (SubItemRecord record) {
+    public static Function<IdentGameItemRecord, String> GET_IDENT =
+        new Function<IdentGameItemRecord, String>() {
+        public String apply (IdentGameItemRecord record) {
             return record.ident;
         }
     };
-
-    /** The identifier of the suite to which this subitem belongs. See {@link SubItem#suiteId}. */
-    @Index(name="ixSuiteId")
-    public int suiteId;
 
     /** An identifier for this level pack, used by the game code. */
     public String ident;
 
     @Override // from ItemRecord
-    public void prepareForListing (ItemRecord oldListing)
-    {
-        super.prepareForListing(oldListing);
-
-        // we need to flip from the dev game id to the published game id
-        suiteId = Math.abs(suiteId);
-    }
-
-    @Override // from ItemRecord
     public Item toItem ()
     {
-        SubItem item = (SubItem)super.toItem();
-        item.suiteId = suiteId;
+        IdentGameItem item = (IdentGameItem)super.toItem();
         item.ident = ident;
         return item;
     }
@@ -81,8 +66,7 @@ public abstract class SubItemRecord extends ItemRecord
     {
         super.fromItem(item);
 
-        SubItem sitem = (SubItem)item;
-        suiteId = sitem.suiteId;
+        IdentGameItem sitem = (IdentGameItem)item;
         ident = sitem.ident;
     }
 }

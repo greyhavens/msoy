@@ -19,7 +19,7 @@ import com.threerings.msoy.item.server.persist.ItemPackRecord;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRecord;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
-import com.threerings.msoy.item.server.persist.SubItemRecord;
+import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
 
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
@@ -69,10 +69,10 @@ public abstract class ContentOwnershipUnit extends RepositoryUnit
     }
 
     protected Iterable<GameContentOwnership> summarize (
-        final byte type, Iterable<? extends SubItemRecord> records)
+        final byte type, Iterable<? extends IdentGameItemRecord> records)
     {
         CountHashMap<String> counts = new CountHashMap<String>();
-        for (SubItemRecord rec : records) {
+        for (IdentGameItemRecord rec : records) {
             counts.incrementCount(rec.ident, 1);
         }
         return Iterables.transform(counts.countEntrySet(),

@@ -4,7 +4,7 @@
 package client.stuff;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -27,7 +27,7 @@ public class ItemEntry extends ItemBox
             getFlexCellFormatter().addStyleName(1, 0, "Original");
         }
 
-        if (!(item instanceof SubItem)) {
+        if (!(item instanceof IdentGameItem)) {
             addWidget(new ItemActivator(item, false), getColumns(), "Activator");
         }
     }

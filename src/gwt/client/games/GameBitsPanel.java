@@ -20,9 +20,6 @@ import client.util.Link;
  */
 public class GameBitsPanel extends SmartTable
 {
-    /**
-     * @param gamesPlayed If > 0 will display the total # of games played
-     */
     public GameBitsPanel (GameDetail detail)
     {
         super("gameBits", 0, 0);

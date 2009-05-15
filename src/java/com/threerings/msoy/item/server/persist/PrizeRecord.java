@@ -14,14 +14,14 @@ import com.threerings.msoy.item.data.all.Prize;
  * Contains the persistent data for a Prize item.
  */
 @TableGenerator(name="itemId", pkColumnValue="PRIZE")
-public class PrizeRecord extends SubItemRecord
+public class PrizeRecord extends IdentGameItemRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<PrizeRecord> _R = PrizeRecord.class;
     public static final ColumnExp TARGET_TYPE = colexp(_R, "targetType");
     public static final ColumnExp TARGET_CATALOG_ID = colexp(_R, "targetCatalogId");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

@@ -8,7 +8,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 /**
  * Contains the runtime data for an ItemPack item.
  */
-public class ItemPack extends SubItem
+public class ItemPack extends IdentGameItem
 {
     public function ItemPack ()
     {

@@ -331,7 +331,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId);
         } else {
             where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId,
-                              getItemColumn(SubItemRecord.SUITE_ID), suiteId);
+                              getItemColumn(GameItemRecord.SUITE_ID), suiteId);
         }
         return findAll(getItemClass(), where);
     }
@@ -348,9 +348,9 @@ public abstract class ItemRepository<T extends ItemRecord>
         for (IntIntMap.IntIntEntry entry : migs.entrySet()) {
             int sourceSuiteId = entry.getIntKey();
             int destSuiteId = entry.getIntValue();
-            for (Key<T> key : findAllKeys(
-                     getItemClass(), false,
-                     new Where(new Equals(getItemColumn(SubItemRecord.SUITE_ID), sourceSuiteId)))) {
+            Where where = new Where(new Equals(getItemColumn(GameItemRecord.SUITE_ID),
+                                               sourceSuiteId));
+            for (Key<T> key : findAllKeys(getItemClass(), false, where)) {
                 migmap.put(destSuiteId, (Integer)key.getValues()[0]);
             }
         }
@@ -359,7 +359,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         for (Map.Entry<Integer, Collection<Integer>> entry : migmap.asMap().entrySet()) {
             updatePartial(getItemClass(),
                           new Where(new In(getItemColumn(ItemRecord.ITEM_ID), entry.getValue())),
-                          null, getItemColumn(SubItemRecord.SUITE_ID), entry.getKey());
+                          null, getItemColumn(GameItemRecord.SUITE_ID), entry.getKey());
         }
     }
 // END TEMP
@@ -372,7 +372,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // TODO: This shouldn't need a conservative cache strategy, just debugging
         // TODO: by process of elimination.
         return findAll(getItemClass(), CacheStrategy.NONE, Lists.newArrayList(
-                           new Where(getItemColumn(SubItemRecord.SUITE_ID), suiteId)));
+                           new Where(getItemColumn(GameItemRecord.SUITE_ID), suiteId)));
     }
 
     /**
@@ -385,7 +385,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
         } else {
             where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId,
-                              getItemColumn(SubItemRecord.SUITE_ID), suiteId);
+                              getItemColumn(GameItemRecord.SUITE_ID), suiteId);
         }
         return loadClonedItems(where);
     }
@@ -1383,8 +1383,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             whereBits.add(new GreaterThanEquals(getRatingExpression(), minRating));
         }
 
-        if (suiteId != 0 && isSubItem()) {
-            whereBits.add(new Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
+        if (suiteId != 0 && isGameItem()) {
+            whereBits.add(new Equals(getItemColumn(GameItemRecord.SUITE_ID), suiteId));
             significantlyConstrained = true;
         }
 
@@ -1550,11 +1550,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Checks whether the Item class for this repository is a SubItemRecord.
+     * Checks whether the Item class for this repository is a GameItemRecord.
      */
-    protected boolean isSubItem ()
+    protected boolean isGameItem ()
     {
-        return SubItemRecord.class.isAssignableFrom(getItemClass());
+        return GameItemRecord.class.isAssignableFrom(getItemClass());
     }
 
     /**

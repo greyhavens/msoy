@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -73,7 +73,7 @@ public class ItemBuyPanel extends BuyPanel<Item>
         boughtPanel.add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists()) {
-            if (item instanceof SubItem) {
+            if (item instanceof IdentGameItem) {
                 boughtPanel.add(WidgetUtil.makeShim(10, 10));
                 boughtPanel.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(),
                     new ClickHandler() {

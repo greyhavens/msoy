@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 /**
  * Contains the runtime data for a Prize item.
  */
-public class Prize extends SubItem
+public class Prize extends IdentGameItem
 {
     /** The item type of the target prize item. */
     public var targetType :int;

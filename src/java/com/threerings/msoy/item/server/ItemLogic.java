@@ -59,7 +59,7 @@ import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 
@@ -85,7 +85,7 @@ import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.PropRepository;
-import com.threerings.msoy.item.server.persist.SubItemRecord;
+import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
@@ -235,8 +235,8 @@ public class ItemLogic
         record.ownerId = creatorId;
 
         // if this is a subitem, validate its suite id
-        if (item instanceof SubItem) {
-            int gameId = ((SubItem)item).suiteId;
+        if (item instanceof IdentGameItem) {
+            int gameId = ((IdentGameItem)item).gameId;
             GameInfoRecord grec = _mgameRepo.loadGame(gameId);
             if (grec == null || GameInfo.toDevId(grec.gameId) != gameId) {
                 log.warning("Requested to create game item with invalid parent", "who", creatorId,
@@ -352,9 +352,9 @@ public class ItemLogic
                     MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId);
                 }
 
-            } else if (nrecord instanceof SubItemRecord &&
-                       ((SubItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
-                int gameId = ((SubItemRecord)nrecord).suiteId;
+            } else if (nrecord instanceof IdentGameItemRecord &&
+                       ((IdentGameItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
+                int gameId = ((IdentGameItemRecord)nrecord).suiteId;
                 if (gameId != 0) {
                     // notify any server hosting this game that its data is updated
                     _peerMan.invokeNodeAction(new GameUpdatedAction(gameId));
@@ -396,9 +396,9 @@ public class ItemLogic
         if (record.getType() == Item.AVATAR) {
             MemberNodeActions.avatarUpdated(record.ownerId, record.itemId);
 
-        } else if (record instanceof SubItemRecord &&
-                   ((SubItem)record.toItem()).getSuiteMasterType() == Item.GAME) {
-            SubItemRecord srecord = (SubItemRecord)record;
+        } else if (record instanceof IdentGameItemRecord &&
+                   ((IdentGameItem)record.toItem()).getSuiteMasterType() == Item.GAME) {
+            IdentGameItemRecord srecord = (IdentGameItemRecord)record;
             // see if the owner of this game is playing a game right now
             if (srecord.suiteId != 0 &&
                 _peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {

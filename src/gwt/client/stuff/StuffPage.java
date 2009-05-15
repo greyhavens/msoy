@@ -12,7 +12,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -157,7 +157,7 @@ public class StuffPage extends Page
                     if (BULK_TYPES.contains(item.getType())) {
                         Link.go(Pages.STUFF, Args.compose(item.getType(), item.ownerId));
                     } else if (GAME_TYPES.containsKey(item.getType())) {
-                        int gameId = Math.abs(((SubItem)item).suiteId);
+                        int gameId = Math.abs(((IdentGameItem)item).gameId);
                         int tabIdx = GAME_TYPES.get(item.getType());
                         Link.go(Pages.GAMES, Args.compose("e", gameId, tabIdx));
                     } else {

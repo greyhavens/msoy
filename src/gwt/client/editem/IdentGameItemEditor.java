@@ -7,25 +7,19 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 
 /**
- * Handles the editing of sub-items.
+ * Handles the editing of game items with an identifier.
  */
-public abstract class SubItemEditor extends ItemEditor
+public abstract class IdentGameItemEditor extends GameItemEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
-        _subi = (SubItem)item;
-        safeSetText(_ident, _subi.ident);
-    }
-
-    @Override // from ItemEditor
-    public void setGameId (int gameId)
-    {
-        _subi.suiteId = gameId;
+        _igitem = (IdentGameItem)item;
+        safeSetText(_ident, _igitem.ident);
     }
 
     @Override // from ItemEditor
@@ -35,7 +29,7 @@ public abstract class SubItemEditor extends ItemEditor
 
         addSpacer();
         addRow(_emsgs.subIdent(), _ident = new TextBox());
-        _ident.setMaxLength(SubItem.MAX_IDENT_LENGTH);
+        _ident.setMaxLength(IdentGameItem.MAX_IDENT_LENGTH);
         addTip(_emsgs.subIdentTip());
     }
 
@@ -45,13 +39,13 @@ public abstract class SubItemEditor extends ItemEditor
     {
         super.prepareItem();
 
-        _subi.ident = _ident.getText();
-        if (!nonBlank(_subi.ident, SubItem.MAX_IDENT_LENGTH)) {
-            throw new Exception(_emsgs.subIdentMissing(""+SubItem.MAX_IDENT_LENGTH));
+        _igitem.ident = _ident.getText();
+        if (!nonBlank(_igitem.ident, IdentGameItem.MAX_IDENT_LENGTH)) {
+            throw new Exception(_emsgs.subIdentMissing(""+IdentGameItem.MAX_IDENT_LENGTH));
         }
     }
 
-    protected SubItem _subi;
+    protected IdentGameItem _igitem;
     protected TextBox _ident;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);

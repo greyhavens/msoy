@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.LevelPack;
 /**
  * A class for creating and editing {@link LevelPack} digital items.
  */
-public class LevelPackEditor extends SubItemEditor
+public class LevelPackEditor extends IdentGameItemEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)

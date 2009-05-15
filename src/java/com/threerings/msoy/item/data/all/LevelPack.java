@@ -8,7 +8,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 /**
  * Contains the runtime data for a LevelPack item.
  */
-public class LevelPack extends SubItem
+public class LevelPack extends IdentGameItem
 {
     /** Premium level packs must be purchased to be used. */
     public boolean premium;

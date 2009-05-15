@@ -24,7 +24,7 @@ import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.Prop;
-import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.TrophySource;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -150,12 +150,12 @@ public class GameInfoRecord extends PersistentRecord
     /**
      * Returns the item types in our suite.
      */
-    public SubItem[] getSuiteTypes ()
+    public IdentGameItem[] getSuiteTypes ()
     {
         // TODO: add GameLauncher
-        return (isAVRG ? new SubItem[] {
+        return (isAVRG ? new IdentGameItem[] {
                 new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), new Prop() } :
-            new SubItem[] {
+            new IdentGameItem[] {
                 new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), });
     }
 

@@ -4,16 +4,12 @@
 package com.threerings.msoy.item.data.all;
 
 /**
- * A base class for sub-items (level packs, etc.).
+ * A base class for game items with an identifier (level packs, etc.).
  */
-public abstract class SubItem extends Item
+public abstract class IdentGameItem extends GameItem
 {
     /** The maximum length of game identifiers (used by level and item packs and trophies). */
     public static final int MAX_IDENT_LENGTH = 32;
-
-    /** The identifier of the suite to which this sub-item belongs. For game-related subitems this
-     * is the game id. */
-    public int suiteId;
 
     /** An identifier for this sub-item, used to identify it from code. */
     public String ident;

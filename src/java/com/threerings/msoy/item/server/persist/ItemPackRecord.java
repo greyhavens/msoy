@@ -14,12 +14,12 @@ import com.threerings.msoy.item.data.all.ItemPack;
  * Contains the persistent data for a ItemPack item.
  */
 @TableGenerator(name="itemId", pkColumnValue="ITEMPACK")
-public class ItemPackRecord extends SubItemRecord
+public class ItemPackRecord extends IdentGameItemRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<ItemPackRecord> _R = ItemPackRecord.class;
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 /**
  * Contains the runtime data for a TrophySource item.
  */
-public class TrophySource extends SubItem
+public class TrophySource extends IdentGameItem
 {
     /** The required width for a trophy image. */
     public static const TROPHY_WIDTH :int = 60;
