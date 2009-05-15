@@ -45,10 +45,10 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
-import com.threerings.msoy.game.server.PlayerNodeAction;
+import com.threerings.msoy.game.server.GameNodeActions;
+import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -357,7 +357,7 @@ public class ItemLogic
                 int gameId = ((IdentGameItemRecord)nrecord).suiteId;
                 if (gameId != 0) {
                     // notify any server hosting this game that its data is updated
-                    _peerMan.invokeNodeAction(new GameUpdatedAction(gameId));
+                    _gameActions.gameUpdated(gameId);
                 }
             }
 
@@ -403,9 +403,8 @@ public class ItemLogic
             if (srecord.suiteId != 0 &&
                 _peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
                 // notify the game that the user has purchased some game content
-                _peerMan.invokeNodeAction(
-                    new ContentPurchasedAction(
-                        record.ownerId, srecord.suiteId, srecord.getType(), srecord.ident));
+                _playerActions.gameContentPurchased(
+                    record.ownerId, srecord.suiteId, srecord.getType(), srecord.ident);
             }
         }
 
@@ -833,45 +832,13 @@ public class ItemLogic
         return repo;
     }
 
-    /** Notifies other nodes when a game record is updated. */
-    protected static class GameUpdatedAction extends GameNodeAction
-    {
-        public GameUpdatedAction (int gameId) {
-            super(gameId);
-        }
-        public GameUpdatedAction () {
-        }
-        @Override protected void execute () {
-            _gameReg.gameContentUpdated(_gameId);
-        }
-        @Inject protected transient GameGameRegistry _gameReg;
-    }
-
-    /** Notifies other nodes when a user has purchased game content. */
-    protected static class ContentPurchasedAction extends PlayerNodeAction
-    {
-        public ContentPurchasedAction (int memberId, int gameId, byte itemType, String ident) {
-            super(memberId);
-            _gameId = gameId;
-            _itemType = itemType;
-            _ident = ident;
-        }
-        public ContentPurchasedAction () {
-        }
-        @Override protected void execute (PlayerObject plobj) {
-            _gameReg.gameContentPurchased(plobj, _gameId, _itemType, _ident);
-        }
-        protected int _gameId;
-        protected byte _itemType;
-        protected String _ident;
-        @Inject protected transient GameGameRegistry _gameReg;
-    }
-
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GameNodeActions _gameActions;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected MemberRepository _memberRepo;

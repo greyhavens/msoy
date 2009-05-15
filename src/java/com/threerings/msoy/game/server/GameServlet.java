@@ -36,8 +36,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
-import com.threerings.msoy.peer.server.GameNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
@@ -299,7 +297,7 @@ public class GameServlet extends MsoyServiceServlet
         _ratingRepo.deletePercentile(single ? -gameId : gameId, gameMode);
 
         // tell any resolved instance of this game to clear its in memory percentiler
-        _peerMan.invokeNodeAction(new ResetScoresAction(gameId, single, gameMode));
+        _gameActions.resetScores(gameId, single, gameMode);
     }
 
     // from interface GameService
@@ -557,10 +555,8 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(code.gameId, mrec);
         _mgameRepo.updateGameCode(GameCodeRecord.fromGameCode(code));
-
-// TODO
-//         // notify any server hosting this game that its data is updated
-//         _peerMan.invokeNodeAction(new GameUpdatedAction(grec.gameId));
+        // notify any server hosting this game that its data is updated
+        _gameActions.gameUpdated(code.isDevelopment ? GameInfo.toDevId(code.gameId) : code.gameId);
     }
 
     // from interface GameService
@@ -680,35 +676,12 @@ public class GameServlet extends MsoyServiceServlet
         return (ppg == null) ? 0 : ppg.population;
     }
 
-    /** Used by {@link #resetGameScores}. */
-    protected static class ResetScoresAction extends GameNodeAction
-    {
-        public ResetScoresAction (int gameId, boolean single, int gameMode) {
-            super(gameId);
-            _single = single;
-            _gameMode = gameMode;
-        }
-
-        public ResetScoresAction () {
-        }
-
-        @Override // from PeerManager.NodeAction
-        protected void execute () {
-            _gameReg.resetScorePercentiler(_gameId, _single, _gameMode);
-        }
-
-        protected boolean _single;
-        protected int _gameMode;
-
-        @Inject protected transient GameGameRegistry _gameReg;
-    }
-
     // our dependencies
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GameNodeActions _gameActions;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;

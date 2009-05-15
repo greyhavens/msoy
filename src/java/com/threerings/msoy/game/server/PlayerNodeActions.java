@@ -46,6 +46,11 @@ public class PlayerNodeActions
         _peerMan.invokeNodeAction(new DisplayNameUpdated(name));
     }
 
+    public void gameContentPurchased (int playerId, int gameId, byte itemType, String ident)
+    {
+        _peerMan.invokeNodeAction(new ContentPurchasedAction(playerId, gameId, itemType, ident));
+    }
+
     /** Handles updating a player's game. */
     protected static class UpdatePlayerAction extends MemberNodeAction
     {
@@ -88,6 +93,29 @@ public class PlayerNodeActions
 
         protected String _name;
         @Inject protected transient BodyManager _bodyMan;
+    }
+
+    /** Notifies other nodes when a user has purchased game content. */
+    protected static class ContentPurchasedAction extends PlayerNodeAction
+    {
+        public ContentPurchasedAction (int memberId, int gameId, byte itemType, String ident) {
+            super(memberId);
+            _gameId = gameId;
+            _itemType = itemType;
+            _ident = ident;
+        }
+
+        public ContentPurchasedAction () {
+        }
+
+        @Override protected void execute (PlayerObject plobj) {
+            _gameReg.gameContentPurchased(plobj, _gameId, _itemType, _ident);
+        }
+
+        protected int _gameId;
+        protected byte _itemType;
+        protected String _ident;
+        @Inject protected transient GameGameRegistry _gameReg;
     }
 
     @Inject protected MsoyPeerManager _peerMan;
