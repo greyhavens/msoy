@@ -47,8 +47,11 @@ public class LandingPage extends Page
         } else if (action.equals(DEVELOPER_INTRO)) {
             setContent(_msgs.landingTitle(), new DeveloperIntroPanel());
 
+        } else if (action.equals("compact")) {
+            setContent(_msgs.landingTitle(), new LandingPanel(true));
+
         } else {
-            setContent(_msgs.landingTitle(), new LandingPanel());
+            setContent(_msgs.landingTitle(), new LandingPanel(false));
         }
     }
 

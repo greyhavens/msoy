@@ -33,21 +33,23 @@ import client.util.ServiceUtil;
  */
 public class LandingPanel extends SimplePanel
 {
-    public LandingPanel ()
+    public LandingPanel (boolean compact)
     {
         // LandingPanel contains LandingBackground contains LandingContent
         setStyleName("LandingPanel");
         SimplePanel headerBackground = new SimplePanel();
-        headerBackground.setStyleName("LandingBackground");
+        headerBackground.setStyleName(compact ? "LandingBackgroundCompact" : "LandingBackground");
         AbsolutePanel content = new AbsolutePanel();
-        content.setStyleName("LandingContent");
+        content.setStyleName(compact ? "LandingContentCompact" : "LandingContent");
         headerBackground.setWidget(content);
         this.setWidget(headerBackground);
 
-        // splash with animated characters (left goes over right)
-        final HTML titleAnimation = WidgetUtil.createTransparentFlashContainer(
-            "preview", "/images/landing/splash_left.swf", 500, 300, null);
-        content.add(titleAnimation, -23, 10);
+        if (!compact) {
+            // splash with animated characters (left goes over right)
+            final HTML titleAnimation = WidgetUtil.createTransparentFlashContainer(
+                "preview", "/images/landing/splash_left.swf", 500, 300, null);
+            content.add(titleAnimation, -23, 10);
+        }
 
         // join now
         ClickHandler onJoin = Link.createListener(Pages.ACCOUNT, "create");
@@ -61,56 +63,60 @@ public class LandingPanel extends SimplePanel
         logon.add(logonButton);
         content.add(logon, 590, 0);
 
-        // intro video with click-to-play button
-        final AbsolutePanel video = new AbsolutePanel();
-        video.setStyleName("Video");
-        ClickHandler onClick = new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                video.remove(0);
-                // controls skin hardcoded in the swf as /images/landing/landing_movie_skin.swf
-                video.add(WidgetUtil.createFlashContainer(
-                    "preview", "/images/landing/landing_movie.swf", 208, 154, null), 34, 1);
-            }
-        };
-        final Image clickToPlayImage = MsoyUI.createActionImage(
-            "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
-        video.add(clickToPlayImage, 0, 0);
-        content.add(video, 465, 90);
+        if (!compact) {
+            // intro video with click-to-play button
+            final AbsolutePanel video = new AbsolutePanel();
+            video.setStyleName("Video");
+            ClickHandler onClick = new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    video.remove(0);
+                    // controls skin hardcoded in the swf as /images/landing/landing_movie_skin.swf
+                    video.add(WidgetUtil.createFlashContainer(
+                        "preview", "/images/landing/landing_movie.swf", 208, 154, null), 34, 1);
+                }
+            };
+            final Image clickToPlayImage = MsoyUI.createActionImage(
+                "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
+            video.add(clickToPlayImage, 0, 0);
+            content.add(video, 465, 90);
+    
+            // tagline
+            final HTML tagline = MsoyUI.createHTML(_msgs.landingTagline(), null);
+            tagline.setStyleName("LandingTagline");
+            content.add(tagline, 425, 275);
+        }
 
-        // tagline
-        final HTML tagline = MsoyUI.createHTML(_msgs.landingTagline(), null);
-        tagline.setStyleName("LandingTagline");
-        content.add(tagline, 425, 275);
+        int yoffset = compact ? -201 : 0;
 
         // background for the rest of the page
-        final FlowPanel background = new FlowPanel();
+        FlowPanel background = new FlowPanel();
         background.setStyleName("Background");
-        final FlowPanel leftBorder = new FlowPanel();
+        FlowPanel leftBorder = new FlowPanel();
         leftBorder.setStyleName("LeftBorder");
         background.add(leftBorder);
-        final FlowPanel center = new FlowPanel();
+        FlowPanel center = new FlowPanel();
         center.setStyleName("Center");
         background.add(center);
-        final FlowPanel rightBorder = new FlowPanel();
+        FlowPanel rightBorder = new FlowPanel();
         rightBorder.setStyleName("RightBorder");
         background.add(rightBorder);
-        content.add(background, 0, 310);
+        content.add(background, 0, 310 + yoffset);
 
         // top games
-        final RoundBox games = new RoundBox(RoundBox.DARK_BLUE);
+        RoundBox games = new RoundBox(RoundBox.DARK_BLUE);
         final TopGamesPanel topGamesPanel = new TopGamesPanel();
         games.add(topGamesPanel);
-        content.add(games, 68, 312);
+        content.add(games, 68, 312 + yoffset);
 
         // featured avatar
-        content.add(_avatarPanel = new AvatarPanel(), 67, 618);
+        content.add(_avatarPanel = new AvatarPanel(), 67, 618 + yoffset);
 
         // featured group panel is beaten into place using css
         _featuredGroup = new FeaturedGroupPanel(true);
-        content.add(_featuredGroup, 290, 618);
+        content.add(_featuredGroup, 290, 618 + yoffset);
 
         // copyright, about, terms & conditions, help
-        content.add(new LandingCopyright(), 48, 1012);
+        content.add(new LandingCopyright(), 48, 1012 + yoffset);
 
         // collect the data for this page
         _landingsvc.getLandingData(new InfoCallback<LandingData>() {
@@ -120,6 +126,7 @@ public class LandingPanel extends SimplePanel
                 _avatarPanel.setAvatars(data.topAvatars);
             }
         });
+        
     }
 
     protected FeaturedGroupPanel _featuredGroup;
