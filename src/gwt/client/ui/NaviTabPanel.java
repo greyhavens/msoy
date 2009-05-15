@@ -32,7 +32,7 @@ public abstract class NaviTabPanel extends StyledTabPanel
     public void activateTab (final int tabIdx)
     {
         _handreg.removeHandler();
-        DeferredCommand.add(new Command() {
+        DeferredCommand.addCommand(new Command() {
             public void execute () {
                 selectTab(tabIdx);
                 _handreg = addBeforeSelectionHandler(_onSelect);
