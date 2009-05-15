@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 import client.util.events.FlashEvents;
