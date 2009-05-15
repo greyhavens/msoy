@@ -164,8 +164,6 @@ public class ItemManager
     /**
      * Helper function: updates usage of avatar items.  This method assumes that the specified
      * items are both valid and owned by the user in question.
-     *
-     * @see #updateItemUsage(byte, byte, int, int, int, int, ResultListener)
      */
     public void updateItemUsage (int memberId, Avatar oldAvatar, Avatar newAvatar,
                                  ResultListener<Void> lner)

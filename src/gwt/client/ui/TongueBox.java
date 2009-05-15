@@ -145,7 +145,7 @@ public class TongueBox extends SmartTable
         }
         Cell cell = getCellForEvent(event);
         String style = getCellFormatter().getStyleName(cell.getRowIndex(), cell.getCellIndex());
-        if (cell != null && !"Line".equals(style)) {
+        if (!"Line".equals(style)) {
             _clicker.onClick(null);
         }
     }

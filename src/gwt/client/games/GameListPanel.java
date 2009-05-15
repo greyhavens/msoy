@@ -30,10 +30,8 @@ import client.game.PlayButton;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.Stars;
-import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.StringUtil;
 
 /**
  * Displays a list of games.

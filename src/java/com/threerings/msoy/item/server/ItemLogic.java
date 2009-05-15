@@ -54,7 +54,6 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;

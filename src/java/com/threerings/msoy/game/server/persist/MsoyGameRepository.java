@@ -48,7 +48,6 @@ import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.PropRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
-import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
