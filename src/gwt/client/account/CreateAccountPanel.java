@@ -122,10 +122,14 @@ public class CreateAccountPanel extends FlowPanel
     {
         setStyleName("createAccount");
 
-        add(WidgetUtil.makeShim(15, 15));
+        // no shim and different banner for V2
+        if (mode == Mode.VALIDATION_TEST_V2) {
+            add(new Image("/images/account/register_banner.jpg"));
+        } else {
+            add(WidgetUtil.makeShim(15, 15));
+            add(new Image("/images/account/create_bg_top.png"));
+        }
 
-        add(new Image(mode == Mode.VALIDATION_TEST_V2 ? "/images/account/register_banner.jpg" :
-            "/images/account/create_bg_top.png"));
         final FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
