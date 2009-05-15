@@ -32,7 +32,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
 import client.comment.CommentsPanel;
-import client.game.GameBitsPanel;
 import client.game.GameNamePanel;
 import client.game.PlayButton;
 import client.shell.CShell;
@@ -106,9 +105,7 @@ public class GameDetailPanel extends SmartTable
         setWidget(0, 1, new GameNamePanel(
                       info.name, info.genre, info.creator, info.description), 2, null);
 
-        setWidget(1, 0, new GameBitsPanel(
-                      info.gameId, info.creator.getMemberId(), detail.minPlayers, detail.maxPlayers,
-                      detail.metrics.averageDuration, detail.metrics.gamesPlayed));
+        setWidget(1, 0, new GameBitsPanel(detail));
 
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");

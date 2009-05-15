@@ -35,7 +35,7 @@ public class TrophyComparePanel extends SmartTable
     public TrophyComparePanel (final int gameId, int targetId)
     {
         super("trophyCompare", 0, 10);
-        setText(0, 0, _msgs.compareLoading());
+        setWidget(0, 0, MsoyUI.createNowLoading());
 
         int[] memberIds = new int[] { targetId, CShell.getMemberId() };
         _gamesvc.compareTrophies(gameId, memberIds, new InfoCallback<GameService.CompareResult>() {

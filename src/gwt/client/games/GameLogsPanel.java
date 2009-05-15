@@ -33,7 +33,7 @@ public class GameLogsPanel extends VerticalPanel
         setStyleName("gameLogs");
         _gameId = gameId;
 
-        add(MsoyUI.createLabel(_msgs.glpLoading(), "Header"));
+        add(MsoyUI.createNowLoading());
         _gamesvc.loadGameLogs(_gameId, new AsyncCallback<GameLogs>() {
             public void onSuccess (GameLogs logs) {
                 gotLogs(logs);

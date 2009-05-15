@@ -39,7 +39,7 @@ public class GameMetricsPanel extends VerticalPanel
         setStyleName("gameMetrics");
         _detail = detail;
 
-        add(MsoyUI.createLabel(_msgs.gmpLoading(), "Header"));
+        add(MsoyUI.createNowLoading());
         _gamesvc.loadGameMetrics(_detail.gameId, new AsyncCallback<GameDistribs>() {
             public void onSuccess (GameDistribs metrics) {
                 gotMetrics(metrics);

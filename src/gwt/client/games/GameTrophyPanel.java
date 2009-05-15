@@ -22,6 +22,7 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.CShell;
+import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
 import client.util.ServiceUtil;
@@ -36,7 +37,6 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
         super(50, 2, NAV_ON_BOTTOM);
         addStyleName("gameTrophyPanel");
         addStyleName("dottedGrid");
-        add(new Label(_msgs.gameTrophyLoading()));
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_TOP);
 
         _gamesvc.loadGameTrophies(gameId, new AsyncCallback<List<Trophy>>() {
@@ -45,6 +45,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
             }
             public void onFailure (Throwable caught) {
                 CShell.log("loadGameTrophies failed", caught);
+                clear();
                 add(new Label(CShell.serverError(caught)));
             }
         });
@@ -66,6 +67,12 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
     protected boolean displayNavi (int items)
     {
         return (items > _rows*_cols);
+    }
+
+    @Override// from PagedWidget
+    protected Widget getNowLoadingWidget ()
+    {
+        return new MiniNowLoadingWidget();
     }
 
     protected class TrophyDetail extends FlexTable

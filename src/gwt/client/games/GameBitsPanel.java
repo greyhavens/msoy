@@ -1,14 +1,16 @@
 //
 // $Id$
 
-package client.game;
+package client.games;
 
 import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.game.GameMessages;
 import client.shell.CShell;
 import client.util.Link;
 
@@ -21,33 +23,32 @@ public class GameBitsPanel extends SmartTable
     /**
      * @param gamesPlayed If > 0 will display the total # of games played
      */
-    public GameBitsPanel (int gameId, int creatorId, int minPlayers, int maxPlayers,
-                          int avgTime, int gamesPlayed)
+    public GameBitsPanel (GameDetail detail)
     {
         super("gameBits", 0, 0);
 
         int row = 0;
 
-        if (maxPlayers == Integer.MAX_VALUE) {
-            setText(row, 1, _msgs.bitsPlayersParty("" + minPlayers));
-        } else if (minPlayers == maxPlayers) {
-            setText(row, 1, _msgs.bitsPlayersSame("" + minPlayers));
+        if (detail.maxPlayers == Integer.MAX_VALUE) {
+            setText(row, 1, _msgs.bitsPlayersParty(""+detail.minPlayers));
+        } else if (detail.minPlayers == detail.maxPlayers) {
+            setText(row, 1, _msgs.bitsPlayersSame(""+detail.minPlayers));
         } else {
-            setText(row, 1, _msgs.bitsPlayersFixed("" + minPlayers, "" + maxPlayers));
+            setText(row, 1, _msgs.bitsPlayersFixed(""+detail.minPlayers, ""+detail.maxPlayers));
         }
         setText(row++, 0, _msgs.bitsPlayers(), 1, "Label");
 
         setText(row, 0, _msgs.bitsAvgDuration(), 1, "Label");
-        setText(row++, 1, avgMinsLabel(Math.round(avgTime/60f)));
+        setText(row++, 1, avgMinsLabel(Math.round(detail.metrics.averageDuration/60f)));
 
-        if (gamesPlayed > 0) {
+        if (detail.metrics.gamesPlayed > 0) {
             setText(row, 0, _msgs.bitsGamesPlayed(), 1, "Label");
-            setText(row++, 1, ""+gamesPlayed);
+            setText(row++, 1, detail.metrics.gamesPlayed, 1, null);
         }
 
-        if (CShell.getMemberId() == creatorId || CShell.isSupport()) {
+        if (CShell.getMemberId() == detail.info.creator.getMemberId() || CShell.isSupport()) {
             setWidget(row++, 0, Link.create(_msgs.bitsEdit(), Pages.GAMES,
-                                            Args.compose("e", gameId)), 2, null);
+                                            Args.compose("e", detail.info.gameId)), 2, null);
         }
     }
 

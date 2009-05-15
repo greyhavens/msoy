@@ -15,12 +15,10 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.NaviTabPanel;
 import client.util.InfoCallback;
-import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
