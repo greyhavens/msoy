@@ -1026,7 +1026,7 @@ ChatInput {
   backgroundColor: #000000;
 }
 
-.gameInfoTip {
+.infoTip {
   fontSize: 12;
   backgroundColor: #FFFFFF;
   borderColor: #FFFFFF;

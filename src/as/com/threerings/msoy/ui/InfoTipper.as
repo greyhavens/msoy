@@ -69,7 +69,7 @@ public class InfoTipper extends HBox
     protected function handleTipShow (event :ToolTipEvent) :void
     {
         var tip :ToolTip = ToolTip(event.toolTip);
-        tip.styleName = "gameInfoTip";
+        tip.styleName = "infoTip";
         // text must be jiggled, otherwise the tip won't size properly after the style change
         // fawking flex
         tip.text = tip.text; // this is enough jiggling
