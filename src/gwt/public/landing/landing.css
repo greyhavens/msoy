@@ -110,7 +110,6 @@
 .LandingPanel {
   background: #63ABD3 url(/images/landing/bg_gradient.jpg) repeat-x top center;
   width: 100%;
-  height: 1044px;
   position: absolute;
   top: 0;
   left: 0;
@@ -122,27 +121,27 @@
 .LandingBackground {
   background: transparent url(/images/landing/splash_right.png) no-repeat top center;
   width: 100%;
-  height: 1044px;
 }
 
-.LandingBackgroundCompact {
+.LandingPanelCompact .LandingBackground {
   background: transparent url(/images/landing/small_banner.jpg) no-repeat top center;
-  width: 100%;
-  height: 785px;
 }
 
 /* Centered in the middle of the page */
 .LandingContent {
   width: 800px;
-  height: 1044px;
   margin: auto;
 }
 
-/* Centered in the middle of the page */
-.LandingContentCompact {
-  width: 800px;
-  height: 785px;
-  margin: auto;
+/* We need to specify the exact height for 3 widgets... do them all here. */
+.LandingPanel, .LandingBackground, .LandingContent {
+  height: 1044px;
+}
+
+/* Same for compact override. */
+.LandingPanelCompact, .LandingPanelCompact .LandingBackground,
+.LandingPanelCompact .LandingContent {
+  height: 844px;
 }
 
 .LandingPanel .Video {

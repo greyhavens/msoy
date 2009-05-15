@@ -37,10 +37,13 @@ public class LandingPanel extends SimplePanel
     {
         // LandingPanel contains LandingBackground contains LandingContent
         setStyleName("LandingPanel");
+        if (compact) {
+            addStyleName("LandingPanelCompact");
+        }
         SimplePanel headerBackground = new SimplePanel();
-        headerBackground.setStyleName(compact ? "LandingBackgroundCompact" : "LandingBackground");
+        headerBackground.setStyleName("LandingBackground");
         AbsolutePanel content = new AbsolutePanel();
-        content.setStyleName(compact ? "LandingContentCompact" : "LandingContent");
+        content.setStyleName("LandingContent");
         headerBackground.setWidget(content);
         this.setWidget(headerBackground);
 
