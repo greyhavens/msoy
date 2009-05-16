@@ -211,11 +211,13 @@ public class FrameEntryPoint
             ABTestCard test = LandingTestCookie.getTest("2009 05 landing");
             int landingGroup = test == null ? -1 : test.getGroup(getVisitorInfo());
             switch (landingGroup) {
-            case 1:  // group A: go home
+            case 1:  // group A: normal
+                break;
+            case 2:  // group B: go home and see hpg
                 page = Pages.WORLD;
                 args = Args.fromToken("hplaces");
                 break;
-            case 2:  // group B: register NOW
+            case 3:  // group C: register NOW + force validate
                 page = Pages.LANDACC;
                 args = Args.fromToken("reg");
                 break;
