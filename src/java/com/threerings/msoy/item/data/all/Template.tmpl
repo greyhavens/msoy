@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data.all;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Contains the runtime data for a Template item.
  */
@@ -10,19 +12,19 @@ public class Template extends Item
 {
     // TODO: add custom item fields
 
-    // @Override // from Item
+    @Override // from Item
     public byte getType ()
     {
         return TEMPLATE;
     }
 
-    // @Override // from Item
+    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getThumbnailMedia();
     }
 
-    // @Override // from Item
+    @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent(); // TODO: check consistency
