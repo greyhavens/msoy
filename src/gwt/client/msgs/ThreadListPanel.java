@@ -126,10 +126,9 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
      * Shortcut for concatenating our base args with some more args and {@link Args#compose}'ing
      * the result.
      */
-    protected String compose (Object... moreArgs)
+    protected Args compose (Object... moreArgs)
     {
-        Object[] args = ArrayUtil.concatenate(_baseArgs, moreArgs, ArrayUtil.OBJECT_TYPE);
-        return Args.compose(args);
+        return Args.compose(ArrayUtil.concatenate(_baseArgs, moreArgs, ArrayUtil.OBJECT_TYPE));
     }
 
     @Override // from PagedGrid
@@ -231,12 +230,11 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
 
             Widget toThread;
             if (thread.hasUnreadMessages()) {
-                String args = thread.getFirstUnreadPostArgs();
-                toThread = Link.create(thread.subject, Pages.GROUPS, args);
+                toThread = Link.create(
+                    thread.subject, Pages.GROUPS, thread.getFirstUnreadPostArgs());
                 toThread.setTitle(_mmsgs.tlpFirstUnreadTip());
             } else {
-                String args = thread.getFirstPostArgs();
-                toThread = Link.create(thread.subject, Pages.GROUPS, args);
+                toThread = Link.create(thread.subject, Pages.GROUPS, thread.getFirstPostArgs());
             }
             bits.add(toThread);
         }
