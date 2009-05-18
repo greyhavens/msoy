@@ -4,14 +4,14 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -24,7 +24,7 @@ import client.util.MediaUtil;
 /**
  * Helper class, used in ItemEditor.
  */
-public class ItemMediaUploader extends FlexTable
+public class ItemMediaUploader extends SmartTable
 {
     public static final int MODE_NORMAL = 0;
     public static final int MODE_THUMB = 1;
@@ -44,46 +44,45 @@ public class ItemMediaUploader extends FlexTable
         ItemEditor itemEditor, String mediaIds, String type, int mode,
         ItemEditor.MediaUpdater updater)
     {
+        super("mediaUploader", 0, 0);
+
         _itemEditor = itemEditor;
         _mediaIds = mediaIds;
         _type = type;
         _mode = mode;
         _updater = updater;
 
-        setStyleName("mediaUploader");
-        setCellPadding(0);
-        setCellSpacing(0);
-
         FlexCellFormatter fmt = getFlexCellFormatter();
 
-        fmt.setStyleName(0, 0, "ItemPreview");
-        fmt.setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
-        fmt.setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
-        setText(0, 0, "");
+        fmt.setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+        fmt.setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
+        setText(0, 0, "", 1, "ItemPreview");
 
         fmt.setWidth(0, 1, "5px");
 
         setWidget(0, 2, _hint = MsoyUI.createLabel("", "Tip"));
-        _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
-        fmt.setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
+        fmt.setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
 
-        setText(1, 0, "");
-        fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
-        setText(2, 0, "");
-        fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
-        setWidget(3, 0, FlashClients.createUploader(mediaIds, type));
-        fmt.setVerticalAlignment(3, 0, HorizontalPanel.ALIGN_BOTTOM);
+        int row = 0;
+        setText(_editRow = ++row, 0, "", 1, "Button");
+        fmt.setVerticalAlignment(_editRow, 0, HasAlignment.ALIGN_BOTTOM);
+        setText(_paintRow = ++row, 0, "", 1, "Button");
+        fmt.setVerticalAlignment(_paintRow, 0, HasAlignment.ALIGN_BOTTOM);
+        setText(_snapRow = ++row, 0, "", 1, "Button");
+        fmt.setVerticalAlignment(_snapRow, 0, HasAlignment.ALIGN_BOTTOM);
+        setWidget(++row, 0, FlashClients.createUploader(mediaIds, type), 1, "Button");
+        fmt.setVerticalAlignment(row, 0, HasAlignment.ALIGN_BOTTOM);
 
-        setWidget(4, 0, _clearMedia = new Button(_emsgs.clear(), new ClickHandler() {
+        setWidget(++row, 0, new Button(_emsgs.clear(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _updater.clearMedia();
                 setMedia(null);
             }
-        }));
-        fmt.setVerticalAlignment(4, 0, HorizontalPanel.ALIGN_BOTTOM);
+        }), 1, "Button");
+        fmt.setVerticalAlignment(row, 0, HasAlignment.ALIGN_BOTTOM);
 
         // sweet sweet debugging
-        //setText(5, 0, type + " : " + mediaIds + " : " + mode);
+        //setText(++row, 0, type + " : " + mediaIds + " : " + mode);
 
         fmt.setRowSpan(0, 0, getRowCount());
         fmt.setRowSpan(0, 1, getRowCount());
@@ -115,28 +114,23 @@ public class ItemMediaUploader extends FlexTable
 
     protected void addImageEditing (final MediaDesc desc)
     {
-        final Button createBtn = new Button(_emsgs.createImage());
-
-        ClickHandler listener = new ClickHandler() {
+        setWidget(_paintRow, 0, new Button(_emsgs.createImage(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                openImageEditor((event.getSource() == createBtn) ? null : desc, false);
+                openImageEditor(null, false);
             }
-        };
-        createBtn.addClickHandler(listener);
+        }), 1, "Button");
 
-        HorizontalPanel hpan = new HorizontalPanel();
-        hpan.add(createBtn);
-        hpan.add(FlashClients.createCameraButton(_mediaIds));
-        hpan.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
-        setWidget(2, 0, hpan);
+        setWidget(_snapRow, 0, FlashClients.createCameraButton(_mediaIds), 1, "Button");
 
         if (desc != null && desc.isImage()) {
-            Button editBtn = new Button(_emsgs.editImage());
-            editBtn.addClickHandler(listener);
-            setWidget(1, 0, editBtn);
+            setWidget(_editRow, 0, new Button(_emsgs.editImage(), new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    openImageEditor(desc, false);
+                }
+            }), 1, "Button");
 
         } else {
-            setText(1, 0, "");
+            setText(_editRow, 0, "");
         }
     }
 
@@ -236,8 +230,7 @@ public class ItemMediaUploader extends FlexTable
     protected ItemEditor.MediaUpdater _updater;
 
     protected Label _hint;
-    protected HorizontalPanel _panel;
-    protected Button _clearMedia;
+    protected int _editRow, _paintRow, _snapRow;
 
     protected ItemEditor _itemEditor;
     protected String _mediaIds;

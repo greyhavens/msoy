@@ -181,7 +181,7 @@
 .mediaUploader {
 }
 
-.mediaUploader td {
+.mediaUploader .Button {
   padding: 2px;
 }
 
