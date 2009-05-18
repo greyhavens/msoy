@@ -17,12 +17,12 @@ public class Args
      */
     public static String compose (Object... args)
     {
-        StringBuffer builder = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         for (int ii = 0; ii < args.length; ii++) {
             if (ii > 0) {
                 builder.append(ARG_SEP);
             }
-            builder.append(escape(args[ii].toString()));
+            builder.append(escape(String.valueOf(args[ii])));
         }
         return builder.toString();
     }
@@ -33,12 +33,12 @@ public class Args
      */
     public static String compose (List<String> args)
     {
-        StringBuffer builder = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         for (int ii = 0; ii < args.size(); ii++) {
             if (ii > 0) {
                 builder.append(ARG_SEP);
             }
-            builder.append(escape(args.get(ii).toString()));
+            builder.append(escape(args.get(ii)));
         }
         return builder.toString();
     }
