@@ -1039,7 +1039,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public CatalogRecord insertListing (
         ItemRecord master, int originalItemId, int pricing, int salesTarget,
-        Currency currency, int cost, long listingTime)
+        Currency currency, int cost, long listingTime, int basisCatalogId)
     {
         if (master.ownerId != 0) {
             throw new IllegalArgumentException(
@@ -1061,11 +1061,15 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.purchases = record.returns = 0;
         record.currency = currency;
         record.cost = cost;
+        record.basisId = basisCatalogId;
         insert(record);
 
         // wire this listed item and its original up to the catalog record
         noteListing(record.listedItemId, record.catalogId);
         noteListing(originalItemId, record.catalogId);
+        if (record.basisId > 0) {
+            noteBasisAssigned(record.basisId, true);
+        }
 
         // fill this in for the caller
         master.catalogId = record.catalogId;
@@ -1100,6 +1104,9 @@ public abstract class ItemRepository<T extends ItemRecord>
         // clear out the listing mappings for the original item
         if (listing.originalItemId != 0) {
             noteListing(listing.originalItemId, 0);
+        }
+        if (listing.basisId > 0) {
+            noteBasisAssigned(listing.basisId, false);
         }
         // if there are no clones of the master record, delete it as well
         boolean masterDeleted = false;
@@ -1235,6 +1242,16 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void noteListing (int itemId, int catalogId)
     {
         updatePartial(getItemClass(), itemId, ItemRecord.CATALOG_ID, catalogId);
+    }
+
+    /**
+     * Increments or decrements the derivation count of the given listing.
+     */
+    protected void noteBasisAssigned(int catalogId, boolean add)
+    {
+        ColumnExp count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
+        SQLExpression addExp = new Arithmetic.Add(count, add ? 1 : -1);
+        updatePartial(getCatalogClass(), catalogId, count, addExp);
     }
 
     /**

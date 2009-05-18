@@ -81,6 +81,13 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     };
 
     /**
+     * A list of item types that can specify a basis item when listed.
+     */
+    public static final byte[] DERIVATION_TYPES = {
+        AVATAR, PET, FURNITURE, TOY, DECOR
+    };
+
+    /**
      * Enumerates the ways in which an item can be used, stored in the {@link #used} member.
      */
     public enum UsedAs
@@ -294,6 +301,19 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     /**
+     * Checks if the given item type supports derivation.
+     */
+    public static boolean supportsDerivation (byte itemType)
+    {
+        for (int ii = 0; ii < DERIVATION_TYPES.length; ++ii) {
+            if (DERIVATION_TYPES[ii] == itemType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns this item's composite identifier.
      */
     public ItemIdent getIdent ()
@@ -485,6 +505,15 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public boolean isConsistent ()
     {
         return getPrimaryMedia() != null;
+    }
+
+    /**
+     * Checks if this item supports derivation. Derived items may set a non-zero value in
+     * {@link com.threerings.msoy.item.gwt.CatalogListing#basisId}.
+     */
+    public boolean supportsDerviation ()
+    {
+        return supportsDerivation(getType());
     }
 
     // from DSet.Entry

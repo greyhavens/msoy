@@ -129,6 +129,8 @@ public abstract class CatalogRecord extends PersistentRecord
         listing.purchases = purchases;
         listing.returns = returns;
         listing.favoriteCount = favoriteCount;
+        listing.basisId = basisId;
+        listing.derivationCount = derivationCount;
         return listing;
     }
 

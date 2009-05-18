@@ -3,6 +3,9 @@
 
 package client.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -17,11 +20,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemPrices;
+import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.gwt.CatalogService.FavoritesResult;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -32,6 +38,7 @@ import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.ui.Stars;
 import client.util.ClickCallback;
+import client.util.InfoCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
 
@@ -106,6 +113,29 @@ public class DoListItemPopup extends VerticalPanel
 
         } else if (repricing) {
             _stars.setRating(listing.detail.item.getRating());
+        }
+
+        // possibly add the basis selection ui
+        if (_item.supportsDerviation() && firstTime && DeploymentConfig.devDeployment) {
+            SmartTable basis = new SmartTable(0, 3);
+            basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3, null);
+            basis.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+
+            int row = basis.addText(_imsgs.doListBasis(), 1, "rightLabel");
+            basis.setWidget(row, 1, _basisBox = new ListBox(), 1, null);
+            _basisBox.addItem(_imsgs.doListNoBasis());
+
+            // TODO: we don't get the pricing model back with these listing cards. create a new
+            // method that will filter the cards for us on the server
+            _catalogsvc.loadFavorites(CShell.getMemberId(), _item.getType(),
+                new InfoCallback<CatalogService.FavoritesResult>() {
+                    @Override public void onSuccess (FavoritesResult result) {
+                        gotBasisItems(result.favorites);
+                    }
+            });
+
+            add(MsoyUI.createLabel(_imsgs.doListSelectBasisHeader(), "Header"));
+            add(basis);
         }
 
         // possibly add the pricing selection UI
@@ -203,8 +233,10 @@ public class DoListItemPopup extends VerticalPanel
                     if (!validatePricing()) {
                         return false;
                     }
+                    int basisSel = _basisBox.getSelectedIndex();
+                    int basisId = basisSel == 0 ? 0 : _basisItems.get(basisSel - 1).catalogId;
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
-                                         getCurrency(), getCost(), this);
+                                         getCurrency(), getCost(), basisId, this);
                     return true;
                 }
                 @Override protected boolean gotResult (Integer result) {
@@ -297,6 +329,15 @@ public class DoListItemPopup extends VerticalPanel
         return ItemPrices.getMinimumPrice(currency, _item.getType(), (byte)_stars.getRating());
     }
 
+    protected void gotBasisItems (List<ListingCard> items)
+    {
+        // TODO: filter out ineligible items
+        for (ListingCard item : items) {
+            _basisBox.addItem(item.name);
+            _basisItems.add(item);
+        }
+    }
+
     protected Stars _stars = new Stars(0f, false, false, new Stars.StarMouseListener() {
         public void starClicked (byte newRating) {
             _stars.setRating(newRating);
@@ -312,6 +353,9 @@ public class DoListItemPopup extends VerticalPanel
 
     protected Item _item;
     protected ListedListener _listener;
+
+    protected ListBox _basisBox;
+    protected List<ListingCard> _basisItems = new ArrayList<ListingCard>();
 
     protected ListBox _pricingBox;
     protected ListBox _currencyBox;

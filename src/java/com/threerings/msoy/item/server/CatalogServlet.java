@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import com.samskivert.util.RandomUtil;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -293,7 +295,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                         Currency currency, int cost)
+                         Currency currency, int cost, int basisCatalogId)
         throws ServiceException
     {
         final MemberRecord mrec = requireRegisteredUser();
@@ -329,6 +331,25 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
+        // validate the basis
+        if (basisCatalogId != 0) {
+            if (!DeploymentConfig.devDeployment) {
+                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+            }
+            // the client should not let any of this happen, so just throw a generic error
+            if (!Item.supportsDerivation(item.type)) {
+                throw new ServiceException(ItemCodes.E_BASIS_ERROR);
+            }
+            List<CatalogRecord> basisRecs = repo.loadCatalog(Collections.singleton(basisCatalogId));
+            CatalogRecord basisRec = basisRecs.size() > 0 ? basisRecs.get(0) : null;
+            if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
+                basisRec.item.creatorId == originalItem.creatorId ||
+                basisRec.pricing != CatalogListing.PRICING_MANUAL ||
+                basisRec.currency != currency || cost < basisRec.cost + 1) {
+                throw new ServiceException(ItemCodes.E_BASIS_ERROR);
+            }
+        }
+
         // sanitize the sales target
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
@@ -352,6 +373,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final long now = System.currentTimeMillis();
         final Currency fcurrency = currency;
         final int fpricing = pricing, fsalesTarget = salesTarget, fcost = cost;
+        final int fbasisId = basisCatalogId;
         // the coin minimum price is the listing fee
         int listFee = ItemPrices.getMinimumPrice(Currency.COINS, item.type, rating);
         MoneyLogic.BuyOperation<CatalogRecord> buyOp;
@@ -361,8 +383,8 @@ public class CatalogServlet extends MsoyServiceServlet
                 // create our new immutable catalog master item
                 repo.insertOriginalItem(master, true);
                 // create & insert the catalog record
-                _record = repo.insertListing(
-                    master, originalItemId, fpricing, fsalesTarget, fcurrency, fcost, now);
+                _record = repo.insertListing(master, originalItemId, fpricing, fsalesTarget,
+                                             fcurrency, fcost, now, fbasisId);
                 return true;
             }
             public CatalogRecord getWare () {

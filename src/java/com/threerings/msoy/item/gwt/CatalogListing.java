@@ -71,6 +71,13 @@ public class CatalogListing
     /** The number of people who consider this item a favorite. */
     public int favoriteCount;
 
+    /** The item that was used to create this item. The creator of the item declares this
+     * voluntarily. */
+    public int basisId;
+
+    /** The number of items that are based on this item. */
+    public int derivationCount;
+
     /** The amount by which we increase the price at each escalation. */
     protected static final float ESCALATION_FACTOR = 0.25f;
 }

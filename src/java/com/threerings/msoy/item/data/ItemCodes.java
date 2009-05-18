@@ -40,4 +40,7 @@ public interface ItemCodes extends InvocationCodes
 
     /** Error when a user tries to rerate an item they created and listed. */
     public static final String E_NO_RERATE_OWN_ITEM = "e.no_rerate_own_item";
+
+    /** Error reported when listing an item and the basis of the item does not exist. */
+    public static final String E_BASIS_ERROR = "e.basis_error";
 }

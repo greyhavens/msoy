@@ -110,7 +110,7 @@ public interface CatalogService extends RemoteService
      * @return the catalog id of the newly listed item.
      */
     int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                  Currency currency, int cost)
+                  Currency currency, int cost, int basisCatalogId)
         throws ServiceException;
 
     /**

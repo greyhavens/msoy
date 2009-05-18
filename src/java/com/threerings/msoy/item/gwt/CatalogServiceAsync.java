@@ -41,7 +41,8 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#listItem}
      */
     void listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                   Currency currency, int cost, AsyncCallback<Integer> callback);
+                   Currency currency, int cost, int basisCatalogId,
+                   AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
