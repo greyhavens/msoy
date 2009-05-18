@@ -4,12 +4,14 @@
 package com.threerings.msoy.web.gwt;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Used to parse the arguments supplied to the page.
  */
 public class Args
+    implements Iterable<String>
 {
     /**
      * Composes multiple arguments into a single string argument that can be properly handled by
@@ -19,10 +21,12 @@ public class Args
     {
         Args aobj = new Args();
         for (Object arg : args) {
-            if (arg instanceof Args) {
-                aobj._args.addAll(((Args)arg)._args);
+            if (arg instanceof Iterable<?>) {
+                for (Object larg : (Iterable<?>)arg) {
+                    aobj.add(larg);
+                }
             } else {
-                aobj._args.add(String.valueOf(arg));
+                aobj.add(arg);
             }
         }
         return aobj;
@@ -50,14 +54,6 @@ public class Args
         Args args = new Args();
         args.setToken(token);
         return args;
-    }
-
-    /**
-     * Creates a new blank args instance.
-     */
-    public Args ()
-    {
-        _args = new ArrayList<String>();
     }
 
     /**
@@ -209,6 +205,12 @@ public class Args
             buf.append("/").append(arg);
         }
         return buf.toString();
+    }
+
+    // from interface Iterable<String>
+    public Iterator<String> iterator ()
+    {
+        return _args.iterator();
     }
 
     @Override // from Object

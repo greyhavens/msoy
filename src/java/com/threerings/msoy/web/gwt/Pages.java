@@ -69,10 +69,8 @@ public enum Pages
     public String makeToken (Object... args)
     {
         String token = getPath();
-        if (args.length > 0) {
-            token = token + "-" + Args.compose(args);
-        }
-        return token;
+        String atok = Args.compose(args).toToken();
+        return (atok.length() == 0) ? token : (token + "-" + atok);
     }
 
     /**
