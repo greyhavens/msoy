@@ -17,6 +17,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -31,7 +32,7 @@ public class ShareDialog extends BorderedDialog
     public static class Info
     {
         public Pages page;
-        public String args;
+        public Args args;
         public String what;
         public String title;
         public String descrip;

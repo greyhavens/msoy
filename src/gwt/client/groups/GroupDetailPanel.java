@@ -27,6 +27,7 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ShopUtil;
@@ -211,7 +212,7 @@ public class GroupDetailPanel extends FlowPanel
 
         // shop
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
-            String args = ShopUtil.composeArgs(
+            Args args = ShopUtil.composeArgs(
                 _extras.catalogItemType, _extras.catalogTag, null, 0);
             actions.add(MsoyUI.createActionLabel(
                             _msgs.detailShop(), Link.createHandler(Pages.SHOP, args)));
@@ -229,7 +230,7 @@ public class GroupDetailPanel extends FlowPanel
             FlowPanel managerActions = MsoyUI.createFlowPanel("ManagerActions");
             actions.add(managerActions);
 
-            String args = GroupsPage.Nav.EDIT.composeArgs(_group.groupId);
+            Args args = GroupsPage.Nav.EDIT.composeArgs(_group.groupId);
             managerActions.add(MsoyUI.createActionLabel(
                 _msgs.detailEdit(), "inline", Link.createHandler(Pages.GROUPS, args)));
 

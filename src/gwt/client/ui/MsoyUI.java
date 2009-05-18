@@ -38,6 +38,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -729,7 +730,7 @@ public class MsoyUI
      * @param descrip the description for the share blurb.
      * @param image the image to be included in the share blurb.
      */
-    public static Widget makeShareButton (Pages page, String args, String what,
+    public static Widget makeShareButton (Pages page, Args args, String what,
                                           String title, String descrip, MediaDesc image)
     {
         final ShareDialog.Info info = new ShareDialog.Info();

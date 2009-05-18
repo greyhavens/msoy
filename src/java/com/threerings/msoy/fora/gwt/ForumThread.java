@@ -102,7 +102,7 @@ public class ForumThread
     /**
      * Gets the token arguments that will link to the most recent post.
      */
-    public String getMostRecentPostArgs ()
+    public Args getMostRecentPostArgs ()
     {
         return getArgs(posts-1, mostRecentPostId);
     }
@@ -110,7 +110,7 @@ public class ForumThread
     /**
      * Gets the token arguments that will link to the first unread post.     
      */
-    public String getFirstUnreadPostArgs ()
+    public Args getFirstUnreadPostArgs ()
     {
         // this is slightly hacky but, we track the index of the last read post, but we
         // really want to send you to the first unread post, but we don't know what the id
@@ -127,7 +127,7 @@ public class ForumThread
     /**
      * Gets the token arguments that will link to the first post in the thread.
      */
-    public String getFirstPostArgs ()
+    public Args getFirstPostArgs ()
     {
         return getArgs(0, 0);
     }
@@ -135,7 +135,7 @@ public class ForumThread
     /**
      * Get the token arguments that will link to given message id on a given page.
      */
-    public String getPagePostArgs (int page, int messageId)
+    public Args getPagePostArgs (int page, int messageId)
     {
         // fake up a message index that will put us on the correct page
         int msgIndex = page * MESSAGES_PER_PAGE;
@@ -154,7 +154,7 @@ public class ForumThread
         return (other instanceof ForumThread) && ((ForumThread)other).threadId == threadId;
     }
 
-    protected String getArgs (int msgIndex, int msgId)
+    protected Args getArgs (int msgIndex, int msgId)
     {
         Object[] args = new Object[msgId > 0 ? 4 : 2];
         args[0] = "t";

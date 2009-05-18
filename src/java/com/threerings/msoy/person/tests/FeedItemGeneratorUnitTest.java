@@ -29,6 +29,7 @@ import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import static org.junit.Assert.*; 
@@ -193,7 +194,7 @@ public class FeedItemGeneratorUnitTest
             return new StubItem(text);
         }
 
-        public String createLink (String label, Pages page, String args) {
+        public String createLink (String label, Pages page, Args args) {
             calls.count();
             assertNotNull(label);
             assertNotNull(page);
@@ -201,7 +202,7 @@ public class FeedItemGeneratorUnitTest
             return simpleToString("link", "label", label, "page", page, "args", args);
         }
 
-        public Media createMedia (MediaDesc md, Pages page, String args) {
+        public Media createMedia (MediaDesc md, Pages page, Args args) {
             calls.count();
             assertNotNull(md);
             assertNotNull(page);
@@ -296,7 +297,7 @@ public class FeedItemGeneratorUnitTest
     public static class StubItem
         implements Icon, Media
     {
-        public StubItem (MediaDesc md, Pages page, String args)
+        public StubItem (MediaDesc md, Pages page, Args args)
         {
             _text = simpleToString("media", "desc", md, "page", page, "args", args);
         }

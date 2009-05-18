@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
 
@@ -93,7 +94,7 @@ public class TitleBar extends SmartTable
         setCloseVisible(closeWasVisible);
     }
 
-    public void addContextLink (String label, Pages page, String args, int position)
+    public void addContextLink (String label, Pages page, Args args, int position)
     {
         _subnavi.addContextLink(label, page, args, position);
     }

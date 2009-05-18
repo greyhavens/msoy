@@ -99,7 +99,8 @@ public class ShopPage extends Page
 
     protected void addTypeNavi (byte type)
     {
-        CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.SHOP, ""+type, 1);
+        CShell.frame.addNavLink(
+            _dmsgs.xlate("pItemType" + type), Pages.SHOP, Args.compose(type), 1);
     }
 
     protected RemixerHost createRemixerHost (

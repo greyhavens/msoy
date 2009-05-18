@@ -9,6 +9,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
@@ -40,7 +41,7 @@ public abstract class NaviTabPanel extends StyledTabPanel
         });
     }
 
-    protected abstract String getTabArgs (int tabidx);
+    protected abstract Args getTabArgs (int tabidx);
 
     protected BeforeSelectionHandler<Integer> _onSelect = new BeforeSelectionHandler<Integer>() {
         public void onBeforeSelection (BeforeSelectionEvent<Integer> event) {

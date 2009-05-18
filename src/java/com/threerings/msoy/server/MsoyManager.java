@@ -88,7 +88,7 @@ public class MsoyManager
                             InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
-        String args = isGame ? Args.compose("game", "p", placeId) : ("s" + placeId);
+        Args args = isGame ? Args.compose("game", "p", placeId) : Args.compose("s" + placeId);
         int memberId = memObj.getMemberId();
         String url = friend ? Pages.WORLD.makeFriendURL(memberId, args) :
                               Pages.WORLD.makeAffiliateURL(memberId, args);

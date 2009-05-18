@@ -63,8 +63,8 @@ public abstract class Page
                 public void setTitle (String title) {
                     frameCall(Frame.Calls.SET_TITLE, title);
                 }
-                public void addNavLink (String label, Pages page, String args, int position) {
-                    frameCall(Frame.Calls.ADD_NAV_LINK, label, ""+page, args, ""+position);
+                public void addNavLink (String label, Pages page, Args args, int position) {
+                    frameCall(Frame.Calls.ADD_NAV_LINK, label, ""+page, args.toToken(), ""+position);
                 }
                 public void navigateTo (String token) {
                     frameCall(Frame.Calls.NAVIGATE_TO, token);
@@ -126,7 +126,7 @@ public abstract class Page
                 public void setTitle (String title) {
                     Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
                 }
-                public void addNavLink (String label, Pages page, String args, int position) {
+                public void addNavLink (String label, Pages page, Args args, int position) {
                     CShell.log("No nav bar in standalone mode", "label", label, "page", page,
                                "args", args, "position", position);
                 }

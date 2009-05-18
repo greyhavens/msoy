@@ -41,7 +41,7 @@ public class GroupsPage extends Page
             return _navToken;
         }
 
-        public String composeArgs (Object... args)
+        public Args composeArgs (Object... args)
         {
             List<String> stringArgs = new ArrayList<String>();
             stringArgs.add(getNavToken());

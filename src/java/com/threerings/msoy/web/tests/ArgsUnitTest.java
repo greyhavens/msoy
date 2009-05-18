@@ -16,26 +16,26 @@ public class ArgsUnitTest
 {
     @Test public void testCompose ()
     {
-        String token = Args.compose(RAW);
+        String token = Args.compose(RAW).toToken();
         assertEquals(COMPOSED, token);
     }
 
     @Test public void testRecompose ()
     {
         Args args = Args.fromToken(COMPOSED);
-        assertEquals(COMPOSED, args.recompose(0));
-        assertEquals("c_d_e", args.recompose(2));
-        assertEquals("", args.recompose(99));
+        assertEquals(COMPOSED, args.recompose(0).toToken());
+        assertEquals("c_d_e", args.recompose(2).toToken());
+        assertEquals("", args.recompose(99).toToken());
     }
 
     @Test public void testRecomposeWithout ()
     {
         Args args = Args.fromToken(COMPOSED);
-        assertEquals("a_c_d_e", args.recomposeWithout(1, 1));
-        assertEquals("a_b_c", args.recomposeWithout(3, 99));
-        assertEquals("a_b_c_d_e", args.recomposeWithout(99, 1));
-        assertEquals("a_b_c_d_e", args.recomposeWithout(1, 0));
-        assertEquals("", args.recomposeWithout(0, 99));
+        assertEquals("a_c_d_e", args.recomposeWithout(1, 1).toToken());
+        assertEquals("a_b_c", args.recomposeWithout(3, 99).toToken());
+        assertEquals("a_b_c_d_e", args.recomposeWithout(99, 1).toToken());
+        assertEquals("a_b_c_d_e", args.recomposeWithout(1, 0).toToken());
+        assertEquals("", args.recomposeWithout(0, 99).toToken());
     }
 
     protected static final Object[] RAW = { "a", "b", "c", "d", "e" };

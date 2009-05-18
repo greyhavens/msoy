@@ -38,12 +38,12 @@ public class FeedItemGenerator
          * Creates context-free media using the given descriptor that links to the provided page
          * and args.
          */
-        Media createMedia (MediaDesc md, Pages page, String args);
+        Media createMedia (MediaDesc md, Pages page, Args args);
 
         /**
          * Creates context-free html that links to the given page + args and has the given label.
          */
-        String createLink (String label, Pages page, String args);
+        String createLink (String label, Pages page, Args args);
 
         /**
          * Creates a context-free icon for when a user or users gains a level.
@@ -320,7 +320,8 @@ public class FeedItemGenerator
             return profileString(message.data[0], message.data[1]);
 
         case ROOMS:
-            return _builder.createLink(message.data[1], Pages.WORLD, "s" + message.data[0]);
+            return _builder.createLink(
+                message.data[1], Pages.WORLD, Args.compose("s" + message.data[0]));
 
         case TROPHIES:
             return _builder.createLink(message.data[0], Pages.GAMES,
@@ -399,7 +400,7 @@ public class FeedItemGenerator
             if (media == null) {
                 return null;
             }
-            return _builder.createMedia(media, Pages.PEOPLE, message.data[1]);
+            return _builder.createMedia(media, Pages.PEOPLE, Args.compose(message.data[1]));
 
         case ROOMS:
             if (message.data.length < 3) {
@@ -409,7 +410,7 @@ public class FeedItemGenerator
             if (media == null) {
                 return null;
             }
-            return _builder.createMedia(media, Pages.WORLD, "s" + message.data[0]);
+            return _builder.createMedia(media, Pages.WORLD, Args.compose("s" + message.data[0]));
 
         case TROPHIES:
             media = MediaDesc.stringToMD(message.data[2]);
@@ -529,7 +530,7 @@ public class FeedItemGenerator
         if (_usePronouns && id.trim().equals(_memberId + "")) {
             return _messages.you();
         }
-        return _builder.createLink(name, Pages.PEOPLE, id);
+        return _builder.createLink(name, Pages.PEOPLE, Args.compose(id));
     }
 
     /**

@@ -71,11 +71,12 @@ import com.threerings.msoy.server.util.MailSender.Parameters;
 import com.threerings.msoy.spam.server.persist.SpamRecord;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
-import com.threerings.msoy.web.gwt.SharedMediaUtil;
 import com.threerings.msoy.web.gwt.SharedMediaUtil.Dimensions;
+import com.threerings.msoy.web.gwt.SharedMediaUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -738,13 +739,13 @@ public class SpamLogic
         }
 
         // from Builder
-        public String createLink (String label, Pages page, String args) {
+        public String createLink (String label, Pages page, Args args) {
             return _html.reset().open("a", "href", link(page, args),"style", A_STYLE).append(label)
                 .finish();
         }
 
         // from Builder
-        public Media createMedia (MediaDesc md, Pages page, String args) {
+        public Media createMedia (MediaDesc md, Pages page, Args args) {
             // start with the anchor
             _html.reset().open("a", "href", link(page, args), "style", A_STYLE);
 
@@ -755,7 +756,7 @@ public class SpamLogic
                 return new StringWrapper(_html.append("[X]").finish());
             }
             int size = MediaDesc.HALF_THUMBNAIL_SIZE;
-            if (page == Pages.WORLD && args.startsWith("s")) {
+            if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                 // snapshots are unconstrained at a set size; fake a width constraint for
                 // TINY_SIZE.
                 md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
@@ -771,7 +772,7 @@ public class SpamLogic
                 "style", imgStyle(dim)).finish());
         }
 
-        protected static String link (Pages page, String args)
+        protected static String link (Pages page, Args args)
         {
             return page.makeLink(args);
         }
@@ -793,12 +794,12 @@ public class SpamLogic
         }
 
         // from Builder
-        public String createLink (String label, Pages page, String args) {
+        public String createLink (String label, Pages page, Args args) {
             return label;
         }
 
         // from Builder
-        public Media createMedia (MediaDesc md, Pages page, String args) {
+        public Media createMedia (MediaDesc md, Pages page, Args args) {
             return new StringWrapper("");
         }
     }

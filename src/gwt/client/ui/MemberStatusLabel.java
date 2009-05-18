@@ -34,8 +34,8 @@ public class MemberStatusLabel extends FlowPanel
             MemberCard.InGame gs = (MemberCard.InGame)card.status;
             add(new InlineLabel(_cmsgs.mslOnlinePlaying(gs.gameName), true, false, true));
 
-            String args = (card.status instanceof MemberCard.InAVRGame) ?
-                "s" + ((MemberCard.InAVRGame)gs).sceneId :
+            Args args = (card.status instanceof MemberCard.InAVRGame) ?
+                Args.compose("s" + ((MemberCard.InAVRGame)gs).sceneId) :
                 Args.compose("game", "j", gs.gameId, card.name.getMemberId());
             add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, args));
 

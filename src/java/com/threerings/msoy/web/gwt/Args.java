@@ -15,32 +15,28 @@ public class Args
      * Composes multiple arguments into a single string argument that can be properly handled by
      * the Args class.
      */
-    public static String compose (Object... args)
+    public static Args compose (Object... args)
     {
-        StringBuilder builder = new StringBuilder();
-        for (int ii = 0; ii < args.length; ii++) {
-            if (ii > 0) {
-                builder.append(ARG_SEP);
+        Args aobj = new Args();
+        for (Object arg : args) {
+            if (arg instanceof Args) {
+                aobj._args.addAll(((Args)arg)._args);
+            } else {
+                aobj._args.add(String.valueOf(arg));
             }
-            builder.append(escape(String.valueOf(args[ii])));
         }
-        return builder.toString();
+        return aobj;
     }
 
     /**
      * Composes multiple arguments into a single string argument that can be properly handled by
      * the Args class.
      */
-    public static String compose (List<String> args)
+    public static Args compose (List<String> args)
     {
-        StringBuilder builder = new StringBuilder();
-        for (int ii = 0; ii < args.size(); ii++) {
-            if (ii > 0) {
-                builder.append(ARG_SEP);
-            }
-            builder.append(escape(args.get(ii)));
-        }
-        return builder.toString();
+        Args aobj = new Args();
+        aobj._args.addAll(args);
+        return aobj;
     }
 
     /**
@@ -141,7 +137,7 @@ public class Args
     /**
      * Recomposes the arguments from the specified index onward with {@link #compose}.
      */
-    public String recompose (int fromIndex)
+    public Args recompose (int fromIndex)
     {
         return recomposeWithout(0, fromIndex);
     }
@@ -154,7 +150,7 @@ public class Args
      * <code>remove(1, 2)</code> will return an array of strings containing elements { "a", "d",
      * "e" }.
      */
-    public String recomposeWithout (int start, int span)
+    public Args recomposeWithout (int start, int span)
     {
         List<String> args = new ArrayList<String>();
         for (int ii = 0, ll = Math.min(_args.size(), start); ii < ll; ii++) {
@@ -181,6 +177,21 @@ public class Args
                 token = token.substring(didx+1);
             }
         } while (token != null && token.length() > 0);
+    }
+
+    /**
+     * Turns this instance into a token that can be used in a URL.
+     */
+    public String toToken ()
+    {
+        StringBuilder builder = new StringBuilder();
+        for (String arg : _args) {
+            if (builder.length() > 0) {
+                builder.append(ARG_SEP);
+            }
+            builder.append(escape(arg));
+        }
+        return builder.toString();
     }
 
     /**

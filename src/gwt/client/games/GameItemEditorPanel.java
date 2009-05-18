@@ -77,9 +77,9 @@ public class GameItemEditorPanel extends SmartTable
             setWidget(row, col++, MediaUtil.createMediaView(
                           item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1, null);
             setText(row, col++, item.name, 1, null);
-            String dargs = Args.compose("d", item.getType(), item.itemId);
+            Args dargs = Args.compose("d", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1, null);
-            String eargs = Args.compose("e", item.getType(), item.itemId);
+            Args eargs = Args.compose("e", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
             setText(row, col++, (item.catalogId == 0) ? "" : _msgs.gieIsPublished());
             if (item instanceof IdentGameItem) {
@@ -91,7 +91,7 @@ public class GameItemEditorPanel extends SmartTable
                 setText(row, col++, ((LevelPack)item).premium ? _msgs.gieIsPremium() : "");
             } else if (item instanceof Prize) {
                 Prize prize = (Prize)item;
-                String pargs = Args.compose("l", prize.targetType, prize.targetCatalogId);
+                Args pargs = Args.compose("l", prize.targetType, prize.targetCatalogId);
                 setWidget(row, col++, Link.create(_msgs.gieTarget(), Pages.SHOP, pargs));
             }
             getRowFormatter().setStyleName(row, "Row");
@@ -106,7 +106,7 @@ public class GameItemEditorPanel extends SmartTable
         bits.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         bits.add(MsoyUI.createHTML(_dmsgs.get("editorWikiLink" + itemType), "Tip"));
         bits.add(WidgetUtil.makeShim(10, 10));
-        String cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
+        Args cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
         bits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),
                                      Link.createHandler(Pages.STUFF, cargs)));
         setWidget(row, 0, bits, getRowCount() == 0 ? 1 : getCellCount(0), null);

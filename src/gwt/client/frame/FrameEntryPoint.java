@@ -233,7 +233,7 @@ public class FrameEntryPoint
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
         // for the first time, it will request in a moment with a call to getPageToken)
-        _pageToken = args.recompose(0);
+        _pageToken = args.recompose(0).toToken();
 
         // replace the page if necessary
         if (_page != page || _page == Pages.WORLD) {
@@ -314,7 +314,7 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void addNavLink (String label, Pages page, String args, int position)
+    public void addNavLink (String label, Pages page, Args args, int position)
     {
         _bar.addContextLink(label, page, args, position);
     }
@@ -706,7 +706,7 @@ public class FrameEntryPoint
             setTitle(args[0]);
             return null;
         case ADD_NAV_LINK:
-            addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), args[2],
+            addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), Args.fromToken(args[2]),
                        Integer.parseInt(args[3]));
             return null;
         case NAVIGATE_TO:

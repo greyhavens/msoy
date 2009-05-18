@@ -134,7 +134,7 @@ public class GameDetailPanel extends SmartTable
         getFlexCellFormatter().setRowSpan(1, 1, 2);
 
         _tabs = new NaviTabPanel(Pages.GAMES) {
-            protected String getTabArgs (int tabIdx) {
+            protected Args getTabArgs (int tabIdx) {
                 return NaviUtil.gameDetail(_gameId, getTabCode(tabIdx));
             }
         };

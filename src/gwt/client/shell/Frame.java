@@ -6,6 +6,7 @@ package client.shell;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -34,7 +35,7 @@ public interface Frame
      * sub-navigation is reset to its default, so a page should set up any custom sub-navigation
      * every time the history changes.
      */
-    void addNavLink (String label, Pages page, String args, int position);
+    void addNavLink (String label, Pages page, Args args, int position);
 
     /**
      * Navigates to the page represented by the specified token.

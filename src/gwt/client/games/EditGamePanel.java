@@ -59,7 +59,7 @@ public class EditGamePanel extends FlowPanel
 
         // add our giant tab list of doom
         add(_tabs = new NaviTabPanel(Pages.GAMES) {
-            protected String getTabArgs (int tabIdx) {
+            protected Args getTabArgs (int tabIdx) {
                 return Args.compose("e", _gameId, tabIdx);
             }
         });

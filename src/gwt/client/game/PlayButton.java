@@ -33,12 +33,12 @@ public class PlayButton
     public static Widget create (int gameId, boolean inWorld, int groupId, String noGroupMessage,
                                  Size size)
     {
-        String args;
+        Args args;
         if (inWorld) {
             if (groupId == 0) {
                 return MsoyUI.createLabel(noGroupMessage, null);
             }
-            args = "g" + groupId;
+            args = Args.compose("g" + groupId);
         } else {
             args = Args.compose("game", "p", gameId);
         }

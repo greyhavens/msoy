@@ -742,7 +742,7 @@ public class MemberLogic
         String name, String imagePath, Pages page, Object... args)
     {
         return new HomePageItem(HomePageItem.ACTION_GWT_PAGE,
-            new GwtPageNavItemData(name, page.getPath(), Args.compose(args)),
+            new GwtPageNavItemData(name, page.getPath(), Args.compose(args).toToken()),
             new StaticMediaDesc(MediaDesc.IMAGE_PNG, "icon", imagePath));
     }
 

@@ -51,7 +51,7 @@ public class InventoryModels
             return item.getType() == type;
         }
 
-        public String makeArgs (int memberId, int page)
+        public Args makeArgs (int memberId, int page)
         {
             return (query == null) ? Args.compose(type, memberId, page) :
                 Args.compose(type, memberId, page, query);

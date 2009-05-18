@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
 
@@ -40,7 +41,8 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Home", Pages.LANDING);
             } else {
                 addLink(null, "Me", Pages.ME);
-                addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
+                addImageLink("/images/me/menu_home.png", "Home",
+                             Pages.WORLD, Args.compose("m" + memberId));
                 addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
                 if (CShell.isRegistered()) {
                     addLink(null, "Friends", Pages.PEOPLE);
@@ -70,7 +72,8 @@ public class SubNaviPanel extends FlowPanel
         case ROOMS:
             addLink(null, "Rooms", Pages.ROOMS);
             if (CShell.isMember()) {
-                addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
+                addImageLink("/images/me/menu_home.png", "Home",
+                             Pages.WORLD, Args.compose("m" + memberId));
                 addLink(null, "My Rooms", Pages.PEOPLE, "rooms", memberId);
             }
             break;
@@ -132,7 +135,7 @@ public class SubNaviPanel extends FlowPanel
         add(Link.create(label, page, args));
     }
 
-    public void addContextLink (String label, Pages page, String args, int position)
+    public void addContextLink (String label, Pages page, Args args, int position)
     {
         // sanity check the position
         if (position > getWidgetCount()) {
@@ -142,7 +145,7 @@ public class SubNaviPanel extends FlowPanel
         insert(Link.create(label, page, args), position);
     }
 
-    public Image addImageLink (String path, String tip, Pages page, String args)
+    public Image addImageLink (String path, String tip, Pages page, Args args)
     {
         addSeparator(true);
         Image icon = MsoyUI.createActionImage(path, Link.createHandler(page, args));

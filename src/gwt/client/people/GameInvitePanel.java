@@ -95,7 +95,7 @@ public class GameInvitePanel extends InvitePanel
 
         // build the invite url; this will be a play now link for lobbied games (type 0) or a
         // start-in-room link for avrgs (type 1)
-        final String iargs = (gameType == 1) ?
+        final Args iargs = (gameType == 1) ?
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token, roomId) :
             Args.compose("game", "j", detail.gameId, CShell.getMemberId(), token);
         final String url = Pages.WORLD.makeFriendURL(CShell.getMemberId(), iargs);
@@ -144,7 +144,7 @@ public class GameInvitePanel extends InvitePanel
         });
         addMethodButton("Facebook", new InviteMethodCreator() {
             public Widget create () {
-                showFBInvitePopup(detail.gameId, message, iargs);
+                showFBInvitePopup(detail.gameId, message, iargs.toToken());
                 return null;
             }
         });
@@ -169,7 +169,7 @@ public class GameInvitePanel extends InvitePanel
          * Creates a new friends panel.
          */
         public WhirledFriendsPanel (final String defaultMessage, final int gameId,
-            final String gameName, final String args)
+            final String gameName, final Args args)
         {
             super(0, 5);
             _gameId = gameId;
@@ -234,8 +234,9 @@ public class GameInvitePanel extends InvitePanel
                     String body = message.getText().length() == 0 ?
                         _msgs.gameInviteWhirledMailBodyNoMessage(inviter, gameName) :
                         _msgs.gameInviteWhirledMailBody(inviter, gameName, message.getText());
-                    _invitesvc.sendWhirledMailGameInvites(recipients, gameId,
-                        _msgs.gameInviteWhirledMailSubject(gameName), body, args, this);
+                    _invitesvc.sendWhirledMailGameInvites(
+                        recipients, gameId, _msgs.gameInviteWhirledMailSubject(gameName),
+                        body, args.toToken(), this);
                     return true;
                 }
 

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.ThumbBox;
@@ -28,7 +29,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
         table.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         table.setText(0, 1, _msgs.awardTitle());
-        String args = NaviUtil.gameDetail(_payload.gameId, NaviUtil.GameDetails.TROPHIES);
+        Args args = NaviUtil.gameDetail(_payload.gameId, NaviUtil.GameDetails.TROPHIES);
         table.setWidget(0, 2, Link.create(_payload.gameName, Pages.GAMES, args));
 
         switch (_payload.awardType) {

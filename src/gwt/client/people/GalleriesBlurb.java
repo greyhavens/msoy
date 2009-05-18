@@ -76,7 +76,7 @@ public class GalleriesBlurb extends Blurb
     {
         public GalleryWidget (final Gallery gallery) {
             setStyleName("Gallery");
-            String args = Args.compose(GalleryActions.VIEW, gallery.galleryId);
+            Args args = Args.compose(GalleryActions.VIEW, gallery.galleryId);
             add(new ThumbBox(gallery.thumbMedia, Pages.PEOPLE, args));
             add(Link.create(gallery.name, Pages.PEOPLE, args));
         }

@@ -27,6 +27,7 @@ import com.threerings.msoy.person.gwt.FeedItemGenerator.Icon;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Media;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Messages;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Plural;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -46,14 +47,14 @@ public class FeedMessagePanel extends FocusPanel
     public FeedMessagePanel (FeedMessage message, boolean usePronouns)
     {
         Builder builder = new Builder() {
-            public Media createMedia (MediaDesc md, final Pages page, final String args) {
+            public Media createMedia (MediaDesc md, final Pages page, final Args args) {
                 ClickHandler clicker = new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         Link.go(page, args);
                     }
                 };
                 int size = MediaDesc.HALF_THUMBNAIL_SIZE;
-                if (page == Pages.WORLD && args.startsWith("s")) {
+                if (page == Pages.WORLD && args.get(0, "").startsWith("s")) {
                     // snapshots are unconstrained at a set size; fake a width constraint for
                     // TINY_SIZE.
                     md.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
@@ -62,7 +63,7 @@ public class FeedMessagePanel extends FocusPanel
                 return new WidgetWrapper(MediaUtil.createMediaView(md, size, clicker));
             }
 
-            public String createLink (String label, Pages page, String args) {
+            public String createLink (String label, Pages page, Args args) {
                 return Link.createHtml(label, page, args);
             }
 

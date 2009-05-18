@@ -16,7 +16,7 @@ public class ShopUtil
     /**
      * Composes arguments to browse the catalog.
      */
-    public static String composeArgs (byte type, String tag, String search, int creatorId)
+    public static Args composeArgs (byte type, String tag, String search, int creatorId)
     {
         CatalogQuery query = new CatalogQuery();
         query.itemType = type;
@@ -29,7 +29,7 @@ public class ShopUtil
     /**
      * Composes arguments to browse the catalog.
      */
-    public static String composeArgs (CatalogQuery query, String tag, String search, int creatorId)
+    public static Args composeArgs (CatalogQuery query, String tag, String search, int creatorId)
     {
         query.tag = tag;
         query.search = search;
@@ -40,7 +40,7 @@ public class ShopUtil
     /**
      * Composes arguments to browse the catalog.
      */
-    public static String composeArgs (CatalogQuery query, int page)
+    public static Args composeArgs (CatalogQuery query, int page)
     {
         ArrayList<String> args = new ArrayList<String>();
         args.add(String.valueOf(query.itemType));

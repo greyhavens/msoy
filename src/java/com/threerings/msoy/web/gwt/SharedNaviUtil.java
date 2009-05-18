@@ -41,7 +41,7 @@ public class SharedNaviUtil
         protected String _code;
     }        
 
-    public static String gameDetail (int gameId, GameDetails tab)
+    public static Args gameDetail (int gameId, GameDetails tab)
     {
         return Args.compose("d", gameId, tab.code());
     }

@@ -177,7 +177,7 @@ public class ShopPanel extends FlowPanel
         return new HeaderBox(ipath, title, contents).makeRoundBottom();
     }
 
-    protected static String makeShopArgs (ListingCard card)
+    protected static Args makeShopArgs (ListingCard card)
     {
         return Args.compose("l", card.itemType, card.catalogId);
     }

@@ -25,6 +25,7 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.images.msgs.MsgsImages;
@@ -316,7 +317,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             String path = "/images/msgs/" +
                 ((_message.messageId > _thread.lastReadPostId) ? "unread" : "read") + ".png";
-            String args = _thread.getPagePostArgs(_page, _message.messageId);
+            Args args = _thread.getPagePostArgs(_page, _message.messageId);
             return Link.createImage(path, _mmsgs.permaLink(), Pages.GROUPS, args);
         }
 
