@@ -197,10 +197,9 @@ public class FlashClients
      */
     public static void setClientFullHeight (boolean fullHeight)
     {
-        if (fullHeight && !_clientFullHeight) {
-            setClientHeightNative(findClient(), "100%");
-        } else if (!fullHeight && _clientFullHeight) {
-            setClientHeightNative(findClient(), CLIENT_HEIGHT+"px");
+        if (_clientFullHeight != fullHeight) {
+            _clientFullHeight = fullHeight;
+            setClientHeightNative(findClient(), getClientHeight());
         }
     }
 
