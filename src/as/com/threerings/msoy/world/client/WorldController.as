@@ -1135,6 +1135,7 @@ public class WorldController extends MsoyController
         const memId :int = name.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
+        const isSupport :Boolean = _wctx.getTokens().isSupport();
         var placeCtrl :Object = null;
         if (addPlaceItems) {
             placeCtrl = _wctx.getLocationDirector().getPlaceController();
@@ -1174,9 +1175,10 @@ public class WorldController extends MsoyController
 
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                              command: OPEN_CHANNEL, arg: name, enabled: !muted });
-            if (onlineFriend) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.visit_friend"),
-                                 command: VISIT_MEMBER, arg: memId });
+            if (onlineFriend || isSupport) {
+                var label :String = onlineFriend ?
+                    Msgs.GENERAL.get("b.visit_friend") : "Visit (as agent)";
+                menuItems.push({ label: label, command: VISIT_MEMBER, arg: memId });
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
                              command: GO_MEMBER_HOME, arg: memId });

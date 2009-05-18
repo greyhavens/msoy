@@ -408,8 +408,9 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
 
-        // ensure that the other member is a full friend
-        if (!user.getLocal(MemberLocal.class).friendIds.contains(memberId)) {
+        // ensure that the other member is a full friend (or we're support)
+        if (!user.tokens.isSupport() &&
+                !user.getLocal(MemberLocal.class).friendIds.contains(memberId)) {
             throw new InvocationException("e.not_a_friend");
         }
 
