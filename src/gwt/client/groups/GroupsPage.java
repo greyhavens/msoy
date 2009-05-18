@@ -3,9 +3,6 @@
 
 package client.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -36,23 +33,20 @@ public class GroupsPage extends Page
             return Nav.DEFAULT;
         }
 
-        public String getNavToken ()
-        {
+        public String getNavToken () {
             return _navToken;
         }
 
-        public Args composeArgs (Object... args)
-        {
-            List<String> stringArgs = new ArrayList<String>();
-            stringArgs.add(getNavToken());
-            for (int ii = 0; ii < args.length; ii++) {
-                stringArgs.add("" + args[ii]);
+        public Args composeArgs (Object... exArgs) {
+            Args args = new Args();
+            args.add(getNavToken());
+            for (Object arg : exArgs) {
+                args.add(arg);
             }
-            return Args.compose(stringArgs);
+            return args;
         }
 
-        Nav (String navToken)
-        {
+        Nav (String navToken) {
             _navToken = navToken;
         }
 

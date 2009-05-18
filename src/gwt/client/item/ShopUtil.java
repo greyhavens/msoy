@@ -3,8 +3,6 @@
 
 package client.item;
 
-import java.util.ArrayList;
-
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.web.gwt.Args;
 
@@ -42,9 +40,9 @@ public class ShopUtil
      */
     public static Args composeArgs (CatalogQuery query, int page)
     {
-        ArrayList<String> args = new ArrayList<String>();
-        args.add(String.valueOf(query.itemType));
-        args.add(String.valueOf(query.sortBy));
+        Args args = new Args();
+        args.add(query.itemType);
+        args.add(query.sortBy);
         if (query.tag != null) {
             args.add("t" + query.tag);
         } else if (query.search != null && query.search.length() > 0) {
@@ -55,9 +53,9 @@ public class ShopUtil
             args.add("");
         }
         if (page > 0) {
-            args.add(String.valueOf(page));
+            args.add(page);
         }
-        return Args.compose(args);
+        return args;
     }
 
     /**

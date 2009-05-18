@@ -3,9 +3,6 @@
 
 package client.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import client.util.Link;
 
 import com.google.gwt.user.client.ui.FlexTable;
@@ -18,8 +15,6 @@ import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * A reusable item grid.
- *
- * @author mjensen
  */
 public abstract class ItemGrid extends PagedGrid<Item>
 {
@@ -69,16 +64,15 @@ public abstract class ItemGrid extends PagedGrid<Item>
     protected void displayPageFromClick (int page)
     {
         // route our page navigation through the URL
-        List<String> args = new ArrayList<String>();
+        Args args = new Args();
         if (_prefixArgs != null) {
             for (String arg : _prefixArgs) {
                 args.add(arg);
             }
         }
-        args.add(String.valueOf(getItemType()));
-        args.add(String.valueOf(page));
-
-        Link.go(_parentPage, Args.compose(args));
+        args.add(getItemType());
+        args.add(page);
+        Link.go(_parentPage, args);
     }
 
     public void setDisplayNavigation (boolean displayControls)
@@ -115,12 +109,8 @@ public abstract class ItemGrid extends PagedGrid<Item>
     protected abstract String getEmptyMessage ();
 
     protected Pages _parentPage;
-
     protected String[] _prefixArgs;
-
     protected boolean _displayNavigation = true;
-
     protected ItemListDataModel _listDataModel;
-
     protected Label _titleLabel;
 }

@@ -29,17 +29,6 @@ public class Args
     }
 
     /**
-     * Composes multiple arguments into a single string argument that can be properly handled by
-     * the Args class.
-     */
-    public static Args compose (List<String> args)
-    {
-        Args aobj = new Args();
-        aobj._args.addAll(args);
-        return aobj;
-    }
-
-    /**
      * Extracts, parses and returns the args from the supplied history token. The history token
      * contains the page and the args.
      */
@@ -64,11 +53,27 @@ public class Args
     }
 
     /**
+     * Creates a new blank args instance.
+     */
+    public Args ()
+    {
+        _args = new ArrayList<String>();
+    }
+
+    /**
      * Returns the number of arguments available.
      */
     public int getArgCount ()
     {
         return _args.size();
+    }
+
+    /**
+     * Adds the supplied argument to the end of this args list.
+     */
+    public void add (Object arg)
+    {
+        _args.add(String.valueOf(arg));
     }
 
     /**
