@@ -304,7 +304,7 @@ public class FlashClients
      */
     protected static String getClientHeight ()
     {
-        return _clientFullHeight ? "100%" : (""+CLIENT_HEIGHT);
+        return _clientFullHeight ? "100%" : (CLIENT_HEIGHT + "px");
     }
 
     /**
