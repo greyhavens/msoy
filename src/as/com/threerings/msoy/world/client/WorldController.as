@@ -815,7 +815,7 @@ public class WorldController extends MsoyController
                     return;
                 }
             } catch (e :Error) {
-                log.warning("Unable to handleToggleHeight via Javascript: " + e);
+                log.warning("Unable to handleToggleHeight via Javascript", e);
             }
         } else {
             log.warning("Can't access GWT to handleToggleHeight");
@@ -1375,8 +1375,7 @@ public class WorldController extends MsoyController
                     return true;
                 }
             } catch (e :Error) {
-                log.warning("Unable to display page via Javascript [page=" + page +
-                            ", args=" + args +"]: " + e);
+                log.warning("Unable to display page via Javascript", "page", page, "args", args, e);
             }
         }
         return false;
