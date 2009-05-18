@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -171,7 +172,7 @@ public class Link
     public static void goFromFlash (String page, String args)
     {
     	try {
-            go(Enum.valueOf(Pages.class, page.toUpperCase()), args);
+            go(Enum.valueOf(Pages.class, page.toUpperCase()), Args.fromToken(args));
     	} catch (Exception e) {
             CShell.log("Unable to display page from Flash", "page", page, "args", args, e);
     	}
