@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.server;
 
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 
+import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
@@ -244,7 +246,8 @@ public class MoneyLogic
      * accounts of an exchange of money -- item fulfillment must be handled separately.
      *
      * @param buyerRec the member record of the buying user.
-     * @param catrec the catalog entry for the item, with the catalog master item loaded
+     * @param listings the catalog entries for the item, with the catalog master items loaded. the
+     * first item is the item being purchased. subsequent items are bases
      * @param buyCurrency the currency the buyer is using
      * @param authedAmount the amount the buyer has validated to purchase the item.
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
@@ -252,20 +255,18 @@ public class MoneyLogic
      * @return a BuyResult, or null if the BuyOperation returned false.
      */
     public BuyResult buyItem (
-        final MemberRecord buyerRec, CatalogRecord catrec, Currency buyCurrency, int authedAmount,
-        BuyOperation<?> buyOp)
+        final MemberRecord buyerRec, List<CatalogRecord> listings, Currency buyCurrency,
+        int authedAmount, BuyOperation<?> buyOp)
         throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
+        CatalogRecord catrec = listings.get(0);
         Preconditions.checkArgument(catrec.item != null, "catalog master not loaded");
         final CatalogIdent item = new CatalogIdent(catrec.item.getType(), catrec.catalogId);
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
-        Currency listedCurrency = catrec.currency;
-        int listedAmount = catrec.cost;
         int buyerId = buyerRec.memberId;
-        int creatorId = catrec.item.creatorId;
         final String itemName = catrec.item.name;
         ItemIdent iident = new ItemIdent(catrec.item.getType(), catrec.listedItemId);
-        boolean forceFree = (buyerId == creatorId);
+        boolean forceFree = (buyerId == catrec.item.creatorId);
         Function<Boolean, String> buyMsgFn = new Function<Boolean,String>() {
             public String apply (Boolean magicFree) {
                 return MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
@@ -277,7 +278,7 @@ public class MoneyLogic
 
         // do the buy!
         IntermediateBuyResult ibr = buy(buyerRec, item, buyCurrency, authedAmount,
-            forceFree, listedCurrency, listedAmount, buyOp, TransactionType.ITEM_PURCHASE,
+            forceFree, catrec.currency, catrec.cost, buyOp, TransactionType.ITEM_PURCHASE,
             buyMsgFn, iident, changeMsg);
         if (ibr == null) {
             return null;
@@ -290,25 +291,32 @@ public class MoneyLogic
         MoneyTransactionRecord changeTx = ibr.changeTx;
 
         // see what kind of payouts we're going pay- null means don't load, don't care
-        CurrencyAmount creatorPayout = magicFree ? null : computeCreatorPayout(quote);
+        List<CurrencyAmount> creatorPayouts =
+            magicFree ? null : computeCreatorPayouts(quote, listings);
         CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
         CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
 
-        MoneyTransactionRecord creatorTx = null;
-        if (creatorPayout != null) {
-            try {
-                creatorTx = _repo.accumulateAndStoreTransaction(creatorId,
-                    creatorPayout.currency, creatorPayout.amount,
-                    TransactionType.CREATOR_PAYOUT,
-                    MessageBundle.tcompose("m.item_sold",
-                        itemName, item.type, item.catalogId),
-                    iident, buyerTx.id, buyerId, true);
+        List<MoneyTransactionRecord> creatorTxs = null;
+        if (creatorPayouts != null) {
+            creatorTxs = Lists.newArrayListWithExpectedSize(creatorPayouts.size());
+            for (int ii = 0; ii < creatorPayouts.size(); ++ii) {
+                int creatorId = listings.get(ii).item.creatorId;
+                TransactionType txType = ii == 0 ? TransactionType.CREATOR_PAYOUT :
+                    TransactionType.BASIS_CREATOR_PAYOUT;
+                CurrencyAmount amount = creatorPayouts.get(ii);
+                String message = MessageBundle.tcompose(ii == 0 ? "m.item_sold" :
+                    "m.derived_item_sold", itemName, item.type, item.catalogId);
 
-            } catch (MoneyRepository.NoSuchMemberException nsme) {
-                log.warning("Invalid item creator, payout cancelled.",
-                    "buyer", buyerId, "creator", creatorId,
-                    "item", itemName, "catalogIdent", item);
-                // but, we continue, just having no creatorTx
+                try {
+                    creatorTxs.add(_repo.accumulateAndStoreTransaction(creatorId, amount.currency,
+                        amount.amount, txType, message, iident, buyerTx.id, buyerId, true));
+
+                } catch (MoneyRepository.NoSuchMemberException nsme) {
+                    log.warning("Invalid item creator, payout omitted",
+                        "buyer", buyerId, "creator", creatorId, "item", itemName,
+                        "catalogIdent", item, "currentCatalogId", listings.get(ii).catalogId);
+                    // but, we continue, just missing this creatorTx
+                }
             }
         }
 
@@ -356,8 +364,10 @@ public class MoneyLogic
             // It's kind of a payout.  Really.
             logAction(UserAction.receivedPayout(buyerId), changeTx);
         }
-        if (creatorTx != null) {
-            logAction(UserAction.receivedPayout(creatorId), creatorTx);
+        if (creatorTxs != null) {
+            for (MoneyTransactionRecord tx : creatorTxs) {
+                logAction(UserAction.receivedPayout(tx.memberId), tx);
+            }
         }
         if (affiliateTx != null) {
             logAction(UserAction.receivedPayout(affiliateId), affiliateTx);
@@ -371,8 +381,10 @@ public class MoneyLogic
         if (changeTx != null) {
             _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
         }
-        if (creatorTx != null) {
-            _nodeActions.moneyUpdated(creatorTx, true);
+        if (creatorTxs != null) {
+            for (MoneyTransactionRecord tx : creatorTxs) {
+                _nodeActions.moneyUpdated(tx, true);
+            }
         }
         if (affiliateTx != null) {
             _nodeActions.moneyUpdated(affiliateTx, true);
@@ -383,7 +395,8 @@ public class MoneyLogic
 
         return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
             (changeTx == null) ? null : changeTx.toMoneyTransaction(),
-            (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
+            (creatorTxs == null) ? null : Lists.transform(creatorTxs,
+                MoneyTransactionRecord.TO_TRANSACTION),
             (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
             (charityTx == null) ? null : charityTx.toMoneyTransaction());
     }
@@ -1134,11 +1147,78 @@ public class MoneyLogic
     }
 
     /**
-     * Compute the payout that the creator should receive for the given price quote.
+     * Compute the payouts that creators should receive for the given price quote. The first
+     * listing is the creator who listed the item. Others are contributors. Payouts are made based
+     * on a fraction of the total payout due, with the lister receiving any remainder.
      */
-    protected CurrencyAmount computeCreatorPayout (PriceQuote quote)
+    protected List<CurrencyAmount> computeCreatorPayouts (
+        PriceQuote quote, List<CatalogRecord> listings)
+        throws MoneyServiceException
     {
-        return computePayout(quote, _runtime.money.creatorPercentage);
+        // get the normal total creator payout - this is what we'll distribute
+        CurrencyAmount totalPayout = computePayout(quote, _runtime.money.creatorPercentage);
+
+        // optimize the single creator case with no bases
+        if (listings.size() == 1) {
+            return Collections.singletonList(totalPayout);
+        }
+
+        // all listings must match this currency - detecting race condition
+        Currency baseCurrency = listings.get(listings.size() - 1).currency;
+
+        // list of divided payouts
+        List<CurrencyAmount> divvies = Lists.newArrayListWithExpectedSize(listings.size());
+
+        // loop from the end and give each creator a portion of the payout
+        int totalCost = listings.get(0).cost, lastCost = 0;
+        for (int ii = listings.size() - 1; ii >= 0; --ii) {
+            CatalogRecord listing = listings.get(ii);
+            if (listing.currency != baseCurrency) {
+                log.warning("Unexpected currency", "expected", baseCurrency,
+                    "got", listing.currency, "itemType", listing.item.getType(),
+                    "catalogId", listing.catalogId);
+                throw new MoneyServiceException(MoneyCodes.E_INTERNAL_ERROR);
+            }
+
+            // each creator gets a % of the payout based on the % of the cost he contributes
+            float costContribution = (float)(listing.cost - lastCost) / totalCost;
+            CurrencyAmount payout = new CurrencyAmount(totalPayout.currency, (int)(Math.floor(
+                costContribution * totalPayout.amount)));
+            divvies.add(payout);
+
+            if (payout.amount == 0) {
+                log.warning("Payout or cost too small for divvying", "totalCost", totalCost,
+                    "listingPortion", listing.cost - lastCost, "totalPayout", totalPayout,
+                    "itemType", listing.item.getType(), "catalogId", listing.catalogId);
+                throw new MoneyServiceException(MoneyCodes.E_INTERNAL_ERROR);
+            }
+
+            lastCost = listing.cost;
+        }
+
+        // reverse so the divvies match the incoming list
+        Collections.reverse(divvies);
+
+        // calculate the distributed payout so far
+        int payoutSum = 0;
+        for (CurrencyAmount amount : divvies) {
+            payoutSum += amount.amount;
+        }
+
+        // since we use Math.floor, this should never happen
+        if (payoutSum > totalPayout.amount) {
+            log.warning("Fishy... basis payouts larger than overall payout", "payoutSum", payoutSum,
+                "totalPayout", totalPayout, "itemType", listings.get(0).item.getType(),
+                "catalogId", listings.get(0).catalogId);
+            throw new MoneyServiceException(MoneyCodes.E_INTERNAL_ERROR);
+        }
+
+        // since we use Math.floor, complete payout by giving leftovers to the main creator
+        if (payoutSum < totalPayout.amount) {
+            divvies.get(0).amount += totalPayout.amount - payoutSum;
+        }
+
+        return divvies;
     }
 
     /**

@@ -35,6 +35,7 @@ public enum TransactionType
     BROADCAST_PURCHASE(20),
     PARTY_PURCHASE(21),
     FRIEND_AWARD(22),
+    BASIS_CREATOR_PAYOUT(23),
     ;
 
     // Required by ByteEnum

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server;
 
+import java.util.List;
+
 import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
@@ -20,12 +22,13 @@ public class BuyResult
      */
     public BuyResult (
         boolean magicFreeBuy, MoneyTransaction memberTx, MoneyTransaction changeTx,
-        MoneyTransaction creatorTx, MoneyTransaction affiliateTx, MoneyTransaction charityTx)
+        List<MoneyTransaction> creatorTxs, MoneyTransaction affiliateTx,
+        MoneyTransaction charityTx)
     {
         _magicFree = magicFreeBuy;
         _memberTransaction = memberTx;
         _changeTransaction = changeTx;
-        _creatorTransaction = creatorTx;
+        _creatorTransactions = creatorTxs;
         _affiliateTransaction = affiliateTx;
         _charityTransaction = charityTx;
     }
@@ -53,13 +56,13 @@ public class BuyResult
     }
 
     /**
-     * The transaction that was performed on the creator's account.  Null if the creator was
-     * not modified.  Note that the creator account will still be modified if an operation involving
-     * 0 coins was performed.
+     * The transactions that were performed on the primary creator's and contributors' accounts.
+     * Null if no creators were modified.  Note that the creators' accounts will still be modified
+     * if an operation involving 0 coins was performed.
      */
-    public MoneyTransaction getCreatorTransaction ()
+    public List<MoneyTransaction> getCreatorTransactions ()
     {
-        return _creatorTransaction;
+        return _creatorTransactions;
     }
 
     /**
@@ -89,7 +92,9 @@ public class BuyResult
         // transaction if applicable, since payouts are done in buyer, creator, affiliate order.
         updateBalance(balances, buyerId, _memberTransaction);
         updateBalance(balances, buyerId, _changeTransaction);
-        updateBalance(balances, buyerId, _creatorTransaction);
+        for (MoneyTransaction tx : _creatorTransactions) {
+            updateBalance(balances, buyerId, tx);
+        }
         updateBalance(balances, buyerId, _affiliateTransaction);
         return balances;
     }
@@ -118,7 +123,7 @@ public class BuyResult
     protected boolean _magicFree;
     protected MoneyTransaction _memberTransaction;
     protected MoneyTransaction _changeTransaction;
-    protected MoneyTransaction _creatorTransaction;
+    protected List<MoneyTransaction> _creatorTransactions;
     protected MoneyTransaction _affiliateTransaction;
     protected MoneyTransaction _charityTransaction;
 }

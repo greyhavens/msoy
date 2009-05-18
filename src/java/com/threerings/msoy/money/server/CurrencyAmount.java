@@ -24,4 +24,10 @@ public class CurrencyAmount
         this.currency = currency;
         this.amount = amount;
     }
+
+    // from Object
+    public String toString ()
+    {
+        return String.valueOf(amount) + currency;
+    }
 }

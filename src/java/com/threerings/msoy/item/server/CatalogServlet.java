@@ -176,8 +176,13 @@ public class CatalogServlet extends MsoyServiceServlet
         _eventLog.testAction(mrec.visitorId, "bought_" + currency, test, group);
         // END ABTEST
 
-        // locate the appropriate repository
+        // load up the listings
         final CatalogRecord listing = _itemLogic.requireListing(itemType, catalogId, true);
+        final List<CatalogRecord> listings = Lists.newArrayList(listing);
+        int basisId;
+        while ((basisId = listings.get(listings.size() - 1).basisId) > 0) {
+            listings.add(_itemLogic.requireListing(itemType, basisId, true));
+        }
         // make sure we haven't hit our limited edition count
         if (listing.pricing == CatalogListing.PRICING_LIMITED_EDITION &&
                 listing.purchases >= listing.salesTarget) {
@@ -226,7 +231,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // update money as appropriate
         BuyResult result;
         try {
-            result = _moneyLogic.buyItem(mrec, listing, currency, authedCost, buyOp);
+            result = _moneyLogic.buyItem(mrec, listings, currency, authedCost, buyOp);
         } catch (MoneyException me) {
             throw me.toServiceException();
         }
@@ -243,26 +248,28 @@ public class CatalogServlet extends MsoyServiceServlet
         try {
             boolean magicFree = result.wasMagicFreeBuy();
             MoneyTransaction memberTx = result.getMemberTransaction();
-            MoneyTransaction creatorTx = result.getCreatorTransaction();
-            if (!magicFree && creatorTx != null) {
-                int creatorId = creatorTx.memberId;
-                if (mrec.memberId != creatorId && creatorTx.amount > 0) {
-                    if (creatorTx.currency == Currency.COINS) {
-                        _statLogic.incrementStat(
-                            creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
-                    }
-                    // else: I guess if they earned BLING, that's it's own reward
-
-                    // Some items have a stat that may need updating
-                    if (itemType == Item.AVATAR) {
-                        _statLogic.ensureIntStatMinimum(
-                            creatorId, StatType.AVATARS_CREATED, StatType.ITEM_SOLD);
-                    } else if (itemType == Item.FURNITURE) {
-                        _statLogic.ensureIntStatMinimum(
-                            creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_SOLD);
-                    } else if (itemType == Item.DECOR) {
-                        _statLogic.ensureIntStatMinimum(
-                            creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_SOLD);
+            List<MoneyTransaction> creatorTxs = result.getCreatorTransactions();
+            if (!magicFree && creatorTxs != null) {
+                for (MoneyTransaction creatorTx : creatorTxs) {
+                    int creatorId = creatorTx.memberId;
+                    if (mrec.memberId != creatorId && creatorTx.amount > 0) {
+                        if (creatorTx.currency == Currency.COINS) {
+                            _statLogic.incrementStat(
+                                creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
+                        }
+                        // else: I guess if they earned BLING, that's it's own reward
+    
+                        // Some items have a stat that may need updating
+                        if (itemType == Item.AVATAR) {
+                            _statLogic.ensureIntStatMinimum(
+                                creatorId, StatType.AVATARS_CREATED, StatType.ITEM_SOLD);
+                        } else if (itemType == Item.FURNITURE) {
+                            _statLogic.ensureIntStatMinimum(
+                                creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_SOLD);
+                        } else if (itemType == Item.DECOR) {
+                            _statLogic.ensureIntStatMinimum(
+                                creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_SOLD);
+                        }
                     }
                 }
             }
