@@ -233,7 +233,7 @@ public class DoListItemPopup extends VerticalPanel
                     if (!validatePricing()) {
                         return false;
                     }
-                    int basisSel = _basisBox.getSelectedIndex();
+                    int basisSel = _basisBox == null ? 0 : _basisBox.getSelectedIndex();
                     int basisId = basisSel == 0 ? 0 : _basisItems.get(basisSel - 1).catalogId;
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
                                          getCurrency(), getCost(), basisId, this);
