@@ -178,7 +178,6 @@ public class AccountLogic
         AccountData data = new AccountData(
             false, email, PERMAGUEST_PASSWORD, displayName,
             new VisitorInfo(checkCreateId(email, visitorId), false), affiliate);
-        data.roomName = _serverMsgs.getBundle("server").get("m.guest_room_name");
         MemberRecord guest =  createAccount(data);
         // now that we have their member id, we can update their display name with it
         guest.name = generatePermaguestDisplayName(guest.memberId);
@@ -418,8 +417,7 @@ public class AccountLogic
             }
 
             // create a blank room for them, store it
-            final String name = data.roomName == null ? _serverMsgs.getBundle("server").get(
-                "m.new_room_name", mrec.name) : data.roomName;
+            final String name = _serverMsgs.getBundle("server").get("m.new_room_name");
             mrec.homeSceneId = _sceneRepo.createBlankRoom(
                 MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true).sceneId;
             _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
@@ -535,7 +533,6 @@ public class AccountLogic
         public int[] birthdayYMD;
         public ExternalAuther exAuther;
         public String exAuthUserId;
-        public String roomName;
 
         public AccountData (boolean isRegistering, String email, String password,
                             String displayName, VisitorInfo vinfo, AffiliateCookie affiliate)
