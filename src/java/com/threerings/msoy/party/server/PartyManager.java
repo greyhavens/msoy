@@ -12,6 +12,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
@@ -38,6 +39,7 @@ import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartierObject;
+import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
@@ -152,26 +154,27 @@ public class PartyManager
     /**
      * Called from the access controller when subscription is approved for the specified member.
      */
-    public void clientSubscribed (final PartierObject partier)
+    public void clientSubscribed (PartierObject partier)
     {
+        final int memberId = partier.getMemberId();
         // listen for them to die
         partier.addListener(new ObjectDeathListener() {
             public void objectDestroyed (ObjectDestroyedEvent event) {
-                removePlayer(partier.getMemberId());
+                removePlayer(memberId);
             }
         });
 
         // clear their invites to this party, if any
-        _invitedIds.remove(partier.getMemberId());
+        _invitedIds.remove(memberId);
 
         // update member's party info via a node action
-        indicateMemberPartying(partier.getMemberId(), true);
+        indicateMemberPartying(memberId, true);
 
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
         // more than MAX_PLAYERS to join the party...
         // The user may already be in the party if they arrived from another node.
-        if (!_partyObj.peeps.containsKey(partier.getMemberId())) {
+        if (!_partyObj.peeps.containsKey(memberId)) {
             _partyObj.addToPeeps(new PartyPeep(partier.memberName, nextJoinOrder()));
         }
         updatePartyInfo();
@@ -365,6 +368,14 @@ public class PartyManager
         return true;
     }
 
+    protected void shutdownPartier (int partierOid)
+    {
+        System.err.println("Shutting down partierOid " + partierOid);
+        if (partierOid != 0) {
+            _omgr.destroyObject(partierOid);
+        }
+    }
+
     protected void indicateMemberPartying (int memberId, boolean set)
     {
         MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
@@ -377,6 +388,14 @@ public class PartyManager
 
         // tell the registry about this one directly
         _partyReg.updateUserParty(memberId, set ? _partyObj.id : 0, nodeObj);
+
+        // and, if they're no longer partying, end their session
+        if (!set) {
+            PartySession session = (PartySession) _clmgr.getClient(PartyAuthName.makeKey(memberId));
+            if (session != null) {
+                session.endSession();
+            }
+        }
     }
 
 //    // from SpeakHandler.SpeakerValidator
@@ -481,6 +500,7 @@ public class PartyManager
     protected PartyInfo _lastInfo;
     protected ArrayIntSet _invitedIds = new ArrayIntSet();
 
+    @Inject protected ClientManager _clmgr;
     @Inject protected InvocationManager _invMgr;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected NotificationManager _notifyMgr;
