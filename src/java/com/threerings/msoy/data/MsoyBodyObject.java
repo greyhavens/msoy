@@ -10,8 +10,6 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.ScenePlace;
 
-import com.threerings.msoy.room.data.RoomLocal;
-
 /**
  * Contains additional information for a body in Whirled.
  */
@@ -55,15 +53,6 @@ public class MsoyBodyObject extends BodyObject
     public boolean isActor ()
     {
         return true;
-    }
-
-    @Override // from BodyObject
-    public void didLeavePlace (PlaceObject plobj)
-    {
-        super.didLeavePlace(plobj);
-
-        // clear out our RoomLocal when we leave our room
-        setLocal(RoomLocal.class, null);
     }
 
     @Override // from BodyObject

@@ -854,6 +854,8 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MsoyUserObject) {
             _partyReg.userLeavingPlace((MsoyUserObject) body, _roomObj);
         }
+        // clear any RoomLocal
+        body.setLocal(RoomLocal.class, null);
     }
 
     @Override // from SpotSceneManager
