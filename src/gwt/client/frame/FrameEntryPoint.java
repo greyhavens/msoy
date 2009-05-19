@@ -159,7 +159,7 @@ public class FrameEntryPoint
         _currentToken = token;
 
         Pages page;
-        Args args = new Args();
+        Args args;
         try {
             page = Pages.fromHistory(token);
             args = Args.fromHistory(token);
