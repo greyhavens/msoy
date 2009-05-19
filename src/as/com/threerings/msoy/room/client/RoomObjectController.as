@@ -48,10 +48,10 @@ import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Item_UsedAs;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.Pet;
 
 import com.threerings.msoy.notify.data.Notification;
@@ -675,11 +675,11 @@ public class RoomObjectController extends RoomController
                     }
                     // create it at the front of the scene, centered on the floor
                     _roomView.setInitialFurniLocation(furni);
-                    if (item is Game) {
-                        var game :Game = (item as Game);
-                        furni.actionType = game.isAVRG ?
+                    if (item is Launcher) {
+                        var launcher :Launcher = (item as Launcher);
+                        furni.actionType = launcher.isAVRG ?
                             FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
-                        furni.actionData = String(game.gameId) + ":" + game.name;
+                        furni.actionData = String(launcher.gameId) + ":" + launcher.name;
                     }
                     applyUpdate(new FurniUpdateAction(_wdctx, null, furni));
                 }

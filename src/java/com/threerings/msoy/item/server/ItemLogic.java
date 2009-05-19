@@ -71,6 +71,7 @@ import com.threerings.msoy.item.server.persist.FavoriteItemRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
@@ -78,12 +79,12 @@ import com.threerings.msoy.item.server.persist.ItemListRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.LauncherRepository;
 import com.threerings.msoy.item.server.persist.LevelPackRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.PropRepository;
-import com.threerings.msoy.item.server.persist.IdentGameItemRecord;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
@@ -118,16 +119,17 @@ public class ItemLogic
         registerRepository(Item.DECOR, _decorRepo);
         registerRepository(Item.DOCUMENT, _documentRepo);
         registerRepository(Item.FURNITURE, _furniRepo);
-        registerRepository(Item.TOY, _toyRepo);
         registerRepository(Item.GAME, _gameRepo);
+        registerRepository(Item.ITEM_PACK, _ipackRepo);
+        registerRepository(Item.LAUNCHER, _launcherRepo);
+        registerRepository(Item.LEVEL_PACK, _lpackRepo);
         registerRepository(Item.PET, _petRepo);
         registerRepository(Item.PHOTO, _photoRepo);
-        registerRepository(Item.VIDEO, _videoRepo);
-        registerRepository(Item.LEVEL_PACK, _lpackRepo);
-        registerRepository(Item.ITEM_PACK, _ipackRepo);
-        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
         registerRepository(Item.PRIZE, _prizeRepo);
         registerRepository(Item.PROP, _propRepo);
+        registerRepository(Item.TOY, _toyRepo);
+        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
+        registerRepository(Item.VIDEO, _videoRepo);
     }
 
     /**
@@ -854,6 +856,7 @@ public class ItemLogic
     @Inject protected FurnitureRepository _furniRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected LauncherRepository _launcherRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected PetRepository _petRepo;
     @Inject protected PhotoRepository _photoRepo;

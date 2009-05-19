@@ -32,7 +32,7 @@ public class SideBar extends FlowPanel
         setStyleName("sideBar");
 
         if (showAll) {
-            init(linker, ALL_TYPES, extras);
+            init(linker, Item.FAVORITE_TYPES, extras);
         } else {
             init(linker, Item.SHOP_TYPES, extras);
         }
@@ -86,10 +86,6 @@ public class SideBar extends FlowPanel
         return itemWidget;
     }
 
-    protected static final byte[] ALL_TYPES = new byte[] { Item.NOT_A_TYPE, Item.AVATAR,
-            Item.FURNITURE, Item.DECOR, Item.TOY, Item.PET, Item.GAME, Item.PHOTO, Item.AUDIO,
-            Item.VIDEO };
-
     protected static final ItemMessages _msgs = GWT.create(ItemMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ItemImages _itemImages = GWT.create(ItemImages.class);
@@ -101,7 +97,7 @@ public class SideBar extends FlowPanel
         IMAGES.put(Item.AVATAR, _itemImages.avatar());
         IMAGES.put(Item.DECOR, _itemImages.backdrop());
         IMAGES.put(Item.FURNITURE, _itemImages.furniture());
-        IMAGES.put(Item.GAME, _itemImages.game());
+        IMAGES.put(Item.LAUNCHER, _itemImages.game());
         IMAGES.put(Item.PET, _itemImages.pet());
         IMAGES.put(Item.PHOTO, _itemImages.photo());
         IMAGES.put(Item.TOY, _itemImages.toy());

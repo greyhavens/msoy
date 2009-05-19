@@ -5,6 +5,9 @@ package com.threerings.msoy.item.server.persist;
 
 import java.lang.reflect.Field;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
@@ -42,6 +47,7 @@ import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.impl.Modifier;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FieldDefinition;
@@ -65,6 +71,7 @@ import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -79,6 +86,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
+import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -268,6 +276,108 @@ public abstract class ItemRepository<T extends ItemRecord>
                           new Where(new In(getItemColumn(ItemRecord.ITEM_ID), entry.getValue())),
                           null, getItemColumn(GameItemRecord.SUITE_ID), entry.getKey());
         }
+    }
+
+    public void migrateLaunchers ()
+    {
+        // copy the IdSequences for GAME_* to LAUNCHER_*
+        _ctx.invoke(new Modifier() {
+            @Override
+            protected int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String tname = liaison.tableSQL("IdSequences");
+                String sname = liaison.columnSQL("sequence");
+                String vname = liaison.columnSQL("value");
+                Statement stmt = conn.createStatement();
+                int mods = 0;
+                try {
+                    for (String suffix : new String[] { "", "_CATALOG", "_CLONE" }) {
+                        String gseq = "'GAME" + suffix + "'";
+                        String lseq = "'LAUNCHER" + suffix + "'";
+                        mods += stmt.executeUpdate("update " + tname + " set " + vname + " = " +
+                                                   "(select " + vname + " from " + tname +
+                                                   " where " + sname + " = " + gseq + ") " +
+                                                   "where " + sname + " = " + lseq);
+                    }
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return mods;
+            }
+        });
+
+        // create launcher records for all extant game records
+        int recs = 0, clrecs = 0, catrecs = 0;
+        for (GameRecord grec : findAll(GameRecord.class, CacheStrategy.NONE,
+                                       Lists.<QueryClause>newArrayList())) {
+            LauncherRecord lrec = new LauncherRecord();
+            lrec.itemId = grec.itemId;
+            lrec.creatorId = grec.creatorId;
+            lrec.ownerId = grec.ownerId;
+            lrec.catalogId = grec.catalogId;
+            lrec.ratingSum = grec.ratingSum;
+            lrec.ratingCount = grec.ratingCount;
+            lrec.used = grec.used;
+            lrec.location = grec.location;
+            lrec.lastTouched = grec.lastTouched;
+            lrec.name = grec.name;
+            lrec.description = grec.description;
+            lrec.mature = grec.mature;
+            lrec.thumbMediaHash = grec.thumbMediaHash;
+            lrec.thumbMimeType = grec.thumbMimeType;
+            lrec.thumbConstraint = grec.thumbConstraint;
+            lrec.furniMediaHash = grec.furniMediaHash;
+            lrec.furniMimeType = grec.furniMimeType;
+            lrec.furniConstraint = grec.furniConstraint;
+            lrec.suiteId = grec.gameId;
+            lrec.isAVRG = GameCode.detectIsInWorld(grec.config);
+            store(lrec);
+            recs++;
+        }    
+        for (GameCloneRecord grec : findAll(GameCloneRecord.class, CacheStrategy.NONE,
+                                            Lists.<QueryClause>newArrayList())) {
+            LauncherCloneRecord lrec = new LauncherCloneRecord();
+            lrec.itemId = grec.itemId;
+            lrec.originalItemId = grec.originalItemId;
+            lrec.ownerId = grec.ownerId;
+            lrec.purchaseTime = grec.purchaseTime;
+            lrec.currency = grec.currency;
+            lrec.amountPaid = grec.amountPaid;
+            lrec.used = grec.used;
+            lrec.location = grec.location;
+            lrec.lastTouched = grec.lastTouched;
+            lrec.name = grec.name;
+            lrec.mediaHash = grec.mediaHash;
+            lrec.mediaStamp = grec.mediaStamp;
+            store(lrec);
+            clrecs++;
+        }
+        for (GameCatalogRecord grec : findAll(GameCatalogRecord.class, CacheStrategy.NONE,
+                                              Lists.<QueryClause>newArrayList())) {
+            LauncherCatalogRecord lrec = new LauncherCatalogRecord();
+            lrec.catalogId = grec.catalogId;
+            lrec.listedItemId = grec.listedItemId;
+            lrec.originalItemId = grec.originalItemId;
+            lrec.listedDate = grec.listedDate;
+            lrec.currency = grec.currency;
+            lrec.cost = grec.cost;
+            lrec.pricing = grec.pricing;
+            lrec.salesTarget = grec.salesTarget;
+            lrec.purchases = grec.purchases;
+            lrec.returns = grec.returns;
+            lrec.favoriteCount = grec.favoriteCount;
+            lrec.basisId = grec.basisId;
+            lrec.derivationCount = grec.derivationCount;
+            store(lrec);
+            catrecs++;
+        }
+
+        // switch all scene furni records over from game to launcher
+        int furni = updatePartial(SceneFurniRecord.class,
+                                  new Where(SceneFurniRecord.ITEM_TYPE, Item.GAME), null,
+                                  SceneFurniRecord.ITEM_TYPE, Item.LAUNCHER);
+
+        log.info("Migrated launchers", "recs", recs, "clones", clrecs, "catrecs", catrecs,
+                 "furni", furni);
     }
 // END TEMP
 

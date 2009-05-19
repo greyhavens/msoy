@@ -41,6 +41,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public static final byte TROPHY_SOURCE = registerItemType(TrophySource.class, 13);
     public static final byte PRIZE = registerItemType(Prize.class, 14);
     public static final byte PROP = registerItemType(Prop.class, 15);
+    public static final byte LAUNCHER = registerItemType(Prop.class, 16);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
     /**
@@ -49,28 +50,36 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * shown in game shops.
      */
     public static final byte[] SHOP_TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
     };
 
     /**
      * A canonical ordering of our item types for use on the inventory page.
      */
     public static final byte[] STUFF_TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, LEVEL_PACK, ITEM_PACK, PHOTO, AUDIO, VIDEO
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, LEVEL_PACK, ITEM_PACK, PHOTO, AUDIO, VIDEO
+    };
+
+    /**
+     * A canonical ordering of our item types for use on the favorites page.
+     */
+    public static final byte[] FAVORITE_TYPES = new byte[] {
+        NOT_A_TYPE, AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
     };
 
     /**
      * A canonical ordering of our item types for use in giving gifts.
      */
     public static final byte[] GIFT_TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK, PROP
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, LEVEL_PACK, ITEM_PACK, PHOTO, AUDIO, VIDEO,
+        PROP
     };
 
     /**
      * A canonical ordering of item types that can have their 'location' set to a roomId.
      */
     public static final byte[] ROOM_TYPES = {
-        FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+        FURNITURE, DECOR, TOY, PET, LAUNCHER, PHOTO, AUDIO, VIDEO
     };
 
     /**
@@ -295,6 +304,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
             return "prize";
         } else if (type == PROP) {
             return "prop";
+        } else if (type == LAUNCHER) {
+            return "launcher";
         } else {
             return "unknown:" + type;
         }

@@ -152,11 +152,8 @@ public class StuffPanel extends FlowPanel
 
     protected boolean isCatalogItem (byte type)
     {
-        if (type == Item.GAME) {
-            return false; // TEMP
-        }
-        for (byte element2 : Item.SHOP_TYPES) {
-            if (type == element2) {
+        for (byte stype : Item.SHOP_TYPES) {
+            if (type == stype) {
                 return true;
             }
         }

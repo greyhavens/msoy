@@ -65,6 +65,9 @@ public class ItemTypes
     /** The type constant for a {@link Prop} item. */
     public static const PROP :int = 15;
 
+    /** The type constant for a {@link Launcher} item. */
+    public static const LAUNCHER :int = 16;
+
     // WARNING: DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
     /**
@@ -104,6 +107,8 @@ public class ItemTypes
             return "prize";
         } else if (type == PROP) {
             return "prop";
+        } else if (type == LAUNCHER) {
+            return "launcher";
         } else {
             return "unknown:" + type;
         }

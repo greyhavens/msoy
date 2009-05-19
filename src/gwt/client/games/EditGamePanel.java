@@ -98,7 +98,7 @@ public class EditGamePanel extends FlowPanel
     protected NaviTabPanel _tabs;
 
     protected static final byte[] SUBITEM_TYPES = {
-        Item.TROPHY_SOURCE, Item.ITEM_PACK, Item.LEVEL_PACK, Item.PRIZE };
+        Item.LAUNCHER, Item.TROPHY_SOURCE, Item.ITEM_PACK, Item.LEVEL_PACK, Item.PRIZE };
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

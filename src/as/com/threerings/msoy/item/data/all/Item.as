@@ -81,6 +81,9 @@ public /*abstract*/ class Item
     /** The type constant for a {@link Prop} item. */
     public static const PROP :int = ItemTypes.PROP;
 
+    /** The type constant for a {@link Launcher} item. */
+    public static const LAUNCHER :int = ItemTypes.LAUNCHER;
+
     /** Identifies our thumbnail media. */
     public static const THUMB_MEDIA :String = "thumb";
 
@@ -466,6 +469,7 @@ public /*abstract*/ class Item
         registerItemType(TrophySource, TROPHY_SOURCE);
         registerItemType(Prize, PRIZE);
         registerItemType(Prop, PROP);
+        registerItemType(Launcher, LAUNCHER);
     }
 
     private static function staticInit () :void

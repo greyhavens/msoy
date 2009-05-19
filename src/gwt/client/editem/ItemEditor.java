@@ -163,6 +163,8 @@ public abstract class ItemEditor extends FlowPanel
             editor = new PrizeEditor();
         } else if (type == Item.PROP) {
             editor = new PropEditor();
+        } else if (type == Item.LAUNCHER) {
+            editor = new LauncherEditor();
         } else {
             return null; // woe be the caller
         }
