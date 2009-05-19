@@ -12,7 +12,6 @@ import com.samskivert.util.StringUtil;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
 import com.threerings.msoy.web.gwt.FacebookCreds;
-import com.threerings.msoy.web.gwt.FacebookAppCreds;
 import com.threerings.msoy.web.server.FacebookServlet;
 
 /**
