@@ -11,17 +11,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.threerings.msoy.aggregators.key.CohortKey;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class CohortReturnResult implements AggregatedResult<CohortReturnResult>
+public class CohortReturnResult implements AggregatedResult<CohortKey.Key, CohortReturnResult>
 {
-    public void combine (final CohortReturnResult result)
+    public void combine (CohortReturnResult result)
     {
         this.memberIds.addAll(result.memberIds);
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (CohortKey.Key key, EventData eventData)
     {
         final Integer playerId = ((Number)eventData.getData().get("memberId")).intValue();
         if (playerId <= 0) {

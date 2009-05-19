@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
@@ -19,7 +21,7 @@ import com.threerings.panopticon.common.event.EventData;
  *
  * @author matt
  */
-public class ForumPostResult implements AggregatedResult<ForumPostResult>
+public class ForumPostResult implements AggregatedResult<WritableComparable<?>, ForumPostResult>
 {
     /**
      * Combines the given result with this one as part of the reduce step.
@@ -38,7 +40,7 @@ public class ForumPostResult implements AggregatedResult<ForumPostResult>
     /**
      * Adds the given event data to this result.
      */
-    public boolean init (EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         // increment the message post count
         posts++;

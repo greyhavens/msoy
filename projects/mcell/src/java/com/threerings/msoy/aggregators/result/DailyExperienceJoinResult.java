@@ -6,6 +6,8 @@ package com.threerings.msoy.aggregators.result;
 
 import java.util.Map;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.result.JoinResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
@@ -17,7 +19,7 @@ import com.threerings.panopticon.common.event.EventName;
  *
  * @author Robert Zubek <robert@threerings.net>
  */
-public class DailyExperienceJoinResult extends JoinResult
+public class DailyExperienceJoinResult extends JoinResult<WritableComparable<?>>
 {
     public boolean putData (final Map<String, Object> result)
     {

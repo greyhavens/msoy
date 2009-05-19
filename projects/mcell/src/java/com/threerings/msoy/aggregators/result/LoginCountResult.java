@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.google.common.collect.Sets;
 
 import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
@@ -17,13 +19,13 @@ import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
 
-public class LoginCountResult implements AggregatedResult<LoginCountResult>
+public class LoginCountResult implements AggregatedResult<WritableComparable<?>, LoginCountResult>
 {
-    public boolean init (EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         EventName name = eventData.getEventName();
 
-        // register trackers both from LOGIN and VISITOR_INFO_CREATED events, coping with 
+        // register trackers both from LOGIN and VISITOR_INFO_CREATED events, coping with
         // old events where tracker was called sessionToken
         if (eventData.containsKey("tracker")) {
             _uniqueVisitors.add((String)eventData.get("tracker"));

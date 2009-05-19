@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -21,7 +23,8 @@ import com.threerings.panopticon.shared.util.DateFactory;
 /**
  * Extracts a table of guest experiences before conversion, per entry vector / conversion status.
  */
-public abstract class GuestExperienceResult extends FieldResult<GuestExperienceResult>
+public abstract class GuestExperienceResult extends
+        FieldResult<WritableComparable<?>, GuestExperienceResult>
 {
     @StringInputNameResult(inputs="AllGuestBehavior")
     public static class Conversion extends GuestExperienceResult {
@@ -54,7 +57,7 @@ public abstract class GuestExperienceResult extends FieldResult<GuestExperienceR
     }
 
     @Override
-    public boolean init (EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         if (eventData.getDate("acct_start").before(_oneMonthAgo)) {
             return false;

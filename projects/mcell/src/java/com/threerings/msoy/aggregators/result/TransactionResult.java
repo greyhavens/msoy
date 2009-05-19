@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.hadoop.io.WritableComparable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -22,8 +23,6 @@ import com.threerings.panopticon.common.event.EventData;
 
 /**
  * Adds up transactions across all currencies.
- *
- * @author Robert Zubek <robert@threerings.net>
  */
 public class TransactionResult
     implements PropertiesAggregatedResult<TransactionResult>
@@ -40,13 +39,13 @@ public class TransactionResult
         public int earned, spent;
         public AdditiveIntMap<String> details = new AdditiveIntMap<String>();
 
-        public final String deltaFieldName;
-        public final String detailsConfigField;
-        public final String longPrefix;
-        public final String shortPrefix;
+        public String deltaFieldName;
+        public String detailsConfigField;
+        public String longPrefix;
+        public String shortPrefix;
 
-        public CurrencyAccumulator (final String deltaFieldName, final String details,
-                final String longPrefix, final String shortPrefix)
+        public CurrencyAccumulator (String deltaFieldName, String details, String longPrefix,
+                String shortPrefix)
         {
             this.deltaFieldName = deltaFieldName;
             this.detailsConfigField = details;
@@ -62,7 +61,7 @@ public class TransactionResult
         public void combine (CurrencyAccumulator other)
         {
             Preconditions.checkArgument(other.deltaFieldName.equals(this.deltaFieldName));
-            // assume that if one final field matches, all final fields match
+            // assume that if one field matches, all fields match
 
             this.earned += other.earned;
             this.spent += other.spent;
@@ -72,13 +71,13 @@ public class TransactionResult
             }
         }
 
-        public void processEvent (final EventData eventData)
+        public void processEvent (EventData eventData)
         {
             Map<String, String> actions = Maps.newHashMap(); // map from action # to action name
 
             // use the config file to initialize our details table
-            for (final String keyval : keyvals) {
-                final String[] temp = keyval.split(":");
+            for (String keyval : keyvals) {
+                String[] temp = keyval.split(":");
                 actions.put(temp[0], temp[1]);
                 this.details.add(temp[1], 0);
             }
@@ -108,7 +107,7 @@ public class TransactionResult
                 return;
             }
 
-            final String actionNumber = actions.get(actionObject.toString());
+            String actionNumber = actions.get(actionObject.toString());
             if (actionNumber == null) {
                 return; // we don't care about the details of this action
             }
@@ -116,12 +115,12 @@ public class TransactionResult
             this.details.add(actionNumber, value);
         }
 
-        public void putData (final Map<String, Object> result)
+        public void putData (Map<String, Object> result)
         {
             result.put(longPrefix + "earned", this.earned);
             result.put(longPrefix + "spent", this.spent);
 
-            final double percent = (earned == 0) ? 0 : ((double) spent) / earned;
+            double percent = (earned == 0) ? 0 : ((double) spent) / earned;
             result.put(longPrefix + "spending_p", percent);
 
             for (Entry<String, Integer> detail : this.details.entrySet()) {
@@ -130,7 +129,7 @@ public class TransactionResult
         }
 
         @SuppressWarnings("unchecked")
-        public void read (final DataInput in)
+        public void read (DataInput in)
             throws IOException
         {
             this.earned = in.readInt();
@@ -138,7 +137,7 @@ public class TransactionResult
             this.details = (AdditiveIntMap<String>)HadoopSerializationUtil.readObject(in);
         }
 
-        public void write (final DataOutput out)
+        public void write (DataOutput out)
             throws IOException
         {
             out.writeInt(this.earned);
@@ -154,7 +153,7 @@ public class TransactionResult
         new CurrencyAccumulator("deltaBars", "barsDetails", "bars_", "b_"),
         new CurrencyAccumulator("deltaBling", "blingDetails", "bling_", "bl_") };
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         for (CurrencyAccumulator acc : accumulators) {
             acc.processEvent(eventData);
@@ -163,14 +162,14 @@ public class TransactionResult
         return true;
     }
 
-    public void combine (final TransactionResult result)
+    public void combine (TransactionResult result)
     {
         for (int ii = 0; ii < this.accumulators.length; ii++) {
             this.accumulators[ii].combine(result.accumulators[ii]);
         }
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         for (CurrencyAccumulator acc : accumulators) {
             acc.putData(result);
@@ -179,7 +178,7 @@ public class TransactionResult
         return false;
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         for (CurrencyAccumulator acc : accumulators) {
@@ -187,7 +186,7 @@ public class TransactionResult
         }
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         for (CurrencyAccumulator acc : accumulators) {

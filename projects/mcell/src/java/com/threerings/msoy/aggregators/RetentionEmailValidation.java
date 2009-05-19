@@ -30,6 +30,7 @@ public class RetentionEmailValidation extends RetentionEmailBucketed
 
     protected class ValidatedOutputBuilder extends KeyedOutputBuilder<Boolean>
     {
+        @Override
         public Boolean getColumnId (Mailing mailing) {
             return mailing.validated;
         }

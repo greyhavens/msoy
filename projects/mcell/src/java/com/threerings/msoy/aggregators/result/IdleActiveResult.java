@@ -12,12 +12,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class IdleActiveResult implements AggregatedResult<IdleActiveResult>
+public class IdleActiveResult implements AggregatedResult<WritableComparable<?>, IdleActiveResult>
 {
-    public void combine (final IdleActiveResult result)
+    public void combine (IdleActiveResult result)
     {
         this.activePlayers.addAll(result.activePlayers);
         this.idlePlayers.addAll(result.idlePlayers);
@@ -25,9 +27,9 @@ public class IdleActiveResult implements AggregatedResult<IdleActiveResult>
         this.idleGuests.addAll(result.idleGuests);
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
-        final int memberId = ((Number) eventData.getData().get("memberId")).intValue();
+        int memberId = ((Number) eventData.getData().get("memberId")).intValue();
         if (memberId == 0) {
             return false; // this is a whirled page lurker - ignore
         }
@@ -42,7 +44,7 @@ public class IdleActiveResult implements AggregatedResult<IdleActiveResult>
         return true;
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         result.put("GIdle", avg(idleGuests));
         result.put("GActive", avg(activeGuests));
@@ -55,7 +57,7 @@ public class IdleActiveResult implements AggregatedResult<IdleActiveResult>
         return false;
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         readList(in, activePlayers);
@@ -64,7 +66,7 @@ public class IdleActiveResult implements AggregatedResult<IdleActiveResult>
         readList(in, idleGuests);
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         writeList(out, activePlayers);
@@ -73,58 +75,58 @@ public class IdleActiveResult implements AggregatedResult<IdleActiveResult>
         writeList(out, idleGuests);
     }
 
-    private void writeList (final DataOutput out, final List<Integer> list)
+    private void writeList (DataOutput out, List<Integer> list)
         throws IOException
     {
         out.writeInt(list.size());
-        for (final int value : list) {
+        for (int value : list) {
             out.writeInt(value);
         }
     }
 
-    private void readList (final DataInput in, final List<Integer> list)
+    private void readList (DataInput in, List<Integer> list)
         throws IOException
     {
         list.clear();
-        final int size = in.readInt();
+        int size = in.readInt();
         for (int i = 0; i < size; i++) {
             list.add(in.readInt());
         }
     }
 
-    private int avg (final List<Integer> list)
+    private int avg (List<Integer> list)
     {
         int total = 0;
-        final int size = list.size();
+        int size = list.size();
         if (size == 0) {
             return 0;
         }
 
-        for (final Integer ii : list) {
+        for (Integer ii : list) {
             total += ii;
         }
         return total / size;
     }
 
-    private int med (final List<Integer> list)
+    private int med (List<Integer> list)
     {
-        final int size = list.size();
+        int size = list.size();
         if (size == 0) {
             return 0;
         }
 
-        final int[] array = new int[size];
+        int[] array = new int[size];
         for (int ii = 0; ii < array.length; ii++) {
             array[ii] = list.get(ii).intValue();
         }
         Arrays.sort(array);
-        final int pos = array.length / 2;
+        int pos = array.length / 2;
         return array[pos];
     }
 
-    private final List<Integer> activePlayers = new ArrayList<Integer>();
-    private final List<Integer> idlePlayers = new ArrayList<Integer>();
-    private final List<Integer> activeGuests = new ArrayList<Integer>();
-    private final List<Integer> idleGuests = new ArrayList<Integer>();
+    private List<Integer> activePlayers = new ArrayList<Integer>();
+    private List<Integer> idlePlayers = new ArrayList<Integer>();
+    private List<Integer> activeGuests = new ArrayList<Integer>();
+    private List<Integer> idleGuests = new ArrayList<Integer>();
 
 }

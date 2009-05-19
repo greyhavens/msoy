@@ -2,15 +2,17 @@ package com.threerings.msoy.aggregators.result;
 
 import java.util.Map;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class RetentionByEntryResult extends FieldAggregatedResult
+public class RetentionByEntryResult extends FieldAggregatedResult<WritableComparable<?>>
 {
     public int converted, retained, total;
 
     @Override
-    protected void doInit (EventData data)
+    protected void doInit (WritableComparable<?> key, EventData data)
     {
         total = 1;
         converted = data.getInt("conv") == 1 ? 1 : 0;

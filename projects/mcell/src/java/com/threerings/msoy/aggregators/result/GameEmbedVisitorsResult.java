@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
@@ -27,15 +29,16 @@ import com.threerings.panopticon.common.event.EventData;
  *
  * @author Sarah Collins <sarah@threerings.net>
  */
-public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisitorsResult>
+public class GameEmbedVisitorsResult
+    implements AggregatedResult<WritableComparable<?>, GameEmbedVisitorsResult>
 {
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
-        final Object trackerObject = eventData.getData().get("tracker");
+        Object trackerObject = eventData.getData().get("tracker");
         if (trackerObject != null) {
             tracker = (String)trackerObject;
         } else {
-            final Object trackerObject2 = eventData.getData().get("visitorId");
+            Object trackerObject2 = eventData.getData().get("visitorId");
             if (trackerObject2 != null) {
                 tracker = (String)trackerObject2;
             }
@@ -43,11 +46,11 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
 
         String name = eventData.getEventName().getShortName();
         if (CLIENT_ACTION_TABLE.equals(name)) {
-            final Object actionObject = eventData.getData().get("actionName");
+            Object actionObject = eventData.getData().get("actionName");
             if (actionObject == null) {
                 return false;
             }
-            final String action = actionObject.toString();
+            String action = actionObject.toString();
 
             if (action.equals(EMBED_LANDING_ACTION)) {
                 embedLanding = true;
@@ -71,13 +74,13 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
             converted = true;
 
         } else if (VISITOR_INFO_TABLE.equals(name)) {
-            final Object timestampObject = eventData.getData().get("timestamp");
+            Object timestampObject = eventData.getData().get("timestamp");
             if (timestampObject != null) {
                 timestamp = (Date)timestampObject;
             }
 
         } else if (VECTOR_TABLE.equals(name)) {
-            final Object vectorObject = eventData.getData().get("vector");
+            Object vectorObject = eventData.getData().get("vector");
             if (vectorObject != null && !("".equals(vectorObject))) {
                 vector = vectorObject.toString();
             }
@@ -89,7 +92,7 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
         return true;
     }
 
-    public void combine (final GameEmbedVisitorsResult other)
+    public void combine (GameEmbedVisitorsResult other)
     {
         // System.out.println("combine tracker is " + tracker + ", other is " + other.tracker);
         // merge all events that happened at least once
@@ -114,7 +117,7 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
         }
     }
 
-    public boolean putData (final Map<String, Object> data)
+    public boolean putData (Map<String, Object> data)
     {
         // only include data from visitors who came through embedded games.
         if (vector == null || embedLanding == false) {
@@ -138,7 +141,7 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
         return false;
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         long timestampLong = in.readLong();
@@ -152,7 +155,7 @@ public class GameEmbedVisitorsResult implements AggregatedResult<GameEmbedVisito
         tracker = in.readUTF();
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         out.writeLong(timestamp == null ? 0 : timestamp.getTime());

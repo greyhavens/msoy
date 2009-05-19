@@ -32,14 +32,14 @@ public class AccountsWithVectors
     }
 
     @StringInputNameResult(inputs="VectorAssociated")
-    public static class VectorMap extends FieldResult<VectorMap>
+    public static class VectorMap extends FieldResult<TrackerKey, VectorMap>
     {
         public Map<String, String> trackerToVector = Maps.newHashMap();
 
         @Override
-        public boolean init (EventData eventData)
+        public boolean init (TrackerKey key, EventData eventData)
         {
-            if (shouldInit(eventData)) {
+            if (shouldInit(key, eventData)) {
                 String tracker = eventData.getString("tracker");
                 String vector = eventData.getString("vector");
                 if (tracker != null && vector != null) {
@@ -64,14 +64,14 @@ public class AccountsWithVectors
     }
 
     @StringInputNameResult(inputs="AccountCreated")
-    public static class AccountMap extends FieldResult<AccountMap>
+    public static class AccountMap extends FieldResult<TrackerKey, AccountMap>
     {
         public Map<String, Account> trackerToAccount = Maps.newHashMap();
 
         @Override
-        public boolean init (EventData eventData)
+        public boolean init (TrackerKey key, EventData eventData)
         {
-            if (shouldInit(eventData)) {
+            if (shouldInit(key, eventData)) {
                 Boolean isGuestValue = (Boolean)eventData.getData().get("isGuest");
 
                 if (isGuestValue == null || !isGuestValue.booleanValue()) {

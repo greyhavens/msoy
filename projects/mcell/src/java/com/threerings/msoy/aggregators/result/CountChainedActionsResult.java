@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.hadoop.io.WritableComparable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -38,10 +39,9 @@ import com.threerings.panopticon.common.event.EventData;
  * <ul>
  *      <li><b>timestampField</b>: Name of the timestamp field, defaults to "timestamp".</li>
  * </ul>
- *
- * @author Robert Zubek <robert@threerings.net>
  */
-public class CountChainedActionsResult implements PropertiesAggregatedResult<CountChainedActionsResult>
+public class CountChainedActionsResult
+    implements PropertiesAggregatedResult<CountChainedActionsResult>
 {
     public void configure (Configuration config)
     {
@@ -50,7 +50,7 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
         maxDelay = config.getLong("maxDelay");
     }
 
-    public void combine (final CountChainedActionsResult other)
+    public void combine (CountChainedActionsResult other)
     {
         this.maxDelay = other.maxDelay;
         this.actions.putAll(other.actions);
@@ -62,31 +62,31 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
         }
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         this.tracker = String.valueOf(eventData.getData().get("tracker"));
         Preconditions.checkState(maxDelay != 0 && actionRegex != null);
 
         // get the client action name
-        final Object o = eventData.getData().get("actionName");
+        Object o = eventData.getData().get("actionName");
         if (o == null) {
             return false;
         }
 
         // match it against our pattern
-        final String action = o.toString();
+        String action = o.toString();
         if (!Pattern.matches(actionRegex, action)) {
             return false;
         }
 
         // pull the timestamp
-        final Object t = eventData.getData().get(timestampField);
+        Object t = eventData.getData().get(timestampField);
         if (! (t instanceof Date || t instanceof Number)) {
             return false;
         }
 
         // pull out action details
-        final String details = String.valueOf(eventData.getData().get("details"));
+        String details = String.valueOf(eventData.getData().get("details"));
 
         // convert timestamp to ms
         long timestamp;
@@ -101,7 +101,7 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
         return true;
     }
 
-    public boolean putData (final Map<String, Object> data)
+    public boolean putData (Map<String, Object> data)
     {
         if (chains == null) {
             this.chains = new PartitionedChain();
@@ -117,7 +117,7 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
         return chains.iter.hasNext();
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         this.maxDelay = in.readLong();
@@ -131,7 +131,7 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
         this.tracker = in.readUTF();
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         out.writeLong(this.maxDelay);
@@ -152,7 +152,7 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
     private class PartitionedChain
     {
         public final String separator = " > ";
-        public final Iterator<String> iter;
+        public Iterator<String> iter;
 
         public PartitionedChain () {
             List<String> subchains = Lists.newArrayList();
@@ -195,7 +195,7 @@ public class CountChainedActionsResult implements PropertiesAggregatedResult<Cou
     private long maxDelay;
 
     /** Map from timestamps to actions. */
-    private final Map<Long, String> actions = Maps.newTreeMap();
+    private Map<Long, String> actions = Maps.newTreeMap();
 
     private String tracker;
 

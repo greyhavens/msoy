@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.hadoop.io.WritableComparable;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -35,19 +36,19 @@ public class WebSessionResult
         totalField = config.getString("total");
     }
 
-    public void combine (final WebSessionResult result)
+    public void combine (WebSessionResult result)
     {
         WebSessionResult other = result;
         this.groups.putAll(other.groups);
         this.all.addAll(other.all);
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
-        final Map<String, Object> data = eventData.getData();
+        Map<String, Object> data = eventData.getData();
 
 
-        final String tracker = (String) data.get("tracker");
+        String tracker = (String) data.get("tracker");
         all.add(tracker);
 
         for (String field : detailsFields) {
@@ -59,7 +60,7 @@ public class WebSessionResult
         return true;
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         for (String fieldName : detailsFields) {
             Collection<String> trackers = this.groups.get(fieldName);
@@ -72,14 +73,14 @@ public class WebSessionResult
     }
 
     @SuppressWarnings("unchecked")
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         this.groups = (Multimap<String, String>)HadoopSerializationUtil.readObject(in);
         this.all = (HashSet<String>)HadoopSerializationUtil.readObject(in);
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         HadoopSerializationUtil.writeObject(out, groups);

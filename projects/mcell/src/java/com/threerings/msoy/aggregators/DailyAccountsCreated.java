@@ -39,7 +39,7 @@ public class DailyAccountsCreated
     }
 
     @Result(inputs=AccountsWithVectors.class)
-    public static class CountTypes extends FieldAggregatedResult
+    public static class CountTypes extends FieldAggregatedResult<DayKey>
     {
         public int total;
         public int affiliated;
@@ -47,7 +47,7 @@ public class DailyAccountsCreated
         public int organic;
 
         @Override
-        public void doInit (EventData eventData)
+        public void doInit (DayKey key, EventData eventData)
         {
             total = 1;
 

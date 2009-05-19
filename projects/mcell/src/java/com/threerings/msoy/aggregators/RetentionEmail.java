@@ -152,6 +152,7 @@ public abstract class RetentionEmail
 
     protected class SubjectLineOutputBuilder extends KeyedOutputBuilder<String>
     {
+        @Override
         public String getColumnId (Mailing mailing) {
             return mailing.subject;
         }

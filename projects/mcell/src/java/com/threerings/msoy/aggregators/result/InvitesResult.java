@@ -10,13 +10,15 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class InvitesResult implements AggregatedResult<InvitesResult>
+public class InvitesResult implements AggregatedResult<WritableComparable<?>, InvitesResult>
 {
-    public void combine (final InvitesResult result)
+    public void combine (InvitesResult result)
     {
         this.invitesSent.addAll(result.invitesSent);
         this.invitesAccepted.addAll(result.invitesAccepted);
@@ -24,10 +26,10 @@ public class InvitesResult implements AggregatedResult<InvitesResult>
         this.inviteSenders.addAll(result.inviteSenders);
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         // Add the invite ID to the appropriate sets
-        final String inviteId = (String)eventData.getData().get("inviteId");
+        String inviteId = (String)eventData.getData().get("inviteId");
         invitesSent.add(inviteId);
         inviteSenders.add((Integer)eventData.getData().get("inviterId"));
         if ((Boolean)eventData.getData().get("followed")) {
@@ -40,7 +42,7 @@ public class InvitesResult implements AggregatedResult<InvitesResult>
         return true;
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         result.put("sent", invitesSent.size());
         result.put("followed", invitesFollowed.size());
@@ -52,7 +54,7 @@ public class InvitesResult implements AggregatedResult<InvitesResult>
     }
 
     @SuppressWarnings("unchecked")
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         invitesSent = (TreeSet<String>)HadoopSerializationUtil.readObject(in);
@@ -61,7 +63,7 @@ public class InvitesResult implements AggregatedResult<InvitesResult>
         inviteSenders = (TreeSet<Integer>)HadoopSerializationUtil.readObject(in);
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         HadoopSerializationUtil.writeObject(out, invitesSent);

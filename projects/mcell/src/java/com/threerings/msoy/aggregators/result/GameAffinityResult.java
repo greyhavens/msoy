@@ -7,21 +7,25 @@ package com.threerings.msoy.aggregators.result;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.hadoop.io.WritableComparable;
+
+import com.google.common.collect.Maps;
+
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class GameAffinityResult implements AggregatedResult<GameAffinityResult>
+public class GameAffinityResult
+    implements AggregatedResult<WritableComparable<?>, GameAffinityResult>
 {
-    public void combine (final GameAffinityResult result)
+    public void combine (GameAffinityResult result)
     {
-        for (final Entry<Integer, Set<Integer>> entry : result.gamesPlayedByPlayers.entrySet()) {
+        for (Entry<Integer, Set<Integer>> entry : result.gamesPlayedByPlayers.entrySet()) {
             Set<Integer> set = this.gamesPlayedByPlayers.get(entry.getKey());
             if (set == null) {
                 set = new HashSet<Integer>();
@@ -31,22 +35,22 @@ public class GameAffinityResult implements AggregatedResult<GameAffinityResult>
         }
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         if (! eventData.getData().containsKey("playerId")) {
             return false; // old event type
         }
 
-        final int playerId = ((Number) eventData.getData().get("playerId")).intValue();
-        final int gameId = Math.abs(((Number) eventData.getData().get("gameId")).intValue());
-        final Set<Integer> set = new HashSet<Integer>();
+        int playerId = ((Number) eventData.getData().get("playerId")).intValue();
+        int gameId = Math.abs(((Number) eventData.getData().get("gameId")).intValue());
+        Set<Integer> set = new HashSet<Integer>();
         set.add(playerId);
         gamesPlayedByPlayers.put(gameId, set);
 
         return true;
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         // Do not process any records if nothing was recorded.
         if (gamesPlayedByPlayers.isEmpty()) {
@@ -69,7 +73,7 @@ public class GameAffinityResult implements AggregatedResult<GameAffinityResult>
 
         // Get the next item in the second iterator.  We should only create a record if the
         // second game ID > first game ID.
-        final Entry<Integer, Set<Integer>> thisEntry = itor2.next();
+        Entry<Integer, Set<Integer>> thisEntry = itor2.next();
         if (thisEntry.getKey() > curEntry.getKey()) {
             result.put("game1", curEntry.getKey());
             result.put("game2", thisEntry.getKey());
@@ -79,15 +83,15 @@ public class GameAffinityResult implements AggregatedResult<GameAffinityResult>
         return itor1.hasNext() || itor2.hasNext();
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         gamesPlayedByPlayers.clear();
-        final int count = in.readInt();
+        int count = in.readInt();
         for (int i = 0; i < count; i++) {
-            final int key = in.readInt();
-            final Set<Integer> set = new HashSet<Integer>();
-            final int setCount = in.readInt();
+            int key = in.readInt();
+            Set<Integer> set = new HashSet<Integer>();
+            int setCount = in.readInt();
             for (int j = 0; j < setCount; j++) {
                 set.add(in.readInt());
             }
@@ -95,27 +99,27 @@ public class GameAffinityResult implements AggregatedResult<GameAffinityResult>
         }
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         out.writeInt(gamesPlayedByPlayers.size());
-        for (final Entry<Integer, Set<Integer>> entry : gamesPlayedByPlayers.entrySet()) {
+        for (Entry<Integer, Set<Integer>> entry : gamesPlayedByPlayers.entrySet()) {
             out.writeInt(entry.getKey());
             out.writeInt(entry.getValue().size());
-            for (final int value : entry.getValue()) {
+            for (int value : entry.getValue()) {
                 out.writeInt(value);
             }
         }
     }
 
-    private static <T> Set<T> intersection (final Set<T> set1, final Set<T> set2)
+    private static <T> Set<T> intersection (Set<T> set1, Set<T> set2)
     {
-        final Set<T> set = new HashSet<T>(set1);
+        Set<T> set = new HashSet<T>(set1);
         set.retainAll(set2);
         return set;
     }
 
-    private final Map<Integer, Set<Integer>> gamesPlayedByPlayers = new HashMap<Integer, Set<Integer>>();
+    private Map<Integer, Set<Integer>> gamesPlayedByPlayers = Maps.newHashMap();
 
     // Transient data used by putData()
     private Iterator<Entry<Integer, Set<Integer>>> itor1 = null;

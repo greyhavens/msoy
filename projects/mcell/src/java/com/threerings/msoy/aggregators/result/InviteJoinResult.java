@@ -7,11 +7,13 @@ package com.threerings.msoy.aggregators.result;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.result.JoinResult;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.event.EventName;
 
-public class InviteJoinResult extends JoinResult
+public class InviteJoinResult extends JoinResult<WritableComparable<?>>
 {
     public boolean putData (final Map<String, Object> result)
     {

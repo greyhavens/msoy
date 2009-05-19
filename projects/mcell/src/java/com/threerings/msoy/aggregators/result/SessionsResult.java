@@ -12,13 +12,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.HadoopSerializationUtil;
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class SessionsResult implements AggregatedResult<SessionsResult>
+public class SessionsResult implements AggregatedResult<WritableComparable<?>, SessionsResult>
 {
-    public void combine (final SessionsResult result)
+    public void combine (SessionsResult result)
     {
         if (this.playerStats == null) {
             this.playerStats = result.playerStats;
@@ -29,24 +31,24 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
         }
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
-        final int memberId = ((Number) eventData.getData().get("memberId")).intValue();
+        int memberId = ((Number) eventData.getData().get("memberId")).intValue();
         if (memberId == 0) {
             return false; // this is a whirled page lurker - ignore
         }
-        
+
         Boolean isGuest = (Boolean) eventData.getData().get("isGuest");
 
-        final Map<String, Object> data = eventData.getData();
-        final int inOwnRoomsTotal = getClampedSeconds(data, "inMyRooms");
-        final int inFriendsRoomsTotal = getClampedSeconds(data, "inFriendRooms");
-        final int inOtherRoomsTotal = getClampedSeconds(data, "inStrangerRooms");
-        final int inWhirledsTotal = getClampedSeconds(data, "inWhirleds");
-        final int activeTotal = getClampedSeconds(data, "totalActive");
-        final int idleTotal = getClampedSeconds(data, "totalIdle");
+        Map<String, Object> data = eventData.getData();
+        int inOwnRoomsTotal = getClampedSeconds(data, "inMyRooms");
+        int inFriendsRoomsTotal = getClampedSeconds(data, "inFriendRooms");
+        int inOtherRoomsTotal = getClampedSeconds(data, "inStrangerRooms");
+        int inWhirledsTotal = getClampedSeconds(data, "inWhirleds");
+        int activeTotal = getClampedSeconds(data, "totalActive");
+        int idleTotal = getClampedSeconds(data, "totalIdle");
 
-        final GroupStats stats = new GroupStats(inOwnRoomsTotal, inFriendsRoomsTotal,
+        GroupStats stats = new GroupStats(inOwnRoomsTotal, inFriendsRoomsTotal,
             inOtherRoomsTotal, inWhirledsTotal, idleTotal, activeTotal, memberId);
 
         if ((isGuest != null) ? isGuest.booleanValue() : (memberId < 0)) {
@@ -62,7 +64,7 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
     /** Retrieves the number of seconds, and clamps it to be in the range [0, MAX_SECONDS]. */
     private int getClampedSeconds (Map<String, Object> data, String field)
     {
-        final int result = ((Number) data.get(field)).intValue();
+        int result = ((Number) data.get(field)).intValue();
         return Math.min(Math.max(0, result), MAX_SECONDS);
     }
 
@@ -71,9 +73,9 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
         return sampleSet.samples == 0 ? 0 : total / (sampleSet.samples * 60.0);
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
-        final int guestInRoomsTotal = guestStats.inOwnRoomsTotal + guestStats.inFriendsRoomsTotal +
+        int guestInRoomsTotal = guestStats.inOwnRoomsTotal + guestStats.inFriendsRoomsTotal +
             guestStats.inOtherRoomsTotal;
 
         result.put("uniqueGuests", guestStats.uniques.size());
@@ -101,38 +103,38 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
         return false;
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         this.playerStats = readGroupStats(in);
         this.guestStats = readGroupStats(in);
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         writeGroupStats(out, this.playerStats);
         writeGroupStats(out, this.guestStats);
     }
 
-    private GroupStats readGroupStats (final DataInput in)
+    private GroupStats readGroupStats (DataInput in)
         throws IOException
     {
-        final int samples = in.readInt();
-        final int inOwnRoomsTotal = in.readInt();
-        final int inFriendsRoomsTotal = in.readInt();
-        final int inOtherRoomsTotal = in.readInt();
-        final int inWhirledsTotal = in.readInt();
-        final int idleTotal = in.readInt();
-        final int activeTotal = in.readInt();
+        int samples = in.readInt();
+        int inOwnRoomsTotal = in.readInt();
+        int inFriendsRoomsTotal = in.readInt();
+        int inOtherRoomsTotal = in.readInt();
+        int inWhirledsTotal = in.readInt();
+        int idleTotal = in.readInt();
+        int activeTotal = in.readInt();
 
         @SuppressWarnings("unchecked")
-        final Set<Integer> uniques = (Set<Integer>)HadoopSerializationUtil.readObject(in);
+        Set<Integer> uniques = (Set<Integer>)HadoopSerializationUtil.readObject(in);
         return new GroupStats(samples, inOwnRoomsTotal, inFriendsRoomsTotal, inOtherRoomsTotal,
             inWhirledsTotal, idleTotal, activeTotal, uniques);
     }
 
-    private void writeGroupStats (final DataOutput out, final GroupStats stats)
+    private void writeGroupStats (DataOutput out, GroupStats stats)
         throws IOException
     {
         out.writeInt(stats.samples);
@@ -145,17 +147,17 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
         HadoopSerializationUtil.writeObject(out, stats.uniques);
     }
 
-    private final static class GroupStats {
-        public final int samples;
-        public final int inOwnRoomsTotal;
-        public final int inFriendsRoomsTotal;
-        public final int inOtherRoomsTotal;
-        public final int inWhirledsTotal;
-        public final int idleTotal;
-        public final int activeTotal;
-        public final Set<Integer> uniques = new TreeSet<Integer>();
+    private static class GroupStats {
+        public int samples;
+        public int inOwnRoomsTotal;
+        public int inFriendsRoomsTotal;
+        public int inOtherRoomsTotal;
+        public int inWhirledsTotal;
+        public int idleTotal;
+        public int activeTotal;
+        public Set<Integer> uniques = new TreeSet<Integer>();
 
-        public GroupStats (final GroupStats stats1, final GroupStats stats2)
+        public GroupStats (GroupStats stats1, GroupStats stats2)
         {
             this(stats1.samples + stats2.samples,
                 stats1.inOwnRoomsTotal + stats2.inOwnRoomsTotal,
@@ -167,9 +169,9 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
                 union(stats1.uniques, stats2.uniques));
         }
 
-        public GroupStats (final int samples, final int inOwnRoomsTotal, final int inFriendsRoomsTotal,
-            final int inOtherRoomsTotal, final int inWhirledsTotal, final int idleTotal,
-            final int activeTotal, final Set<Integer> memberIds)
+        public GroupStats (int samples, int inOwnRoomsTotal, int inFriendsRoomsTotal,
+                int inOtherRoomsTotal, int inWhirledsTotal, int idleTotal, int activeTotal,
+                Set<Integer> memberIds)
         {
             this.samples = samples;
             this.inOwnRoomsTotal = inOwnRoomsTotal;
@@ -181,9 +183,8 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
             uniques.addAll(memberIds);
         }
 
-        public GroupStats (final int inOwnRoomsTotal, final int inFriendsRoomsTotal,
-            final int inOtherRoomsTotal, final int inWhirledsTotal, final int idleTotal,
-            final int activeTotal, final int memberId)
+        public GroupStats (int inOwnRoomsTotal, int inFriendsRoomsTotal, int inOtherRoomsTotal,
+                int inWhirledsTotal, int idleTotal, int activeTotal, int memberId)
         {
             this(1, inOwnRoomsTotal, inFriendsRoomsTotal, inOtherRoomsTotal, inWhirledsTotal,
                 idleTotal, activeTotal, Collections.singleton(memberId));
@@ -194,9 +195,9 @@ public class SessionsResult implements AggregatedResult<SessionsResult>
             this(0, 0, 0, 0, 0, 0, 0, Collections.<Integer>emptySet());
         }
 
-        private static <T> Set<T> union (final Set<T> set1, final Set<T> set2)
+        private static <T> Set<T> union (Set<T> set1, Set<T> set2)
         {
-            final Set<T> set = new TreeSet<T>();
+            Set<T> set = new TreeSet<T>();
             set.addAll(set1);
             set.addAll(set2);
             return set;

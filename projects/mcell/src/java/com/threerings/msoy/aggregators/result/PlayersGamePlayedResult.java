@@ -7,51 +7,55 @@ package com.threerings.msoy.aggregators.result;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.hadoop.io.WritableComparable;
+
+import com.google.common.collect.Sets;
 
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class PlayersGamePlayedResult implements AggregatedResult<PlayersGamePlayedResult>
+public class PlayersGamePlayedResult
+    implements AggregatedResult<WritableComparable<?>, PlayersGamePlayedResult>
 {
-    public void combine (final PlayersGamePlayedResult result)
+    public void combine (PlayersGamePlayedResult result)
     {
         this.values.addAll(result.values);
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         // Get the value of the unique field
         values.add(Math.abs(((Number)eventData.getData().get("gameId")).intValue()));
         return true;
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         result.put("gamesPlayed", values.size());
         return false;
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         values.clear();
-        final int count = in.readInt();
+        int count = in.readInt();
         for (int i = 0; i < count; i++) {
             values.add(in.readInt());
         }
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         out.writeInt(values.size());
-        for (final Integer value : values) {
+        for (Integer value : values) {
             out.writeInt(value);
         }
     }
 
-    private final Set<Integer> values = new HashSet<Integer>();
+    private Set<Integer> values = Sets.newHashSet();
 }

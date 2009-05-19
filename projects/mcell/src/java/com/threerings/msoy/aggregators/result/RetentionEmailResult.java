@@ -5,6 +5,8 @@ package com.threerings.msoy.aggregators.result;
 
 import java.util.Map;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.google.common.collect.Maps;
 
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
@@ -18,20 +20,20 @@ import com.threerings.panopticon.common.event.EventData;
  * data.
  */
 @StringInputNameResult(inputs="RetentionMailSent") // original msoy event
-public class RetentionEmailResult extends FieldAggregatedResult
+public class RetentionEmailResult extends FieldAggregatedResult<WritableComparable<?>>
 {
     /**
      * Normalized msoy retention email event.
      */
     public static class Mailing extends FieldWritable
-        implements AggregatedResult<Mailing>
+        implements AggregatedResult<WritableComparable<?>, Mailing>
     {
         public String bucket;
         public String subject;
         public Boolean validated;
         public Integer memberId;
 
-        public boolean init (EventData eventData) {
+        public boolean init (WritableComparable<?> key, EventData eventData) {
             memberId = eventData.getInt("recipientId");
             bucket = eventData.getDefaultString("bucket", "default");
             subject = eventData.getDefaultString("subjectLine", "default");
@@ -57,10 +59,10 @@ public class RetentionEmailResult extends FieldAggregatedResult
     }
 
     @Override // from FieldResult
-    protected void doInit (EventData eventData)
+    protected void doInit (WritableComparable<?> key, EventData eventData)
     {
         Mailing mailing = new Mailing();
-        mailing.init(eventData);
+        mailing.init(key, eventData);
         sent.put(mailing.memberId, mailing);
     }
 }

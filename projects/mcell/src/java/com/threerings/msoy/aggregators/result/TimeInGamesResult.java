@@ -11,14 +11,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.threerings.panopticon.aggregator.result.AggregatedResult;
 import com.threerings.panopticon.common.event.EventData;
 
-public class TimeInGamesResult implements AggregatedResult<TimeInGamesResult>
+public class TimeInGamesResult implements AggregatedResult<WritableComparable<?>, TimeInGamesResult>
 {
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
-        final int playerId = ((Number)eventData.getData().get("playerId")).intValue();
+        int playerId = ((Number)eventData.getData().get("playerId")).intValue();
         if (playerId == 0) {
             return false; // this is a whirled page lurker - ignore
         }
@@ -40,7 +42,7 @@ public class TimeInGamesResult implements AggregatedResult<TimeInGamesResult>
         return true;
     }
 
-    public void combine (final TimeInGamesResult result)
+    public void combine (TimeInGamesResult result)
     {
         guestSecondsInGame += result.guestSecondsInGame;
         playerSecondsInGame += result.playerSecondsInGame;
@@ -48,7 +50,7 @@ public class TimeInGamesResult implements AggregatedResult<TimeInGamesResult>
         this.playerPlayerIds.addAll(result.playerPlayerIds);
     }
 
-    public boolean putData (final Map<String, Object> result)
+    public boolean putData (Map<String, Object> result)
     {
         result.put("guestAvgMinutesInGames", guestPlayerIds.size() == 0 ? 0
             : (guestSecondsInGame / new Double(guestPlayerIds.size())) / 60);
@@ -58,38 +60,38 @@ public class TimeInGamesResult implements AggregatedResult<TimeInGamesResult>
         return false;
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         guestSecondsInGame = in.readLong();
         playerSecondsInGame = in.readLong();
 
         guestPlayerIds.clear();
-        final int guestCount = in.readInt();
+        int guestCount = in.readInt();
         for (int i = 0; i < guestCount; i++) {
             guestPlayerIds.add(in.readInt());
         }
 
         playerPlayerIds.clear();
-        final int playerCount = in.readInt();
+        int playerCount = in.readInt();
         for (int i = 0; i < playerCount; i++) {
             playerPlayerIds.add(in.readInt());
         }
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         out.writeLong(guestSecondsInGame);
         out.writeLong(playerSecondsInGame);
 
         out.writeInt(guestPlayerIds.size());
-        for (final int value : guestPlayerIds) {
+        for (int value : guestPlayerIds) {
             out.writeInt(value);
         }
 
         out.writeInt(playerPlayerIds.size());
-        for (final int value : playerPlayerIds) {
+        for (int value : playerPlayerIds) {
             out.writeInt(value);
         }
     }
@@ -101,10 +103,10 @@ public class TimeInGamesResult implements AggregatedResult<TimeInGamesResult>
     private long playerSecondsInGame = 0;
 
     /** set of player ids representing unique guests */
-    private final Set<Integer> guestPlayerIds = new HashSet<Integer>();
+    private Set<Integer> guestPlayerIds = new HashSet<Integer>();
 
     /** set of player ids representing unique players */
-    private final Set<Integer> playerPlayerIds = new HashSet<Integer>();
+    private Set<Integer> playerPlayerIds = new HashSet<Integer>();
 
     /** If a single play lasts longer than 30 minutes, set it to exactly 30 minutes */
     private static int MAX_SECONDS = 60 * 30;

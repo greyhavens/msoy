@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
@@ -36,9 +38,9 @@ import com.threerings.panopticon.shared.util.DateFactory;
  * VectorAssociated.
  */
 public class GuestBehaviorResult
-    implements AggregatedResult<GuestBehaviorResult>
+    implements AggregatedResult<WritableComparable<?>, GuestBehaviorResult>
 {
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, final EventData eventData)
     {
         final Map<String, Object> data = eventData.getData();
 

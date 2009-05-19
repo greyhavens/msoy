@@ -12,6 +12,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import org.apache.hadoop.io.WritableComparable;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -23,12 +25,12 @@ import com.threerings.panopticon.aggregator.result.field.FieldAggregatedResult;
 import com.threerings.panopticon.aggregator.result.field.FieldKey;
 import com.threerings.panopticon.common.event.EventData;
 
-public class MultiServerAverageResult extends FieldAggregatedResult
+public class MultiServerAverageResult extends FieldAggregatedResult<WritableComparable<?>>
 {
     public List<Sample> samples = Lists.newArrayList();
 
     @Override
-    public void doInit (EventData eventData)
+    public void doInit (WritableComparable<?> key, EventData eventData)
     {
         Sample sample = new Sample();
         sample.init(eventData);

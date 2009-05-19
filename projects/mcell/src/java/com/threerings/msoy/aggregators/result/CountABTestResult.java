@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.hadoop.io.WritableComparable;
 
 import com.google.common.base.Preconditions;
 
@@ -30,8 +31,6 @@ import com.threerings.panopticon.common.event.EventData;
  *      <li><b>testRegex</b>: Regular expression to match the tests to be processed.</li>
  *      <li><b>actionRegex</b>: Regular expression to match actions to be aggregated.</li>
  * </ul>
- *
- * @author Robert Zubek <robert@threerings.net>
  */
 public class CountABTestResult implements PropertiesAggregatedResult<CountABTestResult>
 {
@@ -42,9 +41,9 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         actionRegex = config.getString("actionRegex");
     }
 
-    public void combine (final CountABTestResult aggregate)
+    public void combine (CountABTestResult aggregate)
     {
-        final CountABTestResult other = aggregate;
+        CountABTestResult other = aggregate;
 
         // merge group sets and action sets
         this.actions.addAll(other.actions);
@@ -54,7 +53,7 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         }
     }
 
-    public boolean init (final EventData eventData)
+    public boolean init (WritableComparable<?> key, EventData eventData)
     {
         Preconditions.checkState(testRegex != null && actionRegex != null);
 
@@ -75,7 +74,7 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         throw new RuntimeException("CountABTestResult encountered unknown event: " + name);
     }
 
-    private boolean processBehavior (final EventData eventData)
+    private boolean processBehavior (EventData eventData)
     {
         if (((Number) eventData.getData().get("conv")).intValue() > 0) {
             this.actions.add(CONVERTED_ACTION);
@@ -87,15 +86,15 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         return true;
     }
 
-    private boolean processClientAction (final EventData eventData, final String actionRegex)
+    private boolean processClientAction (EventData eventData, String actionRegex)
     {
         // get the client action name
-        final Object o = eventData.getData().get("actionName");
+        Object o = eventData.getData().get("actionName");
         if (o == null) {
             return false;
         }
 
-        final String action = o.toString();
+        String action = o.toString();
 
         if (!Pattern.matches(actionRegex, action)) {
             return false;
@@ -105,13 +104,13 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         return true;
     }
 
-    private boolean processTestAssignment (
-        final EventData eventData, final String testRegex, final String actionRegex)
+    private boolean processTestAssignment (EventData eventData, String testRegex,
+        String actionRegex)
     {
-        final Map<String, Object> data = eventData.getData();
+        Map<String, Object> data = eventData.getData();
 
         // see if this test is one of those we want
-        final String test = (String) data.get("testName");
+        String test = (String) data.get("testName");
         if (test == null) {
             return false;
         }
@@ -121,13 +120,13 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         }
 
         // pull out the action, if it's not a test assignment, process it elsewhere
-        final Object action = data.get("actionName");
+        Object action = data.get("actionName");
         if (!"ABTestGroupAssigned".equals(action)) {
             return processClientAction(eventData, actionRegex);
         }
 
         // get the group
-        final Object group = data.get("testGroup");
+        Object group = data.get("testGroup");
         if (group == null) {
             return false;
         }
@@ -140,7 +139,7 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         return true;
     }
 
-    public boolean putData (final Map<String, Object> data)
+    public boolean putData (Map<String, Object> data)
     {
         if (outputState == null) {
             this.outputState = new OutputState();
@@ -156,9 +155,9 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         data.put("_action", outputState.currentAction);
 
         // get constituents
-        final String[] elts = outputState.currentGroup.split(" - ");
-        final String test = elts[0];
-        final String group = elts[1];
+        String[] elts = outputState.currentGroup.split(" - ");
+        String test = elts[0];
+        String group = elts[1];
 
         data.put("ab_test", test);
         data.put("ab_test_grp", group);
@@ -169,7 +168,7 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         return outputState.hasNext();
     }
 
-    public void readFields (final DataInput in)
+    public void readFields (DataInput in)
         throws IOException
     {
         this.vector = in.readUTF();
@@ -186,7 +185,7 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
         this.groups.addAll(otherGroups);
     }
 
-    public void write (final DataOutput out)
+    public void write (DataOutput out)
         throws IOException
     {
         out.writeUTF(this.vector);
@@ -260,10 +259,10 @@ public class CountABTestResult implements PropertiesAggregatedResult<CountABTest
     private String vector = "";
 
     /** Set of all test/group assignments for this tracking number. */
-    private final Set<String> groups = new HashSet<String>();
+    private Set<String> groups = new HashSet<String>();
 
     /** Set of all testable actions performed by this tracking number. */
-    private final Set<String> actions = new HashSet<String>();
+    private Set<String> actions = new HashSet<String>();
 
     private OutputState outputState = null;
 
