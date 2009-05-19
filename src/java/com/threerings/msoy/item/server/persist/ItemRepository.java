@@ -32,6 +32,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.MySQLLiaison;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
@@ -293,10 +294,21 @@ public abstract class ItemRepository<T extends ItemRecord>
                     for (String suffix : new String[] { "", "_CATALOG", "_CLONE" }) {
                         String gseq = "'GAME" + suffix + "'";
                         String lseq = "'LAUNCHER" + suffix + "'";
-                        mods += stmt.executeUpdate("update " + tname + " set " + vname + " = " +
-                                                   "(select " + vname + " from " + tname +
-                                                   " where " + sname + " = " + gseq + ") " +
-                                                   "where " + sname + " = " + lseq);
+                        String query;
+                        if (liaison instanceof MySQLLiaison) {
+                            // fucking braindead mysql
+                            query = "update " + tname + " set " + vname + " = " +
+                                "(select " + vname + " from" +
+                                " (select " + vname + " from " + tname +
+                                "  where " + sname + " = " + gseq + ") as SUB) " +
+                                "where " + sname + " = " + lseq;
+                        } else {
+                            query = "update " + tname + " set " + vname + " = " +
+                                "(select " + vname + " from " + tname +
+                                " where " + sname + " = " + gseq + ") " +
+                                "where " + sname + " = " + lseq;
+                        }
+                        mods += stmt.executeUpdate(query);
                     }
                 } finally {
                     JDBCUtil.close(stmt);
