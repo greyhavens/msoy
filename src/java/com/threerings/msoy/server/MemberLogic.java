@@ -63,6 +63,7 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
+import com.threerings.msoy.person.server.persist.InviteRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -501,8 +502,7 @@ public class MemberLogic
 
     /**
      * Sends a vanilla friend invitation.
-     * @param memberId id of the user requesting friendship
-     * @param friendId id of the user who will be sent an invitation
+     *
      * @return true if the invitee is a greeter and the friendship was automatically established
      */
     public boolean inviteToBeFriend (int memberId, int friendId)
@@ -601,6 +601,7 @@ public class MemberLogic
             _galleryRepo.purgeMembers(purgeIds);
             _gcookRepo.purgePlayers(purgeIds);
             _groupRepo.purgeMembers(purgeIds);
+            _inviteRepo.purgeMembers(purgeIds);
             _mailRepo.purgeMembers(purgeIds);
             _medalRepo.purgeMembers(purgeIds);
             _memberRepo.purgeMembers(purgeIds);
@@ -904,6 +905,7 @@ public class MemberLogic
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GalleryRepository _galleryRepo;
     @Inject protected GameCookieRepository _gcookRepo;
+    @Inject protected InviteRepository _inviteRepo;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MoneyRepository _moneyRepo;

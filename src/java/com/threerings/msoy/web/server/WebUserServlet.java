@@ -49,7 +49,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.CharityRecord;
-import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.MailSender.By;
@@ -61,6 +60,8 @@ import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
+import com.threerings.msoy.person.server.persist.InviteRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
@@ -113,7 +114,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // check invitation validity
         InvitationRecord invite = null;
         if (info.inviteId != null) {
-            invite = _memberRepo.inviteAvailable(info.inviteId);
+            invite = _inviteRepo.inviteAvailable(info.inviteId);
             if (invite == null) {
                 throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
             }
@@ -146,7 +147,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // if we are responding to an invitation, wire that all up
         if (invite != null && invite.inviterId != 0) {
-            _memberRepo.linkInvite(info.inviteId, mrec);
+            _inviteRepo.linkInvite(info.inviteId, mrec);
 
             // TODO: if forceValidation, we shouldn't tell the inviter anything yet
             MemberRecord inviter = _memberRepo.loadMember(invite.inviterId);
@@ -616,6 +617,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected FriendManager _friendMan;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected InviteRepository _inviteRepo;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MailSender _mailer;

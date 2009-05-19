@@ -24,6 +24,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.AffiliateCookie;
 
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -37,7 +38,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.AuthenticationDomain.Account;
-import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;

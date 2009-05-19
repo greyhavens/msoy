@@ -89,7 +89,6 @@ public class DashboardPanel extends SmartTable
         support.add(makeLink(_msgs.reviewButton(), "review"));
         support.add(makeLink(_msgs.promosButton(), "promos"));
         support.add(makeLink(_msgs.contestsButton(), "contests"));
-        support.add(makeLink(_msgs.browseButton(), "browser"));
         support.add(makeLink(_msgs.broadcastButton(), "broadcasts"));
         setWidget(row, col, support);
         getFlexCellFormatter().setVerticalAlignment(row++, col++, HasAlignment.ALIGN_TOP);

@@ -793,9 +793,8 @@ public class MemberManager
 
             _invoker.postUnit(new RepositoryUnit("updateLevel") {
                 @Override public void invokePersist () throws Exception {
-                    // record the new level, and grant a new invite
+                    // record the new level
                     _memberRepo.setUserLevel(memberId, newLevel);
-                    _memberRepo.grantInvites(memberId, 1);
                     // mark the level gain in their feed
                     _feedRepo.publishMemberMessage(
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));

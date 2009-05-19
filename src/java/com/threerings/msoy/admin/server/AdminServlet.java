@@ -37,7 +37,6 @@ import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
-import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
@@ -81,8 +80,6 @@ import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
-import com.threerings.msoy.admin.gwt.MemberInviteResult;
-import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
@@ -101,15 +98,6 @@ import com.whirled.bureau.data.BureauTypes;
 public class AdminServlet extends MsoyServiceServlet
     implements AdminService
 {
-    // from interface AdminService
-    public void grantInvitations (final int numberInvitations, final int memberId)
-        throws ServiceException
-    {
-        final MemberRecord memrec = requireAdminUser();
-        _memberRepo.grantInvites(memberId, numberInvitations);
-        sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
-    }
-
     // from interface AdminService
     public MemberAdminInfo getMemberInfo (final int memberId)
         throws ServiceException
@@ -163,29 +151,6 @@ public class AdminServlet extends MsoyServiceServlet
             info.charityDescription = charity.description;
         }
         return info;
-    }
-
-    // from interface AdminService
-    public MemberInviteResult getPlayerList (final int inviterId)
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        final MemberInviteResult res = new MemberInviteResult();
-        final MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
-        if (memRec != null) {
-            res.name = memRec.permaName == null || memRec.permaName.equals("") ?
-                memRec.name : memRec.permaName;
-            res.memberId = inviterId;
-            res.invitingFriendId = memRec.affiliateMemberId;
-        }
-
-        final List<MemberInviteStatus> players = Lists.newArrayList();
-        for (final MemberInviteStatusRecord rec : _memberRepo.getMembersInvitedBy(inviterId)) {
-            players.add(rec.toWebObject());
-        }
-        res.invitees = players;
-        return res;
     }
 
     // from interface AdminService

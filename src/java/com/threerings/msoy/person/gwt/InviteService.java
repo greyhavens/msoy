@@ -27,12 +27,6 @@ public interface InviteService extends RemoteService
         throws ServiceException;
 
     /**
-     * Return the invitation details for the given ident.
-     */
-    MemberInvites getInvitationsStatus ()
-        throws ServiceException;
-
-    /**
      * Send out some of this person's available invites.
      *
      * @param anonymous if true, the invitations will not be from the caller but will be
@@ -55,12 +49,6 @@ public interface InviteService extends RemoteService
      */
     void sendWhirledMailGameInvites (
         Set<Integer> recipientIds, int gameId, String subject, String body, String args)
-        throws ServiceException;
-
-    /**
-     * Removes a pending invitation.
-     */
-    void removeInvitation (String inviteId)
         throws ServiceException;
 
     /**

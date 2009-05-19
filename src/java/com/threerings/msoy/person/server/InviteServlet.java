@@ -24,8 +24,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.persist.GameInvitationRecord;
-import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
@@ -50,6 +48,9 @@ import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.person.gwt.ProfileCodes;
+import com.threerings.msoy.person.server.persist.GameInvitationRecord;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
+import com.threerings.msoy.person.server.persist.InviteRepository;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -117,40 +118,12 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     // from InviteService
-    public MemberInvites getInvitationsStatus ()
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-        MemberInvites result = new MemberInvites();
-        result.availableInvitations = _memberRepo.getInvitesGranted(mrec.memberId);
-        List<Invitation> pending = Lists.newArrayList();
-        for (InvitationRecord iRec : _memberRepo.loadPendingInvites(mrec.memberId)) {
-            // we issued these invites so we are the inviter
-            pending.add(iRec.toInvitation(mrec.getName()));
-        }
-        result.pendingInvitations = pending;
-        result.serverUrl = ServerConfig.getServerURL() + "#invite-";
-        return result;
-    }
-
-    // from InviteService
     public InvitationResults sendInvites (
         List<EmailContact> addresses, String fromName, String subject, String customMessage,
         boolean anonymous)
         throws ServiceException
     {
         MemberRecord mrec = anonymous ? requireAdminUser() : requireAuthedUser();
-
-// TODO: nix this when we stop caring about retaining the potential to limit growth
-//             // make sure this user still has available invites; we already check this value in GWT
-//             // land, and deal with it sensibly there
-//             int availInvites = _memberRepo.getInvitesGranted(mrec.memberId);
-//             if (availInvites < addresses.size()) {
-//                 log.warning("Member requested to grant more invites than they have " +
-//                             "[who=" + mrec.who() + ", tried=" + addresses.size() +
-//                             ", have=" + availInvites + "].");
-//                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-//             }
 
         log.info("Member inviting", "addresses", addresses.size(), "subject", subject);
 
@@ -230,22 +203,6 @@ public class InviteServlet extends MsoyServiceServlet
         }
     }
 
-    // from InviteService
-    public void removeInvitation (String inviteId)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-        InvitationRecord invRec = _memberRepo.loadInvite(inviteId, false);
-        if (invRec == null) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        if (invRec.inviterId != mrec.memberId || invRec.inviteeId != 0) {
-            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-        }
-        _memberRepo.deleteInvite(inviteId);
-    }
-
     public int getHomeSceneId ()
         throws ServiceException
     {
@@ -308,11 +265,11 @@ public class InviteServlet extends MsoyServiceServlet
 
         // make sure this user hasn't already invited this address
         int inviterId = (inviter == null) ? 0 : inviter.memberId;
-        if (_memberRepo.loadInvite(email, inviterId) != null) {
+        if (_inviteRepo.loadInvite(email, inviterId) != null) {
             throw new ServiceException(InvitationResults.ALREADY_INVITED);
         }
 
-        String inviteId = _memberRepo.generateInviteId();
+        String inviteId = _inviteRepo.generateInviteId();
 
         // create and send the invitation email
         MailSender.Parameters params = new MailSender.Parameters();
@@ -336,7 +293,7 @@ public class InviteServlet extends MsoyServiceServlet
         _mailer.sendTemplateEmail(MailSender.By.HUMAN, email, from, "memberInvite", params);
 
         // record the invite and that we sent it
-        _memberRepo.addInvite(email, inviterId, inviteId);
+        _inviteRepo.addInvite(email, inviterId, inviteId);
         _eventLog.inviteSent(inviteId, inviterId, email);
 
         Invitation invite = new Invitation();
@@ -374,11 +331,11 @@ public class InviteServlet extends MsoyServiceServlet
         // we are fine to send multiple game invites, but we must provide an invite id so the
         // recipient can opt out securely
         String inviteId;
-        GameInvitationRecord invite = _memberRepo.loadGameInviteByEmail(email);
+        GameInvitationRecord invite = _inviteRepo.loadGameInviteByEmail(email);
         if (invite != null) {
             inviteId = invite.inviteId;
         } else {
-            inviteId = _memberRepo.generateGameInviteId();
+            inviteId = _inviteRepo.generateGameInviteId();
         }
 
         // create and send the invitation email
@@ -402,7 +359,7 @@ public class InviteServlet extends MsoyServiceServlet
         _mailer.sendTemplateEmail(MailSender.By.HUMAN, email, from, "gameInvite", params);
 
         // record the invite and that we sent it
-        _memberRepo.addGameInvite(email, inviteId);
+        _inviteRepo.addGameInvite(email, inviteId);
         _eventLog.gameInviteSent(gameId, inviter.memberId, email, "email");
     }
 
@@ -420,12 +377,13 @@ public class InviteServlet extends MsoyServiceServlet
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _webmailCleared = System.currentTimeMillis();
 
+    @Inject protected AVRGameRepository _avrGameRepo;
+    @Inject protected InviteRepository _inviteRepo;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MailSender _mailer;
+    @Inject protected MsoyGameCookieRepository _gameCookieRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected SpamRepository _spamRepo;
-    @Inject protected AVRGameRepository _avrGameRepo;
-    @Inject protected MsoyGameCookieRepository _gameCookieRepo;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;

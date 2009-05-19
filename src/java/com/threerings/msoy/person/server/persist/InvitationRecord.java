@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 

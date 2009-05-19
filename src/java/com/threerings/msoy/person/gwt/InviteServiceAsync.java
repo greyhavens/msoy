@@ -23,11 +23,6 @@ public interface InviteServiceAsync
                               AsyncCallback<List<EmailContact>> callback);
 
     /**
-     * The asynchronous version of {@link InviteService#getInvitationsStatus}.
-     */
-    void getInvitationsStatus (AsyncCallback<MemberInvites> callback);
-
-    /**
      * The asynchronous version of {@link InviteService#sendInvites}.
      */
     void sendInvites (
@@ -47,11 +42,6 @@ public interface InviteServiceAsync
     void sendWhirledMailGameInvites (
         Set<Integer> recipientIds, int gameId, String subject, String body, String args,
         AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link InviteService#removeInvitation}.
-     */
-    void removeInvitation (String inviteId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link InviteService#getHomeSceneId}.

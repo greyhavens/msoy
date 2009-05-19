@@ -32,13 +32,6 @@ public class AdminPage extends Page
         } else if (!CShell.isSupport()) {
             setContent(MsoyUI.createLabel(_msgs.lackPrivileges(), "infoLabel"));
 
-        } else if (action.equals("browser")) {
-            if (_playerBrowser == null) {
-                _playerBrowser = new PlayerBrowserPanel();
-            }
-            setContent(_msgs.browserTitle(), _playerBrowser);
-            _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
-
         } else if (action.equals("review")) {
             byte type = (byte)args.get(1, 0);
             int item = args.get(2, 0);
@@ -109,7 +102,6 @@ public class AdminPage extends Page
         return Pages.ADMINZ;
     }
 
-    protected PlayerBrowserPanel _playerBrowser;
     protected ReviewPanel _reviewPanel;
     protected EditSurveyPanel _surveyPanel;
 

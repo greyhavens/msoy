@@ -249,12 +249,9 @@ public class MemberRepository extends DepotRepository
      */
     public int getActivePopulationCount ()
     {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -60); // TODO: unmagick
-        Date when = new Date(cal.getTimeInMillis());
+        Timestamp cutoff = RepositoryUtil.getCutoff(60); // TODO: unmagick
         return load(CountRecord.class, new FromOverride(MemberRecord.class),
-                    new Where(new GreaterThan(
-                        MemberRecord.LAST_SESSION, new ValueExp(when)))).count;
+                    new Where(new GreaterThan(MemberRecord.LAST_SESSION, cutoff))).count;
     }
 
     /**
@@ -709,8 +706,6 @@ public class MemberRepository extends DepotRepository
                   new Where(new In(MemberWarningRecord.MEMBER_ID, memberIds)));
         deleteAll(AffiliateRecord.class,
                   new Where(new In(AffiliateRecord.MEMBER_ID, memberIds)));
-        deleteAll(InviterRecord.class,
-                  new Where(new In(InviterRecord.MEMBER_ID, memberIds)));
         deleteAll(CharityRecord.class,
                   new Where(new In(CharityRecord.MEMBER_ID, memberIds)));
         deleteAll(EntryVectorRecord.class,
@@ -826,210 +821,6 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Grants the specified number of invites to the given member.
-     */
-    public void grantInvites (int memberId, int number)
-    {
-        InviterRecord inviterRec = load(InviterRecord.class, memberId);
-        if (inviterRec != null) {
-            inviterRec.invitesGranted += number;
-            update(inviterRec, InviterRecord.INVITES_GRANTED);
-
-        } else {
-            inviterRec = new InviterRecord();
-            inviterRec.memberId = memberId;
-            inviterRec.invitesGranted = number;
-            insert(inviterRec);
-        }
-    }
-
-    /**
-     * Grants the given number of invites to all users whose last session expired after the given
-     * Timestamp.
-     *
-     * @param lastSession Anybody who's been logged in since this timestamp will get the invites.
-     *                    If this parameter is null, everybody will get the invites.
-     *
-     * @return an array containing the member ids of all members that received invites.
-     */
-    public int[] grantInvites (int number, Timestamp lastSession)
-    {
-        List<MemberRecord> activeUsers;
-        if (lastSession != null) {
-            activeUsers = findAll(MemberRecord.class, new Where(
-                new GreaterThanEquals(MemberRecord.LAST_SESSION, lastSession)));
-        } else {
-            activeUsers = findAll(MemberRecord.class);
-        }
-
-        IntSet ids = new ArrayIntSet();
-        for (MemberRecord memRec : activeUsers) {
-            grantInvites(memRec.memberId, number);
-            ids.add(memRec.memberId);
-        }
-        return ids.toIntArray();
-    }
-
-    /**
-     * Get the number of invites this member has available to send out.
-     */
-    public int getInvitesGranted (int memberId)
-    {
-        InviterRecord inviter = load(InviterRecord.class, memberId);
-        return inviter != null ? inviter.invitesGranted : 0;
-    }
-
-    /**
-     * get the total number of invites that this user has sent
-     */
-    public int getInvitesSent (int memberId)
-    {
-        InviterRecord inviter = load(InviterRecord.class, memberId);
-        return inviter != null ? inviter.invitesSent : 0;
-    }
-
-    public String generateInviteId ()
-    {
-        return _inviteIdGenerator.generate();
-    }
-
-    /**
-     * Add a new invitation. Also decrements the available invitation count for the inviterId and
-     * increments the number of invites sent, iff the inviterId is non-zero.
-     */
-    public void addInvite (String inviteeEmail, int inviterId, String inviteId)
-    {
-        insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
-
-        if (inviterId > 0) {
-            InviterRecord inviterRec = load(InviterRecord.class, inviterId);
-            if (inviterRec == null) {
-                inviterRec = new InviterRecord();
-                inviterRec.memberId = inviterId;
-            }
-// TODO: nix this when we nix invite limiting
-//             inviterRec.invitesGranted--;
-            inviterRec.invitesSent++;
-            store(inviterRec);
-        }
-    }
-
-    /**
-     * Check if the invitation is available for use, or has been claimed already. Returns null if
-     * it has already been claimed, an invite record if not.
-     */
-    public InvitationRecord inviteAvailable (String inviteId)
-    {
-        InvitationRecord rec = load(
-            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
-        return (rec == null || rec.inviteeId != 0) ? null : rec;
-    }
-
-    /**
-     * Update the invitation indicated with the new memberId.
-     */
-    public void linkInvite (String inviteId, MemberRecord member)
-    {
-        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
-        invRec.inviteeId = member.memberId;
-        update(invRec, InvitationRecord.INVITEE_ID);
-    }
-
-    /**
-     * Get a list of the invites that this user has already sent out that have not yet been
-     * accepted.
-     */
-    public List<InvitationRecord> loadPendingInvites (int memberId)
-    {
-        return findAll(
-            InvitationRecord.class,
-            new Where(InvitationRecord.INVITER_ID, memberId,
-                      InvitationRecord.INVITEE_ID, 0));
-    }
-
-    /**
-     * Return the InvitationRecord that corresponds to the given unique code.
-     */
-    public InvitationRecord loadInvite (String inviteId, boolean markViewed)
-    {
-        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
-        if (invRec != null && invRec.viewed == null) {
-            invRec.viewed = new Timestamp((new java.util.Date()).getTime());
-            update(invRec, InvitationRecord.VIEWED);
-        }
-        return invRec;
-    }
-
-    /**
-     * Return the InvitationRecord that corresponds to the given inviter
-     */
-    public InvitationRecord loadInvite (String inviteeEmail, int inviterId)
-    {
-        // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
-        return load(InvitationRecord.class, new Where(
-            InvitationRecord.INVITEE_EMAIL, inviteeEmail,
-            InvitationRecord.INVITER_ID, inviterId));
-    }
-
-    /**
-     * Gets a new unique random id for use with game invitations.
-     */
-    public String generateGameInviteId ()
-    {
-        return _gameInviteIdGenerator.generate();
-    }
-
-    /**
-     * Adds a new game invite sent to the given user with the given id.
-     */
-    public void addGameInvite (String inviteeEmail, String inviteId)
-    {
-        GameInvitationRecord invite = new GameInvitationRecord();
-        invite.inviteeEmail = inviteeEmail;
-        invite.inviteId = inviteId;
-        insert(invite);
-    }
-
-    /**
-     * Returns the game invitation record that corresponds to the given invitee.
-     */
-    public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
-    {
-        return load(GameInvitationRecord.class, inviteeEmail);
-    }
-
-    /**
-     * Returns the game invitation record that corresponds to the given id.
-     */
-    public GameInvitationRecord loadGameInviteById (String inviteId)
-    {
-        return load(GameInvitationRecord.class,
-            new Where(GameInvitationRecord.INVITE_ID, inviteId));
-    }
-
-    /**
-     * Delete the InvitationRecord that corresponds to the given unique code.
-     */
-    public void deleteInvite (String inviteId)
-    {
-        delete(InvitationRecord.class, inviteId);
-    }
-
-    /**
-     * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
-     * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
-     */
-    public void optOutInvite (String inviteId)
-    {
-        InvitationRecord invRec = loadInvite(inviteId, false);
-        if (invRec != null) {
-            invRec.inviteeId = -1;
-            update(invRec, InvitationRecord.INVITEE_ID);
-            _spamRepo.addOptOutEmail(invRec.inviteeEmail);
-        }
-    }
-
-    /**
      * Sets the reported level for the given member
      */
     public void setUserLevel (int memberId, int level)
@@ -1048,22 +839,6 @@ public class MemberRepository extends DepotRepository
             names.add(name.toMemberName());
         }
         return names;
-    }
-
-    /**
-     * Returns info on all members invited by the specified member. This method will only return
-     * 500 results, which avoids mayhem when asking for all members invited by memberId 0.
-     */
-    public List<MemberInviteStatusRecord> getMembersInvitedBy (int memberId)
-    {
-        // TODO: this needs fixing: your affiliate is not necessarily your inviter
-        // (I mean, if you have an inviter, they will be your affiliate, and you can't have
-        // both, but we can't just look at an affiliate id and know that that's your inviter)
-        return findAll(MemberInviteStatusRecord.class,
-                       new Join(MemberRecord.MEMBER_ID,
-                                InviterRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
-                       new Where(MemberRecord.AFFILIATE_MEMBER_ID, memberId),
-                       new Limit(0, 500));
     }
 
     /**
@@ -1591,92 +1366,18 @@ public class MemberRepository extends DepotRepository
         classes.add(FriendRecord.class);
         classes.add(FriendshipRecord.class);
         classes.add(SessionRecord.class);
-        classes.add(InvitationRecord.class);
-        classes.add(InviterRecord.class);
         classes.add(ExternalMapRecord.class);
         classes.add(MemberWarningRecord.class);
         classes.add(AffiliateRecord.class);
         classes.add(MemberExperienceRecord.class);
         classes.add(CharityRecord.class);
         classes.add(EntryVectorRecord.class);
-        classes.add(GameInvitationRecord.class);
         classes.add(MuteRecord.class);
         classes.add(FriendPayoutRecord.class);
     }
 
-    /**
-     * Abstract algorithm for generating new unique invite ids. Delegates the testing for existence
-     * to implementation.
-     */
-    protected static abstract class InviteIDGenerator
-    {
-        /**
-         * Creates a new invite id generator.
-         */
-        public InviteIDGenerator (String name)
-        {
-            _name = name;
-        }
-
-        /**
-         * Generates a new, unique invite id.
-         */
-        public String generate ()
-        {
-            // find a free invite id
-            String inviteId;
-            int tries = 0;
-            while (exists(inviteId = randomId())) {
-                tries++;
-            }
-            if (tries > 5) {
-                log.warning(_name + " inviteId space is getting saturated", "tries", tries);
-            }
-            return inviteId;
-        }
-
-        /**
-         * Tests if a given invite id already exists.
-         */
-        abstract protected boolean exists (String id);
-
-        /**
-         * Generates an arbitrary non-unique id.
-         */
-        protected static String randomId ()
-        {
-            String rand = "";
-            for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
-                rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() *
-                    INVITE_ID_CHARACTERS.length()));
-            }
-            return rand;
-        }
-
-        /** Name to be used in saturation warnings. */
-        protected String _name;
-    }
-
-    /** Generator for normal invitations. */
-    protected InviteIDGenerator _inviteIdGenerator = new InviteIDGenerator ("InvitationRecord") {
-        @Override protected boolean exists (String id) {
-            return loadInvite(id, false) != null;
-        }
-    };
-
-    /** Generator for normal game invitations. */
-    protected InviteIDGenerator _gameInviteIdGenerator =
-        new InviteIDGenerator ("GameInvitationRecord") {
-            @Override protected boolean exists (String id) {
-                return loadGameInviteById(id) != null;
-            }
-        };
-
-    @Inject protected SpamRepository _spamRepo;
     @Inject protected UserActionRepository _actionRepo;
 
-    protected static final int INVITE_ID_LENGTH = 10;
-    protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
     protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new Arithmetic.BitAnd(
         MemberRecord.FLAGS, MemberRecord.Flag.GREETER.getBit()), 0);
 

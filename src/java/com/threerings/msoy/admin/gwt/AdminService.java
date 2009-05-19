@@ -88,21 +88,9 @@ public interface AdminService extends RemoteService
     }
 
     /**
-     * Grants the given number of invitations to the given user.
-     */
-    void grantInvitations (int numberInvitations, int memberId)
-        throws ServiceException;
-
-    /**
      * Returns admin information for the specified member.
      */
     MemberAdminInfo getMemberInfo (int memberId)
-        throws ServiceException;
-
-    /**
-     * Fetches a list of players who were invited by inviterId.
-     */
-    MemberInviteResult getPlayerList (int inviterId)
         throws ServiceException;
 
     /**

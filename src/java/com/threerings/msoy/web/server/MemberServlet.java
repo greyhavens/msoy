@@ -26,14 +26,15 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.persist.GameInvitationRecord;
-import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.person.server.persist.GameInvitationRecord;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
+import com.threerings.msoy.person.server.persist.InviteRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.spam.server.SpamUtil;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -199,7 +200,7 @@ public class MemberServlet extends MsoyServiceServlet
     public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {
-        InvitationRecord invRec = _memberRepo.loadInvite(inviteId, viewing);
+        InvitationRecord invRec = _inviteRepo.loadInvite(inviteId, viewing);
         if (invRec == null) {
             return null;
         }
@@ -220,7 +221,7 @@ public class MemberServlet extends MsoyServiceServlet
     public Invitation getGameInvitation (String inviteId)
         throws ServiceException
     {
-        GameInvitationRecord invRec = _memberRepo.loadGameInviteById(inviteId);
+        GameInvitationRecord invRec = _inviteRepo.loadGameInviteById(inviteId);
         if (invRec == null) {
             throw new ServiceException("e.invite_not_found");
         }
@@ -232,15 +233,13 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         if (gameInvite) {
-            GameInvitationRecord invRec = _memberRepo.loadGameInviteById(inviteId);
-            // check for funny business
-            if (invRec == null) {
-                throw new ServiceException("e.invite_not_found");
+            GameInvitationRecord invRec = _inviteRepo.loadGameInviteById(inviteId);
+            if (invRec != null) {
+                _spamRepo.addOptOutEmail(invRec.inviteeEmail);
             }
-            _spamRepo.addOptOutEmail(invRec.inviteeEmail);
 
-        } else if (_memberRepo.inviteAvailable(inviteId) != null) {
-            _memberRepo.optOutInvite(inviteId);
+        } else if (_inviteRepo.inviteAvailable(inviteId) != null) {
+            _inviteRepo.optOutInvite(inviteId);
         }
     }
 
@@ -347,6 +346,7 @@ public class MemberServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected FriendManager _friendMan;
+    @Inject protected InviteRepository _inviteRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected ProfileRepository _profileRepo;

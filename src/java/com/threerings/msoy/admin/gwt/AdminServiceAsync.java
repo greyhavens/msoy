@@ -25,19 +25,9 @@ import com.threerings.msoy.web.gwt.WebCreds;
 public interface AdminServiceAsync
 {
     /**
-     * The asynchronous version of {@link AdminService#grantInvitations}.
-     */
-    void grantInvitations (int numberInvitations, int memberId, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link AdminService#getMemberInfo}.
      */
     void getMemberInfo (int memberId, AsyncCallback<MemberAdminInfo> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#getPlayerList}.
-     */
-    void getPlayerList (int inviterId, AsyncCallback<MemberInviteResult> callback);
 
     /**
      * The asynchronous version of {@link AdminService#setRole}.
