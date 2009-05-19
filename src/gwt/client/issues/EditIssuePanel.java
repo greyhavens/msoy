@@ -262,6 +262,10 @@ public class EditIssuePanel extends SmartTable
 
     protected void setOwners (List<MemberName> owners)
     {
+        while (_ownerBox.getItemCount() > 1) {
+            _ownerBox.removeItem(1);
+        }
+
         _ownerNames = owners;
         for (int ii = 0, nn = owners.size(); ii < nn; ii++) {
             MemberName name = owners.get(ii);
