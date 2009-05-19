@@ -350,8 +350,8 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<FeedMessage> loadFeed (final int profileMemberId, final int cutoffDays)
     {
         // load up the feed records for the target member
-        long since = System.currentTimeMillis() - cutoffDays * 24*60*60*1000L;
-        return _feedLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
+        return _feedLogic.resolveFeedMessages(
+            _feedRepo.loadMemberFeed(profileMemberId, cutoffDays));
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)

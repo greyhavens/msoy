@@ -69,12 +69,9 @@ public class FeedLogic
         Set<Integer> groupMemberships = Sets.newHashSet(Iterables.transform(
             _groupRepo.getMemberships(mrec.memberId), GroupMembershipRecord.TO_GROUP_ID));
         List<FeedMessageRecord> allRecords = Lists.newArrayList();
-        long now = System.currentTimeMillis();
-        _feedRepo.loadPersonalFeed(
-            mrec.memberId, allRecords, friendIds, now - feedDays * 24*60*60*1000L);
+        _feedRepo.loadPersonalFeed(mrec.memberId, allRecords, friendIds, feedDays);
         // TODO: use different cutoffs for different groupMemberships.size()?
-        _feedRepo.loadGroupFeeds(
-            allRecords, groupMemberships, now - GROUP_FEED_CUTOFF_DAYS * 24*60*60*1000L);
+        _feedRepo.loadGroupFeeds(allRecords, groupMemberships, GROUP_FEED_CUTOFF_DAYS);
 
         // sort all the records by date
         Collections.sort(allRecords, new Comparator<FeedMessageRecord>() {
