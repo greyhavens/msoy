@@ -50,6 +50,8 @@ public class NewPetitionBox extends FlowPanel
         create.setStyleName("uRegisterPetition");
 
         int row = 0;
+        create.setHTML(row, 0, CSupport.msgs.petitionPrehelp());
+        create.getFlexCellFormatter().setColSpan(row++, 0, 2);
         create.setText(row, 0, (_anonymous ? CSupport.msgs.newAnonymousPetitionHelp() :
                                 CSupport.msgs.newPetitionHelp()));
         create.getFlexCellFormatter().setColSpan(row++, 0, 2);
