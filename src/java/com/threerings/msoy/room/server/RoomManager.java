@@ -383,11 +383,6 @@ public class RoomManager extends SpotSceneManager
         if (caller instanceof MemberObject) {
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-//                if (!isRecentOccupant(who.getOid())) {
-//                    log.warning("Rejecting sprite message request by non-occupant",
-//                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
-//                        "item", item, "name", name);
-//                }
                 return;
             }
         }
@@ -412,11 +407,6 @@ public class RoomManager extends SpotSceneManager
             // make sure the caller is in the room
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-//                if (!isRecentOccupant(who.getOid())) {
-//                    log.warning("Rejecting sprite signal request by non-occupant",
-//                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
-//                        "name", name);
-//                }
                 return;
             }
         }
@@ -520,11 +510,6 @@ public class RoomManager extends SpotSceneManager
         if (caller instanceof MemberObject) {
             MemberObject who = (MemberObject) caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-//                if (!isRecentOccupant(who.getOid())) {
-//                    log.warning("Rejecting actor state request by non-occupant", "where", where(),
-//                        "who", who.who(), "left", whenLeft(who.getOid()), "item", item,
-//                        "state", state);
-//                }
                 return;
             }
         }
@@ -533,9 +518,6 @@ public class RoomManager extends SpotSceneManager
         MsoyBodyObject actor;
         if (caller.getOid() != actorOid) {
             if (!_roomObj.occupants.contains(actorOid)) {
-//                log.warning("Rejecting actor state request for non-occupant", "where", where(),
-//                    "who", caller.who(), "left", whenLeft(actorOid), "item", item,
-//                    "state", state);
                 return;
             }
             actor = (MsoyBodyObject) _omgr.getObject(actorOid);
