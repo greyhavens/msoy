@@ -47,10 +47,6 @@ public class FeaturedPlaceUtil
         }
 
         flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
-        String partner = CShell.getPartner();
-        if (partner != null) {
-            flashArgs += "&partner=" + partner;
-        }
         container.clear();
         FlashClients.embedFeaturedPlaceView(container, flashArgs);
         return true;

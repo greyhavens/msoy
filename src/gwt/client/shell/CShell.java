@@ -170,14 +170,6 @@ public class CShell
     }
 
     /**
-     * Returns a partner identifier when we're running in partner cobrand mode, null when we're
-     * running in the full Whirled environment.
-     */
-    public static native String getPartner () /*-{
-        return $doc.whirledPartner;
-    }-*/;
-
-    /**
      * Records a log message to the JavaScript console.
      */
     protected static native void consoleLog (String message, Object error) /*-{

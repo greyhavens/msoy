@@ -157,15 +157,6 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
-     * Returns the Whirled cobrand partner in effect or null if we're running in the standard
-     * Whirled webapp or emebedded mode.
-     */
-    public function getPartner () :String
-    {
-        return MsoyParameters.get()["partner"];
-    }
-
-    /**
      * Create an InvocationListener that will automatically log and report errors to chat.
      *
      * @param bundle the MessgeBundle to use to translate the error message.

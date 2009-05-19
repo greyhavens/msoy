@@ -595,9 +595,6 @@ public class MsoyController extends Controller
         if (_mctx.getMsoyClient().isEmbedded()) {
             return false;
         }
-        if (_mctx.getPartner() == "facebook") {
-            return false;
-        }
         return true;
     }
 

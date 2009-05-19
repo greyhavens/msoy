@@ -26,7 +26,8 @@ import client.util.StringUtil;
  */
 public class WorldClient extends Widget
 {
-    public static interface PanelProvider {
+    public static interface PanelProvider
+    {
         public Panel get ();
     }
 
@@ -131,10 +132,6 @@ public class WorldClient extends Widget
         }
         if (flashArgs.indexOf("&port") == -1) {
             flashArgs += "&port=" + _defaultPort;
-        }
-        String partner = CShell.getPartner();
-        if (partner != null) {
-            flashArgs += "&partner=" + partner;
         }
         if (CShell.getAuthToken() != null) {
             flashArgs += "&token=" + CShell.getAuthToken();
