@@ -39,6 +39,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
@@ -332,7 +333,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             lrec.location = grec.location;
             lrec.lastTouched = grec.lastTouched;
             lrec.name = grec.name;
-            lrec.description = grec.description;
+            lrec.description = StringUtil.truncate(grec.description, Item.MAX_DESCRIPTION_LENGTH);
             lrec.mature = grec.mature;
             lrec.thumbMediaHash = grec.thumbMediaHash;
             lrec.thumbMimeType = grec.thumbMimeType;
