@@ -235,7 +235,14 @@ public class MemberRecord extends PersistentRecord
             return WebCreds.Role.ADMIN;
         } else if (isSet(flags, Flag.SUPPORT)) {
             return WebCreds.Role.SUPPORT;
-        } else if (isSet(flags, Flag.VALIDATED)) {
+        } else if (isSet(flags, Flag.VALIDATED) ||
+                   // annoying hack: if this member has a placeholder address, pretend like they
+                   // are validated because they are using an account created via an external
+                   // authentication source (like Facebook) and we can't require validation, at
+                   // some point we'll have the client upsell them to giving us an email address
+                   // and validating it, but for now this is the path of least PITA
+                   (!MemberMailUtil.isPermaguest(accountName) &&
+                    MemberMailUtil.isPlaceholderAddress(accountName))) {
             return WebCreds.Role.VALIDATED;
         } else if (!MemberMailUtil.isPermaguest(accountName)) {
             return WebCreds.Role.REGISTERED;
