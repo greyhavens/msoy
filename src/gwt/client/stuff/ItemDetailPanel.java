@@ -208,7 +208,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                         MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUpprice(), null);
                     new ClickCallback<CatalogListing>(button) {
                         @Override protected boolean callService () {
-                            _catalogsvc.loadListing(_item.getType(), _item.catalogId, this);
+                            _catalogsvc.loadListing(_item.getType(), _item.catalogId, false, this);
                             return true;
                         }
                         @Override protected boolean gotResult (CatalogListing listing) {

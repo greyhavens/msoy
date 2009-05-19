@@ -58,6 +58,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.IdentGameItem;
+import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 
@@ -689,6 +690,28 @@ public class ItemLogic
         }
 
         return list;
+    }
+
+    /**
+     * Loads information about each listing that is derived from the given listing.
+     * @param max maximum number of items to return, or 0 to return all listings
+     */
+    public CatalogListing.DerivedItem[] loadDerivedItems (byte itemType, int catalogId, int max)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = getRepository(itemType);
+        List<CatalogListing.DerivedItem> items = Lists.newArrayListWithExpectedSize(max);
+        for (int derivativeId : repo.loadDerivativeIds(catalogId, max)) {
+            CatalogRecord drec = repo.loadListing(derivativeId, true);
+            if (drec == null) {
+                continue;
+            }
+            CatalogListing.DerivedItem derived = new CatalogListing.DerivedItem();
+            derived.catalogId = drec.catalogId;
+            derived.name = drec.item.name;
+            items.add(derived);
+        }
+        return items.toArray(new CatalogListing.DerivedItem[items.size()]);
     }
 
     /**

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
@@ -41,6 +42,27 @@ public class CatalogListing
         return Math.round(value + value * ESCALATION_FACTOR);
     }
 
+    /**
+     * Just enough information to link to a derived item.
+     */
+    public static class DerivedItem
+        implements IsSerializable
+    {
+        public int catalogId;
+        public String name;
+    }
+
+    /**
+     * Just enough information to link to the basis item and show the creator.
+     */
+    public static class BasisItem
+        implements IsSerializable
+    {
+        public int catalogId;
+        public String name;
+        public MemberName creator;
+    }
+
     /** The unique id for this listing. */
     public int catalogId;
 
@@ -71,12 +93,17 @@ public class CatalogListing
     /** The number of people who consider this item a favorite. */
     public int favoriteCount;
 
-    /** The item that was used to create this item. The creator of the item declares this
-     * voluntarily. */
+    /** The catalog id of item that was used to create this item. Set voluntarily. */
     public int basisId;
 
-    /** The number of items that are based on this item. */
+    /** If requested, set to the item referred to by {@link #basisId}. */
+    public BasisItem basis;
+
+    /** The number of item listings that are based on this item. */
     public int derivationCount;
+
+    /** If requested, a sampling of the listings that are based on this one. */
+    public DerivedItem[] derivatives;
 
     /** The amount by which we increase the price at each escalation. */
     protected static final float ESCALATION_FACTOR = 0.25f;

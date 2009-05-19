@@ -8,17 +8,22 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.CatalogListing.BasisItem;
+import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -53,7 +58,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // ABTEST: 2009 03 buypanel: switched to loadTestedListing
         _catalogsvc.loadTestedListing(
-            CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId,
+            CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId, true,
             new InfoCallback<CatalogService.ListingResult>() {
             public void onSuccess (CatalogService.ListingResult result) {
                 gotListing(result.listing, result.abTestGroup);
@@ -79,8 +84,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     // ABTEST: 2009 03 buypanel: added abTestGroup
     protected void gotListing (CatalogListing listing, int abTestGroup)
     {
-        init(listing.detail);
         _listing = listing;
+        init(listing.detail);
 
         HorizontalPanel extras = new HorizontalPanel();
         extras.setStyleName("Extras");
@@ -173,6 +178,29 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         }
     }
 
+    @Override
+    protected void addExtraDetails ()
+    {
+        super.addExtraDetails();
+        byte type = _listing.detail.item.getType();
+
+        if (_listing.basis != null) {
+            BasisItem basis = _listing.basis;
+            FlowPanel basedOn = new FlowPanel();
+            basedOn.add(new InlineLabel(_msgs.listingBasedOn() + " "));
+            basedOn.add(Link.shopListingView(basis.name, type, basis.catalogId));
+            basedOn.add(new InlineLabel(" " + _cmsgs.creatorBy() + " "));
+            basedOn.add(Link.memberView(basis.creator));
+            _details.add(basedOn);
+        }
+
+        if (_listing.derivatives != null) {
+            _usedBy = new FlowPanel();
+            updateDerivatives();
+            _details.add(_usedBy);
+        }
+    }
+
     @Override // from BaseItemDetailPanel
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {
@@ -215,6 +243,40 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
     }
 
+    protected void updateDerivatives ()
+    {
+        while (_usedBy.getWidgetCount() > 0) {
+            _usedBy.remove(0);
+        }
+        _usedBy.add(new InlineLabel(_msgs.listingUsedBy() + " "));
+        final byte type = _listing.detail.item.getType();
+        boolean first = true;
+        for (DerivedItem derived : _listing.derivatives) {
+            if (!first) {
+                _usedBy.add(new InlineLabel(", "));
+            }
+            first = false;
+            _usedBy.add(Link.shopListingView(derived.name, type, derived.catalogId));
+        }
+        if (_listing.derivatives.length < _listing.derivationCount) {
+            final AsyncCallback<DerivedItem[]> showAll = new InfoCallback<DerivedItem[]>() {
+                public void onSuccess (DerivedItem[] result) {
+                    _listing.derivationCount = result.length;
+                    _listing.derivatives = result;
+                    updateDerivatives();
+                }
+            };
+            ClickHandler action = new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    _catalogsvc.loadAllDerivedItems(type, _listing.catalogId, showAll);
+                }
+            };
+            _usedBy.add(new InlineLabel(", "));
+            _usedBy.add(MsoyUI.createActionLabel(
+                _msgs.listingSeeAllDerivatives(), "inline", action));
+        }
+    }
+
     /**
      * A callback from the studio viewer, to indicate that custom config is available.
      */
@@ -233,6 +295,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected CatalogListing _listing;
 
     protected ConfigButton _configBtn;
+    protected FlowPanel _usedBy;
 
     protected static ListingDetailPanel _singleton;
 

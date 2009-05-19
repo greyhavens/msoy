@@ -111,7 +111,7 @@ public class ShopPage extends Page
             public void buyItem () {
                 // Request the listing, re-reserving a new price for us
                 _catalogsvc.loadTestedListing(
-                    CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId,
+                    CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId, false,
                     new InfoCallback<CatalogService.ListingResult>() {
                     public void onSuccess (CatalogService.ListingResult result) {
                         // and display a mini buy dialog.

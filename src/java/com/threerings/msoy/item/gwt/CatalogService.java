@@ -18,6 +18,7 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
 
 /**
  * Provides digital items related services.
@@ -114,9 +115,10 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads and returns the specified catalog listing.
+     * Loads and returns the specified catalog listing. If <code>forDisplay</code> is set, some
+     * additional listing fields are filled in that are only needed for display.
      */
-    CatalogListing loadListing (byte itemType, int catalogId)
+    CatalogListing loadListing (byte itemType, int catalogId, boolean forDisplay)
         throws ServiceException;
 
     // ABTEST: 2009 03 buypanel
@@ -125,9 +127,17 @@ public interface CatalogService extends RemoteService
      * and the specified catalog listing. This allows us to A/B test the listing detail page
      * without making (and waiting for) an extra round trip to the server.
      */
-    ListingResult loadTestedListing (VisitorInfo info, String test, byte itemType, int catalogId)
+    ListingResult loadTestedListing (VisitorInfo info, String test, byte itemType, int catalogId,
+                                     boolean forDisplay)
         throws ServiceException;
     // ENDABTEST
+
+    /**
+     * Loads all derived items for a given item. The user interface shows a short list when the
+     * listing is loaded, then this may be called at the user's request.
+     */
+    DerivedItem[] loadAllDerivedItems (byte itemType, int catalogId)
+        throws ServiceException;
 
     /**
      * Updates the catalog listing associated with the supplied catalog original.

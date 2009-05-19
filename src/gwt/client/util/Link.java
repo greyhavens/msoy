@@ -52,6 +52,14 @@ public class Link
     }
 
     /**
+     * Returns link that displays a shop listing.
+     */
+    public static Widget shopListingView (String itemName, byte itemType, int catalogId)
+    {
+        return create(itemName, Pages.SHOP, "l", itemType, catalogId);
+    }
+
+    /**
      * Returns link that displays the transaction history of a given member.
      */
     public static Widget transactionsView (String label, int memberId)

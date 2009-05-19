@@ -1358,6 +1358,26 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Loads up the catalog ids of all listings that specify the listing with the given catalog id
+     * as a basis.
+     * @param maximum maximum number of results to return, or 0 to return all available
+     */
+    public List<Integer> loadDerivativeIds (int catalogId, int maximum)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(new Equals(getCatalogColumn(CatalogRecord.BASIS_ID), catalogId)));
+        if (maximum > 0) {
+            clauses.add(new Limit(0, maximum));
+        }
+        return Lists.transform(findAllKeys(getCatalogClass(), false, clauses),
+            new Function<Key<? extends CatalogRecord>, Integer>() {
+                public Integer apply (Key<? extends CatalogRecord> key) {
+                    return CatalogRecord.getCatalogId(key);
+                }
+            });
+    }
+
+    /**
      * Notes that the specified original item is now associated with the specified catalog listed
      * item (which may be zero to clear out a listing link).
      */

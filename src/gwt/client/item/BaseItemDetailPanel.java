@@ -93,6 +93,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
         bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));
         _creator.add(bshop);
 
+        addExtraDetails();
+
         _details.add(WidgetUtil.makeShim(10, 10));
         _indeets = new RoundBox(RoundBox.WHITE);
         _indeets.addStyleName("Description");
@@ -159,6 +161,14 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected void addTagMenuItems (String tag, PopupMenu menu)
     {
         // nothing here
+    }
+
+    /**
+     * Adds extra items to the _details widget, just after the creator profile and browse links.
+     */
+    protected void addExtraDetails ()
+    {
+        // nothing in base class
     }
 
     protected void addRatableBits (HorizontalPanel row)

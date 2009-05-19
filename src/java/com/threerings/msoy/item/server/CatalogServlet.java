@@ -443,7 +443,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogServlet
-    public CatalogListing loadListing (byte itemType, int catalogId)
+    public CatalogListing loadListing (byte itemType, int catalogId, boolean forDisplay)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -465,6 +465,25 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
+        // load up the basis item if requested
+        CatalogListing.BasisItem basis = null;
+        if (forDisplay && record.basisId > 0) {
+            CatalogRecord basisRec = 
+                _itemLogic.getRepository(itemType).loadListing(record.basisId, true);
+            if (basisRec != null) {
+                basis = new CatalogListing.BasisItem();
+                basis.catalogId = basisRec.catalogId;
+                basis.name = basisRec.item.name;
+                basis.creator = _memberRepo.loadMemberName(basisRec.item.creatorId);
+            }
+        }
+
+        // load up to 5 derived items if requested
+        CatalogListing.DerivedItem[] derivatives = null;
+        if (forDisplay && record.derivationCount > 0) {
+            derivatives = _itemLogic.loadDerivedItems(itemType, catalogId, 5);
+        }
+
         // secure the current price of the item for this member
         PriceQuote quote = _moneyLogic.securePrice((mrec == null) ? 0 : mrec.memberId,
             new CatalogIdent(itemType, catalogId), record.currency, record.cost);
@@ -483,6 +502,8 @@ public class CatalogServlet extends MsoyServiceServlet
         clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
         clrec.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
         clrec.quote = quote;
+        clrec.basis = basis;
+        clrec.derivatives = derivatives;
 
         // let's remember this
         final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
@@ -494,16 +515,22 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // ABTEST: 2009 03 buypanel
     // from interface CatalogServlet
-    public ListingResult loadTestedListing (VisitorInfo info, String test,
-                                            byte itemType, int catalogId)
+    public ListingResult loadTestedListing (VisitorInfo info, String test, byte itemType,
+                                            int catalogId, boolean forDisplay)
         throws ServiceException
     {
         ListingResult result = new ListingResult();
         result.abTestGroup = _memberLogic.getABTestGroup(test, info, true);
-        result.listing = loadListing(itemType, catalogId);
+        result.listing = loadListing(itemType, catalogId, forDisplay);
         return result;
     }
     // ENDABTEST
+
+    public CatalogListing.DerivedItem[] loadAllDerivedItems (byte itemType, int catalogId)
+        throws ServiceException
+    {
+        return _itemLogic.loadDerivedItems(itemType, catalogId, 0);
+    }
 
     // from interface CatalogService
     public void updateListing (ItemIdent item)

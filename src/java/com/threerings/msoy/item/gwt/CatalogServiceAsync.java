@@ -14,6 +14,7 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
 
 /**
  * The asynchronous (client-side) version of {@link CatalogService}.
@@ -47,15 +48,22 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
      */
-    void loadListing (byte itemType, int catalogId, AsyncCallback<CatalogListing> callback);
+    void loadListing (byte itemType, int catalogId, boolean forDisplay,
+                      AsyncCallback<CatalogListing> callback);
 
     // ABTEST: 2009 03 buypanel
     /**
      * The asynchronous version of {@link CatalogService#loadTestedListing}
      */
-    void loadTestedListing (VisitorInfo info, String test, byte itemType, int catalogId,
-                            AsyncCallback<CatalogService.ListingResult> callback);
+    void loadTestedListing (
+        VisitorInfo info, String test, byte itemType, int catalogId, boolean forDisplay,
+        AsyncCallback<CatalogService.ListingResult> callback);
     // ENDABTEST
+
+    /**
+     * The asynchronous version of {@link CatalogService#loadAllDerivedItems}
+     */
+    void loadAllDerivedItems (byte itemType, int catalogId, AsyncCallback<DerivedItem[]> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updateListing}
