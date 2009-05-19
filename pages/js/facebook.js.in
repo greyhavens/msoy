@@ -18,12 +18,12 @@ window.FB_RequireSession = function() {
 };
 window.FB_PostStory = function(bundleId, data, targetIds, body) {
   FB_WithInit(function() {
-    FB.Connect.showFeedDialog(bundleId, data, targetIds, body, FB.FeedStorySize.shortStory,
+    FB.Connect.showFeedDialog(bundleId, data, targetIds, body, null,
                               FB.RequireConnect.promptConnect, function () { /*noop*/ });
   });
 };
-window.FB_PostTrophy = function(data, templateId, targetIds) {
-  FB_PostStory(parseInt(templateId), data, targetIds, "");
+window.FB_PostTrophy = function(templateId, data) {
+  FB_PostStory(templateId, data, [], "");
 };
 window.FB_Logout = function() {
   FB_WithInit(function() {

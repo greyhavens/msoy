@@ -67,7 +67,6 @@ public class ExternalFeeder
                                          String descrip, String mediaURL, String trophyURL,
                                          String vector)
     /*-{
-        var ids = new Array();
         var data = {
             "game_id": gameId,
             "game": game,
@@ -75,7 +74,7 @@ public class ExternalFeeder
             "descrip": descrip,
             "vector": vector,
             "images": [ {"src": mediaURL, "href": trophyURL} ] };
-        $wnd.FB_PostTrophy(data, templateId, ids);
+        $wnd.FB_PostTrophy(templateId, data);
     }-*/;
 
     // Handy JSON for pasting into Facebook's template editor
