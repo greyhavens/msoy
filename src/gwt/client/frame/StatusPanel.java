@@ -102,7 +102,7 @@ public class StatusPanel extends SmartTable
     public void didLogon (SessionData data)
     {
         _creds = data.creds;
-        CookieUtil.set("/", WebUserService.SESSION_DAYS, CookieNames.WHO, _creds.accountName);
+        CookieUtil.set("/", MAX_WHO_AGE, CookieNames.WHO, _creds.accountName);
 
         boolean permaguest = MemberMailUtil.isPermaguest(_creds.accountName);
 
@@ -293,4 +293,5 @@ public class StatusPanel extends SmartTable
     protected int _promoCount;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final int MAX_WHO_AGE = 365; // days
 }
