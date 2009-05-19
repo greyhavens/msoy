@@ -5,65 +5,44 @@ package client.game;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.game.gwt.GameInfo;
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
- * Displays a play button that does the right thing in for all of the myriad modalities a game
- * might represent.
+ * Displays a play button that starts playing the game in question.
  */
 public class PlayButton
 {
-    public enum Size { SMALL, MEDIUM, LARGE };
-
-    public static Widget create (GameInfo info, String noGroupMessage, Size size)
+    public static PushButton createSmall (int gameId)
     {
-        return create(info.gameId, info.isAVRG, info.groupId, noGroupMessage, size);
+        return create(gameId, null);
     }
 
-    public static Widget create (int gameId, boolean inWorld, int groupId, String noGroupMessage,
-                                 Size size)
+    public static PushButton createMedium (int gameId)
     {
-        Args args;
-        if (inWorld) {
-            if (groupId == 0) {
-                return MsoyUI.createLabel(noGroupMessage, null);
-            }
-            args = Args.compose("g" + groupId);
-        } else {
-            args = Args.compose("game", "p", gameId);
-        }
+        return create(gameId, "playButtonMedium");
+    }
 
+    public static PushButton createLarge (int gameId)
+    {
+        return create(gameId, "playButtonLarge");
+    }
+
+    protected static PushButton create (int gameId, String style)
+    {
         PushButton play;
-        switch (size) {
-        default:
-        case SMALL:
+        if (style == null) {
             play = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.playPlay(), null);
-            break;
-        case MEDIUM:
+        } else {
             play = new PushButton();
-            play.setStyleName("playButtonMedium");
-            break;
-        case LARGE:
-            play = new PushButton();
-            play.setStyleName("playButtonLarge");
-            break;
+            play.setStyleName(style);
         }
-
-        play.addClickHandler(Link.createHandler(Pages.WORLD, args));
+        play.addClickHandler(Link.createHandler(Pages.WORLD, "game", "p", gameId));
         return play;
     }
 
     protected static final GameMessages _msgs = GWT.create(GameMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

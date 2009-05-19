@@ -61,7 +61,7 @@ public abstract class GameListPanel extends FlowPanel
 
     protected Widget createPlay (GameInfo game)
     {
-        return PlayButton.create(game, "", PlayButton.Size.SMALL);
+        return PlayButton.createSmall(game.gameId);
     }
 
     /**

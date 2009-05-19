@@ -46,8 +46,7 @@ public class MyGamesPanel extends GameListPanel
                 add(new GameGrid(games) {
                     protected Widget createPlay (GameInfo game) {
                         // we want our play buttons to play the development version
-                        return PlayButton.create(GameInfo.toDevId(game.gameId), game.isAVRG,
-                                                 game.groupId, "", PlayButton.Size.SMALL);
+                        return PlayButton.createSmall(GameInfo.toDevId(game.gameId));
                     }
                 });
             }

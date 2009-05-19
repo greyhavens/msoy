@@ -180,7 +180,7 @@ public class TopGamesPanel extends AbsolutePanel
         right.add(gameName);
 
         // play button
-        right.add(PlayButton.create(game, "", PlayButton.Size.MEDIUM));
+        right.add(PlayButton.createMedium(game.gameId));
 
         // more games button
         right.add(MsoyUI.createImageButton("MoreGames", Link.createHandler(Pages.GAMES, "")));

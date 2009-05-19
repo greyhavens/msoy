@@ -109,8 +109,7 @@ public class GameDetailPanel extends SmartTable
 
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
-        play.add(PlayButton.create(_gameId, info.isAVRG, info.groupId, _msgs.gdpNoWhirled(),
-                                   PlayButton.Size.LARGE));
+        play.add(PlayButton.createLarge(_gameId));
         if (info.playersOnline > 0) {
             play.add(MsoyUI.createLabel(_msgs.featuredOnline(""+info.playersOnline), "Online"));
         }
