@@ -64,6 +64,18 @@ public class SocialDirector extends BasicDirector
     public static const HANG_OUT_TIME :int = 1 * 60 * 1000;
 
     /**
+     * Logs a debug message, if debug logging is currently enabled.
+     */
+    public static function logDebug (message :String, ...args) :void
+    {
+        // TODO: some sort of runtime configuration for logging would be nice
+        if (false) {
+            args.unshift(message);
+            log.debug.apply(null, args);
+        }
+    }
+
+    /**
      * Creates a new social director.
      */
     public function SocialDirector (ctx :MsoyContext)
@@ -139,7 +151,7 @@ public class SocialDirector extends BasicDirector
      */
     public function mayDeactivateAVRGame (deactivator :Function) :Boolean
     {
-        log.debug("Checking for AVRG deactivation");
+        logDebug("Checking for AVRG deactivation");
         return !maybeShowGamePopup(deactivator);
     }
 
@@ -163,7 +175,7 @@ public class SocialDirector extends BasicDirector
             // if the timer has expired, "bank" those seen. wait until the session ends to popup
             if (_gameTimer.currentCount > 0) {
                 addNames(seen, _seenInGame);
-                log.debug("Saved seen co-players", "count", seen.length);
+                logDebug("Saved seen co-players", "count", seen.length);
             }
             _gameTimer.reset();
             _gameTimer.start();
@@ -172,7 +184,9 @@ public class SocialDirector extends BasicDirector
 
     protected function maybeShowRoomPopup (seen :Array, onClose :Function) :Boolean
     {
+        // get rid of people the user has already blocked
         seen = seen.filter(isNotMuted);
+
         // bail if the user has not been in the room very long of there are no new occupants
         if (_roomTimer.currentCount == 0 || seen.length == 0) {
             return false;
@@ -182,12 +196,17 @@ public class SocialDirector extends BasicDirector
         if (_gobs != null && _avrg) {
             var filtered :Array = _gobs.filterUnseen(seen);
             addNames(filtered, _seenInGame);
-            log.debug("Saved seen avrg co-players", "count", filtered.length,
+            logDebug("Saved seen avrg co-players", "count", filtered.length,
                 "roomCount", seen.length);
             return false;
         }
 
-        log.debug("Showing invite panel", "count", seen.length);
+        // if the server is not accessible, don't bother
+        if (!_mctx.getClient().isConnected()) {
+            return false;
+        }
+
+        logDebug("Showing invite panel", "count", seen.length);
         _roomTimer.stop();
         if (!BatchFriendInvitePanel.showRoom(_mctx, seen, onClose)) {
             return false;
@@ -204,7 +223,7 @@ public class SocialDirector extends BasicDirector
     protected function trackGame (ctx :CrowdContext, avrg :Boolean) :void
     {
         var socdir :SocialDirector = this;
-        log.debug("Tracking game", "avrg", avrg);
+        logDebug("Tracking game", "avrg", avrg);
 
         // when the client logs on...
         ctx.getClient().addEventListener(ClientEvent.CLIENT_DID_LOGON,
@@ -256,7 +275,12 @@ public class SocialDirector extends BasicDirector
 
         seen = seen.filter(isNotMuted);
         if (seen.length == 0) {
-            log.debug("No one seen, not showing game popup");
+            logDebug("No one seen, not showing game popup");
+            return false;
+        }
+
+        // if the server is not accessible, don't bother
+        if (!_mctx.getClient().isConnected()) {
             return false;
         }
 
@@ -266,7 +290,7 @@ public class SocialDirector extends BasicDirector
         // suppress future popups with the same people
         addNames(seen, _shown);
 
-        log.debug("Game popup shown", "shown", shown, "count", seen.length, "avrg", _avrg);
+        logDebug("Game popup shown", "shown", shown, "count", seen.length, "avrg", _avrg);
 
         return shown;
     }
@@ -320,7 +344,6 @@ public class SocialDirector extends BasicDirector
 import flash.utils.Dictionary;
 import flash.utils.getTimer; // function
 
-import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.Util;
 
@@ -343,8 +366,6 @@ import com.threerings.msoy.data.all.VizMemberName;
  */
 class Observer
 {
-    public static var log :Log = SocialDirector.log;
-
     /**
      * Creates a new observer.
      */
@@ -374,7 +395,7 @@ class Observer
         var names :Array = [];
         for each (var seen :Seen in _seen) {
             seen.didPart();
-            log.debug("Leaving seen", "name", seen.name, "qual", seen.isQualified());
+            logDebug("Leaving seen", "name", seen.name, "qual", seen.isQualified());
             if (seen.isQualified()) {
                 names.push(seen.name);
             }
@@ -401,20 +422,20 @@ class Observer
 
         if (_plobj != null) {
             _plobj.removeListener(_slnr);
-            log.debug("Left location", "ploid", _plobj.getOid());
+            logDebug("Left location", "ploid", _plobj.getOid());
         }
 
         _plobj = plobj;
 
         if (_plobj != null) {
-            log.debug("Entered location", "ploid", _plobj.getOid());
+            logDebug("Entered location", "ploid", _plobj.getOid());
             _plobj.addListener(_slnr);
 
             // add the current members
             for each (var oinf :OccupantInfo in plobj.occupantInfo.toArray()) {
                 updateSeen(oinf, function (seen :Seen) :void {
                     seen.didMeet();
-                    log.debug("Met resident", "name", seen.name, "qual", seen.isQualified());
+                    logDebug("Met resident", "name", seen.name, "qual", seen.isQualified());
                 });
             }
         }
@@ -428,7 +449,7 @@ class Observer
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             updateSeen(OccupantInfo(event.getEntry()), function (seen :Seen) :void {
                 seen.didMeet();
-                log.debug("Met newcomer", "name", seen.name, "qual", seen.isQualified());
+                logDebug("Met newcomer", "name", seen.name, "qual", seen.isQualified());
             });
         }
     }
@@ -443,7 +464,7 @@ class Observer
             var oinf :OccupantInfo = OccupantInfo(event.getEntry());
             updateSeen(oinf, function (seen :Seen) :void {
                 seen.name = VizMemberName(oinf.username); // in case it has changed
-                log.debug("Seen changed", "name", seen.name, "qual", seen.isQualified());
+                logDebug("Seen changed", "name", seen.name, "qual", seen.isQualified());
             });
         }
     }
@@ -457,7 +478,7 @@ class Observer
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             updateSeen(OccupantInfo(event.getOldEntry()), function (seen :Seen) :void {
                 seen.didPart();
-                log.debug("Seen left", "name", seen.name, "qual", seen.isQualified());
+                logDebug("Seen left", "name", seen.name, "qual", seen.isQualified());
             });
         }
     }
@@ -479,6 +500,12 @@ class Observer
             }
         }
         // else: PetName, or something else
+    }
+
+    protected static function logDebug (message :String, ...args) :void
+    {
+        args.unshift(message);
+        SocialDirector.logDebug.apply(null, args);
     }
 
     protected var _lobs :LocationAdapter = new LocationAdapter(null, locationDidChange);
