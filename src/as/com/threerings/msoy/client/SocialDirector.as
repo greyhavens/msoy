@@ -19,6 +19,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 /**
  * Helps the user to make friends. Currently does the following:
  * <ul>
@@ -108,7 +110,8 @@ public class SocialDirector extends BasicDirector
         // friend or we've already added them to the seen list, skip 'em
         var member :MemberObject = MemberObject(_mctx.getMsoyClient().getClientObject());
         return (member != null) && (memId != member.getMemberId()) && (_shown[memId] == null) &&
-            !member.isOnlineFriend(memId);
+            !member.isOnlineFriend(memId) &&
+            !WorldContext(_mctx).getPartyDirector().partyContainsPlayer(memId);
     }
 
     /**
