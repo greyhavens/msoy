@@ -37,7 +37,6 @@ public class IssueListPanel extends PagedGrid<Issue>
         _open = open;
         _owned = owned;
         _imodels = imodels;
-        _linkPrefix = "i_";
         _create.setVisible(CShell.isSupport() && open);
 
         refreshModel();
@@ -129,7 +128,7 @@ public class IssueListPanel extends PagedGrid<Issue>
             if (summary == null || summary.length() == 0) {
                 summary = "<no summary>";
             }
-            Widget toIssue = Link.create(summary, Pages.ISSUES, _linkPrefix + issue.issueId);
+            Widget toIssue = Link.create(summary, Pages.ISSUES, "i", issue.issueId);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
@@ -159,7 +158,6 @@ public class IssueListPanel extends PagedGrid<Issue>
 
     protected IssueModels _imodels;
     protected boolean _open, _owned;
-    protected String _linkPrefix;
 
     protected Button _create, _refresh;
 
