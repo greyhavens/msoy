@@ -208,7 +208,7 @@ public class FrameEntryPoint
 
         // do different things for new users on landing
         if (page == Pages.LANDING && args.get(0, "").equals("") && newUser) {
-            ABTestCard test = LandingTestCookie.getTest("2009 05 landing");
+            ABTestCard test = LandingTestCookie.getTest("2009 05 landing take 2");
             int landingGroup = test == null ? -1 : test.getGroup(getVisitorInfo());
             switch (landingGroup) {
             case 1:  // group A: normal
@@ -220,6 +220,10 @@ public class FrameEntryPoint
             case 3:  // group C: register NOW + force validate
                 page = Pages.LANDACC;
                 args = Args.fromToken("reg");
+                break;
+            case 4: // group D: compact landing page
+                page = Pages.LANDING;
+                args = Args.fromToken("compact");
                 break;
             }
             // log the result to the server
