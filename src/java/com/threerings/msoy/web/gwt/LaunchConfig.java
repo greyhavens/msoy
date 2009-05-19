@@ -53,6 +53,9 @@ public class LaunchConfig
     /** The port on which the game should connect to the world server. */
     public int groupPort;
 
+    /** The scene to which the client should go if this is an in-world game. */
+    public int sceneId;
+
     /** The port on which the game should connect to the server for HTTP requests (used by Java
      * which must connect back to the game server for its game jar file). */
     public int httpPort;

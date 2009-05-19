@@ -626,8 +626,10 @@ public class FrameEntryPoint
             args = "worldGame=" + config.gameId;
             if (action.equals("j")) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
-                    "&inviteGameRoomId=" + otherId2;
+                    "&gameRoomId=" + otherId2;
                 reportClientAction(null, "2009-02 game invite accepted", "gameId=" + config.gameId);
+            } else {
+                args += "&gameRoomId=" + config.sceneId;
             }
             displayWorldClient(args, null);
             break;

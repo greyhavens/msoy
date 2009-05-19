@@ -45,6 +45,8 @@ import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.WorldGameRegistry;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
@@ -113,6 +115,14 @@ public class GameLogic
             code.clientMedia.getProxyMediaPath() : code.clientMedia.getMediaPath();
         config.name = game.name;
         config.httpPort = ServerConfig.httpPort;
+
+        // if this is an AVRG, resolve its group's home scene
+        if (game.isAVRG && game.groupId != 0) {
+            GroupRecord gprec = _groupRepo.loadGroup(game.groupId);
+            if (gprec != null) {
+                config.sceneId = gprec.homeSceneId;
+            }
+        }
 
         // determine what server is hosting the game, start hosting it if necessary
         final int gameGroupId = ServerConfig.getGameGroupId(game.groupId);
@@ -256,6 +266,7 @@ public class GameLogic
         }
     }
 
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyGameRepository _mgameRepo;

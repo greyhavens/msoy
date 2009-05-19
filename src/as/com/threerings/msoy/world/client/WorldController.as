@@ -1009,8 +1009,8 @@ public class WorldController extends MsoyController
             _wctx.setPlaceView(new NoPlaceView());
 
         } else if (null != params["worldGame"]) {
-            handleJoinAVRGame(int(params["worldGame"]), int(params["inviteGameRoomId"]),
-                params["inviteToken"] as String, int(params["inviterMemberId"]));
+            handleJoinAVRGame(int(params["worldGame"]), int(params["gameRoomId"]),
+                              params["inviteToken"] as String, int(params["inviterMemberId"]));
 
         } else if ("true" == params["tour"]) {
             _wctx.getTourDirector().startTour();
