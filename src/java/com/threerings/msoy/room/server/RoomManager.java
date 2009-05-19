@@ -1125,18 +1125,6 @@ public class RoomManager extends SpotSceneManager
                 });
             }
         }
-
-//        // purge any body oids that left more than a few seconds ago
-//        int now = (int)(System.currentTimeMillis() / 1000);
-//        int limit = now - LEFT_BODY_PURGE_SECS;
-//        for (Interator vals = _left.values(); vals.hasNext(); ) {
-//            if (vals.nextInt() < limit) {
-//                vals.remove();
-//            }
-//        }
-//
-//        // mark this oid as having just left
-//        _left.put(bodyOid, now);
     }
 
     @Override // from PlaceManager
@@ -1821,23 +1809,6 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
-//    protected String whenLeft (int bodyOid)
-//    {
-//        if (!_left.contains(bodyOid)) {
-//            return "unknown";
-//        }
-//        int when = _left.get(bodyOid);
-//        int now = (int)(System.currentTimeMillis() / 1000);
-//        return "" + (now - when) + " seconds ago";
-//    }
-//
-//    protected boolean isRecentOccupant (int bodyOid)
-//    {
-//        int whenLeft = _left.get(bodyOid);
-//        int now = (int)(System.currentTimeMillis() / 1000);
-//        return whenLeft > 0 && (now - whenLeft) < LEFT_BODY_PURGE_SECS;
-//    }
-
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1963,14 +1934,8 @@ public class RoomManager extends SpotSceneManager
         }
     };
 
-//    /** Map of body oids that have left the room to the time they left (in seconds). */
-//    protected IntIntMap _left = new IntIntMap();
-
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
-
-    /** Time to keep left body oids in {@link #_left}. */
-    protected static final int LEFT_BODY_PURGE_SECS = 15;
 
     /** The maximum number of mobs a game may have in this room. */
     protected static final int MAX_MOBS_PER_GAME = 99;
