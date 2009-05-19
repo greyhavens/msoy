@@ -12,6 +12,8 @@ import com.samskivert.util.StringUtil;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
 import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.FacebookAppCreds;
+import com.threerings.msoy.web.server.FacebookServlet;
 
 /**
  * Centralizes some Facebook API bits.
@@ -35,6 +37,15 @@ public class FacebookLogic
     {
         return new FacebookJaxbRestClient(SERVER_URL, requireAPIKey(), requireSecret(),
                                           creds.sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
+    }
+
+    /**
+     * Returns a Facebook client for the app represented by the supplied creds.
+     */
+    public FacebookJaxbRestClient getFacebookClient (FacebookServlet.FacebookAppCreds creds)
+    {
+        return new FacebookJaxbRestClient(SERVER_URL, creds.apiKey, creds.appSecret,
+                                          null, CONNECT_TIMEOUT, READ_TIMEOUT);
     }
 
     protected String requireAPIKey ()

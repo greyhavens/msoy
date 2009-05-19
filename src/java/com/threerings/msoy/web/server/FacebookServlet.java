@@ -26,8 +26,12 @@ import com.samskivert.util.StringUtil;
 // import com.google.code.facebookapi.schema.User;
 // import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FacebookLogic;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
@@ -37,7 +41,9 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -46,6 +52,37 @@ import static com.threerings.msoy.Log.log;
  */
 public class FacebookServlet extends HttpServlet
 {
+    /**
+     * Credentials for a user authenticating from an iframed Facebook app. These are never sent
+     * over the wire.
+     */
+    public static class FacebookAppCreds extends ExternalCreds
+    {
+        /** The Facebook user id of the user in question. */
+        public String uid;
+
+        /** The API key of the app via which the user is authenticating. */
+        public String apiKey;
+
+        /** The app secret of the app via which the user is authenticating. */
+        public String appSecret;
+
+        // from ExternalCreds
+        public ExternalAuther getAuthSource () {
+            return ExternalAuther.FACEBOOK;
+        }
+
+        // from ExternalCreds
+        public String getUserId () {
+            return uid;
+        }
+
+        // from ExternalCreds
+        public String getPlaceholderAddress () {
+            return uid + "@facebook.com";
+        }
+    }
+
     protected void doHead (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
@@ -56,8 +93,10 @@ public class FacebookServlet extends HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
-//         log.info("Got GET request " + req.getRequestURL());
-//         dumpParameters(req);
+        if (DeploymentConfig.devDeployment) {
+            log.info("Got GET request " + req.getRequestURL());
+            dumpParameters(req);
+        }
 
         // determine whether we're in game mode or Whirled mode
         try {
@@ -67,24 +106,25 @@ public class FacebookServlet extends HttpServlet
             validateRequest(req, info.secret);
 
             // we should either have 'canvas_user' or 'user'
-            String fbuid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "canvas_user", "");
-            if (StringUtil.isBlank(fbuid)) {
-                fbuid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "user", "");
+            FacebookAppCreds creds = new FacebookAppCreds();
+            creds.uid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "canvas_user", "");
+            if (StringUtil.isBlank(creds.uid)) {
+                creds.uid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "user", "");
             }
-            if (StringUtil.isBlank(fbuid)) {
+            if (StringUtil.isBlank(creds.uid)) {
                 rsp.sendRedirect(getLoginURL(info.key));
                 return;
             }
+            creds.apiKey = info.key;
+            creds.appSecret = info.secret;
 
-            // see if this external user already has an account
-            int memberId = _memberRepo.lookupExternalAccount(ExternalAuther.FACEBOOK, fbuid);
-            if (memberId == 0) {
-                // TODO: create an account
-                throw new FriendlyException("TODO: create this man an account!");
-            }
+            // authenticate this member via their external FB creds (this will autocreate their
+            // account if they don't already have one)
+            MemberRecord mrec = _auther.authenticateSession(
+                creds, new VisitorInfo(), AffiliateCookie.fromWeb(req));
 
             // activate a session for them
-            String authtok = _memberRepo.startOrJoinSession(memberId, FBAUTH_DAYS);
+            String authtok = _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
             SwizzleServlet.setCookie(req, rsp, authtok);
 
             // and send them to the appropriate page
@@ -96,14 +136,10 @@ public class FacebookServlet extends HttpServlet
                 rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
             }
 
+        } catch (ServiceException se) {
+            reportFailure(rsp, se.getMessage());
         } catch (FriendlyException fe) {
-            PrintStream out = null;
-            try {
-                out = new PrintStream(rsp.getOutputStream());
-                out.println(fe.getMessage());
-            } finally {
-                StreamUtil.close(out);
-            }
+            reportFailure(rsp, fe.getMessage());
         }
     }
 
@@ -120,6 +156,18 @@ public class FacebookServlet extends HttpServlet
             for (String value : req.getParameterValues(pname)) {
                 log.info("  " + pname + " -> " + value);
             }
+        }
+    }
+
+    protected void reportFailure (HttpServletResponse rsp, String message)
+        throws IOException
+    {
+        PrintStream out = null;
+        try {
+            out = new PrintStream(rsp.getOutputStream());
+            out.println(message);
+        } finally {
+            StreamUtil.close(out);
         }
     }
 
@@ -201,10 +249,11 @@ public class FacebookServlet extends HttpServlet
         public String secret;
     }
 
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected FacebookLogic _faceLogic;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyAuthenticator _auther;
+    @Inject protected MsoyGameRepository _mgameRepo;
 
     protected static final AppInfo DEF_APP_INFO = new AppInfo();
     static {

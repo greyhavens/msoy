@@ -24,6 +24,7 @@ import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.server.FacebookServlet;
 
 import com.threerings.msoy.profile.gwt.Profile;
 
@@ -54,13 +55,19 @@ public class FacebookAuthHandler extends ExternalAuthHandler
     public Info getInfo (ExternalCreds creds)
         throws ServiceException
     {
-        FacebookCreds fbcreds = (FacebookCreds)creds;
-        FacebookJaxbRestClient fbclient = _faceLogic.getFacebookClient(fbcreds);
+        FacebookJaxbRestClient fbclient;
+        if (creds instanceof FacebookCreds) {
+            fbclient = _faceLogic.getFacebookClient((FacebookCreds)creds);
+        } else if (creds instanceof FacebookServlet.FacebookAppCreds) {
+            fbclient = _faceLogic.getFacebookClient((FacebookServlet.FacebookAppCreds)creds);
+        } else {
+            throw new IllegalArgumentException("Invalid creds: " + creds);
+        }
 
         Info info = new Info();
         try {
             // look up information from this user's facebook profile
-            Set<Long> ids = Collections.singleton(Long.parseLong(fbcreds.uid));
+            Set<Long> ids = Collections.singleton(Long.parseLong(creds.getUserId()));
             EnumSet<ProfileField> fields = EnumSet.of(
                 ProfileField.FIRST_NAME, ProfileField.LAST_NAME, ProfileField.SEX,
                 ProfileField.BIRTHDAY, ProfileField.CURRENT_LOCATION);
@@ -80,7 +87,8 @@ public class FacebookAuthHandler extends ExternalAuthHandler
                 try {
                     info.profile.birthday = new Date(_bfmt.parse(String.valueOf(bdstr)).getTime());
                 } catch (Exception e) {
-                    log.info("Cannot parse Facebook birthday", "uid", fbcreds.uid, "bday", bdstr);
+                    log.info("Cannot parse Facebook birthday",
+                             "uid", creds.getUserId(), "bday", bdstr);
                 }
             }
 
