@@ -72,7 +72,7 @@ public class EditGamePanel extends FlowPanel
         }, _msgs.egTabInfo());
         _tabs.add(new LazyPanel() {
             protected Widget createWidget () {
-                return new CodeEditorPanel(data.devCode);
+                return new CodeEditorPanel(data.info, data.devCode);
             }
         }, _msgs.egTabCode());
         _tabs.add(new LazyPanel() {
