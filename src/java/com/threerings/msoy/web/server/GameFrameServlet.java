@@ -19,6 +19,10 @@ import com.threerings.msoy.server.ServerMessages;
 
 /**
  * Handles a request to generate a page for playing a game, embedded-style.
+ *
+ * Non-optional parameters:
+ *   gameId - The id of the game to serve
+ *   aff    - The id of the affiliate for whom this page is being generated.
  */
 public class GameFrameServlet extends HttpServlet
 {
