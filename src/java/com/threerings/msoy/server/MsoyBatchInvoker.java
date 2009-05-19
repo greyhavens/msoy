@@ -49,19 +49,5 @@ public class MsoyBatchInvoker extends ReportingInvoker
         }
     }
 
-    @Override
-    public void shutdown ()
-    {
-        log.info("Batch invoker got shutdown request.");
-        super.shutdown();
-    }
-
-    @Override
-    public void didShutdown ()
-    {
-        log.info("Batch invoker shut down.");
-        super.didShutdown();
-    }
-
     @Inject protected @MainInvoker Invoker _mainInvoker;
 }
