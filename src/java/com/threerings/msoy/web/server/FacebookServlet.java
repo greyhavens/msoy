@@ -32,8 +32,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
@@ -125,9 +123,7 @@ public class FacebookServlet extends HttpServlet
             SwizzleServlet.setCookie(req, rsp, authtok);
 
             // and send them to the appropriate page
-            if (info.sceneId != 0) {
-                rsp.sendRedirect("/#" + Pages.WORLD.makeToken("s" + info.sceneId));
-            } else if (info.gameId != 0) {
+            if (info.gameId != 0) {
                 rsp.sendRedirect("/#" + Pages.WORLD.makeToken("game", "p", info.gameId));
             } else {
                 rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
@@ -220,14 +216,6 @@ public class FacebookServlet extends HttpServlet
             throw new FriendlyException("Game missing Facebook info: " + ginfo.name);
         }
 
-        if (ginfo.isAVRG) {
-            GroupRecord grec = _groupRepo.loadGroup(ginfo.groupId);
-            if (grec == null) {
-                throw new FriendlyException("Game missing group: " + ginfo.name);
-            }
-            info.sceneId = grec.homeSceneId;
-        }
-
         info.key = fbinfo.key;
         info.secret = fbinfo.secret;
         return info;
@@ -241,13 +229,11 @@ public class FacebookServlet extends HttpServlet
     protected static class AppInfo
     {
         public int gameId;
-        public int sceneId;
         public String key;
         public String secret;
     }
 
     @Inject protected FacebookLogic _faceLogic;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _auther;
     @Inject protected MsoyGameRepository _mgameRepo;
