@@ -3,6 +3,7 @@
 
 package client.games;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -27,7 +28,7 @@ import client.util.ServiceUtil;
  */
 public class MyGamesPanel extends GameListPanel
 {
-    public MyGamesPanel (GameInfo.Sort sort)
+    public MyGamesPanel (final GameInfo.Sort sort)
     {
         super(GameGenre.ALL, sort);
 
@@ -43,6 +44,7 @@ public class MyGamesPanel extends GameListPanel
 
         _gamesvc.loadMyGames(new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
+                Collections.sort(games, sort.comparator);
                 add(new GameGrid(games) {
                     protected Widget createPlay (GameInfo game) {
                         // we want our play buttons to play the development version

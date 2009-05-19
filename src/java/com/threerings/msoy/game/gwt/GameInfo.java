@@ -18,7 +18,15 @@ public class GameInfo
 {
     /** Sort options for games. */
     public enum Sort {
-        BY_RATING(null),
+        BY_RATING(new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                if (c2.rating == c1.rating) {
+                    return c2.ratingCount - c1.ratingCount;
+                } else {
+                    return ((c2.rating > c1.rating) ? 1 : -1);
+                }
+            }
+        }),
         BY_NEWEST(new Comparator<GameInfo>() {
             public int compare (GameInfo c1, GameInfo c2) {
                 return c2.gameId - c1.gameId;

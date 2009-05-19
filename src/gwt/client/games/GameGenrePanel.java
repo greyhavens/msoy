@@ -3,6 +3,7 @@
 
 package client.games;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -22,7 +23,7 @@ import client.util.ServiceUtil;
  */
 public class GameGenrePanel extends GameListPanel
 {
-    public GameGenrePanel (byte genre, GameInfo.Sort sort, String query)
+    public GameGenrePanel (byte genre, final GameInfo.Sort sort, String query)
     {
         super(genre, sort);
 
@@ -36,9 +37,11 @@ public class GameGenrePanel extends GameListPanel
         add(_header = new GameHeaderPanel(titleText, genre, sort));
         _header.setQuery(query);
 
-        _gamesvc.loadGameGenre(genre, sort, query, new InfoCallback<List<GameInfo>>() {
+        _gamesvc.loadGameGenre(genre, query, new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
+                Collections.sort(games, GameInfo.Sort.BY_NAME.comparator);
                 _header.initWithInfos(games); // set the dropdown list of all games
+                Collections.sort(games, sort.comparator);
                 add(new GameGrid(games));
             }
         });

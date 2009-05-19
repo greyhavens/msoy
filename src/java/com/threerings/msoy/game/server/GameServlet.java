@@ -163,16 +163,13 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<GameInfo> loadGameGenre (byte genre, GameInfo.Sort sort, String query)
+    public List<GameInfo> loadGameGenre (byte genre, String query)
         throws ServiceException
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         List<GameInfo> infos = Lists.newArrayList();
         for (GameInfoRecord grec : _mgameRepo.loadGenre(genre, -1, query)) {
             infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
-        }
-        if (sort.comparator != null) {
-            Collections.sort(infos, sort.comparator);
         }
         return infos;
     }
