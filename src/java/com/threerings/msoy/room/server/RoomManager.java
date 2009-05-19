@@ -955,7 +955,7 @@ public class RoomManager extends SpotSceneManager
             reason = "furni not in room";
         }
 
-        log.info("Rejecting memory update", "who", caller.who(), "ident", ident, "reason", reason);
+        log.debug("Rejecting memory update", "who", caller.who(), "ident", ident, "reason", reason);
         return false;
     }
 
