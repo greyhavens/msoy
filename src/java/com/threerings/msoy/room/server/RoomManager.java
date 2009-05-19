@@ -819,14 +819,7 @@ public class RoomManager extends SpotSceneManager
             // add them to our list of ordered bodies
             _actors.add(body.getOid());
 
-            body.setLocal(RoomLocal.class, new RoomLocal() {
-                public boolean useStaticMedia (MsoyBodyObject body) {
-                    return _actors.indexOf(body.getOid()) >= ACTOR_RENDERING_LIMIT;
-                }
-                public boolean isManager (MsoyBodyObject body) {
-                    return (body instanceof MemberObject) && canManage((MemberObject)body);
-                }
-            });
+            body.setLocal(RoomLocal.class, _roomLocal);
         }
 
         if (body instanceof MemberObject) {
@@ -1968,6 +1961,16 @@ public class RoomManager extends SpotSceneManager
 
     /** The throttle imposed on jumping to a new song. */
     protected Throttle _songJumpThrottle = new Throttle(1, 4000);
+
+    /** The RoomLocal installed on actors in this room. */
+    protected RoomLocal _roomLocal = new RoomLocal() {
+        public boolean useStaticMedia (MsoyBodyObject body) {
+            return _actors.indexOf(body.getOid()) >= ACTOR_RENDERING_LIMIT;
+        }
+        public boolean isManager (MsoyBodyObject body) {
+            return (body instanceof MemberObject) && canManage((MemberObject)body);
+        }
+    };
 
 //    /** Map of body oids that have left the room to the time they left (in seconds). */
 //    protected IntIntMap _left = new IntIntMap();
