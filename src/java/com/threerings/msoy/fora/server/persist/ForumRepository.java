@@ -4,7 +4,6 @@
 package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +39,7 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.RepositoryUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -452,6 +452,8 @@ public class ForumRepository extends DepotRepository
         );
         SQLExpression where = new And(
             new In(ForumThreadRecord.GROUP_ID, groupIds),
+            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_TIME,
+                            RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
             new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
                    new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
                            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
@@ -464,15 +466,6 @@ public class ForumRepository extends DepotRepository
     protected List<QueryClause> getUnreadFriendThreadsClauses (
         int memberId, Set<Integer> authorIds, Set<Integer> hiddenGroupIds)
     {
-        // calculate midnight, 30 days ago
-        Calendar cutoff = Calendar.getInstance();
-        cutoff.setTimeInMillis(System.currentTimeMillis());
-        cutoff.add(Calendar.DATE, -UNREAD_POSTS_CUTOFF);
-        cutoff.set(Calendar.HOUR_OF_DAY, 0);
-        cutoff.set(Calendar.MINUTE, 0);
-        cutoff.set(Calendar.SECOND, 0);
-        cutoff.set(Calendar.MILLISECOND, 0);
-
         // join expressions
         SQLExpression joinRead = new And(
             new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
@@ -490,7 +483,7 @@ public class ForumRepository extends DepotRepository
             conditions.add(new Not(new In(ForumThreadRecord.GROUP_ID, hiddenGroupIds)));
         }
         conditions.add(new GreaterThan(ForumMessageRecord.CREATED,
-            new Timestamp(cutoff.getTimeInMillis())));
+                                       RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)));
 
         // joins + group + filter
         return Lists.newArrayList(
@@ -508,6 +501,6 @@ public class ForumRepository extends DepotRepository
         classes.add(ReadTrackingRecord.class);
     }
 
-    /** We don't consider unread friend posts older than this many days. */
-    protected static final int UNREAD_POSTS_CUTOFF = 30;
+    /** We don't consider unread posts older than this many days. */
+    protected static final int UNREAD_POSTS_CUTOFF = 21;
 }
