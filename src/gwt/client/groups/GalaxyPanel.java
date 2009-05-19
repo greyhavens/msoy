@@ -35,10 +35,11 @@ import client.shell.CShell;
 import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -108,12 +109,13 @@ public class GalaxyPanel extends FlowPanel
 
         _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
-                // preserve action and args.
-                String action = _query.search != null ? ACTION_SEARCH
-                    : (_query.tag != null ? ACTION_TAG : "");
-                String arg = _query.search != null ? _query.search
-                    : (_query.tag != null ? _query.tag : "");
-                Link.go(Pages.GROUPS, action, page, arg, _query.sort);
+                if (!StringUtil.isBlank(_query.search)) {
+                    Link.go(Pages.GROUPS, ACTION_SEARCH, page, _query.search, _query.sort);
+                } else if (!StringUtil.isBlank(_query.tag)) {
+                    Link.go(Pages.GROUPS, ACTION_TAG, page, _query.tag, _query.sort);
+                } else {
+                    Link.go(Pages.GROUPS, "", page, "", _query.sort);
+                }
             }
             protected Widget createWidget (GroupCard card) {
                 return createGroupWidget(card);
@@ -207,7 +209,12 @@ public class GalaxyPanel extends FlowPanel
         // If the query has changed, instantiate a new data model for the group grid.
         if (_query == null || !_query.equals(query)) {
             _query = query;
-            _groupGrid.setModel(new GroupDataModel(), page);
+            _groupGrid.setModel(new PagedServiceDataModel<GroupCard, PagedResult<GroupCard>>() {
+                protected void callFetchService (int start, int count, boolean needCount,
+                                                 AsyncCallback<PagedResult<GroupCard>> callback) {
+                    _groupsvc.getGroups(start, count, _query, needCount, callback);
+                }
+            }, page);
         } else {
             _groupGrid.displayPage(page, false);
         }
@@ -278,19 +285,6 @@ public class GalaxyPanel extends FlowPanel
                                Pages.GROUPS, "f", group.name.getGroupId()));
         return widget;
     }
-
-    /**
-     * Data model for the groups list, which uses _totalGroups as the total count, and returns all
-     * data whenever a subset is requested. Page limiting must be done at the repo level.
-     */
-    protected class GroupDataModel
-        extends PagedServiceDataModel<GroupCard, PagedResult<GroupCard>>
-    {
-        protected void callFetchService (int start, int count, boolean needCount,
-            AsyncCallback<PagedResult<GroupCard>> callback) {
-            _groupsvc.getGroups(start, count, _query, needCount, callback);
-        }
-    };
 
     /** The current search,tag,page, and sort being displayed */
     protected GroupService.GroupQuery _query;
