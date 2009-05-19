@@ -16,8 +16,8 @@ public class ArgsUnitTest
 {
     @Test public void testCompose ()
     {
-        String token = Args.compose(RAW).toToken();
-        assertEquals(COMPOSED, token);
+        assertEquals(COMPOSED, Args.compose(RAW).toToken());
+        assertEquals(FB_COMPOSED, Args.compose(FIRST_BLANK).toToken());
     }
 
     @Test public void testRecompose ()
@@ -40,4 +40,7 @@ public class ArgsUnitTest
 
     protected static final Object[] RAW = { "a", "b", "c", "d", "e" };
     protected static final String COMPOSED = "a_b_c_d_e";
+
+    protected static final Object[] FIRST_BLANK = { "", "a", "b" };
+    protected static final String FB_COMPOSED = "_a_b";
 }

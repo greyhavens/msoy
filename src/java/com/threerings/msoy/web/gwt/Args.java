@@ -174,8 +174,9 @@ public class Args
     public String toToken ()
     {
         StringBuilder builder = new StringBuilder();
+        int idx = 0;
         for (String arg : _args) {
-            if (builder.length() > 0) {
+            if (idx++ > 0) { // can't use length() here as first arg may have been ""
                 builder.append(ARG_SEP);
             }
             builder.append(escape(arg));
@@ -204,7 +205,15 @@ public class Args
     @Override // from Object
     public String toString ()
     {
-        return "" + _args.size() + ": " + _args.toString();
+        StringBuilder builder = new StringBuilder("[");
+        int idx = 0;
+        for (String arg : _args) {
+            if (idx++ > 0) {
+                builder.append(", ");
+            }
+            builder.append("'").append(arg).append("'");
+        }
+        return builder.append("]").toString();
     }
 
     // Since we're using _ for our own purposes, encode it as %- and thus also % as %%
