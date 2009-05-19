@@ -38,7 +38,7 @@ import client.util.MediaUtil;
  */
 public abstract class GameListPanel extends FlowPanel
 {
-    public GameListPanel (byte genre, byte sortMethod)
+    public GameListPanel (byte genre, GameInfo.Sort sort)
     {
         setStyleName("gameList");
         _genre = genre;
@@ -46,7 +46,7 @@ public abstract class GameListPanel extends FlowPanel
         _sortBox = new ListBox();
         for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
             _sortBox.addItem(SORT_LABELS[ii]);
-            if (SORT_VALUES[ii] == sortMethod) {
+            if (SORT_VALUES[ii] == sort) {
                 _sortBox.setSelectedIndex(ii);
             }
         }
@@ -57,7 +57,7 @@ public abstract class GameListPanel extends FlowPanel
         });
     }
 
-    protected abstract void onSortChanged (byte sortMethod);
+    protected abstract void onSortChanged (GameInfo.Sort sort);
 
     protected Widget createPlay (GameInfo game)
     {
@@ -102,11 +102,10 @@ public abstract class GameListPanel extends FlowPanel
             controls.setWidget(1, 0, headers);
             controls.getFlexCellFormatter().setColSpan(1, 0, 7);
 
-            headers.add(createTitle("Name", "NameTitle", GameInfo.SORT_BY_RATING));
-            headers.add(createTitle("Rating", "RatingTitle", GameInfo.SORT_BY_NAME));
-            headers.add(createTitle("Category", "CategoryTitle", GameInfo.SORT_BY_GENRE));
-            headers.add(createTitle("Now Playing", "NowPlayingTitle",
-                                    GameInfo.SORT_BY_PLAYERS_ONLINE));
+            headers.add(createTitle("Name", "NameTitle", GameInfo.Sort.BY_NAME));
+            headers.add(createTitle("Rating", "RatingTitle", GameInfo.Sort.BY_RATING));
+            headers.add(createTitle("Category", "CategoryTitle", GameInfo.Sort.BY_GENRE));
+            headers.add(createTitle("Now Playing", "NowPlayingTitle", GameInfo.Sort.BY_ONLINE));
         }
 
         @Override
@@ -116,10 +115,10 @@ public abstract class GameListPanel extends FlowPanel
             }
         }
 
-        protected Widget createTitle (String text, String styleName, final byte sortMethod) {
+        protected Widget createTitle (String text, String styleName, final GameInfo.Sort sort) {
             return MsoyUI.createActionLabel(text, styleName, new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    onSortChanged(sortMethod);
+                    onSortChanged(sort);
                 }
             });
         }
@@ -169,17 +168,15 @@ public abstract class GameListPanel extends FlowPanel
         _msgs.genreSortByRating(),
         _msgs.genreSortByNewest(),
         _msgs.genreSortByAlphabetical(),
-        _msgs.genreSortByMultiplayer(),
-        _msgs.genreSortBySinglePlayer(),
         _msgs.genreSortByCategory(),
         _msgs.genreSortByNowPlaying()
     };
 
-    protected static final byte[] SORT_VALUES = new byte[] {
-        GameInfo.SORT_BY_RATING,
-        GameInfo.SORT_BY_NEWEST,
-        GameInfo.SORT_BY_NAME,
-        GameInfo.SORT_BY_GENRE,
-        GameInfo.SORT_BY_PLAYERS_ONLINE
+    protected static final GameInfo.Sort[] SORT_VALUES = new GameInfo.Sort[] {
+        GameInfo.Sort.BY_RATING,
+        GameInfo.Sort.BY_NEWEST,
+        GameInfo.Sort.BY_NAME,
+        GameInfo.Sort.BY_GENRE,
+        GameInfo.Sort.BY_ONLINE
     };
 }

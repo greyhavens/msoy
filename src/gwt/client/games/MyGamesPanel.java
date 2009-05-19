@@ -27,9 +27,9 @@ import client.util.ServiceUtil;
  */
 public class MyGamesPanel extends GameListPanel
 {
-    public MyGamesPanel (byte sortMethod)
+    public MyGamesPanel (GameInfo.Sort sort)
     {
-        super(GameGenre.ALL, sortMethod);
+        super(GameGenre.ALL, sort);
 
         FlowPanel header = MsoyUI.createFlowPanel("gameHeaderPanel");
         FlowPanel absbits = MsoyUI.createFlowPanel("Absolute");
@@ -63,9 +63,9 @@ public class MyGamesPanel extends GameListPanel
         return bits;
     }
 
-    protected void onSortChanged (byte sortMethod)
+    protected void onSortChanged (GameInfo.Sort sort)
     {
-        Link.go(Pages.GAMES, "mine", sortMethod);
+        Link.go(Pages.GAMES, "m", sort.toToken());
     }
 
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)

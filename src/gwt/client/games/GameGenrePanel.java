@@ -22,9 +22,9 @@ import client.util.ServiceUtil;
  */
 public class GameGenrePanel extends GameListPanel
 {
-    public GameGenrePanel (byte genre, byte sortMethod, String query)
+    public GameGenrePanel (byte genre, GameInfo.Sort sort, String query)
     {
-        super(genre, sortMethod);
+        super(genre, sort);
 
         String titleText;
         if (genre >= 0) {
@@ -33,10 +33,10 @@ public class GameGenrePanel extends GameListPanel
         } else {
             titleText = _msgs.genreAllGames();
         }
-        add(_header = new GameHeaderPanel(titleText, genre, sortMethod));
+        add(_header = new GameHeaderPanel(titleText, genre, sort));
         _header.setQuery(query);
 
-        _gamesvc.loadGameGenre(genre, sortMethod, query, new InfoCallback<List<GameInfo>>() {
+        _gamesvc.loadGameGenre(genre, sort, query, new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
                 _header.initWithInfos(games); // set the dropdown list of all games
                 add(new GameGrid(games));
@@ -44,9 +44,9 @@ public class GameGenrePanel extends GameListPanel
         });
     }
 
-    protected void onSortChanged (byte sortMethod)
+    protected void onSortChanged (GameInfo.Sort sort)
     {
-        Link.go(Pages.GAMES, "g", _genre, sortMethod, _header.getQuery());
+        Link.go(Pages.GAMES, "g", _genre, sort.toToken(), _header.getQuery());
     }
 
     /** Header area with title, games dropdown and search */

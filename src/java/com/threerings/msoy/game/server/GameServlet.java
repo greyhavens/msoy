@@ -163,7 +163,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
+    public List<GameInfo> loadGameGenre (byte genre, GameInfo.Sort sort, String query)
         throws ServiceException
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
@@ -171,9 +171,8 @@ public class GameServlet extends MsoyServiceServlet
         for (GameInfoRecord grec : _mgameRepo.loadGenre(genre, -1, query)) {
             infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
         }
-        Comparator<GameInfo> comp = _sorts.get(sortMethod);
-        if (comp != null) {
-            Collections.sort(infos, comp);
+        if (sort.comparator != null) {
+            Collections.sort(infos, sort.comparator);
         }
         return infos;
     }
@@ -695,30 +694,6 @@ public class GameServlet extends MsoyServiceServlet
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected TrophySourceRepository _trophySourceRepo;
-
-    protected static Map<Byte, Comparator<GameInfo>> _sorts = Maps.newHashMap();
-    static {
-        _sorts.put(GameInfo.SORT_BY_NEWEST, new Comparator<GameInfo>() {
-            public int compare (GameInfo c1, GameInfo c2) {
-                return c2.gameId - c1.gameId;
-            }
-        });
-        _sorts.put(GameInfo.SORT_BY_NAME, new Comparator<GameInfo>() {
-            public int compare (GameInfo c1, GameInfo c2) {
-                return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-            }
-        });
-        _sorts.put(GameInfo.SORT_BY_GENRE, new Comparator<GameInfo>() {
-            public int compare (GameInfo c1, GameInfo c2) {
-                return c2.genre - c1.genre;
-            }
-        });
-        _sorts.put(GameInfo.SORT_BY_PLAYERS_ONLINE, new Comparator<GameInfo>() {
-            public int compare (GameInfo c1, GameInfo c2) {
-                return c2.playersOnline - c1.playersOnline;
-            }
-        });
-    }
 
     protected static final int MAX_RANKINGS = 10;
     protected static final int ARCADE_RAW_COUNT = 200;

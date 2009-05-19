@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.gwt;
 
+import java.util.Comparator;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -14,20 +16,49 @@ import com.threerings.msoy.data.all.MemberName;
 public class GameInfo
     implements IsSerializable
 {
-    /** Default sort by rating */
-    public static final byte SORT_BY_RATING = 0;
+    /** Sort options for games. */
+    public enum Sort {
+        BY_RATING(null),
+        BY_NEWEST(new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c2.gameId - c1.gameId;
+            }
+        }),
+        BY_NAME(new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+            }
+        }),
+        BY_GENRE(new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c2.genre - c1.genre;
+            }
+        }),
+        BY_ONLINE(new Comparator<GameInfo>() {
+            public int compare (GameInfo c1, GameInfo c2) {
+                return c2.playersOnline - c1.playersOnline;
+            }
+        });
 
-    /** Alternate sort by newest */
-    public static final byte SORT_BY_NEWEST = 1;
+        public static Sort fromToken (String token) {
+            try {
+                return Sort.valueOf("BY_" + token.toUpperCase());
+            } catch (Exception e) {
+                return BY_RATING;
+            }
+        }
 
-    /** Alternate sort by name */
-    public static final byte SORT_BY_NAME = 2;
+        /** Returns a comparator that sorts according to this option. */
+        public final Comparator<GameInfo> comparator;
 
-    /** Alternate sort by category */
-    public static final byte SORT_BY_GENRE = 3;
+        public String toToken () {
+            return toString().substring(3).toLowerCase();
+        }
 
-    /** Alternate sort by # people playing */
-    public static final byte SORT_BY_PLAYERS_ONLINE = 4;
+        Sort (Comparator<GameInfo> comp) {
+            this.comparator = comp;
+        }
+    };
 
     /** The maximum allowed length for game names. */
     public static final int MAX_NAME_LENGTH = 64;

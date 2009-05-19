@@ -25,7 +25,7 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadGameGenre}.
      */
-    void loadGameGenre (byte genre, byte sortMethod, String query,
+    void loadGameGenre (byte genre, GameInfo.Sort sort, String query,
                         AsyncCallback<List<GameInfo>> callback);
 
     /**

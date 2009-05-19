@@ -62,7 +62,7 @@ public interface GameService extends RemoteService
     /**
      * Loads up information on the specified game genre.
      */
-    List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
+    List<GameInfo> loadGameGenre (byte genre, GameInfo.Sort sort, String query)
         throws ServiceException;
 
     /**

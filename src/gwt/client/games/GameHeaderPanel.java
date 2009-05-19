@@ -33,7 +33,7 @@ import client.util.Link;
  */
 public class GameHeaderPanel extends FlowPanel
 {
-    public GameHeaderPanel (String titleText, final byte genre, final byte sortMethod)
+    public GameHeaderPanel (String titleText, final byte genre, final GameInfo.Sort sortMethod)
     {
         setStyleName("gameHeaderPanel");
         _genre = genre;
