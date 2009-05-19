@@ -167,10 +167,10 @@ public class FrameEntryPoint
             // on bogus or missing URLs, go to landing page for guests or world-places for members
             if (CShell.isGuest()) {
                 page = Pages.LANDING;
-                args.setToken("");
+                args = Args.fromToken("");
             } else {
                 page = Pages.WORLD;
-                args.setToken("places");
+                args = Args.fromToken("places");
             }
         }
 
@@ -539,8 +539,7 @@ public class FrameEntryPoint
 
     protected void displayWorld (String pageToken)
     {
-        Args args = new Args();
-        args.setToken(pageToken);
+        Args args = Args.fromToken(pageToken);
 
         String action = args.get(0, "");
         if (action.startsWith("s")) {

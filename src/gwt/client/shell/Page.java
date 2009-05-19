@@ -304,9 +304,7 @@ public abstract class Page
      */
     protected void setPageToken (String token)
     {
-        Args args = new Args();
-        args.setToken(token);
-        onHistoryChanged(args);
+        onHistoryChanged(Args.fromToken(token));
     }
 
     /**

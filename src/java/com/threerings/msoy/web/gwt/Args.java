@@ -38,12 +38,8 @@ public class Args
      */
     public static Args fromHistory (String historyToken)
     {
-        Args args = new Args();
         int didx = historyToken.indexOf("-");
-        if (didx >= 0) {
-            args.setToken(historyToken.substring(didx+1));
-        }
-        return args;
+        return (didx >= 0) ? Args.fromToken(historyToken.substring(didx+1)) : new Args();
     }
 
     /**
@@ -52,7 +48,16 @@ public class Args
     public static Args fromToken (String token)
     {
         Args args = new Args();
-        args.setToken(token);
+        do {
+            int didx = token.indexOf(ARG_SEP);
+            if (didx == -1) {
+                args.add(unescape(token));
+                token = null;
+            } else {
+                args.add(unescape(token.substring(0, didx)));
+                token = token.substring(didx+1);
+            }
+        } while (token != null && token.length() > 0);
         return args;
     }
 
@@ -161,23 +166,6 @@ public class Args
             args.add(_args.get(ii));
         }
         return compose(args);
-    }
-
-    /**
-     * Called by the application when configuring our arguments.
-     */
-    public void setToken (String token)
-    {
-        do {
-            int didx = token.indexOf(ARG_SEP);
-            if (didx == -1) {
-                _args.add(unescape(token));
-                token = null;
-            } else {
-                _args.add(unescape(token.substring(0, didx)));
-                token = token.substring(didx+1);
-            }
-        } while (token != null && token.length() > 0);
     }
 
     /**
