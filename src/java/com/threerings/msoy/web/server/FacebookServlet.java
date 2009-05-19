@@ -107,8 +107,10 @@ public class FacebookServlet extends HttpServlet
                 creds.uid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "user", "");
             }
             if (StringUtil.isBlank(creds.uid)) {
-                rsp.sendRedirect(getLoginURL(info.key));
-                return;
+                // this the "way" iframed Facebook apps redirect to the logon page, awseome!
+                throw new FriendlyException(
+                    "<script type=\"text/javascript\">\n" +
+                    "top.location.href = \"" + getLoginURL(info.key) + "\";\n</script>");
             }
             creds.apiKey = info.key;
             creds.appSecret = info.secret;
@@ -132,9 +134,9 @@ public class FacebookServlet extends HttpServlet
             }
 
         } catch (ServiceException se) {
-            reportFailure(rsp, se.getMessage());
+            sendResponse(rsp, se.getMessage());
         } catch (FriendlyException fe) {
-            reportFailure(rsp, fe.getMessage());
+            sendResponse(rsp, fe.getMessage());
         }
     }
 
@@ -154,7 +156,7 @@ public class FacebookServlet extends HttpServlet
         }
     }
 
-    protected void reportFailure (HttpServletResponse rsp, String message)
+    protected void sendResponse (HttpServletResponse rsp, String message)
         throws IOException
     {
         PrintStream out = null;
@@ -233,7 +235,7 @@ public class FacebookServlet extends HttpServlet
 
     protected static String getLoginURL (String key)
     {
-        return "http://www.facebook.com/login.php?api_key=" + key + "&v=1.0";
+        return "http://www.facebook.com/login.php?api_key=" + key + "&canvas=1&v=1.0";
     }
 
     protected static class AppInfo
