@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
+import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -26,6 +27,8 @@ public class GameContent
     public int gameId;
 
     public GameInfoRecord game;
+
+    public FacebookInfo facebook;
 
     public GameMetricsRecord metrics;
 

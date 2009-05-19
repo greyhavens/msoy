@@ -115,4 +115,9 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#publishGameCode}.
      */
     void publishGameCode (int gameId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#updateFacebookInfo}.
+     */
+    void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
 }

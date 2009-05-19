@@ -45,6 +45,7 @@ public interface GameService extends RemoteService
     public static class GameData implements IsSerializable
     {
         public GameInfo info;
+        public FacebookInfo facebook;
         public GameCode devCode;
         public GameCode pubCode;
     }
@@ -180,5 +181,11 @@ public interface GameService extends RemoteService
      * Publishes the specified game's development code.
      */
     void publishGameCode (int gameId)
+        throws ServiceException;
+
+    /**
+     * Updates the Facebook info for the supplied game.
+     */
+    void updateFacebookInfo (FacebookInfo info)
         throws ServiceException;
 }

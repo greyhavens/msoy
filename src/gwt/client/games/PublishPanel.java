@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
@@ -53,22 +54,24 @@ public class PublishPanel extends SmartTable
 
     protected int updateData (GameService.GameData data)
     {
+        GameCode pubCode = (data.pubCode == null) ? new GameCode() : data.pubCode;
         int row = _dataRow;
+
         setText(row, 0, _msgs.publishLastUp(), 1, "rightLabel");
         setText(row, 1, MsoyUI.formatDateTime(new Date(data.devCode.lastUpdated)));
-        if (data.pubCode.lastUpdated > 0) {
-            setText(row, 2, MsoyUI.formatDateTime(new Date(data.pubCode.lastUpdated)));
+        if (pubCode.lastUpdated > 0) {
+            setText(row, 2, MsoyUI.formatDateTime(new Date(pubCode.lastUpdated)));
         }
 
         setText(++row, 0, _msgs.publishClientCode(), 1, "rightLabel");
         setText(row, 1, toString(data.devCode.clientMedia));
-        setText(row, 2, toString(data.pubCode.clientMedia));
+        setText(row, 2, toString(pubCode.clientMedia));
 
         setText(++row, 0, _msgs.publishServerCode(), 1, "rightLabel");
         setText(row, 1, toString(data.devCode.serverMedia));
-        setText(row, 2, toString(data.pubCode.serverMedia));
+        setText(row, 2, toString(pubCode.serverMedia));
 
-        _publish.setEnabled(data.pubCode.lastUpdated < data.devCode.lastUpdated);
+        _publish.setEnabled(pubCode.lastUpdated < data.devCode.lastUpdated);
         return row;
     }
 

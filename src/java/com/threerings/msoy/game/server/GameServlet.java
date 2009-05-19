@@ -42,6 +42,7 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
+import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameDetail;
@@ -208,8 +209,7 @@ public class GameServlet extends MsoyServiceServlet
         detail.metrics = _mgameRepo.loadGameMetrics(info.gameId).toGameMetrics();
 
         // determine how many players can play this game
-        int[] players = GameUtil.getMinMaxPlayers(
-            _mgameRepo.loadGameCode(gameId, false).toGameCode());
+        int[] players = GameUtil.getMinMaxPlayers(_mgameRepo.loadGameCode(gameId, false));
         detail.minPlayers = players[0];
         detail.maxPlayers = players[1];
 
@@ -458,8 +458,9 @@ public class GameServlet extends MsoyServiceServlet
         GameInfoRecord info = requireIsGameCreator(gameId, mrec);
         GameData data = new GameData();
         data.info = info.toGameInfo(0);
-        data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false).toGameCode();
-        data.pubCode = _mgameRepo.loadGameCode(info.gameId, false).toGameCode();
+        data.facebook = _mgameRepo.loadFacebookInfo(info.gameId);
+        data.devCode = _mgameRepo.loadGameCode(GameInfo.toDevId(info.gameId), false);
+        data.pubCode = _mgameRepo.loadGameCode(info.gameId, false);
         return data;
     }
 
@@ -565,9 +566,16 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(gameId, mrec);
-        GameCodeRecord code = _mgameRepo.loadGameCode(GameInfo.toDevId(gameId), true);
-        code.isDevelopment = false;
-        _mgameRepo.updateGameCode(code);
+        _mgameRepo.publishGameCode(gameId);
+    }
+
+    // from interface GameService
+    public void updateFacebookInfo (FacebookInfo info)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        requireIsGameCreator(info.gameId, mrec);
+        _mgameRepo.updateFacebookInfo(info);
     }
 
     protected PlayerRating[] toRatingResult (

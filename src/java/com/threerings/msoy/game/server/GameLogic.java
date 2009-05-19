@@ -65,10 +65,10 @@ public class GameLogic
     {
         // load up the metadata for this game
         GameInfoRecord game = _mgameRepo.loadGame(gameId);
-        if (game == null) {
+        GameCode code = _mgameRepo.loadGameCode(gameId, false);
+        if (game == null || code == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        GameCode code = _mgameRepo.loadGameCode(gameId, false).toGameCode();
 
         // create a launch config record for the game
         final LaunchConfig config = new LaunchConfig();

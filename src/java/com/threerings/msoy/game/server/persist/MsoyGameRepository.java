@@ -52,6 +52,7 @@ import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameInfo;
 
@@ -328,16 +329,15 @@ public class MsoyGameRepository extends DepotRepository
 
     /**
      * Loads the code record for the specified game. If the id is negative, the development record
-     * will be loaded, if positive, the published record will be loaded. Returns a blank code
-     * record if the game has no record of the requested type.
+     * will be loaded, if positive, the published record will be loaded.
      */
-    public GameCodeRecord loadGameCode (int gameId, boolean skipCache)
+    public GameCode loadGameCode (int gameId, boolean skipCache)
     {
         CacheStrategy cache = skipCache ? CacheStrategy.NONE : CacheStrategy.BEST;
-        boolean isDevelopment = gameId < 0 ? true : false;
+        boolean isDevelopment = (gameId < 0);
         GameCodeRecord code = load(GameCodeRecord.class, cache,
                                    GameCodeRecord.getKey(Math.abs(gameId), isDevelopment));
-        return (code == null) ? GameCodeRecord.createBlank(gameId, isDevelopment) : code;
+        return (code != null) ? code.toGameCode() : null;
     }
 
     /**
@@ -346,6 +346,29 @@ public class MsoyGameRepository extends DepotRepository
     public GameMetricsRecord loadGameMetrics (int gameId)
     {
         return load(GameMetricsRecord.class, Math.abs(gameId));
+    }
+
+    /**
+     * Loads the Facebook info for the specified game. If no info is registered for the game in
+     * question a blank record is created with gameId filled in but no key or secret.
+     */
+    public FacebookInfo loadFacebookInfo (int gameId)
+    {
+        FacebookInfoRecord info = load(FacebookInfoRecord.class, gameId);
+        if (info != null) {
+            return info.toFacebookInfo();
+        }
+        FacebookInfo blank = new FacebookInfo();
+        blank.gameId = gameId;
+        return blank;
+    }
+
+    /**
+     * Creates or updates the Facebook info for the game referenced by the supplied record.
+     */
+    public void updateFacebookInfo (FacebookInfo info)
+    {
+        store(FacebookInfoRecord.fromFacebookInfo(info));
     }
 
     /**
@@ -379,6 +402,19 @@ public class MsoyGameRepository extends DepotRepository
     {
         code.lastUpdated = new Timestamp(System.currentTimeMillis());
         store(code);
+    }
+
+    /**
+     * Publishes the supplied game's dev code record to its published code record.
+     */
+    public void publishGameCode (int gameId)
+    {
+        GameCodeRecord code = load(GameCodeRecord.class, CacheStrategy.NONE,
+                                   GameCodeRecord.getKey(gameId, true));
+        if (code != null) {
+            code.isDevelopment = false;
+            store(code);
+        }
     }
 
     /**
@@ -609,12 +645,13 @@ public class MsoyGameRepository extends DepotRepository
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(GameInfoRecord.class);
+        classes.add(FacebookInfoRecord.class);
         classes.add(GameCodeRecord.class);
+        classes.add(GameInfoRecord.class);
         classes.add(GameMetricsRecord.class);
         classes.add(GamePlayRecord.class);
-        classes.add(InstructionsRecord.class);
         classes.add(GameTraceLogRecord.class);
+        classes.add(InstructionsRecord.class);
     }
 
     protected RatingRepository _ratingRepo;

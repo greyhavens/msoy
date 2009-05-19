@@ -1093,8 +1093,10 @@ public class GameGameRegistry
         GameContent content = new GameContent();
         content.gameId = gameId;
         content.game = _mgameRepo.loadGame(gameId);
-        content.code = _mgameRepo.loadGameCode(gameId, true).toGameCode();
+        content.facebook = _mgameRepo.loadFacebookInfo(gameId);
         content.metrics = _mgameRepo.loadGameMetrics(gameId);
+        content.code = _mgameRepo.loadGameCode(gameId, true);
+
         // load up our level and item packs
         for (LevelPackRecord record : _lpackRepo.loadGameOriginals(gameId)) {
             content.lpacks.add((LevelPack)record.toItem());

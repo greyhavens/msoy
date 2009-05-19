@@ -54,19 +54,6 @@ public class GameCodeRecord extends PersistentRecord
         return record;
     }
 
-    /**
-     * Creates a blank record to use when a game has no published code record.
-     */
-    public static GameCodeRecord createBlank (int gameId, boolean isDevelopment)
-    {
-        GameCodeRecord code = new GameCodeRecord();
-        code.gameId = Math.abs(gameId);
-        code.isDevelopment = isDevelopment;
-        code.config = "";
-        code.lastUpdated = new Timestamp(0L);
-        return code;
-    }
-
     /** The id of the game. */
     @Id public int gameId;
 
