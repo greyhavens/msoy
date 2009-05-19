@@ -21,11 +21,6 @@ import com.samskivert.servlet.util.FriendlyException;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
-// import com.google.code.facebookapi.FacebookJaxbRestClient;
-// import com.google.code.facebookapi.schema.FriendsGetResponse;
-// import com.google.code.facebookapi.schema.User;
-// import com.google.code.facebookapi.schema.UsersGetInfoResponse;
-
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FacebookLogic;
