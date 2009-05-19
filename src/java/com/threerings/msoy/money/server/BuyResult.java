@@ -92,8 +92,10 @@ public class BuyResult
         // transaction if applicable, since payouts are done in buyer, creator, affiliate order.
         updateBalance(balances, buyerId, _memberTransaction);
         updateBalance(balances, buyerId, _changeTransaction);
-        for (MoneyTransaction tx : _creatorTransactions) {
-            updateBalance(balances, buyerId, tx);
+        if (_creatorTransactions != null) {
+            for (MoneyTransaction tx : _creatorTransactions) {
+                updateBalance(balances, buyerId, tx);
+            }
         }
         updateBalance(balances, buyerId, _affiliateTransaction);
         return balances;
