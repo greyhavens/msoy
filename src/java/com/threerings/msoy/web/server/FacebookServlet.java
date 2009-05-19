@@ -29,6 +29,7 @@ import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.Pages;
 
 import static com.threerings.msoy.Log.log;
 
@@ -69,12 +70,10 @@ public class FacebookServlet extends HttpServlet
         // see if this external user already has an account
         int memberId = _memberRepo.lookupExternalAccount(ExternalAuther.FACEBOOK, fbuid);
         if (memberId != 0) {
-            // if so, activate a session for them and send them the contents of index.html (we
-            // can't redirect here because we're in an iframe and that would redirect the whole
-            // enchilada)
+            // if so, activate a session for them and send them to the main games page
             String authtok = _memberRepo.startOrJoinSession(memberId, FBAUTH_DAYS);
             SwizzleServlet.setCookie(req, rsp, authtok);
-            rsp.sendRedirect("/");
+            rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
             return;
         }
 
