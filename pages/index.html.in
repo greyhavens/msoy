@@ -7,7 +7,7 @@
   <meta content="games,friends,explore,chat,shop,create,whirled" name="keywords"/>
   <script type="text/javascript">
     if (document.location.host.indexOf("@SERVER_URL_HOST@") != 0) {
-        document.location = "@SERVER_URL@";
+        document.location = "@SERVER_URL@" + document.location.hash;
     }
   </script>
 
