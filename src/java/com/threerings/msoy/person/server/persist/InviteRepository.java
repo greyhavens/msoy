@@ -103,28 +103,12 @@ public class InviteRepository extends DepotRepository
     /**
      * Return the InvitationRecord that corresponds to the given inviter
      */
-    public InvitationRecord loadInvite (String inviteeEmail, int inviterId)
+    public InvitationRecord loadInviteByEmail (String inviteeEmail, int inviterId)
     {
         // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
         return load(InvitationRecord.class, new Where(
             InvitationRecord.INVITEE_EMAIL, inviteeEmail,
             InvitationRecord.INVITER_ID, inviterId));
-    }
-
-    /**
-     * Generates a new unique invitation id.
-     */
-    public String generateInviteId ()
-    {
-        return _inviteIdGen.generate();
-    }
-
-    /**
-     * Gets a new unique random id for use with game invitations.
-     */
-    public String generateGameInviteId ()
-    {
-        return _gameInviteIdGen.generate();
     }
 
     /**
@@ -153,6 +137,22 @@ public class InviteRepository extends DepotRepository
     public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
     {
         return load(GameInvitationRecord.class, inviteeEmail);
+    }
+
+    /**
+     * Generates a new unique invitation id.
+     */
+    public String generateInviteId ()
+    {
+        return _inviteIdGen.generate();
+    }
+
+    /**
+     * Gets a new unique random id for use with game invitations.
+     */
+    public String generateGameInviteId ()
+    {
+        return _gameInviteIdGen.generate();
     }
 
     /**

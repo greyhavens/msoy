@@ -265,7 +265,7 @@ public class InviteServlet extends MsoyServiceServlet
 
         // make sure this user hasn't already invited this address
         int inviterId = (inviter == null) ? 0 : inviter.memberId;
-        if (_inviteRepo.loadInvite(email, inviterId) != null) {
+        if (_inviteRepo.loadInviteByEmail(email, inviterId) != null) {
             throw new ServiceException(InvitationResults.ALREADY_INVITED);
         }
 
