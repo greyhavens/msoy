@@ -1097,7 +1097,4 @@ public class MemberObject extends MsoyBodyObject
 
     /** The user's party summary. Only needed on the server. */
     protected transient PartySummary _party;
-
-//    /** Limits the number of recent scenes tracked in {@link #recentScenes}. */
-//    protected static final int MAX_RECENT_SCENES = 10;
 }
