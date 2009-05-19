@@ -221,7 +221,7 @@ public class MemberServlet extends MsoyServiceServlet
     public Invitation getGameInvitation (String inviteId)
         throws ServiceException
     {
-        GameInvitationRecord invRec = _inviteRepo.loadGameInviteById(inviteId);
+        GameInvitationRecord invRec = _inviteRepo.loadGameInvite(inviteId);
         if (invRec == null) {
             throw new ServiceException("e.invite_not_found");
         }
@@ -232,14 +232,20 @@ public class MemberServlet extends MsoyServiceServlet
     public void optOut (boolean gameInvite, String inviteId)
         throws ServiceException
     {
+        String email = null;
         if (gameInvite) {
-            GameInvitationRecord invRec = _inviteRepo.loadGameInviteById(inviteId);
+            GameInvitationRecord invRec = _inviteRepo.loadGameInvite(inviteId);
             if (invRec != null) {
-                _spamRepo.addOptOutEmail(invRec.inviteeEmail);
+                email = invRec.inviteeEmail;
             }
-
-        } else if (_inviteRepo.inviteAvailable(inviteId) != null) {
-            _inviteRepo.optOutInvite(inviteId);
+        } else {
+            InvitationRecord invRec = _inviteRepo.loadInvite(inviteId, false);
+            if (invRec != null) {
+                email = invRec.inviteeEmail;
+            }
+        }
+        if (email != null) {
+            _spamRepo.addOptOutEmail(email);
         }
     }
 

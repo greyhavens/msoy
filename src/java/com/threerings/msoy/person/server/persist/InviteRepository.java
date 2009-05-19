@@ -21,7 +21,6 @@ import com.samskivert.depot.operator.Conditionals.In;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -140,42 +139,20 @@ public class InviteRepository extends DepotRepository
     }
 
     /**
-     * Returns the game invitation record that corresponds to the given invitee.
-     */
-    public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
-    {
-        return load(GameInvitationRecord.class, inviteeEmail);
-    }
-
-    /**
      * Returns the game invitation record that corresponds to the given id.
      */
-    public GameInvitationRecord loadGameInviteById (String inviteId)
+    public GameInvitationRecord loadGameInvite (String inviteId)
     {
         return load(GameInvitationRecord.class,
             new Where(GameInvitationRecord.INVITE_ID, inviteId));
     }
 
     /**
-     * Delete the InvitationRecord that corresponds to the given unique code.
+     * Returns the game invitation record that corresponds to the given invitee.
      */
-    public void deleteInvite (String inviteId)
+    public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
     {
-        delete(InvitationRecord.class, inviteId);
-    }
-
-    /**
-     * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
-     * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
-     */
-    public void optOutInvite (String inviteId)
-    {
-        InvitationRecord invRec = loadInvite(inviteId, false);
-        if (invRec != null) {
-            invRec.inviteeId = -1;
-            update(invRec, InvitationRecord.INVITEE_ID);
-            _spamRepo.addOptOutEmail(invRec.inviteeEmail);
-        }
+        return load(GameInvitationRecord.class, inviteeEmail);
     }
 
     /**
@@ -240,9 +217,7 @@ public class InviteRepository extends DepotRepository
     /** Generator for normal game invitations. */
     protected InviteIDGen _gameInviteIdGen = new InviteIDGen("GameInvitationRecord") {
         @Override protected boolean exists (String id) {
-            return loadGameInviteById(id) != null;
+            return loadGameInvite(id) != null;
         }
     };
-
-    @Inject protected SpamRepository _spamRepo;
 }
