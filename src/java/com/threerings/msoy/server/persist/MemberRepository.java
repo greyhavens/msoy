@@ -150,24 +150,6 @@ public class MemberRepository extends DepotRepository
         // drop this superfluous index
         ctx.registerMigration(MemberExperienceRecord.class,
             new SchemaMigration.DropIndex(2, "ixDateOccurred"));
-
-        registerMigration(new DataMigration("2009_05_05_friend_revamp") {
-            public void invoke ()
-                throws DatabaseException
-            {
-                int count = 0;
-                log.info("Friend conversion: starting.");
-                for (FriendRecord fr : findAll(FriendRecord.class,
-                        CacheStrategy.NONE, new ArrayList<QueryClause>())) {
-                    store(new FriendshipRecord(fr.inviterId, fr.inviteeId, true));
-                    store(new FriendshipRecord(fr.inviteeId, fr.inviterId, true));
-                    if (++count % 2000 == 0) {
-                        log.info("Friend conversion: chug...");
-                    }
-                }
-                log.info("Friend conversion: done!");
-            }
-        });
     }
 
     /**
@@ -1363,7 +1345,6 @@ public class MemberRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(MemberRecord.class);
-        classes.add(FriendRecord.class);
         classes.add(FriendshipRecord.class);
         classes.add(SessionRecord.class);
         classes.add(ExternalMapRecord.class);
