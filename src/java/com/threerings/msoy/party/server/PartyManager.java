@@ -368,14 +368,6 @@ public class PartyManager
         return true;
     }
 
-    protected void shutdownPartier (int partierOid)
-    {
-        System.err.println("Shutting down partierOid " + partierOid);
-        if (partierOid != 0) {
-            _omgr.destroyObject(partierOid);
-        }
-    }
-
     protected void indicateMemberPartying (int memberId, boolean set)
     {
         MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
