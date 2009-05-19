@@ -160,18 +160,7 @@ public class MemberLocal extends BodyLocal
      */
     public void willEnterRoom (MemberObject memobj, RoomObject roomObj)
     {
-        roomObj.startTransaction();
-        try {
-            if (memories != null) {
-                // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
-                log.info("AVAMEM: Putting memories into room", "avatar", memobj.avatar, 
-                    "memories", memories, "roomOid", roomObj.getOid(), "source", "willEnter");
-            }
-            putAvatarMemoriesIntoRoom(roomObj);
-
-        } finally {
-            roomObj.commitTransaction();
-        }
+        putAvatarMemoriesIntoRoom(roomObj);
     }
 
     /**
@@ -180,19 +169,8 @@ public class MemberLocal extends BodyLocal
      */
     public void willLeaveRoom (MemberObject memobj, RoomObject roomObj)
     {
-        roomObj.startTransaction();
-        try {
-            // remove our avatar memories from this room
-            takeAvatarMemoriesFromRoom(memobj, roomObj);
-            if (memories != null) {
-                // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
-                log.info("AVAMEM: Took memories from room", "avatar", memobj.avatar,
-                    "memories", memories, "roomOid", roomObj.getOid(), "source", "willLeave");
-            }
-
-        } finally {
-            roomObj.commitTransaction();
-        }
+        // remove our avatar memories from this room
+        takeAvatarMemoriesFromRoom(memobj, roomObj);
     }
 
     /** If not null, contains the set of group ids for which to suppress chat. */

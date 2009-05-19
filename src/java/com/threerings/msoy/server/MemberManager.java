@@ -568,7 +568,6 @@ public class MemberManager
 
             @Override public void handleSuccess () {
                 if (_avatar.equals(user.avatar)) {
-                    log.warning("AVAMEM: suppressing setting of same avatar");
                     ((InvocationService.ConfirmListener)_listener).requestProcessed();
                     return;
                 }
@@ -842,10 +841,6 @@ public class MemberManager
     {
         final Avatar prev = user.avatar;
 
-        log.info("AVAMEM: Setting avatar",
-            "memberId", user.getMemberId(), "oldAvatar", (prev == null) ? 0 : prev.itemId,
-            "newAvatar", (avatar == null) ? 0 : avatar.itemId);
-
         // now we need to make sure that the two avatars have a reasonable touched time
         user.startTransaction();
         try {
@@ -879,11 +874,6 @@ public class MemberManager
                         // if so, make absolutely sure the avatar memories are in place in the
                         // room before we update the occupant info (which triggers the avatar
                         // media change on the client).
-
-                        // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
-                        log.info("AVAMEM: Putting memories into room", "avatar", avatar,
-                            "memories", memories, "roomOid", plobj.getOid(), "source", "setAvatar");
-
                         user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
                             (RoomObject)plobj);
                     }

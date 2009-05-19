@@ -517,9 +517,6 @@ public class RoomObject extends SpotSceneObject
             postEvent(mce);
 
         } else {
-            if (ident.type == Item.AVATAR) {
-                log.info("AVAMEM: Created new memory entry", "room", getOid(), "ident", ident);
-            }
             // We do not have an entry and we're adding a new value.
             // This form of the constructor marks the memories modified immediately.
             addToMemories(new EntityMemories(ident, key, value));

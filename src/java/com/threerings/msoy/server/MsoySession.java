@@ -190,13 +190,6 @@ public class MsoySession extends WhirledSession
                 (local.sessionSeconds + _connectTime - _idleTracker.getIdleTime()) / 60f);
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
-            
-            // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
-            if (local.memories != null) {
-                log.info("AVAMEM: Possibly persisting memories...", 
-                    "memories", local.memories, "source", "sessionDidEnd");
-            }
-
             //final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
             final MemoriesRecord memrec = (local.memories == null || !local.memories.modified)
                 ? null : new MemoriesRecord(local.memories);
