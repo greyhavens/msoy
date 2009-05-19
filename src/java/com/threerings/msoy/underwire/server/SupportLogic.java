@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -105,6 +106,33 @@ public class SupportLogic
         if (target == null) {
             log.warning("Unable to locate target of complaint [event=" + event +
                     ", targetId=" + targetId+ "].");
+        } else {
+            event.targetHandle = target.toString();
+        }
+        _underrepo.insertEvent(event);
+    }
+
+    /**
+     * Insert a note on a member's support record.
+     * @param source the filer of the note
+     * @param targetId the id of the member being noted
+     * @param subj non-null subject of the note
+     * @param note optional text of the note
+     * @param link optional link to material pertaining to the note
+     */
+    public void addNote (MemberName source, int targetId, String subj, String note, String link)
+    {
+        EventRecord event = new EventRecord();
+        event.source = String.valueOf(source.getMemberId());
+        event.sourceHandle = source.toString();
+        event.status = Event.RESOLVED_CLOSED;
+        event.subject = subj;
+        event.link = link;
+        event.target = String.valueOf(targetId);
+        event.chatHistory = StringUtil.deNull(note);
+        MemberName target = _memberRepo.loadMemberName(targetId);
+        if (target == null) {
+            log.warning("Unable to locate target of note", "event", event, "targetId", targetId);
         } else {
             event.targetHandle = target.toString();
         }

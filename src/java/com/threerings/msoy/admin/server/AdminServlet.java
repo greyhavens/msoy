@@ -24,6 +24,7 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.Invoker.Unit;
 
@@ -393,6 +394,11 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
 
+        // create a note for storing with the support system later
+        StringBuilder note = new StringBuilder();
+        appendToNote(note, "Message Body", body);
+        appendToNote(note, "Item Record", item);
+
         final IntSet owners = new ArrayIntSet();
 
         ItemDeletionResult result = new ItemDeletionResult();
@@ -403,6 +409,7 @@ public class AdminServlet extends MsoyServiceServlet
         if (item.catalogId != 0) {
             CatalogRecord catrec = repo.loadListing(item.catalogId, true);
             if (catrec != null) {
+                appendToNote(note, "Catalog Record", catrec);
                 if (catrec.listedItemId != item.itemId) {
                     log.warning("Catalog record doesn't match item", "itemId", item.itemId,
                         "listedItemId", catrec.listedItemId);
@@ -414,6 +421,8 @@ public class AdminServlet extends MsoyServiceServlet
                         if (original == null) {
                             log.warning("Could not load original item",
                                 "id", catrec.originalItemId);
+                        } else {
+                            appendToNote(note, "Original Item Record", original);
                         }
                     }
                 }
@@ -469,6 +478,12 @@ public class AdminServlet extends MsoyServiceServlet
         // now do the refunds
         result.refunds += _moneyLogic.refundAllItemPurchases(new ItemIdent(
             type, item.itemId), item.name);
+
+        appendToNote(note, "Result", result);
+
+        // attach a note to the creator's support history
+        _supportLogic.addNote(memrec.getName(), item.creatorId, subject,
+            note.toString(), item.toItem().getPrimaryMedia().getMediaPath());
 
         return result;
     }
@@ -699,6 +714,14 @@ public class AdminServlet extends MsoyServiceServlet
             return null;
         }
         return _mgameRepo.loadGame(Integer.parseInt(bureauId.substring(prefix.length())));
+    }
+
+    protected static void appendToNote (StringBuilder note, String objectName, Object object)
+    {
+        String sep = "\n  ";
+        note.append(objectName).append(":").append(sep);
+        StringUtil.fieldsToString(note, object, sep);
+        note.append("\n");
     }
 
     protected static class RestartPanopticonAction extends NodeAction
