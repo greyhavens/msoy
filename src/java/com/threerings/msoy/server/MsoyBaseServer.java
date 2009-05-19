@@ -97,7 +97,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // set up the right client factories
         configSessionFactory();
-
         _bureauMgr.configClientFactories();
     }
 
