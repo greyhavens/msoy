@@ -145,12 +145,6 @@ public class MemberObject extends MsoyBodyObject
     /** The names of members following this member. */
     public var followers :DSet;
 
-//    /** The recent scenes we've been through. */
-//    public var recentScenes :DSet;
-//
-//    /** The scenes we own. */
-//    public var ownedScenes :DSet;
-
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
 
@@ -350,8 +344,6 @@ public class MemberObject extends MsoyBodyObject
         availability = ins.readInt();
         following = MemberName(ins.readObject());
         followers = DSet(ins.readObject());
-//        recentScenes = DSet(ins.readObject());
-//        ownedScenes = DSet(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
         homeSceneId = ins.readInt();
         avatar = Avatar(ins.readObject());
