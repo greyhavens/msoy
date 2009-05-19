@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -51,6 +52,16 @@ public class MyGamesPanel extends GameListPanel
                 });
             }
         });
+    }
+
+    @Override // from GameListPanel
+    protected Widget createPlay (GameInfo game)
+    {
+        FlowPanel bits = new FlowPanel();
+        bits.add(super.createPlay(game));
+        bits.add(WidgetUtil.makeShim(5, 5));
+        bits.add(Link.create(_msgs.myGamesEdit(), Pages.GAMES, "e", game.gameId));
+        return bits;
     }
 
     protected void onSortChanged (byte sortMethod)

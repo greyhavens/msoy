@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -57,6 +58,11 @@ public abstract class GameListPanel extends FlowPanel
     }
 
     protected abstract void onSortChanged (byte sortMethod);
+
+    protected Widget createPlay (GameInfo game)
+    {
+        return PlayButton.create(game, "", PlayButton.Size.SMALL);
+    }
 
     /**
      * Displays a grid of games with paging and sort
@@ -118,10 +124,6 @@ public abstract class GameListPanel extends FlowPanel
             });
         }
 
-        protected Widget createPlay (GameInfo game) {
-            return PlayButton.create(game, "", PlayButton.Size.SMALL);
-        }
-
         protected class GameInfoPanel extends SmartTable
         {
             public GameInfoPanel (final GameInfo game) {
@@ -146,7 +148,8 @@ public abstract class GameListPanel extends FlowPanel
                 setText(0, col++, _dmsgs.xlate("genre" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
-                setWidget(0, col++, createPlay(game), 1, "PlayButtons");
+                setWidget(0, col, createPlay(game), 1, "PlayButtons");
+                getFlexCellFormatter().setHorizontalAlignment(0, col++, HasAlignment.ALIGN_CENTER);
             }
         }
     }
