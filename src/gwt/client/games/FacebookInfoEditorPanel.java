@@ -5,6 +5,7 @@ package client.games;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
@@ -36,6 +37,14 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
         addRow(_msgs.fieSecret(), secret, new Command() {
             public void execute () {
                 info.appSecret = secret.getText().trim();
+            }
+        });
+
+        final CheckBox chromeless = new CheckBox(_msgs.fieChromelessText());
+        chromeless.setValue(info.chromeless);
+        addRow(_msgs.fieChromeless(), chromeless, new Command() {
+            public void execute () {
+                info.chromeless = chromeless.getValue();
             }
         });
 

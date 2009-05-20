@@ -24,4 +24,7 @@ public class FacebookInfo implements IsSerializable
 
     /** The Facebook app secret for this game's Facebook app. */
     public String appSecret;
+
+    /** If true Whirled won't display any chrome when in Facebook App mode. */
+    public boolean chromeless;
 }

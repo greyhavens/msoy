@@ -21,11 +21,12 @@ public class FacebookInfoRecord extends PersistentRecord
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp API_KEY = colexp(_R, "apiKey");
     public static final ColumnExp APP_SECRET = colexp(_R, "appSecret");
+    public static final ColumnExp CHROMELESS = colexp(_R, "chromeless");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /**
      * Converts the supplied runtime record into a persistent record.
@@ -50,6 +51,10 @@ public class FacebookInfoRecord extends PersistentRecord
     @Column(length=FacebookInfo.SECRET_LENGTH)
     public String appSecret;
 
+    /** If true Whirled won't display any chrome when in Facebook App mode. */
+    @Column(defaultValue="false") // TODO: remove default after migration
+    public boolean chromeless;
+
     /**
      * Converts this persistent record into a runtime record.
      */
@@ -59,6 +64,7 @@ public class FacebookInfoRecord extends PersistentRecord
         info.gameId = this.gameId;
         info.apiKey = this.apiKey;
         info.appSecret = this.appSecret;
+        info.chromeless = this.chromeless;
         return info;
     }
 
