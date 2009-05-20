@@ -67,7 +67,7 @@ public class StuffPage extends Page
 
         // if we're displaying an item's detail, do that
         if ("d".equals(arg0)) {
-            type = (byte)args.get(1, Item.AVATAR);
+            type = args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
 
             // otherwise we're display a particular item's details
@@ -103,7 +103,7 @@ public class StuffPage extends Page
             if (!MsoyUI.requireRegistered()) {
                 return; // permaguests can't create or edit items
             }
-            type = (byte)args.get(1, Item.AVATAR);
+            type = args.get(1, Item.AVATAR);
             final ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
@@ -120,7 +120,7 @@ public class StuffPage extends Page
 
         // or maybe we're remixing an item
         } else if ("r".equals(arg0)) {
-            type = (byte) args.get(1, Item.AVATAR);
+            type = args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
             final ItemRemixer remixer = new ItemRemixer();
             getItem(type, itemId, new InfoCallback<Item>() {
@@ -132,7 +132,7 @@ public class StuffPage extends Page
 
         // otherwise we're viewing some player's inventory
         } else {
-            type = (byte)args.get(0, Item.AVATAR);
+            type = args.get(0, Item.AVATAR);
             memberId = args.get(1, CShell.getMemberId());
             StuffPanel panel = getStuffPanel(memberId, type);
             panel.setArgs(args.get(2, -1), args.get(3, ""));

@@ -78,6 +78,22 @@ public class Args
     }
 
     /**
+     * Parses and returns the specified argument as a byte. Returns the default if the argument is
+     * not a valid byte or is out of bounds.
+     */
+    public byte get (int index, byte defval)
+    {
+        if (index >= _args.size()) {
+            return defval;
+        }
+        try {
+            return Byte.parseByte(_args.get(index));
+        } catch (Exception e) {
+            return defval;
+        }
+    }
+
+    /**
      * Parses and returns the specified argument as an integer. Returns the default if the argument
      * is not a valid integer or is out of bounds.
      */

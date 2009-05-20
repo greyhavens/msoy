@@ -142,7 +142,7 @@ public class ShopPage extends Page
      */
     protected byte getItemType (Args args, int index, byte deftype)
     {
-        byte type = (byte)args.get(index, deftype);
+        byte type = args.get(index, deftype);
         if (Item.getClassForType(type) == null) {
             CShell.log("Rejecting invalid item type", "type", type, "args", args);
             return deftype;

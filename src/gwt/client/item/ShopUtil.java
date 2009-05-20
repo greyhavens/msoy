@@ -64,8 +64,8 @@ public class ShopUtil
     public static CatalogQuery parseArgs (Args args)
     {
         CatalogQuery query = new CatalogQuery();
-        query.itemType = (byte)args.get(0,  query.itemType);
-        query.sortBy = (byte)args.get(1, query.sortBy);
+        query.itemType = args.get(0,  query.itemType);
+        query.sortBy = args.get(1, query.sortBy);
         String action = args.get(2, "");
         if (action.startsWith("s")) {
             query.search = action.substring(1);
