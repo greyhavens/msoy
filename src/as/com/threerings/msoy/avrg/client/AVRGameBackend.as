@@ -708,12 +708,12 @@ public class AVRGameBackend extends ControlBackend
     // LocalSubControl
     protected function getPaintableArea_v1 (full :Boolean) :Rectangle
     {
+        if (full) {
+            var bounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
+            return new Rectangle(0, 0, bounds.width, bounds.height);
+        }
         var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
-            if (full) {
-                var bounds :Rectangle = _wctx.getPlaceViewBounds();
-                return new Rectangle(0, 0, bounds.width, bounds.height);
-            }
             return view.getScrollSize();
         }
         return null;

@@ -20,6 +20,9 @@ public class MsoyGameDefinition extends GameDefinition
     /** TEMP: hack to allow us to only run the agent for multiplayer games. */
     public var isAgentMPOnly :Boolean;
 
+    /** Indicates that this AVRG should not auto-send player into a room. */
+    public var roomless :Boolean;
+
     /** We need this here to be able to communicate with the whirled code that will launch the
      *  agent on the server. */
     public var serverMedia :String;
@@ -66,6 +69,7 @@ public class MsoyGameDefinition extends GameDefinition
         super.readObject(ins);
         lwjgl = ins.readBoolean();
         isAgentMPOnly = ins.readBoolean();
+        roomless = ins.readBoolean();
         serverMedia = (ins.readField(String) as String);
         bureauId = (ins.readField(String) as String);
     }
@@ -76,6 +80,7 @@ public class MsoyGameDefinition extends GameDefinition
         super.writeObject(out);
         out.writeBoolean(lwjgl);
         out.writeBoolean(isAgentMPOnly);
+        out.writeBoolean(roomless);
         out.writeField(serverMedia);
         out.writeField(bureauId);
     }

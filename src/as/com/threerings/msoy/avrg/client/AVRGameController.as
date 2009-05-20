@@ -246,18 +246,13 @@ public class AVRGameController extends PlaceController
 
         _wctx.getOccupantDirector().addOccupantObserver(_occupantObserver);
 
-        // will be null if not a room
-        _roomObj = (_wctx.getLocationDirector().getPlaceObject() as RoomObject);
-
-        // make sure we're listening for events
-        enteredRoom(_roomObj);
-
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
 
-        // sign up for room objects
+        // listen for location changes
         _wctx.getLocationDirector().addLocationObserver(_roomObserver);
 
+        // set up our current room if we're in one
         updateRoom(_wctx.getLocationDirector().getPlaceObject() as RoomObject);
     }
 
@@ -277,24 +272,27 @@ public class AVRGameController extends PlaceController
     /**
      * Called when the user's room changes.
      */
-    protected function updateRoom (roomObject :RoomObject) :void
+    protected function updateRoom (roomObj :RoomObject) :void
     {
-        if (roomObject == _roomObj) {
-            log.warning("Room changing to same room?");
+        if (roomObj == _roomObj) {
+            if (roomObj != null) {
+                log.warning("Room changing to same room?", "name", roomObj.name);
+            }
+            return;
         }
 
         leftRoom(_roomObj);
         maybeDispatchLeftRoom("room change");
 
-        _roomObj = roomObject;
+        _roomObj = roomObj;
 
         // establish a subscription to the properties of the room
         var gameId :int = getGameId();
 
         var entry :RoomPropertiesEntry = null;
-        if (roomObject != null) {
-            entry = roomObject.propertySpaces.get(gameId) as RoomPropertiesEntry;
-            _roomOid = roomObject.getOid();
+        if (roomObj != null) {
+            entry = roomObj.propertySpaces.get(gameId) as RoomPropertiesEntry;
+            _roomOid = roomObj.getOid();
         } else {
             _roomOid = 0;
         }
@@ -302,7 +300,7 @@ public class AVRGameController extends PlaceController
         if (entry != null) {
             setRoomPropsOid(entry.propsOid);
 
-        } else if (roomObject != null) {
+        } else if (roomObj != null) {
             setRoomPropsOid(0);
 
             // listen for the property space becoming available
@@ -313,11 +311,11 @@ public class AVRGameController extends PlaceController
                     if (entry.ownerId == gameId) {
                         setRoomPropsOid(entry.propsOid);
                         // unregister this listener once we have the property space oid
-                        roomObject.removeListener(setListener);
+                        roomObj.removeListener(setListener);
                     }
                 }
             });
-            roomObject.addListener(setListener);
+            roomObj.addListener(setListener);
 
         } else {
             setRoomPropsOid(0);

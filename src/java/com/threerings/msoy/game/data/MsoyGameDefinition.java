@@ -17,6 +17,9 @@ public class MsoyGameDefinition extends GameDefinition
     /** TEMP: hack to allow us to only run the agent for multiplayer games. */
     public boolean isAgentMPOnly;
 
+    /** Indicates that this AVRG should not auto-send player into a room. */
+    public boolean roomless;
+
     /** We need this here to be able to communicate with the whirled code that will launch the
      *  agent on the server. */
     public String serverMedia;

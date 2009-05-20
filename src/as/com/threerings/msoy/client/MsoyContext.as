@@ -330,14 +330,6 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
-     * Get the current boundaries of the PlaceView, in global coordinates.
-     */
-    public function getPlaceViewBounds () :Rectangle
-    {
-        return _topPanel.getPlaceViewBounds();
-    }
-
-    /**
      * Return the current PlaceView.
      */
     public function getPlaceView () :PlaceView

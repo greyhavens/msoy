@@ -77,6 +77,7 @@ public class GameLogic
         config.gameId = gameId;
 
         MsoyMatchConfig match;
+        boolean roomless = false;
         try {
             if (StringUtil.isBlank(code.config)) {
                 // fall back to a sensible default for our legacy games
@@ -86,6 +87,7 @@ public class GameLogic
             } else {
                 MsoyGameDefinition def = (MsoyGameDefinition)new MsoyGameParser().parseGame(code);
                 config.lwjgl = def.lwjgl;
+                roomless = def.roomless;
                 match = (MsoyMatchConfig)def.match;
             }
 
@@ -116,8 +118,8 @@ public class GameLogic
         config.name = game.name;
         config.httpPort = ServerConfig.httpPort;
 
-        // if this is an AVRG, resolve its group's home scene
-        if (game.isAVRG && game.groupId != 0) {
+        // if this is an AVRG (and not roomless), send the user to its group's home scene
+        if (game.isAVRG && game.groupId != 0 && !roomless) {
             GroupRecord gprec = _groupRepo.loadGroup(game.groupId);
             if (gprec != null) {
                 config.sceneId = gprec.homeSceneId;

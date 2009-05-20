@@ -41,6 +41,12 @@ public class MsoyGameParser extends WhirledGameParser
                 ((MsoyGameDefinition)digester.peek()).isAgentMPOnly = true;
             }
         });
+        _digester.addRule("game/roomless", new Rule() {
+            public void begin (String namespace, String name, Attributes attrs)
+                throws Exception {
+                ((MsoyGameDefinition)digester.peek()).roomless = true;
+            }
+        });
     }
 
     /**
