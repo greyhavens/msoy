@@ -21,14 +21,17 @@ import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.party.data.PartyCodes;
+
 public class PartyBoardPanel extends FloatingPanel
 {
-    public function PartyBoardPanel (ctx :WorldContext)
+    public function PartyBoardPanel (ctx :WorldContext, mode :int = PartyCodes.BOARD_NORMAL)
     {
-        super(ctx, Msgs.PARTY.get("t.board"));
+        super(ctx, Msgs.PARTY.get("t.board_" + mode));
         showCloseButton = true;
         setButtonWidth(0);
         _wctx = ctx;
+        _mode = mode;
 
         var cf :ClassFactory = new ClassFactory(PartyBoardInfoRenderer);
         cf.properties = { wctx: _wctx };
@@ -74,7 +77,7 @@ public class PartyBoardPanel extends FloatingPanel
 
         var text :Text = FlexUtil.createWideText(null);
         text.selectable = true;
-        text.htmlText = Msgs.PARTY.get("m.about");
+        text.htmlText = Msgs.PARTY.get("m.about_" + _mode);
         text.setStyle("fontSize", 12);
         top.addChild(text);
 
@@ -84,17 +87,21 @@ public class PartyBoardPanel extends FloatingPanel
             FloatingPanel.createPopper(function () :FloatingPanel {
                 return new CreatePartyPanel(_wctx);
             }));
-        //btn.styleName = "orangeButton";
-        addButtons(btn);
+        var buttons :Array = [ btn ];
+        if (_mode != PartyCodes.BOARD_NORMAL) {
+            buttons.unshift(new CommandButton(Msgs.PARTY.get("b.view_main"), viewMain));
+        }
+
+        addButtons.apply(this, buttons);
         _buttonBar.styleName = "buttonPadding"; // pad out the buttons since we have no border
         _buttonBar.setStyle("buttonStyleName", "orangeButton"); // oh you're kidding me
         // TODO: if we need to add more buttons, and want to undo orangeness, we will
         // have to put these buttons into an hbox or something
     }
 
-    protected function getPartyBoard (query :String = null) :void
+    protected function getPartyBoard () :void
     {
-        _wctx.getPartyDirector().getPartyBoard(gotPartyBoard, query);
+        _wctx.getPartyDirector().getPartyBoard(gotPartyBoard, _mode);
     }
 
     /**
@@ -108,14 +115,26 @@ public class PartyBoardPanel extends FloatingPanel
             _content.addChild(_partyList);
             _partyList.dataProvider = result;
         } else {
-            var none :Label = FlexUtil.createLabel(Msgs.PARTY.get("m.no_parties"), null);
+            var none :Label = FlexUtil.createLabel(
+                Msgs.PARTY.get("m.no_parties_" + _mode), null);
             none.percentWidth = 100;
             none.percentHeight = 100;
             _content.addChild(none);
         }
     }
 
+    /**
+     * View the main party board.
+     */
+    protected function viewMain () :void
+    {
+        close();
+        _wctx.getPartyDirector().showBoard();
+    }
+
     protected var _wctx :WorldContext;
+
+    protected var _mode :int;
 
     protected var _partyList :List;
 

@@ -20,7 +20,7 @@ public interface PartyBoardService extends InvocationService
     function getCreateCost (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface PartyBoardService
-    function getPartyBoard (arg1 :Client, arg2 :String, arg3 :InvocationService_ResultListener) :void;
+    function getPartyBoard (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface PartyBoardService
     function getPartyDetail (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;

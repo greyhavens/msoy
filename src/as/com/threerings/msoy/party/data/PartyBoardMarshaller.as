@@ -10,6 +10,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Byte;
 import com.threerings.util.Integer;
 import com.threerings.util.langBoolean;
 
@@ -53,12 +54,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const GET_PARTY_BOARD :int = 3;
 
     // from interface PartyBoardService
-    public function getPartyBoard (arg1 :Client, arg2 :String, arg3 :InvocationService_ResultListener) :void
+    public function getPartyBoard (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
         var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, GET_PARTY_BOARD, [
-            arg2, listener3
+            Byte.valueOf(arg2), listener3
         ]);
     }
 

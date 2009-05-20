@@ -31,7 +31,7 @@ public interface PartyBoardService extends InvocationService
     /**
      * Retrieve a list of parties. Replies with a List<PartyBoardInfo>.
      */
-    void getPartyBoard (Client client, String query, ResultListener rl);
+    void getPartyBoard (Client client, byte mode, ResultListener rl);
 
     /**
      * Locates the specified party in the wide-Whirled.

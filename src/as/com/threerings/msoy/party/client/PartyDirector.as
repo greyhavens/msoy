@@ -151,6 +151,30 @@ public class PartyDirector extends BasicDirector
         }
     }
 
+    /**
+     * Show the main, or an alternate, party board, trying to avoid having
+     * a fuckton of them on the screen.
+     */
+    public function showBoard (mode :int = PartyCodes.BOARD_NORMAL) :void
+    {
+        var inParty :Boolean = (_partyObj != null);
+        var btn :CommandButton = getButton();
+
+        // first of all, if we're already showing a board, pop it down
+        if (!inParty && btn.selected) {
+            btn.activate();
+        }
+
+        // if we're not in a party and want standard mode, pop the standard button
+        if (!inParty && (mode == PartyCodes.BOARD_NORMAL)) {
+            btn.activate();
+
+        } else {
+            // open the board desired
+            new PartyBoardPanel(_wctx, mode).open();
+        }
+    }
+
     public function popPeepMenu (peep :PartyPeep, partyId :int) :void
     {
         var menuItems :Array = [];
@@ -175,9 +199,10 @@ public class PartyDirector extends BasicDirector
     /**
      * Get the party board.
      */
-    public function getPartyBoard (resultHandler :Function, query :String = null) :void
+    public function getPartyBoard (
+        resultHandler :Function, mode :int = PartyCodes.BOARD_NORMAL) :void
     {
-        _pbsvc.getPartyBoard(_wctx.getClient(), query,
+        _pbsvc.getPartyBoard(_wctx.getClient(), mode,
             _wctx.resultListener(resultHandler, MsoyCodes.PARTY_MSGS));
     }
 

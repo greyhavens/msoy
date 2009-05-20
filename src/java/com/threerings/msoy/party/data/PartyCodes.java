@@ -30,6 +30,13 @@ public class PartyCodes
     public static final byte STATUS_TYPE_PLAYING = 2;
     public static final byte STATUS_TYPE_LOBBY = 3;
 
+    /** Board mode for a normal party board. */
+    public static final byte BOARD_NORMAL = 0;
+    /** Board mode for a normal party board. */
+    public static final byte BOARD_AWAITING_PLAYERS = 1;
+    /** Board mode for a party board showing all friends, even when not leading. */
+    public static final byte BOARD_FRIENDS = 2;
+
     /** The maximum size of a party. */
     public static final int MAX_PARTY_SIZE = 50;
 

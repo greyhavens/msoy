@@ -32,5 +32,12 @@ public class PartyCodes
     public static const STATUS_TYPE_SCENE :int = 1;
     public static const STATUS_TYPE_PLAYING :int = 2;
     public static const STATUS_TYPE_LOBBY :int = 3;
+
+    /** Board mode for a normal party board. */
+    public static const BOARD_NORMAL :int = 0;
+    /** Board mode for a normal party board. */
+    public static const BOARD_AWAITING_PLAYERS :int = 1;
+    /** Board mode for a party board showing all friends, even when not leading. */
+    public static const BOARD_FRIENDS :int = 2;
 }
 }

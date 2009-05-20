@@ -30,7 +30,7 @@ public interface PartyBoardProvider extends InvocationProvider
     /**
      * Handles a {@link PartyBoardService#getPartyBoard} request.
      */
-    void getPartyBoard (ClientObject caller, String arg1, InvocationService.ResultListener arg2)
+    void getPartyBoard (ClientObject caller, byte arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**

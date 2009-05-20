@@ -104,12 +104,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int GET_PARTY_BOARD = 3;
 
     // from interface PartyBoardService
-    public void getPartyBoard (Client arg1, String arg2, InvocationService.ResultListener arg3)
+    public void getPartyBoard (Client arg1, byte arg2, InvocationService.ResultListener arg3)
     {
         InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, GET_PARTY_BOARD, new Object[] {
-            arg2, listener3
+            Byte.valueOf(arg2), listener3
         });
     }
 

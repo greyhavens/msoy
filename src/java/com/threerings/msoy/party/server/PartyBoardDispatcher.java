@@ -51,7 +51,7 @@ public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshal
 
         case PartyBoardMarshaller.GET_PARTY_BOARD:
             ((PartyBoardProvider)provider).getPartyBoard(
-                source, (String)args[0], (InvocationService.ResultListener)args[1]
+                source, ((Byte)args[0]).byteValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 

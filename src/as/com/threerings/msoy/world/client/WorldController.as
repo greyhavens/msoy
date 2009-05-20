@@ -83,6 +83,8 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.skins.CommentButton;
 
+import com.threerings.msoy.party.data.PartyCodes;
+
 import com.threerings.msoy.room.client.PlaylistMusicDialog;
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
@@ -1559,6 +1561,8 @@ public class WorldController extends MsoyController
 
         CommandMenu.addSeparator(menuData);
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
+        menuData.push({ label: Msgs.GENERAL.get("b.parties_awaiting"),
+            callback: _wctx.getPartyDirector().showBoard, arg: PartyCodes.BOARD_AWAITING_PLAYERS });
         // and the world tour, baby!
         menuData.push({ label: Msgs.WORLD.get("b.start_tour"),
             enabled: !_wctx.getTourDirector().isOnTour(),

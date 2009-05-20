@@ -259,7 +259,7 @@ public class PartyRegistry
 
     // from PartyBoardProvider
     public void getPartyBoard (
-        ClientObject caller, String query, final InvocationService.ResultListener rl)
+        ClientObject caller, final byte mode, final InvocationService.ResultListener rl)
         throws InvocationException
     {
         final MemberObject member = (MemberObject)caller;
@@ -272,6 +272,10 @@ public class PartyRegistry
                     if ((info.population >= PartyCodes.MAX_PARTY_SIZE) ||
                             (info.recruitment == PartyCodes.RECRUITMENT_CLOSED)) {
                         continue; // skip: too big, or closed
+                    }
+                    if ((mode == PartyCodes.BOARD_AWAITING_PLAYERS) &&
+                            (info.statusType != PartyCodes.STATUS_TYPE_LOBBY)) {
+                        continue; // skip: we want only boards awaiting players.
                     }
                     PartySummary summary = nodeObj.hostedParties.get(info.id);
                     if ((info.recruitment == PartyCodes.RECRUITMENT_GROUP) &&
