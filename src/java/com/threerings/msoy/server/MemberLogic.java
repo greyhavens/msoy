@@ -42,7 +42,7 @@ import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
-import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;

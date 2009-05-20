@@ -30,7 +30,6 @@ import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebCreds;
-import com.threerings.msoy.web.gwt.WebUserService;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;

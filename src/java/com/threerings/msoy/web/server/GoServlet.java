@@ -33,7 +33,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 
-import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 

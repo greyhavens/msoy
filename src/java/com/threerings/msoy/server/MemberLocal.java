@@ -23,8 +23,6 @@ import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Contains server-side only information for a member.
  */

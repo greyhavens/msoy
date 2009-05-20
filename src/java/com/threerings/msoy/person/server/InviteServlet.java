@@ -29,7 +29,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
@@ -46,10 +46,8 @@ import com.threerings.msoy.mail.gwt.GameInvitePayload;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
-import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.persist.GameInvitationRecord;
-import com.threerings.msoy.person.server.persist.InvitationRecord;
 import com.threerings.msoy.person.server.persist.InviteRepository;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
 

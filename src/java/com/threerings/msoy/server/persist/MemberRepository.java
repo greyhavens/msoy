@@ -57,7 +57,6 @@ import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.FullText;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
-import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Conditionals.LessThan;
 import com.samskivert.depot.operator.Conditionals.LessThanEquals;
@@ -73,7 +72,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -89,7 +87,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.server.persist.MemberRecord.Flag;
-import com.threerings.msoy.spam.server.persist.SpamRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.MemberCard;

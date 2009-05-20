@@ -10,8 +10,6 @@ import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
-import client.shell.CShell;
-
 /**
  * Utility method for displaying the Featured Place client.
  */

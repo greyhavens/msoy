@@ -6,7 +6,6 @@ package com.threerings.msoy.data;
 import java.util.Set;
 
 import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.ScenePlace;
 

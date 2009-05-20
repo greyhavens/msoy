@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.depot.Key;
-import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 

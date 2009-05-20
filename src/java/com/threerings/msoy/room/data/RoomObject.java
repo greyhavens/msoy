@@ -12,7 +12,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartyLeader;
 import com.threerings.msoy.party.data.PartyPlaceObject;
