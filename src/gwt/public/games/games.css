@@ -793,6 +793,11 @@
   font-size: 13px;
 }
 
+.baseEditor .mediaBox .gwt-Image, .baseEditor .codeBox .Code {
+  margin: 0px;
+  padding: 0px 0px 5px 0px;
+}
+
 .baseEditor .Label .tipLabel {
   width: 130px;
 }

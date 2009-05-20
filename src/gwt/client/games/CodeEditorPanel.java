@@ -90,7 +90,24 @@ public class CodeEditorPanel extends BaseEditorPanel
             addSpacer();
         }
 
-        final CodeBox ccbox = new CodeBox(Item.MAIN_MEDIA, code.clientMedia);
+        final MediaBox spbox = new MediaBox(
+            MediaDesc.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
+            public void setMedia (MediaDesc media) {
+                if (media != null) {
+                    // we do some fakery here to keep the splash media sanely scaled
+                    media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
+                }
+                super.setMedia(media);
+            }
+        };
+        addRow(_msgs.egSplash(), _msgs.egSplashTip(), spbox, new Command() {
+            public void execute () {
+                code.splashMedia = checkImageMedia(_msgs.egSplash(), spbox.getMedia());
+            }
+        });
+
+        final CodeBox ccbox = new CodeBox(
+            _msgs.egNoClientCode(), Item.MAIN_MEDIA, code.clientMedia);
         addRow(_msgs.egClientCode(), _msgs.egClientCodeTip(), ccbox, new Command() {
             public void execute () {
                 code.clientMedia = checkClientMedia(ccbox.getMedia());
@@ -108,7 +125,8 @@ public class CodeEditorPanel extends BaseEditorPanel
 
         addSpacer();
 
-        final CodeBox scbox = new CodeBox(GameCode.SERVER_CODE_MEDIA, code.serverMedia);
+        final CodeBox scbox = new CodeBox(
+            _msgs.egNoServerCode(), GameCode.SERVER_CODE_MEDIA, code.serverMedia);
         addRow(_msgs.egServerCode(), _msgs.egServerCodeTip(), scbox, new Command() {
             public void execute () {
                 code.serverMedia = checkServerMedia(scbox.getMedia());
@@ -128,24 +146,6 @@ public class CodeEditorPanel extends BaseEditorPanel
         _watchRow = addRow(_msgs.egServerMPOnly(), mponly, new Command() {
             public void execute () {
                 config.agentMPOnly = mponly.getValue();
-            }
-        });
-
-        addSpacer();
-
-        final MediaBox spbox = new MediaBox(
-            MediaDesc.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
-            public void setMedia (MediaDesc media) {
-                if (media != null) {
-                    // we do some fakery here to keep the splash media sanely scaled
-                    media.constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-                }
-                super.setMedia(media);
-            }
-        };
-        addRow(_msgs.egSplash(), _msgs.egSplashTip(), spbox, new Command() {
-            public void execute () {
-                code.splashMedia = checkImageMedia(_msgs.egSplash(), spbox.getMedia());
             }
         });
 

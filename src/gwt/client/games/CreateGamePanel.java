@@ -52,7 +52,7 @@ public class CreateGamePanel extends BaseEditorPanel
             }
         });
 
-        final CodeBox ccbox = new CodeBox(Item.MAIN_MEDIA, null);
+        final CodeBox ccbox = new CodeBox(_msgs.egNoClientCode(), Item.MAIN_MEDIA, null);
         addRow(_msgs.egClientCode(), _msgs.egClientCodeTip(), ccbox, new Command() {
             public void execute () {
                 _clientMedia = checkClientMedia(ccbox.getMedia());

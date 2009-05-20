@@ -163,8 +163,7 @@ public class BaseEditorPanel extends SmartTable
             super("mediaBox", 0, 0);
             _size = size;
             setMedia(media);
-            setWidget(0, 1, WidgetUtil.makeShim(5, 5));
-            setWidget(0, 2, new MediaUploader(mediaId, this));
+            setWidget(1, 0, new MediaUploader(mediaId, this));
             getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_BOTTOM);
         }
 
@@ -193,15 +192,16 @@ public class BaseEditorPanel extends SmartTable
     protected class CodeBox extends SmartTable
         implements MediaUploader.Listener
     {
-        public CodeBox (String mediaId, MediaDesc media) {
+        public CodeBox (String emptyMessgae, String mediaId, MediaDesc media) {
             super("codeBox", 0, 0);
+            _emptyMessage = emptyMessgae;
             setMedia(media);
             setWidget(1, 0, new MediaUploader(mediaId, this));
         }
 
         public void setMedia (MediaDesc media) {
             _media = media;
-            setText(0, 0, (media == null) ? "" : media.toString());
+            setText(0, 0, (media == null) ? _emptyMessage : media.toString(), 1, "Code");
         }
 
         public MediaDesc getMedia () {
@@ -214,6 +214,7 @@ public class BaseEditorPanel extends SmartTable
             mediaModified();
         }
 
+        protected String _emptyMessage;
         protected MediaDesc _media;
     }
 
