@@ -41,6 +41,15 @@ public class CodeEditorPanel extends BaseEditorPanel
         if (info.isAVRG) {
             config.type = null; // clear out legacy type bits (remove this in a month or so)
 
+            final CheckBox roomless = new CheckBox(_msgs.egRoomlessText());
+            roomless.setValue(config.roomless);
+            _watchRow = addRow(_msgs.egRoomless(), roomless, new Command() {
+                public void execute () {
+                    config.roomless = roomless.getValue();
+                }
+            });
+            addTip(_msgs.egRoomlessTip());
+
         } else {
             final ListBox tbox = new ListBox();
             for (GameType type : GameType.values()) {
@@ -86,9 +95,9 @@ public class CodeEditorPanel extends BaseEditorPanel
                     config.watchable = watchable.getValue();
                 }
             });
-
-            addSpacer();
         }
+
+        addSpacer();
 
         final MediaBox spbox = new MediaBox(
             MediaDesc.GAME_SHOT_SIZE, GameCode.SPLASH_MEDIA, code.splashMedia) {
@@ -226,8 +235,10 @@ public class CodeEditorPanel extends BaseEditorPanel
             config.serverClass = elem.getFirstChild().toString();
         }
 
-        // determine our agent-only-on-multiplayer mode
+        // look up some boolean bits
+        config.noprogress = (xml.getElementsByTagName("noprogress").getLength() > 0);
         config.agentMPOnly = (xml.getElementsByTagName("agentmponly").getLength() > 0);
+        config.roomless = (xml.getElementsByTagName("roomless").getLength() > 0);
 
         return config;
     }
@@ -266,6 +277,9 @@ public class CodeEditorPanel extends BaseEditorPanel
         }
         if (config.agentMPOnly) {
             xml.getFirstChild().appendChild(xml.createElement("agentmponly"));
+        }
+        if (config.roomless) {
+            xml.getFirstChild().appendChild(xml.createElement("roomless"));
         }
 
         // add the custom parameters, if any
@@ -332,6 +346,7 @@ public class CodeEditorPanel extends BaseEditorPanel
         public String serverClass;
         public boolean agentMPOnly;
         public boolean noprogress;
+        public boolean roomless;
         public String params;
     }
 
