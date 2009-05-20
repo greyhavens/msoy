@@ -52,15 +52,6 @@ public interface CatalogServiceAsync
     void loadListing (byte itemType, int catalogId, boolean forDisplay,
                       AsyncCallback<CatalogListing> callback);
 
-    // ABTEST: 2009 03 buypanel
-    /**
-     * The asynchronous version of {@link CatalogService#loadTestedListing}
-     */
-    void loadTestedListing (
-        VisitorInfo info, String test, byte itemType, int catalogId, boolean forDisplay,
-        AsyncCallback<CatalogService.ListingResult> callback);
-    // ENDABTEST
-
     /**
      * The asynchronous version of {@link CatalogService#loadAllDerivedItems}
      */

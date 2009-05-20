@@ -67,19 +67,6 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> listings;
     }
 
-    // ABTEST: 2009 03 buypanel
-    /** Returned by {@link #loadTestedListing}. */
-    public static class ListingResult
-        implements IsSerializable
-    {
-        /** The test group to which the requesting member is assigned. */
-        public int abTestGroup;
-
-        /** The requested catalog listing. */
-        public CatalogListing listing;
-    }
-    // ENDABTEST
-
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/catalogsvc";
 
@@ -120,17 +107,6 @@ public interface CatalogService extends RemoteService
      */
     CatalogListing loadListing (byte itemType, int catalogId, boolean forDisplay)
         throws ServiceException;
-
-    // ABTEST: 2009 03 buypanel
-    /**
-     * Assigns the requester to an A/B test group (if they're not already) and returns that group
-     * and the specified catalog listing. This allows us to A/B test the listing detail page
-     * without making (and waiting for) an extra round trip to the server.
-     */
-    ListingResult loadTestedListing (VisitorInfo info, String test, byte itemType, int catalogId,
-                                     boolean forDisplay)
-        throws ServiceException;
-    // ENDABTEST
 
     /**
      * Loads all derived items for a given item. The user interface shows a short list when the

@@ -24,7 +24,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 
-import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
@@ -169,13 +168,6 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
-
-        // ABTEST: 2009 03 buypanel
-        // make a note that the player clicked a button to buy an item
-        String test = "2009 03 buypanel";
-        int group = _memberLogic.getABTestGroup(test, new VisitorInfo(mrec.visitorId, true), false);
-        _eventLog.testAction(mrec.visitorId, "bought_" + currency, test, group);
-        // END ABTEST
 
         // load up the listings
         final CatalogRecord listing = _itemLogic.requireListing(itemType, catalogId, true);
@@ -505,19 +497,6 @@ public class CatalogServlet extends MsoyServiceServlet
         return clrec;
     }
 
-    // ABTEST: 2009 03 buypanel
-    // from interface CatalogServlet
-    public ListingResult loadTestedListing (VisitorInfo info, String test, byte itemType,
-                                            int catalogId, boolean forDisplay)
-        throws ServiceException
-    {
-        ListingResult result = new ListingResult();
-        result.abTestGroup = _memberLogic.getABTestGroup(test, info, true);
-        result.listing = loadListing(itemType, catalogId, forDisplay);
-        return result;
-    }
-    // ENDABTEST
-
     public CatalogListing.DerivedItem[] loadAllDerivedItems (byte itemType, int catalogId)
         throws ServiceException
     {
@@ -784,7 +763,6 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected MemberLogic _memberLogic; // ABTEST: 2009 03 buypanel
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
