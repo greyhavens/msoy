@@ -66,13 +66,15 @@ public class TopPanel extends Canvas
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
-        if (UberClient.isRegularClient() && !_ctx.getMsoyClient().isChromeless()) {
+        if (UberClient.isRegularClient()) {
             _headerBar = new HeaderBar(_ctx, this, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
             _headerBar.setStyle("left", 0);
             _headerBar.setStyle("right", 0);
-            addChild(_headerBar);
+            if (!_ctx.getMsoyClient().isChromeless()) {
+                addChild(_headerBar);
+            }
         }
 
         _placeBox = new PlaceBox();
@@ -83,7 +85,7 @@ public class TopPanel extends Canvas
         // save the control bar, even if we don't add it (due to being a featured place)
         _controlBar = controlBar;
         _controlBar.init(this);
-        if (!UberClient.isFeaturedPlaceView() && !_ctx.getMsoyClient().isChromeless()) {
+        if (!_ctx.getMsoyClient().isChromeless()) {
             // only create and display an overlay for real clients
             if (UberClient.isRegularClient()) {
                 _comicOverlay = new ComicOverlay(_ctx, _placeBox);
@@ -318,7 +320,7 @@ public class TopPanel extends Canvas
 
     protected function getHeaderBarHeight () :int
     {
-        return _headerBar != null ? HeaderBar.HEIGHT : 0;
+        return (_headerBar != null && _headerBar.parent != null) ? HeaderBar.HEIGHT : 0;
     }
 
     protected function layoutPanels () :void
@@ -329,7 +331,7 @@ public class TopPanel extends Canvas
         app.width = _ctx.getWidth();
         app.height = _ctx.getHeight();
 
-        if (UberClient.isFeaturedPlaceView()) {
+        if (_ctx.getMsoyClient().isChromeless()) {
             // in this case, we only have one panel...
             updatePlaceViewSize();
             return;
@@ -370,7 +372,7 @@ public class TopPanel extends Canvas
             return; // nothing doing if we're not in control
         }
 
-        if (UberClient.isFeaturedPlaceView()) {
+        if (_ctx.getMsoyClient().isChromeless()) {
             _placeBox.clearStyle("top");
             _placeBox.clearStyle("bottom");
             _placeBox.clearStyle("left");
@@ -402,7 +404,7 @@ public class TopPanel extends Canvas
             _comicOverlay.setTargetBounds(new Rectangle(0, 0, ChatOverlay.DEFAULT_WIDTH, h));
         }
 
-        //w -= ScrollBar.THICKNESS;
+        // w -= ScrollBar.THICKNESS;
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
         _placeBox.setStyle("right", right);

@@ -52,10 +52,6 @@ public class HeaderBar extends HBox
 
         percentWidth = 100;
         height = HEIGHT;
-
-        // listen for location name and ownership changes
-        topPanel.addEventListener(TopPanel.LOCATION_NAME_CHANGED, locationNameChanged);
-        topPanel.addEventListener(TopPanel.LOCATION_OWNER_CHANGED, locationOwnerChanged);
     }
 
     public function getChatTabs () :ChatTabBar
@@ -79,6 +75,10 @@ public class HeaderBar extends HBox
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        // listen for loc name/ownership changes (only do this if we're added to the UI hierarchy)
+        _ctx.getTopPanel().addEventListener(TopPanel.LOCATION_NAME_CHANGED, locationNameChanged);
+        _ctx.getTopPanel().addEventListener(TopPanel.LOCATION_OWNER_CHANGED, locationOwnerChanged);
 
         _goBtn = new CommandButton();
         _goBtn.toolTip = Msgs.GENERAL.get("i.go");
