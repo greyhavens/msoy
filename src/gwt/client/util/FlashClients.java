@@ -21,8 +21,25 @@ import client.shell.CShell;
  */
 public class FlashClients
 {
-    /** The height of our Flash client in pixels. */
-    public static final int CLIENT_HEIGHT = 545;
+    /**
+     * Returns the target height of the client (does not account for full-height mode).
+     */
+    public static int getClientHeight ()
+    {
+        int height = CLIENT_HEIGHT;
+        if (_chromeless) {
+            height -= (HEADER_HEIGHT + CTRLBAR_HEIGHT);
+        }
+        return height;
+    }
+
+    /**
+     * Configures whether or not the client is in chromeless mode.
+     */
+    public static void setChromeless (boolean chromeless)
+    {
+        _chromeless = chromeless;
+    }
 
     /**
      * Create a tiny applet for uploading media.
@@ -106,13 +123,17 @@ public class FlashClients
      */
     public static void embedWorldClient (Panel container, String flashVars)
     {
-        if (shouldShowFlash(container, 0, 0)) {
-            Widget embed = WidgetUtil.embedFlashObject(
-                container, WidgetUtil.createFlashObjectDefinition(
-                    "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
-                    "100%", getClientHeight(), flashVars));
-            embed.setHeight("100%");
+        if (!shouldShowFlash(container, 0, 0)) {
+            return;
         }
+        if (_chromeless) {
+            flashVars += "&chromeless=true";
+        }
+        Widget embed = WidgetUtil.embedFlashObject(
+            container, WidgetUtil.createFlashObjectDefinition(
+                "asclient", "/clients/" + DeploymentConfig.version + "/world-client.swf",
+                "100%", getClientCSSHeight(), flashVars));
+        embed.setHeight("100%");
     }
 
     /**
@@ -125,7 +146,7 @@ public class FlashClients
             WidgetUtil.embedFlashObject(
                 container, WidgetUtil.createFlashObjectDefinition(
                     "asclient", "/clients/" + DeploymentConfig.version + "/game-client.swf",
-                    "100%", getClientHeight(), flashVars));
+                    "100%", getClientCSSHeight(), flashVars));
         }
     }
 
@@ -161,20 +182,6 @@ public class FlashClients
     }
 
     /**
-     * Creates a neighborhood view definition, as an object definition string. The resulting
-     * string can be turned into an embedded Flash object using a call to
-     * WidgetUtil.embedFlashObject or equivalent.
-     */
-    public static String createPopularPlacesDefinition (String hotspotData)
-    {
-        String definition = CShell.frame.checkFlashVersion(0,0);
-        return definition != null ? definition : WidgetUtil.createFlashObjectDefinition(
-            "hotspots", "/clients/" + DeploymentConfig.version + "/neighborhood.swf",
-            "100%", String.valueOf(CLIENT_HEIGHT - BLACKBAR_HEIGHT),
-            "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
-    }
-
-    /**
      * Creates a solo game definition, as an object definition string.
      */
     public static String createSoloGameDefinition (String media)
@@ -199,7 +206,7 @@ public class FlashClients
     {
         if (_clientFullHeight != fullHeight) {
             _clientFullHeight = fullHeight;
-            setClientHeightNative(findClient(), getClientHeight());
+            setClientHeightNative(findClient(), getClientCSSHeight());
         }
     }
 
@@ -302,9 +309,9 @@ public class FlashClients
     /**
      * Returns the height to use for the world/game client.
      */
-    protected static String getClientHeight ()
+    protected static String getClientCSSHeight ()
     {
-        return _clientFullHeight ? "100%" : (CLIENT_HEIGHT + "px");
+        return _clientFullHeight ? "100%" : (getClientHeight() + "px");
     }
 
     /**
@@ -390,9 +397,14 @@ public class FlashClients
     }-*/;
 
     /** TEMP: Whether or not the client is in full-height mode. */
-    protected static boolean _clientFullHeight = false;
+    protected static boolean _clientFullHeight;
 
-    protected static final int BLACKBAR_HEIGHT = 20;
+    /** Whether or not the client is in chromeless mode. */
+    protected static boolean _chromeless;
+
+    protected static final int CLIENT_HEIGHT = 545;
+    protected static final int HEADER_HEIGHT = 20;
+    protected static final int CTRLBAR_HEIGHT = 28;
 
     protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
     protected static final int FEATURED_PLACE_WIDTH = 350;

@@ -617,6 +617,9 @@ public class FrameEntryPoint
         // configure our world client with a default host and port in case we're first to the party
         WorldClient.setDefaultServer(config.groupServer, config.groupPort);
 
+        // if we're launching a chromeless game from inside the Facebook App we do some hackery
+        FlashClients.setChromeless(action.equals("pc"));
+
         // sanitize our token
         token = (token == null) ? "" : token;
 
@@ -645,10 +648,9 @@ public class FrameEntryPoint
             // "j" is from a game invite
             } else if (action.equals("j")) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
-                reportClientAction(
-                    null, "2009-02 game invite accepted", "gameId=" + config.gameId);
+                reportClientAction(null, "2009-02 game invite accepted", "gameId=" + config.gameId);
 
-            // everything else ("p" and "i" and legacy codes) means 'play now'
+            // everything else ("p", "pc" and "i" and legacy codes) means 'play now'
             } else if (otherId1 != 0) {
                 args += "&playerId=" + otherId1;
             }

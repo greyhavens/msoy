@@ -180,7 +180,7 @@ public class StandardLayout extends Layout
 
     protected Panel makeClientPanel ()
     {
-        Panel client = (Window.getClientHeight() < (NAVI_HEIGHT + FlashClients.CLIENT_HEIGHT)) ?
+        Panel client = (Window.getClientHeight() < (NAVI_HEIGHT + FlashClients.getClientHeight())) ?
             new ScrollPanel() : new SimplePanel();
         client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         return client;

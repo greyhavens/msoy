@@ -125,8 +125,8 @@ public class WorldClient extends Widget
         _flashPanel = parent;
         _flashArgs = flashArgs;
 
-        // augment the arguments with things that are only relevant to the initial embed,
-        // i.e. not logically part of the location of the client
+        // augment the arguments with things that are only relevant to the initial embed, i.e. not
+        // logically part of the location of the client
         if (flashArgs.indexOf("&host") == -1) {
             flashArgs += "&host=" + _defaultHost;
         }

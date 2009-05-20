@@ -124,7 +124,8 @@ public class FacebookServlet extends HttpServlet
 
             // and send them to the appropriate page
             if (info.gameId != 0) {
-                rsp.sendRedirect("/#" + Pages.WORLD.makeToken("game", "p", info.gameId));
+                String action = info.chromeless ? "pc" : "p";
+                rsp.sendRedirect("/#" + Pages.WORLD.makeToken("game", action, info.gameId));
             } else {
                 rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
             }
@@ -218,6 +219,7 @@ public class FacebookServlet extends HttpServlet
 
         info.apiKey = fbinfo.apiKey;
         info.appSecret = fbinfo.appSecret;
+        info.chromeless = fbinfo.chromeless;
         return info;
     }
 
@@ -231,6 +233,7 @@ public class FacebookServlet extends HttpServlet
         public int gameId;
         public String apiKey;
         public String appSecret;
+        public boolean chromeless;
     }
 
     @Inject protected FacebookLogic _faceLogic;

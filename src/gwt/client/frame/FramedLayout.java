@@ -56,7 +56,7 @@ public class FramedLayout extends Layout
         _bar.setWidget(null);
         _content.setWidget(null);
         if (_client.getWidget() != null) {
-            _client.setHeight(FlashClients.CLIENT_HEIGHT + "px");
+            _client.setHeight(FlashClients.getClientHeight() + "px");
         }
         return true;
     }
