@@ -152,8 +152,9 @@ public class MoneyExchange
         // record everything about the exchange
         _moneyRepo.recordExchange(bars, coins, quote.getExchangeRate(), txId);
 
-        // immediately recalculate
-        recalculateRate();
+/// FixedExchange
+///        // immediately recalculate
+///        recalculateRate();
     }
 
     // from interface ShutdownManager.Shutdowner
@@ -174,10 +175,11 @@ public class MoneyExchange
         // the more bars in the pool: the lower the exchange rate
         calculateRate(pool);
 
-        // If not shutting down, schedule the next recalculation, always a minute from now
-        if (_recalcInterval != null) {
-            _recalcInterval.schedule(RECALCULATE_INTERVAL);
-        }
+/// FixedExchange
+///        // If not shutting down, schedule the next recalculation, always a minute from now
+///        if (_recalcInterval != null) {
+///            _recalcInterval.schedule(RECALCULATE_INTERVAL);
+///        }
     }
 
     /**
@@ -187,21 +189,24 @@ public class MoneyExchange
     @AnyThread
     protected void calculateRate (int pool)
     {
-        int barPoolTarget = _runtime.money.barPoolSize;
-        if (pool <= 0) {
-            _rate = Float.POSITIVE_INFINITY;
-
-        } else if (pool >= (barPoolTarget * 2)) {
-            _rate = 0;
-
-        } else if (pool >= barPoolTarget) {
-            float x = 1 - ((pool - barPoolTarget) / ((float) barPoolTarget));
-            _rate = (_runtime.money.targetExchangeRate / (1 / x));
-
-        } else {
-            float x = pool / ((float) barPoolTarget);
-            _rate = (_runtime.money.targetExchangeRate * (1 / x));
-        }
+        // FixedExchange
+        _rate = _runtime.money.targetExchangeRate;
+/// FixedExchange
+///        int barPoolTarget = _runtime.money.barPoolSize;
+///        if (pool <= 0) {
+///            _rate = Float.POSITIVE_INFINITY;
+///
+///        } else if (pool >= (barPoolTarget * 2)) {
+///            _rate = 0;
+///
+///        } else if (pool >= barPoolTarget) {
+///            float x = 1 - ((pool - barPoolTarget) / ((float) barPoolTarget));
+///            _rate = (_runtime.money.targetExchangeRate / (1 / x));
+///
+///        } else {
+///            float x = pool / ((float) barPoolTarget);
+///            _rate = (_runtime.money.targetExchangeRate * (1 / x));
+///        }
     }
 
     /**
@@ -340,7 +345,8 @@ public class MoneyExchange
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected RuntimeConfig _runtime;
 
-    /** How often we re-check the exchange rate, even if no cross-currency purchases have been
-     * made during this time. */
-    protected static final long RECALCULATE_INTERVAL = 60 * 1000L; // every minute
+/// FixedExchange
+///    /** How often we re-check the exchange rate, even if no cross-currency purchases have been
+///     * made during this time. */
+///    protected static final long RECALCULATE_INTERVAL = 60 * 1000L; // every minute
 }
