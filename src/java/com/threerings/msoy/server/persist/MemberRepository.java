@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,8 +28,6 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
-import com.samskivert.depot.DatabaseException;
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;

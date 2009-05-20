@@ -8,8 +8,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 

@@ -22,7 +22,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
