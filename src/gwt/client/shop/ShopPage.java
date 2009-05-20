@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService;
@@ -106,17 +107,14 @@ public class ShopPage extends Page
     protected RemixerHost createRemixerHost (
         final ItemRemixer remixer, final byte type, final int catalogId)
     {
-        // ABTEST: 2009 03 buypanel: switched to loadTestedListing
         return new RemixerHost() {
             public void buyItem () {
                 // Request the listing, re-reserving a new price for us
-                _catalogsvc.loadTestedListing(
-                    CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId, false,
-                    new InfoCallback<CatalogService.ListingResult>() {
-                    public void onSuccess (CatalogService.ListingResult result) {
+                _catalogsvc.loadListing(type, catalogId, false,
+                    new InfoCallback<CatalogListing>() {
+                    public void onSuccess (CatalogListing listing) {
                         // and display a mini buy dialog.
-                        new BuyRemixDialog(
-                            result.listing, result.abTestGroup, new AsyncCallback<Item>() {
+                        new BuyRemixDialog(listing, new AsyncCallback<Item>() {
                             public void onFailure (Throwable cause) { /* not used */ }
                             public void onSuccess (Item item) {
                                 remixer.itemPurchased(item);

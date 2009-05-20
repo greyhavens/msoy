@@ -56,12 +56,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // TODO: display loading swirly
 
-        // ABTEST: 2009 03 buypanel: switched to loadTestedListing
-        _catalogsvc.loadTestedListing(
-            CShell.frame.getVisitorInfo(), "2009 03 buypanel", type, catalogId, true,
-            new InfoCallback<CatalogService.ListingResult>() {
-            public void onSuccess (CatalogService.ListingResult result) {
-                gotListing(result.listing, result.abTestGroup);
+        _catalogsvc.loadListing(type, catalogId, true, new InfoCallback<CatalogListing>() {
+            public void onSuccess (CatalogListing result) {
+                gotListing(result);
             }
         });
     }
@@ -81,8 +78,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         super.onUnload();
     }
 
-    // ABTEST: 2009 03 buypanel: added abTestGroup
-    protected void gotListing (CatalogListing listing, int abTestGroup)
+    protected void gotListing (CatalogListing listing)
     {
         _listing = listing;
         init(listing.detail);
@@ -163,8 +159,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // this will contain all of the buy-related interface and will be replaced with the
         // "bought" interface when the buying is done
-        // ABTEST: 2009 03 buypanel: added abTestGroup
-        _details.add(new ItemBuyPanel(_listing, abTestGroup, null));
+        _details.add(new ItemBuyPanel(_listing, null));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);

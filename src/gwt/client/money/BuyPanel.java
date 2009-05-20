@@ -6,6 +6,7 @@ package client.money;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -53,58 +54,43 @@ public abstract class BuyPanel<T> extends SmartTable
         return box;
     }
 
-    // ABTEST: 2009 03 buypanel
-    public void init (PriceQuote quote, AsyncCallback<T> callback)
-    {
-        init(quote, -1, callback);
-    }
-    // END ABTEST
-
     /**
      * Initialize the buy panel. (Separted from constructor to reduce subclassing pain.)
      *
      * @param quote the price quote
      * @param callback optional, notified only on success.
      */
-    public void init (PriceQuote quote, int abTestGroup, AsyncCallback<T> callback)
+    public void init (PriceQuote quote, AsyncCallback<T> callback)
     {
-        // ABTEST: 2009 03 buypanel
-        _abTestGroup = abTestGroup;
-        // END ABTEST
         _callback = callback;
         setStyleName("Buy");
+
+        /** A handler to switch the displayed currency. */
+        ClickHandler switchCurrency = new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                _altCurrency = !_altCurrency;
+                updatePrice(_quote); // rejigger the UI
+            }
+        };
 
         // Buy with bars, plus a link on how to acquire some
         _barPanel = new FlowPanel();
         _barPanel.add(_buyBars = new BuyButton(Currency.BARS));
         _barPanel.add(_barLabel = MsoyUI.createLabel("", "BarTip"));
+        _barPanel.add(
+            _getBars = MsoyUI.createActionLabel(_msgs.getBars(), BillingUtil.onBuyBars()));
+        _barPanel.add(
+            _switchToCoins = MsoyUI.createActionLabel(_msgs.buyWithCoins(), switchCurrency));
         getFlexCellFormatter().setColSpan(0, 0, 2);
         setWidget(0, 0, _barPanel);
 
-        ClickHandler onBuy = BillingUtil.onBuyBars();
-        // ABTEST: 2009 03 buypanel
-        if (_abTestGroup > 0) {
-            onBuy = MsoyUI.makeTestTrackingHandler("2009 03 buypanel", "buy_bars", onBuy);
-        }
-        // END ABTEST
-        _getBars = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.getBars(), onBuy);
-        _getBars.addStyleName("buyPanelButton");
-        setWidget(1, 0, _getBars);
-
-        _buyCoins = new BuyButton(Currency.COINS);
-        setWidget(1, 1, _buyCoins);
-
-        // ABTEST: 2009 03 buypanel
-        if (_abTestGroup > 1) { // 1 is the control group
-            _addenda = new FlowPanel();
-            setWidget(2, 0, _addenda);
-            getFlexCellFormatter().setColSpan(2, 0, 2);
-        }
-
-        // displays exchange rate
-        _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
-        _wikiLink.setStyleName("exchangeRateLink");
-        // END ABTEST
+        // Buy with coins, plus a link to switch to buying with bars
+        _coinPanel = new FlowPanel();
+        _coinPanel.add(_buyCoins = new BuyButton(Currency.COINS));
+        _coinPanel.add(
+            _switchToBars = MsoyUI.createActionLabel(_msgs.buyWithBars(), switchCurrency));
+        getFlexCellFormatter().setColSpan(1, 0, 2);
+        setWidget(1, 0, _coinPanel);
 
         updatePrice(quote);
     }
@@ -166,35 +152,32 @@ public abstract class BuyPanel<T> extends SmartTable
     {
         _quote = quote;
 
-        _barPanel.setVisible(quote.getCoins() > 0);
+        boolean barOnly = (quote.getCoins() < 0); //(quote.getListedCurrency() == Currency.BARS)
+        _getBars.setVisible(barOnly);
+        _switchToCoins.setVisible(!barOnly);
+
         _buyBars.setAmount(quote.getBars());
         _buyCoins.setAmount(quote.getCoins());
 
-        int cents = quote.getCentsPerBar() * quote.getBars();
-        _barLabel.setText((cents < 100) ? _msgs.centsCost(""+cents) :
-                          _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents/100f)));
+        if (barOnly) {
+            // this is a BAR-ONLY item
+            _coinPanel.setVisible(false);
+            _barPanel.setVisible(true);
 
-        // ABTEST: 2009 03 buypanel
-        if (quote.getCoinChange() > 0) {
-            String changeMsg = _msgs.coinChange(Currency.COINS.format(quote.getCoinChange()));
-            switch (_abTestGroup) {
-            case 3: // group 3 sees just change when there's change
-                _barLabel.setText(changeMsg);
-                break;
-            case 4: // group 4 sees cents price plus change when there's change
-                _barLabel.setText(_barLabel.getText() + " " + changeMsg);
-                break;
-            default: // other groups don't see change
-                break;
-            }
-        }
+            int cents = quote.getCentsPerBar() * quote.getBars();
+            _barLabel.setText((cents < 100)
+                ? _msgs.centsCost(""+cents)
+                : _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents/100f)));
 
-        if (_abTestGroup == 2) { // group two sees exchange rate link
-            int rate = (int)Math.floor(quote.getExchangeRate());
-            _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(rate)));
-            _addenda.add(_wikiLink);
+        } else {
+            // the item is priced in coins, so either one will work
+            _coinPanel.setVisible(!_altCurrency);
+            _barPanel.setVisible(_altCurrency);
+
+            _barLabel.setText((quote.getCoinChange() == 0)
+                ? ""
+                : _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())));
         }
-        // END ABTEST
     }
 
     protected class BuyCallback extends ClickCallback<PurchaseResult<T>>
@@ -268,6 +251,9 @@ public abstract class BuyPanel<T> extends SmartTable
 
         public void setAmount (int amount)
         {
+            // hide us if the amount is invalid
+            setVisible(amount >= 0);
+
             HorizontalPanel horiz = new HorizontalPanel();
             horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 
@@ -283,22 +269,17 @@ public abstract class BuyPanel<T> extends SmartTable
         protected Currency _currency;
     }; // end: class BuyButton
 
-    // ABTEST: 2009 03 buypanel
-    protected int _abTestGroup;
-    // END ABTEST
-
     protected AsyncCallback<T> _callback;
     protected PriceQuote _quote;
 
+    protected FlowPanel _barPanel, _coinPanel;
     protected BuyButton _buyBars, _buyCoins;
-    protected PushButton _getBars;
-    protected FlowPanel _barPanel;
+    protected Label _getBars;
     protected Label _barLabel;
+    protected Label _switchToCoins, _switchToBars;
 
-    // ABTEST: 2009 03 buypanel
-    protected FlowPanel _addenda;
-    protected Anchor _wikiLink;
-    // END ABTEST
+    /** Are we showing the "alternate currency" view? (showing a bar price for a coin item) */
+    protected boolean _altCurrency;
 
     protected int _timesBought;
 
