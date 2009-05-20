@@ -66,7 +66,7 @@ public class TopPanel extends Canvas
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
-        if (UberClient.isRegularClient()) {
+        if (UberClient.isRegularClient() && !_ctx.getMsoyClient().isChromeless()) {
             _headerBar = new HeaderBar(_ctx, this, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
@@ -83,7 +83,7 @@ public class TopPanel extends Canvas
         // save the control bar, even if we don't add it (due to being a featured place)
         _controlBar = controlBar;
         _controlBar.init(this);
-        if (!UberClient.isFeaturedPlaceView()) {
+        if (!UberClient.isFeaturedPlaceView() && !_ctx.getMsoyClient().isChromeless()) {
             // only create and display an overlay for real clients
             if (UberClient.isRegularClient()) {
                 _comicOverlay = new ComicOverlay(_ctx, _placeBox);

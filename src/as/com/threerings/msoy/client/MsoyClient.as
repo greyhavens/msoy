@@ -195,6 +195,14 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Returns true if we are running in chromeless mode (no header and control bar), false if not.
+     */
+    public function isChromeless () :Boolean
+    {
+        return MsoyParameters.get()["chromeless"] == "true";
+    }
+
+    /**
      * Notifies our JavaScript shell that the flash client should be cleared out.
      */
     public function closeClient () :void
