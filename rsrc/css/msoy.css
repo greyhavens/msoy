@@ -831,7 +831,6 @@ BasePanel {
 }
 
 .roomEditCustom {
-  /*image: Embed(source="../../pages/images/item/config.png"); */
   image: "images/item/config.png";
 }
 
