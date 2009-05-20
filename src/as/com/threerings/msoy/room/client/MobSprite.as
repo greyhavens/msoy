@@ -86,7 +86,7 @@ public class MobSprite extends OccupantSprite
         if (getMobIdent() != null && _hostBackend != null) {
             var locArray :Array = [ _loc.x, _loc.y, _loc.z ];
             _hostBackend.mobAppearanceChanged(
-                getMobIdent(), locArray, _loc.orient, isMoving(), isIdle());
+                getMobIdent(), locArray, _loc.orient, isMoving(), false);
         }
     }
 

@@ -21,8 +21,8 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.chat.client.ComicOverlay;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -199,14 +199,6 @@ public class OccupantSprite extends MsoySprite
     public function isMoving () :Boolean
     {
         return (_walk != null);
-    }
-
-    /**
-     * @return true if we're idle.
-     */
-    public function isIdle () :Boolean
-    {
-        return (_occInfo.status == OccupantInfo.IDLE);
     }
 
     /**

@@ -26,7 +26,6 @@ import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
@@ -461,8 +460,7 @@ public class AVRGameBackend extends ControlBackend
             data["orient"] = sprite.getLocation().orient;
             data["moveSpeed"] = sprite.getMoveSpeed(1); // TODO: this may be inaccurate. remove?
             data["isMoving"] = sprite.isMoving();
-            data["isIdle"] = (actorInfo.status == OccupantInfo.IDLE ||
-                              actorInfo.status == MsoyBodyObject.AWAY);
+            data["isIdle"] = sprite.isIdle();
             data["bounds"] = sprite.getBounds(sprite.stage);
             data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
             return data;

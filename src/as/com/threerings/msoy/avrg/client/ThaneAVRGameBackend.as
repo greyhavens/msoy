@@ -23,7 +23,6 @@ import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
@@ -486,8 +485,7 @@ public class ThaneAVRGameBackend
         data["orient"] = loc.orient;
         data["moveSpeed"] = 1.0; // TODO moveSpeed
         data["isMoving"] = false; // TODO isMoving
-        data["isIdle"] = (actorInfo.status == OccupantInfo.IDLE ||
-                          actorInfo.status == MsoyBodyObject.AWAY);
+        data["isIdle"] = actorInfo.isIdle();
         data["bounds"] = null; // TODO: bounds
         data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
         return data;

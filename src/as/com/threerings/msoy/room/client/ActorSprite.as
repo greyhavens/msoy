@@ -58,6 +58,14 @@ public class ActorSprite extends OccupantSprite
         return (_occInfo as ActorInfo);
     }
 
+    /**
+     * @return true if we're idle.
+     */
+    public function isIdle () :Boolean
+    {
+        return (_occInfo as ActorInfo).isIdle();
+    }
+
     // from OccupantSprite
     override public function getDesc () :String
     {

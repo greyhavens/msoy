@@ -9,6 +9,7 @@ import com.threerings.util.StringBuilder;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -56,6 +57,14 @@ public class ActorInfo extends OccupantInfo
     public function isStatic () :Boolean
     {
         return (_flags & STATIC) != 0;
+    }
+
+    /**
+     * Returns true if this actor is idle (IDLE or AWAY).
+     */
+    public function isIdle () :Boolean
+    {
+        return (status == OccupantInfo.IDLE || status == MsoyBodyObject.AWAY);
     }
 
     override public function clone () :Object
