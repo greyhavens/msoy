@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
@@ -40,6 +41,21 @@ public class CatalogListing
     public static final int escalatePrice (int value)
     {
         return Math.round(value + value * ESCALATION_FACTOR);
+    }
+
+    /**
+     * Gets the minimum cost of a derived item given the currency and cost of the basis.
+     */
+    public static int getMinimumDerivedCost (Currency currency, int basisCost)
+    {
+        switch (currency) {
+        case COINS:
+            return basisCost + 10;
+        case BARS:
+            return basisCost + 1;
+        default:
+            throw new IllegalArgumentException("Invalid listing currency " + currency);
+        }
     }
 
     /**

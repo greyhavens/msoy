@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server;
 import java.sql.Timestamp;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -712,6 +713,49 @@ public class ItemLogic
             items.add(derived);
         }
         return items.toArray(new CatalogListing.DerivedItem[items.size()]);
+    }
+
+    /**
+     * Checks if a listing of the given derived item can be based on the existing listing with the
+     * given id.
+     */
+    public boolean isSuitableBasis (ItemRecord derived, int basisId, Currency currency, int cost)
+        throws ServiceException
+    {
+        final ItemRepository<ItemRecord> repo = getRepository(derived.getType());
+        List<CatalogRecord> basisRecs = repo.loadCatalog(Collections.singleton(basisId));
+        if (basisRecs.size() == 0) {
+            return false;
+        }
+        CatalogRecord basisRec = basisRecs.get(0);
+        return isSuitableBasis(derived.getType(), derived.creatorId, basisRec, currency, cost);
+    }
+
+    /**
+     * Checks if a listing of the given type by the given creator id can be based on the given
+     * existing listing.
+     */
+    public boolean isSuitableBasis (byte type, int creatorId, CatalogRecord basisRec,
+                                    Currency currency, int cost)
+    {
+        if (type != basisRec.item.getType() || !Item.supportsDerivation(type)) {
+            return false;
+        }
+
+        if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
+            basisRec.item.creatorId == creatorId ||
+            basisRec.pricing != CatalogListing.PRICING_MANUAL) {
+            return false;
+        }
+
+        if (currency != null) {
+            int minCost = CatalogListing.getMinimumDerivedCost(currency, basisRec.cost);
+            if (basisRec.currency != currency || cost < minCost) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

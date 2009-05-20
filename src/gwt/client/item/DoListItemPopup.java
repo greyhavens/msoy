@@ -27,7 +27,6 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.item.gwt.CatalogService.FavoritesResult;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -124,13 +123,20 @@ public class DoListItemPopup extends VerticalPanel
             int row = basis.addText(_imsgs.doListBasis(), 1, "rightLabel");
             basis.setWidget(row, 1, _basisBox = new ListBox(), 1, null);
             _basisBox.addItem(_imsgs.doListNoBasis());
+            _basisBox.addChangeHandler(new ChangeHandler() {
+                public void onChange (ChangeEvent event) {
+                    ListingCard basis = getBasis();
+                    _currencyBox.setEnabled(basis == null);
+                    if (basis != null) {
+                        setCurrency(basis.currency);
+                    }
+                }
+            });
 
-            // TODO: we don't get the pricing model back with these listing cards. create a new
-            // method that will filter the cards for us on the server
-            _catalogsvc.loadFavorites(CShell.getMemberId(), _item.getType(),
-                new InfoCallback<CatalogService.FavoritesResult>() {
-                    @Override public void onSuccess (FavoritesResult result) {
-                        gotBasisItems(result.favorites);
+            _catalogsvc.loadPotentialBasisItems(_item.getType(),
+                new InfoCallback<List<ListingCard>>() {
+                    @Override public void onSuccess (List<ListingCard> result) {
+                        gotBasisItems(result);
                     }
             });
 
@@ -183,10 +189,9 @@ public class DoListItemPopup extends VerticalPanel
             _currencyBox = new ListBox();
             for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
                 _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getLabel()));
-                if (listing != null &&
-                    LISTABLE_CURRENCIES[i] == listing.quote.getListedCurrency()) {
-                    _currencyBox.setSelectedIndex(i);
-                }
+            }
+            if (listing != null) {
+                setCurrency(listing.quote.getListedCurrency());
             }
             row = pricing.addWidget(new Label(_imsgs.doListCurrency()), 1, "rightLabel");
             pricing.setWidget(row, 1, _currencyBox);
@@ -230,13 +235,13 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListNeedRating());
                         return false;
                     }
-                    if (!validatePricing()) {
+                    ListingCard basis = getBasis();
+                    if (!validatePricing(basis)) {
                         return false;
                     }
-                    int basisSel = _basisBox == null ? 0 : _basisBox.getSelectedIndex();
-                    int basisId = basisSel == 0 ? 0 : _basisItems.get(basisSel - 1).catalogId;
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
-                                         getCurrency(), getCost(), basisId, this);
+                                         getCurrency(), getCost(),
+                                         basis == null ? 0 : basis.catalogId, this);
                     return true;
                 }
                 @Override protected boolean gotResult (Integer result) {
@@ -257,7 +262,7 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
-                    if (!validatePricing()) {
+                    if (!validatePricing(null)) {
                         return false;
                     }
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
@@ -287,12 +292,21 @@ public class DoListItemPopup extends VerticalPanel
         }
     }
 
-    protected boolean validatePricing ()
+    protected boolean validatePricing (ListingCard basis)
     {
         if (getCost() < getMinimumPrice(getCurrency())) {
             MsoyUI.error(_imsgs.doListMissedMinimum(""+getMinimumPrice(Currency.COINS)));
             return false;
         }
+        if (basis != null) {
+            int minCost = CatalogListing.getMinimumDerivedCost(basis.currency, basis.cost);
+            if (getCost() < minCost) {
+                MsoyUI.error(_imsgs.doListMissedBasisMinimum(String.valueOf(basis.cost),
+                    _dmsgs.xlate(basis.currency.getKey()), String.valueOf(minCost)));
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -329,9 +343,28 @@ public class DoListItemPopup extends VerticalPanel
         return ItemPrices.getMinimumPrice(currency, _item.getType(), (byte)_stars.getRating());
     }
 
+    protected ListingCard getBasis()
+    {
+        int basisSel = _basisBox == null ? 0 : _basisBox.getSelectedIndex();
+        return basisSel == 0 ? null : _basisItems.get(basisSel - 1);
+    }
+
+    protected void setCurrency (Currency currency)
+    {
+        if (_currencyBox == null) {
+            return;
+        }
+
+        for (int ii = 0; ii < LISTABLE_CURRENCIES.length; ++ii) {
+            if (LISTABLE_CURRENCIES[ii] == currency) {
+                _currencyBox.setSelectedIndex(ii);
+                break;
+            }
+        }
+    }
+
     protected void gotBasisItems (List<ListingCard> items)
     {
-        // TODO: filter out ineligible items
         for (ListingCard item : items) {
             _basisBox.addItem(item.name);
             _basisItems.add(item);

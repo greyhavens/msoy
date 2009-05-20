@@ -171,6 +171,14 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
+     * Using the authenticated member's favorites, returns the subset that are suitable for use as
+     * a basis for the given item type. It's not possible for this method to filter based on the
+     * cost of the items, the caller should use {@link CatalogListing#getMinimumDerivedCost()}.
+     */
+    List<ListingCard> loadPotentialBasisItems (byte itemType)
+        throws ServiceException;
+
+    /**
      * Loads the specified suite.
      */
     SuiteResult loadSuite (byte itemType, int suiteId)

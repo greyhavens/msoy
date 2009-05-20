@@ -5,10 +5,10 @@ package com.threerings.msoy.item.server;
 
 import static com.threerings.msoy.Log.log;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -66,6 +66,7 @@ import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.FavoriteItemRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -343,16 +344,7 @@ public class CatalogServlet extends MsoyServiceServlet
             if (!DeploymentConfig.devDeployment) {
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
-            // the client should not let any of this happen, so just throw a generic error
-            if (!Item.supportsDerivation(item.type)) {
-                throw new ServiceException(ItemCodes.E_BASIS_ERROR);
-            }
-            List<CatalogRecord> basisRecs = repo.loadCatalog(Collections.singleton(basisCatalogId));
-            CatalogRecord basisRec = basisRecs.size() > 0 ? basisRecs.get(0) : null;
-            if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
-                basisRec.item.creatorId == originalItem.creatorId ||
-                basisRec.pricing != CatalogListing.PRICING_MANUAL ||
-                basisRec.currency != currency || cost < basisRec.cost + 1) {
+            if (!_itemLogic.isSuitableBasis(originalItem, basisCatalogId, currency, cost)) {
                 throw new ServiceException(ItemCodes.E_BASIS_ERROR);
             }
         }
@@ -653,6 +645,27 @@ public class CatalogServlet extends MsoyServiceServlet
         }
         result.favorites = _itemLogic.resolveFavorites(_faveRepo.loadFavorites(memberId, itemType));
         return result;
+    }
+
+    // from interface CatalogService
+    public List<ListingCard> loadPotentialBasisItems (byte itemType)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        List<ListingCard> cards = Lists.newArrayList();
+        for (CatalogRecord crec : _itemLogic.getRepository(itemType).loadCatalog(
+            Lists.transform(_faveRepo.loadFavorites(mrec.memberId, itemType),
+                new Function<FavoriteItemRecord, Integer>() {
+                    public Integer apply (FavoriteItemRecord frec) {
+                        return frec.catalogId;
+                    }
+                }))) {
+
+            if (_itemLogic.isSuitableBasis(itemType, mrec.memberId, crec, null, 0)) {
+                cards.add(crec.toListingCard());
+            }
+        }
+        return cards;
     }
 
     // from interface CatalogService
