@@ -589,7 +589,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // get rid of derived listings
         // TODO: attribution phase II - update derived prices if there is a price change
-        _itemLogic.removeDerivedListings(mrec, record);
+        _itemLogic.removeDerivedListings(mrec, record, false);
 
         // now we can update the record
         repo.updatePricing(catalogId, pricing, salesTarget, currency, cost,

@@ -63,6 +63,9 @@ public interface AdminService extends RemoteService
 
         /** Number of items that cause an error during reclaim. */
         public int reclaimErrors;
+
+        /** Number of listings associated with the item that were removed. */
+        public int listings;
     }
 
     /**

@@ -17,6 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -25,11 +26,14 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.presents.dobj.RootDObjectManager;
+
+import com.threerings.underwire.web.data.Event;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -37,6 +41,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -50,6 +55,7 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.item.data.ItemCodes;
@@ -303,8 +309,9 @@ public class ItemLogic
 
     /**
      * Removes the specified catalog listing.
+     * @return the number of listings removed. This can be more than 1 if the listing is a basis
      */
-    public void removeListing (MemberRecord remover, byte itemType, int catalogId)
+    public int removeListing (MemberRecord remover, byte itemType, int catalogId)
         throws ServiceException
     {
         // load up the listing to be removed
@@ -319,21 +326,107 @@ public class ItemLogic
 
         // get rid of derived listings
         // TODO: attribution phase II - update derived prices if there is a price change
-        removeDerivedListings(remover, listing);
+        int removed = removeDerivedListings(remover, listing, true);
 
         // remove the listing record and possibly the catalog master item
         if (getRepository(itemType).removeListing(listing)) {
             itemDeleted(listing.item);
         }
+
+        return ++removed;
     }
 
     /**
      * Removes all listings that are derived from this listing. Also adds a support note if the
      * remover is the item creator.
+     * @param delisted true if this is due to the basis being delisted; only used for notification
+     * @return the number of listings removed
      */
-    public void removeDerivedListings (MemberRecord remover, CatalogRecord record)
+    public int removeDerivedListings (MemberRecord remover, CatalogRecord record, boolean delisted)
+        throws ServiceException
     {
-        // TODO:
+        if (record.derivationCount == 0) {
+            return 0;
+        }
+
+        // TODO: attribution phase II - recursively delist derivatives 
+
+        // record a note unless the remover is support
+        StringBuilder note = remover.isSupport() ? null :
+            new StringBuilder("Delisted: " + delisted + "\n");
+        appendToNote(note, "Basis listing", record);
+        appendToNote(note, "Basis Item", record.item);
+
+        Multimap<Integer, ItemRecord> items = HashMultimap.create();
+        ItemRepository<?> repo = getRepository(record.item.getType());
+        int removed = 0;
+        try {
+            for (CatalogRecord derived : repo.loadCatalog(
+                repo.loadDerivativeIds(record.catalogId, 0))) {
+                appendToNote(note, "Derived Listing", derived);
+                appendToNote(note, "Derived Item", derived.item);
+
+                // remove the listing record and possibly the catalog master item
+                if (repo.removeListing(derived)) {
+                    itemDeleted(derived.item);
+                }
+
+                // stash the derived item for later notification
+                items.put(derived.item.creatorId, derived.item);
+
+                ++removed;
+            }
+
+        } finally {
+            // add a support note on the remover - it's not necessarily wrong, just good to know
+            if (note != null) {
+                String truncMsg = "\n\nTruncated %d characters";
+                int maxLen = Event.CHAT_HISTORY_LENGTH - String.format(truncMsg, 9999999).length();
+                if (note.length() > maxLen) {
+                    truncMsg = String.format(truncMsg, note.length() - maxLen);
+                    note.setLength(maxLen);
+                    note.append(truncMsg);
+                }
+                _supportLogic.addNote(remover.getName(), remover.memberId,
+                    "Delisted " + record.derivationCount + " derived items",
+                    note.toString(), record.item.toItem().getPrimaryMedia().getMediaPath());
+            }
+
+            // notify the derived item owners that their stuff was delisted, just send them the
+            // item names for now
+            // TODO: i18n
+            // TODO: when we are in margaritaville, use a payload with real links
+            for (Map.Entry<Integer, Collection<ItemRecord>> entry : items.asMap().entrySet()) {
+                // don't bother notifying yourself - it can only happen if the remover is support
+                // but I don't want to confuse the mail system
+                if (entry.getKey() == remover.memberId) {
+                    continue;
+                }
+
+                // build the message body
+                // TODO: i18n
+                StringBuilder body = new StringBuilder();
+                body.append("This is an automated message.\n\n");
+                body.append("The following listings were removed due to the ");
+                body.append(delisted ? "delisting" : "repricing");
+                body.append(" of \"").append(record.item.name).append("\":\n\n");
+                for (ItemRecord rec : entry.getValue()) {
+                    body.append(rec.name).append("\n");
+                }
+                try {
+                    MemberRecord recip = _memberRepo.loadMember(entry.getKey());
+                    _mailLogic.startBulkConversation(
+                        remover, recip, "Delisted Items", body.toString(), null);
+
+                } catch (RuntimeException re) {
+                    log.warning("Failed to send mail message for delisted derived items",
+                        "basisId", record.catalogId, "count", entry.getValue().size(),
+                        "recipient", entry.getKey());
+                }
+            }
+        }
+
+        return removed;
     }
 
     /**
@@ -912,6 +1005,17 @@ public class ItemLogic
         return repo;
     }
 
+    protected static void appendToNote (StringBuilder note, String objectName, Object object)
+    {
+        if (note == null) {
+            return;
+        }
+        String sep = "\n  ";
+        note.append(objectName).append(":").append(sep);
+        StringUtil.fieldsToString(note, object, sep);
+        note.append("\n");
+    }
+
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
@@ -921,12 +1025,14 @@ public class ItemLogic
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemListRepository _listRepo;
+    @Inject protected MailLogic _mailLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected SupportLogic _supportLogic;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;

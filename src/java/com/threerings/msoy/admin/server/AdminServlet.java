@@ -380,7 +380,7 @@ public class AdminServlet extends MsoyServiceServlet
                         "listedItemId", catrec.listedItemId);
 
                 } else {
-                    _itemLogic.removeListing(memrec, type, item.catalogId);
+                    result.listings = _itemLogic.removeListing(memrec, type, item.catalogId);
                     if (catrec.originalItemId != item.itemId) {
                         original = repo.loadOriginalItem(catrec.originalItemId);
                         if (original == null) {
