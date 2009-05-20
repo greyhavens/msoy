@@ -331,12 +331,6 @@ public class TopPanel extends Canvas
         app.width = _ctx.getWidth();
         app.height = _ctx.getHeight();
 
-        if (_ctx.getMsoyClient().isChromeless()) {
-            // in this case, we only have one panel...
-            updatePlaceViewSize();
-            return;
-        }
-
         _controlBar.setStyle("left", 0);
         if (_headerBar != null) {
             _headerBar.setStyle("left", 0);
@@ -372,33 +366,29 @@ public class TopPanel extends Canvas
             return; // nothing doing if we're not in control
         }
 
-        if (_ctx.getMsoyClient().isChromeless()) {
-            _placeBox.clearStyle("top");
-            _placeBox.clearStyle("bottom");
-            _placeBox.clearStyle("left");
-            _placeBox.clearStyle("right");
-            _placeBox.setActualSize(_ctx.getWidth(), _ctx.getHeight());
-            return;
-        }
-
         var top :int = getHeaderBarHeight() + getTopPanelHeight();
         var left :int = 0;
         var right :int = 0;
         var bottom :int = 0;
         var w :int = _ctx.getWidth() - getLeftPanelWidth();
         var h :int = _ctx.getHeight() - top;
-        if (padVertical(_placeBox.getPlaceView())) {
-            top += DECORATIVE_MARGIN_HEIGHT;
-            h -= DECORATIVE_MARGIN_HEIGHT;
+
+        if (top > 0) {
+            if (padVertical(_placeBox.getPlaceView())) {
+                top += DECORATIVE_MARGIN_HEIGHT;
+                h -= DECORATIVE_MARGIN_HEIGHT;
+            }
         }
 
-        // for place views, we want to insert decorative margins above and below the view
-        if (padVertical(_placeBox.getPlaceView())) {
-            bottom += DECORATIVE_MARGIN_HEIGHT;
-            h -= DECORATIVE_MARGIN_HEIGHT;
+        if (_controlBar.parent != null) {
+            // for place views, we want to insert decorative margins above and below the view
+            if (padVertical(_placeBox.getPlaceView())) {
+                bottom += DECORATIVE_MARGIN_HEIGHT;
+                h -= DECORATIVE_MARGIN_HEIGHT;
+            }
+            bottom += ControlBar.HEIGHT;
+            h -= ControlBar.HEIGHT;
         }
-        bottom += ControlBar.HEIGHT;
-        h -= ControlBar.HEIGHT;
 
         if (_comicOverlay != null) {
             _comicOverlay.setTargetBounds(new Rectangle(0, 0, ChatOverlay.DEFAULT_WIDTH, h));
