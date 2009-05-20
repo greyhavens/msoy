@@ -879,8 +879,10 @@ public abstract class ItemRepository<T extends ItemRecord>
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
         if (obExprs.size() > 0) {
-            clauses.add(new OrderBy(obExprs.toArray(new SQLExpression[obExprs.size()]),
-                                    obOrders.toArray(new OrderBy.Order[obOrders.size()])));
+            clauses.add(new OrderBy(
+                obExprs.toArray(new SQLExpression[obExprs.size()]),
+                obOrders.toArray(new OrderBy.Order[obOrders.size()])).
+                    thenAscending(getCatalogColumn(CatalogRecord.CATALOG_ID)));
         }
 
         // see if there's any where bits to turn into an actual where clause
