@@ -107,7 +107,7 @@ public class FriendsListPanel extends FlyingPanel
     override protected function didOpen () :void
     {
         // auto-position ourselves
-        var placeBounds :Rectangle = _wctx.getPlaceViewBounds();
+        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.right - width - PADDING;
         y = placeBounds.y + PADDING;

@@ -212,7 +212,7 @@ public class HomePageDialog extends FlyingPanel
     override protected function didOpen () :void
     {
         // Vertical center in place view, and against right edge with padding
-        var placeBounds :Rectangle = _wctx.getPlaceViewBounds();
+        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
         y = placeBounds.y + (placeBounds.height - height) / 2;
         x = placeBounds.right - width - PADDING;
 

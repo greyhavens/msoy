@@ -47,7 +47,7 @@ public class FlyingPanel extends FloatingPanel
 
     protected function checkPositioning (... ignored) :void
     {
-        var placeBounds :Rectangle = _ctx.getPlaceViewBounds();
+        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds();
         // fit the popup within the new bounds, minus padding.
         placeBounds.inflate(-PADDING, -PADDING);
 

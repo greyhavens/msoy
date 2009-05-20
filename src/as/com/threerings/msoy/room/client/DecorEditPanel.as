@@ -54,7 +54,7 @@ public class DecorEditPanel extends FlyingPanel
     override protected function didOpen () :void
     {
         // position ourselves
-        var r :Rectangle = _ctx.getPlaceViewBounds();
+        var r :Rectangle = _ctx.getTopPanel().getPlaceViewBounds();
         this.x = r.right - width - PADDING;
         this.y = r.y + PADDING;
 

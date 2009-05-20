@@ -500,7 +500,7 @@ public class RoomEditorPanel extends FlyingPanel
     // @Override from FloatingPanel
     override protected function didOpen () :void
     {
-        var r :Rectangle = _ctx.getPlaceViewBounds();
+        var r :Rectangle = _ctx.getTopPanel().getPlaceViewBounds();
         this.x = r.right - width - PADDING;
         this.y = r.y + PADDING;
 
