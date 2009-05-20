@@ -448,19 +448,21 @@ public class AVRGameBackend extends ControlBackend
     {
         validateRoomTargetId(targetId);
         var sprite :MemberSprite = getAvatarSprite(playerId);
+        var actorInfo :ActorInfo = sprite.getActorInfo();
         if (sprite != null) {
             var data :Object = new Object();
-            data["entityId"] = sprite.getActorInfo().getItemIdent().toString();
-            data["state"] = sprite.getState();
+            data["entityId"] = actorInfo.getItemIdent().toString();
+            data["state"] = actorInfo.getState();
             data["x"] = sprite.getLocation().x;
             data["y"] = sprite.getLocation().y;
             data["z"] = sprite.getLocation().z;
             data["orient"] = sprite.getLocation().orient;
             data["moveSpeed"] = sprite.getMoveSpeed(1); // TODO: this may be inaccurate. remove?
             data["isMoving"] = sprite.isMoving();
-            data["isIdle"] = sprite.isIdle();
+            data["isIdle"] = (actorInfo.status == OccupantInfo.IDLE ||
+                              actorInfo.status == MsoyBodyObject.AWAY);
             data["bounds"] = sprite.getBounds(sprite.stage);
-            data["name"] = sprite.getActorInfo().username.toString(); // deprecated, only for _v1
+            data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
             return data;
         }
         return null;
