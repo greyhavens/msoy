@@ -123,8 +123,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 public void onClick (ClickEvent event) {
                     DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
                         public void itemListed (Item item, boolean updated) {
-                            Link.replace(Pages.SHOP, "l", _item.getType(), _listing.catalogId,
-                                         "repriced_from_" + _listing.quote.getListedAmount());
+                            Link.replace(Pages.SHOP, "l", _item.getType(), _listing.catalogId);
                         }
                     });
                 }
@@ -132,7 +131,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             controls.add(reprice);
 
             Label delist = new Label(_msgs.listingDelist());
-            new ClickCallback<Void>(delist, _msgs.listingDelistConfirm()) {
+            new ClickCallback<Void>(delist, _listing.derivationCount > 0 ?
+                _msgs.listingDelistBasisConfirm("" + _listing.derivationCount) :
+                _msgs.listingDelistConfirm()) {
                 @Override protected boolean callService () {
                     _catalogsvc.removeListing(_item.getType(), _listing.catalogId, this);
                     return true;

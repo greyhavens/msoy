@@ -254,7 +254,8 @@ public class DoListItemPopup extends VerticalPanel
             };
 
         } else if (repricing) {
-            new ClickCallback<Void>(_doIt) {
+            new ClickCallback<Void>(_doIt, listing.derivationCount > 0 ?
+                _imsgs.doListRepriceBasisConfirm("" + listing.derivationCount) : null) {
                 @Override protected boolean callService () {
                     int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (pricing == CatalogListing.PRICING_LIMITED_EDITION &&
