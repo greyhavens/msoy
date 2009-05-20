@@ -44,11 +44,12 @@ public class ButtonPalette extends Canvas
         _tile.tileHeight = 23;
         _tile.styleName = "buttonPalette";
         _tile.owner = DisplayObjectContainer(Application.application.systemManager);
-        _tile.owner.addChild(_tile);
 
         CommandEvent.configureBridge(_tile, parent);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
 
         minWidth = TOGGLE_WIDTH + _tile.tileWidth + int(_tile.getStyle("paddingLeft")) +
             int(_tile.getStyle("paddingRight"));
@@ -159,6 +160,15 @@ public class ButtonPalette extends Canvas
         if (!_lastPoint.equals(p)) {
             _lastPoint = p;
             updateTileLoc();
+        }
+    }
+
+    protected function handleAddRemove (event :Event) :void
+    {
+        if (event.type == Event.ADDED_TO_STAGE) {
+            _tile.owner.addChild(_tile);
+        } else {
+            _tile.owner.removeChild(_tile);
         }
     }
 
