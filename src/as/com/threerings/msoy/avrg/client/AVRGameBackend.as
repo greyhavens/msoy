@@ -26,6 +26,7 @@ import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
@@ -38,6 +39,7 @@ import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomController;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
