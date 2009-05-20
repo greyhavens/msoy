@@ -79,8 +79,10 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
     {
         // if we have data, and are requesting the same data we have...
         if ((_count >= 0) && (_pageOffset == start) && (_pageCount == count) &&
-                // and we're either on the last page or have enough items for the page requested..
-                ((start + _pageCount > _count) || (_pageItems.size() == count))) {
+                // and we're either on the last page
+                (((start + _pageCount > _count) && !_pageItems.isEmpty()) ||
+                // or have enough items for the page requested..
+                (_pageItems.size() == count))) {
             callback.onSuccess(_pageItems);
 
         } else {
