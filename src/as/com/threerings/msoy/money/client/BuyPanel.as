@@ -49,6 +49,10 @@ public class BuyPanel extends VBox
 
         _coinPanel.addChild(_coins);
         _coinPanel.addChild(_switchToBars);
+
+        // hide everything until we're ready to roll
+        FlexUtil.setVisible(_coinPanel, false);
+        FlexUtil.setVisible(_barPanel, false);
     }
 
     public function setPriceQuote (quote :PriceQuote) :void
@@ -65,7 +69,7 @@ public class BuyPanel extends VBox
         var barTip :String = null;
         if (barOnly) {
             FlexUtil.setVisible(_coinPanel, false);
-            FlexUtil.setVisible(_barPanel, false);
+            FlexUtil.setVisible(_barPanel, true);
         } else {
             FlexUtil.setVisible(_coinPanel, !_altCurrency);
             FlexUtil.setVisible(_barPanel, _altCurrency);
