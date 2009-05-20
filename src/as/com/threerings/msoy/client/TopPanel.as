@@ -41,8 +41,6 @@ import com.threerings.msoy.chat.client.GameChatContainer;
 
 public class TopPanel extends Canvas
 {
-    public static const DECORATIVE_MARGIN_HEIGHT :int = 0;
-
     public static const RIGHT_SIDEBAR_WIDTH :int = 300;
 
     /** An event dispatched when our location name changes. */
@@ -66,8 +64,8 @@ public class TopPanel extends Canvas
         var chatTabs :ChatTabBar = new ChatTabBar(_ctx);
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
+        _headerBar = new HeaderBar(_ctx, this, chatTabs);
         if (UberClient.isRegularClient()) {
-            _headerBar = new HeaderBar(_ctx, this, chatTabs);
             _headerBar.includeInLayout = false;
             _headerBar.setStyle("top", 0);
             _headerBar.setStyle("left", 0);
@@ -82,16 +80,9 @@ public class TopPanel extends Canvas
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
-        // save the control bar, even if we don't add it (due to being a featured place)
         _controlBar = controlBar;
         _controlBar.init(this);
         if (!_ctx.getMsoyClient().isChromeless()) {
-            // only create and display an overlay for real clients
-            if (UberClient.isRegularClient()) {
-                _comicOverlay = new ComicOverlay(_ctx, _placeBox);
-                _ctx.getMsoyChatDirector().addChatDisplay(_comicOverlay);
-            }
-
             // set up the control bar
             _controlBar.includeInLayout = false;
             _controlBar.setStyle("bottom", 0);
@@ -115,6 +106,12 @@ public class TopPanel extends Canvas
             }
         }
 
+        // only create and display an overlay for real clients
+        if (UberClient.isRegularClient()) {
+            _comicOverlay = new ComicOverlay(_ctx, _placeBox);
+            _ctx.getMsoyChatDirector().addChatDisplay(_comicOverlay);
+        }
+
         // clear out the application and install ourselves as the only child
         var app :Application = UberClient.getApplication();
         app.removeAllChildren();
@@ -123,9 +120,6 @@ public class TopPanel extends Canvas
 
         // display something until someone comes along and sets a real view on us
         setPlaceView(new BlankPlaceView(_ctx));
-
-        _ctx.getUIState().addEventListener(UIState.STATE_CHANGE, handleUIStateChange);
-        handleUIStateChange(null);
     }
 
     /**
@@ -177,15 +171,6 @@ public class TopPanel extends Canvas
         if (_comicOverlay != null) {
             _comicOverlay.displayChat((mView != null) && mView.shouldUseChatOverlay());
         }
-//
-//        if (_topPanel is EmbedHeader) {
-//            const embedHeader :EmbedHeader = _topPanel as EmbedHeader;
-//            if (mView != null) {
-//                embedHeader.setPlaceName(mView.getPlaceName(), mView.getPlaceLogo());
-//            } else {
-//                embedHeader.setPlaceName(null);
-//            }
-//        }
     }
 
     /**
@@ -237,32 +222,6 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Set the panel at the top of the display.
-     *
-     * This is an unfortunate name collision.  However, it is the name that makes sense...
-     */
-    public function setTopPanel (top :UIComponent) :void
-    {
-        clearTopPanel();
-        _topPanel = top;
-        _topPanel.includeInLayout = false;
-        addChild(_topPanel);
-        layoutPanels();
-        handleUIStateChange(null);
-    }
-
-    public function clearTopPanel (top :UIComponent = null) :void
-    {
-        if ((_topPanel != null) && (top == null || top == _topPanel)) {
-            if (_topPanel.parent == this) {
-                removeChild(_topPanel);
-            }
-            _topPanel = null;
-            layoutPanels();
-        }
-    }
-
-    /**
      * Configures our left side panel. Any previous right side panel will be cleared.
      */
     public function setLeftPanel (side :UIComponent) :void
@@ -304,23 +263,9 @@ public class TopPanel extends Canvas
         layoutPanels();
     }
 
-    protected function handleUIStateChange (event :Event) :void
-    {
-        var state :UIState = _ctx.getUIState();
-
-        if (_topPanel != null) {
-            _topPanel.visible = state.embedded && state.inRoom;
-        }
-    }
-
-    protected function getTopPanelHeight () :int
-    {
-        return _topPanel != null ? Math.round(_topPanel.height) : 0;
-    }
-
     protected function getHeaderBarHeight () :int
     {
-        return (_headerBar != null && _headerBar.parent != null) ? HeaderBar.HEIGHT : 0;
+        return (_headerBar.parent != null) ? HeaderBar.HEIGHT : 0;
     }
 
     protected function layoutPanels () :void
@@ -332,19 +277,13 @@ public class TopPanel extends Canvas
         app.height = _ctx.getHeight();
 
         _controlBar.setStyle("left", 0);
-        if (_headerBar != null) {
+        if (_headerBar.parent != null) {
             _headerBar.setStyle("left", 0);
-            _headerBar.setStyle("top", getTopPanelHeight());
-        }
-
-        if (_topPanel != null) {
-            _topPanel.setStyle("top", 0);
-            _topPanel.setStyle("right", 0);
-            _topPanel.setStyle("left", 0);
+            _headerBar.setStyle("top", 0);
         }
 
         if (_leftPanel != null) {
-            _leftPanel.setStyle("top", getTopPanelHeight() + getHeaderBarHeight());
+            _leftPanel.setStyle("top", getHeaderBarHeight());
             _leftPanel.setStyle("left", 0);
             _leftPanel.setStyle("bottom", ControlBar.HEIGHT);
 
@@ -366,26 +305,14 @@ public class TopPanel extends Canvas
             return; // nothing doing if we're not in control
         }
 
-        var top :int = getHeaderBarHeight() + getTopPanelHeight();
+        var top :int = getHeaderBarHeight();
         var left :int = 0;
         var right :int = 0;
         var bottom :int = 0;
         var w :int = _ctx.getWidth() - getLeftPanelWidth();
         var h :int = _ctx.getHeight() - top;
 
-        if (top > 0) {
-            if (padVertical(_placeBox.getPlaceView())) {
-                top += DECORATIVE_MARGIN_HEIGHT;
-                h -= DECORATIVE_MARGIN_HEIGHT;
-            }
-        }
-
         if (_controlBar.parent != null) {
-            // for place views, we want to insert decorative margins above and below the view
-            if (padVertical(_placeBox.getPlaceView())) {
-                bottom += DECORATIVE_MARGIN_HEIGHT;
-                h -= DECORATIVE_MARGIN_HEIGHT;
-            }
             bottom += ControlBar.HEIGHT;
             h -= ControlBar.HEIGHT;
         }
@@ -414,9 +341,6 @@ public class TopPanel extends Canvas
 
     /** The box that will hold the placeview. */
     protected var _placeBox :PlaceBox;
-
-    /** The current top panel component. */
-    protected var _topPanel :UIComponent;
 
     /** The current right panel component. */
     protected var _leftPanel :UIComponent;

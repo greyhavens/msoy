@@ -77,7 +77,6 @@ public class WorldClient extends MsoyClient
         // if we're an embedded client, turn on the embed header
         if (getHostname() == null && !_featuredPlaceView) {
             _wctx.getUIState().setEmbedded(true);
-//            _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
         }
 
         // if we are going right into a game, do that now and once we get into the game, then we'll
