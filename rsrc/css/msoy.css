@@ -563,7 +563,7 @@ TabNavigator, TabBar {
 .roomEditScaleDown, .roomEditScaleUp, .roomEditMoveDown, .roomEditMoveUp,
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
-.roomEditUndo, .roomEditButtonMakeMyHome,
+.roomEditUndo, .roomEditButtonMakeMyHome, .roomEditCustom,
 .roomEditResetLocation, .roomEditResetScale, .roomEditResetRotation, .tourNext, .trophyFeedTrophy {
   upSkin: ClassReference(null);
   downSkin: ClassReference(null);
@@ -828,6 +828,11 @@ BasePanel {
 
 .roomEditUndo {
   image: Embed(source="../media/skins/button/roomeditor/right_icons/undo-shape.png");
+}
+
+.roomEditCustom {
+  /*image: Embed(source="../../pages/images/item/config.png"); */
+  image: "images/item/config.png";
 }
 
 /*
