@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -30,8 +31,9 @@ import client.util.ServiceUtil;
  */
 public class InfoEditorPanel extends BaseEditorPanel
 {
-    public InfoEditorPanel (final GameInfo info)
+    public InfoEditorPanel (final GameService.GameData data)
     {
+        final GameInfo info = data.info;
         final TextBox name = MsoyUI.createTextBox(info.name, GameInfo.MAX_NAME_LENGTH, 40);
         addRow(_msgs.egName(), name, new Command() {
             public void execute () {
@@ -49,7 +51,11 @@ public class InfoEditorPanel extends BaseEditorPanel
         }
         addRow(_msgs.egGenre(), genbox, new Command() {
             public void execute () {
-                info.genre = GameGenre.valueOf(genbox.getValue(genbox.getSelectedIndex()));
+                GameGenre genre = GameGenre.valueOf(genbox.getValue(genbox.getSelectedIndex()));
+                if (data.pubCode == null && genre != GameGenre.HIDDEN) {
+                    throw new ConfigException(_msgs.errMustHideUnpublished());
+                }
+                info.genre = genre;
             }
         });
 
