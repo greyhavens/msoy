@@ -238,7 +238,7 @@ public abstract class BuyPanel<T> extends SmartTable
     {
         public BuyButton (Currency currency)
         {
-            super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THIN, null);
+            super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THICK, null);
             _currency = currency;
             addStyleName("BuyButton");
             new BuyCallback(this, currency);

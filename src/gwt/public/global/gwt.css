@@ -1145,6 +1145,48 @@ img, embed, applet, object {
   background-position: right;
 }
 
+/** THICK BLUE BUTTON */
+
+.blueThick .W {
+  background-image: url(/images/ui/button/blue_thick_left.png);
+}
+
+.blueThick .X {
+  background-image: url(/images/ui/button/blue_thick_center.png);
+  height: 44px;
+}
+
+.blueThick .E {
+  background-image: url(/images/ui/button/blue_thick_right.png);
+  background-position: right;
+}
+
+.blueThick-up-hovering .W {
+  background-image: url(/images/ui/button/blue_thick_left_over.png);
+}
+
+.blueThick-up-hovering .X {
+  background-image: url(/images/ui/button/blue_thick_center_over.png);
+}
+
+.blueThick-up-hovering .E {
+  background-image: url(/images/ui/button/blue_thick_right_over.png);
+  background-position: right;
+}
+
+.blueThick-down-hovering .W {
+  background-image: url(/images/ui/button/blue_thick_left_down.png);
+}
+
+.blueThick-down-hovering .X {
+  background-image: url(/images/ui/button/blue_thick_center_down.png);
+}
+
+.blueThick-down-hovering .E {
+  background-image: url(/images/ui/button/blue_thick_right_down.png);
+  background-position: right;
+}
+
 /** THIN BLUE BUTTON */
 
 .blueThin .W {
