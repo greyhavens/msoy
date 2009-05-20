@@ -615,13 +615,15 @@ public class GroupRepository extends DepotRepository
     {
         // if no full text or tag search, return a subset of all records, order by query.sort
         if (sortBy == GroupQuery.SORT_BY_NAME) {
-            return OrderBy.ascending(GroupRecord.NAME).thenDescending(GroupRecord.MEMBER_COUNT);
+            return OrderBy.ascending(GroupRecord.NAME);
 
         } else if (sortBy == GroupQuery.SORT_BY_NUM_MEMBERS) {
             return OrderBy.descending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
 
         } else if (sortBy == GroupQuery.SORT_BY_CREATED_DATE) {
-            return OrderBy.ascending(GroupRecord.CREATION_DATE);
+            return OrderBy.ascending(GroupRecord.CREATION_DATE).
+                thenDescending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
+
 
         } else if (tagId > 0) {
             // for a tag search, define 'relevance' as member count
@@ -633,7 +635,9 @@ public class GroupRepository extends DepotRepository
                 // the rank is (1 + fts rank), boosted by 25% if there's a tag match
                 return OrderBy.descending(new Mul(
                     new Add(search.fullTextRank(), new ValueExp(1.0)),
-                    new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0))));
+                    new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0)))).
+                        thenDescending(GroupRecord.MEMBER_COUNT).
+                        thenAscending(GroupRecord.NAME);
 
             } else {
                 return OrderBy.descending(search.fullTextRank()).
@@ -645,7 +649,8 @@ public class GroupRepository extends DepotRepository
             long membersPerDay = (24 * 60 * 60) / 2;
             return OrderBy.descending(new Add(
                 new Div(new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay),
-                GroupRecord.MEMBER_COUNT));
+                GroupRecord.MEMBER_COUNT)).
+                    thenAscending(GroupRecord.NAME);
         }
     }
 
