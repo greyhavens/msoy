@@ -116,7 +116,7 @@ public class CodeEditorPanel extends BaseEditorPanel
 
         final CheckBox noprogress = new CheckBox(_msgs.egNoProgressText());
         noprogress.setValue(config.noprogress);
-        _watchRow = addRow(_msgs.egNoProgress(), noprogress, new Command() {
+        addRow(_msgs.egNoProgress(), noprogress, new Command() {
             public void execute () {
                 config.noprogress = noprogress.getValue();
             }
@@ -143,7 +143,8 @@ public class CodeEditorPanel extends BaseEditorPanel
         addTip(_msgs.egServerClassTip());
 
         final CheckBox mponly = new CheckBox(_msgs.egServerMPOnlyText());
-        _watchRow = addRow(_msgs.egServerMPOnly(), mponly, new Command() {
+        mponly.setValue(config.agentMPOnly);
+        addRow(_msgs.egServerMPOnly(), mponly, new Command() {
             public void execute () {
                 config.agentMPOnly = mponly.getValue();
             }
