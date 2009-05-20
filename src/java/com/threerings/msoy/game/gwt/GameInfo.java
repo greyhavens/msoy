@@ -142,6 +142,6 @@ public class GameInfo
     @Override // from Object
     public String toString ()
     {
-        return "[game=" + gameId + ", name=" + name + "]";
+        return gameId + ", name=" + name;
     }
 }

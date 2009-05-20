@@ -950,10 +950,10 @@ public class GameGameRegistry
         try {
             def = (MsoyGameDefinition)new MsoyGameParser().parseGame(content.code);
         } catch (IOException ioe) {
-            log.warning("Error parsing game config", "game", content.game, ioe);
+            log.warning("Error parsing game config", "game", content.code, ioe);
             throw new InvocationException(MsoyGameCodes.E_BAD_GAME_CONTENT);
         } catch (SAXException saxe) {
-            log.warning("Error parsing game config", "game", content.game, saxe);
+            log.warning("Error parsing game config", "game", content.code, saxe);
             throw new InvocationException(MsoyGameCodes.E_BAD_GAME_CONTENT);
         }
 

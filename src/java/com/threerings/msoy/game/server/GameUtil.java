@@ -29,10 +29,10 @@ public class GameUtil
                 match = (MsoyMatchConfig)new MsoyGameParser().parseGame(game).match;
             }
             if (match == null) {
-                log.warning("Game missing match configuration " + game);
+                log.warning("Game missing match configuration", "game", game);
             }
         } catch (Exception e) {
-            log.warning("Failed to parse XML game definition " + game, e);
+            log.warning("Failed to parse XML game definition", "game", game, e);
         }
         if (match != null) {
             return new int[] {

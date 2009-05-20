@@ -51,6 +51,6 @@ public class GameCode
     @Override // from Object
     public String toString ()
     {
-        return "[game=" + gameId + ", isDev=" + isDevelopment + ", config=" + config + "]";
+        return gameId + ", isDev=" + isDevelopment + ", config=" + config;
     }
 }
