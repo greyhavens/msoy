@@ -26,16 +26,8 @@ public class AVRGameConfig extends PlaceConfig
     /** The game's thumbnail media. */
     public var thumbnail :MediaDesc;
 
-    /**
-     * Configures this config with information from the supplied {@link Game} item.
-     */
-    public function init (game :Game, gameDef :GameDefinition) :void
-    {
-        this.name = game.name;
-        this.thumbnail = game.getThumbnailMedia();
-        _gameId = game.gameId;
-        _gameDef = gameDef;
-    }
+    /** The splash screen media, or null if we have none. */
+    public var splashMedia :MediaDesc;
 
     // from PlaceConfig
     override public function createController () :PlaceController
@@ -75,6 +67,7 @@ public class AVRGameConfig extends PlaceConfig
         super.readObject(ins);
         name = ins.readField(String) as String;
         thumbnail = MediaDesc(ins.readObject());
+        splashMedia = MediaDesc(ins.readObject());
         _gameId = ins.readInt();
         _gameDef = GameDefinition(ins.readObject());
     }
@@ -85,6 +78,7 @@ public class AVRGameConfig extends PlaceConfig
         super.writeObject(out);
         out.writeField(name);
         out.writeObject(thumbnail);
+        out.writeObject(splashMedia);
         out.writeInt(_gameId);
         out.writeObject(_gameDef);
     }

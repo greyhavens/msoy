@@ -26,13 +26,17 @@ public class AVRGameConfig extends PlaceConfig
     /** The game's thumbnail media. */
     public MediaDesc thumbnail;
 
+    /** This game's splash screen media or null. */
+    public MediaDesc splashMedia;
+
     /**
      * Configures this config with information from the supplied game metadata.
      */
-    public void init (int gameId, GameSummary game, GameDefinition gameDef)
+    public void init (int gameId, GameSummary game, GameDefinition gameDef, MediaDesc splashMedia)
     {
         this.name = game.name;
         this.thumbnail = game.thumbMedia;
+        this.splashMedia = splashMedia;
         _gameId = gameId;
         _gameDef = gameDef;
     }
