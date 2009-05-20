@@ -5,7 +5,7 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -42,7 +42,7 @@ public class GamesPage extends Page
                 new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
 
         } else if (action.equals("g")) {
-            setContent(new GameGenrePanel((byte)args.get(1, GameGenre.ALL),
+            setContent(new GameGenrePanel(GameGenre.fromByte(args.get(1, GameGenre.ALL.toByte())),
                                           GameInfo.Sort.fromToken(args.get(2, "")),
                                           args.get(3, null)));
 

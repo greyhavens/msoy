@@ -54,7 +54,7 @@ public class FeaturedGamePanel extends AbsolutePanel
         }));
 
         add(MsoyUI.createLabel(game.name, "Name"), 200, 40);
-        add(MsoyUI.createLabel(_dmsgs.xlate("genre" + game.genre), "Genre"), 200, 65);
+        add(MsoyUI.createLabel(_dmsgs.xlate("genre_" + game.genre), "Genre"), 200, 65);
         add(new CreatorLabel(game.creator), 200, 85);
         add(MsoyUI.createLabel(
                 MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);

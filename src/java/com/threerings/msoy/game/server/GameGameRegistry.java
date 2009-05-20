@@ -365,7 +365,7 @@ public class GameGameRegistry
      */
     public void gameDidPayout (int memberId, GameInfoRecord game, int payout, int secondsPlayed)
     {
-        _eventLog.gamePlayed(game.genre, game.gameId, 0, payout, secondsPlayed, memberId);
+        _eventLog.gamePlayed(game.genre.toByte(), game.gameId, 0, payout, secondsPlayed, memberId);
     }
 
     /**

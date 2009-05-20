@@ -39,7 +39,7 @@ public class GameInfo
         }),
         BY_GENRE(new Comparator<GameInfo>() {
             public int compare (GameInfo c1, GameInfo c2) {
-                return c2.genre - c1.genre;
+                return c1.genre.compareTo(c2.genre);
             }
         }),
         BY_ONLINE(new Comparator<GameInfo>() {
@@ -96,7 +96,7 @@ public class GameInfo
     public String name;
 
     /** This game's genre. */
-    public byte genre;
+    public GameGenre genre;
 
     /** True if this is an AVRG, false if it's a parlor game. */
     public boolean isAVRG;

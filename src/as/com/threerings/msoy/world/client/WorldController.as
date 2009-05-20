@@ -693,15 +693,8 @@ public class WorldController extends MsoyController
             sceneId = getCurrentSceneId();
         }
 
-        // don't try and start avrgs before we are in a scene
-        if (sceneId <= 0) {
-            log.warning("Join avrg - invalid scene", "gameId", gameId, "sceneId", sceneId,
-                "currentSceneId", getCurrentSceneId());
-            return;
-        }
-
-        // yay! we're there, carry on
-        if (sceneId == getCurrentSceneId()) {
+        // either we don't want a scene, or we're already in the right one, carry on
+        if (sceneId <= 0 || sceneId == getCurrentSceneId()) {
             _wctx.getGameDirector().activateAVRGame(
                 gameId, StringUtil.deNull(token), inviterMemberId);
             return;

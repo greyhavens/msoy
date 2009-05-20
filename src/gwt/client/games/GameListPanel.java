@@ -38,10 +38,9 @@ import client.util.MediaUtil;
  */
 public abstract class GameListPanel extends FlowPanel
 {
-    public GameListPanel (byte genre, GameInfo.Sort sort)
+    public GameListPanel (GameInfo.Sort sort)
     {
         setStyleName("gameList");
-        _genre = genre;
 
         _sortBox = new ListBox();
         for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
@@ -144,7 +143,7 @@ public abstract class GameListPanel extends FlowPanel
                 ratingPanel.add(MsoyUI.createLabel(_msgs.genreNumRatings(game.ratingCount+""),
                                 "NumRatings"));
                 setWidget(0, col++, ratingPanel, 1, "Rating");
-                setText(0, col++, _dmsgs.xlate("genre" + game.genre), 1, "Category");
+                setText(0, col++, _dmsgs.xlate("genre_" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
                 setWidget(0, col, createPlay(game), 1, "PlayButtons");
@@ -155,9 +154,6 @@ public abstract class GameListPanel extends FlowPanel
 
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
-
-    /** Genre ID or -1 for All Games page */
-    protected byte _genre;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

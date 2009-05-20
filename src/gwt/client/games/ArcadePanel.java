@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -86,7 +86,7 @@ public class ArcadePanel extends FlowPanel
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
             ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", genre.genre);
-            header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre" + genre.genre), onClick));
+            header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre_" + genre.genre), onClick));
 
             for (int i = 0; i < genre.games.length; i++) {
                 GameCard game = genre.games[i];

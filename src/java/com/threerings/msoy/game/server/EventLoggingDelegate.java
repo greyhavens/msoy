@@ -61,7 +61,7 @@ public class EventLoggingDelegate extends GameManagerDelegate
         int memberId = plobj.memberName.getMemberId();
         int seconds = (int)((System.currentTimeMillis() - entry) / 1000);
         boolean isMultiplayer = ((ParlorGameManager)_plmgr).isMultiplayer();
-        _eventLog.gameLeft(memberId, _content.game.genre, _content.gameId, seconds,
+        _eventLog.gameLeft(memberId, _content.game.genre.toByte(), _content.gameId, seconds,
                            isMultiplayer, plobj.getVisitorId());
     }
 

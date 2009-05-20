@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -30,7 +29,7 @@ public class MyGamesPanel extends GameListPanel
 {
     public MyGamesPanel (final GameInfo.Sort sort)
     {
-        super(GameGenre.ALL, sort);
+        super(sort);
 
         FlowPanel header = MsoyUI.createFlowPanel("gameHeaderPanel");
         FlowPanel absbits = MsoyUI.createFlowPanel("Absolute");
@@ -45,12 +44,7 @@ public class MyGamesPanel extends GameListPanel
         _gamesvc.loadMyGames(new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
                 Collections.sort(games, sort.comparator);
-                add(new GameGrid(games) {
-                    protected Widget createPlay (GameInfo game) {
-                        // we want our play buttons to play the development version
-                        return PlayButton.createSmall(GameInfo.toDevId(game.gameId));
-                    }
-                });
+                add(new GameGrid(games));
             }
         });
     }
@@ -59,7 +53,8 @@ public class MyGamesPanel extends GameListPanel
     protected Widget createPlay (GameInfo game)
     {
         FlowPanel bits = new FlowPanel();
-        bits.add(super.createPlay(game));
+        // we want our play buttons to play the development version
+        bits.add(PlayButton.createSmall(GameInfo.toDevId(game.gameId)));
         bits.add(WidgetUtil.makeShim(5, 5));
         bits.add(Link.create(_msgs.myGamesEdit(), Pages.GAMES, "e", game.gameId));
         return bits;

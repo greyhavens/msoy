@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.util.Comparators;
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -39,7 +38,6 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FacebookInfo;
@@ -47,6 +45,7 @@ import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameDistribs;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameService;
@@ -117,14 +116,16 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         // load up our genre counts
-        IntIntMap genreCounts = _mgameRepo.loadGenreCounts();
+        Map<GameGenre, Integer> genreCounts = _mgameRepo.loadGenreCounts();
 
         // load information about the genres
         List<ArcadeData.Genre> genres = Lists.newArrayList();
-        for (byte gcode : GameGenre.GENRES) {
+        for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
             ArcadeData.Genre genre = new ArcadeData.Genre();
             genre.genre = gcode;
-            genre.gameCount = Math.max(0, genreCounts.get(gcode));
+            if (genreCounts.containsKey(gcode)) {
+                genre.gameCount = genreCounts.get(gcode);
+            }
             if (genre.gameCount == 0) {
                 continue;
             }
@@ -163,7 +164,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<GameInfo> loadGameGenre (byte genre, String query)
+    public List<GameInfo> loadGameGenre (GameGenre genre, String query)
         throws ServiceException
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();

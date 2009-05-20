@@ -29,6 +29,7 @@ import com.threerings.msoy.item.data.all.TrophySource;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.gwt.GameCard;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 
 /**
@@ -82,7 +83,7 @@ public class GameInfoRecord extends PersistentRecord
     public String name;
 
     /** This game's genre. */
-    @Index public byte genre;
+    @Index public GameGenre genre;
 
     /** True if this is an AVRG, false if it's a parlor game. */
     public boolean isAVRG;

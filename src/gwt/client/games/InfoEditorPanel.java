@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.data.all.GameGenre;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -40,13 +40,16 @@ public class InfoEditorPanel extends BaseEditorPanel
         });
 
         final ListBox genbox = new ListBox();
-        for (byte genre : GameGenre.GENRES) {
-            genbox.addItem(_dmsgs.xlate("genre" + genre));
+        genbox.addItem(_dmsgs.xlate("genre_" + GameGenre.HIDDEN), ""+GameGenre.HIDDEN);
+        for (GameGenre genre : GameGenre.DISPLAY_GENRES) {
+            genbox.addItem(_dmsgs.xlate("genre_" + genre), ""+genre);
+            if (genre == info.genre) {
+                genbox.setSelectedIndex(genbox.getItemCount()-1);
+            }
         }
-        genbox.setSelectedIndex(info.genre);
         addRow(_msgs.egGenre(), genbox, new Command() {
             public void execute () {
-                info.genre = (byte)genbox.getSelectedIndex();
+                info.genre = GameGenre.valueOf(genbox.getValue(genbox.getSelectedIndex()));
             }
         });
 

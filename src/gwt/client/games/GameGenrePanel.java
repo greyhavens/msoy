@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -23,13 +24,14 @@ import client.util.ServiceUtil;
  */
 public class GameGenrePanel extends GameListPanel
 {
-    public GameGenrePanel (byte genre, final GameInfo.Sort sort, String query)
+    public GameGenrePanel (GameGenre genre, final GameInfo.Sort sort, String query)
     {
-        super(genre, sort);
+        super(sort);
+        _genre = genre;
 
         String titleText;
-        if (genre >= 0) {
-            String genreTitle = _dmsgs.xlate("genre" + genre);
+        if (genre != GameGenre.ALL) {
+            String genreTitle = _dmsgs.xlate("genre_" + genre);
             titleText = (genreTitle.indexOf("/") != -1) ? genreTitle : _msgs.genreWrap(genreTitle);
         } else {
             titleText = _msgs.genreAllGames();
@@ -49,8 +51,11 @@ public class GameGenrePanel extends GameListPanel
 
     protected void onSortChanged (GameInfo.Sort sort)
     {
-        Link.go(Pages.GAMES, "g", _genre, sort.toToken(), _header.getQuery());
+        Link.go(Pages.GAMES, "g", _genre.toByte(), sort.toToken(), _header.getQuery());
     }
+
+    /** Our currently displayed genre */
+    protected GameGenre _genre;
 
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+
 /**
  * Contains information displayed in the arcade.
  */
@@ -21,7 +22,7 @@ public class ArcadeData
         public static final int HIGHLIGHTED_GAMES = 3;
 
         /** This genre's code. */
-        public byte genre;
+        public GameGenre genre;
 
         /** The total number of games in this genre. */
         public int gameCount;

@@ -8,10 +8,12 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -51,9 +53,9 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
-import com.threerings.msoy.game.data.all.GameGenre;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -77,7 +79,7 @@ public class MsoyGameRepository extends DepotRepository
     public static class GenreCountRecord extends PersistentRecord
     {
         /** The genre in question. */
-        public byte genre;
+        public GameGenre genre;
 
         /** The number of games in that genre .*/
         @Computed(fieldDefinition="count(*)")
@@ -116,7 +118,7 @@ public class MsoyGameRepository extends DepotRepository
                     GameInfoRecord irec = new GameInfoRecord();
                     irec.gameId = drec.gameId;
                     irec.name = StringUtil.truncate(grec.name, GameInfo.MAX_NAME_LENGTH);
-                    irec.genre = grec.genre;
+                    irec.genre = GameGenre.fromByte(grec.genre);
                     irec.isAVRG = GameCode.detectIsInWorld(grec.config);
                     irec.creatorId = grec.creatorId;
                     irec.description = StringUtil.truncate(
@@ -244,9 +246,9 @@ public class MsoyGameRepository extends DepotRepository
     /**
      * Loads the count of how many published, integrated games we have in each genre.
      */
-    public IntIntMap loadGenreCounts ()
+    public Map<GameGenre, Integer> loadGenreCounts ()
     {
-        IntIntMap counts = new IntIntMap();
+        Map<GameGenre, Integer> counts = Maps.newHashMap();
         for (GenreCountRecord gcr : findAll(
                  GenreCountRecord.class,
                  new Where(new And(new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN),
@@ -260,10 +262,10 @@ public class MsoyGameRepository extends DepotRepository
     /**
      * Loads all listed game records in the specified genre, sorted from highest to lowest rating.
      *
-     * @param genre the genre of game record to load or {@link GameGenre#ALL} to load all games.
+     * @param genre the genre of game record to load or ALL to load all games.
      * @param limit a limit to the number of records loaded or <= 0 to load all records.
      */
-    public List<GameInfoRecord> loadGenre (byte genre, int limit)
+    public List<GameInfoRecord> loadGenre (GameGenre genre, int limit)
     {
         return loadGenre(genre, limit, null);
     }
@@ -271,17 +273,17 @@ public class MsoyGameRepository extends DepotRepository
     /**
      * Loads all game records in the specified genre, sorted from highest to lowest rating.
      *
-     * @param genre the genre of game record to load or -1 to load all published games.
+     * @param genre the genre of game record to load or ALL to load all published games.
      * @param limit a limit to the number of records loaded or <= 0 to load all records.
      * @param search string to search for in the title, tags and description
      */
-    public List<GameInfoRecord> loadGenre (byte genre, int limit, String search)
+    public List<GameInfoRecord> loadGenre (GameGenre genre, int limit, String search)
     {
         List<QueryClause> clauses = Lists.newArrayList();
 
         // build the where clause with genre and/or search string
         List<SQLOperator> whereBits = Lists.newArrayList();
-        if (genre < 0) { // ALL == -1 but we want to avoid showing HIDDEN always
+        if (genre == GameGenre.ALL || genre == GameGenre.HIDDEN) {
             whereBits.add(new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN));
         } else {
             whereBits.add(new Equals(GameInfoRecord.GENRE, genre));
