@@ -24,18 +24,18 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
         addSpacer();
 
         final TextBox key = MsoyUI.createTextBox(
-            info.key, FacebookInfo.KEY_LENGTH, FacebookInfo.KEY_LENGTH);
+            info.apiKey, FacebookInfo.KEY_LENGTH, FacebookInfo.KEY_LENGTH);
         addRow(_msgs.fieKey(), key, new Command() {
             public void execute () {
-                info.key = key.getText().trim();
+                info.apiKey = key.getText().trim();
             }
         });
 
         final TextBox secret = MsoyUI.createTextBox(
-            info.secret, FacebookInfo.SECRET_LENGTH, FacebookInfo.SECRET_LENGTH);
+            info.appSecret, FacebookInfo.SECRET_LENGTH, FacebookInfo.SECRET_LENGTH);
         addRow(_msgs.fieSecret(), secret, new Command() {
             public void execute () {
-                info.secret = secret.getText().trim();
+                info.appSecret = secret.getText().trim();
             }
         });
 

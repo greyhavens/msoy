@@ -24,6 +24,7 @@ import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
@@ -99,6 +100,13 @@ public class MsoyGameRepository extends DepotRepository
                 return coerceRating(MsoyGameRatingRecord.class);
             }
         };
+
+        _ctx.registerMigration(
+            FacebookInfoRecord.class,
+            new SchemaMigration.Rename(2, "key", FacebookInfoRecord.API_KEY));
+        _ctx.registerMigration(
+            FacebookInfoRecord.class,
+            new SchemaMigration.Rename(2, "secret", FacebookInfoRecord.APP_SECRET));
 
         registerMigration(new DataMigration("2009_05_12_gameasaurus") {
             @Override public void invoke () {

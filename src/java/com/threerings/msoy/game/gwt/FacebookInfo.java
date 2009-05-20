@@ -20,8 +20,8 @@ public class FacebookInfo implements IsSerializable
     public int gameId;
 
     /** The Facebook API key for this game's Facebook app. */
-    public String key;
+    public String apiKey;
 
     /** The Facebook app secret for this game's Facebook app. */
-    public String secret;
+    public String appSecret;
 }

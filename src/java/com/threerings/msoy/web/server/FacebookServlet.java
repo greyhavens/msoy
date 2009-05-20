@@ -96,7 +96,7 @@ public class FacebookServlet extends HttpServlet
             AppInfo info = parseAppInfo(req.getPathInfo());
 
             // make sure we have signed facebook data
-            validateRequest(req, info.secret);
+            validateRequest(req, info.appSecret);
 
             // we should either have 'canvas_user' or 'user'
             FacebookAppCreds creds = new FacebookAppCreds();
@@ -108,10 +108,10 @@ public class FacebookServlet extends HttpServlet
                 // this the "way" iframed Facebook apps redirect to the logon page, awseome!
                 throw new FriendlyException(
                     "<script type=\"text/javascript\">\n" +
-                    "top.location.href = \"" + getLoginURL(info.key) + "\";\n</script>");
+                    "top.location.href = \"" + getLoginURL(info.apiKey) + "\";\n</script>");
             }
-            creds.apiKey = info.key;
-            creds.appSecret = info.secret;
+            creds.apiKey = info.apiKey;
+            creds.appSecret = info.appSecret;
 
             // authenticate this member via their external FB creds (this will autocreate their
             // account if they don't already have one)
@@ -212,12 +212,12 @@ public class FacebookServlet extends HttpServlet
         info.gameId = ginfo.gameId;
 
         FacebookInfo fbinfo = _mgameRepo.loadFacebookInfo(ginfo.gameId);
-        if (fbinfo.key == null) {
+        if (fbinfo.apiKey == null) {
             throw new FriendlyException("Game missing Facebook info: " + ginfo.name);
         }
 
-        info.key = fbinfo.key;
-        info.secret = fbinfo.secret;
+        info.apiKey = fbinfo.apiKey;
+        info.appSecret = fbinfo.appSecret;
         return info;
     }
 
@@ -229,8 +229,8 @@ public class FacebookServlet extends HttpServlet
     protected static class AppInfo
     {
         public int gameId;
-        public String key;
-        public String secret;
+        public String apiKey;
+        public String appSecret;
     }
 
     @Inject protected FacebookLogic _faceLogic;
@@ -240,8 +240,8 @@ public class FacebookServlet extends HttpServlet
 
     protected static final AppInfo DEF_APP_INFO = new AppInfo();
     static {
-        DEF_APP_INFO.key = ServerConfig.config.getValue("facebook.api_key", "");
-        DEF_APP_INFO.secret = ServerConfig.config.getValue("facebook.secret", "");
+        DEF_APP_INFO.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
+        DEF_APP_INFO.appSecret = ServerConfig.config.getValue("facebook.secret", "");
     }
 
     protected static final String FBKEY_PREFIX = "fb_sig_";
