@@ -47,4 +47,10 @@ public class GameCode
 
     /** The time at which this code was last updated. */
     public long lastUpdated;
+
+    @Override // from Object
+    public String toString ()
+    {
+        return "[game=" + gameId + ", isDev=" + isDevelopment + "]";
+    }
 }
