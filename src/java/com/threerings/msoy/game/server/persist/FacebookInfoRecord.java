@@ -37,6 +37,7 @@ public class FacebookInfoRecord extends PersistentRecord
         record.gameId = info.gameId;
         record.apiKey = info.apiKey;
         record.appSecret = info.appSecret;
+        record.chromeless = info.chromeless;
         return record;
     }
 
