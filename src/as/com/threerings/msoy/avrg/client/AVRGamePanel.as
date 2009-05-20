@@ -88,7 +88,7 @@ public class AVRGamePanel extends UIComponent
         addEventListener(ResizeEvent.RESIZE, handleResize);
 
         // Give the control bar button our thumbnail
-        getWorldCtx().getControlBar().setGameButtonIcon(cfg.thumbnail);
+        getWorldCtx().getControlBar().setGameButtonIcon(cfg.thumbMedia);
     }
 
     // from PlaceLayer

@@ -366,7 +366,7 @@ public class LobbyController extends Controller
 
         // replace the current view with the game's splash screen
         if (_displaySplash) {
-            _mctx.setPlaceView(new LobbyPlaceView(_lobj.splashMedia, _lobj.game));
+            _mctx.setPlaceView(new SplashPlaceView(_lobj.splashMedia, _lobj.game.thumbMedia));
         }
 
         _waitForWorldLogon.execute(function () :void {

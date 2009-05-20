@@ -15,5 +15,8 @@ public interface MsoyGameConfig
 
     /** Returns the thumbnail for this game. */
     function getThumbnail () :MediaDesc;
+
+    /** Returns the splash screen for this game. */
+    function getSplash () :MediaDesc;
 }
 }

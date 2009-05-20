@@ -121,7 +121,7 @@ public class ParlorGamePanel extends WhirledGamePanel
 
         _spinner = new GameLoadingDisplay(
             _gctx.getWorldContext().getTopPanel().getPlaceContainer(),
-            LobbyPlaceView.getLoadingMedia(config.splashMedia, config.game));
+            SplashPlaceView.getLoadingMedia(config.getSplash(), config.getThumbnail()));
 
         super.willEnterPlace(plobj);
 

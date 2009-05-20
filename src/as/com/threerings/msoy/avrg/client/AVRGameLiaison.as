@@ -19,6 +19,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.client.GameLiaison;
+import com.threerings.msoy.game.client.SplashPlaceView;
 
 import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -96,7 +97,13 @@ public class AVRGameLiaison extends GameLiaison
         // handle deactivations to offer the user to share earned trophies
         getAVRGameController().addDeactivateHandler(onUserDeactivate);
 
+        // tell interested parties (ie the party director) that we're now gaming
         _wctx.getGameDirector().dispatchGamingStateChanged();
+
+        // if we're not in a room, stuff a display with our splash media into view
+        if (_wctx.getLocationDirector().getPlaceObject() == null) {
+            _wctx.setPlaceView(new SplashPlaceView(config.getSplash(), config.getThumbnail()));
+        }
     }
 
     override public function shutdown () :void

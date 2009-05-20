@@ -56,6 +56,12 @@ public class ParlorGameConfig extends WhirledGameConfig
         return game.thumbMedia;
     }
 
+    // from interface MsoyGameConfig
+    public function getSplash () :MediaDesc
+    {
+        return splashMedia;
+    }
+
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {

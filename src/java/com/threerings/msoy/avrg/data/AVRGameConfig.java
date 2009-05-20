@@ -24,7 +24,7 @@ public class AVRGameConfig extends PlaceConfig
     public String name;
 
     /** The game's thumbnail media. */
-    public MediaDesc thumbnail;
+    public MediaDesc thumbMedia;
 
     /** This game's splash screen media or null. */
     public MediaDesc splashMedia;
@@ -35,7 +35,7 @@ public class AVRGameConfig extends PlaceConfig
     public void init (int gameId, GameSummary game, GameDefinition gameDef, MediaDesc splashMedia)
     {
         this.name = game.name;
-        this.thumbnail = game.thumbMedia;
+        this.thumbMedia = game.thumbMedia;
         this.splashMedia = splashMedia;
         _gameId = gameId;
         _gameDef = gameDef;
