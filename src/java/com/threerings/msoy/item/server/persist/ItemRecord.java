@@ -19,7 +19,6 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.annotation.Transient;
 
-import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -337,7 +336,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     @Override // from Object
     public String toString ()
     {
-        return StringUtil.fieldsToString(this);
+        return getClass().getSimpleName() + " " + itemId;
     }
 
     /**
