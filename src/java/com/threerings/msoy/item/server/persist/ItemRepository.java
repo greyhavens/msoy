@@ -1080,6 +1080,14 @@ public abstract class ItemRepository<T extends ItemRecord>
                 if (purchases == record.salesTarget) {
                     updates.put(CatalogRecord.COST,
                                 new LiteralExp(""+CatalogListing.escalatePrice(record.cost)));
+
+                    // TODO: attribution phase II - bump up derivative costs (probably move this
+                    // to item logic too)
+                    if (record.derivationCount > 0) {
+                        log.warning("Snakes! Escalating a price on a listing with derivatives",
+                            "type", getItemType(), "listingId", record.catalogId,
+                            "derivationCount", record.derivationCount);
+                    }
                 }
                 break;
             }
@@ -1201,7 +1209,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Updates the pricing for the specified catalog listing.
+     * Updates the pricing for the specified catalog listing. This does not address the rules
+     * pertaining to basis items: the caller must deal with derivative listings.
      */
     public void updatePricing (int catalogId, int pricing, int salesTarget,
                                Currency currency, int cost, long updateTime)
@@ -1215,8 +1224,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Removes the listing for the specified item from the catalog.
-     *
+     * Removes the listing for the specified item from the catalog. This does not address the rules
+     * pertaining to basis items: the caller must deal with derivative listings.
+     * 
      * @return true if the catalog master was deleted, false if it was left around because it had
      * been purchased one or more times.
      */

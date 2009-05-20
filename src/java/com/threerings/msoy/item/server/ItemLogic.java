@@ -317,10 +317,23 @@ public class ItemLogic
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
 
+        // get rid of derived listings
+        // TODO: attribution phase II - update derived prices if there is a price change
+        removeDerivedListings(remover, listing);
+
         // remove the listing record and possibly the catalog master item
         if (getRepository(itemType).removeListing(listing)) {
             itemDeleted(listing.item);
         }
+    }
+
+    /**
+     * Removes all listings that are derived from this listing. Also adds a support note if the
+     * remover is the item creator.
+     */
+    public void removeDerivedListings (MemberRecord remover, CatalogRecord record)
+    {
+        // TODO:
     }
 
     /**
@@ -369,7 +382,7 @@ public class ItemLogic
     }
 
     /**
-     * Called after an item is deleted. Performs and post delete actions needed.
+     * Called after an item is deleted. Performs any post delete actions needed.
      *
      * @param record the item record for the just deleted item.
      */
