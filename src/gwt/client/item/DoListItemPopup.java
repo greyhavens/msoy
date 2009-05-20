@@ -192,6 +192,15 @@ public class DoListItemPopup extends VerticalPanel
             }
             if (listing != null) {
                 setCurrency(listing.quote.getListedCurrency());
+                if (listing.basisId > 0) {
+                    _currencyBox.setEnabled(false);
+                    _catalogsvc.loadListing(item.getType(), listing.basisId, false,
+                        new InfoCallback<CatalogListing>() {
+                            public void onSuccess (CatalogListing result) {
+                                _previousBasis = result;
+                            }
+                        });
+                }
             }
             row = pricing.addWidget(new Label(_imsgs.doListCurrency()), 1, "rightLabel");
             pricing.setWidget(row, 1, _currencyBox);
@@ -235,10 +244,10 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListNeedRating());
                         return false;
                     }
-                    ListingCard basis = getBasis();
-                    if (!validatePricing(basis)) {
+                    if (!validatePricing()) {
                         return false;
                     }
+                    ListingCard basis = getBasis();
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
                                          getCurrency(), getCost(),
                                          basis == null ? 0 : basis.catalogId, this);
@@ -263,7 +272,7 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
-                    if (!validatePricing(null)) {
+                    if (!validatePricing()) {
                         return false;
                     }
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
@@ -293,21 +302,31 @@ public class DoListItemPopup extends VerticalPanel
         }
     }
 
-    protected boolean validatePricing (ListingCard basis)
+    protected boolean validatePricing ()
     {
         if (getCost() < getMinimumPrice(getCurrency())) {
             MsoyUI.error(_imsgs.doListMissedMinimum(""+getMinimumPrice(Currency.COINS)));
             return false;
         }
-        if (basis != null) {
-            int minCost = CatalogListing.getMinimumDerivedCost(basis.currency, basis.cost);
-            if (getCost() < minCost) {
-                MsoyUI.error(_imsgs.doListMissedBasisMinimum(String.valueOf(basis.cost),
-                    _dmsgs.xlate(basis.currency.getKey()), String.valueOf(minCost)));
-                return false;
-            }
+        ListingCard basis = getBasis();
+        if (basis != null && !validateDerivedPricing(basis.currency, basis.cost)) {
+            return false;
         }
+        if (_previousBasis != null && !validateDerivedPricing(
+            _previousBasis.quote.getListedCurrency(), _previousBasis.quote.getListedAmount())) {
+            return false;
+        }
+        return true;
+    }
 
+    protected boolean validateDerivedPricing (Currency basisCurrency, int basisCost)
+    {
+        int minCost = CatalogListing.getMinimumDerivedCost(basisCurrency, basisCost);
+        if (getCost() < minCost) {
+            MsoyUI.error(_imsgs.doListMissedBasisMinimum(String.valueOf(basisCost),
+                _dmsgs.xlate(basisCurrency.getKey()), String.valueOf(minCost)));
+            return false;
+        }
         return true;
     }
 
@@ -390,6 +409,7 @@ public class DoListItemPopup extends VerticalPanel
 
     protected ListBox _basisBox;
     protected List<ListingCard> _basisItems = new ArrayList<ListingCard>();
+    protected CatalogListing _previousBasis;
 
     protected ListBox _pricingBox;
     protected ListBox _currencyBox;
