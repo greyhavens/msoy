@@ -4,38 +4,19 @@
  * CSS styles for the Money interfaces.
  */
 
-.BuyPrompt {
+.buyPrompt {
   font-size: 20px;
   font-weight: bold;
   white-space: nowrap;
 }
 
-.Buy {
+.buyPanel {
   margin: 0px auto;
-}
-
-.Buy .BarTip {
   max-width: 250px;
-  text-align: center;
 }
 
-.Bought .Charity {
-  font-size: 12px;
-}
-
-.Buy table {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.Bought {
-  border: 1px solid #3776A0;
-  padding: 5px;
-  margin-top: 10px;
-}
-
-.buyPanelButton {
-  margin-top: 10px;
+.buyPanel .BuyButton, .boughtPanel .BuyButton {
+  margin: 10px auto 0px;
 }
 
 .buyButton .X {
@@ -44,4 +25,14 @@
 
 .exchangeRateLink {
   font-size: 12px;
+}
+
+.boughtPanel .Charity {
+  font-size: 12px;
+}
+
+.boughtPanel {
+  border: 1px solid #3776A0;
+  padding: 5px;
+  margin-top: 10px;
 }
