@@ -96,7 +96,7 @@ public class FacebookServlet extends HttpServlet
 
         // determine whether we're in game mode or Whirled mode
         try {
-            AppInfo info = parseAppInfo(req.getPathInfo());
+            AppInfo info = parseAppInfo(req);
 
             // make sure we have signed facebook data
             validateRequest(req, info.appSecret);
@@ -194,11 +194,16 @@ public class FacebookServlet extends HttpServlet
         }
     }
 
-    protected AppInfo parseAppInfo (String path)
+    protected AppInfo parseAppInfo (HttpServletRequest req)
         throws FriendlyException
     {
+        String path = req.getPathInfo();
+        AppInfo info = new AppInfo();
         if (path == null || !path.startsWith(GAME_PATH)) {
-            return DEF_APP_INFO;
+            info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
+            info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
+            info.gameId = ParameterUtil.getIntParameter(req, "game", 0, "Invalid game parameter");
+            return info;
         }
 
         int gameId;
@@ -213,7 +218,6 @@ public class FacebookServlet extends HttpServlet
             throw new FriendlyException("Unknown game: " + gameId);
         }
 
-        AppInfo info = new AppInfo();
         info.gameId = ginfo.gameId;
 
         FacebookInfo fbinfo = _mgameRepo.loadFacebookInfo(ginfo.gameId);
@@ -244,12 +248,6 @@ public class FacebookServlet extends HttpServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _auther;
     @Inject protected MsoyGameRepository _mgameRepo;
-
-    protected static final AppInfo DEF_APP_INFO = new AppInfo();
-    static {
-        DEF_APP_INFO.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
-        DEF_APP_INFO.appSecret = ServerConfig.config.getValue("facebook.secret", "");
-    }
 
     protected static final String FBKEY_PREFIX = "fb_sig_";
     protected static final int FBAUTH_DAYS = 2;
