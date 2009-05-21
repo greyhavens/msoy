@@ -30,37 +30,40 @@ Here's one for a Corpse Craft trophy.
       {
           "game_id" : 827,
           "game" : "Corpse Craft",
+          "game_desc" :
+              "Build an army of corpses to destroy your foes in this puzzle-action hybrid.",
           "trophy" : "Freshman",
           "descrip" : "Complete Chapter 3 of \"The Incident.\"",
           "vector" : "v.none",
+          "action_url" : "http://apps.facebook.com/whirled/?game=827&vec=v.fbtrophyA",
           "images" : [ {"src" :
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
-              "href" : "http://www.whirled.com/go/games-d_827_t"}]}
+              "href" : "http://apps.facebook.com/whirled/?game=827&vec=v.fbtrophyA"}]}
 </pre>
 <h4>Primary One Line Template</h4>
 Entered on the first screen of the template creation tool.
 <pre width>
-{*actor*} earned the &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}_t"&gt;{*trophy*}&lt;/a&gt; trophy in &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}"&gt;{*game*}&lt;/a&gt;.
+{*actor*} earned the {*trophy*} trophy in {*game*}.
 </pre>
 <h4>Primary Short Story Template Title</h4>
 Entered on the second screen of the template creation tool.
 <pre width>
-{*actor*} earned the &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}_t"&gt;{*trophy*}&lt;/a&gt; trophy in &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}"&gt;{*game*}&lt;/a&gt;.
+{*actor*} earned the {*trophy*} trophy in {*game*}.
 </pre>
 <h4>Primary Short Story Template Body</h4>
 Entered on the third screen of the template creation tool.
 <pre width>
-{*descrip*}
+{*game_desc*}
 </pre>
 <h4>Action Link URL</h4>
 Entered on the final screen of the template creation tool. The action link appears at the bottom of the feed story.
 <pre width>
-http://www.whirled.com/go/world-vec_{*vector*}_game_p_{*game_id*}
+{*action_url*}
 </pre>
 <h4>Action Link Text</h4>
-We are currently experimenting with variants on trophy feed story text. We have three running
+We are currently experimenting with variants on trophy feed story text. We have four running
 right now. Each user gets a constant one based on their visitor id (like an A/B test but not
-a true one). The variants are mapped in the deployment config fb template variable.
+a true one). The variants are mapped in the deployment config's templates variable.
 <h5>Variant 1</h5>
 <pre width>
 Compare your trophies to {*actor*}'s or just play a game of {*game*}.
@@ -72,6 +75,10 @@ Can you do better than {*actor*}? Play {*game*}.
 <h5>Variant 3</h5>
 <pre width>
 {*actor*} is grabbing all the glory in {*game*}. Challenge them now!
+</pre>
+<h5>Variant 4</h5>
+<pre width>
+Start your own game of {*game*}. Play now!
 </pre>
 </body>
 </html>

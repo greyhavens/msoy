@@ -58,14 +58,18 @@ public class ExternalFeeder
             mediaURL = "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png";
             trophyURL = "http://www.whirled.com/go/games-d_827_t";
         }
+        String actionUrl =
+            DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector;
 
-        publishTrophy(templateId, event.getGameId(), event.getGame(), event.getGameDescription(),
-            event.getTrophy(), event.getDescription(), mediaURL, trophyURL, vector);
+        publishTrophy(actionUrl, templateId, event.getGameId(), event.getGame(),
+            event.getGameDescription(), event.getTrophy(), event.getDescription(), mediaURL,
+            trophyURL, vector);
     }
 
-    protected native void publishTrophy (String templateId, int gameId, String game,
-                                         String gameDesc, String trophy, String descrip,
-                                         String mediaURL, String trophyURL, String vector)
+    protected native void publishTrophy (String actionUrl, String templateId, int gameId,
+                                         String game, String gameDesc, String trophy,
+                                         String descrip, String mediaURL, String trophyURL,
+                                         String vector)
     /*-{
         var data = {
             "game_id": gameId,
@@ -74,7 +78,8 @@ public class ExternalFeeder
             "trophy": trophy,
             "descrip": descrip,
             "vector": vector,
-            "images": [ {"src": mediaURL, "href": trophyURL} ] };
+            "action_url": actionUrl,
+            "images": [ {"src": mediaURL, "href": actionUrl} ] };
         $wnd.FB_PostTrophy(templateId, data);
     }-*/;
 
