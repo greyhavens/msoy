@@ -59,7 +59,9 @@ public class BaseEditorPanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         setWidget(row, 1, widget);
         getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
-        _binders.add(binder);
+        if (binder != null) {
+            _binders.add(binder);
+        }
         return row;
     }
 

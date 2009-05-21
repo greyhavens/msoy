@@ -12,6 +12,7 @@ import com.threerings.msoy.game.gwt.FacebookInfo;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
+import client.util.StringUtil;
 
 /**
  * Displays and allows editing of a game's Facebook info.
@@ -23,6 +24,9 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
         addWidget(MsoyUI.createHTML(_msgs.fieIntro(), null), 2, null);
 
         addSpacer();
+
+        _viewRow = addRow("", MsoyUI.createHTML(_msgs.fieViewApp(info.apiKey), null), null);
+        getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
 
         final TextBox key = MsoyUI.createTextBox(
             info.apiKey, FacebookInfo.KEY_LENGTH, FacebookInfo.KEY_LENGTH);
@@ -61,8 +65,11 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
             }
             protected boolean gotResult (Void result) {
                 MsoyUI.info(_msgs.fieInfoUpdated());
+                getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
                 return true;
             }
         };
     }
+
+    protected int _viewRow;
 }
