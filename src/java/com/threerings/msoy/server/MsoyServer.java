@@ -369,16 +369,20 @@ public class MsoyServer extends MsoyBaseServer
                 return;
             }
 
-            // if someone is online, give 'em two minutes, otherwise reboot immediately
-            final boolean playersOnline = Iterators.any(
+            // if someone is online, delay the reboot
+            if (Iterators.any(
                 _clmgr.enumerateClientObjects(), new Predicate<ClientObject>() {
                     public boolean apply (ClientObject clobj) {
                         return (clobj instanceof MemberObject);
                     }
-                });
+                })) {
+                return;
+            }
+
+            // otherwise reboot immediately
             _omgr.postRunnable(new Runnable() {
                 public void run () {
-                    _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
+                    _adminMan.scheduleReboot(0, "codeUpdateAutoRestart");
                 }
             });
 
