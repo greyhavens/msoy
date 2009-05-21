@@ -915,15 +915,17 @@ public class RoomManager extends SpotSceneManager
     {
         String reason;
         if (ident.type == Item.AVATAR) {
-            // Changed April 7, 2009: only the wearer of an avatar may update memory
-            if ((caller.avatar == null) || (caller.avatar.itemId != ident.itemId)) {
-                reason = "not wearing avatar";
-
-            } else if (!_roomObj.occupantInfo.containsKey(caller.getOid())) {
+            // only the wearer of an avatar may update its memory
+            OccupantInfo info = _roomObj.occupantInfo.get(caller.getOid());
+            if (info == null) {
                 reason = "not in room";
 
-            } else {
+            } else if ((info instanceof ActorInfo) &&
+                    ident.equals(((ActorInfo)info).getItemIdent())) {
                 return true;
+
+            } else {
+                reason = "not wearing avatar";
             }
 
         } else if (ident.type == Item.PET) {
