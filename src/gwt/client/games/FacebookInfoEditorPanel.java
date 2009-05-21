@@ -25,8 +25,8 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
 
         addSpacer();
 
-        _viewRow = addRow("", MsoyUI.createHTML(_msgs.fieViewApp(info.apiKey), null), null);
-        getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
+        _viewRow = addRow("", MsoyUI.createHTML("", null), null);
+        updateAppLink(info);
 
         final TextBox key = MsoyUI.createTextBox(
             info.apiKey, FacebookInfo.KEY_LENGTH, FacebookInfo.KEY_LENGTH);
@@ -65,10 +65,16 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
             }
             protected boolean gotResult (Void result) {
                 MsoyUI.info(_msgs.fieInfoUpdated());
-                getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
+                updateAppLink(info);
                 return true;
             }
         };
+    }
+
+    protected void updateAppLink (FacebookInfo info)
+    {
+        setWidget(_viewRow, 1, MsoyUI.createHTML(_msgs.fieViewApp(info.apiKey), null));
+        getRowFormatter().setVisible(_viewRow, !StringUtil.isBlank(info.apiKey));
     }
 
     protected int _viewRow;
