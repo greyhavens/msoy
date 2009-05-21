@@ -484,10 +484,8 @@ public class ShareDialog extends FloatingPanel
 
     protected function popTwitter () :void
     {
-        var status :String = Msgs.GENERAL.get(
-            "m.tweet_" + (_inGame ? "game" : "room"), _placeName, createLink());
-        var shareURL :String = "http://twitter.com/home?status=" + encodeURIComponent(status);
-        _ctx.getMsoyController().handleViewUrl(shareURL, "_blank");
+        _ctx.getMsoyController().handleTweet(
+            Msgs.GENERAL.get("m.tweet_" + (_inGame ? "game" : "room"), _placeName, createLink()));
     }
 
     /**

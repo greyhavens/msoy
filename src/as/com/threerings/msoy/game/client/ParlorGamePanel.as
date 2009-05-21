@@ -11,6 +11,7 @@ import mx.containers.VBox;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flex.CommandButton;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.chat.client.ChatDirector;
@@ -34,6 +35,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
+
+import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.ParlorGameObject;
@@ -168,6 +171,13 @@ public class ParlorGamePanel extends WhirledGamePanel
 
         } else {
             mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
+        }
+
+        // if we're the first person in a party game, create a twittering link
+        if ((config.getMatchType() == GameConfig.PARTY) && (plobj.occupants.size() == 1)) {
+            mctx.getNotificationDirector().addGenericNotification(
+                MessageBundle.tcompose("m.tweet_game", config.getGameId(), config.game.name),
+                Notification.SYSTEM);
         }
     }
 

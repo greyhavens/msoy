@@ -113,10 +113,9 @@ public class LobbyTablePanel extends VBox
 
         // twitter an invite
         var tweetLbl :Label = FlexUtil.createLabel(Msgs.GAME.get("l.invite_twitter"));
-        var tweet :String = Msgs.GAME.get("m.invite_twitter", _lobj.game.name, shareLink);
         var tweetBtn :CommandButton = new CommandButton(Msgs.GAME.get("b.invite_twitter"),
-            _gctx.getWorldContext().getMsoyController().handleViewUrl,
-            [ "http://twitter.com/home?status=" + encodeURIComponent(tweet), "_blank" ]);
+            _gctx.getWorldContext().getMsoyController().handleTweetGame,
+            [ _lobj.game.gameId, _lobj.game.name, false ]);
         tweetBtn.styleName = "orangeButton";
         addChild(makeHBox(tweetLbl, tweetBtn));
 

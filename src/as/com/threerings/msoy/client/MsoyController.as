@@ -145,6 +145,12 @@ public class MsoyController extends Controller
     /** Command to indicate an audio item was clicked, arg is [ mediaDesc ] */
     public static const AUDIO_CLICKED :String = "AudioClicked";
 
+    /** Command to tweet an message. */
+    public static const TWEET :String = "Tweet";
+
+    /** Command to tweet an invite to a specific game. */
+    public static const TWEET_GAME :String = "TweetGame";
+
     // NOTE:
     // Any commands defined in this class should be handled in this class.
     // Currently, this is not the case. Some commands are here without even an abstract or
@@ -463,6 +469,26 @@ public class MsoyController extends Controller
         }
 
         CommandMenu.createMenu(menuItems, _topPanel).popUpAtMouse();
+    }
+
+    /**
+     * Handles TWEET
+     */
+    public function handleTweet (msg :String) :void
+    {
+        handleViewUrl("http://twitter.com/home?status=" + encodeURIComponent(msg), "_blank");
+    }
+
+    /**
+     * Handles TWEET_GAME
+     */
+    public function handleTweetGame (gameId :int, gameName :String, party :Boolean = true) :void
+    {
+        var shareLink :String = createSharableLink(
+            "world-game_i_" + gameId + "_" + _mctx.getMyId(), true);
+        var tweet :String = Msgs.GAME.get("m.invite_twitter" + (party ? "_party" : ""),
+            gameName, shareLink);
+        handleTweet(tweet);
     }
 
     /**
