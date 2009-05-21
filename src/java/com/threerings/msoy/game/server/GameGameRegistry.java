@@ -430,7 +430,7 @@ public class GameGameRegistry
 
     /**
      * Notes that some number of games were played, player minutes accumulated and coins paid out
-     * for the supplied game. The appropriate records are stored in the database to faciliate
+     * for the supplied game. The appropriate records are stored in the database to facilitate
      * payout factor recalculation, recalculation is performed if the time to do so has arrived and
      * the supplied detail record is updated with the new information. Separate data is kept for
      * single player and multiplayer game plays. AVR games are always stored as multiplayer, but
