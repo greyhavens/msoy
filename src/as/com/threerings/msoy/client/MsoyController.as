@@ -253,6 +253,30 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Are we currently idle, i.e. no input for a period of time? This precludes away-ness.
+     */
+    public function isIdle () :Boolean
+    {
+        return _idle;
+    }
+
+    /**
+     * Are we currently away, i.e. we've typed /afk? This precludes idleness.
+     */
+    public function isAway () :Boolean
+    {
+        return _away;
+    }
+
+    /**
+     * Are we currently idle as far as games concerns? This is the logical union of idle and away.
+     */
+    public function isGameIdle () :Boolean
+    {
+        return _idle || _away;
+    }
+
+    /**
      * Adds a place exit handler to be invoked whenever the user requests to leave the current
      * place. The function should take no arguments and return a Boolean. A true return value means
      * carry on closing the place view. A false value means ignore the current request. In the

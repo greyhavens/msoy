@@ -1473,17 +1473,17 @@ public class WorldController extends MsoyController
     // from MsoyController
     override protected function setIdle (nowIdle :Boolean) :void
     {
-        const wasGameIdle :Boolean = (_idle || _away);
+        const wasGameIdle :Boolean = isGameIdle();
 
         super.setIdle(nowIdle);
 
         // only change game idleness when it truly changes
-        if (wasGameIdle != (_idle || _away)) {
+        if (wasGameIdle != isGameIdle()) {
             // let AVRGs know about our idleness changes
             var gd :GameDirector = _wctx.getGameDirector();
             if (gd != null) { // studio has no GameDirector
                 // game idleness = whirled idle or whirled away
-                gd.setIdle(_idle || _away);
+                gd.setIdle(isGameIdle());
             }
         }
     }
@@ -1491,17 +1491,17 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function setAway (nowAway :Boolean, message :String = null) :void
     {
-        const wasGameIdle :Boolean = (_idle || _away);
+        const wasGameIdle :Boolean = isGameIdle();
 
         super.setAway(nowAway, message);
 
         // only change game idleness when it truly changes
-        if (wasGameIdle != (_idle || _away)) {
+        if (wasGameIdle != isGameIdle()) {
             // let AVRGs know about our idleness changes
             var gd :GameDirector = _wctx.getGameDirector();
             if (gd != null) { // studio has no GameDirector
                 // game idleness = whirled idle or whirled away
-                gd.setIdle(_idle || _away);
+                gd.setIdle(isGameIdle());
             }
         }
     }
