@@ -31,12 +31,13 @@ import com.threerings.msoy.item.data.all.TrophySource;
  */
 public class TrophyPanel extends FloatingPanel
 {
-    public static function show (ctx :GameContext, gameId :int, gameName :String) :void
+    public static function show (ctx :GameContext, gameId :int, gameName :String,
+        gameDescription :String) :void
     {
         (ctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
             ctx.getClient(), gameId, ctx.getWorldContext().resultListener(
                 function (trophies :TypedArray) :void {
-                    new TrophyPanel(ctx, trophies, gameName).open();
+                    new TrophyPanel(ctx, trophies, gameName, gameDescription).open();
                 }, MsoyCodes.GAME_MSGS));
     }
 
@@ -53,12 +54,14 @@ public class TrophyPanel extends FloatingPanel
         });
     }
 
-    public function TrophyPanel (ctx :GameContext, trophies :Array, gameName :String)
+    public function TrophyPanel (ctx :GameContext, trophies :Array, gameName :String,
+        gameDescription :String)
     {
         super(ctx.getWorldContext(), Msgs.GAME.get("t.trophy"));
         _gctx = ctx;
         _trophies = trophies;
         _gameName = gameName;
+        _gameDescription = gameDescription;
     }
 
     override protected function createChildren () :void
@@ -127,12 +130,14 @@ public class TrophyPanel extends FloatingPanel
     protected function publishTrophies () :void
     {
         close();
-        TrophyFeederPanel.showExisting(_gctx.getWorldContext(), _gameName, filterEarned(_trophies));
+        TrophyFeederPanel.showExisting(
+            _gctx.getWorldContext(), _gameName, _gameDescription, filterEarned(_trophies));
     }
 
     protected var _gctx :GameContext;
     protected var _trophies :Array /*of Trophy*/;
     protected var _gameName :String;
+    protected var _gameDescription :String;
 
     protected static const CELL_WIDTH :int = 200;
 }

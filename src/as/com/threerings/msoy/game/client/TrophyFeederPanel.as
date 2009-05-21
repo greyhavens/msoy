@@ -48,8 +48,8 @@ public class TrophyFeederPanel extends FloatingPanel
      * were supplied.
      */
     public static function showNew (
-        ctx :MsoyContext, gameName :String, trophies :Array /* of Trophy */, onClose :Function)
-        :void
+        ctx :MsoyContext, gameName :String, gameDescription :String,
+        trophies :Array /* of Trophy */, onClose :Function) :void
     {
         // these trophies will always be earned 
         var tfp :TrophyFeederPanel;
@@ -63,7 +63,8 @@ public class TrophyFeederPanel extends FloatingPanel
      * until the user closes it. When the user clicks a trophy, it is disabled for feedback. The
      * facebook popup can take up to about 30 seconds to appear.
      */
-    public static function showExisting (ctx :MsoyContext, gameName :String, trophies :Array) :void
+    public static function showExisting (ctx :MsoyContext, gameName :String,
+        gameDescription :String, trophies :Array) :void
     {
         new TrophyFeederPanel(ctx, trophies, gameName, MODE_EXISTING).open();
     }
@@ -135,7 +136,7 @@ public class TrophyFeederPanel extends FloatingPanel
     {
         _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
             trophy.gameId, _gameName, trophy.name, trophy.description,
-            trophy.trophyMedia.getMediaPath() ]);
+            trophy.trophyMedia.getMediaPath(), _gameDescription ]);
 
         btn.enabled = false;
         if (_mode == MODE_NEW) {
@@ -145,6 +146,7 @@ public class TrophyFeederPanel extends FloatingPanel
 
     protected var _trophies :Array /*of Trophy*/;
     protected var _gameName :String;
+    protected var _gameDescription :String;
     protected var _mode :int;
 
     protected static const MODE_NEW :int = 0;

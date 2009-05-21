@@ -109,6 +109,15 @@ public class GameLiaison
     }
 
     /**
+     * Returns the description of the game we are playing or lobbying for.
+     */
+    public function get gameDescription () :String
+    {
+        var cfg :MsoyGameConfig = gameConfig as MsoyGameConfig;
+        return (cfg == null) ? null : cfg.getTextDescription();
+    }
+
+    /**
      * Returns the ID of this game's group.
      */
     public function get gameGroupId () :int
@@ -452,7 +461,8 @@ public class GameLiaison
             return true;
         }
 
-        TrophyFeederPanel.showNew(_gctx.getWorldContext(), gameName, _trophies, onClose);
+        TrophyFeederPanel.showNew(
+            _gctx.getWorldContext(), gameName, gameDescription, _trophies, onClose);
         return false;
     }
 

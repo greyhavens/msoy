@@ -138,6 +138,14 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Returns the description of the game we're currently connected to, or null if we're not.
+     */
+    public function getGameDescription () :String
+    {
+        return (_liaison != null) ? _liaison.gameDescription : null;
+    }
+
+    /**
      * Is our game an avr game?
      */
     public function isAVRGame () :Boolean
@@ -273,7 +281,7 @@ public class GameDirector extends BasicDirector
      */
     public function viewGameTrophies () :void
     {
-        TrophyPanel.show(getGameContext(), getGameId(), getGameName());
+        TrophyPanel.show(getGameContext(), getGameId(), getGameName(), getGameDescription());
     }
 
     /**

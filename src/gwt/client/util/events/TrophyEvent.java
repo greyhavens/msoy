@@ -49,6 +49,14 @@ public class TrophyEvent extends FlashEvent
     }
 
     /**
+     * Returns the name of the game in which the trophy was earned.
+     */
+    public String getGameDescription ()
+    {
+        return _gameDesc;
+    }
+
+    /**
      * Returns the name of the trophy was earned.
      */
     public String getTrophy ()
@@ -80,6 +88,7 @@ public class TrophyEvent extends FlashEvent
         _trophy = JavaScriptUtil.getStringElement(args, 2);
         _descrip = JavaScriptUtil.getStringElement(args, 3);
         _mediaURL = JavaScriptUtil.getStringElement(args, 4);
+        _gameDesc = JavaScriptUtil.getStringElement(args, 5);
     }
 
     @Override // from FlashEvent
@@ -90,6 +99,7 @@ public class TrophyEvent extends FlashEvent
         JavaScriptUtil.setStringElement(args, 2, _trophy);
         JavaScriptUtil.setStringElement(args, 3, _descrip);
         JavaScriptUtil.setStringElement(args, 4, _mediaURL);
+        JavaScriptUtil.setStringElement(args, 5, _gameDesc);
     }
 
     @Override // from FlashEvent
@@ -105,4 +115,5 @@ public class TrophyEvent extends FlashEvent
     protected String _trophy;
     protected String _descrip;
     protected String _mediaURL;
+    protected String _gameDesc;
 }
