@@ -67,8 +67,8 @@ public class PetHandler
     public void reinitFollowing (MemberObject owner)
     {
         if (_follow != null) {
-            log.warning("Requested to reinit following but we're already following!? " +
-                        "[pet=" + this + ", target=" + owner.who() + "].");
+            log.warning("Requested to reinit following but we're already following!?",
+                "pet", this, "target", owner.who());
             return;
         }
 
@@ -118,8 +118,8 @@ public class PetHandler
         // then enter the scene like a proper scene entity
         _sceneReg.moveTo(_petobj, sceneId, Integer.MAX_VALUE, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
-                log.warning("Pet failed to enter scene [pet=" + this + ", scene=" + sceneId +
-                            ", reason=" + reason + "].");
+                log.warning("Pet failed to enter scene",
+                   "pet", this, "scene", sceneId, "reason", reason);
                 shutdown(false);
             }
         });
@@ -188,7 +188,7 @@ public class PetHandler
             // make sure the requester is in a room that they own
             PlaceManager plmgr = _placeReg.getPlaceManager(owner.getPlaceOid());
             if (!(plmgr instanceof RoomManager)) {
-                log.info("Owner no longer in a room? [who=" + owner.who() + ", in=" + plmgr + "].");
+                log.info("Owner no longer in a room?", "who", owner.who(), "in", plmgr);
                 throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
             }
             ((RoomManager)plmgr).requireCanAddPet(owner);
@@ -199,8 +199,7 @@ public class PetHandler
             break;
 
         default:
-            log.warning("Received unknown pet order [from=" + owner.who() +
-                        ", order=" + order + "].");
+            log.warning("Received unknown pet order", "from", owner.who(), "order", order);
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
     }
@@ -220,8 +219,8 @@ public class PetHandler
         // TODO: if pet is updated or changes hands, we need to update the resolved PetObject
         if (_petobj.pet.ownerId != owner.getMemberId()) {
             // TODO: allow support personnel?
-            log.warning("Pet handling by non-owner [who=" + owner.who() + ", pet=" + this +
-                        ", ownerId=" + _petobj.pet.ownerId + "].");
+            log.warning("Pet handling by non-owner",
+                "who", owner.who(), "pet", this, "ownerId", _petobj.pet.ownerId);
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
     }
@@ -250,8 +249,8 @@ public class PetHandler
         throws InvocationException
     {
         if (_follow != null) {
-            log.warning("Asked to follow but we're already following! [pet=" + this +
-                        ", target=" + owner.who() + ", following=" + _follow.who() + "].");
+            log.warning("Asked to follow but we're already following!",
+                "pet", this, "target", owner.who(), "following", _follow.who());
             throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
         }
 
@@ -272,8 +271,8 @@ public class PetHandler
             return;
         }
         if (_follow.walkingId != _petobj.pet.itemId) {
-            log.warning("Our owner is somehow not walking us? [pet=" + this +
-                        ", owner=" + _follow.who() + ", walking=" + _follow.walkingId + "].");
+            log.warning("Our owner is somehow not walking us?",
+               "pet", this, "owner", _follow.who(), "walking", _follow.walkingId);
         } else {
             _follow.setWalkingId(0);
         }
