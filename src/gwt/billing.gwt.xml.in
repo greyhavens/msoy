@@ -1,0 +1,10 @@
+<module>
+  <inherits name="page"/>
+
+  <source path="client/billing"/>
+
+  <public path="public/billing"/>
+  <stylesheet src="billing.css"/>
+
+  <entry-point class="client.billing.BillingPage"/>
+</module>

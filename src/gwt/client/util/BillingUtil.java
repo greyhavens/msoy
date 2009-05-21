@@ -6,58 +6,38 @@ package client.util;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
-import client.shell.ShellMessages;
-import client.ui.MsoyUI;
 
 /**
  * Contains methods to get URLs for various points in the billing system.
  */
 public class BillingUtil
 {
-    /**
-     * Pops up a window to the billing system for buying bars. This and {@link #onBuyBars} are the
-     * <em>only</em> way that the billing system should be linked to.
-     */
-    public static void goBuyBars ()
-    {
-        if (CShell.isGuest()) {
-            MsoyUI.info(_cmsgs.gobuyMustLogon());
+//         if (CShell.isGuest()) {
+//             MsoyUI.info(_cmsgs.gobuyMustLogon());
 
-        } else if (CShell.isPermaguest()) {
-            MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
-                              Link.createHandler(Pages.ACCOUNT, "create"));
+//         } else if (CShell.isPermaguest()) {
+//             MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
+//                               Link.createHandler(Pages.ACCOUNT, "create"));
 
-        } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
-            MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
-                              Link.createHandler(Pages.ACCOUNT, "config"));
-
-        } else {
-            Window.open(LANDING + "?initUsername=" + URL.encodeComponent(CShell.creds.accountName),
-                "_blank",
-                // For those silly browsers that open this in a new window instead of a new
-                // tab, enable all the chrome options on the new window.
-                "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
-        }
-    }
+//         } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
+//             MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
+//                               Link.createHandler(Pages.ACCOUNT, "config"));
 
     /**
-     * When clicked, popup up a window to billing to buy bars.
+     * Displays the sepecified billing page.
      */
-    public static ClickHandler onBuyBars ()
+    public static void popBillingPage (String url)
     {
-        return new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                goBuyBars();
-            }
-        };
+        Window.open(BASE + url + "?initUsername=" + URL.encodeComponent(CShell.creds.accountName),
+                    "_blank",
+                    // For those silly browsers that open this in a new window instead of a new
+                    // tab, enable all the chrome options on the new window.
+                    "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
     }
 
     /**
@@ -78,8 +58,5 @@ public class BillingUtil
         return path.endsWith("/") ? path : (path + "/");
     }
 
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-
     protected static final String BASE = capPath(DeploymentConfig.billingURL);
-    protected static final String LANDING = BASE + "whirled.wm";
 }

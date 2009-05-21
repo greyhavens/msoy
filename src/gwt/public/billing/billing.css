@@ -1,0 +1,48 @@
+/** 
+ * $Id$
+ *
+ * CSS styles for the Billing interfaces.
+ */
+
+.selectMethod {
+  font-family: Helvetica, Arial, sans-serif;
+  background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
+  height: 100%;
+  padding: 0px 50px;
+}
+
+.selectMethod .Header {
+  margin-top: 15px;
+}
+
+.selectMethod .Intro {
+  width: 410px;
+  text-align: right;
+}
+
+.selectMethod .Select {
+  color: #2E6D8E;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 16px;
+  padding: 10px 0px;
+}
+
+.selectMethod .Balloons {
+  padding: 5px 0px 0px 10px;
+}
+
+.selectMethod .Balloons .Tip {
+  background: transparent url(/images/billing/balloon.png) no-repeat;
+  width: 393px;
+  height: 40px;
+  padding-left: 24px;
+  vertical-align: top;
+  padding-top: 5px;
+  margin: 5px 0px;
+}
+
+.selectMethod .Balloons .Tip, .selectMethod .Balloons .Tip a {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  font-size: 10px;
+}

@@ -18,7 +18,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.TongueBox;
-import client.util.BillingUtil;
 import client.util.Link;
 
 public class TransactionsPanel extends FlowPanel
@@ -37,7 +36,7 @@ public class TransactionsPanel extends FlowPanel
         FlowPanel billing = MsoyUI.createFlowPanel("BillingTip");
         billing.add(MsoyUI.createHTML(_msgs.billingTip(), null));
         billing.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.buyBars(),
-                                        BillingUtil.onBuyBars()));
+                                        Link.createListener(Pages.BILLING)));
         blurb.setWidget(0, 1, billing);
         blurb.getCellFormatter().setStyleName(0, 1, "Billing");
 

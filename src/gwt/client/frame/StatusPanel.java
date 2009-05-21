@@ -38,7 +38,6 @@ import client.shell.CShell;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
-import client.util.BillingUtil;
 import client.util.Link;
 import client.util.NaviUtil;
 import client.util.events.FlashEvents;
@@ -231,8 +230,7 @@ public class StatusPanel extends SmartTable
             FocusPanel barsFocus = new FocusPanel(bars);
             barsFocus.addClickHandler(NaviUtil.onViewTransactions(ReportType.BARS));
             setWidget(0, idx++, barsFocus);
-            setWidget(0, idx++, MsoyUI.createActionLabel(
-                          _cmsgs.statusBuyBars(), "BuyBars", BillingUtil.onBuyBars()));
+            setWidget(0, idx++, Link.create(_cmsgs.statusBuyBars(), Pages.BILLING), 1, "BuyBars");
 
             FloatPanel level = new FloatPanel("Level");
             level.add(new Image("/images/header/symbol_level.png"));

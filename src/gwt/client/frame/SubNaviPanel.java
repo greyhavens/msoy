@@ -14,7 +14,6 @@ import com.threerings.msoy.web.gwt.Tabs;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.BillingUtil;
 import client.util.Link;
 
 /**
@@ -52,6 +51,10 @@ public class SubNaviPanel extends FlowPanel
                     addLink(null, "Admin", Pages.ADMINZ);
                 }
             }
+            break;
+
+        case BILLING:
+            addLink(null, "Select method", Pages.BILLING);
             break;
 
         case STUFF:
@@ -95,7 +98,7 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "My Favorites", Pages.SHOP, "f");
             if (CShell.isRegistered()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
-                addExternalLink("Buy Bars", BillingUtil.onBuyBars(), true);
+                addLink(null, "Get Bars", Pages.BILLING);
             }
             break;
 
@@ -112,12 +115,6 @@ public class SubNaviPanel extends FlowPanel
             // nada
             break;
         }
-    }
-
-    public void addExternalLink (String label, ClickHandler listener, boolean sep)
-    {
-        addSeparator(sep);
-        add(MsoyUI.createActionLabel(label, "external", listener));
     }
 
     public void addLink (String iconPath, String label, Pages page, Object... args)

@@ -28,7 +28,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.StretchButton;
-import client.util.BillingUtil;
 import client.util.ClickCallback;
 import client.util.MoneyUtil;
 import client.util.Link;
@@ -75,8 +74,7 @@ public abstract class BuyPanel<T> extends SmartTable
         _barPanel = new FlowPanel();
         _barPanel.add(_buyBars = new BuyButton(Currency.BARS));
         _barPanel.add(_barLabel = MsoyUI.createHTML("", "inline"));
-        _barPanel.add(_getBars = MsoyUI.createActionLabel(
-                          _msgs.getBars(), "inline", BillingUtil.onBuyBars()));
+        _barPanel.add(_getBars = Link.create(_msgs.getBars(), Pages.BILLING));
         _barPanel.add(_switchToCoins = MsoyUI.createActionLabel(
                           _msgs.buyWithCoins(), "inline", switchCurrency));
         setWidget(0, 0, _barPanel, 2, null);
@@ -227,7 +225,7 @@ public abstract class BuyPanel<T> extends SmartTable
             if (msg == null) {
                 super.reportFailure(cause);
             } else {
-                MsoyUI.infoAction(msg, _msgs.getBars(), BillingUtil.onBuyBars());
+                MsoyUI.infoAction(msg, _msgs.getBars(), Link.createListener(Pages.BILLING));
             }
         }
 

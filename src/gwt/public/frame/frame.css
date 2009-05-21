@@ -151,7 +151,7 @@
   text-decoration: underline;
 }
 
-.statusPanel .Levels div.BuyBars {
+.statusPanel .Levels .BuyBars a {
   font-size: 10px;
   color: #f3a613;
   padding-left: 5px;

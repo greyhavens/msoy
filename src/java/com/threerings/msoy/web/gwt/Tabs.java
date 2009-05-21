@@ -8,5 +8,5 @@ package com.threerings.msoy.web.gwt;
  */
 public enum Tabs
 {
-    ME, STUFF, GAMES, ROOMS, GROUPS, SHOP, /*CREATE,*/ HELP
+    ME, BILLING, STUFF, GAMES, ROOMS, GROUPS, SHOP, /*CREATE,*/ HELP
 }
