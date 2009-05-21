@@ -430,6 +430,7 @@
         <filter token="facebook_api_key" value="${facebook.api_key}"/>
         <filter token="facebook_trophy_template_config" value="${facebook.trophy_template_config}"/>
         <filter token="facebook_url_validation_hack" value="${facebook.url_validation_hack}"/>
+        <filter token="facebook_canvas_url" value="${facebook.canvas_url}"/>
       </filterset>
     </copy>
   </target>
