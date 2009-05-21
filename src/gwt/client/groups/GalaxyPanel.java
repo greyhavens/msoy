@@ -27,7 +27,6 @@ import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -232,8 +231,9 @@ public class GalaxyPanel extends FlowPanel
         // set up my groups
         if (!CShell.isGuest() && data.myGroups.size() == 0) {
             _myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
+
         } else {
-            for (MyGroupCard group : data.myGroups) {
+            for (GroupCard group : data.myGroups) {
                 _myGroups.add(createQuickGroupWidget(group));
             }
             Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
@@ -281,7 +281,7 @@ public class GalaxyPanel extends FlowPanel
                                       "MemberCount"));
         widget.add(Link.create(_msgs.galaxyPeopleInRooms(group.population + ""), "InRooms",
                                Pages.WORLD, "s" + group.homeSceneId));
-        widget.add(Link.create(_msgs.galaxyThreadCount(group.threadCount + ""), "ThreadCount",
+        widget.add(Link.create(_msgs.galaxyDiscussions(), "ThreadCount",
                                Pages.GROUPS, "f", group.name.getGroupId()));
         return widget;
     }

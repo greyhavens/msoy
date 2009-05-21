@@ -76,7 +76,6 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
-import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -96,18 +95,16 @@ public class GroupServlet extends MsoyServiceServlet
     public GalaxyData getGalaxyData ()
         throws ServiceException
     {
+        MemberRecord mrec = getAuthedUser();
         GalaxyData data = new GalaxyData();
 
         // load up my groups
-        data.myGroups = Lists.newArrayList();
-        if (getAuthedUser() != null) {
-            List<MyGroupCard> myGroups = getMyGroups(MyGroupCard.SORT_BY_NEWEST_POST);
-            for (MyGroupCard group : myGroups) {
-                data.myGroups.add(group);
-                if (data.myGroups.size() == GalaxyData.MY_GROUPS_COUNT) {
-                    break;
-                }
-            }
+        if (mrec != null) {
+            List<GroupRecord> groups = _groupRepo.getFullMemberships(
+                mrec.memberId, GalaxyData.MY_GROUPS_COUNT);
+            data.myGroups = Lists.newArrayList(Iterables.transform(groups, GroupRecord.TO_CARD));
+        } else {
+            data.myGroups = Lists.newArrayList();
         }
 
         // TODO: make sure these are in a sensible order?
@@ -126,8 +123,8 @@ public class GroupServlet extends MsoyServiceServlet
     {
         List<GroupRecord> records = _groupRepo.getGroups(offset, count, query);
         PagedResult<GroupCard> result = new PagedResult<GroupCard>();
-        result.page = populateGroupCard(Lists.newArrayList(Iterables.transform(records,
-            GroupRecord.TO_CARD)));
+        result.page = populateGroups(
+            Lists.newArrayList(Iterables.transform(records, GroupRecord.TO_CARD)));
 
         if (needCount) {
             result.total = _groupRepo.getGroupCount(query);
@@ -463,77 +460,12 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<MyGroupCard> getMyGroups (byte sortMethod)
+    public List<GroupCard> getMyGroups ()
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        final int memberId = mrec.memberId;
-
-        // load up our group memberships
-        List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
-
-        // if we're not already a member, include Whirled Announcements
-        if (!Iterables.any(groupRecords, IS_ANNOUNCE)) {
-            GroupRecord agroup = _groupRepo.loadGroup(ServerConfig.getAnnounceGroupId());
-            if (agroup != null) {
-                groupRecords.add(agroup);
-            }
-        }
-
-        List<MyGroupCard> myGroupCards = Lists.newArrayList();
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-
-        for (GroupRecord record : groupRecords) {
-            final MyGroupCard card = new MyGroupCard();
-
-            // collect basic info from the GroupRecord
-            card.blurb = record.blurb;
-            card.homeSceneId = record.homeSceneId;
-            if (record.toLogo() != null) {
-                card.logo = record.toLogo();
-            }
-            card.name = record.toGroupName();
-            card.official = record.official;
-
-            // fetch thread information
-            card.numThreads = _forumRepo.loadThreadCount(record.groupId);
-            card.numPosts = _forumRepo.loadMessageCount(record.groupId);
-
-            List<ForumThreadRecord> threads = _forumRepo.loadRecentThreads(record.groupId, 1);
-            if (threads.size() > 0) {
-                Map<Integer,GroupName> gmap =
-                    Collections.singletonMap(record.groupId, card.name);
-                card.latestThread = _forumLogic.resolveThreads(
-                    mrec, threads, gmap, false, true).get(0);
-            }
-
-            // fetch current population from PopularPlacesSnapshot
-            PopularPlacesSnapshot.Place pcard = pps.getWhirled(card.name.getGroupId());
-            if (pcard != null) {
-                card.population = pcard.population;
-            }
-
-            // determine our rank info
-            card.rank = _groupRepo.getRank(record.groupId, mrec.memberId);
-
-            myGroupCards.add(card);
-        }
-
-        // sort by the preferred sort method
-        if (sortMethod == MyGroupCard.SORT_BY_PEOPLE_ONLINE) {
-            Collections.sort(myGroupCards, SORT_BY_PEOPLE_ONLINE);
-        }
-        else if (sortMethod == MyGroupCard.SORT_BY_NAME) {
-            Collections.sort(myGroupCards, SORT_BY_NAME);
-        }
-        else if (sortMethod == MyGroupCard.SORT_BY_MANAGER) {
-            Collections.sort(myGroupCards, SORT_BY_MANAGER);
-        }
-        else if (sortMethod == MyGroupCard.SORT_BY_NEWEST_POST) {
-            Collections.sort(myGroupCards, SORT_BY_NEWEST_POST);
-        }
-
-        return myGroupCards;
+        List<GroupRecord> groups = _groupRepo.getFullMemberships(mrec.memberId, -1);
+        return populateGroups(Lists.newArrayList(Iterables.transform(groups, GroupRecord.TO_CARD)));
     }
 
     // from interface GroupService
@@ -751,7 +683,7 @@ public class GroupServlet extends MsoyServiceServlet
      * Fill in the current number of people in rooms (population) and the number of total threads
      * for a list of group cards.
      */
-    protected List<GroupCard> populateGroupCard (List<GroupCard> groups)
+    protected List<GroupCard> populateGroups (List<GroupCard> groups)
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         for (GroupCard card : groups) {
@@ -759,7 +691,6 @@ public class GroupServlet extends MsoyServiceServlet
             if (pcard != null) {
                 card.population = pcard.population;
             }
-            card.threadCount = _forumRepo.loadThreadCount(card.name.getGroupId());
         }
         return groups;
     }
@@ -838,70 +769,4 @@ public class GroupServlet extends MsoyServiceServlet
 
     /** The number of matches to return when searching against all display names in the database. */
     protected static int MAX_MEMBER_MATCHES = 100;
-
-    /** A predicate that matches the announcement group. */
-    protected static Predicate<GroupRecord> IS_ANNOUNCE = new Predicate<GroupRecord>() {
-        public boolean apply (GroupRecord record) {
-            return record.groupId == ServerConfig.getAnnounceGroupId();
-        }
-    };
-
-    /** Compartor for sorting by population then by last post date. */
-    protected static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
-        new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            int rv = c2.population - c1.population;
-            if (rv != 0) {
-                return rv;
-            }
-            if (c1.latestThread != null && c2.latestThread == null) {
-                return -1;
-            } else if (c1.latestThread == null && c2.latestThread != null) {
-                return 1;
-            } else if (c1.latestThread != null && c2.latestThread != null) {
-                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
-            }
-            // if neither has a single post or active user, sort by name
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting by population then by last post date. */
-    protected static Comparator<MyGroupCard> SORT_BY_NAME = new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting by manager status then population then by last post date. */
-    protected static Comparator<MyGroupCard> SORT_BY_MANAGER = new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            int cmp = c2.rank.compareTo(c1.rank); // highest first
-            if (cmp != 0) {
-                return cmp;
-            }
-
-            // fall back to other sort
-            return SORT_BY_PEOPLE_ONLINE.compare(c1, c2);
-        }
-    };
-
-    /** Compartor for sorting by last post date then by population. */
-    protected static Comparator<MyGroupCard> SORT_BY_NEWEST_POST = new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            if (c1.latestThread != null && c2.latestThread == null) {
-                return -1;
-            } else if (c1.latestThread == null && c2.latestThread != null) {
-                return 1;
-            } else if (c1.latestThread != null && c2.latestThread != null) {
-                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
-            }
-            int rv = c2.population - c1.population;
-            if (rv != 0) {
-                return rv;
-            }
-            // if neither has a single post or active user, sort by name
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
 }

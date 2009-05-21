@@ -511,13 +511,18 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches the full records of the groups a given member belongs to.
+     * Fetches the full records of the groups a given member belongs to ordered from most populous
+     * to least.
+     *
+     * @param limit if greater than zero, a limit on the number of groups to return.
      */
-    public List<GroupRecord> getFullMemberships (int memberId)
+    public List<GroupRecord> getFullMemberships (int memberId, int limit)
     {
         return findAll(GroupRecord.class,
                        new Join(GroupRecord.GROUP_ID, GroupMembershipRecord.GROUP_ID),
-                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
+                       new Where(GroupMembershipRecord.MEMBER_ID, memberId),
+                       OrderBy.descending(GroupRecord.MEMBER_COUNT),
+                       new Limit(0, (limit > 0) ? limit : Integer.MAX_VALUE));
     }
 
     /**

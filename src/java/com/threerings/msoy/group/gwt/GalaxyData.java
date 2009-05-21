@@ -17,7 +17,7 @@ public class GalaxyData
     public static final int MY_GROUPS_COUNT = 7;
 
     /** The member's MY_GROUPS_COUNT groups */
-    public List<MyGroupCard> myGroups;
+    public List<GroupCard> myGroups;
 
     /** The official whirled groups */
     public List<GroupCard> officialGroups;

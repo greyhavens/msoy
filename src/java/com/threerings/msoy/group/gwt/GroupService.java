@@ -205,10 +205,9 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetch a list of {@link MyGroupCard} records, one for each group of which the caller is a
-     * member.
+     * Returns the list of groups of which the caller is a member.
      */
-    List<MyGroupCard> getMyGroups (byte sortMethod)
+    List<GroupCard> getMyGroups ()
         throws ServiceException;
 
     /**

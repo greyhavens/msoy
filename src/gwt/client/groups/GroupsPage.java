@@ -76,9 +76,7 @@ public class GroupsPage extends Page
             }
 
         } else if (page == Nav.MYGROUPS) {
-            byte sortMethod = (byte) args.get(1, 0);
-            MyGroups myGroups = new MyGroups(sortMethod);
-            setContent(_msgs.myGroupsTitle(), myGroups);
+            setContent(_msgs.myGroupsTitle(), new MyGroupsPanel());
 
         } else if (page == Nav.UNREAD) {
             showForumPanel(ForumPanel.Mode.UNREAD, 0, args.get(1, ""), args.get(2, 0));

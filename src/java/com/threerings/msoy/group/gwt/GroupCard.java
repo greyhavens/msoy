@@ -36,9 +36,6 @@ public class GroupCard
     /** The number of members in this group. */
     public int memberCount;
 
-    /** The number of discussion threads in this group. */
-    public int threadCount;
-
     /** If the group is an official whirled group. */
     public boolean official;
 

@@ -558,178 +558,37 @@
    MY GROUPS
 -------------------------------------*/
 
-.myGroups {
-  background-color: #1d5884;
-  min-height: 100%;
-  width: 100%;
-  font-family: Arial, Helvetica, sans-serif;
+.myGroups .Card {
+  width: 330px;
+  border: 1px solid #CCCCCC;
   font-size: 12px;
-}
-
-.myGroups .GroupsGrid {
-  width: 665px;
-  margin: 10px 0 0 10px;
-}
-
-.myGroups .GroupsGrid .Header {
-  background-position: top center;
-}
-
-.myGroups .GroupsGrid .Header .TopLeft,
-.myGroups .GroupsGrid .Header .TopRight {
-  background-color: #1d5884;
-  height: 29px;
-}
-
-.myGroups .GroupsGrid .Header .SortBy {
-  padding-right: 5px;
-  width: 50px;
-}
-
-.myGroups .GroupsGrid .Header td.Info {
-  width: 350px;
-}
-
-.myGroups .GroupsGrid .Headers div {
-  float: left;
-  height: 17px;
-  background-color: #5683a4;
-  border: solid #1d5884 1px;
-  border-right: none;
-  padding-top: 5px;
-  text-align: center;
-  color: #FFFFFF;
-}
-
-.myGroups .GroupsGrid .Headers div.GroupNameHeader {
-  border-left: none;
-  width: 227px;
-}
-
-.myGroups .GroupsGrid .Headers div.LatestPostHeader {
-  width: 340px;
-}
-
-.myGroups .GroupsGrid .Headers div.ThreadsHeader {
-  width: 50px;
-}
-
-.myGroups .GroupsGrid .Headers div.PostsHeader {
-  width: 45px;
-}
-
-.myGroups .GroupWidget {
-  height: 80px;
-  text-align: left;
-  background: transparent url(/images/group/mywhirleds_row_bg.png) repeat-y top left;
-  margin-bottom: 5px;
-}
-.myGroups .GroupWidget,
-.myGroups .GroupWidget a {
-  color: #073859;
-}
-
-.myGroups .LogoBox {
-  position: absolute;
-  top: 10px;
-  left: 5px;
-}
-/* vertical centering not supported in ie */
-.myGroups .LogoBox div {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
 }
 
 .myGroups .Name {
-  position: absolute;
-  top: 10px;
-  left: 90px;
-  width: 130px;
-  height: 45px;
-  overflow: hidden;
-}
-.myGroups .Name a {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 17px;
-  color: #6692af;
-}
-
-.myGroups .MembersOnline {
-  color: #6692af;
-  font-size: 12px;
-  text-align: center;
-  position: absolute;
-  top: 60px;
-  left: 90px;
-}
-
-.myGroups .LatestThreadSubject,
-.myGroups .NoThreads {
-  position: absolute;
-  top: 10px;
-  left: 235px;
-  width: 320px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-decoration: none;
-}
-.myGroups .LatestThreadSubject a {
   font-size: 14px;
 }
 
-.myGroups .PostedBy {
-  position: absolute;
-  top: 30px;
-  left: 235px;
-  width: 325px;
-}
-
-.myGroups .Date {
-  position: absolute;
-  top: 60px;
-  left: 360px;
-  width: 200px;
-  text-align: right;
-}
-
-.myGroups .Date .Time {
-  color: #6692af;
-}
-
-.myGroups .NumThreads,
-.myGroups .NumPosts {
-  position: absolute;
-  top: 10px;
-  font-size: 15px;
-  width: 50px;
-  height: 40px; /* plus 20 padding */
-  padding-top: 20px;
+.myGroups .Thumb {
+  width: 60px;
   text-align: center;
-  cursor: pointer;
-}
-.myGroups .NumThreads a,
-.myGroups .NumPosts a {
-  text-decoration: none;
 }
 
-.myGroups .NumThreads a:hover,
-.myGroups .NumPosts a:hover,
-.myGroups .NumThreads a:active,
-.myGroups .NumPosts a:active {
-  text-decoration: underline;
+.myGroups .Bold {
+  font-weight: bold;
 }
 
-.myGroups .NumThreads {
-  left: 570px;
+.myGroups .Thumb .thumbBox {
+  margin: 0px auto;
 }
 
-.myGroups .NumPosts {
-  left: 617px;
+.myGroups .Blurb {
+  font-size: 12px;
+  max-height: 30px;
+  overflow: hidden;
 }
 
-.myGroups .ManagerStar {
-  margin-left: 5px;
+.myGroups .Link {
+  text-align: right;
 }
 
 /* ------------------------------------
