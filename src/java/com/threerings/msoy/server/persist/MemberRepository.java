@@ -1284,6 +1284,7 @@ public class MemberRepository extends DepotRepository
         FriendPayoutRecord payout = new FriendPayoutRecord();
         payout.friendId = friendId;
         payout.paidMemberId = paidMemberId;
+        payout.time = new Timestamp(System.currentTimeMillis());
         insert(payout);
     }
 
