@@ -23,6 +23,9 @@ public class AVRGameConfig extends PlaceConfig
     /** The creator provided name of this game. */
     public String name;
 
+    /** The description of this game. */
+    public String description;
+
     /** The game's thumbnail media. */
     public MediaDesc thumbMedia;
 

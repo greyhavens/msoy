@@ -24,6 +24,9 @@ public class GameSummary extends SimpleStreamableObject
     /** The name of the game - used as a tooltip */
     public var name :String;
 
+    /** The description of the game - used for sharing */
+    public var description :String;
+
     /** Whether or not this is an AVRGame. */
     public var avrGame :Boolean;
 
@@ -41,6 +44,7 @@ public class GameSummary extends SimpleStreamableObject
         var data :GameSummary = new GameSummary();
         data.gameId = this.gameId;
         data.name = this.name;
+        data.description = this.description;
         data.avrGame = this.avrGame;
         data.thumbMedia = this.thumbMedia;
         return data;
@@ -62,6 +66,7 @@ public class GameSummary extends SimpleStreamableObject
         super.readObject(ins);
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
+        description = (ins.readField(String) as String);
         avrGame = ins.readBoolean();
         thumbMedia = MediaDesc(ins.readObject());
     }
@@ -72,6 +77,7 @@ public class GameSummary extends SimpleStreamableObject
         super.writeObject(out);
         out.writeInt(gameId);
         out.writeField(name);
+        out.writeField(description);
         out.writeBoolean(avrGame);
         out.writeObject(thumbMedia);
     }

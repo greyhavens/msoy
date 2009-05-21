@@ -51,6 +51,12 @@ public class ParlorGameConfig extends WhirledGameConfig
     }
 
     // from interface MsoyGameConfig
+    public function getTextDescription () :String
+    {
+        return game.description;
+    }
+
+    // from interface MsoyGameConfig
     public function getThumbnail () :MediaDesc
     {
         return game.thumbMedia;

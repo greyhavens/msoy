@@ -23,6 +23,9 @@ public class AVRGameConfig extends PlaceConfig
     /** The creator provided name of this game. */
     public var name :String;
 
+    /** The creator provided name of this game. */
+    public var description :String;
+
     /** The game's thumbnail media. */
     public var thumbMedia :MediaDesc;
 
@@ -45,6 +48,12 @@ public class AVRGameConfig extends PlaceConfig
     public function getName () :String
     {
         return name;
+    }
+
+    // from MsoyGameConfig
+    public function getTextDescription () :String
+    {
+        return description;
     }
 
     // from MsoyGameConfig
@@ -72,6 +81,7 @@ public class AVRGameConfig extends PlaceConfig
     {
         super.readObject(ins);
         name = ins.readField(String) as String;
+        description = ins.readField(String) as String;
         thumbMedia = MediaDesc(ins.readObject());
         splashMedia = MediaDesc(ins.readObject());
         _gameId = ins.readInt();
@@ -83,6 +93,7 @@ public class AVRGameConfig extends PlaceConfig
     {
         super.writeObject(out);
         out.writeField(name);
+        out.writeField(description);
         out.writeObject(thumbMedia);
         out.writeObject(splashMedia);
         out.writeInt(_gameId);

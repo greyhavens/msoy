@@ -205,7 +205,7 @@ public class GameInfoRecord extends PersistentRecord
      */
     public GameSummary toGameSummary ()
     {
-        return new GameSummary(gameId, name, isAVRG, getThumbMedia());
+        return new GameSummary(gameId, name, description, isAVRG, getThumbMedia());
     }
 
     /**

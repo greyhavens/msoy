@@ -13,6 +13,9 @@ public interface MsoyGameConfig
     /** Returns the name of this game. */
     function getName () :String;
 
+    /** Returns the description of this game. */
+    function getTextDescription () :String;
+
     /** Returns the thumbnail for this game. */
     function getThumbnail () :MediaDesc;
 

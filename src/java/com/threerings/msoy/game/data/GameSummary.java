@@ -20,6 +20,9 @@ public class GameSummary extends SimpleStreamableObject
     /** The name of the game - used as a tooltip */
     public String name;
 
+    /** The description of the game - used for sharing */
+    public String description;
+
     /** Whether or not this is an AVRGame. */
     public boolean avrGame;
 
@@ -36,16 +39,18 @@ public class GameSummary extends SimpleStreamableObject
      */
     public GameSummary (GameInfo game)
     {
-        this(game.gameId, game.name, game.isAVRG, game.thumbMedia);
+        this(game.gameId, game.name, game.description, game.isAVRG, game.thumbMedia);
     }
 
     /**
      * Creates a summary for the specified game.
      */
-    public GameSummary (int gameId, String name, boolean isAVRG, MediaDesc thumbMedia)
+    public GameSummary (int gameId, String name, String description, boolean isAVRG,
+                        MediaDesc thumbMedia)
     {
         this.gameId = gameId;
         this.name = name;
+        this.description = description;
         this.avrGame = isAVRG;
         this.thumbMedia = thumbMedia;
     }
