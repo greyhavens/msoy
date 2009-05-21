@@ -1255,7 +1255,7 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Returns the member ids of all permaguest accounts that have not logged in in the past 10
-     * days and have not achieved at least level 5.
+     * days and have not achieved at least level 5. The list is limited to a maximum number.
      */
     public List<Integer> loadExpiredWeakPermaguestIds (long now)
     {
@@ -1370,5 +1370,5 @@ public class MemberRepository extends DepotRepository
     protected static final int STRONG_PERMAGUEST_LEVEL = 5;
 
     /** We'll only return 1000 weak accounts at a time for purging. */
-    protected static final int MAX_WEAK_ACCOUNTS = 1000;
+    protected static final int MAX_WEAK_ACCOUNTS = 1500;
 }
