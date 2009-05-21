@@ -148,7 +148,7 @@ public class GoServlet extends HttpServlet
         HttpServletRequest req, HttpServletResponse rsp, String path, String agent)
         throws IOException
     {
-        if (agent.startsWith("Googlebot")) {
+        if (agent.contains("Googlebot")) {
             if (serveGoogle(req, rsp, path)) {
                 return true;
             }
