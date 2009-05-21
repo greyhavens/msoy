@@ -4,16 +4,16 @@
 package client.money;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -44,9 +44,7 @@ public abstract class BuyPanel<T> extends SmartTable
     {
         RoundBox box = new RoundBox(RoundBox.BLUE);
         box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        Label prompt = new Label(promptStr);
-        prompt.setStyleName("buyPrompt");
-        box.add(prompt);
+        box.add(MsoyUI.createLabel(promptStr, "buyPrompt"));
         box.add(this);
         return box;
     }
@@ -269,7 +267,7 @@ public abstract class BuyPanel<T> extends SmartTable
     protected BuyButton _buyBars, _buyCoins;
     protected Widget _getBars;
     protected HTML _barLabel;
-    protected Label _switchToCoins, _switchToBars;
+    protected Widget _switchToCoins, _switchToBars;
 
     /** Are we showing the "alternate currency" view? (showing a bar price for a coin item) */
     protected boolean _altCurrency;
