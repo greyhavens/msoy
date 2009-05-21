@@ -51,7 +51,7 @@ public class StuffPanel extends FlowPanel
         _models = models;
         _memberId = memberId;
         _type = type;
-        boolean isCatalogType = isCatalogItem(type);
+        boolean displayUpload = shouldDisplayUpload(type);
 
         // prepare the search box
         _search = new HorizontalPanel();
@@ -91,7 +91,7 @@ public class StuffPanel extends FlowPanel
         });
 
         // compute the number of rows of items we can fit on the page
-        int used = isCatalogType ? NAVIGATION_HEIGHT + GET_STUFF_HEIGHT : NAVIGATION_HEIGHT;
+        int used = displayUpload ? NAVIGATION_HEIGHT + GET_STUFF_HEIGHT : NAVIGATION_HEIGHT;
         int rows = MsoyUI.computeRows(used, ITEM_BOX_HEIGHT, 2);
 
         // now create our grid of items
@@ -121,7 +121,7 @@ public class StuffPanel extends FlowPanel
         _contents.addStyleName("Contents");
 
         // finally optionally add the "create your own" sales blurb
-        if (isCatalogType) {
+        if (displayUpload) {
             createUploadInterface();
         }
     }
@@ -150,8 +150,11 @@ public class StuffPanel extends FlowPanel
         showInventory(page, query);
     }
 
-    protected boolean isCatalogItem (byte type)
+    protected boolean shouldDisplayUpload (byte type)
     {
+        if (type == Item.LAUNCHER) {
+            return false; // TODO: we should have Buy but not Upload, punt!
+        }
         for (byte stype : Item.SHOP_TYPES) {
             if (type == stype) {
                 return true;
