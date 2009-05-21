@@ -59,17 +59,18 @@ public class ExternalFeeder
             trophyURL = "http://www.whirled.com/go/games-d_827_t";
         }
 
-        publishTrophy(templateId, event.getGameId(), event.getGame(), event.getTrophy(),
-            event.getDescription(), mediaURL, trophyURL, vector);
+        publishTrophy(templateId, event.getGameId(), event.getGame(), event.getGameDescription(),
+            event.getTrophy(), event.getDescription(), mediaURL, trophyURL, vector);
     }
 
-    protected native void publishTrophy (String templateId, int gameId, String game, String trophy,
-                                         String descrip, String mediaURL, String trophyURL,
-                                         String vector)
+    protected native void publishTrophy (String templateId, int gameId, String game,
+                                         String gameDesc, String trophy, String descrip,
+                                         String mediaURL, String trophyURL, String vector)
     /*-{
         var data = {
             "game_id": gameId,
             "game": game,
+            "game_desc": gameDesc,
             "trophy": trophy,
             "descrip": descrip,
             "vector": vector,
@@ -82,6 +83,8 @@ public class ExternalFeeder
       {
           "game_id" : 827,
           "game" : "Corpse Craft",
+          "game_desc" :
+              "Build an army of corpses to destroy your foes in this puzzle-action hybrid.",
           "trophy" : "Freshman",
           "descrip" : "Complete Chapter 3 of \"The Incident.\"",
           "vector" : "v.none",
