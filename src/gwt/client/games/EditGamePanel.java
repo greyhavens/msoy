@@ -15,7 +15,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.NaviTabPanel;
@@ -86,15 +85,11 @@ public class EditGamePanel extends FlowPanel
                 super.setVisible(visible);
             }
         }, _msgs.egTabPublish());
-
-        // only add the Facebook tab for support+ for now
-        if (CShell.isSupport()) {
-            _tabs.add(new LazyPanel() {
-                protected Widget createWidget () {
-                    return new FacebookInfoEditorPanel(data.facebook);
-                }
-            }, _msgs.egTabFacebook());
-        }
+        _tabs.add(new LazyPanel() {
+            protected Widget createWidget () {
+                return new FacebookInfoEditorPanel(data.facebook);
+            }
+        }, _msgs.egTabFacebook());
 
         for (final byte type : SUBITEM_TYPES) {
             _tabs.add(new LazyPanel() {
