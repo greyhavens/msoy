@@ -103,8 +103,10 @@ public class AVRGameLiaison extends GameLiaison
         // if we're not in a room, stuff a display with our splash media into view
         if (_wctx.getLocationDirector().getPlaceObject() == null) {
             _wctx.setPlaceView(new SplashPlaceView(config.getSplash(), config.getThumbnail()));
-        } else if (_wctx.getWorldController().isGameIdle()) {
-            // if we started the game afk/idle, tell the server
+        }
+
+        // if we started the game afk/idle, tell the server
+        if (_wctx.getWorldController().isGameIdle()) {
             getAVRGameController().setIdle(true);
         }
     }
