@@ -54,17 +54,10 @@ public interface GroupService extends RemoteService
         /** Tag to search for; preempted by searchString */
         public String tag;
 
-        public boolean equals (GroupQuery query)
-        {
-            if (query == null) {
-                return false;
-            }
-            if ((tag == query.tag || (tag != null && tag.equals(query.tag)))
-                && (search == query.search || (search != null && search.equals(query.search)))
-                && (sort == query.sort)) {
-                return true;
-            }
-            return false;
+        public boolean equals (GroupQuery query) {
+            return (query != null) && (sort == query.sort) &&
+                (tag == query.tag || (tag != null && tag.equals(query.tag))) &&
+                (search == query.search || (search != null && search.equals(query.search)));
         }
     }
 
@@ -91,8 +84,8 @@ public interface GroupService extends RemoteService
         /** The owners of the Medal */
         public List<VizMemberName> owners;
 
-        public int compareTo (MedalOwners o)
-        {
+        // from interface Comparable<MedalOwners>
+        public int compareTo (MedalOwners o) {
             return medal.name.compareTo(o.medal.name);
         }
     }
