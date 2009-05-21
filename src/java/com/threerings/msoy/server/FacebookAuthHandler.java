@@ -76,8 +76,10 @@ public class FacebookAuthHandler extends ExternalAuthHandler
                 User user = uinfo.getUser().get(0);
                 info.displayName = user.getFirstName();
                 info.profile.realName = user.getFirstName() + " " + user.getLastName();
-                String city = user.getCurrentLocation().getValue().getCity();
-                info.profile.location = (city == null) ? "" : city;
+                if (user.getCurrentLocation().getValue() != null) {
+                    String city = user.getCurrentLocation().getValue().getCity();
+                    info.profile.location = (city == null) ? "" : city;
+                }
                 if ("male".equalsIgnoreCase(user.getSex().getValue())) {
                     info.profile.sex = Profile.SEX_MALE;
                 } else if ("female".equalsIgnoreCase(user.getSex().getValue())) {
@@ -85,18 +87,27 @@ public class FacebookAuthHandler extends ExternalAuthHandler
                 }
                 String bdstr = user.getBirthday().getValue();
                 try {
-                    info.profile.birthday = new Date(_bfmt.parse(String.valueOf(bdstr)).getTime());
+                    if (bdstr != null) {
+                        info.profile.birthday = new Date(_bfmt.parse(bdstr).getTime());
+                    }
                 } catch (Exception e) {
                     log.info("Cannot parse Facebook birthday",
                              "uid", creds.getUserId(), "bday", bdstr);
                 }
             }
 
+            // TODO: we need to somehow fix this: Session key invalid or no longer valid
+
             // look up their friends' facebook ids
-            info.friendIds = Lists.newArrayList();
-            FriendsGetResponse finfo = fbclient.friends_get();
-            for (Long uid : finfo.getUid()) {
-                info.friendIds.add(uid.toString());
+            try {
+                info.friendIds = Lists.newArrayList();
+                FriendsGetResponse finfo = fbclient.friends_get();
+                for (Long uid : finfo.getUid()) {
+                    info.friendIds.add(uid.toString());
+                }
+            } catch (Exception e) {
+                log.info("Failed to look up Facebook friends", "who", creds.getUserId(),
+                         "error", e.getMessage());
             }
             return info;
 

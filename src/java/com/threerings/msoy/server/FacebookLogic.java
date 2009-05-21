@@ -44,7 +44,7 @@ public class FacebookLogic
     public FacebookJaxbRestClient getFacebookClient (FacebookServlet.FacebookAppCreds creds)
     {
         return new FacebookJaxbRestClient(SERVER_URL, creds.apiKey, creds.appSecret,
-                                          null, CONNECT_TIMEOUT, READ_TIMEOUT);
+                                          creds.sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
     }
 
     protected String requireAPIKey ()

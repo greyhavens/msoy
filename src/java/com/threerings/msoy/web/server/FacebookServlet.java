@@ -60,6 +60,9 @@ public class FacebookServlet extends HttpServlet
         /** The app secret of the app via which the user is authenticating. */
         public String appSecret;
 
+        /** The session key of the viewing user (may be null). */
+        public String sessionKey;
+
         // from ExternalCreds
         public ExternalAuther getAuthSource () {
             return ExternalAuther.FACEBOOK;
@@ -112,6 +115,7 @@ public class FacebookServlet extends HttpServlet
             }
             creds.apiKey = info.apiKey;
             creds.appSecret = info.appSecret;
+            creds.sessionKey = ParameterUtil.getParameter(req, FBKEY_PREFIX + "session_key", true);
 
             // authenticate this member via their external FB creds (this will autocreate their
             // account if they don't already have one)
