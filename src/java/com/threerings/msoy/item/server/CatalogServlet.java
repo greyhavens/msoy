@@ -20,7 +20,6 @@ import com.samskivert.util.RandomUtil;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -332,9 +331,6 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // validate the basis
         if (basisCatalogId != 0) {
-            if (!DeploymentConfig.devDeployment) {
-                throw new ServiceException(ItemCodes.INTERNAL_ERROR);
-            }
             if (!_itemLogic.isSuitableBasis(originalItem, basisCatalogId, currency, cost)) {
                 throw new ServiceException(ItemCodes.E_BASIS_ERROR);
             }

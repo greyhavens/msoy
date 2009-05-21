@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -115,7 +114,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // possibly add the basis selection ui
-        if (_item.supportsDerviation() && firstTime && DeploymentConfig.devDeployment) {
+        if (_item.supportsDerviation() && firstTime) {
             SmartTable basis = new SmartTable(0, 3);
             basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3, null);
             basis.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
