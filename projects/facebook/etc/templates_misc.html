@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>Facebook story templates</title>
+<style type="text/css">
+pre {width:auto; background: lightblue; border: gray solid 1px; padding: 5px;}
+</style>
+</head>
+<body>
+<a href="http://developers.facebook.com/tools.php?templates&app_id=6546537184">
+    Whirled App Templates on facebook.com</a><br>
+<a href="http://developers.facebook.com/tools.php?feed">Create a new template</a><br>
+
+<h3>Trophies</h3>
+<h4>Data Pipeline Overview</h4>
+These are created using the <a href="http://developers.facebook.com/tools.php?feed">template
+creation tool</a>. The id numbers are then put in the <code>msoy-server.properties</code> for the
+target deployment. The deployment config variable is parsed by the
+<code>client.frame.ExternalFeeder</code> class. To insulate facebook from gwt, the data parameter
+(see below) is generated in <code>ExternalFeeder</code> as well and passed into the window
+function <code>FB_PostStory</code> created by <code>pages/js/facebook.js</code> (this is copied
+and modified by <code>build.xml</code> from <code>facebook.js.in</code>). Finally, the story popup
+is shown using <code>FB.Connect.showFeedDialog</code>. This takes care of poppping up a dialog,
+allowing the user to connect to the Whirled app if they haven't already, and allowing them to
+enter their own text to display.
+<h4>Sample Data For Use When Creating Templates</h4>
+<code>FB.Connect.showFeedDialog</codE> takes a data argument which is a JSON dictionary. When
+creating a template, you can paste in a sample object so that your wildcards show up properly.
+Here's one for a Corpse Craft trophy.
+<pre width>
+      {
+          "game_id" : 827,
+          "game" : "Corpse Craft",
+          "trophy" : "Freshman",
+          "descrip" : "Complete Chapter 3 of \"The Incident.\"",
+          "vector" : "v.none",
+          "images" : [ {"src" :
+              "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
+              "href" : "http://www.whirled.com/go/games-d_827_t"}]}
+</pre>
+<h4>Primary One Line Template</h4>
+Entered on the first screen of the template creation tool.
+<pre width>
+{*actor*} earned the &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}_t"&gt;{*trophy*}&lt;/a&gt; trophy in &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}"&gt;{*game*}&lt;/a&gt;.
+</pre>
+<h4>Primary Short Story Template Title</h4>
+Entered on the second screen of the template creation tool.
+<pre width>
+{*actor*} earned the &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}_t"&gt;{*trophy*}&lt;/a&gt; trophy in &lt;a href="http://www.whirled.com/go/games-vec_{*vector*}_d_{*game_id*}"&gt;{*game*}&lt;/a&gt;.
+</pre>
+<h4>Primary Short Story Template Body</h4>
+Entered on the third screen of the template creation tool.
+<pre width>
+{*descrip*}
+</pre>
+<h4>Action Link URL</h4>
+Entered on the final screen of the template creation tool. The action link appears at the bottom of the feed story.
+<pre width>
+http://www.whirled.com/go/world-vec_{*vector*}_game_p_{*game_id*}
+</pre>
+<h4>Action Link Text</h4>
+We are currently experimenting with variants on trophy feed story text. We have three running
+right now. Each user gets a constant one based on their visitor id (like an A/B test but not
+a true one). The variants are mapped in the deployment config fb template variable.
+<h5>Variant 1</h5>
+<pre width>
+Compare your trophies to {*actor*}'s or just play a game of {*game*}.
+</pre>
+<h5>Variant 2</h5>
+<pre width>
+Can you do better than {*actor*}? Play {*game*}.
+</pre>
+<h5>Variant 3</h5>
+<pre width>
+{*actor*} is grabbing all the glory in {*game*}. Challenge them now!
+</pre>
+</body>
+</html>
+
