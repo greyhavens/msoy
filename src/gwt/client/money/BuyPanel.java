@@ -225,7 +225,7 @@ public abstract class BuyPanel<T> extends SmartTable
             if (msg == null) {
                 super.reportFailure(cause);
             } else {
-                MsoyUI.infoAction(msg, _msgs.getBars(), Link.createListener(Pages.BILLING));
+                MsoyUI.infoAction(msg, _msgs.getBars(), Link.createHandler(Pages.BILLING));
             }
         }
 
@@ -267,7 +267,7 @@ public abstract class BuyPanel<T> extends SmartTable
 
     protected FlowPanel _barPanel, _coinPanel;
     protected BuyButton _buyBars, _buyCoins;
-    protected Label _getBars;
+    protected Widget _getBars;
     protected HTML _barLabel;
     protected Label _switchToCoins, _switchToBars;
 
