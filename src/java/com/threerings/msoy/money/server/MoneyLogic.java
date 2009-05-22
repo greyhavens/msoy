@@ -190,11 +190,14 @@ public class MoneyLogic
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
             memberId, currency, amount, type, action.description, null, true);
+        if (tx == null) {
+            return null; // the target member doesn't exist
+        }
+
         if (notify) {
             _nodeActions.moneyUpdated(tx, true);
         }
         logAction(action, tx);
-
         return tx.toMoneyTransaction();
     }
 
@@ -214,6 +217,10 @@ public class MoneyLogic
         UserAction action = UserAction.boughtBars(memberId, payment);
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
             Currency.BARS, numBars, TransactionType.BARS_BOUGHT, action.description, null, true);
+        if (tx == null) {
+            return null; // the target member doesn't exist
+        }
+        
         _nodeActions.moneyUpdated(tx, true);
         logAction(action, tx);
         return tx.toMoneyTransaction();
@@ -241,9 +248,10 @@ public class MoneyLogic
                 memberId, currency, -delta, TransactionType.SUPPORT_ADJUST, action.description,
                 null);
         }
-
-        _nodeActions.moneyUpdated(tx, true);
-        logAction(action, tx);
+        if (tx != null) {
+            _nodeActions.moneyUpdated(tx, true);
+            logAction(action, tx);
+        }
     }
 
     /**
@@ -786,16 +794,18 @@ public class MoneyLogic
                 continue;
             }
 
-            updates.add(_repo.accumulateAndStoreTransaction(memberId, Currency.COINS, refundAmount,
-                TransactionType.REFUND_GIVEN, MessageBundle.tcompose("m.item_refund",
-                itemName), item, false));
-            coinPool -= refundAmount;
+            MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+                memberId, Currency.COINS, refundAmount, TransactionType.REFUND_GIVEN,
+                MessageBundle.tcompose("m.item_refund", itemName), item, false);
+            if (tx != null) {
+                updates.add(tx);
+                coinPool -= refundAmount;
+            }
         }
 
         for (MoneyTransactionRecord txRec : updates) {
             // TODO: logAction?
-            // notify members
-            _nodeActions.moneyUpdated(txRec, true);
+            _nodeActions.moneyUpdated(txRec, true); // notify members
         }
 
         return updates.size();
@@ -919,6 +929,9 @@ public class MoneyLogic
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, blingAmount,
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null, true);
+        if (accumTx == null) {
+            return null; // the target member doesn't exist
+        }
         _nodeActions.moneyUpdated(accumTx, true);
 
         logAction(UserAction.exchangedCurrency(memberId), deductTx);
