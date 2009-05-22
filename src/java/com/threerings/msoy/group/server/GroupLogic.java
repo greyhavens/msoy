@@ -35,7 +35,6 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyServiceException;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -114,7 +113,7 @@ public class GroupLogic
             mrec, GROUP_PURCHASE_KEY, currency, authedAmount, Currency.COINS, getGroupCoinCost(),
             grec.name, buyOp = new MoneyLogic.BuyOperation<Group>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid)
-                throws MoneyServiceException
+                throws ServiceException
             {
                 try {
                     // create the group and then add the creator to it
@@ -122,7 +121,7 @@ public class GroupLogic
                     _groupRepo.joinGroup(grec.groupId, grec.creatorId, Rank.MANAGER);
                 } catch (DuplicateKeyException dke) {
                     // inform the user that the name is already in use
-                    throw new MoneyServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
+                    throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
                 }
 
                 // if the creator is online, update their runtime data (don't let this booch us)
