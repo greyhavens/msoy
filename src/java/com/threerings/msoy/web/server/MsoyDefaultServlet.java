@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 import com.samskivert.servlet.util.CookieUtil;
 
+import org.mortbay.jetty.EofException;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.resource.Resource;
 
@@ -50,6 +51,8 @@ public class MsoyDefaultServlet extends DefaultServlet
         }
         try {
             super.doGet(req, rsp);
+        } catch (EofException eofe) {
+            // not a problem, they just closed their end of the connection
         } catch (Exception e) {
             log.warning("Failed to serve defaultness", "uri", req.getRequestURI(), "error", e);
         }
