@@ -50,7 +50,7 @@ public class ConsumeItemPackDialog extends FloatingPanel
 
         // display the confirmation dialog
         _consumeDialog = new ConsumeItemPackDialog(ctx, pdata.name, msg, function () :void {
-            contentService.consumeItemPack(client, ident, ctx.listener());
+            contentService.consumeItemPack(client, 0, ident, ctx.listener());
         });
         _consumeDialog.addCloseCallback(function () :void {
             _consumeDialog = null;
