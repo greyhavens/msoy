@@ -171,7 +171,7 @@ public class GroupListPanel extends FlowPanel
                                          Pages.GROUPS, "d", groupId), 1, "Name");
         card.setText(0, 2, _msgs.galaxyMemberCount(""+group.memberCount));
 
-        card.setText(1, 0, group.blurb, 0, "Blurb");
+        card.setWidget(1, 0, MsoyUI.createLabel(group.blurb, "Blurb"));
         card.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
         card.setWidget(1, 1, Link.create(_msgs.galaxyPeopleInRooms(""+group.population),
                                          Pages.WORLD, "s" + group.homeSceneId));

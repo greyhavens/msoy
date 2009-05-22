@@ -582,8 +582,11 @@
 }
 
 .groupList .Group .Name {
-  width: 515px;
   font-weight: bold;
+}
+
+.groupList .Group .Name, .groupList .Group .Blurb {
+  width: 515px;
 }
 
 /** CategoryLinks **/
@@ -641,6 +644,7 @@
 
 .myGroups .Link {
   text-align: right;
+  white-space: nowrap;
 }
 
 /* ------------------------------------
