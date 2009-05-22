@@ -69,7 +69,7 @@ public class GalaxyPanel extends FlowPanel
         // search box floats on far right
         FloatPanel search = new FloatPanel("Search");
         search.add(MsoyUI.createLabel(_msgs.galaxySearchTitle(), "SearchTitle"));
-        final TextBox searchInput = MsoyUI.createTextBox("", 255, 20);
+        final TextBox searchInput = MsoyUI.createTextBox("", 255, 15);
         search.add(searchInput);
         ClickHandler doSearch = new ClickHandler() {
             public void onClick (ClickEvent event) {
