@@ -41,10 +41,12 @@ public class ContentDelegate extends PlayManagerDelegate
     /**
      * Handles {@link ContentService#consumeItemPack}.
      */
-    public void consumeItemPack (ClientObject caller, final String ident,
+    public void consumeItemPack (ClientObject caller, int playerId, final String ident,
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
+        // TODO: handle playerId and isAgent() and isApproved() and blah blah blah
+
         final PlayerObject plobj = (PlayerObject)caller;
 
         // make sure they have at least one copy of this item pack

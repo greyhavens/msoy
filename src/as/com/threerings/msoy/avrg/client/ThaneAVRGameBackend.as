@@ -313,7 +313,11 @@ public class ThaneAVRGameBackend
         o["setAvatarMoveSpeed_v1"] = setAvatarMoveSpeed_v1;
         o["setAvatarLocation_v1"] = setAvatarLocation_v1;
         o["setAvatarOrientation_v1"] = setAvatarOrientation_v1;
+        o["getCoins_v1"] = getCoins_v1;
+        o["getBars_v1"] = getBars_v1;
         o["player_sendMessage_v1"] = player_sendMessage_v1;
+        o["purchaseItemPack_v1"] = purchaseItemPack_v1;
+        o["consumeItemPack_v1"] = consumeItemPack_v1;
 
         // .getPlayer().props
         o["player_getGameData_v1"] = player_getGameData_v1;
@@ -745,10 +749,38 @@ public class ThaneAVRGameBackend
         });
     }
 
+    protected function getCoins_v1 (playerId :int) :int
+    {
+        var player :PlayerObject = _controller.getPlayerForUser(playerId);
+        return (player == null) ? 0 : player.coins;
+    }
+
+    protected function getBars_v1 (playerId :int) :int
+    {
+        var player :PlayerObject = _controller.getPlayerForUser(playerId);
+        return (player == null) ? 0 : player.bars;
+    }
+
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void
     {
         BackendUtils.sendPrivateMessage(
             _gameObj.messageService, ensureGameClient(), playerId, name, value, "room");
+    }
+
+    protected function purchaseItemPack_v1 (playerId :int, ident :String) :void
+    {
+        // TODO
+    }
+
+    protected function consumeItemPack_v1 (playerId :int, ident :String) :Boolean
+    {
+        if (countPlayerData(GameData.ITEM_DATA, ident, playerId) < 1) {
+            return false;
+        }
+        _gameObj.contentService.consumeItemPack(
+            ensureGameClient(), playerId, ident, BackendUtils.loggingInvocationListener(
+                "consumeItemPack", _controller.outputToUserCode));
+        return true;
     }
 
     // -------------------- .getPlayer().props --------------------

@@ -295,6 +295,8 @@ public class AVRGameBackend extends ControlBackend
         o["setAvatarMoveSpeed_v1"] = setAvatarMoveSpeed_v1;
         o["setAvatarLocation_v1"] = setAvatarLocation_v1;
         o["setAvatarOrientation_v1"] = setAvatarOrientation_v1;
+        o["getCoins_v1"] = getCoins_v1;
+        o["getBars_v1"] = getBars_v1;
 
         // LocalSubControl
         o["localChat_v1"] = localChat_v1;
@@ -605,6 +607,18 @@ public class AVRGameBackend extends ControlBackend
         }
         return ConsumeItemPackDialog.show(
             _wctx, _gctx.getClient(), _gameObj.contentService, _gameObj.gameData, ident, msg);
+    }
+
+    // PlayerSubControl
+    protected function getCoins_v1 (targetId :int /* ignored */) :int
+    {
+        return _gctx.getPlayerObject().coins;
+    }
+
+    // PlayerSubControl
+    protected function getBars_v1 (targetId :int /* ignored */) :int
+    {
+        return _gctx.getPlayerObject().bars;
     }
 
     // PlayerSubControl
