@@ -924,5 +924,5 @@ public class MemberLogic
     protected static final int MWP_COUNT = 9;
 
     /** Minimum level a player must achieve to trigger a payment to her inviter. */
-    protected static final int FRIEND_PAYOUT_MIN_LEVEL = DeploymentConfig.devDeployment ? 2 : 5;
+    protected static final int FRIEND_PAYOUT_MIN_LEVEL = DeploymentConfig.devDeployment ? 2 : 10;
 }
