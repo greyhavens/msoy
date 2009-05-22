@@ -16,11 +16,11 @@ public class InsufficientFundsException extends ServiceException
 {
     public static String E_INSUFFICIENT_FUNDS = "e.insufficient_funds";
 
-    public InsufficientFundsException (Currency currency, BalanceInfo balances)
+    public InsufficientFundsException (Currency currency, int balance)
     {
         super(E_INSUFFICIENT_FUNDS);
         _currency = currency;
-        _balances = balances;
+        _balance = balance;
     }
 
     /** Suitable for unserialization. */
@@ -37,13 +37,33 @@ public class InsufficientFundsException extends ServiceException
     }
 
     /**
+     * Returns the user's current balance in the currency in question.
+     */
+    public int getBalance ()
+    {
+        return _balance;
+    }
+
+    /**
      * Get the updated applicable balances.
      */
     public BalanceInfo getBalances ()
     {
-        return _balances;
+        BalanceInfo info = new BalanceInfo();
+        switch (_currency) {
+        case COINS:
+            info.coins = _balance;
+            break;
+        case BARS:
+            info.bars = _balance;
+            break;
+        case BLING:
+            info.bling = _balance;
+            break;
+        }
+        return info;
     }
 
     protected Currency _currency;
-    protected BalanceInfo _balances;
+    protected int _balance;
 }

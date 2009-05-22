@@ -45,7 +45,6 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.BuyResult;
-import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
@@ -220,13 +219,7 @@ public class CatalogServlet extends MsoyServiceServlet
         };
 
         // update money as appropriate
-        BuyResult result;
-        try {
-            result = _moneyLogic.buyItem(mrec, listings, currency, authedCost, buyOp);
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
-
+        BuyResult result = _moneyLogic.buyItem(mrec, listings, currency, authedCost, buyOp);
         if (result == null) {
             // this won't happen because our buyOp always returns true (if it fails,
             // it will throw an exception). But let's cope should someone change that and

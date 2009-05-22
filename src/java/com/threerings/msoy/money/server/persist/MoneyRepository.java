@@ -54,7 +54,7 @@ import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.NotEnoughMoneyException;
+import com.threerings.msoy.money.gwt.InsufficientFundsException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -69,17 +69,6 @@ import static com.threerings.msoy.Log.log;
 @NotThreadSafe
 public class MoneyRepository extends DepotRepository
 {
-    /**
-     * Thrown when accumulate*() or deduct*() are called with an invalid memberId.
-     */
-    public static class NoSuchMemberException extends DatabaseException
-    {
-        public NoSuchMemberException (int memberId)
-        {
-            super("Member does not have a money record (" + memberId + ")");
-        }
-    }
-
     @Inject
     public MoneyRepository (final PersistenceContext ctx)
     {
@@ -156,26 +145,27 @@ public class MoneyRepository extends DepotRepository
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
         int count = updateLiteral(MemberAccountRecord.class, key, key, builder.build());
         if (count == 0) {
-            // the accumulate should always work, so if we mod'd 0 rows, it means there's
-            // no member.
-            throw new NoSuchMemberException(memberId);
+            // accumulate should always work, so if we mod'd 0 rows, it means there's no member
+            log.warning("Missing member in accumulate?!", "id", memberId, "currency", currency,
+                        "amount", amount, "ua", updateAcc);
+            return null;
         }
+
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         int balance = load(MemberAccountRecord.class, key).getAmount(currency);
-
         return new MoneyTransactionRecord(memberId, currency, amount, balance);
     }
 
     /**
-     * Deduct money from the specified member's money.
-     * If the user does not have enough money, a NotEnoughMoneyException will be thrown.
+     * Deduct money from the specified member's money.  If the user does not have enough money, an
+     * InsufficientFundsException will be thrown.
      *
      * @return a partially filled-out MTR that should later either be passed to
      * rollbackDeduction() or filled-in and passed to storeTransaction().
      */
     public MoneyTransactionRecord deduct (
         int memberId, Currency currency, int amount, boolean allowFree)
-        throws NotEnoughMoneyException
+        throws InsufficientFundsException
     {
         Preconditions.checkArgument(amount >= 0, "Amount to deduct must be 0 or greater.");
 
@@ -192,11 +182,14 @@ public class MoneyRepository extends DepotRepository
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         MemberAccountRecord mar = load(MemberAccountRecord.class, key);
         if (mar == null) {
-            throw new NoSuchMemberException(memberId);
+            log.warning("Missing member in deduct?!", "id", memberId, "currency", currency,
+                        "amount", amount, "allowFree", allowFree);
+            return null;
         }
+
         int balance = mar.getAmount(currency);
         if (count == 0 && !allowFree) {
-            throw new NotEnoughMoneyException(memberId, currency, amount, balance);
+            throw new InsufficientFundsException(currency, balance);
         }
 
         // Return the amount reserved, or 0 if it didn't work, but allowFree==true
@@ -208,9 +201,9 @@ public class MoneyRepository extends DepotRepository
      * transaction.
      */
     public MoneyTransactionRecord deductAndStoreTransaction (
-        int memberId, Currency currency, int amount,
-        TransactionType type, String description, Object subject)
-        throws NotEnoughMoneyException
+        int memberId, Currency currency, int amount, TransactionType type,
+        String description, Object subject)
+        throws InsufficientFundsException
     {
         MoneyTransactionRecord tx = deduct(memberId, currency, amount, false);
         tx.fill(type, description, subject);
@@ -266,8 +259,7 @@ public class MoneyRepository extends DepotRepository
 
         int count = updateLiteral(MemberAccountRecord.class, key, key, updates);
         if (count == 0) {
-            // This should never happen, because the deduction must have already worked!
-            throw new NoSuchMemberException(deduction.memberId);
+            log.warning("Missing member for rollback?!", "mtr", deduction);
         }
     }
 

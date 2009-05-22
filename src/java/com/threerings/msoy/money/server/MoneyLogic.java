@@ -51,18 +51,20 @@ import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutInfo;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ExchangeData;
 import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
-import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
+import com.threerings.msoy.money.gwt.CostUpdatedException;
+import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.server.persist.BlingCashOutRecord;
 import com.threerings.msoy.money.server.persist.ExchangeRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
-import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -92,7 +94,7 @@ public class MoneyLogic
 
         /**
          * Create the thing that is being purchased.
-         * You may throw a MoneyServiceException, RuntimeException or return false on failure.
+         * You may throw a ServiceException, RuntimeException or return false on failure.
          *
          * @param magicFree indicates that the product was received for free.
          * @param currency the currency used to make the purchase.
@@ -101,7 +103,7 @@ public class MoneyLogic
          * @return true on success.
          */
         public abstract boolean create (boolean magicFree, Currency currency, int amountPaid)
-            throws MoneyServiceException;
+            throws ServiceException;
 
         /**
          * Get the ware that was created.
@@ -218,24 +220,27 @@ public class MoneyLogic
     }
 
     /**
-     * The member has his purse poked by support staff. This adds or lowers their currency by
-     * some amount as logged transaction.
+     * The member has his purse poked by support staff. This adds or lowers their currency by some
+     * amount as logged transaction.
      *
      * @param support Logged name of the acting support member.
      */
-    public void supportAdjust (
-        int memberId, Currency currency, int delta, MemberName support)
-        throws NotEnoughMoneyException
+    public void supportAdjust (int memberId, Currency currency, int delta, MemberName support)
+        throws ServiceException
     {
         Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
 
         UserAction action = UserAction.supportAdjust(memberId, support);
-
-        MoneyTransactionRecord tx = (delta > 0)
-            ? _repo.accumulateAndStoreTransaction(memberId, currency, delta,
-                TransactionType.SUPPORT_ADJUST, action.description, null, true)
-            : _repo.deductAndStoreTransaction(memberId, currency, -delta,
-                TransactionType.SUPPORT_ADJUST, action.description, null);
+        MoneyTransactionRecord tx;
+        if (delta > 0) {
+            tx = _repo.accumulateAndStoreTransaction(
+                memberId, currency, delta, TransactionType.SUPPORT_ADJUST, action.description,
+                null, true);
+        } else {
+            tx = _repo.deductAndStoreTransaction(
+                memberId, currency, -delta, TransactionType.SUPPORT_ADJUST, action.description,
+                null);
+        }
 
         _nodeActions.moneyUpdated(tx, true);
         logAction(action, tx);
@@ -246,18 +251,19 @@ public class MoneyLogic
      * accounts of an exchange of money -- item fulfillment must be handled separately.
      *
      * @param buyerRec the member record of the buying user.
-     * @param listings the catalog entries for the item, with the catalog master items loaded. the
+     * @param listings the catalog entries for the item, with the catalog master items loaded. The
      * first item is the item being purchased. subsequent items are bases
      * @param buyCurrency the currency the buyer is using
      * @param authedAmount the amount the buyer has validated to purchase the item.
-     * @throws NotSecuredException iff there is no secured price for the item and the authorized
-     * buy amount is not enough money.
+     *
      * @return a BuyResult, or null if the BuyOperation returned false.
+     *
+     * @throws CostUpdatedException iff there is no secured price for the item and the authorized
+     * buy amount is not enough money.
      */
-    public BuyResult buyItem (
-        final MemberRecord buyerRec, List<CatalogRecord> listings, Currency buyCurrency,
-        int authedAmount, BuyOperation<?> buyOp)
-        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+    public BuyResult buyItem (final MemberRecord buyerRec, List<CatalogRecord> listings,
+                              Currency buyCurrency, int authedAmount, BuyOperation<?> buyOp)
+        throws ServiceException
     {
         CatalogRecord catrec = listings.get(0);
         Preconditions.checkArgument(catrec.item != null, "catalog master not loaded");
@@ -306,16 +312,11 @@ public class MoneyLogic
                 CurrencyAmount amount = creatorPayouts.get(ii);
                 String message = MessageBundle.tcompose(ii == 0 ? "m.item_sold" :
                     "m.derived_item_sold", itemName, item.type, item.catalogId);
-
-                try {
-                    creatorTxs.add(_repo.accumulateAndStoreTransaction(creatorId, amount.currency,
-                        amount.amount, txType, message, iident, buyerTx.id, buyerId, true));
-
-                } catch (MoneyRepository.NoSuchMemberException nsme) {
-                    log.warning("Invalid item creator, payout omitted",
-                        "buyer", buyerId, "creator", creatorId, "item", itemName,
-                        "catalogIdent", item, "currentCatalogId", listings.get(ii).catalogId);
-                    // but, we continue, just missing this creatorTx
+                MoneyTransactionRecord creatorTx = _repo.accumulateAndStoreTransaction(
+                    creatorId, amount.currency, amount.amount, txType, message, iident,
+                    buyerTx.id, buyerId, true);
+                if (creatorTx != null) {
+                    creatorTxs.add(creatorTx);
                 }
             }
         }
@@ -324,38 +325,22 @@ public class MoneyLogic
         int affiliateId = buyerRec.affiliateMemberId;
         MoneyTransactionRecord affiliateTx = null;
         if (affiliateId != 0 && affiliatePayout != null) {
-            try {
-                affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
-                    affiliatePayout.currency, affiliatePayout.amount,
-                    TransactionType.AFFILIATE_PAYOUT,
-                    MessageBundle.tcompose("m.item_affiliate",
-                        buyerRec.name, buyerRec.memberId),
-                    iident, buyerTx.id, buyerId, true);
-
-            } catch (MoneyRepository.NoSuchMemberException nsme) {
-                log.warning("Invalid user affiliate, payout cancelled.",
-                    "buyer", buyerId, "affiliate", affiliateId,
-                    "item", itemName, "catalogIdent", item);
-                // but, we continue, just having no affiliateTx
-            }
+            affiliateTx = _repo.accumulateAndStoreTransaction(
+                affiliateId, affiliatePayout.currency, affiliatePayout.amount,
+                TransactionType.AFFILIATE_PAYOUT,
+                MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
+                iident, buyerTx.id, buyerId, true);
         }
 
         // Determine the ID of the charity that will receive a payout.
         int charityId = getChosenCharity(buyerRec);
         MoneyTransactionRecord charityTx = null;
         if (charityId != 0 && charityPayout != null) {
-            try {
-                charityTx = _repo.accumulateAndStoreTransaction(charityId,
-                    charityPayout.currency, charityPayout.amount,
-                    TransactionType.CHARITY_PAYOUT,
-                    MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
-                    iident, buyerTx.id, buyerId, true);
-            } catch (MoneyRepository.NoSuchMemberException nsme) {
-                log.warning("Invalid user charity, payout cancelled.",
-                    "buyer", buyerId, "charity", charityId,
-                    "item", itemName, "catalogIdent", item);
-                // but, we continue, just having no charityTx
-            }
+            charityTx = _repo.accumulateAndStoreTransaction(
+                charityId, charityPayout.currency, charityPayout.amount,
+                TransactionType.CHARITY_PAYOUT,
+                MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
+                iident, buyerTx.id, buyerId, true);
         }
 
         // log this!
@@ -409,15 +394,11 @@ public class MoneyLogic
         Currency listCurrency, int listAmount)
         throws ServiceException
     {
-        try {
-            MemberRecord buyerRec = _memberRepo.loadMember(buyerId);
-            return buyFromOOO(
-                buyerRec, partyKey, buyCurrency, authedAmount, listCurrency, listAmount,
-                BuyOperation.NOOP, UserAction.Type.BOUGHT_PARTY, "m.party_bought",
-                TransactionType.PARTY_PURCHASE, "m.change_rcvd_party");
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        MemberRecord buyerRec = _memberRepo.loadMember(buyerId);
+        return buyFromOOO(
+            buyerRec, partyKey, buyCurrency, authedAmount, listCurrency, listAmount,
+            BuyOperation.NOOP, UserAction.Type.BOUGHT_PARTY, "m.party_bought",
+            TransactionType.PARTY_PURCHASE, "m.change_rcvd_party");
     }
 
     /**
@@ -428,14 +409,10 @@ public class MoneyLogic
         Currency listCurrency, int listAmount, BuyOperation<?> buyOp)
         throws ServiceException
     {
-        try {
-            return buyFromOOO(
-                buyerRec, roomKey, buyCurrency, authedAmount, listCurrency, listAmount,
-                buyOp, UserAction.Type.BOUGHT_ROOM, "m.room_bought", TransactionType.ROOM_PURCHASE,
-                "m.change_rcvd_room");
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        return buyFromOOO(
+            buyerRec, roomKey, buyCurrency, authedAmount, listCurrency, listAmount,
+            buyOp, UserAction.Type.BOUGHT_ROOM, "m.room_bought", TransactionType.ROOM_PURCHASE,
+            "m.change_rcvd_room");
     }
 
     /**
@@ -446,14 +423,10 @@ public class MoneyLogic
         Currency listCurrency, int listAmount, String groupName, BuyOperation<?> buyOp)
         throws ServiceException
     {
-        try {
-            return buyFromOOO(
-                buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
-                UserAction.Type.BOUGHT_GROUP, MessageBundle.tcompose("m.group_created", groupName),
-                TransactionType.GROUP_PURCHASE, "m.change_rcvd_group");
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        return buyFromOOO(
+            buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
+            UserAction.Type.BOUGHT_GROUP, MessageBundle.tcompose("m.group_created", groupName),
+            TransactionType.GROUP_PURCHASE, "m.change_rcvd_group");
     }
 
     /**
@@ -463,14 +436,10 @@ public class MoneyLogic
         MemberRecord listerRec, int listFee, String itemName, BuyOperation<?> buyOp)
         throws ServiceException
     {
-        try {
-            return buyFromOOO(
-                listerRec, LIST_ITEM_KEY, Currency.COINS, listFee, Currency.COINS, listFee, buyOp,
-                UserAction.Type.LISTED_ITEM, MessageBundle.tcompose("m.created_listing", itemName),
-                TransactionType.CREATED_LISTING, null /* never any change */);
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        return buyFromOOO(
+            listerRec, LIST_ITEM_KEY, Currency.COINS, listFee, Currency.COINS, listFee, buyOp,
+            UserAction.Type.LISTED_ITEM, MessageBundle.tcompose("m.created_listing", itemName),
+            TransactionType.CREATED_LISTING, null /* never any change */);
     }
 
     /**
@@ -480,7 +449,7 @@ public class MoneyLogic
         MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
         Currency listCurrency, int listAmount, BuyOperation<?> buyOp, UserAction.Type buyActionType,
         final String boughtTxMsg, TransactionType boughtTxType, String changeTxMsg)
-        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+        throws ServiceException
     {
         int buyerId = buyerRec.memberId;
         Function<Boolean, String> boughtTxMsgFn = new Function<Boolean,String>() {
@@ -490,9 +459,10 @@ public class MoneyLogic
         };
 
         // do the buy!
-        IntermediateBuyResult ibr = buy(buyerRec, wareKey, buyCurrency, authedAmount,
-            false /*forcefree*/, listCurrency, listAmount, buyOp,
-            boughtTxType, boughtTxMsgFn, null /*subject*/, changeTxMsg);
+        IntermediateBuyResult ibr = buy(
+            buyerRec, wareKey, buyCurrency, authedAmount, false /*forcefree*/,
+            listCurrency, listAmount, buyOp, boughtTxType, boughtTxMsgFn,
+            null /*subject*/, changeTxMsg);
         if (ibr == null) {
             return null;
         }
@@ -531,16 +501,18 @@ public class MoneyLogic
      * @param listedCurrency the currency in which the payee will be paid
      * @param listedAmount the amount the payee will be paid
      * @param buyOp enacts the purchase
-     * @throws NotSecuredException iff there is no secured price for the item and the authorized
-     * buy amount is not enough money.
+     *
      * @return a BuyResult, or null if the BuyOperation returned false.
+     *
+     * @throws CostUpdatedException iff there is no secured price for the item and the authorized
+     * buy amount is not enough money.
      */
     public IntermediateBuyResult buy (
-        final MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
+        MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
         boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation<?> buyOp,
         TransactionType buyerTxType, Function<Boolean,String> buyMsgFn, Object subject,
         String changeMsg)
-        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+        throws ServiceException
     {
         Preconditions.checkArgument(
             buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
@@ -556,9 +528,9 @@ public class MoneyLogic
             // right now and see if that works.
             quote = securePrice(buyerId, wareKey, listedCurrency, listedAmount);
             if (!quote.isPurchaseValid(buyCurrency, authedAmount, _exchange.getRate())) {
-                // doh, it doesn't work, so we need to tell them about this new latest price
-                // we've secured for them
-                throw new NotSecuredException(buyerId, wareKey, quote);
+                // doh, it doesn't work, so we need to tell them about this new latest price we've
+                // secured for them
+                throw new CostUpdatedException(quote);
             }
         }
 
@@ -572,9 +544,8 @@ public class MoneyLogic
         int buyCost = forceFree ? 0 : quote.getAmount(buyCurrency);
 
         // deduct from the buyer (but don't yet save the transaction)
-        // (This will throw a NotEnoughMoneyException if applicable)
-        MoneyTransactionRecord buyerTx = _repo.deduct(
-            buyerId, buyCurrency, buyCost, buyerRec.isSupport());
+        MoneyTransactionRecord buyerTx =
+            _repo.deduct(buyerId, buyCurrency, buyCost, buyerRec.isSupport());
         try {
             // Are we giving away a free item?
             boolean magicFree = forceFree || (buyerTx.amount == 0 && buyCost != 0);
@@ -599,18 +570,10 @@ public class MoneyLogic
             // If there is any change in coins from the purchase, create a transaction for it.
             MoneyTransactionRecord changeTx = null;
             if (!magicFree && (buyCurrency == Currency.BARS) && (quote.getCoinChange() > 0)) {
-                try {
-                    // Don't update accumulated coins column with this.
-                    changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS,
-                        quote.getCoinChange(), TransactionType.CHANGE_IN_COINS, changeMsg, subject,
-                        buyerTx.id, buyerId, false);
-
-                } catch (MoneyRepository.NoSuchMemberException nsme) {
-                    // Likely a programming error in this case.
-                    log.warning("This is fucking impossible since we just deducted",
-                        "buyer", buyerId, new Exception());
-                    // but, we continue, just having no changeTx
-                }
+                // Don't update accumulated coins column with this.
+                changeTx = _repo.accumulateAndStoreTransaction(
+                    buyerId, Currency.COINS, quote.getCoinChange(), TransactionType.CHANGE_IN_COINS,
+                    changeMsg, subject, buyerTx.id, buyerId, false);
             }
 
             return new IntermediateBuyResult(magicFree, quote, buyerTx, changeTx);
@@ -756,9 +719,8 @@ public class MoneyLogic
                         pool[currency.ordinal()] += deduction;
                         deduction = 0;
 
-                    } catch (NotEnoughMoneyException neme) {
-
-                        int deficit = deduction - neme.getMoneyAvailable();
+                    } catch (InsufficientFundsException nsf) {
+                        int deficit = deduction - nsf.getBalance();
                         Currency conversion = null;
                         int result = 0;
 
@@ -787,7 +749,7 @@ public class MoneyLogic
                             "conversion", conversion, "result", result);
 
                         // take what we can next time around
-                        deduction = neme.getMoneyAvailable();
+                        deduction = nsf.getBalance();
                     }
                 }
             }
@@ -847,19 +809,20 @@ public class MoneyLogic
      * amount requested, at the discretion of the support person handling this request.
      */
     public void cashOutBling (int memberId, int amount)
-        throws NotEnoughMoneyException
+        throws ServiceException
     {
         BlingCashOutRecord cashOut = _repo.getCurrentCashOutRequest(memberId);
         if (cashOut == null) {
             return; // No effect if this member has no pending cashout
         }
+
         String payment = formatUSD(amount * cashOut.blingWorth / 100);
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, amount,
             TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);
         _repo.commitBlingCashOutRequest(memberId, amount);
 
-        // if that didn't throw a NotEnoughMoneyException, we're good to go.
+        // if that didn't throw an exception, we're good to go.
         _nodeActions.moneyUpdated(deductTx, true);
         logAction(UserAction.cashedOutBling(memberId), deductTx);
     }
@@ -884,39 +847,35 @@ public class MoneyLogic
      *
      * @param memberId ID of the member making the request.
      * @param amount Amount of bling (NOT centibling) to cash out.
-     * @throws NotEnoughMoneyException The user does not currently have the amount of bling in their
-     * account.
-     * @throws AlreadyCashedOutException The user has already requested a bling cash out that has
-     * not yet been fulfilled.
-     * @throws BelowMinimumBlingException The amount requested is below the minimum amount allowed
-     * for cashing out.
+     *
+     * @throws ServiceException if the user has already requested a bling cash out that has not yet
+     * been fulfilled or the amount requested is below the minimum amount allowed for cashing out
+     * or the user hsa cashed out too recently.
      */
     public BlingInfo requestCashOutBling (int memberId, int amount, CashOutBillingInfo info)
-        throws NotEnoughMoneyException, AlreadyCashedOutException, BelowMinimumBlingException,
-               CashedOutTooRecentlyException
+        throws ServiceException
     {
         MemberAccountRecord account = _repo.load(memberId);
 
         // If the user does not have the minimum amount required to cash out bling, don't allow
         // them to proceed
         if (amount < _runtime.money.minimumBlingCashOut) {
-            throw new BelowMinimumBlingException(
-                memberId, amount, _runtime.money.minimumBlingCashOut);
+            throw new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
         }
 
         // Ensure the account has the requested amount of bling and that it is currently not
         // requesting a cash out.
         int blingAmount = amount * 100;
         if (account.bling < blingAmount) {
-            throw new NotEnoughMoneyException(memberId, Currency.BLING, blingAmount, account.bling);
+            throw new InsufficientFundsException(Currency.BLING, account.bling);
         }
         if (_repo.getCurrentCashOutRequest(memberId) != null) {
-            throw new AlreadyCashedOutException(memberId, account.cashOutBling);
+            throw new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
         }
 
         long waitTime = getTimeToNextBlingCashOutRequest(memberId);
         if (waitTime > 0) {
-            throw new CashedOutTooRecentlyException(memberId, waitTime);
+            throw new ServiceException("e.cashed_out_too_recently");
         }
 
         // Add a cash out record for this member.
@@ -942,17 +901,19 @@ public class MoneyLogic
      *
      * @param memberId ID of the member.
      * @param blingAmount Amount of bling (NOT centibling) to convert to bars.
-     * @return Number of bars added to the account.
-     * @throws NotEnoughMoneyException The account does not have the specified amount of bling
-     * available, aight?
+     *
+     * @return the number of bars added to the account.
+     *
+     * @throws ServiceException if the account does not have the specified amount of bling
+     * available.
      */
     public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
-        throws NotEnoughMoneyException
+        throws ServiceException
     {
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, blingAmount * 100,
             TransactionType.SPENT_FOR_EXCHANGE, "m.exchanged_for_bars", null);
-        // if that didn't throw a NotEnoughMoneyException, we're good to go.
+        // if that didn't throw an exception, we're good to go.
         _nodeActions.moneyUpdated(deductTx, true);
 
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
@@ -1081,19 +1042,20 @@ public class MoneyLogic
     }
 
     /**
-     * Secures a price for an item. This ensures the user will be able to purchase an item
-     * for a set price. This price will remain available for some amount of time (specified by
-     * {@link PriceQuoteCache#SECURED_PRICE_DURATION}. The secured price may also be removed
-     * if the maximum number of secured prices system-wide has been reached (specified by
-     * {@link PriceQuoteCache#MAX_SECURED_PRICES}. In either case, an attempt to buy the
-     * item will fail with a {@link NotSecuredException}. If a guest id is specified, the quote
-     * is returned, but not saved in the cache.
+     * Secures a price for an item. This ensures the user will be able to purchase an item for a
+     * set price. This price will remain available for some amount of time (specified by {@link
+     * PriceQuoteCache#SECURED_PRICE_DURATION}. The secured price may also be removed if the
+     * maximum number of secured prices system-wide has been reached (specified by {@link
+     * PriceQuoteCache#MAX_SECURED_PRICES}. In either case, an attempt to buy the item will fail
+     * with a {@link CostUpdatedException}. If a guest id is specified, the quote is returned, but
+     * not saved in the cache.
      *
      * @param buyerId the memberId of the buying user.
      * @param item the identity of the catalog listing.
      * @param listedCurrency the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
-     * @return A full PriceQuote for the item.
+     *
+     * @return a full PriceQuote for the item.
      */
     public PriceQuote securePrice (
         int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount)
@@ -1157,7 +1119,7 @@ public class MoneyLogic
      */
     protected List<CurrencyAmount> computeCreatorPayouts (
         PriceQuote quote, List<CatalogRecord> listings)
-        throws MoneyServiceException
+        throws ServiceException
     {
         // get the normal total creator payout - this is what we'll distribute
         CurrencyAmount totalPayout = computePayout(quote, _runtime.money.creatorPercentage);
@@ -1181,7 +1143,7 @@ public class MoneyLogic
                 log.warning("Unexpected currency", "expected", baseCurrency,
                     "got", listing.currency, "itemType", listing.item.getType(),
                     "catalogId", listing.catalogId);
-                throw new MoneyServiceException(MoneyCodes.E_INTERNAL_ERROR);
+                throw new ServiceException(MoneyCodes.E_INTERNAL_ERROR);
             }
 
             // each creator gets a % of the payout based on the % of the cost he contributes
@@ -1194,7 +1156,7 @@ public class MoneyLogic
                 log.warning("Payout or cost too small for divvying", "totalCost", totalCost,
                     "listingPortion", listing.cost - lastCost, "totalPayout", totalPayout,
                     "itemType", listing.item.getType(), "catalogId", listing.catalogId);
-                throw new MoneyServiceException(MoneyCodes.E_INTERNAL_ERROR);
+                throw new ServiceException(MoneyCodes.E_INTERNAL_ERROR);
             }
 
             lastCost = listing.cost;
@@ -1214,7 +1176,7 @@ public class MoneyLogic
             log.warning("Fishy... basis payouts larger than overall payout", "payoutSum", payoutSum,
                 "totalPayout", totalPayout, "itemType", listings.get(0).item.getType(),
                 "catalogId", listings.get(0).catalogId);
-            throw new MoneyServiceException(MoneyCodes.E_INTERNAL_ERROR);
+            throw new ServiceException(MoneyCodes.E_INTERNAL_ERROR);
         }
 
         // since we use Math.floor, complete payout by giving leftovers to the main creator

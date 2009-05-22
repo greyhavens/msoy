@@ -243,18 +243,12 @@ public class BlingPoolDistributor
         }
 
         // Update account with the awarded bling.
-        try {
-            _repo.accumulateAndStoreTransaction(
-                game.creatorId, Currency.BLING, amount, TransactionType.BLING_POOL,
-                MessageBundle.tcompose("m.game_plays_bling_awarded", game.gameId, game.name),
-                null, true); // TODO: create a "game" subject type?
-            // Note: we do not need to post the transaction as a node action, because
-            // bling is not part of a user's runtime money.
-
-        } catch (MoneyRepository.NoSuchMemberException nsme) {
-            log.warning("Invalid game creator. Bling award cancelled.",
-                "game", game.gameId, "creator", game.creatorId, "bling", amount);
-        }
+        _repo.accumulateAndStoreTransaction(
+            game.creatorId, Currency.BLING, amount, TransactionType.BLING_POOL,
+            MessageBundle.tcompose("m.game_plays_bling_awarded", game.gameId, game.name),
+            null, true); // TODO: create a "game" subject type?
+        // Note: we do not need to post the transaction as a node action, because
+        // bling is not part of a user's runtime money.
     }
 
     /** Necessary because DistributorJob is not a static class. */

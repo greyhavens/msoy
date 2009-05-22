@@ -50,9 +50,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyServiceException;
 import com.threerings.msoy.money.server.MoneyLogic.BuyOperation;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
@@ -250,7 +248,7 @@ public class MsoyManager
                 // our buy operation saves the history record but has no ware
                 BuyOperation<Void> buyOp = new BuyOperation<Void>() {
                     public boolean create (boolean magicFree, Currency currency, int amountPaid)
-                        throws MoneyServiceException {
+                        throws ServiceException {
                         _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
                         return true;
                     }
@@ -258,16 +256,12 @@ public class MsoyManager
                         return null;
                     }
                 };
-                // buy it! with exception translation
-                try {
-                    _moneyLogic.buyFromOOO(_memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
-                        Currency.BARS, authedCost, Currency.BARS, newQuote.getBars(), buyOp,
-                        UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
-                        TransactionType.BROADCAST_PURCHASE, null);
-
-                } catch (MoneyException mex) {
-                    throw mex.toServiceException();
-                }
+                // buy it!
+                _moneyLogic.buyFromOOO(
+                    _memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
+                    Currency.BARS, authedCost, Currency.BARS, newQuote.getBars(), buyOp,
+                    UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
+                    TransactionType.BROADCAST_PURCHASE, null);
             }
             public void handleSuccess () {
                 // inform the client, null = success, non-null = price changed

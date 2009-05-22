@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.money.server;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -79,11 +78,7 @@ public class MoneyServlet extends MsoyServiceServlet
             // the memberId parameter is sorta worthless...
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
-        try {
-            return _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        return _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
     }
 
     public BlingInfo requestCashOutBling (
@@ -97,12 +92,7 @@ public class MoneyServlet extends MsoyServiceServlet
         }
         _authenticator.authenticateSession(mrec.accountName, password);
 
-        BlingInfo result;
-        try {
-            result = _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        BlingInfo result = _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
 
         // Spam the cash out mailing list
         _mailer.sendTemplateEmail(
@@ -159,7 +149,8 @@ public class MoneyServlet extends MsoyServiceServlet
         Map<Integer, MemberMoney> monies = _moneyLogic.getMoneyFor(memberIds);
 
         // Create CharityBlingInfo objects from this information.
-        List<CharityBlingInfo> charityBlingInfos = new ArrayList<CharityBlingInfo>(charities.size());
+        List<CharityBlingInfo> charityBlingInfos =
+            Lists.newArrayListWithExpectedSize(charities.size());
         for (CharityRecord charity : charities) {
             MemberRecord member = memberMap.get(charity.memberId);
             MemberMoney money = monies.get(charity.memberId);
@@ -173,29 +164,18 @@ public class MoneyServlet extends MsoyServiceServlet
     public void supportAdjust (int memberId, Currency currency, int delta)
         throws ServiceException
     {
-        // Support can modify coins, but only admin can modify other currencies.
-        MemberRecord mrec = (currency == Currency.COINS) ? requireSupportUser()
-                                                         : requireAdminUser();
-        try {
-            // Additional safety checks in MoneyLogic
-            _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
-        } catch (NotEnoughMoneyException neme) {
-            // TODO: use InsufficientFundsException?
-            throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
-        }
+        // support can modify coins, but only admin can modify other currencies
+        MemberRecord mrec = (currency == Currency.COINS) ?
+            requireSupportUser() : requireAdminUser();
+        // additional safety checks in MoneyLogic
+        _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
     }
 
     public void cashOutBling (int memberId, int blingAmount)
         throws ServiceException
     {
         requireSupportUser();
-
-        try {
-            _moneyLogic.cashOutBling(memberId, blingAmount);
-        } catch (NotEnoughMoneyException e) {
-            // TODO: use InsufficientFundsException?
-            throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
-        }
+        _moneyLogic.cashOutBling(memberId, blingAmount);
     }
 
     public void charityCashOutBling (int memberId, int blingAmount)
@@ -206,21 +186,8 @@ public class MoneyServlet extends MsoyServiceServlet
         // Need to create a cash out request and fulfill it immediately.  Most of the billing
         // info will be blank, since we will have it on file.  This may change in the future.
         CashOutBillingInfo cashOutInfo = new CashOutBillingInfo("", "", "", "", "", "", "", "", "");
-        try {
-            try {
-                _moneyLogic.requestCashOutBling(memberId, blingAmount/100, cashOutInfo);
-            } catch (AlreadyCashedOutException acoe) {
-                // Ignore any already cashed out exception -- we'll go ahead and cash out from that.
-            }
-            _moneyLogic.cashOutBling(memberId, blingAmount);
-
-        } catch (NotEnoughMoneyException neme) {
-            // customize this service exception...
-            throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
-
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
+        _moneyLogic.requestCashOutBling(memberId, blingAmount/100, cashOutInfo);
+        _moneyLogic.cashOutBling(memberId, blingAmount);
     }
 
     public void cancelCashOut (int memberId, String reason)
