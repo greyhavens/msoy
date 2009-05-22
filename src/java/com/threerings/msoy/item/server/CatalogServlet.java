@@ -508,7 +508,7 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
         if (originalItem == null) {
-            log.warning("Can't find item for listing update [item= " + item + "]");
+            log.warning("Can't find item for listing update", "item", item);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -518,8 +518,8 @@ public class CatalogServlet extends MsoyServiceServlet
         // load up the old catalog record
         CatalogRecord record = repo.loadListing(originalItem.catalogId, false);
         if (record == null) {
-            log.warning("Missing listing for update [who=" + mrec.who() + ", item=" + item +
-                        ", catId=" + originalItem.catalogId + "].");
+            log.warning("Missing listing for update", "who", mrec.who(), "item", item,
+                "catId", originalItem.catalogId);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -556,8 +556,8 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
         CatalogRecord record = repo.loadListing(catalogId, true);
         if (record == null) {
-            log.warning("Missing listing for update [who=" + mrec.who() + ", type=" + itemType +
-                        ", catId=" + catalogId + "].");
+            log.warning("Missing listing for update", "who", mrec.who(), "type", itemType,
+                "catId", catalogId);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -568,12 +568,18 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
+        // check basis item validity (in case of client hackery)
+        if (record.basisId != 0) {
+            if (!_itemLogic.isSuitableBasis(record.item, record.basisId, currency, cost)) {
+                throw new ServiceException(ItemCodes.E_BASIS_ERROR);
+            }
+        }
+
         // load a copy of the original item
         ItemRecord originalItem = repo.loadOriginalItem(record.originalItemId);
         if (originalItem == null) {
-            log.warning("Can't find original for pricing update [who=" + mrec.who() +
-                        ", type=" + itemType + ", catId=" + catalogId +
-                        ", itemId=" + record.originalItemId + "]");
+            log.warning("Can't find original for pricing update", "who", mrec.who(),
+                "type", itemType, "catId", catalogId, "itemId", record.originalItemId);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -728,7 +734,7 @@ public class CatalogServlet extends MsoyServiceServlet
         try {
             return Item.getClassForType(itemType).newInstance().isSalable();
         } catch (Exception e) {
-            log.warning("Failed to check salability [type=" + itemType + "].", e);
+            log.warning("Failed to check salability", "type", itemType, e);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
@@ -742,8 +748,8 @@ public class CatalogServlet extends MsoyServiceServlet
         if (mrec == null || (mrec.memberId != targetId && !mrec.isSupport())) {
             String who = (mrec == null) ? "null" : mrec.who();
             String iid = (item == null) ? "null" : ""+item.itemId;
-            log.warning("Access denied for catalog action [who=" + who + ", wanted=" + targetId +
-                        ", action=" + action + ", item=" + iid + "].");
+            log.warning("Access denied for catalog action", "who", who, "wanted", targetId,
+                        "action", action, "item", iid);
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
     }
