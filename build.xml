@@ -217,11 +217,6 @@
     </copy>
   </target>
 
-  <!-- enumerate our GWT pages -->
-  <property name="pages1.list" value="account,adminz,games,help,landing,mail,me,people"/>
-  <property name="pages2.list" value="rooms,shop,stuff,support,groups,issues,billing"/>
-  <property name="gpages.list" value="frame,${pages1.list},${pages2.list}"/>
-
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
@@ -455,83 +450,93 @@
   </target>
 
   <!-- builds our numerous GWT web clients -->
-  <property name="pages" value="${gpages.list}"/>
-  <target name="gclient" depends="jprepare,gmsgs"
-          description="Rebuilds the GWT client (but only for Mozilla).">
+  <target name="gclients" description="Rebuilds the GWT clients.">
+    <pathconvert property="pages" pathsep=",">
+      <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
+      <mapper type="regexp" from=".*/([a-z]+).gwt.xml.in" to="\1"/>
+    </pathconvert>
+    <echo>Converted ${pages}</echo>
+    <for list="${pages}" param="page">
+    <sequential>
+      <antcall target="gclient" inheritAll="true">
+        <param name="page" value="@{page}"/>
+      </antcall>
+    </sequential></for>
+  </target>
+
+  <!-- builds a single GWT web client -->
+  <target name="gclient" depends="jprepare,gmsgs">
     <property name="pageout.dir" value="${gwtout.dir}/${version}"/>
     <mkdir dir="${pageout.dir}"/>
-    <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}">
-    <sequential>
-      <delete dir="${pageout.dir}/@{page}"/>
-      <mkdir dir="${pageout.dir}/@{page}"/>
+    <delete dir="${pageout.dir}/${page}"/>
+    <mkdir dir="${pageout.dir}/${page}"/>
 
-      <!-- prepare our temporary .gwt.xml file -->
-      <antcall target="preppage"><param name="page" value="@{page}"/></antcall>
+    <!-- prepare our temporary .gwt.xml file -->
+    <antcall target="preppage"><param name="page" value="${page}"/></antcall>
 
-      <!-- invoke the GWT compiler and grindy grindy grindy -->
-      <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
-            classname="com.google.gwt.dev.Compiler">
-        <classpath>
-          <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
-          <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
-          <path refid="gwt.classpath"/>
-        </classpath>
-        <!-- temporary workaround to crashing problem on build server's BSD java -->
-        <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
-        <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
-        <!-- end temp -->
-        <jvmarg value="-Djava.awt.headless=true"/>
-        <arg value="-style"/><arg value="${gwt_style}"/>
-        <arg value="-war"/>
-        <arg value="${pageout.dir}"/>
-        <arg value="@{page}"/>
-        <!-- gather all the compiler output into a property -->
-        <redirector outputproperty="redirector.out"/>
-      </java>
+    <!-- invoke the GWT compiler and grindy grindy grindy -->
+    <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
+          classname="com.google.gwt.dev.Compiler">
+      <classpath>
+        <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
+        <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
+        <path refid="gwt.classpath"/>
+      </classpath>
+      <!-- temporary workaround to crashing problem on build server's BSD java -->
+      <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
+      <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
+      <!-- end temp -->
+      <jvmarg value="-Djava.awt.headless=true"/>
+      <arg value="-style"/><arg value="${gwt_style}"/>
+      <arg value="-war"/>
+      <arg value="${pageout.dir}"/>
+      <arg value="${page}"/>
+      <!-- gather all the compiler output into a property -->
+      <redirector outputproperty="redirector.out"/>
+    </java>
 
-      <!-- delete our temporary .gwt.xml file -->
-      <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
+    <!-- delete our temporary .gwt.xml file -->
+    <delete file="${gsrc.dir}/${page}.gwt.xml"/>
 
-      <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
-      <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
-          <echo level="error">${redirector.out}</echo>
-          <!-- be really, really sure that the build fails if we get an error logs -->
-          <property name="has.errors" value="true"/>
-        </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
-            <echo level="warning">${redirector.out}</echo>
-        </then></elseif><else>
-          <echo level="info">${redirector.out}</echo>
-      </else></if>
+    <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
+    <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
+        <echo level="error">${redirector.out}</echo>
+        <!-- be really, really sure that the build fails if we get an error logs -->
+        <property name="has.errors" value="true"/>
+      </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
+          <echo level="warning">${redirector.out}</echo>
+      </then></elseif><else>
+        <echo level="info">${redirector.out}</echo>
+    </else></if>
 
-      <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
-      <fail message="The GWT build failed. See output for details.">
-        <condition><or>
-            <equals arg1="${gwt.result}" arg2="1"/>
-            <isset property="has.errors"/>
-        </or></condition>
-      </fail>
+    <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
+    <fail message="The GWT build failed. See output for details.">
+      <condition><or>
+          <equals arg1="${gwt.result}" arg2="1"/>
+          <isset property="has.errors"/>
+      </or></condition>
+    </fail>
 
-      <!-- if we succeeded, gzip our generated HTML output -->
-      <apply failonerror="true" executable="gzip">
-        <arg value="-c"/>
-        <srcfile/>
-        <fileset dir="${pageout.dir}/@{page}" includes="*.cache.html"/>
-        <redirector>
-          <outputmapper type="glob" from="*.cache.html"
-                        to="${pageout.dir}/@{page}/*.cache.html.gz"/>
-        </redirector>
-      </apply>
+    <!-- if we succeeded, gzip our generated HTML output -->
+    <apply failonerror="true" executable="gzip">
+      <arg value="-c"/>
+      <srcfile/>
+      <fileset dir="${pageout.dir}/${page}" includes="*.cache.html"/>
+      <redirector>
+        <outputmapper type="glob" from="*.cache.html"
+                      to="${pageout.dir}/${page}/*.cache.html.gz"/>
+      </redirector>
+    </apply>
 
-      <!-- if we're building the 'frame' page, we need to move it up out of the version dir -->
-      <if><equals arg1="@{page}" arg2="frame"/><then>
-        <move file="${pageout.dir}/@{page}" todir="${gwtout.dir}"/>
-      </then></if>
+    <!-- if we're building the 'frame' page, we need to move it up out of the version dir -->
+    <if><equals arg1="${page}" arg2="frame"/><then>
+      <move file="${pageout.dir}/${page}" todir="${gwtout.dir}"/>
+    </then></if>
 
-      <!-- clear out some variables -->
-      <var name="gwt.result" unset="true"/>
-      <var name="redirector.out" unset="true"/>
-      <var name="has.errors" unset="true"/>
-    </sequential></for>
+    <!-- clear out some variables -->
+    <var name="gwt.result" unset="true"/>
+    <var name="redirector.out" unset="true"/>
+    <var name="has.errors" unset="true"/>
   </target>
 
   <!-- prepares to build our Flash client -->
@@ -1034,7 +1039,7 @@
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
-  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclient"
+  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->
