@@ -9,7 +9,7 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * A class for creating and editing {@link Launcher} digital items.
  */
-public class LauncherEditor extends ItemEditor
+public class LauncherEditor extends GameItemEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)
