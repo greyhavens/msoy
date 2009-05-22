@@ -931,6 +931,9 @@ public class MemberRepository extends DepotRepository
     public IntMap<Friendship> loadFriendships (int memberId, Collection<Integer> otherIds)
     {
         IntMap<Friendship> ships = IntMaps.newHashIntMap();
+        if (otherIds.isEmpty()) {
+            return ships;
+        }
         for (FriendshipRecord frec : findAll(FriendshipRecord.class, new Where(new And(
                 new Equals(FriendshipRecord.MEMBER_ID, memberId),
                 new In(FriendshipRecord.FRIEND_ID, otherIds))))) {
