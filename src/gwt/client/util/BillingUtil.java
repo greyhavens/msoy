@@ -33,7 +33,8 @@ public class BillingUtil
      */
     public static void popBillingPage (String url)
     {
-        Window.open(BASE + url + "?initUsername=" + URL.encodeComponent(CShell.creds.accountName),
+        Window.open(BASE + url + ((url.indexOf("?") == -1) ? "?" : "&") +
+                    "initUsername=" + URL.encodeComponent(CShell.creds.accountName),
                     "_blank",
                     // For those silly browsers that open this in a new window instead of a new
                     // tab, enable all the chrome options on the new window.
