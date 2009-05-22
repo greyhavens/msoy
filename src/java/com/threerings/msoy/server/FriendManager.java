@@ -230,13 +230,18 @@ public class FriendManager
      */
     protected void memberLoggedOn (Integer memberId, FriendEntry entry)
     {
+        int weird = 0;
         for (MemberObject watcher : _friendMap.get(memberId)) {
             if (watcher.friends.containsKey(memberId)) {
-                log.info("That's weird.");
                 watcher.updateFriends(entry);
+                weird++;
             } else {
                 watcher.addToFriends(entry);
             }
+        }
+        if (weird > 0) {
+            // it would be extra weird if it only happened with some watchers
+            log.info("That's weird.", "weirdness", weird + " / " + _friendMap.get(memberId).size());
         }
     }
 
