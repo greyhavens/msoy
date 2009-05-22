@@ -90,6 +90,7 @@ public class EditGamePanel extends FlowPanel
                 return new FacebookInfoEditorPanel(data.facebook);
             }
         }, _msgs.egTabFacebook());
+        // NOTE: if you add a tab here, you have to adjust the constants in StuffPage
 
         for (final byte type : SUBITEM_TYPES) {
             _tabs.add(new LazyPanel() {
