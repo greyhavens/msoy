@@ -9,6 +9,7 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.gwt.GameCode;
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.log;
@@ -21,8 +22,13 @@ public class GameUtil
     /**
      * Returns the minimum and maximum players for the supplied game.
      */
-    public static int[] getMinMaxPlayers (GameCode game)
+    public static int[] getMinMaxPlayers (GameInfo info, GameCode game)
     {
+        // AVRGs are 1+
+        if (info.isAVRG) {
+            return new int[] { 1, Integer.MAX_VALUE };
+        }
+
         MsoyMatchConfig match = null;
         try {
             if (game != null && !StringUtil.isBlank(game.config)) {

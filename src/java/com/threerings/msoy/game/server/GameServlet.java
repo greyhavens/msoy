@@ -206,7 +206,8 @@ public class GameServlet extends MsoyServiceServlet
         detail.metrics = _mgameRepo.loadGameMetrics(info.gameId).toGameMetrics();
 
         // determine how many players can play this game
-        int[] players = GameUtil.getMinMaxPlayers(_mgameRepo.loadGameCode(gameId, false));
+        int[] players = GameUtil.getMinMaxPlayers(
+            detail.info, _mgameRepo.loadGameCode(gameId, false));
         detail.minPlayers = players[0];
         detail.maxPlayers = players[1];
 
