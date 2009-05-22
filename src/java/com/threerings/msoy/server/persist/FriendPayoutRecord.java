@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
@@ -32,6 +33,7 @@ public class FriendPayoutRecord extends PersistentRecord
     public int paidMemberId;
 
     /** The time the payout was made. */
+    @Column(defaultValue="CURRENT_TIMESTAMP")
     public Timestamp time;
 
     /** Increment this value if you modify the definition of this persistent object in a way that
