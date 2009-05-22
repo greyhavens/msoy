@@ -33,7 +33,7 @@ public class FriendPayoutRecord extends PersistentRecord
     public int paidMemberId;
 
     /** The time the payout was made. */
-    @Column(defaultValue="CURRENT_TIMESTAMP")
+    @Column(defaultValue="CURRENT_TIMESTAMP") // TODO: remove defaultValue once this ships
     public Timestamp time;
 
     /** Increment this value if you modify the definition of this persistent object in a way that
