@@ -769,7 +769,9 @@ public class ThaneAVRGameBackend
 
     protected function purchaseItemPack_v1 (playerId :int, ident :String) :void
     {
-        // TODO
+        _gameObj.contentService.purchaseItemPack(
+            ensureGameClient(), playerId, ident, BackendUtils.loggingInvocationListener(
+                "purchaseItemPack", _controller.outputToUserCode));
     }
 
     protected function consumeItemPack_v1 (playerId :int, ident :String) :Boolean

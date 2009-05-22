@@ -54,11 +54,20 @@ public class ParlorGameManager extends WhirledGameManager
     }
 
     // from interface ContentProvider
-    public void consumeItemPack (ClientObject caller, String ident,
+    public void purchaseItemPack (ClientObject caller, int playerId, String ident,
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _contentDelegate.consumeItemPack(caller, ident, listener);
+        throw new InvocationException(E_ACCESS_DENIED); // not allow in parlor games
+    }
+
+    // from interface ContentProvider
+    public void consumeItemPack (ClientObject caller, int playerId, String ident,
+                                 InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        PlayerObject plobj = (PlayerObject)caller; // we don't allow agents here
+        _contentDelegate.consumeItemPack(plobj, ident, listener);
     }
 
     // from interface PrizeProvider

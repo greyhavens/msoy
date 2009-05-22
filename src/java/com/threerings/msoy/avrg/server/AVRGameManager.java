@@ -329,11 +329,19 @@ public class AVRGameManager extends PlaceManager
     }
 
     // from interface ContentProvider
-    public void consumeItemPack (ClientObject caller, String ident,
+    public void purchaseItemPack (ClientObject caller, int playerId, String ident,
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _contentDelegate.consumeItemPack(caller, ident, listener);
+        _contentDelegate.purchaseItemPack(getPlayer(caller, playerId), ident, listener);
+    }
+
+    // from interface ContentProvider
+    public void consumeItemPack (ClientObject caller, int playerId, String ident,
+                                 InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        _contentDelegate.consumeItemPack(getPlayer(caller, playerId), ident, listener);
     }
 
     // from interface PrizeProvider
@@ -367,22 +375,7 @@ public class AVRGameManager extends PlaceManager
                               final float payoutLevel, ConfirmListener listener)
         throws InvocationException
     {
-        PlayerObject player;
-        if (playerId == 0) {
-            player = (PlayerObject) caller;
-
-        } else if (isAgent(caller)) {
-            player = _locator.lookupPlayer(playerId);
-            if (player == null) {
-                throw new InvocationException("e.player_not_found");
-            }
-
-        } else {
-            log.warning("Non-agent calling completeTask", "caller", caller, "playerId", playerId);
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
-
-        _questDelegate.completeTask(player, questId, payoutLevel, listener);
+        _questDelegate.completeTask(getPlayer(caller, playerId), questId, payoutLevel, listener);
     }
 
     // from AVRGameProvider
@@ -628,91 +621,30 @@ public class AVRGameManager extends PlaceManager
         });
     }
 
+    @Override // from Object
     public String toString ()
     {
         return this.getClass().getSimpleName() + " (gameId " + getGameId() + ")";
     }
 
-    protected void doJoinGame (int playerId, Map<String, Object> initialProps,
-                               List<GameContentOwnership> content,
-                               AVRService.AVRGameJoinListener listener)
+    /**
+     * Reports the id/name of this game for use in log messages.
+     */
+    @Override
+    public String where ()
     {
-        PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player == null) {
-            // if the player logged out while the records were being loaded from the
-            // database, the client is surely about to disintegrate anyway and we just
-            // don't respond on the listener
-            return;
+        StringBuilder buf = new StringBuilder();
+        buf.append(getGameId());
+        if (_gameObj != null) {
+            buf.append(", oid=").append(_gameObj.getOid());
         }
-
-        if (content != null && player.isActive()) {
-            int gameId = getGameId();
-            player.startTransaction();
-            try {
-                for (GameContentOwnership ownership : content) {
-                    player.addToGameContent(ownership);
-                }
-            } finally {
-                player.removeFromGameContent(new GameContentOwnership(gameId,
-                    GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVING));
-                player.addToGameContent(new GameContentOwnership(gameId,
-                    GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVED));
-                player.commitTransaction();
-            }
-        }
-
-        if (player.location == null || !player.location.equals(getLocation())) {
-            // if we're not already playing this avrg, initialize our property space from the
-            // database records
-            if (initialProps != null) {
-                PropertySpaceHelper.initWithProperties(player, initialProps);
-            }
-
-            // when we're ready, move the player into the AVRG 'place'
-            try {
-                _locmgr.moveTo(player, _gameObj.getOid());
-
-            } catch (InvocationException pe) {
-                log.warning("Move to AVRGameObject failed", "gameId", getGameId(), pe);
-                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-                return;
-            }
-
-        } else {
-            log.debug("Player shift-reloaded AVRG", "playerId", playerId, "gameId", getGameId());
-        }
-        listener.avrgJoined(_gameObj.getOid(), (AVRGameConfig) _config);
-    }
-
-    protected void leaveGame (int playerId)
-    {
-        PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player == null) {
-            // already left, not a big deal
-            return;
-        }
-
-        _locmgr.leavePlace(player);
+        return buf.toString();
     }
 
     @Override
     protected AccessController getAccessController ()
     {
         return CrowdObjectAccess.BUREAU_ACCESS_PLACE;
-    }
-
-    /**
-     * Post the given member's movement to the game object for all to see.
-     */
-    protected void postPlayerMove (int memberId, int sceneId)
-    {
-        PlayerLocation loc = new PlayerLocation(memberId, sceneId);
-        if (_gameObj.playerLocs.contains(loc)) {
-            _gameObj.updatePlayerLocs(loc);
-
-        } else {
-            _gameObj.addToPlayerLocs(loc);
-        }
     }
 
     @Override
@@ -812,6 +744,82 @@ public class AVRGameManager extends PlaceManager
         return IDLE_UNLOAD_PERIOD;
     }
 
+    protected void doJoinGame (int playerId, Map<String, Object> initialProps,
+                               List<GameContentOwnership> content,
+                               AVRService.AVRGameJoinListener listener)
+    {
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            // if the player logged out while the records were being loaded from the
+            // database, the client is surely about to disintegrate anyway and we just
+            // don't respond on the listener
+            return;
+        }
+
+        if (content != null && player.isActive()) {
+            int gameId = getGameId();
+            player.startTransaction();
+            try {
+                for (GameContentOwnership ownership : content) {
+                    player.addToGameContent(ownership);
+                }
+            } finally {
+                player.removeFromGameContent(new GameContentOwnership(gameId,
+                    GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVING));
+                player.addToGameContent(new GameContentOwnership(gameId,
+                    GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVED));
+                player.commitTransaction();
+            }
+        }
+
+        if (player.location == null || !player.location.equals(getLocation())) {
+            // if we're not already playing this avrg, initialize our property space from the
+            // database records
+            if (initialProps != null) {
+                PropertySpaceHelper.initWithProperties(player, initialProps);
+            }
+
+            // when we're ready, move the player into the AVRG 'place'
+            try {
+                _locmgr.moveTo(player, _gameObj.getOid());
+
+            } catch (InvocationException pe) {
+                log.warning("Move to AVRGameObject failed", "gameId", getGameId(), pe);
+                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                return;
+            }
+
+        } else {
+            log.debug("Player shift-reloaded AVRG", "playerId", playerId, "gameId", getGameId());
+        }
+        listener.avrgJoined(_gameObj.getOid(), (AVRGameConfig) _config);
+    }
+
+    protected void leaveGame (int playerId)
+    {
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            // already left, not a big deal
+            return;
+        }
+
+        _locmgr.leavePlace(player);
+    }
+
+    /**
+     * Post the given member's movement to the game object for all to see.
+     */
+    protected void postPlayerMove (int memberId, int sceneId)
+    {
+        PlayerLocation loc = new PlayerLocation(memberId, sceneId);
+        if (_gameObj.playerLocs.contains(loc)) {
+            _gameObj.updatePlayerLocs(loc);
+
+        } else {
+            _gameObj.addToPlayerLocs(loc);
+        }
+    }
+
     protected void playerEnteredScene (int memberId, int sceneId, String hostname, int port)
     {
         log.debug(
@@ -904,20 +912,6 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
-    /**
-     * Reports the id/name of this game for use in log messages.
-     */
-    @Override
-    public String where ()
-    {
-        StringBuilder buf = new StringBuilder();
-        buf.append(getGameId());
-        if (_gameObj != null) {
-            buf.append(", oid=").append(_gameObj.getOid());
-        }
-        return buf.toString();
-    }
-
     protected AVRGameAgentObject createGameAgentObject (int gameId, MsoyGameDefinition def)
     {
         String code = def.getServerMediaPath(gameId);
@@ -981,6 +975,25 @@ public class AVRGameManager extends PlaceManager
     {
         if (!isPlayer(caller) && !isAgent(caller)) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Returns the PlayerObject for the target player if the caller is an agent or the calling
+     * player if the player is the caller. Throws an invocation exception if the target is not
+     * found.
+     */
+    protected PlayerObject getPlayer (ClientObject caller, int playerId)
+        throws InvocationException
+    {
+        if (isAgent(caller)) {
+            PlayerObject player = _locator.lookupPlayer(playerId);
+            if (player == null) {
+                throw new InvocationException("e.player_not_found");
+            }
+            return player;
+        } else {
+            return (PlayerObject) caller;
         }
     }
 
