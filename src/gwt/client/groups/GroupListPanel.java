@@ -74,7 +74,7 @@ public class GroupListPanel extends FlowPanel
                 } else if (!StringUtil.isBlank(_query.tag)) {
                     Link.go(Pages.GROUPS, ACTION_TAG, page, _query.tag, _query.sort);
                 } else {
-                    Link.go(Pages.GROUPS, "", page, "", _query.sort);
+                    Link.go(Pages.GROUPS, "list", page, "", _query.sort);
                 }
             }
             @Override protected Widget createWidget (GroupCard card) {
