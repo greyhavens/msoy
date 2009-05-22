@@ -121,7 +121,8 @@ public class TrophyPanel extends FloatingPanel
         }
 
         var buttons :Array = [ OK_BUTTON ];
-        if (filterEarned(_trophies).length > 0) {
+        // TODO: get rid of publishing trophies on the client?
+        if (false && filterEarned(_trophies).length > 0) {
             buttons.push(new CommandButton(Msgs.GAME.get("b.tp_publish"), publishTrophies));
         }
         addButtons.apply(this, buttons);

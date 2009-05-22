@@ -443,7 +443,8 @@ public class GameLiaison
     protected function onPlaceExit () :Boolean
     {
         // show the trophy feeder; have it close the place view when it closes
-        return maybeShowFeedPanel(_wctx.getWorldController().handleClosePlaceView);
+        // TODO: get rid of the publishing trophies on the client?
+        return true || maybeShowFeedPanel(_wctx.getWorldController().handleClosePlaceView);
     }
 
     /**
