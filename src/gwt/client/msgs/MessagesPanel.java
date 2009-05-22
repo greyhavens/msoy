@@ -330,7 +330,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     {
         public ForumMessageComplainPopup (ForumMessage message)
         {
-            super();
+            super(ForumService.MAX_COMPLAINT_LENGTH);
             _message = message;
         }
 

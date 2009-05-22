@@ -268,7 +268,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         public CommentComplainPopup (Comment comment, int type, int id)
         {
-            super();
+            super(CommentService.MAX_COMPLAINT_LENGTH);
             _comment = comment;
             _type = type;
             _id = id;

@@ -18,6 +18,11 @@ public interface CommentService extends RemoteService
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/commentsvc";
 
+    /** Maximum length allowed for a comment complaint. Note: this must be the same as the maximum
+     * length of {@link com.threerings.underwire.server.persist.EventRecord#subject}, but we cannot
+     * easily share code here. */
+    public static final int MAX_COMPLAINT_LENGTH = 255;
+
     /**
      * Loads recent comments made about the specified entity.
      */

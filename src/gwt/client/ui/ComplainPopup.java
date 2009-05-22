@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
@@ -21,7 +20,7 @@ import client.shell.ShellMessages;
 public abstract class ComplainPopup extends BorderedDialog
     implements AsyncCallback<Void>
 {
-    public ComplainPopup ()
+    public ComplainPopup (int maxLength)
     {
         setHeaderTitle(_cmsgs.complainHeader());
 
@@ -30,7 +29,7 @@ public abstract class ComplainPopup extends BorderedDialog
         vbox.setSpacing(5);
         vbox.add(MsoyUI.createLabel(_cmsgs.complainMessage(), null));
         vbox.add(MsoyUI.createLabel(_cmsgs.complainDesc(), null));
-        vbox.add(_description = MsoyUI.createTextBox("", 512, 50));
+        vbox.add(_description = new LimitedTextArea(maxLength, 50, 2));
         setContents(vbox);
 
         ClickHandler sendComplain = new ClickHandler() {
@@ -38,7 +37,7 @@ public abstract class ComplainPopup extends BorderedDialog
                 sendComplain();
             }
         };
-        _description.addKeyPressHandler(new EnterClickAdapter(sendComplain));
+        _description.getTextArea().addKeyPressHandler(new EnterClickAdapter(sendComplain));
 
         addButton(new Button(_cmsgs.send(), sendComplain));
         addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
@@ -80,7 +79,7 @@ public abstract class ComplainPopup extends BorderedDialog
     protected void onLoad ()
     {
         super.onLoad();
-        _description.setFocus(true);
+        _description.getTextArea().setFocus(true);
     }
 
     protected void sendComplain ()
@@ -94,7 +93,7 @@ public abstract class ComplainPopup extends BorderedDialog
         }
     }
 
-    protected TextBox _description;
+    protected LimitedTextArea _description;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

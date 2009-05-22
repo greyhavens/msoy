@@ -16,6 +16,11 @@ import com.threerings.msoy.web.gwt.ServiceException;
  */
 public interface ForumService extends RemoteService
 {
+    /** Maximum length allowed for a message complaint. Note: this must be the same as the maximum
+     * length of {@link com.threerings.underwire.server.persist.EventRecord#subject}, but we cannot
+     * easily share code here. */
+    public static final int MAX_COMPLAINT_LENGTH = 255;
+
     /** Provides results for {@link #loadThreads}. */
     public static class ThreadResult extends PagedResult<ForumThread>
     {
