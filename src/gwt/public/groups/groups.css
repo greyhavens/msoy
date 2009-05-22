@@ -327,6 +327,12 @@
   min-height: 100%;
 }
 
+.galaxyPanel .categoryLinks {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .galaxyPanel .Title {
   background: transparent url(/images/whirled/orange_header.png) no-repeat scroll 0 0;
   color: #FFFFFF;
@@ -338,6 +344,10 @@
   padding-top: 3px;
   text-align: center;
   width: 233px;
+}
+
+.galaxyPanel .SeeAll a {
+  color: #487999;
 }
 
 .galaxyPanel .CurrentTag {
@@ -378,27 +388,6 @@
   margin-right: 5px;
 }
 
-.galaxyPanel .CategoryLinks {
-  width: 100%;
-  text-align: center;
-  color: #b4ddf9;
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-
-.galaxyPanel .CategoryLinks .CategoryTitle {
-  color: #FFFFFF;
-}
-
-.galaxyPanel .CategoryLinks a {
-  color: #b4ddf9;
-  margin: 0 5px 0 5px;
-}
-
-.galaxyPanel .CategoryLinks .SelectedLink a {
-  color: #FFFFFF;
-}
-
 .galaxyPanel .LeftColumn {
   width: 130px;
   margin: 0 10px 10px 10px;
@@ -410,6 +399,7 @@
   color: #FFFFFF;
   font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
   text-align: center;
+  font-weight :bold;
 }
 
 .galaxyPanel .MyGroupsHeader {
@@ -422,7 +412,6 @@
   height: 22px; /* plus padding */
   padding-top: 8px;
   font-size: 14px;
-  font-weight :bold;
 }
 
 .galaxyPanel .QuickGroups {
@@ -459,36 +448,39 @@
   display: block;
   margin: 5px;
   text-align: right;
-  color: #487999;
-}
-.galaxyPanel .QuickGroups .SeeAll a {
-  color: #487999;
 }
 
 .galaxyPanel .tagCloud {
   margin-left: 25px;
 }
 
+.galaxyPanel .FeaturedHeader {
+  background: url(/images/group/galaxy_featured_title_bg.png) no-repeat;
+  color: #FFFFFF;
+  width: 528px;
+  height: 25px; /* plus padding */
+  padding-top: 5px;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  font-weight: bold;
+  font-size: 17px;
+  text-align: center;
+}
+
 .galaxyPanel .GroupsList {
   width: 528px;
-}
-
-.galaxyPanel .GroupsList .Header .TopLeft,
-.galaxyPanel .GroupsList .Header .TopRight {
-  background-color: #19577B;
-}
-
-.galaxyPanel .GroupsList .Grid {
   background-color: #FFFFFF;
+}
+
+.galaxyPanel .GroupsList .SeeAll {
+  font-size: 12px;
+  text-align: right;
 }
 
 .galaxyPanel .GroupsList .Group {
   border: 1px solid #CCCCCC;
-  margin: 10px 0;
   width: 115px;
   height: 100px;
   font-size: 12px;
-  text-align: left;
 }
 
 .galaxyPanel .GroupsList .Group .LogoAndName {
@@ -550,8 +542,68 @@
   padding-right: 20px;
 }
 
-.GroupsList .miniNowLoadingWidget {
+/** GroupList **/
+
+.groupList {
+  background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  width: 100%;
+  min-height: 100%;
+}
+
+.groupList .Navi {
+  margin: 5px auto;
+}
+
+.groupList .pagedGrid {
+  width: 680px;
+  margin: 0px auto;
+}
+
+.groupList .pagedGrid .miniNowLoadingWidget {
   background-image: url(/images/ui/dot_bluematte.gif);
+}
+
+.groupList .pagedGrid .Header .TopLeft, .groupList .pagedGrid .Header .TopRight {
+  background-color: #0F4B6F;
+}
+
+.groupList .pagedGrid .Grid, .groupList .pagedGrid .Empty {
+  background: #FFFFFF;
+}
+
+.groupList .Group {
+  width: 100%;
+}
+
+.groupList .Group .Thumb {
+  width: 60px;
+}
+
+.groupList .Group .Name {
+  width: 515px;
+  font-weight: bold;
+}
+
+/** CategoryLinks **/
+
+.categoryLinks {
+  color: #B4DDF9;
+  font-size: 12px;
+}
+
+.categoryLinks .CategoryTitle {
+  color: #FFFFFF;
+}
+
+.categoryLinks a {
+  color: #B4DDF9;
+  margin: 0 5px 0 5px;
+}
+
+.categoryLinks .SelectedLink a {
+  color: #FFFFFF;
 }
 
 /* ------------------------------------

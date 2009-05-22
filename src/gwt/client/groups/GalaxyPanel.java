@@ -20,6 +20,7 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -49,21 +50,33 @@ public class GalaxyPanel extends FlowPanel
     public GalaxyPanel ()
     {
         setStyleName("galaxyPanel");
+        add(MsoyUI.createNowLoading());
+        _groupsvc.getGalaxyData(new InfoCallback<GalaxyData>() {
+            public void onSuccess (GalaxyData galaxy) {
+                init(galaxy);
+            }
+        });
+    }
+
+    /**
+     * Called when my groups & tags data is retrieved after this panel is created; populate the
+     * page with data.
+     */
+    protected void init (final GalaxyData data)
+    {
+        clear();
 
         // search box floats on far right
         FloatPanel search = new FloatPanel("Search");
         search.add(MsoyUI.createLabel(_msgs.galaxySearchTitle(), "SearchTitle"));
-        search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
+        final TextBox searchInput = MsoyUI.createTextBox("", 255, 20);
+        search.add(searchInput);
         ClickHandler doSearch = new ClickHandler() {
             public void onClick (ClickEvent event) {
-                if (_searchInput.getText().equals("")) {
-                    Link.go(Pages.GROUPS);
-                } else {
-                    Link.go(Pages.GROUPS, ACTION_SEARCH, 0, _searchInput.getText());
-                }
+                Link.go(Pages.GROUPS, ACTION_SEARCH, 0, searchInput.getText().trim());
             }
         };
-        _searchInput.addKeyPressHandler(new EnterClickAdapter(doSearch));
+        searchInput.addKeyPressHandler(new EnterClickAdapter(doSearch));
         search.add(MsoyUI.createImageButton("GoButton", doSearch));
         add(search);
 
@@ -76,176 +89,52 @@ public class GalaxyPanel extends FlowPanel
         }
 
         // category tag links
-        _categoryLinks = MsoyUI.createFlowPanel("CategoryLinks");
-        add(_categoryLinks);
+        add(new CategoryLinks());
 
         FloatPanel content = new FloatPanel("Content");
         add(content);
 
         FlowPanel leftColumn = MsoyUI.createFlowPanel("LeftColumn");
-
-        _myGroups = MsoyUI.createFlowPanel("QuickGroups");
-        if (!CShell.isGuest()) {
-            leftColumn.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsTitle(), "MyGroupsHeader"));
-            leftColumn.add(_myGroups = MsoyUI.createFlowPanel("QuickGroups"));
-            _myGroups.addStyleName("MyGroups");
-        }
-
-        leftColumn.add(MsoyUI.createLabel(_msgs.galaxyOfficialGroupsTitle(),
-            "OfficialGroupsHeader"));
-        leftColumn.add(_officialGroups = MsoyUI.createFlowPanel("QuickGroups"));
-        _officialGroups.addStyleName("OfficialGroups");
         content.add(leftColumn);
 
-        _sortBox = new ListBox();
-        _sortBox.addChangeHandler(new ChangeHandler() {
-            public void onChange (ChangeEvent event) {
-                int sort = SORT_VALUES[((ListBox)event.getSource()).getSelectedIndex()];
-                // sort is only available with no search/tag action, and resets the page.
-                Link.go(Pages.GROUPS, "", 0, "", sort);
-            }
-        });
-
-        _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
-            protected void displayPageFromClick (int page) {
-                if (!StringUtil.isBlank(_query.search)) {
-                    Link.go(Pages.GROUPS, ACTION_SEARCH, page, _query.search, _query.sort);
-                } else if (!StringUtil.isBlank(_query.tag)) {
-                    Link.go(Pages.GROUPS, ACTION_TAG, page, _query.tag, _query.sort);
-                } else {
-                    Link.go(Pages.GROUPS, "", page, "", _query.sort);
-                }
-            }
-            protected Widget createWidget (GroupCard card) {
-                return createGroupWidget(card);
-            }
-            protected String getEmptyMessage () {
-                return _msgs.galaxyNoGroups();
-            }
-            @Override // from PagedWidget
-            protected Widget getNowLoadingWidget () {
-                return new MiniNowLoadingWidget();
-            }
-            @Override // from PagedWidget
-            protected void addCustomControls (FlexTable controls) {
-                controls.setWidget(
-                    0, 0, new InlineLabel(_msgs.galaxySortBy(), false, false, false));
-                controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
-                controls.setWidget(0, 1, _sortBox);
-            }
-        };
-        _groupGrid.addStyleName("GroupsList");
-        content.add(_groupGrid);
-
-        _groupsvc.getGalaxyData(new InfoCallback<GalaxyData>() {
-            public void onSuccess (GalaxyData galaxy) {
-                init(galaxy);
-            }
-        });
-        _nowLoading1 = new MiniNowLoadingWidget();
-        _myGroups.add(_nowLoading1);
-        _nowLoading2 = new MiniNowLoadingWidget();
-        _officialGroups.add(_nowLoading2);
-    }
-
-    /**
-     * Called by parent page when the url changes; may be the first time the panel was loaded, or
-     * the result of a tag, text search, or page change query.
-     */
-    public void setArgs (Args args)
-    {
-        // Create a new GroupQuery based on the args
-        GroupService.GroupQuery query = new GroupService.GroupQuery();
-        String action = args.get(0, "");
-        int page = args.get(1, 0);
-        String arg = args.get(2, "");
-        query.sort = (byte)args.get(3, 0);
-        if (action.equals(ACTION_SEARCH) && !arg.equals("")) {
-            query.search = arg;
-        } else if (action.equals(ACTION_TAG) && !arg.equals("")) {
-            query.tag = arg;
-        }
-
-        // set the current tag and search text for the new query
-        _searchInput.setText("");
-        if (query.search != null) {
-            _searchInput.setText(arg);
-        }
-
-        _categoryLinks.clear();
-        _categoryLinks.add(MsoyUI.createLabel(_msgs.galaxyCategoryTitle(), "CategoryTitle inline"));
-        for (String tag : CATEGORY_TAGS) {
-            String tagStyle = "Link";
-            if (query.tag != null && query.tag.equals(tag.toLowerCase())) {
-                tagStyle = "SelectedLink";
-            }
-            _categoryLinks.add(Link.create(tag, tagStyle, Pages.GROUPS, ACTION_TAG,
-                                           0, tag.toLowerCase(), false));
-        }
-        _categoryLinks.add(Link.create(_msgs.galaxyCategoryAll(), "Link", Pages.GROUPS, ""));
-
-        // If currently displaying search results, lock the sort box to "By Relevance", otherwise
-        // display all search values and select the right one.
-        if (query.search != null || query.tag != null) {
-            if (_sortBox.getItemCount() != 1) {
-                _sortBox.clear();
-                _sortBox.addItem(_msgs.sortByRelevance());
-                _sortBox.setEnabled(false);
-            }
-        } else {
-            if (_sortBox.getItemCount() != SORT_LABELS.length) {
-                _sortBox.clear();
-                for (int ii = 0; ii < SORT_LABELS.length; ii++) {
-                    _sortBox.addItem(SORT_LABELS[ii], SORT_VALUES[ii] + "");
-                    if (query.sort == SORT_VALUES[ii]) {
-                        _sortBox.setSelectedIndex(ii);
-                    }
-                }
-                _sortBox.setEnabled(true);
-            }
-        }
-
-        // If the query has changed, instantiate a new data model for the group grid.
-        if (_query == null || !_query.equals(query)) {
-            _query = query;
-            _groupGrid.setModel(new PagedServiceDataModel<GroupCard, PagedResult<GroupCard>>() {
-                protected void callFetchService (int start, int count, boolean needCount,
-                                                 AsyncCallback<PagedResult<GroupCard>> callback) {
-                    _groupsvc.getGroups(start, count, _query, needCount, callback);
-                }
-            }, page);
-        } else {
-            _groupGrid.displayPage(page, false);
-        }
-    }
-
-    /**
-     * Called when my groups & tags data is retrieved after this panel is created; populate the
-     * page with data.
-     */
-    protected void init (final GalaxyData data)
-    {
-        _myGroups.remove(_nowLoading1);
-        _officialGroups.remove(_nowLoading2);
-        
-        // set up my groups
-        if (!CShell.isGuest() && data.myGroups.size() == 0) {
-            _myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
-
+        // add the My Groups display
+        leftColumn.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsTitle(), "MyGroupsHeader"));
+        FlowPanel myGroups = MsoyUI.createFlowPanel("QuickGroups");
+        myGroups.addStyleName("MyGroups");
+        leftColumn.add(myGroups);
+        if (data.myGroups.size() == 0) {
+            myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
         } else {
             for (GroupCard group : data.myGroups) {
-                _myGroups.add(createQuickGroupWidget(group));
+                myGroups.add(createQuickGroupWidget(group));
             }
-            Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
-                "mygroups");
-            seeAllLink.addStyleName("SeeAll");
-            _myGroups.add(seeAllLink);
+            myGroups.add(Link.create(_msgs.galaxySeeAll(), "SeeAll", Pages.GROUPS, "mygroups"));
         }
 
-        // set up official groups
+        // add the official groups display
+        FlowPanel officialGroups = MsoyUI.createFlowPanel("QuickGroups");
+        leftColumn.add(MsoyUI.createLabel(_msgs.galaxyOfficialGroupsTitle(),
+                                          "OfficialGroupsHeader"));
+        officialGroups.addStyleName("OfficialGroups");
         for (GroupCard group : data.officialGroups) {
-            _officialGroups.add(createQuickGroupWidget(group));
+            officialGroups.add(createQuickGroupWidget(group));
         }
+        leftColumn.add(officialGroups);
+
+        content.add(MsoyUI.createLabel(_msgs.galaxyFeaturedTitle(), "FeaturedHeader"));
+
+        SmartTable grid = new SmartTable("GroupsList", 0, 10);
+        int row = 0, col = 0;
+        for (GroupCard card : data.featuredGroups) {
+            grid.setWidget(row, col, createGroupWidget(card));
+            if (++col == GRID_COLUMNS) {
+                row++;
+                col = 0;
+            }
+        }
+        grid.addWidget(Link.create(_msgs.galaxySeeAll(), Pages.GROUPS, "list"),
+                       GRID_COLUMNS, "SeeAll");
+        content.add(grid);
     }
 
     /**
@@ -286,40 +175,13 @@ public class GalaxyPanel extends FlowPanel
         return widget;
     }
 
-    /** The current search,tag,page, and sort being displayed */
-    protected GroupService.GroupQuery _query;
-
     /* dynamic widgets */
-    protected PagedGrid<GroupCard> _groupGrid;
-    protected TextBox _searchInput;
-    protected FlowPanel _myGroups;
-    protected FlowPanel _officialGroups;
-    protected ListBox _sortBox;
-    protected FlowPanel _categoryLinks;
-    protected MiniNowLoadingWidget _nowLoading1, _nowLoading2;
+    protected CategoryLinks _categoryLinks;
     
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 
     protected static final String ACTION_SEARCH = "search";
-    protected static final String ACTION_TAG = "tag";
-    protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 4;
-
-    protected static final String[] SORT_LABELS = {
-        _msgs.sortByNewAndPopular(),
-        _msgs.sortByName(),
-        _msgs.sortByNumMembers(),
-        _msgs.sortByCreatedDate()
-    };
-    protected static final byte[] SORT_VALUES = {
-        GroupService.GroupQuery.SORT_BY_NEW_AND_POPULAR,
-        GroupService.GroupQuery.SORT_BY_NAME,
-        GroupService.GroupQuery.SORT_BY_NUM_MEMBERS,
-        GroupService.GroupQuery.SORT_BY_CREATED_DATE,
-    };
-
-    protected static final String[] CATEGORY_TAGS = { "Games", "Music", "Dance", "Art", "Flash",
-        "Fashion", "Pets", "Sports", "Humor" };
 }

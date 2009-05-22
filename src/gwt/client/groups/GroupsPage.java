@@ -107,14 +107,18 @@ public class GroupsPage extends Page
             int medalId = args.get(1, 0);
             setContent(_msgs.editMedalEdit(), new EditMedalPanel(0, medalId));
 
+        } else if (args.get(0, "").length() > 0) {
+            GroupListPanel list;
+            if (getContent() instanceof GroupListPanel) {
+                list = (GroupListPanel)getContent();
+            } else {
+                list = new GroupListPanel();
+            }
+            list.setArgs(args);
+            setContent(list);
+
         } else {
-            if (_galaxy == null) {
-                _galaxy = new GalaxyPanel();
-            }
-            if (getContent() != _galaxy) {
-                setContent(_galaxy);
-            }
-            _galaxy.setArgs(args);
+            setContent(new GalaxyPanel());
         }
     }
 
@@ -136,7 +140,6 @@ public class GroupsPage extends Page
     protected ForumModels _fmodels = new ForumModels();
     protected ForumPanel _fpanel;
     protected GroupDetailPanel _detail = new GroupDetailPanel();
-    protected GalaxyPanel _galaxy;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
 }

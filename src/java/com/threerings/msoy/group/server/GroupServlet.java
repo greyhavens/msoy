@@ -98,6 +98,11 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser();
         GalaxyData data = new GalaxyData();
 
+        // load up featured groups
+        List<GroupRecord> featured = _groupRepo.getGroups(GalaxyData.FEATURED_GROUPS_COUNT);
+        data.featuredGroups = populateGroups(
+            Lists.newArrayList(Iterables.transform(featured, GroupRecord.TO_CARD)));
+
         // load up my groups
         if (mrec != null) {
             List<GroupRecord> groups = _groupRepo.getFullMemberships(
@@ -107,11 +112,9 @@ public class GroupServlet extends MsoyServiceServlet
             data.myGroups = Lists.newArrayList();
         }
 
-        // TODO: make sure these are in a sensible order?
-        data.officialGroups = Lists.newArrayList();
-        for (GroupRecord grec : _groupRepo.getOfficialGroups()) {
-            data.officialGroups.add(grec.toGroupCard());
-        }
+        // load up the official groups
+        data.officialGroups = Lists.newArrayList(
+            Iterables.transform(_groupRepo.getOfficialGroups(), GroupRecord.TO_CARD));
 
         return data;
     }

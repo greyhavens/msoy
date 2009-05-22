@@ -629,7 +629,6 @@ public class GroupRepository extends DepotRepository
             return OrderBy.ascending(GroupRecord.CREATION_DATE).
                 thenDescending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
 
-
         } else if (tagId > 0) {
             // for a tag search, define 'relevance' as member count
             return OrderBy.descending(GroupRecord.MEMBER_COUNT).thenAscending(GroupRecord.NAME);
