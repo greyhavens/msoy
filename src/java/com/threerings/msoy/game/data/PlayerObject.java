@@ -54,6 +54,12 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>game</code> field. */
     public static final String GAME = "game";
 
+    /** The field name of the <code>coins</code> field. */
+    public static final String COINS = "coins";
+
+    /** The field name of the <code>bars</code> field. */
+    public static final String BARS = "bars";
+
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
@@ -72,6 +78,12 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The game summary for the game that the player is lobbying for or currently playing. */
     public GameSummary game;
+
+    /** How many coins we've got jangling around on our person. */
+    public int coins;
+
+    /** The number of bars the member has currently in their account. */
+    public int bars;
 
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
@@ -227,6 +239,38 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             GAME, value, ovalue);
         this.game = value;
+    }
+
+    /**
+     * Requests that the <code>coins</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setCoins (int value)
+    {
+        int ovalue = this.coins;
+        requestAttributeChange(
+            COINS, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.coins = value;
+    }
+
+    /**
+     * Requests that the <code>bars</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBars (int value)
+    {
+        int ovalue = this.bars;
+        requestAttributeChange(
+            BARS, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.bars = value;
     }
 
     /**

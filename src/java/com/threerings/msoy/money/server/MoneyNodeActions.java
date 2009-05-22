@@ -5,12 +5,21 @@ package com.threerings.msoy.money.server;
 
 import com.google.inject.Inject;
 
+import com.threerings.presents.peer.data.NodeObject;
+
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
+import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.server.MemberLocator;
+
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 
 public class MoneyNodeActions
 {
@@ -54,45 +63,80 @@ public class MoneyNodeActions
         }
     }
 
-    protected static class MoneyUpdated extends MemberNodeAction
+    protected static class MoneyUpdated extends MsoyPeerManager.NodeAction
     {
         public MoneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc)
         {
-            super(memberId);
+            _memberId = memberId;
             _currency = currency;
             _amount = amount;
             _updateAcc = updateAcc;
+
+            _memberKey = MsoyAuthName.makeKey(memberId);
+            _playerKey = GameAuthName.makeKey(memberId);
         }
 
         public MoneyUpdated () { }
 
-        @Override
-        protected void execute (final MemberObject memobj)
+        @Override // from MsoyPeerManager.NodeAction
+        public boolean isApplicable (NodeObject nodeobj)
         {
-            memobj.startTransaction();
-            try {
+            return (nodeobj.clients.containsKey(_memberKey) ||
+                    nodeobj.clients.containsKey(_playerKey));
+        }
+
+        @Override // from MsoyPeerManager.NodeAction
+        protected void execute ()
+        {
+            MemberObject memobj = _mlocator.lookupMember(_memberId);
+            if (memobj != null) {
+                memobj.startTransaction();
+                try {
+                    switch (_currency) {
+                    case COINS:
+                        memobj.setCoins(memobj.coins + _amount);
+                        if (_amount > 0 && _updateAcc) {
+                            memobj.setAccCoins(memobj.accCoins + _amount);
+                        }
+                        break;
+                    case BARS:
+                        memobj.setBars(memobj.bars + _amount);
+                        break;
+                    case BLING:
+                        // Changes to bling are ignored.
+                        break;
+                    }
+                } finally {
+                    memobj.commitTransaction();
+                }
+            }
+
+            PlayerObject plobj = _plocator.lookupPlayer(_memberId);
+            if (plobj != null) {
                 switch (_currency) {
                 case COINS:
-                    memobj.setCoins(memobj.coins + _amount);
-                    if (_amount > 0 && _updateAcc) {
-                        memobj.setAccCoins(memobj.accCoins + _amount);
-                    }
+                    plobj.setCoins(plobj.coins + _amount);
                     break;
                 case BARS:
-                    memobj.setBars(memobj.bars + _amount);
+                    plobj.setBars(plobj.bars + _amount);
                     break;
                 case BLING:
                     // Changes to bling are ignored.
                     break;
                 }
-            } finally {
-                memobj.commitTransaction();
             }
         }
 
+        protected int _memberId;
         protected Currency _currency;
         protected int _amount;
         protected boolean _updateAcc;
+
+        protected transient MsoyAuthName _memberKey;
+        protected transient GameAuthName _playerKey;
+
+        @Inject protected transient MemberLocator _mlocator;
+        @Inject protected transient PlayerLocator _plocator;
     }
 
     protected final MsoyPeerManager _peerMan;

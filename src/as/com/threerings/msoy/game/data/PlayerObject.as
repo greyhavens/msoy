@@ -56,6 +56,12 @@ public class PlayerObject extends WhirledPlayerObject
     /* The game summary for the game that the player is lobbying for or currently playing. */
     public var game :GameSummary;
 
+    /** How many coins we've got jangling around on our person. */
+    public var coins :int;
+
+    /** The number of bars the member has currently in their account. */
+    public var bars :int;
+
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
 
@@ -141,6 +147,8 @@ public class PlayerObject extends WhirledPlayerObject
         memberName = VizMemberName(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
         game = GameSummary(ins.readObject());
+        coins = ins.readInt();
+        bars = ins.readInt();
         humanity = ins.readInt();
         visitorInfo = VisitorInfo(ins.readObject());
         propertyService = PropertySpaceMarshaller(ins.readObject());

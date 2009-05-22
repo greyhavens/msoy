@@ -9,6 +9,8 @@ import com.threerings.presents.data.ClientObject;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
+import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
@@ -51,6 +53,10 @@ public class GameClientResolver extends CrowdClientResolver
         plobj.memberName = new VizMemberName(member.name, member.memberId, photo);
         plobj.humanity = member.humanity;
         plobj.visitorInfo = new VisitorInfo(member.visitorId, true);
+
+        final MemberMoney money = _moneyLogic.getMoneyFor(authName.getMemberId());
+        plobj.coins = money.coins;
+        plobj.bars = money.bars;
     }
 
     @Override
@@ -67,4 +73,5 @@ public class GameClientResolver extends CrowdClientResolver
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected MoneyLogic _moneyLogic;
 }
