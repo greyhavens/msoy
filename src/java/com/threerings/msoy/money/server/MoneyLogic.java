@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.RandomUtil;
 
@@ -187,13 +188,8 @@ public class MoneyLogic
     {
         Preconditions.checkArgument(memberId != 0, "Requested to award money to invalid member.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
-
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
             memberId, currency, amount, type, action.description, null, true);
-        if (tx == null) {
-            return null; // the target member doesn't exist
-        }
-
         if (notify) {
             _nodeActions.moneyUpdated(tx, true);
         }
@@ -217,10 +213,6 @@ public class MoneyLogic
         UserAction action = UserAction.boughtBars(memberId, payment);
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
             Currency.BARS, numBars, TransactionType.BARS_BOUGHT, action.description, null, true);
-        if (tx == null) {
-            return null; // the target member doesn't exist
-        }
-        
         _nodeActions.moneyUpdated(tx, true);
         logAction(action, tx);
         return tx.toMoneyTransaction();
@@ -248,10 +240,8 @@ public class MoneyLogic
                 memberId, currency, -delta, TransactionType.SUPPORT_ADJUST, action.description,
                 null);
         }
-        if (tx != null) {
-            _nodeActions.moneyUpdated(tx, true);
-            logAction(action, tx);
-        }
+        _nodeActions.moneyUpdated(tx, true);
+        logAction(action, tx);
     }
 
     /**
@@ -320,11 +310,12 @@ public class MoneyLogic
                 CurrencyAmount amount = creatorPayouts.get(ii);
                 String message = MessageBundle.tcompose(ii == 0 ? "m.item_sold" :
                     "m.derived_item_sold", itemName, item.type, item.catalogId);
-                MoneyTransactionRecord creatorTx = _repo.accumulateAndStoreTransaction(
-                    creatorId, amount.currency, amount.amount, txType, message, iident,
-                    buyerTx.id, buyerId, true);
-                if (creatorTx != null) {
-                    creatorTxs.add(creatorTx);
+                try {
+                    creatorTxs.add(_repo.accumulateAndStoreTransaction(
+                                       creatorId, amount.currency, amount.amount, txType, message,
+                                       iident, buyerTx.id, buyerId, true));
+                } catch (DatabaseException de) {
+                    log.warning(de.getMessage()); // keep going with the main transaction
                 }
             }
         }
@@ -333,22 +324,30 @@ public class MoneyLogic
         int affiliateId = buyerRec.affiliateMemberId;
         MoneyTransactionRecord affiliateTx = null;
         if (affiliateId != 0 && affiliatePayout != null) {
-            affiliateTx = _repo.accumulateAndStoreTransaction(
-                affiliateId, affiliatePayout.currency, affiliatePayout.amount,
-                TransactionType.AFFILIATE_PAYOUT,
-                MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
-                iident, buyerTx.id, buyerId, true);
+            try {
+                affiliateTx = _repo.accumulateAndStoreTransaction(
+                    affiliateId, affiliatePayout.currency, affiliatePayout.amount,
+                    TransactionType.AFFILIATE_PAYOUT,
+                    MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
+                    iident, buyerTx.id, buyerId, true);
+            } catch (DatabaseException de) {
+                log.warning(de.getMessage()); // keep going with the main transaction
+            }
         }
 
         // Determine the ID of the charity that will receive a payout.
         int charityId = getChosenCharity(buyerRec);
         MoneyTransactionRecord charityTx = null;
         if (charityId != 0 && charityPayout != null) {
-            charityTx = _repo.accumulateAndStoreTransaction(
-                charityId, charityPayout.currency, charityPayout.amount,
-                TransactionType.CHARITY_PAYOUT,
-                MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
-                iident, buyerTx.id, buyerId, true);
+            try {
+                charityTx = _repo.accumulateAndStoreTransaction(
+                    charityId, charityPayout.currency, charityPayout.amount,
+                    TransactionType.CHARITY_PAYOUT,
+                    MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
+                    iident, buyerTx.id, buyerId, true);
+            } catch (DatabaseException de) {
+                log.warning(de.getMessage()); // keep going with the main transaction
+            }
         }
 
         // log this!
@@ -794,12 +793,14 @@ public class MoneyLogic
                 continue;
             }
 
-            MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-                memberId, Currency.COINS, refundAmount, TransactionType.REFUND_GIVEN,
-                MessageBundle.tcompose("m.item_refund", itemName), item, false);
-            if (tx != null) {
+            try {
+                MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+                    memberId, Currency.COINS, refundAmount, TransactionType.REFUND_GIVEN,
+                    MessageBundle.tcompose("m.item_refund", itemName), item, false);
                 updates.add(tx);
                 coinPool -= refundAmount;
+            } catch (DatabaseException de) {
+                log.warning(de.getMessage()); // keep going with the refund
             }
         }
 
@@ -929,9 +930,6 @@ public class MoneyLogic
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, blingAmount,
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null, true);
-        if (accumTx == null) {
-            return null; // the target member doesn't exist
-        }
         _nodeActions.moneyUpdated(accumTx, true);
 
         logAction(UserAction.exchangedCurrency(memberId), deductTx);

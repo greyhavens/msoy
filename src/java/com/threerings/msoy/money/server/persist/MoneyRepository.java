@@ -41,10 +41,11 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.util.Logger;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -123,11 +124,10 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Accumulate money, return a partially-populated MoneyTransactionRecord for
-     * storing.
+     * Accumulate money, return a partially-populated MoneyTransactionRecord for storing.
      *
-     * @param updateAcc true if this transaction is "accumulating", meaning that they
-     * earned the coins rather than got them through change, for example.
+     * @param updateAcc true if this transaction is "accumulating", meaning that they earned the
+     * coins rather than got them through change, for example.
      */
     protected MoneyTransactionRecord accumulate (
         int memberId, Currency currency, int amount, boolean updateAcc)
@@ -146,9 +146,9 @@ public class MoneyRepository extends DepotRepository
         int count = updateLiteral(MemberAccountRecord.class, key, key, builder.build());
         if (count == 0) {
             // accumulate should always work, so if we mod'd 0 rows, it means there's no member
-            log.warning("Missing member in accumulate?!", "id", memberId, "currency", currency,
-                        "amount", amount, "ua", updateAcc);
-            return null;
+            throw new DatabaseException(
+                Logger.format("Missing member in accumulate?!", "id", memberId,
+                              "currency", currency, "amount", amount, "ua", updateAcc));
         }
 
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
@@ -160,8 +160,8 @@ public class MoneyRepository extends DepotRepository
      * Deduct money from the specified member's money.  If the user does not have enough money, an
      * InsufficientFundsException will be thrown.
      *
-     * @return a partially filled-out MTR that should later either be passed to
-     * rollbackDeduction() or filled-in and passed to storeTransaction().
+     * @return a partially filled-out MTR that should later either be passed to rollbackDeduction()
+     * or filled-in and passed to storeTransaction().
      */
     public MoneyTransactionRecord deduct (
         int memberId, Currency currency, int amount, boolean allowFree)
@@ -182,9 +182,9 @@ public class MoneyRepository extends DepotRepository
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         MemberAccountRecord mar = load(MemberAccountRecord.class, key);
         if (mar == null) {
-            log.warning("Missing member in deduct?!", "id", memberId, "currency", currency,
-                        "amount", amount, "allowFree", allowFree);
-            return null;
+            throw new DatabaseException(
+                Logger.format("Missing member in deduct?!", "id", memberId, "currency", currency,
+                              "amount", amount, "allowFree", allowFree));
         }
 
         int balance = mar.getAmount(currency);
