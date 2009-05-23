@@ -11,7 +11,6 @@ import com.google.inject.Singleton;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -107,7 +106,8 @@ public class CatalogLogic
                 }
                 // note the new purchase for the item, but only if it wasn't magicFree.
                 if (!magicFree) {
-                    repo.nudgeListing(listing.catalogId, true);
+                    int newCost = repo.nudgeListing(listing, true);
+                    _itemLogic.updateDerivedListings(listing, newCost);
                 }
                 // make any necessary notifications
                 _itemLogic.itemPurchased(clone, currency, amountPaid);

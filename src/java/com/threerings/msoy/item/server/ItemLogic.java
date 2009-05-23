@@ -858,7 +858,8 @@ public class ItemLogic
 
     /**
      * Checks if a listing of the given derived item can be based on the existing listing with the
-     * given id.
+     * given id. If currency is not null, then the currency and cost are checked against the
+     * minimum pricing requirements of a derived item as well.
      */
     public boolean isSuitableBasis (ItemRecord derived, int basisId, Currency currency, int cost)
         throws ServiceException
@@ -874,7 +875,8 @@ public class ItemLogic
 
     /**
      * Checks if a listing of the given type by the given creator id can be based on the given
-     * existing listing.
+     * existing listing. If currency is not null, then the currency and cost are checked against
+     * the minimum pricing requirements of a derived item as well. 
      */
     public boolean isSuitableBasis (byte type, int creatorId, CatalogRecord basisRec,
                                     Currency currency, int cost)
@@ -884,8 +886,7 @@ public class ItemLogic
         }
 
         if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
-            basisRec.item.creatorId == creatorId ||
-            basisRec.pricing != CatalogListing.PRICING_MANUAL) {
+            basisRec.item.creatorId == creatorId) {
             return false;
         }
 

@@ -1058,14 +1058,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Update either the 'purchases' or the 'returns' field of a catalog listing, and figure out if
      * it's time to reprice it.
+     * @return the newly assigned cost or the original cost if it did not change
      */
-    public void nudgeListing (int catalogId, boolean purchased)
+    public int nudgeListing (CatalogRecord record, boolean purchased)
     {
-        CatalogRecord record = load(getCatalogClass(), catalogId);
-        if (record == null) {
-            return; // if the listing has been unlisted, we don't need to nudge it.
-        }
-
+        int newCost = record.cost;
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
@@ -1082,16 +1079,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             case CatalogListing.PRICING_ESCALATE:
                 if (purchases == record.salesTarget) {
-                    updates.put(CatalogRecord.COST,
-                                new LiteralExp(""+CatalogListing.escalatePrice(record.cost)));
-
-                    // TODO: attribution phase II - bump up derivative costs (probably move this
-                    // to item logic too)
-                    if (record.derivationCount > 0) {
-                        log.warning("Snakes! Escalating a price on a listing with derivatives",
-                            "type", getItemType(), "listingId", record.catalogId,
-                            "derivationCount", record.derivationCount);
-                    }
+                    newCost = CatalogListing.escalatePrice(record.cost);
+                    updates.put(CatalogRecord.COST, new LiteralExp(""+newCost));
                 }
                 break;
             }
@@ -1103,6 +1092,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // finally update the columns we actually modified
         updateLiteral(getCatalogClass(), record.catalogId, updates);
+        return newCost;
     }
 
     /**

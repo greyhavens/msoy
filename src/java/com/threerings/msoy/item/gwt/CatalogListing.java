@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -33,7 +34,7 @@ public class CatalogListing
         PRICING_HIDDEN, PRICING_MANUAL, PRICING_ESCALATE, PRICING_LIMITED_EDITION };
 
     /** The minimum run for escalating pricing and limited edition. */
-    public static final int MIN_SALES_TARGET = 100;
+    public static final int MIN_SALES_TARGET = DeploymentConfig.devDeployment ? 5 : 100;
 
     /**
      * Escalates the supplied price based on the escalation factor.
