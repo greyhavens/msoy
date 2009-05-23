@@ -185,9 +185,6 @@ public abstract class BuyPanel<T> extends SmartTable
         @Override protected boolean gotResult (PurchaseResult<T> result) {
             _timesBought++;
             MoneyUtil.updateBalances(result.balances);
-            if (result.quote != null) {
-                updatePrice(result.quote);
-            }
             wasPurchased(result, _currency);
             if (_callback != null) {
                 _callback.onSuccess(result.ware);

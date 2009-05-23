@@ -333,6 +333,7 @@ public class AVRGameManager extends PlaceManager
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
+        // TODO: check isApproved()
         _contentDelegate.purchaseItemPack(getPlayer(caller, playerId), ident, listener);
     }
 
@@ -341,6 +342,9 @@ public class AVRGameManager extends PlaceManager
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
+        if (isAgent(caller)) {
+            // TODO: check isApproved()
+        }
         _contentDelegate.consumeItemPack(getPlayer(caller, playerId), ident, listener);
     }
 

@@ -166,67 +166,9 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         final MemberRecord mrec = requireAuthedUser();
 
-        // load up the listings
-        final CatalogRecord listing = _itemLogic.requireListing(itemType, catalogId, true);
-        final List<CatalogRecord> listings = Lists.newArrayList(listing);
-        int basisId;
-        while ((basisId = listings.get(listings.size() - 1).basisId) > 0) {
-            listings.add(_itemLogic.requireListing(itemType, basisId, true));
-        }
-        // make sure we haven't hit our limited edition count
-        if (listing.pricing == CatalogListing.PRICING_LIMITED_EDITION &&
-                listing.purchases >= listing.salesTarget) {
-            throw new ServiceException(ItemCodes.E_HIT_SALES_LIMIT);
-        }
-        // make sure they're not seeing a stale record for a hidden item
-        if (listing.pricing == CatalogListing.PRICING_HIDDEN) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-        }
-        // prepare the MemoriesRecord- catch errors here
-        final MemoriesRecord memoryRec = (memories == null) ? null : new MemoriesRecord(memories);
-
-        // Create the operation that will actually take care of creating the item.
-        final int fCatalogId = catalogId;
-        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-        MoneyLogic.BuyOperation<Item> buyOp = new MoneyLogic.BuyOperation<Item>() {
-            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
-                // create the clone row in the database
-                _newClone = repo.insertClone(listing.item, mrec.memberId, currency, amountPaid);
-                // set up the initial memories, if any
-                if (memoryRec != null) {
-                    try {
-                        memoryRec.itemType = _newClone.getType();
-                        memoryRec.itemId = _newClone.itemId;
-                        _memoryRepo.storeMemories(memoryRec);
-                    } catch (Exception e) {
-                        log.warning("Unable to save initial item memories", e);
-                        // but cope and continue the purchase
-                    }
-                }
-                // note the new purchase for the item, but only if it wasn't magicFree.
-                if (!magicFree) {
-                    repo.nudgeListing(fCatalogId, true);
-                }
-                // make any necessary notifications
-                _itemLogic.itemPurchased(_newClone, currency, amountPaid);
-                _eventLog.shopPurchase(mrec.memberId, mrec.visitorId);
-                return true;
-            }
-            public Item getWare () {
-                return _newClone.toItem();
-            }
-            protected ItemRecord _newClone;
-        };
-
-        // update money as appropriate
-        BuyResult result = _moneyLogic.buyItem(mrec, listings, currency, authedCost, buyOp);
-        if (result == null) {
-            // this won't happen because our buyOp always returns true (if it fails,
-            // it will throw an exception). But let's cope should someone change that and
-            // not realize that the result could now be null
-            log.warning("This won't happen. CatalogServlet.purchaseItem.buyOp returned false.");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        BuyResult<Item> result = _catalogLogic.purchaseItem(
+            mrec, itemType, catalogId, currency, authedCost, memories);
+        PurchaseResult<Item> presult = result.toPurchaseResult();
 
         // update stats, not letting any booch in here screw with the purchase..
         try {
@@ -259,8 +201,8 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // update their stat set, if they aren't buying something from themselves.
-            if (!magicFree && (mrec.memberId != listing.item.creatorId) &&
-                    (memberTx.currency == Currency.COINS)) {
+            if (!magicFree && (mrec.memberId != presult.ware.creatorId) &&
+                (memberTx.currency == Currency.COINS)) {
                 _statLogic.incrementStat(mrec.memberId, StatType.COINS_SPENT, -memberTx.amount);
             }
 
@@ -268,20 +210,12 @@ public class CatalogServlet extends MsoyServiceServlet
             log.warning("Error logging stats during item purchase", e);
         }
 
-        // Secure another quote for if they want to buy again
-        PriceQuote quote = _moneyLogic.securePrice(mrec.memberId,
-            new CatalogIdent(itemType, catalogId), listing.currency, listing.cost);
-
-        PurchaseResult<Item> purchResult = new PurchaseResult<Item>(
-            buyOp.getWare(), result.getBuyerBalances(), quote);
-        // If a charity was selected, set charity info
+        // if a charity was selected, set charity info
         if (result.getCharityTransaction() != null) {
-            purchResult.charityPercentage = _runtime.money.charityPercentage;
-            purchResult.charity = _memberRepo.loadMemberName(
-                result.getCharityTransaction().memberId);
+            presult.charityPercentage = _runtime.money.charityPercentage;
+            presult.charity = _memberRepo.loadMemberName(result.getCharityTransaction().memberId);
         }
-
-        return purchResult;
+        return presult;
     }
 
     // from interface CatalogService
@@ -355,24 +289,17 @@ public class CatalogServlet extends MsoyServiceServlet
         final int fbasisId = basisCatalogId;
         // the coin minimum price is the listing fee
         int listFee = ItemPrices.getMinimumPrice(Currency.COINS, item.type, rating);
-        MoneyLogic.BuyOperation<CatalogRecord> buyOp;
-        _moneyLogic.listItem(
-            mrec, listFee, master.name, buyOp = new MoneyLogic.BuyOperation<CatalogRecord>() {
-            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
+
+        int catalogId = _moneyLogic.listItem(
+            mrec, listFee, master.name, new MoneyLogic.BuyOperation<Integer>() {
+            public Integer create (boolean magicFree, Currency currency, int amountPaid) {
                 // create our new immutable catalog master item
                 repo.insertOriginalItem(master, true);
-                // create & insert the catalog record
-                _record = repo.insertListing(master, originalItemId, fpricing, fsalesTarget,
-                                             fcurrency, fcost, now, fbasisId);
-                return true;
+                // create and insert the catalog record, return its new id
+                return repo.insertListing(master, originalItemId, fpricing, fsalesTarget,
+                                          fcurrency, fcost, now, fbasisId);
             }
-            public CatalogRecord getWare () {
-                return _record;
-            }
-            protected CatalogRecord _record;
-        });
-        // result will never return null beceause our BuyOp.create() always returns true
-        CatalogRecord record = buyOp.getWare();
+        }).toPurchaseResult().ware;
 
         // copy tags from the original item to the new listing item
         repo.getTagRepository().copyTags(originalItemId, master.itemId, mrec.memberId, now);
@@ -387,8 +314,8 @@ public class CatalogServlet extends MsoyServiceServlet
         if (pricing != CatalogListing.PRICING_HIDDEN) {
             _feedRepo.publishMemberMessage(
                 mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name + "\t" +
-                String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId) +
-                "\t" + MediaDesc.mdToString(master.getThumbMediaDesc()));
+                String.valueOf(repo.getItemType()) + "\t" + catalogId + "\t" +
+                MediaDesc.mdToString(master.getThumbMediaDesc()));
         }
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId
@@ -411,7 +338,7 @@ public class CatalogServlet extends MsoyServiceServlet
         _eventLog.itemListedInCatalog(master.creatorId, mrec.visitorId, master.getType(),
             master.itemId, currency, cost, pricing, salesTarget);
 
-        return record.catalogId;
+        return catalogId;
     }
 
     // from interface CatalogServlet
@@ -753,11 +680,11 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected CatalogLogic _catalogLogic;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;

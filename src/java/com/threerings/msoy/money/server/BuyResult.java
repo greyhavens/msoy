@@ -7,23 +7,20 @@ import java.util.List;
 
 import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
  * The result of a purchase, this returns the member, creator, and affiliate transactions.
- *
- * @author Kyle Sampson <kyle@threerings.net>
- * @author Ray Greenwell <ray@threerings.net>
  */
-public class BuyResult
+public class BuyResult<T>
 {
     /**
      * @param magicFreeBuy should be true if the item was magic'd up for support
      * personnel and we shouldn't increment the stat of the purchase.
      */
-    public BuyResult (
-        boolean magicFreeBuy, MoneyTransaction memberTx, MoneyTransaction changeTx,
-        List<MoneyTransaction> creatorTxs, MoneyTransaction affiliateTx,
-        MoneyTransaction charityTx)
+    public BuyResult (boolean magicFreeBuy, MoneyTransaction memberTx, MoneyTransaction changeTx,
+                      List<MoneyTransaction> creatorTxs, MoneyTransaction affiliateTx,
+                      MoneyTransaction charityTx, T ware)
     {
         _magicFree = magicFreeBuy;
         _memberTransaction = memberTx;
@@ -31,8 +28,12 @@ public class BuyResult
         _creatorTransactions = creatorTxs;
         _affiliateTransaction = affiliateTx;
         _charityTransaction = charityTx;
+        _ware = ware;
     }
 
+    /**
+     * Returns true if the purchase was magicked up for support+.
+     */
     public boolean wasMagicFreeBuy ()
     {
         return _magicFree;
@@ -84,6 +85,9 @@ public class BuyResult
         return _charityTransaction;
     }
 
+    /**
+     * Returns the buyer's post-purchase currency balances.
+     */
     public BalanceInfo getBuyerBalances ()
     {
         int buyerId = _memberTransaction.memberId;
@@ -99,6 +103,14 @@ public class BuyResult
         }
         updateBalance(balances, buyerId, _affiliateTransaction);
         return balances;
+    }
+
+    /**
+     * Converts this result to a runtime record.
+     */
+    public PurchaseResult<T> toPurchaseResult ()
+    {
+        return new PurchaseResult<T>(_ware, getBuyerBalances());
     }
 
     protected void updateBalance (BalanceInfo balances, int memberId, MoneyTransaction tx)
@@ -122,6 +134,7 @@ public class BuyResult
         }
     }
 
+    protected T _ware;
     protected boolean _magicFree;
     protected MoneyTransaction _memberTransaction;
     protected MoneyTransaction _changeTransaction;

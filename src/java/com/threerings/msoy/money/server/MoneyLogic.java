@@ -85,31 +85,23 @@ public class MoneyLogic
     public static abstract class BuyOperation<T>
     {
         public static final BuyOperation<Void> NOOP = new BuyOperation<Void>() {
-            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
-                return true;
-            }
-            public Void getWare () {
+            public Void create (boolean magicFree, Currency currency, int amountPaid) {
                 return null;
             }
         };
 
         /**
-         * Create the thing that is being purchased.
-         * You may throw a ServiceException, RuntimeException or return false on failure.
+         * Create the thing that is being purchased. You may throw a ServiceException or
+         * RuntimeException to indicate failure.
          *
          * @param magicFree indicates that the product was received for free.
          * @param currency the currency used to make the purchase.
          * @param amountPaid the price paid (May be 0 even if !magicFree).
          *
-         * @return true on success.
+         * @return the ware purchased by buy operation.
          */
-        public abstract boolean create (boolean magicFree, Currency currency, int amountPaid)
+        public abstract T create (boolean magicFree, Currency currency, int amountPaid)
             throws ServiceException;
-
-        /**
-         * Get the ware that was created.
-         */
-        public abstract T getWare ();
     }
 
     /**
@@ -254,13 +246,13 @@ public class MoneyLogic
      * @param buyCurrency the currency the buyer is using
      * @param authedAmount the amount the buyer has validated to purchase the item.
      *
-     * @return a BuyResult, or null if the BuyOperation returned false.
+     * @return the results of the purchase (never null).
      *
      * @throws CostUpdatedException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
      */
-    public BuyResult buyItem (final MemberRecord buyerRec, List<CatalogRecord> listings,
-                              Currency buyCurrency, int authedAmount, BuyOperation<?> buyOp)
+    public <T> BuyResult<T> buyItem (final MemberRecord buyerRec, List<CatalogRecord> listings,
+                                     Currency buyCurrency, int authedAmount, BuyOperation<T> buyOp)
         throws ServiceException
     {
         CatalogRecord catrec = listings.get(0);
@@ -281,7 +273,7 @@ public class MoneyLogic
             itemName, item.type, item.catalogId);
 
         // do the buy!
-        IntermediateBuyResult ibr = buy(buyerRec, item, buyCurrency, authedAmount,
+        IntermediateBuyResult<T> ibr = buy(buyerRec, item, buyCurrency, authedAmount,
             forceFree, catrec.currency, catrec.cost, buyOp, TransactionType.ITEM_PURCHASE,
             buyMsgFn, iident, changeMsg);
         if (ibr == null) {
@@ -385,18 +377,19 @@ public class MoneyLogic
             _nodeActions.moneyUpdated(charityTx, true);
         }
 
-        return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
-            (changeTx == null) ? null : changeTx.toMoneyTransaction(),
-            (creatorTxs == null) ? null : Lists.transform(creatorTxs,
-                MoneyTransactionRecord.TO_TRANSACTION),
-            (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
-            (charityTx == null) ? null : charityTx.toMoneyTransaction());
+        return new BuyResult<T>(magicFree, buyerTx.toMoneyTransaction(),
+                                (changeTx == null) ? null : changeTx.toMoneyTransaction(),
+                                (creatorTxs == null) ? null : Lists.transform(
+                                    creatorTxs, MoneyTransactionRecord.TO_TRANSACTION),
+                                (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
+                                (charityTx == null) ? null : charityTx.toMoneyTransaction(),
+                                ibr.ware);
     }
 
     /**
      * Process the purchase of a party.
      */
-    public BuyResult buyParty (
+    public BuyResult<Void> buyParty (
         int buyerId, Object partyKey, Currency buyCurrency, int authedAmount,
         Currency listCurrency, int listAmount)
         throws ServiceException
@@ -411,9 +404,9 @@ public class MoneyLogic
     /**
      * Process the purchase of a room.
      */
-    public BuyResult buyRoom (
+    public <T> BuyResult<T> buyRoom (
         MemberRecord buyerRec, Object roomKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, BuyOperation<?> buyOp)
+        Currency listCurrency, int listAmount, BuyOperation<T> buyOp)
         throws ServiceException
     {
         return buyFromOOO(
@@ -425,9 +418,9 @@ public class MoneyLogic
     /**
      * Process the purchase of a group.
      */
-    public BuyResult buyGroup (
+    public <T> BuyResult<T> buyGroup (
         MemberRecord buyerRec, Object groupKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, String groupName, BuyOperation<?> buyOp)
+        Currency listCurrency, int listAmount, String groupName, BuyOperation<T> buyOp)
         throws ServiceException
     {
         return buyFromOOO(
@@ -439,8 +432,8 @@ public class MoneyLogic
     /**
      * Processes the fee charged when listing an item.
      */
-    public BuyResult listItem (
-        MemberRecord listerRec, int listFee, String itemName, BuyOperation<?> buyOp)
+    public <T> BuyResult<T> listItem (
+        MemberRecord listerRec, int listFee, String itemName, BuyOperation<T> buyOp)
         throws ServiceException
     {
         return buyFromOOO(
@@ -452,9 +445,9 @@ public class MoneyLogic
     /**
      * Process a purchase of a ware from Three Rings.
      */
-    public BuyResult buyFromOOO (
+    public <T> BuyResult<T> buyFromOOO (
         MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, BuyOperation<?> buyOp, UserAction.Type buyActionType,
+        Currency listCurrency, int listAmount, BuyOperation<T> buyOp, UserAction.Type buyActionType,
         final String boughtTxMsg, TransactionType boughtTxType, String changeTxMsg)
         throws ServiceException
     {
@@ -466,7 +459,7 @@ public class MoneyLogic
         };
 
         // do the buy!
-        IntermediateBuyResult ibr = buy(
+        IntermediateBuyResult<T> ibr = buy(
             buyerRec, wareKey, buyCurrency, authedAmount, false /*forcefree*/,
             listCurrency, listAmount, buyOp, boughtTxType, boughtTxMsgFn,
             null /*subject*/, changeTxMsg);
@@ -491,9 +484,9 @@ public class MoneyLogic
             _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
         }
 
-        return new BuyResult(ibr.magicFree, buyerTx.toMoneyTransaction(),
-            (changeTx == null) ? null : changeTx.toMoneyTransaction(),
-            null, null, null);
+        return new BuyResult<T>(ibr.magicFree, buyerTx.toMoneyTransaction(),
+                                (changeTx == null) ? null : changeTx.toMoneyTransaction(),
+                                null, null, null, ibr.ware);
     }
 
     /**
@@ -514,9 +507,9 @@ public class MoneyLogic
      * @throws CostUpdatedException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
      */
-    public IntermediateBuyResult buy (
+    public <T> IntermediateBuyResult<T> buy (
         MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
-        boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation<?> buyOp,
+        boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation<T> buyOp,
         TransactionType buyerTxType, Function<Boolean,String> buyMsgFn, Object subject,
         String changeMsg)
         throws ServiceException
@@ -558,10 +551,7 @@ public class MoneyLogic
             boolean magicFree = forceFree || (buyerTx.amount == 0 && buyCost != 0);
 
             // actually create the item!
-            boolean creationSuccess = buyOp.create(magicFree, buyerTx.currency, -buyerTx.amount);
-            if (!creationSuccess) {
-                return null; // stop now: rollback will occur in finally
-            }
+            T ware = buyOp.create(magicFree, buyerTx.currency, -buyerTx.amount);
 
             // go ahead and insert the buyer transaction
             buyerTx.fill(buyerTxType, buyMsgFn.apply(magicFree), subject);
@@ -583,7 +573,7 @@ public class MoneyLogic
                     changeMsg, subject, buyerTx.id, buyerId, false);
             }
 
-            return new IntermediateBuyResult(magicFree, quote, buyerTx, changeTx);
+            return new IntermediateBuyResult<T>(magicFree, quote, buyerTx, changeTx, ware);
 
         } finally {
             // We may have never inserted the buyerTx if the creation failed or
@@ -1353,7 +1343,7 @@ public class MoneyLogic
         return value;
     }
 
-    protected static class IntermediateBuyResult
+    protected static class IntermediateBuyResult<T>
     {
         /** Was this a magic-free transaction? */
         public boolean magicFree;
@@ -1367,15 +1357,19 @@ public class MoneyLogic
         /** A fully-stored MoneyTransaction representing the change to the buyer, or null. */
         public MoneyTransactionRecord changeTx;
 
+        /** The result of the buy operation. */
+        public T ware;
+
         /** Mr. Constructor */
         public IntermediateBuyResult (
             boolean magicFree, PriceQuote quote,
-            MoneyTransactionRecord buyerTx, MoneyTransactionRecord changeTx)
+            MoneyTransactionRecord buyerTx, MoneyTransactionRecord changeTx, T ware)
         {
             this.magicFree = magicFree;
             this.quote = quote;
             this.buyerTx = buyerTx;
             this.changeTx = changeTx;
+            this.ware = ware;
         }
     }
 

@@ -245,22 +245,17 @@ public class MsoyManager
                     _newQuote = newQuote;
                     return;
                 }
-                // our buy operation saves the history record but has no ware
-                BuyOperation<Void> buyOp = new BuyOperation<Void>() {
-                    public boolean create (boolean magicFree, Currency currency, int amountPaid)
-                        throws ServiceException {
-                        _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
-                        return true;
-                    }
-                    public Void getWare () {
-                        return null;
-                    }
-                };
                 // buy it!
                 _moneyLogic.buyFromOOO(
                     _memberRepo.loadMember(memberId), BROADCAST_PURCHASE_KEY,
-                    Currency.BARS, authedCost, Currency.BARS, newQuote.getBars(), buyOp,
-                    UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
+                    Currency.BARS, authedCost, Currency.BARS, newQuote.getBars(),
+                    new BuyOperation<Void>() {
+                        public Void create (boolean magicFree, Currency currency, int amountPaid)
+                            throws ServiceException {
+                            _moneyRepo.noteBroadcastPurchase(memberId, amountPaid, message);
+                            return null;
+                        }
+                    }, UserAction.Type.BOUGHT_BROADCAST, "m.broadcast_bought",
                     TransactionType.BROADCAST_PURCHASE, null);
             }
             public void handleSuccess () {

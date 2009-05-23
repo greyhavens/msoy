@@ -19,18 +19,14 @@ public class PurchaseResult<T>
     }
 
     /** The minimum required fields. */
-    public PurchaseResult (T ware, BalanceInfo balances, PriceQuote quote)
+    public PurchaseResult (T ware, BalanceInfo balances)
     {
         this.ware = ware;
         this.balances = balances;
-        this.quote = quote;
     }
 
     /** Any updated balances. */
     public BalanceInfo balances;
-
-    /** Another price quote if they wish to buy again. */
-    public PriceQuote quote;
 
     /** The percentage of the purchase price the charity received. Optional. */
     public float charityPercentage;

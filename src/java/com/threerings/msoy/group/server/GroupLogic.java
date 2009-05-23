@@ -33,7 +33,6 @@ import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
-import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -108,11 +107,11 @@ public class GroupLogic
         // we fill this in ourselves
         grec.creatorId = mrec.memberId;
 
-        MoneyLogic.BuyOperation<Group> buyOp;
-        BuyResult result = _moneyLogic.buyGroup(
+        // execute the purchase
+        PurchaseResult<Group> result = _moneyLogic.buyGroup(
             mrec, GROUP_PURCHASE_KEY, currency, authedAmount, Currency.COINS, getGroupCoinCost(),
-            grec.name, buyOp = new MoneyLogic.BuyOperation<Group>() {
-            public boolean create (boolean magicFree, Currency currency, int amountPaid)
+            grec.name, new MoneyLogic.BuyOperation<Group>() {
+            public Group create (boolean magicFree, Currency currency, int amountPaid)
                 throws ServiceException
             {
                 try {
@@ -123,25 +122,21 @@ public class GroupLogic
                     // inform the user that the name is already in use
                     throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
                 }
-
-                // if the creator is online, update their runtime data (don't let this booch us)
-                try {
-                    GroupMembership gm = new GroupMembership();
-                    gm.group = grec.toGroupName();
-                    gm.rank = Rank.MANAGER;
-                    MemberNodeActions.joinedGroup(grec.creatorId, gm);
-                } catch (Exception e) {
-                    log.warning("Error notifying of new group", "memberId", mrec.memberId, e);
-                }
-                return true;
-            }
-
-            public Group getWare () {
                 return grec.toGroupObject();
             }
-        });
-        // result will never be null beceause our BuyOp.create() always returns true
-        return new PurchaseResult<Group>(buyOp.getWare(), result.getBuyerBalances(), null);
+        }).toPurchaseResult();
+
+        // if the creator is online, update their runtime data
+        try {
+            GroupMembership gm = new GroupMembership();
+            gm.group = grec.toGroupName();
+            gm.rank = Rank.MANAGER;
+            MemberNodeActions.joinedGroup(grec.creatorId, gm);
+        } catch (Exception e) { // don't let this booch the purchase
+            log.warning("Error notifying of new group", "memberId", mrec.memberId, e);
+        }
+
+        return result;
     }
 
     /**

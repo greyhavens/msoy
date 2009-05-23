@@ -1169,10 +1169,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Create a row in our catalog table with the given master item record. {@link
      * ItemRecord#catalogId} will be filled into the supplied master.
+     *
+     * @return the catalog id of the newly inserted listing.
      */
-    public CatalogRecord insertListing (
-        ItemRecord master, int originalItemId, int pricing, int salesTarget,
-        Currency currency, int cost, long listingTime, int basisCatalogId)
+    public int insertListing (ItemRecord master, int originalItemId, int pricing, int salesTarget,
+                              Currency currency, int cost, long listingTime, int basisCatalogId)
     {
         if (master.ownerId != 0) {
             throw new IllegalArgumentException(
@@ -1207,7 +1208,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // fill this in for the caller
         master.catalogId = record.catalogId;
 
-        return record;
+        return record.catalogId;
     }
 
     /**
