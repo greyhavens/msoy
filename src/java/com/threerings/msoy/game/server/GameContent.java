@@ -25,21 +25,14 @@ import com.threerings.msoy.game.server.persist.GameMetricsRecord;
 public class GameContent
 {
     public int gameId;
-
+    public boolean isApproved;
     public GameInfoRecord game;
-
     public FacebookInfo facebook;
-
     public GameMetricsRecord metrics;
-
     public GameCode code;
-
     public List<LevelPack> lpacks = Lists.newArrayList();
-
     public List<ItemPack> ipacks = Lists.newArrayList();
-
     public List<TrophySource> tsources = Lists.newArrayList();
-
     public List<Prize> prizes = Lists.newArrayList();
 
     public boolean isDevelopmentVersion ()

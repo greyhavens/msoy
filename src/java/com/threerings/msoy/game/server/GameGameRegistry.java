@@ -70,6 +70,8 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -1097,6 +1099,10 @@ public class GameGameRegistry
         content.metrics = _mgameRepo.loadGameMetrics(gameId);
         content.code = _mgameRepo.loadGameCode(gameId, true);
 
+        // TEMP: for now approval means the creator of the game is an admin
+        MemberRecord creator = _memberRepo.loadMember(content.game.creatorId);
+        content.isApproved = (creator != null) && creator.isAdmin();
+
         // load up our level and item packs
         for (LevelPackRecord record : _lpackRepo.loadGameOriginals(gameId)) {
             content.lpacks.add((LevelPack)record.toItem());
@@ -1271,6 +1277,7 @@ public class GameGameRegistry
     @Inject protected InvocationManager _invmgr;
     @Inject protected LocationManager _locmgr;
     @Inject protected MemberManager _memmgr;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyNodeActions _moneyActions;
     @Inject protected MsoyEventLogger _eventLog;

@@ -333,7 +333,9 @@ public class AVRGameManager extends PlaceManager
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        // TODO: check isApproved()
+        if (!_contentDelegate.getContent().isApproved) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
         _contentDelegate.purchaseItemPack(getPlayer(caller, playerId), ident, listener);
     }
 
@@ -342,8 +344,9 @@ public class AVRGameManager extends PlaceManager
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        if (isAgent(caller)) {
-            // TODO: check isApproved()
+        // if this comes from the agent then only approved games are allowed
+        if (isAgent(caller) && !_contentDelegate.getContent().isApproved) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
         _contentDelegate.consumeItemPack(getPlayer(caller, playerId), ident, listener);
     }
