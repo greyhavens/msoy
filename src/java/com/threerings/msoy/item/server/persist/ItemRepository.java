@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 
 import java.sql.Connection;
@@ -41,6 +42,7 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
@@ -1224,6 +1226,28 @@ public abstract class ItemRepository<T extends ItemRecord>
                       CatalogRecord.SALES_TARGET, salesTarget,
                       CatalogRecord.CURRENCY, currency,
                       CatalogRecord.COST, cost);
+    }
+
+    /**
+     * Updates the cost of all listings that derive from the given basis by given amount. Does not
+     * perform any other checks such as making sure currencies are the same.
+     * @return the number of records updated
+     */
+    public int updateDerivedCosts (final int basisId, int change)
+    {
+        if (change == 0) {
+            return 0;
+        }
+        TraverseWithFilter<CatalogRecord> invalidator =
+            new TraverseWithFilter<CatalogRecord>(getCatalogClass()) {
+                protected boolean testForEviction (Serializable key, CatalogRecord record) {
+                    return record.basisId == basisId;
+                }
+            };
+        Where where = new Where(getCatalogColumn(CatalogRecord.BASIS_ID), basisId);
+        ColumnExp cost = getCatalogColumn(CatalogRecord.COST);
+        Arithmetic.Add add = new Arithmetic.Add(cost, change);
+        return updatePartial(getCatalogClass(), where, invalidator, cost, add);
     }
 
     /**

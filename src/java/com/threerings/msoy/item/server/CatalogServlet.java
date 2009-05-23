@@ -509,13 +509,18 @@ public class CatalogServlet extends MsoyServiceServlet
         // sanitize the sales target
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
-        // get rid of derived listings
-        // TODO: attribution phase II - update derived prices if there is a price change
-        _itemLogic.removeDerivedListings(mrec, record, false);
-
         // now we can update the record
         repo.updatePricing(catalogId, pricing, salesTarget, currency, cost,
                            System.currentTimeMillis());
+
+        // delist derivatives if the currency is changing
+        if (record.currency != currency) {
+            _itemLogic.removeDerivedListings(mrec, record, false);
+
+        } else if (record.cost != cost) {
+            // othwerise update their prices
+            _itemLogic.updateDerivedListings(record, cost);
+        }
     }
 
     // from interface CatalogService

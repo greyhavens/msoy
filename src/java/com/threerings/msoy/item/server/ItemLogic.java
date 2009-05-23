@@ -430,6 +430,41 @@ public class ItemLogic
     }
 
     /**
+     * Updates the cost of all listings that use the given listing as a basis. The item field is
+     * expected to be resolved for this method. Each derived item will have its price augmented by
+     * the difference between the given new cost and the old cost (that specified by the given
+     * record). This may be positive or negative.
+     */
+    public void updateDerivedListings (CatalogRecord basis, int newCost)
+    {
+        if (basis.derivationCount == 0) {
+            return;
+        }
+
+        // TODO: attribution phase II - recursively update derived listings 
+
+        byte type = basis.item.getType();
+        try {
+            // give all derived listings a new price
+            int updated =
+                getRepository(type).updateDerivedCosts(basis.catalogId, newCost - basis.cost);
+    
+            if (updated != basis.derivationCount) {
+                log.warning("Mismatch in number of updated derived records and derivationCount",
+                    "type", type, "catId", basis.catalogId, "updated", updated,
+                    "derivationCount", basis.derivationCount);
+            }
+    
+            log.info("Updated cost of derived listings", "type", type, "basisId", basis.catalogId,
+                "count", updated, "oldCost", basis.cost, "newCost", newCost);
+
+        } catch (Exception e) {
+            log.info("Failed to update cost of derived listings", "type", type,
+                "basisId", basis.catalogId, "oldCost", basis.cost, "newCost", newCost);
+        }
+    }
+
+    /**
      * Transfer all the items used in the specified scene to the new owner.
      */
     public void transferRoomItems (int oldOwnerId, int newOwnerId, int sceneId)

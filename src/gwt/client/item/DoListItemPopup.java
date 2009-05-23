@@ -262,8 +262,25 @@ public class DoListItemPopup extends VerticalPanel
             };
 
         } else if (repricing) {
-            new ClickCallback<Void>(_doIt, listing.derivationCount > 0 ?
-                _imsgs.doListRepriceBasisConfirm("" + listing.derivationCount) : null) {
+            new ClickCallback<Void>(_doIt) {
+                @Override protected String getConfirmMessage () {
+                    int dcount = listing.derivationCount;
+                    if (dcount > 0) {
+                        int costChange = getCost() - listing.quote.getListedAmount();
+                        if (getCurrency() != listing.quote.getListedCurrency()) {
+                            return dcount > 1 ?
+                                _imsgs.doListChangeBasisCurrencyConfirmN(""+dcount) :
+                                _imsgs.doListChangeBasisCurrencyConfirm1();
+                        } else if (costChange != 0) {
+                            String did = costChange > 0 ? _imsgs.doListUp() : _imsgs.doListDown();
+                            String cstr = ""+Math.abs(costChange);
+                            return dcount > 1 ?
+                                _imsgs.doListRepriceBasisConfirmN(did, cstr, ""+dcount) :
+                                _imsgs.doListRepriceBasisConfirm1(did, cstr);
+                        }
+                    }
+                    return null;
+                }
                 @Override protected boolean callService () {
                     int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (pricing == CatalogListing.PRICING_LIMITED_EDITION &&

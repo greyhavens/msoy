@@ -131,9 +131,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             controls.add(reprice);
 
             Label delist = new Label(_msgs.listingDelist());
-            new ClickCallback<Void>(delist, _listing.derivationCount > 0 ?
-                _msgs.listingDelistBasisConfirm("" + _listing.derivationCount) :
-                _msgs.listingDelistConfirm()) {
+            String confirm = _msgs.listingDelistConfirm();
+            if (_listing.derivationCount > 1) {
+                confirm = _msgs.listingDelistBasisConfirmN("" + _listing.derivationCount);
+            } else if (_listing.derivationCount > 0) {
+                confirm = _msgs.listingDelistBasisConfirm1();
+            }
+            new ClickCallback<Void>(delist, confirm) {
                 @Override protected boolean callService () {
                     _catalogsvc.removeListing(_item.getType(), _listing.catalogId, this);
                     return true;
