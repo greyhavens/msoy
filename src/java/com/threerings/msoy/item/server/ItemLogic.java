@@ -437,7 +437,7 @@ public class ItemLogic
      */
     public void updateDerivedListings (CatalogRecord basis, int newCost)
     {
-        if (basis.derivationCount == 0) {
+        if (basis.derivationCount == 0 || basis.cost == newCost) {
             return;
         }
 
