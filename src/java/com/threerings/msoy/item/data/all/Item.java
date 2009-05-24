@@ -93,7 +93,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * A list of item types that can specify a basis item when listed.
      */
     public static final byte[] DERIVATION_TYPES = {
-        AVATAR, PET, FURNITURE, TOY, DECOR
+        AVATAR, PET, FURNITURE, TOY, DECOR, PHOTO
     };
 
     /**
