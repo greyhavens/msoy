@@ -13,7 +13,6 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.PersistingUnit;
 

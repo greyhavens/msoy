@@ -3,12 +3,10 @@
 
 package client.util;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 

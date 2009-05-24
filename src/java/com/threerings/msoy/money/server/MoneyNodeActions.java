@@ -15,7 +15,6 @@ import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.PlayerLocator;
-import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.money.data.all.Currency;
