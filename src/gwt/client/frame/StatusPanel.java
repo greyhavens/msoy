@@ -203,6 +203,8 @@ public class StatusPanel extends SmartTable
         }
 
         public void setCount (int count) {
+            // TODO: remove this max line after the -1 bug is really fixed.
+            count = Math.max(0, count);
             _mailLabel.setText("(" + String.valueOf(count) + ")");
             _mailImage.setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
         }
