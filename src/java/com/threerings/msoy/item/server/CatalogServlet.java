@@ -216,7 +216,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                         Currency currency, int cost, int basisCatalogId)
+                         Currency currency, int cost, int basisId)
         throws ServiceException
     {
         final MemberRecord mrec = requireRegisteredUser();
@@ -253,8 +253,8 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // validate the basis
-        if (basisCatalogId != 0) {
-            if (!_itemLogic.isSuitableBasis(originalItem, basisCatalogId, currency, cost)) {
+        if (basisId != 0) {
+            if (!_itemLogic.isSuitableBasis(originalItem, basisId, currency, cost)) {
                 throw new ServiceException(ItemCodes.E_BASIS_ERROR);
             }
         }
@@ -282,7 +282,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final long now = System.currentTimeMillis();
         final Currency fcurrency = currency;
         final int fpricing = pricing, fsalesTarget = salesTarget, fcost = cost;
-        final int fbasisId = basisCatalogId;
+        final int fbasisId = basisId;
         // the coin minimum price is the listing fee
         int listFee = ItemPrices.getMinimumPrice(Currency.COINS, item.type, rating);
 
@@ -456,7 +456,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                               Currency currency, int cost)
+                               Currency currency, int cost, int basisId)
         throws ServiceException
     {
         MemberRecord mrec = requireRegisteredUser();
@@ -485,8 +485,8 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // check basis item validity (in case of client hackery)
-        if (record.basisId != 0) {
-            if (!_itemLogic.isSuitableBasis(record.item, record.basisId, currency, cost)) {
+        if (basisId != 0) {
+            if (!_itemLogic.isSuitableBasis(record.item, basisId, currency, cost)) {
                 throw new ServiceException(ItemCodes.E_BASIS_ERROR);
             }
         }
@@ -508,6 +508,9 @@ public class CatalogServlet extends MsoyServiceServlet
         // now we can update the record
         repo.updatePricing(catalogId, pricing, salesTarget, currency, cost,
                            System.currentTimeMillis());
+
+        // update the basis and derivation counts
+        repo.updateBasis(record, basisId);
 
         // delist derivatives if the currency is changing
         if (record.currency != currency) {

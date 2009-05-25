@@ -41,8 +41,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#listItem}
      */
     void listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                   Currency currency, int cost, int basisCatalogId,
-                   AsyncCallback<Integer> callback);
+                   Currency currency, int cost, int basisId, AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
@@ -64,7 +63,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#updatePricing}
      */
     void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                        Currency currency, int cost, AsyncCallback<Void> callback);
+                        Currency currency, int cost, int basisId, AsyncCallback<Void> callback);
 
     /**
      * Removes the specified catalog listing.

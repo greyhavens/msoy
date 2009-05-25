@@ -114,7 +114,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // possibly add the basis selection ui
-        if (_item.supportsDerviation() && firstTime) {
+        if (_item.supportsDerviation() && (firstTime || repricing)) {
             SmartTable basis = new SmartTable(0, 3);
             basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3, null);
             basis.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
@@ -135,7 +135,7 @@ public class DoListItemPopup extends VerticalPanel
             _catalogsvc.loadPotentialBasisItems(_item.getType(),
                 new InfoCallback<List<ListingCard>>() {
                     @Override public void onSuccess (List<ListingCard> result) {
-                        gotBasisItems(result);
+                        gotBasisItems(result, listing);
                     }
             });
 
@@ -246,10 +246,8 @@ public class DoListItemPopup extends VerticalPanel
                     if (!validatePricing()) {
                         return false;
                     }
-                    ListingCard basis = getBasis();
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
-                                         getCurrency(), getCost(),
-                                         basis == null ? 0 : basis.catalogId, this);
+                                         getCurrency(), getCost(), getBasisId(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Integer result) {
@@ -292,7 +290,8 @@ public class DoListItemPopup extends VerticalPanel
                         return false;
                     }
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
-                                              salesTarget, getCurrency(), getCost(), this);
+                                              salesTarget, getCurrency(), getCost(), getBasisId(),
+                                              this);
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
@@ -385,6 +384,12 @@ public class DoListItemPopup extends VerticalPanel
         return basisSel == 0 ? null : _basisItems.get(basisSel - 1);
     }
 
+    protected int getBasisId ()
+    {
+        ListingCard basis = getBasis();
+        return basis == null ? 0 : basis.catalogId;
+    }
+
     protected void setCurrency (Currency currency)
     {
         if (_currencyBox == null) {
@@ -399,11 +404,14 @@ public class DoListItemPopup extends VerticalPanel
         }
     }
 
-    protected void gotBasisItems (List<ListingCard> items)
+    protected void gotBasisItems (List<ListingCard> items, CatalogListing listing)
     {
         for (ListingCard item : items) {
             _basisBox.addItem(item.name);
             _basisItems.add(item);
+            if (listing != null && item.catalogId == listing.basisId) {
+                _basisBox.setSelectedIndex(_basisBox.getItemCount() - 1);
+            }
         }
     }
 

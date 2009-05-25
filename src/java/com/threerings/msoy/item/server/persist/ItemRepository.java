@@ -1219,6 +1219,22 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Updates the basis catalog id for the given specified listing. Also updates the derivation
+     * counts of the old and new basis items.
+     */
+    public void updateBasis (CatalogRecord record, int newBasisId)
+    {
+        updatePartial(getCatalogClass(), record.catalogId,
+                      CatalogRecord.BASIS_ID, newBasisId);
+        if (record.basisId > 0) {
+            noteBasisAssigned(record.basisId, false);
+        }
+        if (newBasisId > 0) {
+            noteBasisAssigned(newBasisId, true);
+        }
+    }
+
+    /**
      * Updates the cost of all listings that derive from the given basis by given amount. Does not
      * perform any other checks such as making sure currencies are the same.
      * @return the number of records updated
@@ -1417,7 +1433,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Increments or decrements the derivation count of the given listing.
      */
-    protected void noteBasisAssigned(int catalogId, boolean add)
+    protected void noteBasisAssigned (int catalogId, boolean add)
     {
         ColumnExp count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
         SQLExpression addExp = new Arithmetic.Add(count, add ? 1 : -1);
