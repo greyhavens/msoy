@@ -22,7 +22,8 @@ public class MsoyNameLabelCreator
         _forRoom = forRoom;
     }
 
-    public function createLabel (name :Name) :NameLabel
+    // from NameLabelCreator
+    public function createLabel (name :Name, extraInfo :Object) :NameLabel
     {
         if (!(name is VizMemberName)) {
             Log.getLog(this).warning("MsoyNameLabelCreator only supports creating labels " +
@@ -30,7 +31,8 @@ public class MsoyNameLabelCreator
             return null;
         }
 
-        return new LabelBox(_mctx, name as VizMemberName, _forRoom);
+        // here in msoyland, the extraInfo is currently the user's subscriber status
+        return new LabelBox(_mctx, name as VizMemberName, Boolean(extraInfo), _forRoom);
     }
 
     protected var _mctx :MsoyContext;
@@ -61,17 +63,19 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.MsoyNameLabel;
 
-import com.threerings.msoy.room.client.NameField;
 import com.threerings.msoy.room.client.RoomObjectView;
 
 class LabelBox extends HBox
     implements NameLabel
 {
-    public function LabelBox (mctx :MsoyContext, name :VizMemberName, forRoom :Boolean)
+    public function LabelBox (
+        mctx :MsoyContext, name :VizMemberName, subscriber :Boolean, forRoom :Boolean)
     {
         _mctx = mctx;
         _name = name;
+        _subscriber = subscriber;
         _forRoom = forRoom;
 
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -122,9 +126,9 @@ class LabelBox extends HBox
 
         addChild(MediaWrapper.createView(_name.getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE));
 
-        _label = new NameField();
-        _label.autoSize = TextFieldAutoSize.LEFT;
-        _label.text = "" + _name;
+        _label = new MsoyNameLabel();
+        _label.setName(_name.toString());
+        _label.setSubscriber(_subscriber);
         addChild(new FlexWrapper(_label));
     }
 
@@ -146,6 +150,7 @@ class LabelBox extends HBox
 
     protected var _mctx :MsoyContext;
     protected var _name :VizMemberName;
+    protected var _subscriber :Boolean;
     protected var _forRoom :Boolean;
-    protected var _label :NameField;
+    protected var _label :MsoyNameLabel;
 }

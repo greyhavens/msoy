@@ -5,6 +5,7 @@ package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -19,7 +20,7 @@ import com.threerings.msoy.party.data.PartyOccupantInfo;
  * Contains published information about a member in a scene.
  */
 public class MemberInfo extends ActorInfo
-    implements PartyOccupantInfo
+    implements MsoyUserOccupantInfo, PartyOccupantInfo
 {
     /** Used to update our avatar info when that changes. */
     public static class AvatarUpdater implements Updater<MemberInfo>
@@ -45,6 +46,11 @@ public class MemberInfo extends ActorInfo
         updateIsManager(memobj);
 
         updatePartyId(memobj.partyId);
+
+        // indicate if the member is a subscriber (don't worry about changing it while in a room)
+        if (memobj.tokens.isSubscriber()) {
+            _flags |= SUBSCRIBER;
+        }
     }
 
     /** Used for unserialization. */
@@ -76,6 +82,12 @@ public class MemberInfo extends ActorInfo
     public boolean isManager ()
     {
         return (_flags & MANAGER) != 0;
+    }
+
+    // from MsoyUserOccupantInfo
+    public boolean isSubscriber ()
+    {
+        return (_flags & SUBSCRIBER) != 0;
     }
 
     /**

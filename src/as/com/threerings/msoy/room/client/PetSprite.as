@@ -5,6 +5,7 @@ package com.threerings.msoy.room.client {
 
 import com.threerings.util.CommandEvent;
 
+import com.threerings.msoy.ui.MsoyNameLabel;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.PetInfo;
@@ -100,9 +101,9 @@ public class PetSprite extends ActorSprite
     }
 
     // from OccupantSprite
-    override protected function createNameField () :NameField
+    override protected function createNameLabel () :MsoyNameLabel
     {
-        return new NameField(true);
+        return new MsoyNameLabel(true);
     }
 }
 }

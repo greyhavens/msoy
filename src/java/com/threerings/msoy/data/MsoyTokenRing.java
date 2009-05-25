@@ -19,6 +19,9 @@ public class MsoyTokenRing extends TokenRing
     /** Indicates that the user has greeter privileges. */
     public static final int GREETER = (1 << 3);
 
+    /** Indicates that the user has subscriber privileges. */
+    public static final int SUBSCRIBER = (1 << 4);
+
     /**
      * A default constructor, used when unserializing token rings.
      */
@@ -62,5 +65,21 @@ public class MsoyTokenRing extends TokenRing
     public boolean isGreeter ()
     {
         return holdsToken(GREETER);
+    }
+
+    /**
+     * Convenience function for checking if the user is a subscriber, allowing support+, too.
+     */
+    public boolean isSubscriberPlus ()
+    {
+        return holdsAnyToken(SUPPORT | ADMIN | MAINTAINER | SUBSCRIBER);
+    }
+
+    /**
+     * Is this user a subscriber, not counting support+.
+     */
+    public boolean isSubscriber ()
+    {
+        return holdsToken(SUBSCRIBER);
     }
 }

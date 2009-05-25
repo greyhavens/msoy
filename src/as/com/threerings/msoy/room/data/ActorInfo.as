@@ -106,5 +106,6 @@ public class ActorInfo extends OccupantInfo
     /** Bit flags used to check values in the _flags member. */
     protected static const STATIC :int = 1 << 0;
     protected static const MANAGER :int = 1 << 1; // used by MemberInfo but defined here for safety
+    protected static const SUBSCRIBER :int = 1 << 2; // used by MemberInfo, defined here
 }
 }

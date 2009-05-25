@@ -18,7 +18,9 @@ import com.threerings.msoy.data.all.MemberName;
 public class WebCreds implements IsSerializable
 {
     /** This user's role. Each successive role has more privileges than the last. */
-    public static enum Role { PERMAGUEST, REGISTERED, VALIDATED, SUPPORT, ADMIN, MAINTAINER };
+    public static enum Role {
+        PERMAGUEST, REGISTERED, VALIDATED, SUBSCRIBER, SUPPORT, ADMIN, MAINTAINER
+    };
 
     /** Our session token. */
     public String token;
@@ -87,7 +89,7 @@ public class WebCreds implements IsSerializable
      */
     public boolean isMember ()
     {
-        return role == Role.PERMAGUEST || isRegistered();
+        return roleAtLeast(Role.PERMAGUEST);
     }
 
     /**
@@ -95,7 +97,7 @@ public class WebCreds implements IsSerializable
      */
     public boolean isRegistered ()
     {
-        return role == Role.REGISTERED || isValidated();
+        return roleAtLeast(Role.REGISTERED);
     }
 
     /**
@@ -103,7 +105,15 @@ public class WebCreds implements IsSerializable
      */
     public boolean isValidated ()
     {
-        return role == Role.VALIDATED || isSupport();
+        return roleAtLeast(Role.VALIDATED);
+    }
+
+    /**
+     * Returns true if this member is a subscriber (or better).
+     */
+    public boolean isSubscriber ()
+    {
+        return roleAtLeast(Role.SUBSCRIBER);
     }
 
     /**
@@ -111,7 +121,7 @@ public class WebCreds implements IsSerializable
      */
     public boolean isSupport ()
     {
-        return role == Role.SUPPORT || isAdmin();
+        return roleAtLeast(Role.SUPPORT);
     }
 
     /**
@@ -119,7 +129,7 @@ public class WebCreds implements IsSerializable
      */
     public boolean isAdmin ()
     {
-        return role == Role.ADMIN || isMaintainer();
+        return roleAtLeast(Role.ADMIN);
     }
 
     /**
@@ -152,5 +162,13 @@ public class WebCreds implements IsSerializable
     {
         return "[auth=" + accountName + ", name=" + name + ", pname=" + permaName +
             ", token=" + token + ", role=" + role + "]";
+    }
+
+    /**
+     * Return true if this role has at least the privileges of the specified role.
+     */
+    protected boolean roleAtLeast (Role required)
+    {
+        return (role != null) && (role.ordinal() >= required.ordinal());
     }
 }

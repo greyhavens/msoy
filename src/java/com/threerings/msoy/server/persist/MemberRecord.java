@@ -72,20 +72,23 @@ public class MemberRecord extends PersistentRecord
          * @see com.threerings.user.OOOUser#MSOY_BANNED
          * @see MemberWarningRecord
          */
-        SPANKED(1<<9),
+        SPANKED(1 << 9),
 
         /** If this user should automatically send a friend request to their affiliate when they
          * register. */
-        FRIEND_AFFILIATE(1<<10),
+        FRIEND_AFFILIATE(1 << 10),
+
+        /** Is this user a subscriber? */
+        SUBSCRIBER(1 << 11),
 
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 11);
+        UNUSED(1 << 12);
 
         public int getBit () {
             return _bit;
         }
 
-        Flag (final int bit) {
+        Flag (int bit) {
             _bit = bit;
         }
 
@@ -112,7 +115,7 @@ public class MemberRecord extends PersistentRecord
             return _bit;
         }
 
-        Experience (final int bit) {
+        Experience (int bit) {
             _bit = bit;
         }
 
@@ -281,7 +284,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Tests whether a given integer has a given flag set.
      */
-    public static boolean isSet (int flags, final Flag flag)
+    public static boolean isSet (int flags, Flag flag)
     {
         return (flags & flag.getBit()) != 0;
     }
@@ -292,7 +295,7 @@ public class MemberRecord extends PersistentRecord
     }
 
     /** Constructs a blank member record for the supplied account. */
-    public MemberRecord (final String accountName)
+    public MemberRecord (String accountName)
     {
         this.accountName = accountName;
     }
@@ -300,7 +303,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Creates web credentials for this member record.
      */
-    public WebCreds toCreds (final String authtok)
+    public WebCreds toCreds (String authtok)
     {
         WebCreds.Role role = toRole(memberId, flags, accountName);
         return new WebCreds(authtok, accountName, getName(), permaName, role);
@@ -318,6 +321,8 @@ public class MemberRecord extends PersistentRecord
             tokens |= MsoyTokenRing.ADMIN;
         } else if (isSet(Flag.SUPPORT)) {
             tokens |= MsoyTokenRing.SUPPORT;
+        } else if (isSet(Flag.SUBSCRIBER)) {
+            tokens |= MsoyTokenRing.SUBSCRIBER;
         }
 
         // This can be set independently of the other flags
@@ -326,6 +331,14 @@ public class MemberRecord extends PersistentRecord
         }
 
         return new MsoyTokenRing(tokens);
+    }
+
+    /**
+     * Returns true if this member has subscriber or higher privileges.
+     */
+    public boolean isSubscriber ()
+    {
+        return isSet(Flag.SUBSCRIBER) || isSupport();
     }
 
     /**
@@ -405,7 +418,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Tests whether a given flag is set on this member.
      */
-    public boolean isSet (final Flag flag)
+    public boolean isSet (Flag flag)
     {
         return isSet(flags, flag);
     }
@@ -413,7 +426,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Sets a given flag to on or off.
      */
-    public void setFlag (final Flag flag, final boolean value)
+    public void setFlag (Flag flag, boolean value)
     {
         flags = (value ? (flags | flag.getBit()) : (flags & ~flag.getBit()));
     }
@@ -421,7 +434,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Updates a given flag to on or off and returns true if the value changed.
      */
-    public boolean updateFlag (final Flag flag, final boolean value)
+    public boolean updateFlag (Flag flag, boolean value)
     {
         if (isSet(flag) == value) {
             return false;
@@ -433,7 +446,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Returns true if this member has had the specified experience.
      */
-    public boolean isSet (final Experience experience)
+    public boolean isSet (Experience experience)
     {
         return (experiences & experience.getBit()) != 0;
     }
@@ -441,7 +454,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Sets a given experience to on or off.
      */
-    public void setExperience (final Experience exp, final boolean value)
+    public void setExperience (Experience exp, boolean value)
     {
         experiences = (value ? (experiences | exp.getBit()) : (experiences & ~exp.getBit()));
     }

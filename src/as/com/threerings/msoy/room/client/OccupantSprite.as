@@ -21,6 +21,8 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.ui.MsoyNameLabel;
+
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -290,10 +292,7 @@ public class OccupantSprite extends MsoySprite
         // note that we need to compare the String versions of the names, as that's the difference
         // we care about here; MemberName compares as the same if the memberId is the same...
         if (isNameChangeRequired(oldInfo, newInfo)) {
-            setNameStatus(newInfo);
-            _label.text = newInfo.username.toString();
-            _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
-            _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
+            _label.update(newInfo);
             recheckLabel();
             // the bounds of the label may have changed, re-arrange
             return true;
@@ -312,15 +311,6 @@ public class OccupantSprite extends MsoySprite
         var newName :String = newInfo.username.toString();
         return oldInfo == null || (oldInfo.status != newInfo.status) ||
             (oldInfo.username.toString() !== newName);
-    }
-
-    /**
-     * Sets the name field status according to the occupant info fields. By default, only the status
-     * field is used. Subclasses may override to take into account other information.
-     */
-    protected function setNameStatus (occInfo :OccupantInfo) :void
-    {
-        _label.setStatus(occInfo.status);
     }
 
     /**
@@ -731,10 +721,10 @@ public class OccupantSprite extends MsoySprite
         // nada
     }
 
-    protected function createNameField () :NameField
+    protected function createNameLabel () :MsoyNameLabel
     {
         // use the default implementation here.
-        return new NameField();
+        return new MsoyNameLabel();
     }
 
     /** Contains extra children (nameLabel, decorations) that should not be scaled. */
@@ -745,7 +735,7 @@ public class OccupantSprite extends MsoySprite
      * sprite. Also, the label was not working correctly with the "general purpose" layout code for
      * decorations, which I believe to be the fault of the label (it was returning a negative X
      * coordinate for its bounding rectangle, when in fact it should have started at 0). */
-    protected var _label :NameField = createNameField();
+    protected var _label :MsoyNameLabel = createNameLabel();
 
     /** Our most recent occupant information. */
     protected var _occInfo :OccupantInfo;

@@ -74,7 +74,7 @@ public class RoomOccupantList extends PlayerList
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            itemUpdated((event.getEntry() as OccupantInfo).username);
+            itemUpdated(new RoomOccupantRecord(event.getEntry() as OccupantInfo));
         }
     }
 
@@ -82,7 +82,7 @@ public class RoomOccupantList extends PlayerList
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            removeItem((event.getOldEntry() as OccupantInfo).username);
+            removeItem(new RoomOccupantRecord(event.getOldEntry() as OccupantInfo));
         }
     }
 
@@ -90,7 +90,7 @@ public class RoomOccupantList extends PlayerList
     {
         // only members get to be in the occupant list (sorry pets...)
         if (occInfo is MemberInfo) {
-            addItem(occInfo.username);
+            addItem(new RoomOccupantRecord(occInfo));
         }
     }
 
@@ -109,10 +109,60 @@ import mx.containers.HBox;
 
 import mx.core.ScrollPolicy;
 
+import com.threerings.util.Comparable;
+import com.threerings.util.Hashable;
+import com.threerings.util.Name;
+
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
 
+import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.data.all.VizMemberName;
+
+class RoomOccupantRecord
+    implements Hashable
+{
+    /** The username. */
+    public var name :Name;
+
+    /** The subscriber status. */
+    public var subscriber :Boolean;
+
+    public function RoomOccupantRecord (occInfo :OccupantInfo)
+    {
+        this.name = occInfo.username;
+        this.subscriber = (occInfo is MsoyUserOccupantInfo) &&
+            MsoyUserOccupantInfo(occInfo).isSubscriber();
+    }
+
+    // from Hashable
+    public function hashCode () :int
+    {
+        return name.hashCode();
+    }
+
+    // from Equalable (via Hashable)
+    public function equals (other :Object) :Boolean
+    {
+        return (other is RoomOccupantRecord) && name.equals(RoomOccupantRecord(other).name);
+    }
+
+    // from Comparable
+    public function compareTo (other :Object) :int
+    {
+        var that :RoomOccupantRecord = RoomOccupantRecord(other);
+        if (this.subscriber != that.subscriber) {
+            // subscribers sort to the top
+            return this.subscriber ? 1 : -1;
+
+        } else {
+            // otherwise: based on name
+            return this.name.compareTo(that.name);
+        }
+    }
+}
 
 class RoomOccupantRenderer extends HBox
 {
@@ -147,20 +197,22 @@ class RoomOccupantRenderer extends HBox
         if (this.data != null && (this.data is Array) && (this.data as Array).length == 2) {
             var dataArray :Array = this.data as Array;
             var creator :NameLabelCreator = dataArray[0] as NameLabelCreator;
-            var name :VizMemberName = dataArray[1] as VizMemberName;
+            var record :RoomOccupantRecord = dataArray[1] as RoomOccupantRecord;
+            var name :VizMemberName = record.name as VizMemberName;
             if (_currentName == null || !_currentName.equals(name) ||
                 _currentName.toString() != name.toString() ||
                 !_currentName.getPhoto().equals(name.getPhoto())) {
-                if (_currentLabel != null && contains(_currentLabel as DisplayObject)) {
-                    removeChild(_currentLabel as DisplayObject);
+                if (_currentLabel != null && contains(DisplayObject(_currentLabel))) {
+                    removeChild(DisplayObject(_currentLabel));
                 }
-                addChild((_currentLabel = creator.createLabel(name)) as DisplayObject);
+                _currentLabel = creator.createLabel(name, record.subscriber);
+                addChild(DisplayObject(_currentLabel));
                 _currentLabel.percentWidth = 100;
                 _currentName = name;
             }
         } else {
-            if (_currentLabel != null && contains(_currentLabel as DisplayObject)) {
-                removeChild(_currentLabel as DisplayObject);
+            if (_currentLabel != null && contains(DisplayObject(_currentLabel))) {
+                removeChild(DisplayObject(_currentLabel));
             }
             _currentLabel = null;
             _currentName = null;

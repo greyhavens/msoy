@@ -8,6 +8,7 @@ import flash.filters.GlowFilter;
 import com.whirled.ui.NameLabelCreator;
 
 import com.whirled.game.client.GamePlayerList;
+import com.whirled.game.client.GamePlayerRecord;
 
 public class MsoyGamePlayerList extends GamePlayerList
 {
@@ -33,6 +34,11 @@ public class MsoyGamePlayerList extends GamePlayerList
     override protected function getRenderingClass () :Class
     {
         return MsoyGamePlayerRenderer;
+    }
+
+    override protected function createNewRecord () :GamePlayerRecord
+    {
+        return new MsoyGamePlayerRecord();
     }
 }
 }

@@ -5,11 +5,13 @@ package com.threerings.msoy.game.data;
 
 import com.whirled.game.data.WhirledGameOccupantInfo;
 
+import com.threerings.msoy.data.MsoyUserOccupantInfo;
+
 import com.threerings.msoy.party.data.PartyOccupantInfo;
 import com.threerings.msoy.party.data.PartySummary;
 
 public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
-    implements PartyOccupantInfo
+    implements MsoyUserOccupantInfo, PartyOccupantInfo
 {
     /** Suitable for unserializing. */
     public ParlorGameOccupantInfo ()
@@ -21,6 +23,13 @@ public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
         super(plObj);
         PartySummary party = plObj.getParty();
         updatePartyId((party == null) ? 0 : party.id);
+        _subscriber = plObj.tokens.isSubscriber();
+    }
+
+    // from MsoyUserOccupantInfo
+    public boolean isSubscriber ()
+    {
+        return _subscriber;
     }
 
     // from PartyOccupantInfo
@@ -47,4 +56,5 @@ public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
     }
 
     protected int _partyId;
+    protected boolean _subscriber;
 }

@@ -7,6 +7,7 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.StringBuilder;
 
+import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameSummary;
 
@@ -16,7 +17,7 @@ import com.threerings.msoy.party.data.PartyOccupantInfo;
  * Contains published information about a member in a scene.
  */
 public class MemberInfo extends ActorInfo
-    implements PartyOccupantInfo
+    implements MsoyUserOccupantInfo, PartyOccupantInfo
 {
     /**
      * Get the member id for this user, or 0 if they're a guest.
@@ -69,6 +70,12 @@ public class MemberInfo extends ActorInfo
         return (_flags & MANAGER) != 0;
     }
 
+    // from MsoyUserOccupantInfo
+    public function isSubscriber () :Boolean
+    {
+        return (_flags & SUBSCRIBER) != 0;
+    }
+
     // from ActorInfo
     override public function clone () :Object
     {
@@ -96,6 +103,7 @@ public class MemberInfo extends ActorInfo
         buf.append(", scale=", _scale);
         buf.append(", game=", _game);
         buf.append(", partyId=", _partyId);
+        buf.append(", subscriber=", _partyId);
     }
 
     protected var _scale :Number;
