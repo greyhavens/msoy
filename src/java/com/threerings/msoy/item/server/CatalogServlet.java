@@ -370,6 +370,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 basis.catalogId = basisRec.catalogId;
                 basis.name = basisRec.item.name;
                 basis.creator = _memberRepo.loadMemberName(basisRec.item.creatorId);
+                basis.hidden = (basisRec.pricing == CatalogListing.PRICING_HIDDEN);
             }
         }
 

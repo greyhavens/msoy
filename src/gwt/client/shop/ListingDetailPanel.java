@@ -188,13 +188,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             BasisItem basis = _listing.basis;
             FlowPanel basedOn = new FlowPanel();
             basedOn.add(new InlineLabel(_msgs.listingBasedOn() + " "));
-            basedOn.add(Link.shopListingView(basis.name, type, basis.catalogId));
+            basedOn.add(_listing.basis.hidden ? new InlineLabel(basis.name) :
+                Link.shopListingView(basis.name, type, basis.catalogId));
             basedOn.add(new InlineLabel(" " + _cmsgs.creatorBy() + " "));
             basedOn.add(Link.memberView(basis.creator));
             _details.add(basedOn);
         }
 
-        if (_listing.derivatives != null) {
+        if (_listing.derivatives != null && _listing.derivatives.length > 0) {
             _usedBy = new FlowPanel();
             updateDerivatives();
             _details.add(_usedBy);

@@ -78,6 +78,7 @@ public class CatalogListing
         public int catalogId;
         public String name;
         public MemberName creator;
+        public boolean hidden;
     }
 
     /** The unique id for this listing. */

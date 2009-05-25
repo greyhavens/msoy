@@ -1409,7 +1409,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     public List<Integer> loadDerivativeIds (int catalogId, int maximum)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Where(new Equals(getCatalogColumn(CatalogRecord.BASIS_ID), catalogId)));
+        SQLExpression derived = new Equals(getCatalogColumn(CatalogRecord.BASIS_ID), catalogId);
+        SQLExpression visible = new Not(new Equals(
+            getCatalogColumn(CatalogRecord.PRICING), CatalogListing.PRICING_HIDDEN));
+        clauses.add(new Where(new And(derived, visible)));
         if (maximum > 0) {
             clauses.add(new Limit(0, maximum));
         }
