@@ -450,22 +450,24 @@
   </target>
 
   <!-- builds our numerous GWT web clients -->
-  <target name="gclients" description="Rebuilds the GWT clients.">
-    <pathconvert property="pages" pathsep=",">
+  <target name="gclients" depends="jprepare,gmsgs"
+        description="Rebuilds all GWT clients (use -Dpages to choose which).">
+    <pathconvert property="allpages" pathsep=",">
       <path><fileset dir="src/gwt" includes="*.gwt.xml.in"/></path>
       <mapper type="regexp" from=".*/([a-z]+).gwt.xml.in" to="\1"/>
     </pathconvert>
-    <echo>Converted ${pages}</echo>
+    <echo>Converted ${allpages}</echo>
+    <property name="pages" value="${allpages}"/>
     <for list="${pages}" param="page">
     <sequential>
-      <antcall target="gclient" inheritAll="true">
+      <antcall target="gpage" inheritAll="true">
         <param name="page" value="@{page}"/>
       </antcall>
     </sequential></for>
   </target>
 
-  <!-- builds a single GWT web client -->
-  <target name="gclient" depends="jprepare,gmsgs">
+  <!-- builds a single GWT web client module (without dependencies) -->
+  <target name="gpage">
     <property name="pageout.dir" value="${gwtout.dir}/${version}"/>
     <mkdir dir="${pageout.dir}"/>
     <delete dir="${pageout.dir}/${page}"/>
