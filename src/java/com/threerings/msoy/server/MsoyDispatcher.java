@@ -83,12 +83,6 @@ public class MsoyDispatcher extends InvocationDispatcher<MsoyMarshaller>
             );
             return;
 
-        case MsoyMarshaller.TRACK_VECTOR_ASSOCIATION:
-            ((MsoyProvider)provider).trackVectorAssociation(
-                source, (String)args[0]
-            );
-            return;
-
         default:
             super.dispatchRequest(source, methodId, args);
             return;

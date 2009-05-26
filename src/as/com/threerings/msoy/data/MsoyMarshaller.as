@@ -121,16 +121,5 @@ public class MsoyMarshaller extends InvocationMarshaller
             arg2, arg3
         ]);
     }
-
-    /** The method id used to dispatch <code>trackVectorAssociation</code> requests. */
-    public static const TRACK_VECTOR_ASSOCIATION :int = 9;
-
-    // from interface MsoyService
-    public function trackVectorAssociation (arg1 :Client, arg2 :String) :void
-    {
-        sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, [
-            arg2
-        ]);
-    }
 }
 }

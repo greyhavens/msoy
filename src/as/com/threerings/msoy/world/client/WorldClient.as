@@ -198,22 +198,6 @@ public class WorldClient extends MsoyClient
     }
 
     /**
-     * Exposed to javascript so that it may notify us to logoff.
-     */
-    protected function externalClientLogoff (backAsGuest :Boolean = true) :void
-    {
-        log.info("Logging off via external request [backAsGuest=" + backAsGuest + "].");
-
-        if (backAsGuest) {
-            var creds :WorldCredentials = new WorldCredentials(null, null);
-            creds.ident = "";
-            _wctx.getMsoyController().handleLogon(creds);
-        } else {
-            logoff(false);
-        }
-    }
-
-    /**
      * Exposed to javascript so that the it may determine if the current scene is a room.
      */
     protected function externalInRoom () :Boolean
@@ -342,7 +326,6 @@ public class WorldClient extends MsoyClient
 
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
         ExternalInterface.addCallback("clientGo", externalClientGo);
-        ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
         ExternalInterface.addCallback("inRoom", externalInRoom);
         ExternalInterface.addCallback("getSceneId", externalGetSceneId);
         ExternalInterface.addCallback("useAvatar", externalUseAvatar);
@@ -399,6 +382,7 @@ public class WorldClient extends MsoyClient
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();
         creds.affiliateId = getAffiliateId();
+        creds.vector = getEntryVector();
 
         // if we're anonymous and in an embed and have no visitor id we need to generate one
         if (creds.sessionToken == null && creds.getUsername() == null && creds.visitorId == null) {

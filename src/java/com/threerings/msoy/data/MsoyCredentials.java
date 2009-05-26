@@ -4,7 +4,6 @@
 package com.threerings.msoy.data;
 
 import com.threerings.util.ActionScript;
-import com.threerings.util.Name;
 
 import com.threerings.presents.net.Credentials;
 
@@ -22,21 +21,8 @@ public class MsoyCredentials extends Credentials
     /** The affiliate id provided to the client via Flash parameters or 0. */
     public int affiliateId;
 
-    /**
-     * Creates credentials with the specified username. {@link #sessionToken} should be set before
-     * logging in.
-     */
-    public MsoyCredentials (Name username)
-    {
-        super(username);
-    }
-
-    /**
-     * Creates a blank instance for unserialization.
-     */
-    public MsoyCredentials ()
-    {
-    }
+    /** The vector by which this client entered, or null. */
+    public String vector;
 
     @Override @ActionScript(name="toStringBuf")
     protected void toString (StringBuilder buf)
@@ -45,5 +31,6 @@ public class MsoyCredentials extends Credentials
         buf.append(", token=").append(sessionToken);
         buf.append(", visitorId=").append(visitorId);
         buf.append(", affiliateId=").append(affiliateId);
+        buf.append(", vector=").append(vector);
     }
 }

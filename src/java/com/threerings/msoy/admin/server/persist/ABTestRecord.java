@@ -43,8 +43,7 @@ public class ABTestRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 9;
 
     /** This test's unique identifier. */
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int testId;
 
     /** The unique string identifier for this test, used to reference it when switching content. */

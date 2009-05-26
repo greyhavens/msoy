@@ -24,6 +24,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FacebookLogic;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -117,10 +118,19 @@ public class FacebookServlet extends HttpServlet
             creds.appSecret = info.appSecret;
             creds.sessionKey = ParameterUtil.getParameter(req, FBKEY_PREFIX + "session_key", true);
 
+            // create a new visitor info which will either be ignored or used shortly
+            VisitorInfo vinfo = new VisitorInfo();
+
             // authenticate this member via their external FB creds (this will autocreate their
             // account if they don't already have one)
             MemberRecord mrec = _auther.authenticateSession(
-                creds, new VisitorInfo(), AffiliateCookie.fromWeb(req));
+                creds, vinfo, AffiliateCookie.fromWeb(req));
+
+            // if the member has the same visitor id as the one we just made up, they were just
+            // created and we need to note that this is an entry
+            if (vinfo.id.equals(mrec.visitorId)) {
+                _memberLogic.noteNewVisitor(vinfo, true, StringUtil.deNull(req.getPathInfo()));
+            }
 
             // activate a session for them
             String authtok = _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
@@ -245,6 +255,7 @@ public class FacebookServlet extends HttpServlet
     }
 
     @Inject protected FacebookLogic _faceLogic;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _auther;
     @Inject protected MsoyGameRepository _mgameRepo;

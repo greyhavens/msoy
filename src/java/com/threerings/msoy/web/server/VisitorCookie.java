@@ -58,13 +58,16 @@ public class VisitorCookie
     }
 
     /**
-     * Adds the supplied visitor info as a cookie to the supplied response.
+     * Creates a new visitor info record for the requester, sets it in a cookie in the supplied
+     * response and returns the info record.
      */
-    public static void set (HttpServletResponse rsp, VisitorInfo info)
+    public static VisitorInfo createAndSet (HttpServletResponse rsp)
     {
+        VisitorInfo info = new VisitorInfo();
         Cookie cookie = new Cookie(CookieNames.VISITOR, info.id);
         cookie.setMaxAge(365 * 24 * 60 * 60); // 1 year
         cookie.setPath("/");
         rsp.addCookie(cookie);
+        return info;
     }
 }

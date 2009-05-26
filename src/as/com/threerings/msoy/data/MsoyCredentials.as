@@ -25,6 +25,9 @@ public class MsoyCredentials extends Credentials
     /** The affiliate id provided to the client via Flash parameters or 0. */
     public var affiliateId :int;
 
+    /** The vector by which this client entered, or null. */
+    public var vector :String;
+
     /**
      * Creates credentials with the specified username.
      */
@@ -40,6 +43,7 @@ public class MsoyCredentials extends Credentials
         sessionToken = (ins.readField(String) as String);
         visitorId = (ins.readField(String) as String);
         affiliateId = ins.readInt();
+        vector = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -49,6 +53,7 @@ public class MsoyCredentials extends Credentials
         out.writeField(sessionToken);
         out.writeField(visitorId);
         out.writeInt(affiliateId);
+        out.writeField(vector);
     }
 
     // documentation inherited
@@ -58,6 +63,7 @@ public class MsoyCredentials extends Credentials
         buf.append(", token=").append(sessionToken);
         buf.append(", visitorId=").append(visitorId);
         buf.append(", affiliateId=").append(affiliateId);
+        buf.append(", vector=").append(vector);
     }
 }
 }

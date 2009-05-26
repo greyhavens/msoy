@@ -504,7 +504,7 @@ public class AccountLogic
 
     protected String checkCreateId (String account, VisitorInfo visitor)
     {
-        return checkCreateId(account, visitor == null ? null : visitor.id);
+        return checkCreateId(account, (visitor == null) ? null : visitor.id);
     }
 
     protected String checkCreateId (String account, String visitorId)

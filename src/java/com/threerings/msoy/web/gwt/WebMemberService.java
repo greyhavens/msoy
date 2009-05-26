@@ -145,6 +145,13 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Notes that a brand new visitor has arrived at our website. We try to catch this before GWT
+     * is fired up, but if we can't do that for some reason, GWT will pick up the ball.
+     */
+    void noteNewVisitor (VisitorInfo info, String pageToken)
+        throws ServiceException;
+
+    /**
      * Generic method for tracking a client-side action such as clicking a button.
      */
     void trackClientAction (VisitorInfo info, String actionName, String details)
@@ -155,18 +162,6 @@ public interface WebMemberService extends RemoteService
      * is supplied, the visitor's a/b test group will also be tracked.
      */
     void trackTestAction (VisitorInfo info, String actionName, String testName)
-        throws ServiceException;
-
-    /**
-     * Tracks the creation of a new tracking info structure, for a new visitor.
-     */
-    void trackVisitorInfoCreation (VisitorInfo info)
-        throws ServiceException;
-
-    /**
-     * Records that a new entry vector has been recorded.
-     */
-    void trackVectorAssociation (VisitorInfo info, String vector)
         throws ServiceException;
 
     /**

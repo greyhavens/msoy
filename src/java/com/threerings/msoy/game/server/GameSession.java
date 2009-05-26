@@ -4,7 +4,11 @@
 package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
+import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.crowd.server.CrowdSession;
 
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -12,7 +16,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyObjectAccess;
 
 import static com.threerings.msoy.Log.log;
@@ -34,15 +38,20 @@ public class GameSession extends CrowdSession
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
 
-        // if this is a guest account, they didn't get a VisitorInfo through the resolver.
-        // so let's pull one from their flash credentials, or manufacture a brand new one.
+        // if this is a guest account, they won't have gotten a VisitorInfo through the resolver,
+        // pull one from their flash credentials, or manufacture a brand new one
         if (_plobj.visitorInfo == null) {
-            GameCredentials credentials = (GameCredentials) getCredentials();
-            if (credentials.visitorId != null) {
-                _plobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
+            GameCredentials creds = (GameCredentials)getCredentials();
+            if (creds.visitorId != null) {
+                _plobj.visitorInfo = new VisitorInfo(creds.visitorId, false);
             } else {
                 _plobj.visitorInfo = new VisitorInfo();
-                _eventLog.visitorInfoCreated(_plobj.visitorInfo, false);
+                final String vector = StringUtil.getOr(creds.vector, "game_session");
+                _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
+                    public void invokePersist () throws Exception {
+                        _memberLogic.noteNewVisitor(_plobj.visitorInfo, false, vector);
+                    }
+                });
             }
         }
 
@@ -81,7 +90,8 @@ public class GameSession extends CrowdSession
     /** A casted reference to the userobject. */
     protected PlayerObject _plobj;
 
-    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected PlayerLocator _locator;
     @Inject protected PlayerNodeActions _playerActions;
 }

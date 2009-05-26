@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.util.MessageBundle;
 
@@ -85,42 +86,17 @@ public class GoServlet extends HttpServlet
             return;
         }
 
-        // if this user appears to be brand new, create a visitor info for them
-        VisitorInfo info = null;
+        // if this user appears to be brand new...
         if (VisitorCookie.shouldCreate(req)) {
-            VisitorCookie.set(rsp, info = new VisitorInfo());
-            _eventLog.visitorInfoCreated(info, true);
-        }
+            // create a visitor info for them
+            VisitorInfo info = VisitorCookie.createAndSet(rsp);
 
-        // if the URL contains an entry vector, we extract it, obtain/assign the visitor id for the
-        // requester and record all of the above
-        if (path.indexOf(VEC_ARG) != -1) {
-            try {
-                Pages page = Pages.fromHistory(path);
-                Args args = Args.fromHistory(path);
+            // if the URL contains an entry vector, we extract it
+            Tuple<String, String> bits = extractVector(path);
+            path = bits.right;
 
-                String vec = null;
-                for (int ii = 0; ii < args.getArgCount(); ii++) {
-                    if (args.get(ii, "").equals(VEC_ARG)) {
-                        vec = args.get(ii+1, (String)null);
-                        path = page.makeToken(args.recomposeWithout(ii, 2));
-                    }
-                }
-                if (vec == null) {
-                    log.info("Passing through malformed entry vector", "path", path);
-
-                } else if (info != null) {
-                    // if we assigned this user a visitor info on this request, that means they are
-                    // brand spanking new; in that case we note their entry vector
-                    _memberLogic.trackVectorAssociation(info, vec);
-
-                } else { // otherwise we don't
-                    log.info("Ignoring entry by existing user", "path", path);
-                }
-
-            } catch (Exception e) {
-                log.info("Failure looking for entry vector", "path", path, "error", e);
-            }
+            // note that we have a new visitor
+            _memberLogic.noteNewVisitor(info, true, bits.left);
         }
 
         // set their affiliate cookie if appropriate
@@ -346,6 +322,28 @@ public class GoServlet extends HttpServlet
     protected static String deQuote (String input)
     {
         return input.replace('\"', '\'');
+    }
+
+    protected static Tuple<String, String> extractVector (String path)
+    {
+        path = StringUtil.deNull(path);
+        if (path.indexOf(VEC_ARG) != -1) {
+            try {
+                Pages page = Pages.fromHistory(path);
+                Args args = Args.fromHistory(path);
+                for (int ii = 0; ii < args.getArgCount(); ii++) {
+                    if (args.get(ii, "").equals(VEC_ARG)) {
+                        return Tuple.newTuple(args.get(ii+1, (String)null),
+                                              page.makeToken(args.recomposeWithout(ii, 2)));
+                    }
+                }
+            } catch (Exception e) {
+                log.info("Failure looking for entry vector", "path", path, "error", e);
+            }
+        }
+
+        // if we had no (or a bogus) vector, use the page URL instead
+        return Tuple.newTuple(StringUtil.truncate("page." + path, 128), path);
     }
 
     /** Number of google bot pages served. */

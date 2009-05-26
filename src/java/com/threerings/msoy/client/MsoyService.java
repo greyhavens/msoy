@@ -48,11 +48,6 @@ public interface MsoyService extends InvocationService
     void trackTestAction (Client client, String actionName, String testName);
 
     /**
-     * Requests that any notifications that were deferred on the MemberObject be dispatched now
-     */
-    void trackVectorAssociation (Client client, String vector);
-
-    /**
      * Requests a quote for sending a global broadcast. On success, the listener will receive an
      * a {@link PriceQuote} indicating the secured price of sending a broadcast.
      * @see com.threerings.msoy.chat.data.MsoyChatCodes#PAID_BROADCAST_MODE

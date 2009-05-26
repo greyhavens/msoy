@@ -58,9 +58,4 @@ public interface MsoyProvider extends InvocationProvider
      * Handles a {@link MsoyService#trackTestAction} request.
      */
     void trackTestAction (ClientObject caller, String arg1, String arg2);
-
-    /**
-     * Handles a {@link MsoyService#trackVectorAssociation} request.
-     */
-    void trackVectorAssociation (ClientObject caller, String arg1);
 }

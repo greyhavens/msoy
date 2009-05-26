@@ -21,7 +21,7 @@ import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.server.VisitorCookie;
 
@@ -76,10 +76,11 @@ public class MsoyDefaultServlet extends DefaultServlet
     protected void doPreMainPageGet (HttpServletRequest req, HttpServletResponse rsp)
     {
         // if this user appears to be brand new, create a visitor info for them
-        VisitorInfo info = null;
         if (VisitorCookie.shouldCreate(req)) {
-            VisitorCookie.set(rsp, info = new VisitorInfo());
-            _eventLog.visitorInfoCreated(info, true);
+            VisitorInfo info = VisitorCookie.createAndSet(rsp);
+            // we can't get the anchor from the URL (AFAIK the client doens't even send it) so we
+            // have to lump all non-/welcome-nor-/go landings into a single vector
+            _memberLogic.noteNewVisitor(info, true, "page.default");
         }
 
         if (CookieUtil.getCookie(req, CookieNames.WHO) == null) {
@@ -105,6 +106,6 @@ public class MsoyDefaultServlet extends DefaultServlet
     }
 
     // dependencies
-    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ABTestRepository _abTestRepo;
+    @Inject protected MemberLogic _memberLogic;
 }

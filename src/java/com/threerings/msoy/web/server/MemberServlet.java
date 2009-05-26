@@ -16,6 +16,7 @@ import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
 
@@ -302,6 +303,13 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    public void noteNewVisitor (VisitorInfo info, String pageToken)
+        throws ServiceException
+    {
+        _memberLogic.noteNewVisitor(info, true, StringUtil.truncate("gpage." + pageToken, 100));
+    }
+
+    // from WebMemberService
     public void trackClientAction (VisitorInfo info, String actionName, String details)
     {
         if (info == null) {
@@ -327,20 +335,6 @@ public class MemberServlet extends MsoyServiceServlet
             testName = "";
         }
         _eventLog.testAction(info.id, actionName, testName, abTestGroup);
-    }
-
-    // from WebMemberService
-    public void trackVisitorInfoCreation (VisitorInfo info)
-        throws ServiceException
-    {
-        _eventLog.visitorInfoCreated(info, true);
-    }
-
-    // from WebMemberService
-    public void trackVectorAssociation (VisitorInfo info, String vector)
-        throws ServiceException
-    {
-        _memberLogic.trackVectorAssociation(info, vector);
     }
 
     // from WebMemberService

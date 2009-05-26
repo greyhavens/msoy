@@ -103,17 +103,6 @@ public class MsoyManager
     }
 
     // from interface MemberProvider
-    public void trackVectorAssociation (ClientObject caller, final String vector)
-    {
-        final VisitorInfo info = ((MemberObject)caller).visitorInfo;
-        _invoker.postUnit(new WriteOnlyUnit("trackVectorAssociation") {
-            @Override public void invokePersist () throws Exception {
-                _memberLogic.trackVectorAssociation(info, vector);
-            }
-        });
-    }
-
-    // from interface MemberProvider
     public void getABTestGroup (final ClientObject caller, final String testName,
         final boolean logEvent, final InvocationService.ResultListener listener)
     {

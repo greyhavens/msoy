@@ -37,6 +37,7 @@ public class LiaisonGameContext
         _wctx = wctx;
 
         var gcreds :GameCredentials = new GameCredentials(null);
+        gcreds.vector = _wctx.getMsoyClient().getEntryVector();
 
         // inherit our visitor and affiliate ids from our world creds
         var wcreds :WorldCredentials = (wctx.getClient().getCredentials() as WorldCredentials);

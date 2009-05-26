@@ -37,8 +37,5 @@ public interface MsoyService extends InvocationService
 
     // from Java interface MsoyService
     function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void;
-
-    // from Java interface MsoyService
-    function trackVectorAssociation (arg1 :Client, arg2 :String) :void;
 }
 }

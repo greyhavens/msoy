@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.CookieUtil;
@@ -24,6 +25,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 
 /**
  * A central place where we keep track of whether or not we've logged on or logged off.
@@ -147,7 +149,9 @@ public class Session
             return (_visitor = VisitorCookie.get());
         } else {
             VisitorCookie.save(_visitor = new VisitorInfo(), false);
-            _membersvc.trackVisitorInfoCreation(_visitor, new NoopAsyncCallback());
+            _membersvc.noteNewVisitor(_visitor, StringUtil.isBlank(History.getToken()) ?
+                                      Pages.LANDING.getPath() : History.getToken(),
+                                      new NoopAsyncCallback());
             return _visitor;
         }
     }

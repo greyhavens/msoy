@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -93,17 +94,21 @@ public class MsoySession extends WhirledSession
         _memobj.addListener(_idleTracker);
 
         AuthenticationDomain.Account acct = (AuthenticationDomain.Account)_authdata;
-        WorldCredentials credentials = (WorldCredentials)getCredentials();
+        WorldCredentials creds = (WorldCredentials)getCredentials();
 
-        // if this is a guest account, they didn't get a VisitorInfo through the resolver. so let's
-        // pull one from their flash credentials, or manufacture a brand new one.  (but only do
-        // this for real guests, not lurkers!)
+        // if this is a guest account, they didn't get a VisitorInfo through the resolver, pull one
+        // from their flash credentials, or manufacture a brand new one (only for non-lurkers)
         if (_memobj.visitorInfo == null && !_memobj.isViewer()) {
-            if (credentials.visitorId != null) {
-                _memobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
+            if (creds.visitorId != null) {
+                _memobj.visitorInfo = new VisitorInfo(creds.visitorId, false);
             } else {
                 _memobj.visitorInfo = new VisitorInfo();
-                _eventLog.visitorInfoCreated(_memobj.visitorInfo, false);
+                final String vector = StringUtil.getOr(creds.vector, "world_session");
+                _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
+                    public void invokePersist () throws Exception {
+                        _memberLogic.noteNewVisitor(_memobj.visitorInfo, false, vector);
+                    }
+                });
             }
         }
 

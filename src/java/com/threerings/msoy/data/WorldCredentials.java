@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.servlet.user.Password;
-
 import com.threerings.util.ActionScript;
-import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCredentials;
 
@@ -20,24 +17,6 @@ public class WorldCredentials extends MsoyCredentials
 
     /** Indicates whether this client is set up as a featured place view. */
     public boolean featuredPlaceView;
-
-    /**
-     * Creates credentials with the specified username and password. {@link #ident} should be set
-     * before logging in unless the client does not know its machine identifier in which case it
-     * should be left null.
-     */
-    public WorldCredentials (Name username, Password password)
-    {
-        super(username);
-        _password = password.getEncrypted();
-    }
-
-    /**
-     * Creates a blank instance for unserialization.
-     */
-    public WorldCredentials ()
-    {
-    }
 
     /**
      * Returns our encrypted password data, or null if none was provided.

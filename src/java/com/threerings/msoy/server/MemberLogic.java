@@ -19,6 +19,7 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -481,23 +482,24 @@ public class MemberLogic
     }
 
     /**
-     * That the specified visitor is associated with the supplied entry vector. The values are
-     * sanity checked so it's safe to pass them straight through from the untrustworthy client.
+     * Notes that we've seen a new visitor (the supplied visitor info must be freshly created).
+     *
+     * @param fromWeb true if this visitor showed up from a web page, false if they showed up via a
+     * Flash client session.
+     * @param vector the vector via which this new visitor arrived. The value is sanity checked so
+     * it's safe to pass it straight through from the untrustworthy client.
      */
-    public void trackVectorAssociation (VisitorInfo info, String vector)
-        throws ServiceException
+    public void noteNewVisitor (VisitorInfo info, boolean fromWeb, String vector)
     {
-        if (info == null || info.id == null || vector == null) {
-            log.warning("Got bogus vector data", "info", info, "vector", vector);
+        if (info == null || info.id == null || StringUtil.isBlank(vector)) {
+            log.warning("Got bogus visitor data", "info", info, "vector", vector);
             return;
         }
-        try {
-            _memberRepo.noteEntryVector(info.id, vector);
-            _eventLog.vectorAssociated(info, vector);
-        } catch (DuplicateKeyException dke) {
-            // this is par for the course as the client will keep reporting its association until
-            // the cookie expires or the user registers
-        }
+
+        // note that the visitor info was created and associate the info with an entry vector
+        _eventLog.visitorInfoCreated(info, fromWeb);
+        _eventLog.vectorAssociated(info, vector);
+        _memberRepo.noteEntryVector(info.id, vector);
     }
 
     /**

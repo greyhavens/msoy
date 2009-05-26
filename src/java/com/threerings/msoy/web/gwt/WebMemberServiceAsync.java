@@ -103,6 +103,11 @@ public interface WebMemberServiceAsync
         AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#noteNewVisitor}.
+     */
+    void noteNewVisitor (VisitorInfo info, String pageToken, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#trackClientAction}.
      */
     void trackClientAction (VisitorInfo info, String actionName, String details,
@@ -113,16 +118,6 @@ public interface WebMemberServiceAsync
      */
     void trackTestAction (VisitorInfo info, String actionName, String testName,
                           AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link WebMemberService#trackVisitorInfoCreation}.
-     */
-    void trackVisitorInfoCreation (VisitorInfo info, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link WebMemberService#trackVectorAssociation}.
-     */
-    void trackVectorAssociation (VisitorInfo info, String vector, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#trackHttpReferrerAssociation}.
