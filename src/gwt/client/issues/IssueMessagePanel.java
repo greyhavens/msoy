@@ -39,7 +39,7 @@ public class IssueMessagePanel extends SimpleMessagePanel
     {
         super.addInfo(info);
 
-        Widget link = Link.create(_msgs.iThread(), Pages.GROUPS, "t_" + _threadId);
+        Widget link = Link.create(_msgs.iThread(), Pages.GROUPS, "t", _threadId);
         link.setStyleName("issueMessageLink");
         link.addStyleName("actionLabel");
         info.add(link);
