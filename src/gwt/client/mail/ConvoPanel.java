@@ -31,7 +31,6 @@ import client.shell.ShellMessages;
 
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
-import client.ui.RoleCaptioner;
 import client.ui.ThumbBox;
 
 import client.util.ClickCallback;
@@ -174,7 +173,7 @@ public class ConvoPanel extends FlowPanel
 
             _msg = msg;
 
-            setWidget(0, 0, RoleCaptioner.add(
+            setWidget(0, 0, MsoyUI.createRoleCaptioner(
                 new ThumbBox(msg.author.photo), msg.author.role), 1, "Thumb");
             getFlexCellFormatter().setWidth(0, 0, (MediaDesc.THUMBNAIL_WIDTH+20) + "px");
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);

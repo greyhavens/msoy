@@ -44,7 +44,7 @@ public class MessagePanel extends FlexTable
         ThumbBox box = getThumbBox(poster);
         if (box != null) {
             if (shouldShowRoleCaption()) {
-                setWidget(0, 0, RoleCaptioner.add(box, poster.role));
+                setWidget(0, 0, MsoyUI.createRoleCaptioner(box, poster.role));
             } else {
                 setWidget(0, 0, box);
             }

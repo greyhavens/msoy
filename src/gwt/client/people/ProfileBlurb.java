@@ -48,7 +48,6 @@ import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
-import client.ui.RoleCaptioner;
 import client.ui.RowPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -92,7 +91,7 @@ public class ProfileBlurb extends Blurb
             ? new ThumbBox(_profile.photo,
                 Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId())
             : new ThumbBox(_profile.photo);
-        photo.add(RoleCaptioner.add(thumb, _profile.role));
+        photo.add(MsoyUI.createRoleCaptioner(thumb, _profile.role));
         if (hasProfileGallery) {
             photo.add(Link.create(_msgs.photosOfMe(),
                     Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()));

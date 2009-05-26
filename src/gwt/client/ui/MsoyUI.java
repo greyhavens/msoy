@@ -23,8 +23,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -34,6 +36,7 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -41,6 +44,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.images.misc.MiscImages;
 import client.shell.CShell;
@@ -505,6 +509,50 @@ public class MsoyUI
         Image image = new Image(path);
         image.setStyleName("inline");
         return image;
+    }
+
+    /**
+     * Create a Widget that hosts a photo and captions it with the user's role.
+     * The ThumbBox is created externally so that you can add a link to it, yo.
+     */
+    public static Widget createRoleCaptioner (ThumbBox photo, WebCreds.Role role)
+    {
+        String roleName;
+        String iconPath = null;
+        switch (role) {
+        case ADMIN:
+        case MAINTAINER:
+            roleName = _cmsgs.roleAdmin();
+            break;
+
+        case SUPPORT:
+            roleName = _cmsgs.roleSupport();
+            break;
+
+        case SUBSCRIBER:
+            roleName = _cmsgs.roleSubscriber();
+            iconPath = "/images/ui/subscriber.gif";
+            break;
+
+        case PERMAGUEST:
+            roleName = _cmsgs.roleGuest();
+            break;
+
+        default:
+            roleName = _cmsgs.roleUser();
+            break;
+        }
+
+        SmartTable table = new SmartTable();
+        table.setWidget(0, 0, photo);
+        Widget roleUI = new InlineLabel(roleName);
+        if (iconPath != null) {
+            roleUI = createFlowPanel(null, MsoyUI.createInlineImage(iconPath), roleUI);
+        }
+        table.setWidget(1, 0, roleUI, 1, "caption");
+        table.getFlexCellFormatter().setHorizontalAlignment(
+            1, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        return table;
     }
 
     /**
