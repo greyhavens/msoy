@@ -42,6 +42,7 @@ public class RoleCaptioner
         SmartTable table = new SmartTable();
         table.setWidget(0, 0, photo);
         Widget roleUI = new InlineLabel(roleName);
+        roleUI.setStyleName("caption");
         if (iconPath != null) {
             roleUI = MsoyUI.createFlowPanel("caption", MsoyUI.createInlineImage(iconPath), roleUI);
         }
