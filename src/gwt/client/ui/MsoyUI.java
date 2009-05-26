@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -550,8 +550,7 @@ public class MsoyUI
             roleUI = createFlowPanel(null, MsoyUI.createInlineImage(iconPath), roleUI);
         }
         table.setWidget(1, 0, roleUI, 1, "caption");
-        table.getFlexCellFormatter().setHorizontalAlignment(
-            1, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        table.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
         return table;
     }
 
