@@ -4,7 +4,7 @@
 package client.item;
 
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -19,7 +19,6 @@ public class ConfigButton extends RowPanel
         setCellSpacing(6);
 
         add(MsoyUI.createImageButton(isConfig ? "configButton" : "remixButton", onClick));
-        add(MsoyUI.createActionLabel(label, "configLabel", onClick),
-            HasVerticalAlignment.ALIGN_MIDDLE);
+        add(MsoyUI.createActionLabel(label, "configLabel", onClick), HasAlignment.ALIGN_MIDDLE);
     }
 }

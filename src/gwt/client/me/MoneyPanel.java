@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,7 +28,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
         super(10, NAV_ON_TOP);
 
         _nav.add(MsoyUI.createLabel(_msgs.reportFilter(), "ReportFilter"));
-        _nav.add(MsoyUI.createImage(model.report.icon, null), HasVerticalAlignment.ALIGN_MIDDLE);
+        _nav.add(MsoyUI.createImage(model.report.icon, null), HasAlignment.ALIGN_MIDDLE);
         _nav.add(controller);
 
         addStyleName("Balance");

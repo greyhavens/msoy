@@ -10,7 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,7 +61,7 @@ public class ShopPanel extends FlowPanel
         HorizontalPanel search = new HorizontalPanel();
         search.setStyleName("Search");
         search.setSpacing(5);
-        search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        search.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         search.add(MsoyUI.createLabel(_msgs.shopSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
         for (byte searchType : Item.STUFF_TYPES) {

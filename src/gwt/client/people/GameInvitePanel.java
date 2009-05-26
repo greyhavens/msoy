@@ -15,7 +15,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -248,8 +248,7 @@ public class GameInvitePanel extends InvitePanel
             };
             _send.setEnabled(false);
             setWidget(row, 0, _send, 2, null);
-            getFlexCellFormatter().setHorizontalAlignment(
-                row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+            getFlexCellFormatter().setHorizontalAlignment(row++, 0, HasAlignment.ALIGN_RIGHT);
             downloadFriends();
         }
 

@@ -4,7 +4,7 @@
 package client.ui;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -22,13 +22,13 @@ public class RowPanel extends FlexTable
     @Override // from Panel
     public void add (Widget child)
     {
-        add(child, HasVerticalAlignment.ALIGN_TOP);
+        add(child, HasAlignment.ALIGN_TOP);
     }
 
     /**
      * Adds the supplied child with the specified vertical alignment.
      */
-    public void add (Widget child, HasVerticalAlignment.VerticalAlignmentConstant valign)
+    public void add (Widget child, HasAlignment.VerticalAlignmentConstant valign)
     {
         int col = getWidgetCount();
         setWidget(0, col, child);

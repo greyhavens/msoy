@@ -7,13 +7,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -145,7 +144,7 @@ public class PromotionEditor extends FlowPanel
 
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
-        buttons.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        buttons.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         Button edit = new Button(_msgs.promoEdit(), new ClickHandler () {
             public void onClick (ClickEvent event) {
                 editPromotion(_edit, promo);

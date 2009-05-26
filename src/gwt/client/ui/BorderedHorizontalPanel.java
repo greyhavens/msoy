@@ -4,8 +4,7 @@
 package client.ui;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -68,14 +67,14 @@ public class BorderedHorizontalPanel extends FlexTable
     }
 
     public void setHorizontalAlignment (
-        int index, HasHorizontalAlignment.HorizontalAlignmentConstant alignHoriz)
+        int index, HasAlignment.HorizontalAlignmentConstant alignHoriz)
     {
         int wrow = 2, wcol = 3 * index + 2;
         getFlexCellFormatter().setHorizontalAlignment(wrow, wcol, alignHoriz);
     }
 
     public void setVerticalAlignment (
-        int index, HasVerticalAlignment.VerticalAlignmentConstant alignVert)
+        int index, HasAlignment.VerticalAlignmentConstant alignVert)
     {
         int wrow = 2, wcol = 3 * index + 2;
         getFlexCellFormatter().setVerticalAlignment(wrow, wcol, alignVert);

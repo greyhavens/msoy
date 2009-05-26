@@ -16,7 +16,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -292,8 +292,7 @@ public class EditAccountPanel extends FlowPanel
             charityTable.setWidget(
                 row, 1, MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE));
             charityTable.getFlexCellFormatter().setRowSpan(row, 1, 2);
-            charityTable.getCellFormatter().setVerticalAlignment(
-                row, 1, HasVerticalAlignment.ALIGN_TOP);
+            charityTable.getCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);
             charityTable.setText(row++, 2, name.getNormal());
             charityTable.setWidget(row++, 1,
                 new HTML(charity.description), 1, "charityDescription");

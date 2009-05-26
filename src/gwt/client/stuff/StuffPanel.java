@@ -12,7 +12,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -57,7 +57,7 @@ public class StuffPanel extends FlowPanel
         _search = new HorizontalPanel();
         _search.setStyleName("Search");
         _search.setSpacing(5);
-        _search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        _search.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
         _search.add(MsoyUI.createLabel(_msgs.stuffSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
         for (byte searchType : Item.STUFF_TYPES) {
