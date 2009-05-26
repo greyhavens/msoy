@@ -38,6 +38,7 @@ import com.samskivert.depot.annotation.Entity;
 
 import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -49,20 +50,9 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 
-import com.samskivert.depot.operator.Arithmetic;
-
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.FullText;
-import com.samskivert.depot.operator.Conditionals.GreaterThan;
-import com.samskivert.depot.operator.Conditionals.In;
-import com.samskivert.depot.operator.Conditionals.LessThan;
-import com.samskivert.depot.operator.Conditionals.LessThanEquals;
-import com.samskivert.depot.operator.Conditionals.Like;
-import com.samskivert.depot.operator.Conditionals.NotEquals;
-
-import com.samskivert.depot.operator.Logic.And;
-import com.samskivert.depot.operator.Logic.Or;
-
+import com.samskivert.depot.operator.Arithmetic.*;
+import com.samskivert.depot.operator.Conditionals.*;
+import com.samskivert.depot.operator.Logic.*;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.ArrayIntSet;
@@ -75,6 +65,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.util.StreamableArrayIntSet;
 import com.threerings.util.TimeUtil;
 
+import com.threerings.msoy.admin.gwt.EntrySummary;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.data.all.FriendEntry;
@@ -204,6 +195,40 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns a summary of Whirled entries for the last two weeks (up to the entry vector purge
+     * interval).
+     */
+    public List<EntrySummary> summarizeEntries ()
+    {
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - ENTRY_VECTOR_EXPIRE);
+        SQLExpression since = new GreaterThanEquals(EntryVectorRecord.CREATED, cutoff);
+
+        // first load up all entries in the period
+        Map<String, EntrySummary> summaries = Maps.newHashMap();
+        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, new Where(since),
+                                                new GroupBy(EntryVectorRecord.VECTOR))) {
+            EntrySummary sum = new EntrySummary();
+            sum.vector = entry.vector;
+            sum.entries = entry.entries;
+            summaries.put(sum.vector, sum);
+        }
+
+        // then determine how many of those eventually registered
+        Where where = new Where(new And(since, new NotEquals(EntryVectorRecord.MEMBER_ID, 0)));
+        for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
+                                                new GroupBy(EntryVectorRecord.VECTOR))) {
+            EntrySummary sum = summaries.get(entry.vector);
+            if (sum == null) { // should not be possible, but robustness demands
+                summaries.put(entry.vector, sum = new EntrySummary());
+                sum.vector = entry.vector;
+            }
+            sum.registrations = entry.entries;
+        }
+
+        return Lists.newArrayList(summaries.values());
+    }
+
+    /**
      * Loads the member records with the supplied set of ids.
      */
     public List<MemberRecord> loadMembers (Collection<Integer> memberIds)
@@ -276,7 +301,7 @@ public class MemberRepository extends DepotRepository
         int valbit = MemberRecord.Flag.VALIDATED.getBit();
         int bits = (MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit() |
                     MemberRecord.Flag.SPANKED.getBit() | valbit);
-        SQLExpression where = new Equals(new Arithmetic.BitAnd(MemberRecord.FLAGS, bits), valbit);
+        SQLExpression where = new Equals(new BitAnd(MemberRecord.FLAGS, bits), valbit);
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, new Where(where))) {
             // !MemberMailUtil.isPlaceholderAddress(record.accountName) (no longer needed)
@@ -419,7 +444,7 @@ public class MemberRepository extends DepotRepository
         Where where = new Where(new And(
             new GreaterThan(lastSess, new ValueExp(earliestLastSession)),
             new LessThanEquals(lastSess, new ValueExp(latestLastSession)),
-            new Equals(new Arithmetic.BitAnd(
+            new Equals(new BitAnd(
                 MemberRecord.FLAGS, Flag.NO_ANNOUNCE_EMAIL.getBit() | Flag.SPANKED.getBit()), 0)));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                RecordFunctions.<MemberRecord>getIntKey());
@@ -1357,7 +1382,7 @@ public class MemberRepository extends DepotRepository
 
     @Inject protected UserActionRepository _actionRepo;
 
-    protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new Arithmetic.BitAnd(
+    protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new BitAnd(
         MemberRecord.FLAGS, MemberRecord.Flag.GREETER.getBit()), 0);
 
     /** Period after which we expire entry vector records that are not associated with members. */

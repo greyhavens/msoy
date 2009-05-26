@@ -79,6 +79,7 @@ import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
+import com.threerings.msoy.admin.gwt.EntrySummary;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
@@ -587,24 +588,6 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public Set<String> getPeerNodeNames ()
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        // Collect the names of all the nodes
-        final Set<String> names = Sets.newHashSet();
-        _peerMgr.applyToNodes(new Function<NodeObject, Void>() {
-            public Void apply (NodeObject node) {
-                names.add(node.nodeName);
-                return null;
-            }
-        });
-
-        return names;
-    }
-
-    // from interface AdminService
     public void scheduleReboot (int minutes, final String message)
         throws ServiceException
     {
@@ -626,6 +609,25 @@ public class AdminServlet extends MsoyServiceServlet
         });
     }
 
+    // from interface AdminService
+    public Set<String> getPeerNodeNames ()
+        throws ServiceException
+    {
+        requireSupportUser();
+
+        // Collect the names of all the nodes
+        final Set<String> names = Sets.newHashSet();
+        _peerMgr.applyToNodes(new Function<NodeObject, Void>() {
+            public Void apply (NodeObject node) {
+                names.add(node.nodeName);
+                return null;
+            }
+        });
+
+        return names;
+    }
+
+    // from interface AdminService
     public void restartPanopticon (Set<String> nodeNames)
         throws ServiceException
     {
@@ -663,6 +665,15 @@ public class AdminServlet extends MsoyServiceServlet
         result.memberNames = Maps.newHashMap();
         result.memberNames.putAll(_memberRepo.loadMemberNames(memberIds));
         return result;
+    }
+
+    // from interface AdminService
+    public List<EntrySummary> summarizeEntries ()
+        throws ServiceException
+    {
+        requireSupportUser();
+        // pass the buck right on through to the repository
+        return _memberRepo.summarizeEntries();
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)

@@ -394,3 +394,10 @@
   color: #804040;
 }
 
+/* ------------------------------------
+   EntrySummaryPanel
+-------------------------------------*/
+
+.entrySummary .Header {
+  font-weight: bold;
+}

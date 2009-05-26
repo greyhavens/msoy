@@ -137,18 +137,29 @@ public interface AdminServiceAsync
      */
     void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
 
-    void getPeerNodeNames (AsyncCallback<Set<String>> callback);
-
-    void restartPanopticon (Set<String> nodeNames, AsyncCallback<Void> callback);
-
     /**
      * The asynchronous version of {@link AdminService#scheduleReboot}.
      */
     void scheduleReboot (int minutes, String message, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#getPeerNodeNames}.
+     */
+    void getPeerNodeNames (AsyncCallback<Set<String>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#restartPanopticon}.
+     */
+    void restartPanopticon (Set<String> nodeNames, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#getBroadcastHistory}.
      */
     void getBroadcastHistory (int offset, int count, boolean needCount,
         AsyncCallback<BroadcastHistoryResult> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#summarizeEntries}.
+     */
+    void summarizeEntries (AsyncCallback<List<EntrySummary>> callback);
 }

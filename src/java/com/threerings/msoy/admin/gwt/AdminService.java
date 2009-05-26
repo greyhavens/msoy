@@ -225,12 +225,6 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Restarts the Panopticon logging client.
-     */
-    void restartPanopticon (Set<String> nodeNames)
-        throws ServiceException;
-
-    /**
      * Requests that the server be rebooted in the specified number of minutes. If the value is
      * zero the server will be rebooted immediately, if it is negative, a pending reboot will be
      * aborted and a new regularly scheduled reboot scheduled.
@@ -238,11 +232,26 @@ public interface AdminService extends RemoteService
     void scheduleReboot (int minutes, String message)
         throws ServiceException;
 
+    /**
+     * Returns a list of the node names of our peer servers.
+     */
     Set<String> getPeerNodeNames ()
+        throws ServiceException;
+
+    /**
+     * Restarts the Panopticon logging client.
+     */
+    void restartPanopticon (Set<String> nodeNames)
         throws ServiceException;
 
     /**
      * Gets a page of user paid broadcast message history.
      */
     BroadcastHistoryResult getBroadcastHistory (int offset, int count, boolean needCount);
+
+    /**
+     * Returns a summary of recent Whirled "entries".
+     */
+    List<EntrySummary> summarizeEntries ()
+        throws ServiceException;
 }
