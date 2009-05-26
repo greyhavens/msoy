@@ -401,3 +401,7 @@
 .entrySummary .Header {
   font-weight: bold;
 }
+
+.entrySummary .AltRow {
+  background: #DDDDDD;
+}
