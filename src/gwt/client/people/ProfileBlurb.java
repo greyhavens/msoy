@@ -30,6 +30,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.Award.AwardType;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
@@ -85,12 +86,19 @@ public class ProfileBlurb extends Blurb
 
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
-        photo.add(RoleCaptioner.add(
-            new ThumbBox(_profile.photo,
-                Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()),
-            _profile.role));
-        photo.add(Link.create(_msgs.photosOfMe(),
-                Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()));
+        boolean hasProfileGallery = hasProfileGallery();
+        ThumbBox thumb = hasProfileGallery
+            ? new ThumbBox(_profile.photo,
+                Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId())
+            : new ThumbBox(_profile.photo);
+        photo.add(RoleCaptioner.add(thumb, _profile.role));
+        if (hasProfileGallery) {
+            photo.add(Link.create(_msgs.photosOfMe(),
+                    Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()));
+        } else if (isMe) {
+            photo.add(Link.create(_msgs.addPhotosOfMe(),
+                    Pages.PEOPLE, GalleryActions.CREATE_PROFILE, _name.getMemberId()));
+        }
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
@@ -455,6 +463,16 @@ public class ProfileBlurb extends Blurb
         }
 
         _friendBtn = addButton(_buttons, image, label, handler);
+    }
+
+    protected boolean hasProfileGallery ()
+    {
+        for (Gallery gal : _pdata.galleries) {
+            if (gal.isProfileGallery()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected ProfileService.ProfileResult _pdata;
