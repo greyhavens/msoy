@@ -4,7 +4,7 @@ import client.shell.ShellMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -41,7 +41,7 @@ public class RoleCaptioner
 
         SmartTable table = new SmartTable();
         table.setWidget(0, 0, photo);
-        Widget roleUI = new Label(roleName);
+        Widget roleUI = new InlineLabel(roleName);
         if (iconPath != null) {
             roleUI = MsoyUI.createFlowPanel("caption", MsoyUI.createInlineImage(iconPath), roleUI);
         }
