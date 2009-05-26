@@ -56,8 +56,8 @@ public class ABTestRepository extends DepotRepository
      */
     public List<ABTestRecord> loadTestsWithLandingCookies ()
     {
-        return findAll(ABTestRecord.class, new Where(new Logic.And(
-            ABTestRecord.ENABLED, ABTestRecord.LANDING_COOKIE)));
+        return findAll(ABTestRecord.class,
+                       new Where(new Logic.And(ABTestRecord.ENABLED, ABTestRecord.LANDING_COOKIE)));
     }
 
     /**
@@ -73,13 +73,9 @@ public class ABTestRepository extends DepotRepository
      */
     public void insertABTest (ABTest test)
     {
-        try {
-            ABTestRecord record = ABTestRecord.class.newInstance();
-            record.fromABTest(test);
-            insert(record);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        ABTestRecord record = new ABTestRecord();
+        record.fromABTest(test);
+        insert(record);
     }
 
     /**
@@ -87,13 +83,9 @@ public class ABTestRepository extends DepotRepository
      */
     public void updateABTest (ABTest test)
     {
-        try {
-            ABTestRecord record = ABTestRecord.class.newInstance();
-            record.fromABTest(test);
-            update(record);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        ABTestRecord record = new ABTestRecord();
+        record.fromABTest(test);
+        update(record);
     }
 
     @Override // from DepotRepository
