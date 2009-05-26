@@ -31,7 +31,6 @@ import com.samskivert.depot.PersistenceContext.CacheListener;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.SchemaMigration;
 
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
@@ -125,16 +124,6 @@ public class MemberRepository extends DepotRepository
                 return "MemberRecord -> MemberNameRecord";
             }
         });
-
-        ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(23, "flow"));
-        ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(23, "accFlow"));
-        ctx.registerMigration(MemberRecord.class,
-            new SchemaMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
-        ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(25, "blingAffiliate"));
-
-        // drop this superfluous index
-        ctx.registerMigration(MemberExperienceRecord.class,
-            new SchemaMigration.DropIndex(2, "ixDateOccurred"));
     }
 
     /**
