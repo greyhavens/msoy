@@ -49,7 +49,7 @@ public class PeoplePage extends Page
             panel.setArgs(args, false);
 
         } else if (action.equals(GalleryActions.VIEW_PROFILE)) {
-            // unlike VIEW_PHOTO_ACTION, this will always refresh the gallery data
+            // unlike VIEW_PHOTO, this will always refresh the gallery data
             GalleryViewPanel panel = new GalleryViewPanel();
             setContent(_msgs.galleriesTitle(), panel);
             panel.setArgs(args, true);

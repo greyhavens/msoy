@@ -41,6 +41,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.item.ImageChooserPopup;
 import client.item.ShopUtil;
+import client.person.GalleryActions;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
@@ -85,9 +86,11 @@ public class ProfileBlurb extends Blurb
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
         photo.add(RoleCaptioner.add(
-            new ThumbBox(_profile.photo, Pages.PEOPLE, "pgallery", _name.getMemberId()),
+            new ThumbBox(_profile.photo,
+                Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()),
             _profile.role));
-        photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, "pgallery", _name.getMemberId()));
+        photo.add(Link.create(_msgs.photosOfMe(),
+                Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()));
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
