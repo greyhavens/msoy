@@ -554,8 +554,8 @@ public class JabberManager
                     if (StringUtil.isBlank(StringUtils.parseName(item.getUser()))) {
                         continue;
                     }
-                    JabberName jname = new JabberName(item.getUser(),
-                            StringUtil.isBlank(item.getName()) ? null : item.getName());
+                    JabberName jname = new JabberName(
+                        item.getUser(), StringUtil.getOr(item.getName(), null));
                     ContactEntry entry = _user.imContacts.get(jname);
                     if (entry == null) {
                         entry = new ContactEntry(jname, false);

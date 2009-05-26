@@ -835,7 +835,7 @@ public abstract class ItemEditor extends FlowPanel
         String typename = Item.getTypeName(_item.getType());
         String flashVars = "media=" + URL.encodeComponent(prototype.getMediaPath()) +
             "&type=" + URL.encodeComponent(typename) +
-            "&name=" + URL.encodeComponent(StringUtil.isBlank(_item.name) ? typename : _item.name) +
+            "&name=" + URL.encodeComponent(StringUtil.getOr(_item.name, typename)) +
             "&server=" + URL.encodeComponent(DeploymentConfig.serverURL) +
             "&mediaId="+ URL.encodeComponent(mediaId) +
             "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +

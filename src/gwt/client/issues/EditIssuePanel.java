@@ -145,8 +145,7 @@ public class EditIssuePanel extends SmartTable
         }
         if (_issue.state != Issue.STATE_OPEN) {
             setText(row++, 0, _msgs.iComment(), 3, "SubTitle");
-            setText(row++, 0, StringUtil.isBlank(_issue.closeComment) ?
-                           _msgs.noComment() : _issue.closeComment, 3, null);
+            setText(row++, 0, StringUtil.getOr(_issue.closeComment, _msgs.noComment()), 3, null);
         }
 
         if (_messageId > 0) {

@@ -16,6 +16,7 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -149,9 +150,8 @@ public class Session
             return (_visitor = VisitorCookie.get());
         } else {
             VisitorCookie.save(_visitor = new VisitorInfo(), false);
-            _membersvc.noteNewVisitor(_visitor, StringUtil.isBlank(History.getToken()) ?
-                                      Pages.LANDING.getPath() : History.getToken(),
-                                      new NoopAsyncCallback());
+            String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.getPath());
+            _membersvc.noteNewVisitor(_visitor, vector, new NoopAsyncCallback());
             return _visitor;
         }
     }

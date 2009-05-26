@@ -77,6 +77,14 @@ public class StringUtil
         return (text == null) || (text.length() == 0);
     }
 
+    /**
+     * Returns the string if it is non-blank (see {@link #isBlank}), the default value otherwise.
+     */
+    public static String getOr (String value, String defval)
+    {
+        return isBlank(value) ? defval : value;
+    }
+
     /** Used by {@link #hexlate} and {@link #unhexlate}. */
     protected static final String XLATE = "0123456789abcdef";
 }

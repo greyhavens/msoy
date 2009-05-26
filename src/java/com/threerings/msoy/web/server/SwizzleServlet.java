@@ -26,7 +26,7 @@ public class SwizzleServlet extends HttpServlet
      */
     public static void setCookie (HttpServletRequest req, HttpServletResponse rsp, String token)
     {
-        if (token != null && !StringUtil.isBlank(token)) {
+        if (!StringUtil.isBlank(token)) {
             Cookie cookie = new Cookie(WebCreds.credsCookie(), token);
             cookie.setMaxAge(WebUserService.SESSION_DAYS * 24*60*60);
             cookie.setPath("/");

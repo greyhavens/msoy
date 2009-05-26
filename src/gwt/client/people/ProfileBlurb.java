@@ -55,6 +55,7 @@ import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 import client.util.events.NameChangeEvent;
 
 /**
@@ -104,7 +105,7 @@ public class ProfileBlurb extends Blurb
         SmartTable info = new SmartTable("Info", 0, 5);
         info.addText(_name.toString(), 1, "Name");
         info.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        if (!isBlank(_profile.headline)) {
+        if (!StringUtil.isBlank(_profile.headline)) {
             info.addText(_profile.headline, 1, "Status");
         }
         String ageSex = "";
@@ -125,7 +126,7 @@ public class ProfileBlurb extends Blurb
         if (ageSex.length() > 0) {
             info.addText(ageSex, 1, "LesserInfo");
         }
-        if (!isBlank(_profile.location)) {
+        if (!StringUtil.isBlank(_profile.location)) {
             info.addText(_profile.location, 1, "LesserInfo");
         }
         if (_greeter == GreeterStatus.GREETER) {
@@ -167,7 +168,7 @@ public class ProfileBlurb extends Blurb
         details.add(level);
 
         SmartTable dbits = new SmartTable(0, 5);
-        if (!isBlank(_profile.permaName)) {
+        if (!StringUtil.isBlank(_profile.permaName)) {
             addDetail(dbits, _msgs.permaName(), _profile.permaName);
         }
         if (_profile.memberSince > 0L) {
@@ -183,7 +184,7 @@ public class ProfileBlurb extends Blurb
             addDetail(dbits, _msgs.lastOnline(),
                       MsoyUI.formatDateTime(new Date(_profile.lastLogon)));
         }
-        if (!isBlank(_profile.homePageURL)) {
+        if (!StringUtil.isBlank(_profile.homePageURL)) {
             Anchor homepage = new Anchor(
                 _profile.homePageURL, _profile.homePageURL, "_blank", true);
             addDetail(dbits, _msgs.homepage(), homepage);
@@ -412,16 +413,6 @@ public class ProfileBlurb extends Blurb
                     }
                 }
             });
-    }
-
-    protected boolean isBlank (String text)
-    {
-        return (text == null) || (text.length() == 0);
-    }
-
-    protected String unBlank (String text)
-    {
-        return (text == null) ? "" : text;
     }
 
     protected void addFriendButton ()

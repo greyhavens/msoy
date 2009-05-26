@@ -931,9 +931,7 @@ public class AVRGameManager extends PlaceManager
         agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
         agent.gameId = gameId;
         agent.code = code;
-
         agent.agentService = addDispatcher(new AVRGameAgentDispatcher(this));
-
         agent.propertiesService =
             addDispatcher(new PropertySpaceDispatcher(new PropertySpaceHandler(agent) {
             @Override protected void validateUser (ClientObject caller)
@@ -943,12 +941,7 @@ public class AVRGameManager extends PlaceManager
                 }
             }
         }));
-        
-        if (StringUtil.isBlank(def.server)) {
-            agent.className = WhirledGameManager.DEFAULT_SERVER_CLASS;
-        } else {
-            agent.className = def.server;
-        }
+        agent.className = StringUtil.getOr(def.server, WhirledGameManager.DEFAULT_SERVER_CLASS);
         return agent;
     }
 
