@@ -28,7 +28,7 @@ import com.threerings.msoy.web.server.VisitorCookie;
 import static com.threerings.msoy.Log.log;
 
 /**
- *Handles redirecting to our magic version numbered client for embedding and other fiddling that
+ * Handles redirecting to our magic version numbered client for embedding and other fiddling that
  * needs doing for static data requests.
  */
 public class MsoyDefaultServlet extends DefaultServlet
@@ -37,16 +37,16 @@ public class MsoyDefaultServlet extends DefaultServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
-        checkCookies(req, rsp); // we want to check cookies even before we do the redirect
+        String uri = req.getRequestURI();
 
-        // TODO: handle this for more than just world-client.swf?
-        if (req.getRequestURI().equals("/clients/world-client.swf")) {
+        if ("/clients/world-client.swf".equals(uri)) {
+            // TODO: handle this for more than just world-client.swf?
             rsp.setContentLength(0);
             rsp.sendRedirect("/clients/" + DeploymentConfig.version + "/world-client.swf");
             return;
         }
 
-        if (req.getRequestURI().equals("/")) {
+        if ("/".equals(uri)) {
             doPreMainPageGet(req, rsp);
         }
         try {
@@ -80,7 +80,7 @@ public class MsoyDefaultServlet extends DefaultServlet
             VisitorInfo info = VisitorCookie.createAndSet(rsp);
             // we can't get the anchor from the URL (AFAIK the client doens't even send it) so we
             // have to lump all non-/welcome-nor-/go landings into a single vector
-            _memberLogic.noteNewVisitor(info, true, "page.default");
+            _memberLogic.noteNewVisitor(info, true, "page.default", req.getHeader("Referrer"));
         }
 
         if (CookieUtil.getCookie(req, CookieNames.WHO) == null) {
@@ -94,15 +94,6 @@ public class MsoyDefaultServlet extends DefaultServlet
             rsp.addCookie(new Cookie(CookieNames.LANDING_TEST, cookieValue.toString()));
             log.info("Sending landing cookie", "value", cookieValue);
         }
-    }
-
-    protected void checkCookies (HttpServletRequest req, HttpServletResponse rsp)
-    {
-        // this is a fiddly interaction - the original HTTP Referrer is only available on the very
-        // first page access, because once we start redirecting through GWT pages, it'll get
-        // overwritten. But we don't have the player's visitor ID available yet. So we squirrel
-        // away the referrer in a cookie, and let GWT handle it once it's ready.
-        HttpReferrerCookie.check(req, rsp);
     }
 
     // dependencies

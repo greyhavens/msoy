@@ -303,10 +303,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public void noteNewVisitor (VisitorInfo info, String pageToken)
+    public void noteNewVisitor (VisitorInfo info, String page)
         throws ServiceException
     {
-        _memberLogic.noteNewVisitor(info, true, StringUtil.truncate("gpage." + pageToken, 100));
+        _memberLogic.noteNewVisitor(info, true, StringUtil.truncate("gpage." + page, 100), null);
     }
 
     // from WebMemberService
@@ -335,13 +335,6 @@ public class MemberServlet extends MsoyServiceServlet
             testName = "";
         }
         _eventLog.testAction(info.id, actionName, testName, abTestGroup);
-    }
-
-    // from WebMemberService
-    public void trackHttpReferrerAssociation (VisitorInfo info, String referrer)
-        throws ServiceException
-    {
-        _eventLog.referrerAssociated(info, referrer);
     }
 
     // our dependencies

@@ -106,7 +106,7 @@ public class MsoySession extends WhirledSession
                 final String vector = StringUtil.getOr(creds.vector, "world_session");
                 _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
                     public void invokePersist () throws Exception {
-                        _memberLogic.noteNewVisitor(_memobj.visitorInfo, false, vector);
+                        _memberLogic.noteNewVisitor(_memobj.visitorInfo, false, vector, null);
                     }
                 });
             }

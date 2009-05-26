@@ -118,10 +118,4 @@ public interface WebMemberServiceAsync
      */
     void trackTestAction (VisitorInfo info, String actionName, String testName,
                           AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link WebMemberService#trackHttpReferrerAssociation}.
-     */
-    void trackHttpReferrerAssociation (VisitorInfo info, String referrer,
-                                       AsyncCallback<Void> callback);
 }

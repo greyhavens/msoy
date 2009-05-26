@@ -96,7 +96,7 @@ public class GoServlet extends HttpServlet
             path = bits.right;
 
             // note that we have a new visitor
-            _memberLogic.noteNewVisitor(info, true, bits.left);
+            _memberLogic.noteNewVisitor(info, true, bits.left, req.getHeader("Referrer"));
         }
 
         // set their affiliate cookie if appropriate

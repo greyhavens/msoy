@@ -44,7 +44,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.images.frame.FrameImages;
 import client.shell.BrowserTest;
 import client.shell.CShell;
-import client.shell.HttpReferrerCookie;
 import client.shell.LandingTestCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
@@ -196,14 +195,7 @@ public class FrameEntryPoint
         // force the creation of our visitor info because we're very probably a real new user
         boolean newUser = StringUtil.isBlank(CookieUtil.get(CookieNames.WHO));
         if (newUser) {
-            VisitorInfo info = getVisitorInfo(); // creates a visitorId and reports it
-
-            // if this is a guest, and we have a referrer cookie from them, record it
-            if (!info.isAuthoritative && HttpReferrerCookie.available()) {
-                String ref = HttpReferrerCookie.get();
-                _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
-                HttpReferrerCookie.disable();
-            }
+            getVisitorInfo(); // creates a visitorId and reports it
         }
 
         // do different things for new users on landing

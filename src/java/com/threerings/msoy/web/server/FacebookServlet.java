@@ -129,7 +129,8 @@ public class FacebookServlet extends HttpServlet
             // if the member has the same visitor id as the one we just made up, they were just
             // created and we need to note that this is an entry
             if (vinfo.id.equals(mrec.visitorId)) {
-                _memberLogic.noteNewVisitor(vinfo, true, StringUtil.deNull(req.getPathInfo()));
+                _memberLogic.noteNewVisitor(
+                    vinfo, true, StringUtil.deNull(req.getPathInfo()), req.getHeader("Referrer"));
             }
 
             // activate a session for them

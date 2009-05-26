@@ -163,10 +163,4 @@ public interface WebMemberService extends RemoteService
      */
     void trackTestAction (VisitorInfo info, String actionName, String testName)
         throws ServiceException;
-
-    /**
-     * Records an HTTP referrer has been recorded for a specific visitor.
-     */
-    void trackHttpReferrerAssociation (VisitorInfo info, String referrer)
-        throws ServiceException;
 }

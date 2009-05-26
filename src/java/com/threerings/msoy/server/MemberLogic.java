@@ -488,8 +488,9 @@ public class MemberLogic
      * Flash client session.
      * @param vector the vector via which this new visitor arrived. The value is sanity checked so
      * it's safe to pass it straight through from the untrustworthy client.
+     * @param referrer if non-null, the HTTP referrer header for this new visitor.
      */
-    public void noteNewVisitor (VisitorInfo info, boolean fromWeb, String vector)
+    public void noteNewVisitor (VisitorInfo info, boolean fromWeb, String vector, String referrer)
     {
         if (info == null || info.id == null || StringUtil.isBlank(vector)) {
             log.warning("Got bogus visitor data", "info", info, "vector", vector);
@@ -499,6 +500,9 @@ public class MemberLogic
         // note that the visitor info was created and associate the info with an entry vector
         _eventLog.visitorInfoCreated(info, fromWeb);
         _eventLog.vectorAssociated(info, vector);
+        if (!StringUtil.isBlank(referrer)) {
+            _eventLog.referrerAssociated(info, referrer);
+        }
         _memberRepo.noteEntryVector(info.id, vector);
     }
 

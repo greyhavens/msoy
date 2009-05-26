@@ -49,7 +49,7 @@ public class GameSession extends CrowdSession
                 final String vector = StringUtil.getOr(creds.vector, "game_session");
                 _invoker.postUnit(new WriteOnlyUnit("noteNewVisitor") {
                     public void invokePersist () throws Exception {
-                        _memberLogic.noteNewVisitor(_plobj.visitorInfo, false, vector);
+                        _memberLogic.noteNewVisitor(_plobj.visitorInfo, false, vector, null);
                     }
                 });
             }
