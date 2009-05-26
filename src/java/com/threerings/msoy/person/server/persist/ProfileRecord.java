@@ -184,6 +184,7 @@ public class ProfileRecord extends PersistentRecord
         }
         profile.location = location;
         profile.photo = getPhoto();
+        profile.role = member.toRole();
         profile.permaName = member.permaName;
 
         profile.level = member.level;

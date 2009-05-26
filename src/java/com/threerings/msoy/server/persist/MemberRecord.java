@@ -294,12 +294,19 @@ public class MemberRecord extends PersistentRecord
     }
 
     /**
+     * Get the Role of this member record.
+     */
+    public WebCreds.Role toRole ()
+    {
+        return toRole(memberId, flags, accountName);
+    }
+
+    /**
      * Creates web credentials for this member record.
      */
     public WebCreds toCreds (String authtok)
     {
-        WebCreds.Role role = toRole(memberId, flags, accountName);
-        return new WebCreds(authtok, accountName, isValidated(), getName(), permaName, role);
+        return new WebCreds(authtok, accountName, isValidated(), getName(), permaName, toRole());
     }
 
     /**

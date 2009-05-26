@@ -46,7 +46,9 @@ import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
+import client.ui.RoleCaptioner;
 import client.ui.RowPanel;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
@@ -82,9 +84,9 @@ public class ProfileBlurb extends Blurb
 
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
-        ClickHandler onClick = null;
-        onClick = Link.createHandler(Pages.PEOPLE, "pgallery", _name.getMemberId());
-        photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
+        photo.add(RoleCaptioner.add(
+            new ThumbBox(_profile.photo, Pages.PEOPLE, "pgallery", _name.getMemberId()),
+            _profile.role));
         photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, "pgallery", _name.getMemberId()));
 
         // create the info section with their name, a/s/l, etc.

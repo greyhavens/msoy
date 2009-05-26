@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
  * Contains all member profile data for display on the profile page.
@@ -29,8 +30,11 @@ public class Profile implements IsSerializable
     /** A {@link #sex} constant. */
     public static final byte SEX_FEMALE = 2;
 
-    /** The the member's selected profile picture. */
+    /** The member's selected profile picture. */
     public MediaDesc photo = MemberCard.DEFAULT_PHOTO;
+
+    /** The member's role. */
+    public WebCreds.Role role;
 
     /** A member provided profile status. */
     public String headline;
