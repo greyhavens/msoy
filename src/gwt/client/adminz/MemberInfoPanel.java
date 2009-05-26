@@ -92,6 +92,9 @@ public class MemberInfoPanel extends SmartTable
         row = addText("Account name:", 1, "Label");
         setText(row, 1, info.accountName);
 
+        row = addText("Validated?:", 1, "Label");
+        setText(row, 1, String.valueOf(info.validated));
+
         row = addText("Perma name:", 1, "Label");
         setText(row, 1, info.permaName == null ? "" : info.permaName);
 

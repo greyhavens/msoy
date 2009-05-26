@@ -132,34 +132,7 @@ public class Session
 
         // update our cached credentials
         CShell.creds.accountName = address;
-
-        // update our role (if appropriate)
-        if (validated) {
-            switch (CShell.creds.role) {
-            case PERMAGUEST: break; // bogosity!
-            case REGISTERED:
-                CShell.creds.role = WebCreds.Role.VALIDATED;
-                break;
-            case VALIDATED:
-            case SUPPORT:
-            case ADMIN:
-            case MAINTAINER:
-                break; // leave them as is
-            }
-
-        } else {
-            switch (CShell.creds.role) {
-            case PERMAGUEST: break; // bogosity!
-            case REGISTERED: break; // bogosity!
-            case VALIDATED:
-                CShell.creds.role = WebCreds.Role.REGISTERED;
-                break;
-            case SUPPORT:
-            case ADMIN:
-            case MAINTAINER:
-                break; // leave them as is
-            }
-        }
+        CShell.creds.validated = validated;
     }
 
     /**

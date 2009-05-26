@@ -72,12 +72,12 @@ public class CShell
     }
 
     /**
-     * Returns true if we are a registered user with a validated email address or "greater", false
+     * Returns true if we are a registered user with a validated email address, false
      * if we're a guest, permaguest or a registered member with an unvalidated email address.
      */
     public static boolean isValidated ()
     {
-        return (creds != null) && creds.isValidated();
+        return (creds != null) && creds.validated;
     }
 
     /**

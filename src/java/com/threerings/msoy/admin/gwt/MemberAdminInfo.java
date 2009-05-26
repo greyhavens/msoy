@@ -23,6 +23,9 @@ public class MemberAdminInfo
     /** This member's account name. */
     public String accountName;
 
+    /** Is this member's email address validated? */
+    public boolean validated;
+
     /** This member's perma name. */
     public String permaName;
 

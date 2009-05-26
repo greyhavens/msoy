@@ -19,7 +19,7 @@ public class WebCreds implements IsSerializable
 {
     /** This user's role. Each successive role has more privileges than the last. */
     public static enum Role {
-        PERMAGUEST, REGISTERED, VALIDATED, SUBSCRIBER, SUPPORT, ADMIN, MAINTAINER
+        PERMAGUEST, REGISTERED, SUBSCRIBER, SUPPORT, ADMIN, MAINTAINER
     };
 
     /** Our session token. */
@@ -27,6 +27,9 @@ public class WebCreds implements IsSerializable
 
     /** The name used to authenticate this account. */
     public String accountName;
+
+    /** Is this user's email address validated? */
+    public boolean validated;
 
     /** Our member name and id. */
     public MemberName name;
@@ -52,17 +55,21 @@ public class WebCreds implements IsSerializable
             return null;
         }
         return new WebCreds(
-            data.next(), data.next(), new MemberName(data.next(), Integer.valueOf(data.next())),
+            data.next(), data.next(), Boolean.valueOf(data.next()),
+            new MemberName(data.next(), Integer.valueOf(data.next())),
             data.next(), Role.valueOf(data.next()));
     }
 
     /**
      * Creates a configured web creds instance.
      */
-    public WebCreds (String token, String accountName, MemberName name, String permaName, Role role)
+    public WebCreds (
+        String token, String accountName, boolean validated,
+        MemberName name, String permaName, Role role)
     {
         this.token = token;
         this.accountName = accountName;
+        this.validated = validated;
         this.name = name;
         this.permaName = permaName;
         this.role = role;
@@ -73,7 +80,7 @@ public class WebCreds implements IsSerializable
      */
     public WebCreds ()
     {
-        this(null, null, null, null, null);
+        this(null, null, false, null, null, null);
     }
 
     /**
@@ -98,14 +105,6 @@ public class WebCreds implements IsSerializable
     public boolean isRegistered ()
     {
         return roleAtLeast(Role.REGISTERED);
-    }
-
-    /**
-     * Returns true if this user is a validated member (or better).
-     */
-    public boolean isValidated ()
-    {
-        return roleAtLeast(Role.VALIDATED);
     }
 
     /**
@@ -148,10 +147,11 @@ public class WebCreds implements IsSerializable
         List<String> data = new ArrayList<String>();
         data.add(token);
         data.add(accountName);
+        data.add(String.valueOf(validated));
         data.add(name.toString());
         data.add(String.valueOf(name.getMemberId()));
         data.add(permaName);
-        data.add(role.toString());
+        data.add(String.valueOf(role));
         return data;
     }
 
@@ -160,7 +160,8 @@ public class WebCreds implements IsSerializable
      */
     public String toString ()
     {
-        return "[auth=" + accountName + ", name=" + name + ", pname=" + permaName +
+        return "[auth=" + accountName + ", validated=" + validated +
+            ", name=" + name + ", pname=" + permaName +
             ", token=" + token + ", role=" + role + "]";
     }
 

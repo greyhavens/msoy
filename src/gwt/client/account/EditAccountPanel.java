@@ -142,7 +142,7 @@ public class EditAccountPanel extends FlowPanel
 
         // the second row informs of their validation status and allows resend of validation email
         table.setText(1, 0, _msgs.editEmailValid(), 1, "rightLabel");
-        if (CShell.creds.isValidated()) {
+        if (CShell.creds.validated) {
             table.setText(1, 1, _msgs.editEmailIsValid(), 2, null);
         } else {
             table.setText(1, 1, _msgs.editEmailNotValid(), 2, "Warning");

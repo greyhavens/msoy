@@ -114,6 +114,7 @@ public class AdminServlet extends MsoyServiceServlet
         final MemberAdminInfo info = new MemberAdminInfo();
         info.name = tgtrec.getName();
         info.accountName = tgtrec.accountName;
+        info.validated = tgtrec.isValidated();
         info.permaName = tgtrec.permaName;
         if (tgtrec.isSet(MemberRecord.Flag.MAINTAINER)) {
             info.role = WebCreds.Role.MAINTAINER;
@@ -121,8 +122,8 @@ public class AdminServlet extends MsoyServiceServlet
             info.role = WebCreds.Role.ADMIN;
         } else if (tgtrec.isSet(MemberRecord.Flag.SUPPORT)) {
             info.role = WebCreds.Role.SUPPORT;
-        } else if (tgtrec.isSet(MemberRecord.Flag.VALIDATED)) {
-            info.role = WebCreds.Role.VALIDATED;
+        } else if (tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER)) {
+            info.role = WebCreds.Role.SUBSCRIBER;
         } else {
             info.role = WebCreds.Role.REGISTERED;
         }
@@ -167,7 +168,11 @@ public class AdminServlet extends MsoyServiceServlet
         // log this as a warning so that it shows up in the nightly filtered logs
         log.warning("Configuring role", "setter", memrec.who(), "target", tgtrec.who(),
                     "role", role);
-        tgtrec.setFlag(MemberRecord.Flag.VALIDATED, role != WebCreds.Role.REGISTERED);
+        if (role == WebCreds.Role.SUBSCRIBER) {
+            // maybe we want a FREEBIE_SUBSCRIBER Role
+            log.warning("Making user a subscriber! This is will never be reset.", new Exception());
+        }
+        tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER, role == WebCreds.Role.SUBSCRIBER);
         tgtrec.setFlag(MemberRecord.Flag.SUPPORT, role == WebCreds.Role.SUPPORT);
         if (memrec.isMaintainer()) {
             tgtrec.setFlag(MemberRecord.Flag.ADMIN, role == WebCreds.Role.ADMIN);
