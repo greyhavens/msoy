@@ -598,8 +598,8 @@ public class GameServlet extends MsoyServiceServlet
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        // verify that the member in question created the game or is an admin
-        if (grec.creatorId != mrec.memberId && !mrec.isAdmin()) {
+        // verify that the member in question created the game or is support+
+        if (grec.creatorId != mrec.memberId && !mrec.isSupport()) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         return grec;
