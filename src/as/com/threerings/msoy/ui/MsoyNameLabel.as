@@ -85,18 +85,12 @@ public class MsoyNameLabel extends Sprite
 
         if (away) {
             _label.textColor = 0xFFFF77;
+        } if (status == OccupantInfo.IDLE) {
+            _label.textColor = 0x777777;
+        } else if (status == OccupantInfo.DISCONNECTED) {
+            _label.textColor = 0x80803C;
         } else {
-            switch (status) {
-            case OccupantInfo.IDLE:
-                _label.textColor = 0x777777;
-                break;
-            case OccupantInfo.DISCONNECTED:
-                _label.textColor = 0x80803C;
-                break;
-            default:
-                _label.textColor = 0x99BFFF;
-                break;
-            }
+            _label.textColor = 0x99BFFF;
         }
 
         // turn on or off italicizing.
