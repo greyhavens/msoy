@@ -15,16 +15,15 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.depot.PersistenceContext;
+import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.Logger;
 import com.samskivert.util.RunQueue;
+import com.samskivert.util.SignalUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.presents.server.SunSignalHandler;
-import com.threerings.presents.server.NativeSignalHandler;
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 import com.threerings.presents.peer.server.persist.NodeRepository;
@@ -40,7 +39,6 @@ import static com.threerings.msoy.Log.log;
  * Operates a bureau launcher client for an msoy server.
  */
 public class BureauLauncher
-    implements Lifecycle.ShutdownComponent
 {
     /** Guice module for bureau launcher. */
     public static class Module extends AbstractModule
@@ -57,7 +55,6 @@ public class BureauLauncher
                 new PersistenceContext("msoy", provider, null));
             bind(RunQueue.class).annotatedWith(EventQueue.class).toInstance(_runner);
             bind(Runner.class).toInstance(_runner);
-            bind(Lifecycle.class).toInstance(new Lifecycle());
         }
 
         @EventQueue
@@ -150,28 +147,23 @@ public class BureauLauncher
     public static void main (String[] args)
     {
         Injector injector = Guice.createInjector(new Module());
-
-        // register SIGTERM, SIGINT (ctrl-c) and a SIGHUP handlers
-        boolean registered = false;
-        try {
-            registered = injector.getInstance(SunSignalHandler.class).init();
-        } catch (Throwable t) {
-            log.warning("Unable to register signal handlers", t);
-        }
-        if (!registered) {
-            injector.getInstance(NativeSignalHandler.class).init();
-        }
-
         BureauLauncher launcher = injector.getInstance(BureauLauncher.class);
         launcher.run();
     }
 
-    /**
-     * Creates a new bureau launcher.
-     */
-    @Inject public BureauLauncher (Lifecycle cycle)
+    public BureauLauncher ()
     {
-        cycle.addComponent(this);
+        // register SIGTERM and SIGINT (ctrl-c) handlers
+        SignalUtil.register(SignalUtil.Number.TERM, new SignalUtil.Handler() {
+            public void signalReceived (SignalUtil.Number sig) {
+                queueShutdown();
+            }
+        });
+        SignalUtil.register(SignalUtil.Number.INT, new SignalUtil.Handler() {
+            public void signalReceived (SignalUtil.Number sig) {
+                queueShutdown();
+            }
+        });
     }
 
     /**
@@ -259,7 +251,6 @@ public class BureauLauncher
         shutdown();
     }
 
-    // from Lifecycle.ShutdownComponent
     public void shutdown ()
     {
         log.info("Shutting down bureau launcher");
@@ -341,6 +332,15 @@ public class BureauLauncher
         } catch (Exception e) {
             log.warning("Could not load nodes", e);
         }
+    }
+
+    protected void queueShutdown ()
+    {
+        _runner.postRunnable(new Runnable() {
+            public void run () {
+                shutdown();
+            }
+        });
     }
 
     protected void printSummary ()
