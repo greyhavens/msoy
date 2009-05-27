@@ -112,6 +112,15 @@ public class MemberSprite extends ActorSprite
         return true;
     }
 
+    // from OccupantSprite
+    override protected function isNameChangeRequired (oldInfo :OccupantInfo,
+                                                      newInfo :OccupantInfo) :Boolean
+    {
+        return super.isNameChangeRequired(oldInfo, newInfo) || // is true if oldInfo == null
+            MemberInfo(oldInfo).isAway() != MemberInfo(newInfo).isAway();
+    }
+
+    // from OccupantSprite
     override protected function getSpecialProperty (name :String) :Object
     {
         switch (name) {
