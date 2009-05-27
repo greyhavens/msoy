@@ -160,7 +160,7 @@ public class ParlorGameLiaison extends GameLiaison
     // from interface GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid);
+        _wctx.getGameDirector().enterGame(_gameId, gameOid);
         return true;
     }
 

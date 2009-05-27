@@ -468,15 +468,6 @@ public class GameDirector extends BasicDirector
         }
     }
 
-    /**
-     * Lets the world controller know that our game is now ready to enter, possibly resulting
-     * in a browser url change.
-     */
-    public function dispatchGameReady (gameId :int, gameOid :int) :void
-    {
-        _wctx.getWorldController().handleGoGame(gameId, gameOid);
-    }
-
     // from BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
     {

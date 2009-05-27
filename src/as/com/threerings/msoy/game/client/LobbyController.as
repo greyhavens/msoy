@@ -245,7 +245,7 @@ public class LobbyController extends Controller
             _mctx.getPartyDirector().joinParty(tablePartyId);
 
         } else if (table.gameOid != -1) {
-            _mctx.getGameDirector().dispatchGameReady(_lobj.game.gameId, table.gameOid);
+            _mctx.getGameDirector().enterGame(_lobj.game.gameId, table.gameOid);
 
         } else {
             _tableDir.joinTable(tableId, position);
