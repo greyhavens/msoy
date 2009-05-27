@@ -62,10 +62,9 @@ public class MeFriendsPanel extends FlowPanel
     {
         add(MsoyUI.createLabel(_msgs.nextNoFriends(), "TitleSub"));
 
-        Widget imageLink = Link.createImage(
-            "/images/me/me_invite_friends.png", _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
+        Widget imageLink = Link.createImage("/images/me/me_invite_friends.png",
+                                            _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
         imageLink.addStyleName("Invite");
-        MsoyUI.addTrackingHandler(((HasClickHandlers)imageLink), "meInviteFriends", null);
         add(imageLink);
 
         add(MsoyUI.createLabel(_msgs.nextOr(), "Or"));

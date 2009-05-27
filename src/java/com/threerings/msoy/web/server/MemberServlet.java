@@ -30,6 +30,7 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.person.server.persist.GameInvitationRecord;
 import com.threerings.msoy.person.server.persist.InvitationRecord;
 import com.threerings.msoy.person.server.persist.InviteRepository;
@@ -287,22 +288,6 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public int getABTestGroup (VisitorInfo info, String testName, boolean logEvent)
-    {
-        return _memberLogic.getABTestGroup(testName, info, logEvent);
-    }
-
-    // from WebMemberService
-    public void logLandingABTestGroup (VisitorInfo info, String testName, int group)
-    {
-        int realGroup = _memberLogic.getABTestGroup(testName, info, true);
-        if (realGroup != group) {
-            log.warning("Funky, the client landing group is different from the server",
-                "test", testName, "client", group, "server", realGroup);
-        }
-    }
-
-    // from WebMemberService
     public void noteNewVisitor (VisitorInfo info, String page)
         throws ServiceException
     {
@@ -310,34 +295,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public void trackClientAction (VisitorInfo info, String actionName, String details)
+    public int getABTestGroup (VisitorInfo info, String testName, boolean logEvent)
     {
-        if (info == null) {
-            log.warning("Failed to log client action with null visitorInfo", "name", actionName);
-            return;
-        }
-        _eventLog.clientAction(info.id, actionName, details);
+        return _testLogic.getABTestGroup(testName, info, logEvent);
     }
 
     // from WebMemberService
-    public void trackTestAction (VisitorInfo info, String actionName, String testName)
+    public void logLandingABTestGroup (VisitorInfo info, String test, int group)
     {
-        if (info == null) {
-            log.warning(
-                "Failed to log test action with null visitorInfo", "actionName", actionName);
-            return;
+        int realGroup = _testLogic.getABTestGroup(test, info, true);
+        if (realGroup != group) {
+            log.warning("Funky, the client landing group is different from the server",
+                        "test", test, "client", group, "server", realGroup);
         }
-        int abTestGroup = -1;
-        if (testName != null) {
-            // grab the group without logging a tracking event about it
-            abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
-        } else {
-            testName = "";
-        }
-        _eventLog.testAction(info.id, actionName, testName, abTestGroup);
+    }
+
+    // from WebMemberService
+    public void trackTestAction (String test, String action, VisitorInfo info)
+    {
+        _testLogic.trackTestAction(test, action, info);
     }
 
     // our dependencies
+    @Inject protected ABTestLogic _testLogic;
     @Inject protected FriendManager _friendMan;
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MemberLogic _memberLogic;

@@ -133,6 +133,13 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Notes that a brand new visitor has arrived at our website. We try to catch this before GWT
+     * is fired up, but if we can't do that for some reason, GWT will pick up the ball.
+     */
+    void noteNewVisitor (VisitorInfo info, String pageToken)
+        throws ServiceException;
+
+    /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
     int getABTestGroup (VisitorInfo info, String testName, boolean logEvent)
@@ -145,22 +152,8 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Notes that a brand new visitor has arrived at our website. We try to catch this before GWT
-     * is fired up, but if we can't do that for some reason, GWT will pick up the ball.
+     * Reports that the user took an A/B test action.
      */
-    void noteNewVisitor (VisitorInfo info, String pageToken)
-        throws ServiceException;
-
-    /**
-     * Generic method for tracking a client-side action such as clicking a button.
-     */
-    void trackClientAction (VisitorInfo info, String actionName, String details)
-        throws ServiceException;
-
-    /**
-     * Tracking a client-side action such as clicking a button during an a/b test.  If testName
-     * is supplied, the visitor's a/b test group will also be tracked.
-     */
-    void trackTestAction (VisitorInfo info, String actionName, String testName)
+    void trackTestAction (String test, String action, VisitorInfo info)
         throws ServiceException;
 }

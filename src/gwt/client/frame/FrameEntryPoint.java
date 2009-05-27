@@ -440,16 +440,10 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void reportClientAction (String test, String action, String details)
+    public void reportTestAction (String test, String action)
     {
-        if (test == null) {
-            CShell.log("Reporting tracking action", "action", action, "details", details);
-            _membersvc.trackClientAction(
-                getVisitorInfo(), action, details, new NoopAsyncCallback());
-        } else {
-            CShell.log("Reporting test action", "test", test, "action", action);
-            _membersvc.trackTestAction(getVisitorInfo(), action, test, new NoopAsyncCallback());
-        }
+        CShell.log("Reporting test action", "test", test, "action", action);
+        _membersvc.trackTestAction(test, action, getVisitorInfo(), new NoopAsyncCallback());
     }
 
     protected void setPage (Pages page)
@@ -622,7 +616,6 @@ public class FrameEntryPoint
             if (action.equals("j")) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
                     "&gameRoomId=" + otherId2;
-                reportClientAction(null, "2009-02 game invite accepted", "gameId=" + config.gameId);
             } else {
                 args += "&gameRoomId=" + config.sceneId;
             }
@@ -640,7 +633,6 @@ public class FrameEntryPoint
             // "j" is from a game invite
             } else if (action.equals("j")) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
-                reportClientAction(null, "2009-02 game invite accepted", "gameId=" + config.gameId);
 
             // everything else ("p", "pc" and "i" and legacy codes) means 'play now'
             } else if (otherId1 != 0) {
@@ -743,8 +735,8 @@ public class FrameEntryPoint
             return _activeInvite == null ? null : _activeInvite.flatten().toArray(new String[0]);
         case GET_VISITOR_INFO:
             return getVisitorInfo().flatten().toArray(new String[0]);
-        case CLIENT_ACTION:
-            reportClientAction(args[0], args[1], args[2]);
+        case TEST_ACTION:
+            reportTestAction(args[0], args[1]);
             return null;
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");

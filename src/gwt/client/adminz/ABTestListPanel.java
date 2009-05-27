@@ -18,13 +18,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
-import client.shell.CShell;
-import client.shell.ShellMessages;
 import client.ui.MsoyUI;
-import client.util.InfoCallback;
+import client.util.PageCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -35,92 +31,44 @@ public class ABTestListPanel extends FlowPanel
     public ABTestListPanel ()
     {
         setStyleName("abTestListPanel");
-        refresh();
+        add(MsoyUI.createNowLoading());
+        _adminsvc.getABTests(new PageCallback<List<ABTest>>(this) {
+            public void onSuccess (List<ABTest> tests) {
+                init(tests);
+            }
+        });
     }
 
-    /**
-     * Fetch and display a list of all tests with the newest tests at the top.
-     */
-    public void refresh ()
+    protected void init (List<ABTest> tests)
     {
         clear();
-        Button createButton = new Button(_msgs.abTestCreateNew());
-        createButton.addClickHandler(new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                new ABTestEditorDialog(null, ABTestListPanel.this).show();
-            }
-        });
-        add(createButton);
-
-        add(_contents = new SmartTable("Tests", 10, 0));
-
-        _adminsvc.getABTests(new InfoCallback<List<ABTest>>() {
-            public void onSuccess (List<ABTest> tests) {
-                displayTests(tests);
-            }
-        });
-    }
-
-    /**
-     * Print a table with one test per row
-     */
-    protected void displayTests (List<ABTest> tests)
-    {
         if (tests.size() == 0) {
-            _contents.setText(0, 0, "No tests");
+            add(MsoyUI.createLabel("No tests", "infoLabel"));
             return;
         }
 
+        SmartTable contents = new SmartTable("Tests", 10, 10);
+        add(contents);
+
         // header row
         int col = 0;
-        _contents.setWidget(0, col++, new Label(_msgs.abTestName()));
-        _contents.setWidget(0, col++, new Label(_msgs.abTestEnabled()));
-        _contents.setWidget(0, col++, new Label(_msgs.abTestStarted()));
-        _contents.setWidget(0, col++, new Label(_msgs.abTestEnded()));
-        _contents.setWidget(0, col++, new Label(""));
-        _contents.getRowFormatter().addStyleName(0, "Header");
+        contents.setText(0, col++, _msgs.abTestName());
+        contents.setText(0, col++, _msgs.abTestEnabled());
+        contents.setText(0, col++, _msgs.abTestStarted());
+        contents.setText(0, col++, _msgs.abTestEnded());
+        contents.getRowFormatter().addStyleName(0, "Header");
 
         for (final ABTest test : tests) {
-            int row = _contents.getRowCount();
+            int row = contents.getRowCount();
             col = 0;
-            _contents.setWidget(row, col++, new Label(test.name));
-            _contents.setWidget(row, col++, new Label(String.valueOf(test.enabled)));
-            _contents.setWidget(row, col++, new Label(
-                                    test.started != null ? MsoyUI.formatDate(test.started) : ""));
-            _contents.setWidget(row, col++, new Label(
-                                    test.ended != null ? MsoyUI.formatDate(test.ended) : ""));
-
-            Button editButton = new Button(_cmsgs.edit());
-            editButton.addClickHandler(new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    new ABTestEditorDialog(test, ABTestListPanel.this).show();
-                }
-            });
-
-            ClickHandler onClick = new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    _membersvc.getABTestGroup(CShell.frame.getVisitorInfo(), test.name, true,
-                                              new InfoCallback<Integer>() {
-                            public void onSuccess (Integer group) {
-                                MsoyUI.info("You are in group #" + group);
-                            }
-                    });
-                }
-            };
-            onClick = MsoyUI.makeTestTrackingHandler(
-                test.name, "ClickedTestButton_"+test.name, onClick);
-            _contents.setWidget(
-                row, col++, MsoyUI.createButtonPair(editButton, new Button("Test", onClick)));
-
+            contents.setText(row, col++, test.name);
+            contents.setText(row, col++, ""+test.enabled);
+            contents.setText(row, col++, MsoyUI.formatDate(test.started));
+            contents.setText(row, col++, MsoyUI.formatDate(test.ended));
         }
     }
 
-    protected FlexTable _contents;
-
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

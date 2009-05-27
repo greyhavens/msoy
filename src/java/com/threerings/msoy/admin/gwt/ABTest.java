@@ -12,63 +12,30 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class ABTest implements IsSerializable
 {
-    /** Id. */
+    /** The maximum length for a test name. */
+    public static final int MAX_NAME_LENGTH = 50;
+
+    /** The maximum length for a test action. */
+    public static final int MAX_ACTION_LENGTH = 32;
+
+    /** A unique id for this test. */
     public int testId;
 
-    /** The unique string identifier for this test, used to reference it when switching content. */
+    /** The unique string identifier for this test. */
     public String name;
-
-    /** More detailed description of this test. */
-    public String description;
 
     /** Number of equally-sized groups for this test (2 or more) */
     public int numGroups;
 
-    /** Only add visitors to a/b groups if this is their first time on whirled */
+    /** Whether to only add visitors to A/B groups if this is their first time on Whirled. */
     public boolean onlyNewVisitors;
-
-    /** Is this test being run on the site right now? */
-    public boolean enabled;
-
-    /** The calculated date on which this test was last enabled. */
-    public Date started;
-
-    /** The calculated date on which this test was last disabled. */
-    public Date ended;
 
     /** True if the test group should be assigned to new users when they land. */
     public boolean landingCookie;
 
-    /** The maximum length for Name strings. */
-    public static final int MAX_NAME_LENGTH = 50;
-    public static final int MAX_DESCRIPTION_LENGTH = 200;
-    public static final int MAX_AFFILIATE_LENGTH = 50;
-    public static final int MAX_VECTOR_LENGTH = 50;
-    public static final int MAX_CREATIVE_LENGTH = 50;
+    /** The calculated date on which this test was first started. */
+    public Date started;
 
-    /**
-     * Constructor; set a few defaults
-     */
-    public ABTest ()
-    {
-        onlyNewVisitors = true;
-        numGroups = 2;
-    }
-
-    /**
-     * Throw an error if there is a problem with any of the test data.
-     */
-    public void validate ()
-        throws Exception
-    {
-        if (name == null || name.length() == 0) {
-            throw new Exception("No name entered.");
-        }
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new Exception("Name can be " + MAX_NAME_LENGTH + " characters max");
-        }
-        if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
-            throw new Exception("Description can be " + MAX_DESCRIPTION_LENGTH + " characters max");
-        }
-    }
+    /** The calculated date on which this test ended. */
+    public Date ended;
 }

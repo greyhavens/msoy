@@ -92,19 +92,8 @@ public class MsoyMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #trackClientAction} requests. */
-    public static final int TRACK_CLIENT_ACTION = 7;
-
-    // from interface MsoyService
-    public void trackClientAction (Client arg1, String arg2, String arg3)
-    {
-        sendRequest(arg1, TRACK_CLIENT_ACTION, new Object[] {
-            arg2, arg3
-        });
-    }
-
     /** The method id used to dispatch {@link #trackTestAction} requests. */
-    public static final int TRACK_TEST_ACTION = 8;
+    public static final int TRACK_TEST_ACTION = 7;
 
     // from interface MsoyService
     public void trackTestAction (Client arg1, String arg2, String arg3)

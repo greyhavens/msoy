@@ -3,18 +3,23 @@
 
 package com.threerings.msoy.admin.server.persist;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ValueExp;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -26,38 +31,20 @@ import com.threerings.msoy.admin.gwt.ABTest;
 @Singleton @BlockingThread
 public class ABTestRepository extends DepotRepository
 {
-    @Inject public ABTestRepository (PersistenceContext perCtx)
+    @Inject public ABTestRepository (PersistenceContext ctx)
     {
-        super(perCtx);
+        super(ctx);
 
-        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "affiliate"));
-        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "vector"));
-        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "creative"));
-
-        // These were once Date and were changed to Timestamp, MySQL treats the 2 types differently
-        _ctx.registerMigration(ABTestRecord.class,
-            new SchemaMigration.Retype(7, ABTestRecord.STARTED));
-        _ctx.registerMigration(ABTestRecord.class,
-            new SchemaMigration.Retype(7, ABTestRecord.ENDED));
-
-        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(9, "abTestId"));
+        ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(10, "enabled"));
+        ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(10, "description"));
     }
 
     /**
-     * Loads all test information with newest tests first
+     * Loads all test information with newest tests first.
      */
     public List<ABTestRecord> loadTests ()
     {
         return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.TEST_ID));
-    }
-
-    /**
-     * Loads up all tests that are enabled and require a cookie to be assigned on landing.
-     */
-    public List<ABTestRecord> loadTestsWithLandingCookies ()
-    {
-        return findAll(ABTestRecord.class,
-                       new Where(new Logic.And(ABTestRecord.ENABLED, ABTestRecord.LANDING_COOKIE)));
     }
 
     /**
@@ -71,26 +58,73 @@ public class ABTestRepository extends DepotRepository
     /**
      * Inserts the supplied record into the database.
      */
-    public void insertABTest (ABTest test)
+    public void createTest (ABTestRecord test)
     {
-        ABTestRecord record = new ABTestRecord();
-        record.fromABTest(test);
-        insert(record);
+        test.started = new Timestamp(System.currentTimeMillis());
+        insert(test);
     }
 
     /**
-     * Updates the supplied record in the database.
+     * Notes the group to which the specified visitor was assigned for the specified test.
      */
-    public void updateABTest (ABTest test)
+    public void noteABGroup (int testId, String visitorId, int group)
     {
-        ABTestRecord record = new ABTestRecord();
-        record.fromABTest(test);
-        update(record);
+        // load and store to avoid doing a write after the first time this method is called; it
+        // will be called every time the client does whatever triggers the A/B group assignment
+        if (load(ABGroupRecord.class, ABGroupRecord.getKey(testId, visitorId)) == null) {
+            ABGroupRecord record = new ABGroupRecord();
+            record.testId = testId;
+            record.visitorId = visitorId;
+            record.group = group;
+            store(record);
+        }
+
+        // TODO: what's more efficient? trying to do the write and having it fail with a DKE or
+        // reading first and then writing? how is this impacted by read slaves, writes always go to
+        // the master, reads can talk to a slave and avoid talking to the master at all...
+    }
+
+    /**
+     * Notes that the specified visitor took the specified action in the specified test.
+     */
+    public void noteABAction (int testId, String visitorId, String action)
+    {
+        try {
+            ABActionRecord record = new ABActionRecord();
+            record.testId = testId;
+            record.visitorId = visitorId;
+            record.action = action;
+            insert(record);
+        } catch (DuplicateKeyException dke) {
+            // not a problem, they can take each action up to once
+        }
+    }
+
+    /**
+     * Ends any tests that are not already marked as ended and are not in the supplied set of
+     * active tests. Summarizes the data for those tests and purges the raw data.
+     */
+    public void endAndSummarizeTests (Set<Integer> activeIds)
+    {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        int mods = updateLiteral(
+            ABTestRecord.class, new Where(
+                new Logic.And(new Conditionals.IsNull(ABTestRecord.ENDED),
+                              new Logic.Not(new Conditionals.In(ABTestRecord.TEST_ID, activeIds)))),
+            null, ImmutableMap.of(ABTestRecord.ENDED, new ValueExp(now)));
+        if (mods == 0) {
+            // if we modded no rows, either there's nothing to summarize or another server is on it
+            return;
+        }
+
+        // TODO: summarize
     }
 
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(ABTestRecord.class);
+        classes.add(ABGroupRecord.class);
+        classes.add(ABActionRecord.class);
     }
 }

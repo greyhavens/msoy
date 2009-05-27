@@ -71,12 +71,6 @@ public class MsoyDispatcher extends InvocationDispatcher<MsoyMarshaller>
             );
             return;
 
-        case MsoyMarshaller.TRACK_CLIENT_ACTION:
-            ((MsoyProvider)provider).trackClientAction(
-                source, (String)args[0], (String)args[1]
-            );
-            return;
-
         case MsoyMarshaller.TRACK_TEST_ACTION:
             ((MsoyProvider)provider).trackTestAction(
                 source, (String)args[0], (String)args[1]

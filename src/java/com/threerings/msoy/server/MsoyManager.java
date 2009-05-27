@@ -30,15 +30,13 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.MemberLocal;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.util.ServiceUnit;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
+import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.web.gwt.Args;
@@ -103,13 +101,13 @@ public class MsoyManager
     }
 
     // from interface MemberProvider
-    public void getABTestGroup (final ClientObject caller, final String testName,
-        final boolean logEvent, final InvocationService.ResultListener listener)
+    public void getABTestGroup (ClientObject caller, final String test, final boolean logEvent,
+                                InvocationService.ResultListener listener)
     {
         final VisitorInfo vinfo = ((MemberObject)caller).visitorInfo;
         _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
             @Override public void invokePersistent () throws Exception {
-                _testGroup = _memberLogic.getABTestGroup(testName, vinfo, logEvent);
+                _testGroup = _testLogic.getABTestGroup(test, vinfo, logEvent);
             }
             @Override public void handleSuccess () {
                 reportRequestProcessed(_testGroup);
@@ -119,43 +117,12 @@ public class MsoyManager
     }
 
     // from interface MemberProvider
-    public void trackClientAction (final ClientObject caller, final String actionName,
-        final String details)
-    {
-        final MemberObject memObj = (MemberObject) caller;
-        if (memObj.visitorInfo == null) {
-            log.warning("Failed to log client action with null visitorInfo", "caller", caller.who(),
-                        "actionName", actionName);
-            return;
-        }
-        _eventLog.clientAction(memObj.getVisitorId(), actionName, details);
-    }
-
-    // from interface MemberProvider
-    public void trackTestAction (final ClientObject caller, final String actionName,
-        final String testName)
+    public void trackTestAction (ClientObject caller, final String test, final String action)
     {
         final VisitorInfo vinfo = ((MemberObject) caller).visitorInfo;
-        final String visitorId =  ((MemberObject) caller).getVisitorId();
-        if (vinfo == null) {
-            log.warning("Failed to log test action with null visitorInfo", "caller", caller.who(),
-                        "actionName", actionName);
-            return;
-        }
-
-        _invoker.postUnit(new Invoker.Unit("getABTestGroup") {
-            @Override public boolean invoke () {
-                int abTestGroup = -1;
-                String actualTestName;
-                if (testName != null) {
-                    // grab the group without logging a tracking event about it
-                    abTestGroup = _memberLogic.getABTestGroup(testName, vinfo, false);
-                    actualTestName = testName;
-                } else {
-                    actualTestName = "";
-                }
-                _eventLog.testAction(visitorId, actionName, actualTestName, abTestGroup);
-                return false;
+        _invoker.postUnit(new WriteOnlyUnit("trackTestAction") {
+            @Override public void invokePersist () throws Exception {
+                _testLogic.trackTestAction(test, action, vinfo);
             }
         });
     }
@@ -277,9 +244,9 @@ public class MsoyManager
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ABTestLogic _testLogic;
     @Inject protected ChatProvider _chatprov;
     @Inject protected MailSender _mailer;
-    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyRepository _moneyRepo;

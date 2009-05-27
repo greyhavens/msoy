@@ -39,7 +39,6 @@ public class UpsellDirector extends BasicDirector
             _timer.stop();
             _locType = 0;
             _shown = {};
-            _clicked = {};
         }
     }
 
@@ -94,37 +93,14 @@ public class UpsellDirector extends BasicDirector
                 Util.keys(Msgs.GENERAL.getAllMapped(key))) as String;
             if (actualKey != null) {
                 // we're doing it, we're actually showing something!
-                var msg :String = Msgs.GENERAL.get(actualKey,
-                    String(placeInfo[1]), String(placeInfo[2]));
-
-                // TODO: someday not track every little piece of spaz?
-                var clientAction :String = "2009_03_upsell_" + actualKey;
-                var clickedTracker :Function = function () :void {
-                    // only track the click once
-                    if (!Boolean(_clicked[key])) {
-                        _mctx.getMsoyClient().trackClientAction(clientAction + "_clicked", null);
-                        _clicked[key] = true;
-                    }
-                };
-
+                var msg :String = Msgs.GENERAL.get(
+                    actualKey, String(placeInfo[1]), String(placeInfo[2]));
                 if (isNotif) {
                     _mctx.getNotificationDirector().addGenericNotification(
-                        MessageBundle.taint(msg), Notification.SYSTEM, null, clickedTracker);
+                        MessageBundle.taint(msg), Notification.SYSTEM, null, null);
                 } else {
-                    var shareBtn :DisplayObject = _mctx.getControlBar().shareBtn;
-                    BubblePopup.showHelpBubble(_mctx, shareBtn, msg, -7);
-                    if (_shareTracker != null) {
-                        // only track one at a time, brah
-                        shareBtn.removeEventListener(MouseEvent.CLICK, _shareTracker);
-                    }
-                    _shareTracker = function (mevent :MouseEvent) :void {
-                        clickedTracker(); // we're just adapting
-                    };
-                    shareBtn.addEventListener(MouseEvent.CLICK, _shareTracker, false, 1);
+                    BubblePopup.showHelpBubble(_mctx, _mctx.getControlBar().shareBtn, msg, -7);
                 }
-
-                // and record that we've shown it
-                _mctx.getMsoyClient().trackClientAction(clientAction + "_shown", null);
                 _shown[key] = true; // we've shown the key, plug it up for all variations
                 break; // we did it
             }
@@ -132,7 +108,6 @@ public class UpsellDirector extends BasicDirector
     }
 
     protected var _mctx :MsoyContext;
-
     protected var _timer :Timer = new Timer(60 * 1000);
 
     /** 0 = none, 1 = game, 2 = scene. Doesn't really matter, really, we just track transitions. */
@@ -140,9 +115,5 @@ public class UpsellDirector extends BasicDirector
 
     /** Contains keys that have already been shown. */
     protected var _shown :Object = {};
-
-    protected var _clicked :Object = {};
-
-    protected var _shareTracker :Function;
 }
 }

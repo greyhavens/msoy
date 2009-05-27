@@ -308,16 +308,13 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         _invoker.postUnit(new ServiceUnit("inviteToBeFriend", listener) {
-            boolean autoFriended;
             @Override public void invokePersistent () throws Exception {
-                autoFriended = _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
+                _autoFriended = _memberLogic.inviteToBeFriend(user.getMemberId(), friendId);
             }
             @Override public void handleSuccess () {
-                reportRequestProcessed(autoFriended);
-                if (autoFriended) {
-                    _msoyMan.trackClientAction(caller, "autoFriendedFlashClient", null);
-                }
+                reportRequestProcessed(_autoFriended);
             }
+            protected boolean _autoFriended;
         });
     }
 

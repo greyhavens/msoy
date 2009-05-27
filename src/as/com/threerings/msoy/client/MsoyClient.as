@@ -244,10 +244,10 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      * Get the int testGroup for this visitor and return it in the listener.
      */
     public function getABTestGroup (
-        testName :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
+        test :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
     {
         var msvc :MsoyService = requireService(MsoyService) as MsoyService;
-        msvc.getABTestGroup(this, testName, logEvent, listener);
+        msvc.getABTestGroup(this, test, logEvent, listener);
     }
 
     /**
@@ -287,30 +287,15 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
-     * Track a client action such as clicking a button
+     * Reports that the user took an action in an A/B test.
      */
-    public function trackClientAction (actionName :String, details :String) :void
+    public function trackTestAction (test :String, action :String) :void
     {
         var msvc :MsoyService = getService(MsoyService) as MsoyService;
         if (msvc != null) {
-            msvc.trackClientAction(this, actionName, details);
+            msvc.trackTestAction(this, test, action);
         } else {
-            log.warning("Dropping client action", "name", actionName, "details", details);
-        }
-    }
-
-    /**
-     * Track a test action such as clicking a button during an a/b test.  Denotes an action
-     * being tracked for the duration of an a/b test only.  trackClientAction may be used instead
-     * if we want to continue tracking the event after the test is over.
-     */
-    public function trackTestAction (actionName :String, testName :String) :void
-    {
-        var msvc :MsoyService = getService(MsoyService) as MsoyService;
-        if (msvc != null) {
-            msvc.trackTestAction(this, actionName, testName);
-        } else {
-            log.warning("Dropping test action", "name", actionName, "test", testName);
+            log.warning("Dropping test action", "test", test, "action", action);
         }
     }
 

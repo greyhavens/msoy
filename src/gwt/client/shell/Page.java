@@ -63,8 +63,8 @@ public abstract class Page
                 public void setTitle (String title) {
                     frameCall(Frame.Calls.SET_TITLE, title);
                 }
-                public void addNavLink (String label, Pages page, Args args, int position) {
-                    frameCall(Frame.Calls.ADD_NAV_LINK, label, ""+page, args.toToken(), ""+position);
+                public void addNavLink (String label, Pages page, Args args, int pos) {
+                    frameCall(Frame.Calls.ADD_NAV_LINK, label, ""+page, args.toToken(), ""+pos);
                 }
                 public void navigateTo (String token) {
                     frameCall(Frame.Calls.NAVIGATE_TO, token);
@@ -108,8 +108,8 @@ public abstract class Page
                     return VisitorInfo.unflatten(
                         ArrayUtil.toIterator(frameCall(Frame.Calls.GET_VISITOR_INFO)));
                 }
-                public void reportClientAction (String testId, String action, String details) {
-                    frameCall(Frame.Calls.CLIENT_ACTION, testId, action, details);
+                public void reportTestAction (String test, String action) {
+                    frameCall(Frame.Calls.TEST_ACTION, test, action);
                 }
             });
 
@@ -170,8 +170,8 @@ public abstract class Page
                 public VisitorInfo getVisitorInfo () {
                     return Session.frameGetVisitorInfo();
                 }
-                public void reportClientAction (String testId, String action, String details) {
-                    CShell.log("Client action", "test", testId, "action", action, "deets", details);
+                public void reportTestAction (String test, String action) {
+                    CShell.log("Test action", "test", test, "action", action);
                 }
             });
 

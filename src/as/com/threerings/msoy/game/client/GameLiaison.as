@@ -345,8 +345,8 @@ public class GameLiaison
     }
 
     /**
-     * Display a slide-down panel to guests in situations in which they otherwise
-     * wouldn't see the standard GameOverPanel.
+     * Display a slide-down panel to guests in situations in which they otherwise wouldn't see the
+     * standard GameOverPanel.
      */
     protected function displayGuestFlowEarnage (amount :int, hasCookie :Boolean) :void
     {
@@ -364,33 +364,8 @@ public class GameLiaison
             return; // we're loading it or already showing it
 
         } else {
-            var displayDefaultNote :Function = function () :void {
-                populateGuestFlowEarnage(amount,
-                    hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
-            };
-
-            // perform an A/B(/C) test on game over upsell text for guests
-            _wctx.getMsoyClient().getABTestGroup(
-                "2008 12 game over upsell 2", true, new ResultAdapter(
-                    function (group :int) :void {
-                        if (group == 2) {
-                            // group 2 sees a general whirled note
-                            populateGuestFlowEarnage(amount, "l.guest_flow_whirled_note");
-                        } else if (group == 3) {
-                            // group 3 sees one of three notes rotating in order (#0, 1 or 2)
-                            populateGuestFlowEarnage(
-                                amount, "l.guest_flow_rotate_note_" + _flowPanelNoteNext);
-                            _flowPanelNoteNext = (_flowPanelNoteNext + 1) % 3;
-                        } else {
-                            // group 1 and no_group see keep your coins &/or progress note
-                            displayDefaultNote();
-                        }
-                    },
-                    function (cause :String) :void {
-                        populateGuestFlowEarnage(amount, "l.guest_flow_note");
-                        // if something goes wrong display default note
-                        displayDefaultNote();
-                    }));
+            populateGuestFlowEarnage(
+                amount, hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
         }
     }
 

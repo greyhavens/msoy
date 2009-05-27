@@ -121,18 +121,6 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Create a new A/B Test record
-     */
-    void createTest (ABTest test)
-        throws ServiceException;
-
-    /**
-     * Update an existing A/B Test record
-     */
-    void updateTest (ABTest test)
-        throws ServiceException;
-
-    /**
      * Fetches a page of item flags from the database and some more information to display them.
      */
     ItemFlagsResult getItemFlags (int from, int count, boolean needCount)

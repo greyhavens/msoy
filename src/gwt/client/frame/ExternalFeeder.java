@@ -30,12 +30,6 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event)
     {
-        // unfortunately, there is no way to track what actually got published, or more importantly
-        // how many views a news feed item actually gets... so just track that the user was
-        // interested enough to try 
-        CShell.frame.reportClientAction(null, "2009-03 trophy publish request",
-                                  "gameId=" + event.getGameId());
-
         // select trophy text based on a pseudo test (not a real A/B test on the server); append
         // the test group to the entry vector so the results can be viewed in the entry vector
         // table

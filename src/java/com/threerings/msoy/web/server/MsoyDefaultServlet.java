@@ -17,11 +17,11 @@ import org.mortbay.jetty.EofException;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.resource.Resource;
 
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
-import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.web.gwt.ABTestCard;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.server.VisitorCookie;
 
@@ -88,8 +88,8 @@ public class MsoyDefaultServlet extends DefaultServlet
             // occurring on landing. The client will compute the group that the user is
             // assigned to when the visitor id is calculated.
             StringBuilder cookieValue = new StringBuilder();
-            for (ABTestRecord test : _abTestRepo.loadTestsWithLandingCookies()) {
-                test.toCard().flatten(cookieValue);
+            for (ABTestCard test : _testLogic.getTestsWithLandingCookies()) {
+                test.flatten(cookieValue);
             }
             rsp.addCookie(new Cookie(CookieNames.LANDING_TEST, cookieValue.toString()));
             log.info("Sending landing cookie", "value", cookieValue);
@@ -97,6 +97,6 @@ public class MsoyDefaultServlet extends DefaultServlet
     }
 
     // dependencies
-    @Inject protected ABTestRepository _abTestRepo;
+    @Inject protected ABTestLogic _testLogic;
     @Inject protected MemberLogic _memberLogic;
 }

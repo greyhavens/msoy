@@ -228,36 +228,7 @@ public class AdminServlet extends MsoyServiceServlet
     public List<ABTest> getABTests ()
         throws ServiceException
     {
-        List<ABTestRecord> records = _testRepo.loadTests();
-        final List<ABTest> tests = Lists.newArrayList();
-        for (final ABTestRecord record : records) {
-            final ABTest test = record.toABTest();
-            tests.add(test);
-        }
-        return tests;
-    }
-
-    // from interface AdminService
-    public void createTest (final ABTest test)
-        throws ServiceException
-    {
-        // make sure there isn't already a test with this name
-        if (_testRepo.loadTestByName(test.name) != null) {
-            throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
-        }
-        _testRepo.insertABTest(test);
-    }
-
-    // from interface AdminService
-    public void updateTest (final ABTest test)
-        throws ServiceException
-    {
-        // make sure there isn't already a test with this name
-        final ABTestRecord existingTest = _testRepo.loadTestByName(test.name);
-        if (existingTest != null && existingTest.testId != test.testId) {
-            throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
-        }
-        _testRepo.updateABTest(test);
+        return Lists.newArrayList(Iterables.transform(_testRepo.loadTests(), ABTestRecord.TO_TEST));
     }
 
     // from interface AdminService

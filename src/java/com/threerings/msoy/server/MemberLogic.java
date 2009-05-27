@@ -35,8 +35,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
-import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.BadgeLogic;
@@ -239,52 +237,6 @@ public class MemberLogic
     }
 
     /**
-     * Return the a/b test group that a member or visitor belongs to for a given a/b test,
-     * generated psudo-randomly based on their tracking ID and the test name.  If the visitor is
-     * not eligible for the a/b test, return < 0.
-     *
-     * @param testName String identifier for the test
-     * @param logEvent If true, track that this visitor was added to this group
-     *
-     * @return The a/b group the visitor has been assigned to, or < 0 for no group.
-     */
-    public int getABTestGroup (String testName, VisitorInfo info, boolean logEvent)
-    {
-        if (info == null) { // sanity check
-            log.warning("Received bogus AB test group request", "name", testName, "info", info,
-                        "logEvent", logEvent);
-            return -1;
-        }
-
-        ABTestRecord test = null;
-        try {
-            test = _testRepo.loadTestByName(testName);
-            if (test == null) {
-                log.warning("Unknown A/B Test in getABTestGroup", "name", testName);
-                return -1;
-            }
-        } catch (Exception e) {
-            log.warning("Failed to load A/B Test", "name", testName, e);
-            return -1;
-        }
-
-        // test is not running
-        if (test.enabled == false) {
-            return -1;
-        }
-
-        // generate the group number based on trackingID + testName
-        int group = test.toCard().getGroup(info);
-
-        // optionally log an event to say the group was assigned
-        if (logEvent && group >= 0) {
-            _eventLog.testAction(info.id, "ABTestGroupAssigned", testName, group);
-        }
-
-        return group;
-    }
-
-    /**
      * Retrieves the last of recent experiences for this member.
      */
     public List<MemberExperience> getExperiences (int memberId)
@@ -358,7 +310,7 @@ public class MemberLogic
 
     // TODO: measure the effectiveness of the HPG and reimplement more efficiently
     public HomePageItem[] getHomePageGridItems_Unhacked (
-            int memberId, final MemberExperience[] rawExperiences, boolean onTour, short badgesVersion)
+        int memberId, final MemberExperience[] rawExperiences, boolean onTour, short badgesVersion)
     {
         HomePageItem[] items = new HomePageItem[MWP_COUNT];
         int curItem = 0;
@@ -886,7 +838,6 @@ public class MemberLogic
     }
 
     // general dependencies
-    @Inject protected ABTestRepository _testRepo;
     @Inject protected BadgeLogic _badgeLogic;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;

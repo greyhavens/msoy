@@ -91,6 +91,11 @@ public interface WebMemberServiceAsync
     void getLeaderList (AsyncCallback<List<MemberCard>> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#noteNewVisitor}.
+     */
+    void noteNewVisitor (VisitorInfo info, String pageToken, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#getABTestGroup}.
      */
     void getABTestGroup (VisitorInfo info, String testName, boolean logEvent,
@@ -103,19 +108,8 @@ public interface WebMemberServiceAsync
         AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#noteNewVisitor}.
-     */
-    void noteNewVisitor (VisitorInfo info, String pageToken, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link WebMemberService#trackClientAction}.
-     */
-    void trackClientAction (VisitorInfo info, String actionName, String details,
-                            AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link WebMemberService#trackTestAction}.
      */
-    void trackTestAction (VisitorInfo info, String actionName, String testName,
+    void trackTestAction (String test, String action, VisitorInfo info,
                           AsyncCallback<Void> callback);
 }

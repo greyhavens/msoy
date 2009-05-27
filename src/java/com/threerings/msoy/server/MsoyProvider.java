@@ -50,11 +50,6 @@ public interface MsoyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MsoyService#trackClientAction} request.
-     */
-    void trackClientAction (ClientObject caller, String arg1, String arg2);
-
-    /**
      * Handles a {@link MsoyService#trackTestAction} request.
      */
     void trackTestAction (ClientObject caller, String arg1, String arg2);

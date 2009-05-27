@@ -33,9 +33,6 @@ public interface MsoyService extends InvocationService
     function setHearingGroupChat (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MsoyService
-    function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void;
-
-    // from Java interface MsoyService
     function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void;
 }
 }

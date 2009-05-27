@@ -37,15 +37,9 @@ public interface MsoyService extends InvocationService
         Client client, String testName, boolean logEvent, ResultListener listener);
 
     /**
-     * Generic method for tracking a client-side action such as clicking a button.
+     * Reports that the client took an action in the specified test.
      */
-    void trackClientAction (Client client, String actionName, String details);
-
-    /**
-     * Tracking a client-side action such as clicking a button during an a/b test.  If testName
-     * is supplied, the visitor's a/b test group will also be tracked.
-     */
-    void trackTestAction (Client client, String actionName, String testName);
+    void trackTestAction (Client client, String test, String action);
 
     /**
      * Requests a quote for sending a global broadcast. On success, the listener will receive an

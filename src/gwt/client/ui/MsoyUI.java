@@ -96,16 +96,16 @@ public class MsoyUI
 
     /**
      * Creates a label of the form "9:15am". TODO: support 24 hour time for people who go for that
-     * sort of thing.
+     * sort of thing. If date is null the empty string is returned.
      */
     public static String formatTime (Date date)
     {
-        return _tfmt.format(date).toLowerCase();
+        return (date == null) ? "" : _tfmt.format(date).toLowerCase();
     }
 
     /**
      * Formats the supplied date relative to the current time: Today, Yesterday, MMM dd, and
-     * finally MMM dd, YYYY.
+     * finally MMM dd, YYYY. If date is null the empty string is returned.
      */
     public static String formatDate (Date date)
     {
@@ -114,13 +114,17 @@ public class MsoyUI
 
     /**
      * Formats the supplied date relative to the current time: Today, Yesterday, MMM dd, and
-     * finally MMM dd, YYYY.
+     * finally MMM dd, YYYY. If date is null the empty string is returned.
      *
      * @param useShorthand if false, "Today" and "Yesterday" will not be used, only the month/day
      * and month/day/year formats.
      */
     public static String formatDate (Date date, boolean useShorthand)
     {
+        if (date == null) {
+            return "";
+        }
+
         Date now = new Date();
         if (DateUtil.getYear(date) != DateUtil.getYear(now)) {
             return _yfmt.format(date);
@@ -144,11 +148,12 @@ public class MsoyUI
     }
 
     /**
-     * Creates a label of the form "{@link #formatDate} at {@link #formatTime}".
+     * Creates a label of the form "{@link #formatDate} at {@link #formatTime}". If date is null
+     * the empty string is returned.
      */
     public static String formatDateTime (Date date)
     {
-        return _cmsgs.dateTime(formatDate(date), formatTime(date));
+        return (date == null) ? "" : _cmsgs.dateTime(formatDate(date), formatTime(date));
     }
 
     /**
@@ -555,51 +560,19 @@ public class MsoyUI
     }
 
     /**
-     * Wraps the supplied ClickHandler into a new ClickHandler that first reports a tracking
-     * action to our server-side event tracking system and then takes the desired action.
-     *
-     * @param action String identifier for the action to be logged eg "landingPlayButtonClicked"
-     * @param details Optional additional info about the action performed eg game or whirled id
-     * @param target the click handler to call once we've sent off our tracking action
-     */
-    public static ClickHandler makeTrackingHandler (
-        final String action, final String details, final ClickHandler target)
-    {
-        return new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                CShell.frame.reportClientAction(null, action, details);
-                if (target != null) {
-                    target.onClick(event);
-                }
-            }
-        };
-    }
-
-    /**
-     * Adds a tracking click handler to the supplied click target. NOTE: do not use this on a
-     * click target that will take the user to a new page. In that case you have to wrap the click
-     * handler that changes the page with a tracking handler using {@link #makeTrackingHandler}.
-     */
-    public static void addTrackingHandler (
-        HasClickHandlers target, String action, String details)
-    {
-        target.addClickHandler(makeTrackingHandler(action, details, null));
-    }
-
-    /**
      * Wraps the supplied ClickHandler into a new ClickHandler that will track an arbitrary click
      * on any widget during an a/b test and then take the desired action.
      *
-     * @param testName Optional string identifier for the a/b test if associated with one
-     * @param action String identifier for the action to be logged
-     * @param target the click handler to call once we've sent off our tracking action
+     * @param test identifier for the A/B test.
+     * @param action identifier for the action to be logged.
+     * @param target the click handler to call once we've sent off our tracking action.
      */
     public static ClickHandler makeTestTrackingHandler (
-        final String testName, final String action, final ClickHandler target)
+        final String test, final String action, final ClickHandler target)
     {
         return new ClickHandler() {
             public void onClick (ClickEvent event) {
-                CShell.frame.reportClientAction(testName, action, null);
+                CShell.frame.reportTestAction(test, action);
                 if (target != null) {
                     target.onClick(event);
                 }

@@ -111,9 +111,6 @@ public class FriendInviter
             }
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.ifriendAdded());
-                _membersvc.trackClientAction(
-                    CShell.frame.getVisitorInfo(), "autoFriended" + _callerId, null,
-                    new NoopAsyncCallback());
                 if (_success != null) {
                     _success.execute();
                 }

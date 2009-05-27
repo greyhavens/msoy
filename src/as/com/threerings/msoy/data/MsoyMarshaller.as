@@ -100,19 +100,8 @@ public class MsoyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>trackClientAction</code> requests. */
-    public static const TRACK_CLIENT_ACTION :int = 7;
-
-    // from interface MsoyService
-    public function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void
-    {
-        sendRequest(arg1, TRACK_CLIENT_ACTION, [
-            arg2, arg3
-        ]);
-    }
-
     /** The method id used to dispatch <code>trackTestAction</code> requests. */
-    public static const TRACK_TEST_ACTION :int = 8;
+    public static const TRACK_TEST_ACTION :int = 7;
 
     // from interface MsoyService
     public function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void
