@@ -34,6 +34,8 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import com.samskivert.util.Lifecycle;
+
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.pulse.web.server.PulseServlet;
 
@@ -91,12 +93,23 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class MsoyHttpServer extends Server
 {
-    @Inject public MsoyHttpServer (Injector injector)
+    @Inject public MsoyHttpServer (Injector injector, Lifecycle cycle)
     {
         // turn our servlet classes into instances with fully resolved dependencies
         for (Map.Entry<String, Class<? extends HttpServlet>> entry : SERVLETS.entrySet()) {
             _servlets.put(entry.getKey(), injector.getInstance(entry.getValue()));
         }
+
+        // stop our http server when the server shuts down
+        cycle.addComponent(new Lifecycle.ShutdownComponent() {
+            public void shutdown () {
+                try {
+                    stop();
+                } catch (Exception e) {
+                    log.warning("Failed to stop HTTP server.", e);
+                }
+            }
+        });
     }
 
     /**

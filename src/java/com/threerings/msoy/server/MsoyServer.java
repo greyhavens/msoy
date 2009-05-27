@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.RunQueue;
 
 import com.threerings.util.Name;
@@ -156,36 +157,25 @@ public class MsoyServer extends MsoyBaseServer
         }
     }
 
-    @Override
-    public void shutdown ()
-    {
-        super.shutdown();
-
-        // shut down our http server
-        try {
-            _httpServer.stop();
-        } catch (final Exception e) {
-            log.warning("Failed to stop http server.", e);
-        }
-
-        // and our policy server if one is running
-        if (_policyServer != null) {
-            _policyServer.unbindAll();
-        }
-
-        // and the message connection
-        try {
-            _messageConn.close();
-        } catch (IOException ioe) {
-            log.warning("Failed to close the connection to the messaging server.", ioe);
-        }
-    }
-
     @Override // from MsoyBaseServer
     public void init (final Injector injector)
         throws Exception
     {
         super.init(injector);
+
+        // we need to register to manually shutdown a couple of bits
+        _lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
+            public void shutdown () {
+                if (_policyServer != null) {
+                    _policyServer.unbindAll();
+                }
+                try {
+                    _messageConn.close();
+                } catch (IOException ioe) {
+                    log.warning("Failed to close the connection to the messaging server.", ioe);
+                }
+            }
+        });
 
         // initialize our HTTP server
         _httpServer.init(new File(ServerConfig.serverRoot, "log"));
@@ -254,7 +244,7 @@ public class MsoyServer extends MsoyBaseServer
      */
     public void addPortsToPolicy (final int[] ports)
     {
-        if (!DeploymentConfig.devDeployment || _lifemgr.isShuttingDown()) {
+        if (!DeploymentConfig.devDeployment || _lifecycle.isShuttingDown()) {
             return;
         }
 
@@ -279,7 +269,7 @@ public class MsoyServer extends MsoyBaseServer
      */
     public void removePortsFromPolicy (final int[] ports)
     {
-        if (!DeploymentConfig.devDeployment || _lifemgr.isShuttingDown()) {
+        if (!DeploymentConfig.devDeployment || _lifecycle.isShuttingDown()) {
             return;
         }
 

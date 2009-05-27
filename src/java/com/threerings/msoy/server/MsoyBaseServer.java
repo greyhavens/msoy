@@ -64,7 +64,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         super.init(injector);
 
         // when we shutdown, the batch invoker needs to do some jockeying
-        _cycle.addComponent(new Lifecycle.ShutdownComponent() {
+        _lifecycle.addComponent(new Lifecycle.ShutdownComponent() {
             public void shutdown () {
                 // queue up a 'shutdown' unit on the batch invoker, after which it will shuttle
                 // further units onto the main invoker instead

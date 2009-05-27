@@ -33,6 +33,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.RebootManager;
 
 import com.threerings.pulse.server.JVMPulseRecorder;
@@ -69,13 +70,17 @@ import static com.threerings.msoy.Log.log;
 public class MsoyAdminManager
     implements PeerAdminProvider
 {
-    @Inject public MsoyAdminManager (PulseManager pulseMan)
+    @Inject public MsoyAdminManager (PresentsServer server, RootDObjectManager omgr,
+                                     PulseManager pulseMan)
     {
         // we need to register our records before the server gets around to initing the repos
         pulseMan.registerRecorder(JVMPulseRecorder.class);
         pulseMan.registerRecorder(PresentsPulseRecorder.class);
         pulseMan.registerRecorder(PeerPulseRecorder.class);
         pulseMan.registerRecorder(MsoyPulseRecorder.class);
+
+        // create our reboot manager
+        _rebmgr = new MsoyRebootManager(server, omgr);
     }
 
     /**
@@ -83,9 +88,6 @@ public class MsoyAdminManager
      */
     public void init (InvocationManager invmgr, CacheManager cacheMgr)
     {
-        // create our reboot manager
-        _rebmgr = new MsoyRebootManager(_lifecycle, _omgr);
-
         // start up the system "snapshot" logger
         _snapshotLogger = new SnapshotLogger();
         _snapshotLogger.schedule(0, STATS_DELAY);
@@ -120,7 +122,7 @@ public class MsoyAdminManager
             log.info("Performing immediate shutdown", "for", initiator);
             new Interval(_omgr) {
                 public void expired () {
-                    _lifecyle.shutdown();
+                    _lifecycle.shutdown();
                 }
             }.schedule(1000L);
 
@@ -186,8 +188,8 @@ public class MsoyAdminManager
     protected class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
     {
-        public MsoyRebootManager (Lifecycle cycle, RootDObjectManager omgr) {
-            super(cycle, omgr);
+        public MsoyRebootManager (PresentsServer server, RootDObjectManager omgr) {
+            super(server, omgr);
             _runtime.server.addListener(this);
             _runtime.server.setCustomRebootMsg("");
         }
