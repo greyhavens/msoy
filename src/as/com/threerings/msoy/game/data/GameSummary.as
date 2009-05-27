@@ -18,11 +18,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class GameSummary extends SimpleStreamableObject
     implements Cloneable
 {
-    /** The game item id */
+    /** The game id. This will be negative if the summary is for the dev version. */
     public var gameId :int;
-
-    /** True if this summary is for the development version of the game. */
-    public var isDevelopment :Boolean;
 
     /** The name of the game - used as a tooltip */
     public var name :String;
@@ -41,22 +38,11 @@ public class GameSummary extends SimpleStreamableObject
         // only used for unserialization
     }
 
-    /**
-     * Returns -gameId if we're the development version of the game and +gameId if we're the
-     * published version. This typed id is used in various places where we have to encode whether
-     * or not we're a development version of the game in the identifier.
-     */
-    public function getTypedId () :int
-    {
-        return isDevelopment ? -gameId : gameId;
-    }
-
     // documentation from Cloneable
     public function clone () :Object
     {
         var data :GameSummary = new GameSummary();
         data.gameId = this.gameId;
-        data.isDevelopment = this.isDevelopment;
         data.name = this.name;
         data.description = this.description;
         data.avrGame = this.avrGame;
@@ -69,7 +55,7 @@ public class GameSummary extends SimpleStreamableObject
     {
         if (other is GameSummary) {
             var data :GameSummary = other as GameSummary;
-            return data.gameId == this.gameId && data.isDevelopment == this.isDevelopment;
+            return data.gameId == this.gameId;
         }
         return false;
     }
@@ -79,7 +65,6 @@ public class GameSummary extends SimpleStreamableObject
     {
         super.readObject(ins);
         gameId = ins.readInt();
-        isDevelopment = ins.readBoolean();
         name = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
         avrGame = ins.readBoolean();
@@ -91,7 +76,6 @@ public class GameSummary extends SimpleStreamableObject
     {
         super.writeObject(out);
         out.writeInt(gameId);
-        out.writeBoolean(isDevelopment);
         out.writeField(name);
         out.writeField(description);
         out.writeBoolean(avrGame);

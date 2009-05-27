@@ -13,11 +13,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 public class GameSummary extends SimpleStreamableObject
     implements Cloneable
 {
-    /** The game id. */
+    /** The game id. This will be negative if the summary is for the dev version. */
     public int gameId;
-
-    /** True if this summary is for the development version of the game. */
-    public boolean isDevelopment;
 
     /** The name of the game - used as a tooltip */
     public String name;
@@ -39,25 +36,14 @@ public class GameSummary extends SimpleStreamableObject
     /**
      * Creates a summary for the specified game.
      */
-    public GameSummary (int gameId, boolean isDevelopment, String name, String description,
-                        boolean isAVRG, MediaDesc thumbMedia)
+    public GameSummary (int gameId, String name, String description, boolean isAVRG,
+                        MediaDesc thumbMedia)
     {
         this.gameId = gameId;
-        this.isDevelopment = isDevelopment;
         this.name = name;
         this.description = description;
         this.avrGame = isAVRG;
         this.thumbMedia = thumbMedia;
-    }
-
-    /**
-     * Returns -gameId if we're the development version of the game and +gameId if we're the
-     * published version. This typed id is used in various places where we have to encode whether
-     * or not we're a development version of the game in the identifier.
-     */
-    public int getTypedId ()
-    {
-        return isDevelopment ? -gameId : gameId;
     }
 
     @Override // from Object
@@ -65,7 +51,7 @@ public class GameSummary extends SimpleStreamableObject
     {
         if (other instanceof GameSummary) {
             GameSummary data = (GameSummary) other;
-            return data.gameId == this.gameId && data.isDevelopment == this.isDevelopment;
+            return data.gameId == this.gameId;
         }
         return false;
     }

@@ -43,7 +43,7 @@ public class GameContent
 
     public GameSummary toGameSummary ()
     {
-        return new GameSummary(game.gameId, isDevelopmentVersion(), game.name, game.description,
-                               game.isAVRG, game.getThumbMedia());
+        return new GameSummary(
+            gameId, game.name, game.description, game.isAVRG, game.getThumbMedia());
     }
 }
