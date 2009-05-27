@@ -508,11 +508,18 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setAway (ClientObject caller, boolean away, String message)
-        //throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
         user.setAwayMessage(away ? message : null);
-        _bodyMan.updateOccupantStatus(user, away ? MsoyBodyObject.AWAY : MemberInfo.ACTIVE);
+        _bodyMan.updateOccupantInfo(user, new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                if (info.isAway() == user.isAway()) {
+                    return false;
+                }
+                info.updateIsAway(user);
+                return true;
+            }
+        });
     }
 
     // from interface MemberProvider

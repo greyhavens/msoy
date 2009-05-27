@@ -265,7 +265,7 @@ public class MsoySession extends WhirledSession
         }
 
         protected boolean isIdle (byte status) {
-            return (status == OccupantInfo.IDLE || status == MemberObject.AWAY);
+            return (status == OccupantInfo.IDLE);
         }
 
         protected int _idleTime;

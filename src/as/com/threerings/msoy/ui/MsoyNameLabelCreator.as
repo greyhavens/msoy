@@ -117,7 +117,7 @@ class LabelBox extends HBox
         // and show uninitialized-ness with italics
         var italicize :Boolean = (status == PlayerList.STATUS_UNINITIALIZED);
 
-        _label.setStatus(occStatus, italicize);
+        _label.setStatus(occStatus, false, italicize);
     }
 
     override protected function createChildren () :void

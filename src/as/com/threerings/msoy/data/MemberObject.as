@@ -139,6 +139,9 @@ public class MemberObject extends MsoyBodyObject
     /** This member's availability for receiving invitations, requests, etc. from other members. */
     public var availability :int = AVAILABLE;
 
+    /** True if the user has enabled /afk mode, false otherwise. */
+    public var isAway :Boolean;
+
     /** The name of the member this member is following or null. */
     public var following :MemberName;
 
@@ -342,6 +345,7 @@ public class MemberObject extends MsoyBodyObject
         bars = ins.readInt();
         level = ins.readInt();
         availability = ins.readInt();
+        isAway = ins.readBoolean();
         following = MemberName(ins.readObject());
         followers = DSet(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());

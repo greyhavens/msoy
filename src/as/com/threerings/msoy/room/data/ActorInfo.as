@@ -67,14 +67,6 @@ public class ActorInfo extends OccupantInfo
         return (status == OccupantInfo.IDLE);
     }
 
-    /**
-     * Returns true if this actor is idle or AFK.
-     */
-    public function isIdleOrAFK () :Boolean
-    {
-        return (isIdle() || status == MsoyBodyObject.AWAY);
-    }
-
     override public function clone () :Object
     {
         var that :ActorInfo = super.clone() as ActorInfo;
@@ -114,6 +106,7 @@ public class ActorInfo extends OccupantInfo
     /** Bit flags used to check values in the _flags member. */
     protected static const STATIC :int = 1 << 0;
     protected static const MANAGER :int = 1 << 1; // used by MemberInfo but defined here for safety
-    protected static const SUBSCRIBER :int = 1 << 2; // used by MemberInfo, defined here
+    protected static const SUBSCRIBER :int = 1 << 2; // used by MemberInfo, defined here for safety
+    protected static const AWAY :int = 1 << 3; // used by MemberInfo, defined here for safety
 }
 }

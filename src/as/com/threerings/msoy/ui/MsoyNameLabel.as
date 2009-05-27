@@ -20,6 +20,7 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
+import com.threerings.msoy.room.data.MemberInfo;
 
 public class MsoyNameLabel extends Sprite
 {
@@ -43,9 +44,8 @@ public class MsoyNameLabel extends Sprite
     public function update (info :OccupantInfo) :void
     {
         setName(info.username.toString());
-        setSubscriber((info is MsoyUserOccupantInfo) &&
-            MsoyUserOccupantInfo(info).isSubscriber());
-        setStatus(info.status);
+        setSubscriber((info is MsoyUserOccupantInfo) && MsoyUserOccupantInfo(info).isSubscriber());
+        setStatus(info.status, (info is MemberInfo) && MemberInfo(info).isAway(), false);
     }
 
     /**
@@ -74,25 +74,29 @@ public class MsoyNameLabel extends Sprite
         }
     }
 
-    // from NameLabel
-    public function setStatus (status :int, italicize :Boolean = false) :void
+    /**
+     * Updates our member's status (idle, disconnected, etc.).
+     */
+    public function setStatus (status :int, away :Boolean, italicize :Boolean) :void
     {
         if (_ignoreStatus) {
             return;
         }
 
-        switch (status) {
-        case OccupantInfo.IDLE:
-            _label.textColor = 0x777777;
-            break;
-        case OccupantInfo.DISCONNECTED:
-            _label.textColor = 0x80803C;
-            break;
-        case MsoyBodyObject.AWAY:
+        if (away) {
             _label.textColor = 0xFFFF77;
-            break;
-        default:
-            _label.textColor = 0x99BFFF;
+        } else {
+            switch (status) {
+            case OccupantInfo.IDLE:
+                _label.textColor = 0x777777;
+                break;
+            case OccupantInfo.DISCONNECTED:
+                _label.textColor = 0x80803C;
+                break;
+            default:
+                _label.textColor = 0x99BFFF;
+                break;
+            }
         }
 
         // turn on or off italicizing.

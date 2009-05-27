@@ -19,9 +19,6 @@ public class MsoyBodyObject extends BodyObject
     public static final String ACTOR_STATE = "actorState";
     // AUTO-GENERATED: FIELDS END
 
-    /** Constant value for {@link #status}. */
-    public static final byte AWAY = 3;
-
     /** The current state of the body's actor, or null if unset/unknown/default. */
     public String actorState;
 
@@ -52,18 +49,6 @@ public class MsoyBodyObject extends BodyObject
     public boolean isActor ()
     {
         return true;
-    }
-
-    @Override // from BodyObject
-    protected String getStatusTranslation ()
-    {
-        switch (status) {
-        case AWAY:
-            return "away";
-
-        default:
-            return super.getStatusTranslation();
-        }
     }
 
     // AUTO-GENERATED: METHODS START

@@ -52,12 +52,6 @@ public class MemberInfo extends ActorInfo
         _scale = scale;
     }
 
-    // from PartyOccupantInfo
-    public function getPartyId () :int
-    {
-        return _partyId;
-    }
-
     /**
      * Tests if this member is able to manage the room.
      * Note that this is not a definitive check, but rather one that can be used by clients
@@ -68,6 +62,20 @@ public class MemberInfo extends ActorInfo
     public function isManager () :Boolean
     {
         return (_flags & MANAGER) != 0;
+    }
+
+    /**
+     * Returns true if this member is away, false otherwise.
+     */
+    public function isAway () :Boolean
+    {
+        return (_flags & AWAY) != 0;
+    }
+
+    // from PartyOccupantInfo
+    public function getPartyId () :int
+    {
+        return _partyId;
     }
 
     // from MsoyUserOccupantInfo

@@ -108,5 +108,6 @@ public abstract class ActorInfo extends OccupantInfo
     /** Bit flags used to check values in the _flags member. */
     protected static final byte STATIC = 1 << 0;
     protected static final byte MANAGER = 1 << 1; // used by MemberInfo but defined here for safety
-    protected static final byte SUBSCRIBER = 1 << 2; // used by MemberInfo, defined here
+    protected static final byte SUBSCRIBER = 1 << 2; // used by MemberInfo, defined here for safety
+    protected static final byte AWAY = 1 << 3; // used by MemberInfo, defined here for safety
 }

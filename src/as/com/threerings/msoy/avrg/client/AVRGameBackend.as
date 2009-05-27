@@ -462,7 +462,7 @@ public class AVRGameBackend extends ControlBackend
             data["orient"] = sprite.getLocation().orient;
             data["moveSpeed"] = sprite.getMoveSpeed(1); // TODO: this may be inaccurate. remove?
             data["isMoving"] = sprite.isMoving();
-            data["isIdle"] = actorInfo.isIdleOrAFK();
+            data["isIdle"] = actorInfo.isIdle();
             data["bounds"] = sprite.getBounds(sprite.stage);
             data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
             return data;

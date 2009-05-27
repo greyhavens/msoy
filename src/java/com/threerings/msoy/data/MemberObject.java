@@ -228,6 +228,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Returns true if this member is away (from the keyboard... sort of), false if they are not.
+     */
+    public boolean isAway ()
+    {
+        return awayMessage != null; // message is set to non-null when we're away
+    }
+
+    /**
      * Returns  our home scene id or 1 (Brave New Whirled) if we have none.
      */
     public int getHomeSceneId ()

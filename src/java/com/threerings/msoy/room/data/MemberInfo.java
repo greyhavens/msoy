@@ -39,13 +39,11 @@ public class MemberInfo extends ActorInfo
     {
         super(memobj); // we'll fill these in later
 
-        // note our current game
+        // configure our various bits
         updateGameSummary(memobj);
-
-        // configure our managerness
         updateIsManager(memobj);
-
         updatePartyId(memobj.partyId);
+        updateIsAway(memobj);
 
         // indicate if the member is a subscriber (don't worry about changing it while in a room)
         if (memobj.tokens.isSubscriber()) {
@@ -73,6 +71,14 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
+     * Returns true if this member is away, false otherwise.
+     */
+    public boolean isAway ()
+    {
+        return (_flags & AWAY) != 0;
+    }
+
+    /**
      * Tests if this member is able to manage the room.
      * Note that this is not a definitive check, but rather one that can be used by clients
      * to check other occupants. The value is computed at the time the occupant enters the
@@ -91,6 +97,18 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
+     * Updates our away status.
+     */
+    public void updateIsAway (MemberObject memobj)
+    {
+        if (memobj.isAway()) {
+            _flags |= AWAY;
+        } else {
+            _flags &= ~AWAY;
+        }
+    }
+
+    /**
      * Updates our room manager status.
      */
     public void updateIsManager (MemberObject memobj)
@@ -101,16 +119,6 @@ public class MemberInfo extends ActorInfo
         } else {
             _flags &= ~MANAGER;
         }
-    }
-
-    // from PartyOccupantInfo
-    public boolean updatePartyId (int partyId)
-    {
-        if (partyId != _partyId) {
-            _partyId = partyId;
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -135,6 +143,16 @@ public class MemberInfo extends ActorInfo
     public float getScale ()
     {
         return _scale;
+    }
+
+    // from PartyOccupantInfo
+    public boolean updatePartyId (int partyId)
+    {
+        if (partyId != _partyId) {
+            _partyId = partyId;
+            return true;
+        }
+        return false;
     }
 
     @Override // from ActorInfo
