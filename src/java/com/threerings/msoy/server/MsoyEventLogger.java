@@ -475,7 +475,7 @@ public class MsoyEventLogger
     /** Dump a message to logs. */
     protected void dumpMessage (MsoyEvent message)
     {
-        StringBuffer sb = new StringBuffer("MsoyEventLogger posting event:\n  ");
+        StringBuilder sb = new StringBuilder("MsoyEventLogger posting event:\n  ");
         sb.append(message.getClass().getSimpleName());
         sb.append("\n  [ ");
 

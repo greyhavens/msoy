@@ -43,11 +43,10 @@ public class MessageUtil
         }
 
         // format the segments
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Segment seg : segs) {
             seg.format(buf);
         }
-
         return buf.toString();
     }
 
@@ -60,7 +59,7 @@ public class MessageUtil
         List<Segment> segs = parseSegments(html);
 
         // format the segments
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Segment seg : segs) {
             seg.preEdit(buf);
         }
@@ -131,9 +130,9 @@ public class MessageUtil
     }
 
     protected static abstract class Segment {
-        public abstract void format (StringBuffer buf);
+        public abstract void format (StringBuilder buf);
 
-        public void preEdit (StringBuffer buf) {
+        public void preEdit (StringBuilder buf) {
             format(buf);
         }
     }
@@ -145,7 +144,7 @@ public class MessageUtil
             this.text = text;
         }
 
-        public void format (StringBuffer buf) {
+        public void format (StringBuilder buf) {
             buf.append(text);
         }
     }
@@ -170,7 +169,7 @@ public class MessageUtil
             this.name = bits[3];
         }
 
-        public void format (StringBuffer buf) {
+        public void format (StringBuilder buf) {
 //             int width = MediaDesc.getWidth(size);
 //             int height = MediaDesc.getHeight(size);
             buf.append("<div class='thingBox'><a href='");
@@ -182,7 +181,7 @@ public class MessageUtil
             buf.append("</a></div>\n");
         }
 
-        public void preEdit (StringBuffer buf) {
+        public void preEdit (StringBuilder buf) {
             buf.append(DeploymentConfig.serverURL).append("#").append(token).append("<br/>");
         }
     }
@@ -194,7 +193,7 @@ public class MessageUtil
             this.boxes = boxes;
         }
 
-        public void format (StringBuffer buf) {
+        public void format (StringBuilder buf) {
             int cols;
             switch (boxes.get(0).size) {
             case MediaDesc.THUMBNAIL_SIZE: cols = 4; break;
@@ -224,7 +223,7 @@ public class MessageUtil
             buf.append("</table>\n");
         }
 
-        public void preEdit (StringBuffer buf) {
+        public void preEdit (StringBuilder buf) {
             throw new RuntimeException("Not implemented.");
         }
     }

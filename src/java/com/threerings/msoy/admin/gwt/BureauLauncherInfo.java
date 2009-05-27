@@ -73,7 +73,7 @@ public class BureauLauncherInfo
 
     public String toString ()
     {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         buff.append("BureauLauncherInfo(");
         buff.append("hostname=").append(hostname);
         buff.append(", bureaus=(");

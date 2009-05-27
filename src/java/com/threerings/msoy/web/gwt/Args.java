@@ -205,7 +205,7 @@ public class Args
      */
     public String toPath (Pages page)
     {
-        StringBuffer buf = new StringBuffer("/").append(page.getPath());
+        StringBuilder buf = new StringBuilder("/").append(page.getPath());
         for (String arg : _args) {
             buf.append("/").append(arg);
         }

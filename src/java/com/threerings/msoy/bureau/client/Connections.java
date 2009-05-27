@@ -211,7 +211,7 @@ class Connections
         // from Object
         public String toString ()
         {
-            StringBuffer buff = new StringBuffer();
+            StringBuilder buff = new StringBuilder();
             buff.append("[updateTime: ").append(_updateTime);
             buff.append(", state: ").append(_state);
             buff.append(", client: ").append(_client);

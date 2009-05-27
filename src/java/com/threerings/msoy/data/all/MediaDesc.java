@@ -419,9 +419,7 @@ public class MediaDesc implements Streamable, IsSerializable
         if (md == null || md instanceof StaticMediaDesc) {
             return "";
         }
-        // Using StringBuffer for GWT compatability
-        StringBuffer buf = new StringBuffer();
-        buf.append(hashToString(md.hash));
+        StringBuilder buf = new StringBuilder(hashToString(md.hash));
         buf.append(":").append(md.mimeType);
         buf.append(":").append(md.constraint);
         return buf.toString();

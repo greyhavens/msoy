@@ -564,6 +564,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // now look for URL expansions
         // TODO: preserve the affiliate servlet?
+        // Fucking Matcher can't handle StringBuilder. They should change it to take an Appendable.
         StringBuffer expbuf = new StringBuffer();
         Matcher m = _messageProcessingPattern.matcher(message);
         while (m.find()) {
