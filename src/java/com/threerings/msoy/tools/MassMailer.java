@@ -18,12 +18,12 @@ import com.google.inject.Injector;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.depot.PersistenceContext;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -59,7 +59,7 @@ public class MassMailer
         final int threadId = parseArgs(argvec, skipAddrs, testAddrs);
 
         final Injector injector = Guice.createInjector(new Module());
-        final ShutdownManager shutMgr = injector.getInstance(ShutdownManager.class);
+        final Lifecycle cycle = injector.getInstance(Lifecycle.class);
         final MailSender mailer = injector.getInstance(MailSender.class);
         final MemberRepository memberRepo = injector.getInstance(MemberRepository.class);
         final ForumRepository forumRepo = injector.getInstance(ForumRepository.class);
@@ -111,7 +111,7 @@ public class MassMailer
         log.info("Queued up announcement email", "subject", ftr.subject, "count", emails.size());
 
         // finally shutdown which will finish sending all of our mails and terminate
-        shutMgr.shutdown();
+        cycle.shutdown();
     }
 
     protected static int parseArgs (String[] argvec, Set<String> skipAddrs, Set<String> testAddrs)

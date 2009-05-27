@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -32,7 +33,6 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ReportManager;
-import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.presents.peer.client.PeerService;
@@ -169,9 +169,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Creates an uninitialized peer manager.
      */
-    @Inject public MsoyPeerManager (ShutdownManager shutmgr)
+    @Inject public MsoyPeerManager (Lifecycle cycle)
     {
-        super(shutmgr);
+        super(cycle);
     }
 
     /**

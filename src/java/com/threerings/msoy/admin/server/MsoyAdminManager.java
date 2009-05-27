@@ -14,6 +14,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
@@ -33,7 +34,6 @@ import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.RebootManager;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.pulse.server.JVMPulseRecorder;
 import com.threerings.pulse.server.PeerPulseRecorder;
@@ -84,7 +84,7 @@ public class MsoyAdminManager
     public void init (InvocationManager invmgr, CacheManager cacheMgr)
     {
         // create our reboot manager
-        _rebmgr = new MsoyRebootManager(_shutmgr, _omgr);
+        _rebmgr = new MsoyRebootManager(_lifecycle, _omgr);
 
         // start up the system "snapshot" logger
         _snapshotLogger = new SnapshotLogger();
@@ -120,7 +120,7 @@ public class MsoyAdminManager
             log.info("Performing immediate shutdown", "for", initiator);
             new Interval(_omgr) {
                 public void expired () {
-                    _shutmgr.shutdown();
+                    _lifecyle.shutdown();
                 }
             }.schedule(1000L);
 
@@ -186,8 +186,8 @@ public class MsoyAdminManager
     protected class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
     {
-        public MsoyRebootManager (ShutdownManager shutmgr, RootDObjectManager omgr) {
-            super(shutmgr, omgr);
+        public MsoyRebootManager (Lifecycle cycle, RootDObjectManager omgr) {
+            super(cycle, omgr);
             _runtime.server.addListener(this);
             _runtime.server.setCustomRebootMsg("");
         }
@@ -311,6 +311,7 @@ public class MsoyAdminManager
     /** A mapping of registered stat collectors. */
     protected Map<StatsModel.Type, StatCollector> _collectors = Maps.newHashMap();
 
+    @Inject protected Lifecycle _lifecycle;
     @Inject protected MailSender _sender;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberManager _memberMan;
@@ -322,7 +323,6 @@ public class MsoyAdminManager
     @Inject protected RPCProfiler _rpcProfiler;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected RuntimeConfig _runtime;
-    @Inject protected ShutdownManager _shutmgr;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;

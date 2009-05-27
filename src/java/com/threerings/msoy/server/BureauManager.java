@@ -11,8 +11,17 @@ import com.google.inject.Singleton;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.bureau.server.BureauAuthenticator;
 import com.threerings.bureau.server.BureauRegistry;
@@ -28,16 +37,6 @@ import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.msoy.bureau.server.MsoyBureauSessionFactory;
 
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.ObjectDeathListener;
-import com.threerings.presents.dobj.ObjectDestroyedEvent;
-
-import com.threerings.presents.server.ClientManager;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.net.ConnectionManager;
-
 import com.whirled.bureau.data.BureauTypes;
 
 import static com.threerings.msoy.Log.log;
@@ -48,6 +47,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class BureauManager
+    implements Lifecycle.ShutdownComponent
 {
     /**
      * Exception to be thrown if the server is configured to launch bureaus remotely and a bureau
@@ -55,13 +55,17 @@ public class BureauManager
      */
     public static class LauncherNotConnected extends IOException
     {
-        /**
-         * Creates a new exception.
-         */
-        public LauncherNotConnected ()
-        {
+        public LauncherNotConnected () {
             super("No bureau launchers connected");
         }
+    }
+
+    @Inject public BureauManager (Lifecycle cycle, ClientManager clmgr)
+    {
+        cycle.addComponent(this);
+        // make sure we are shut down before the client manager so our shutdown message can be sent
+        // prior to our client getting shutdown
+        cycle.addShutdownConstraint(this, Lifecycle.Constraint.RUNS_BEFORE, clmgr);
     }
 
     /**
@@ -96,18 +100,6 @@ public class BureauManager
                     BureauManager.this.setBureauLauncherInfo(caller, info);
                 }
             }), BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
-
-            // register the kill message sender to do its work on shutdown
-            ShutdownManager.Shutdowner killLaunchers = new ShutdownManager.Shutdowner() {
-                public void shutdown () {
-                    shutdownLaunchers();
-                }
-            };
-            _shutmgr.registerShutdowner(killLaunchers);
-
-            // make sure we are shut down before the client manager so our shutdown message can be
-            // sent prior to our client getting shutdown
-            _shutmgr.addConstraint(killLaunchers, ShutdownManager.Constraint.RUNS_BEFORE, _clmgr);
         }
 
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
@@ -175,6 +167,15 @@ public class BureauManager
         }
     }
 
+    // from Lifecycle.ShutdownComponent
+    public void shutdown ()
+    {
+        for (final ClientObject launcher : _launcherClients.values()) {
+            log.info("Shutting down launcher", "launcher", launcher.who());
+            BureauLauncherSender.shutdownLauncher(launcher);
+        }
+    }
+
     protected void launcherInitialized (final ClientObject launcher)
     {
         // this launcher is now available to take sender requests
@@ -231,17 +232,6 @@ public class BureauManager
         }
     }
 
-    /**
-     * Tells all connected bureau launchers to shutdown.
-     */
-    protected void shutdownLaunchers ()
-    {
-        for (final ClientObject launcher : _launcherClients.values()) {
-            log.info("Shutting down launcher", "launcher", launcher.who());
-            BureauLauncherSender.shutdownLauncher(launcher);
-        }
-    }
-
     protected class ThaneCommandGenerator
         implements BureauRegistry.CommandGenerator
     {
@@ -282,7 +272,6 @@ public class BureauManager
     @Inject protected ConnectionManager _conmgr;
     @Inject protected InvocationManager _invmgr;
     @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected ShutdownManager _shutmgr;
 
     /** Time to wait for bureaus to connect back. */
     protected static final int BUREAU_TIMEOUT = 30 * 1000;

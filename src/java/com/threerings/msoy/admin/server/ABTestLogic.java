@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -32,12 +33,14 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @BlockingThread
 public class ABTestLogic
+    implements Lifecycle.InitComponent
 {
-    @Inject public ABTestLogic ()
+    @Inject public ABTestLogic (Lifecycle cycle)
     {
-        // TODO: implement LifecycleManager, register for init()
+        cycle.addComponent(this);
     }
 
+    // from Lifecycle.InitComponent
     public void init ()
     {
         registerTest("2009 05 landing take 2", 4, true, true);

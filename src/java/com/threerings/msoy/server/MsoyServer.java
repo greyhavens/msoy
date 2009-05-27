@@ -254,7 +254,7 @@ public class MsoyServer extends MsoyBaseServer
      */
     public void addPortsToPolicy (final int[] ports)
     {
-        if (!DeploymentConfig.devDeployment || _shutmgr.isShuttingDown()) {
+        if (!DeploymentConfig.devDeployment || _lifemgr.isShuttingDown()) {
             return;
         }
 
@@ -279,7 +279,7 @@ public class MsoyServer extends MsoyBaseServer
      */
     public void removePortsFromPolicy (final int[] ports)
     {
-        if (!DeploymentConfig.devDeployment || _shutmgr.isShuttingDown()) {
+        if (!DeploymentConfig.devDeployment || _lifemgr.isShuttingDown()) {
             return;
         }
 

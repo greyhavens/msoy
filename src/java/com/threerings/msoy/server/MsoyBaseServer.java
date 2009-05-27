@@ -12,11 +12,11 @@ import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.presents.server.ReportManager;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.admin.server.AdminProvider;
 import com.threerings.admin.server.ConfigRegistry;
@@ -34,7 +34,6 @@ import static com.threerings.msoy.Log.log;
  * Provides the set of services that are shared between the Game and World servers.
  */
 public abstract class MsoyBaseServer extends WhirledServer
-    implements ShutdownManager.Shutdowner
 {
     /** Configures dependencies needed by the Msoy servers. */
     public static class Module extends WhirledServer.Module
@@ -64,8 +63,14 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         super.init(injector);
 
-        // we need to know when we're shutting down
-        _shutmgr.registerShutdowner(this);
+        // when we shutdown, the batch invoker needs to do some jockeying
+        _cycle.addComponent(new Lifecycle.ShutdownComponent() {
+            public void shutdown () {
+                // queue up a 'shutdown' unit on the batch invoker, after which it will shuttle
+                // further units onto the main invoker instead
+                _batchInvoker.shutdown();
+            }
+        });
 
         // start the batch invoker thread
         _batchInvoker.start();
@@ -103,14 +108,6 @@ public abstract class MsoyBaseServer extends WhirledServer
      * Derived classes need to override this and configure their main client factory.
      */
     protected abstract void configSessionFactory ();
-
-    // from interface ShutdownManager.Shutdowner
-    public void shutdown ()
-    {
-        // queue up a 'shutdown' unit on the batch invoker, after which it will shuttle
-        // further units onto the main invoker instead
-        _batchInvoker.shutdown();
-    }
 
     @Override // from PresentsServer
     protected void invokerDidShutdown ()

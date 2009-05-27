@@ -9,13 +9,13 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.data.ChatChannel;
 import com.threerings.crowd.chat.data.UserMessage;
@@ -38,9 +38,9 @@ import com.threerings.msoy.chat.data.MsoyChatChannel;
 public class MsoyChatChannelManager extends ChatChannelManager
 {
     @Inject public MsoyChatChannelManager (PresentsDObjectMgr omgr, InvocationManager invmgr,
-                                           ShutdownManager shutmgr)
+                                           Lifecycle cycle)
     {
-        super(omgr, invmgr, shutmgr);
+        super(omgr, invmgr, cycle);
     }
 
     @Override // from ChatChannelManager
