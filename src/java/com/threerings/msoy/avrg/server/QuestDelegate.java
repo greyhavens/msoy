@@ -241,8 +241,8 @@ public class QuestDelegate extends PlayManagerDelegate
                     player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
                 _gameReg.awardCoins(_gameId, action, player.coinsAccrued);
                 totalAward += player.coinsAccrued;
-                player.reset();
             }
+            player.reset();
         }
 
         // if we actually awarded coins or accrued time, update our game metrics
