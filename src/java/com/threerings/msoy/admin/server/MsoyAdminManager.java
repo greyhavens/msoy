@@ -88,7 +88,7 @@ public class MsoyAdminManager
         _snapshotLogger = new SnapshotLogger();
         _snapshotLogger.schedule(0, STATS_DELAY);
 
-        // create and initialize our reboot manager
+        // initialize our reboot manager
         _rebmgr.init();
 
         // register our peer service

@@ -120,7 +120,7 @@ public class BureauManager
     /**
      * Retrieves the current information on all bureau launchers.
      */
-    public void getBureauLauncherInfo(final ResultListener<BureauLauncherInfo[]> listener)
+    public void getBureauLauncherInfo (final ResultListener<BureauLauncherInfo[]> listener)
     {
         // only handle one request at a time on this server
         if (_launcherInfo != null) {
