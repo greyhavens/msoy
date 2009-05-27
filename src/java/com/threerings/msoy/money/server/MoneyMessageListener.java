@@ -117,7 +117,7 @@ public class MoneyMessageListener
      * Listens for messages on the destination address in the server configuration specified by
      * configKey.  When messages come in, they will execute the given message listener.
      */
-    protected ConnectedListener listen (final String configKey, final MessageListener listener)
+    protected ConnectedListener listen (String configKey, MessageListener listener)
     {
         String barsBoughtStr = ServerConfig.config.getValue(configKey, "");
         if (!"".equals(barsBoughtStr)) {
