@@ -12,9 +12,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-import com.threerings.util.Log;
-
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.Log;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -85,7 +84,7 @@ public class MsoyNameLabel extends Sprite
 
         if (away) {
             _label.textColor = 0xFFFF77;
-        } if (status == OccupantInfo.IDLE) {
+        } else if (status == OccupantInfo.IDLE) {
             _label.textColor = 0x777777;
         } else if (status == OccupantInfo.DISCONNECTED) {
             _label.textColor = 0x80803C;
