@@ -28,6 +28,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.Tuple;
 import com.samskivert.velocity.VelocityUtil;
 
@@ -39,7 +40,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.spam.server.SpamUtil;
-import com.threerings.presents.server.ShutdownManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -49,7 +49,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class MailSender
-    implements ShutdownManager.Shutdowner
+    implements Lifecycle.ShutdownComponent
 {
     /** Used to provide key/value pairs that are substituted into mail templates. */
     public static class Parameters
@@ -74,12 +74,12 @@ public class MailSender
         COMPUTER
     };
 
-    @Inject public MailSender (ShutdownManager shutmgr)
+    @Inject public MailSender (Lifecycle cycle)
     {
-        shutmgr.registerShutdowner(this);
+        cycle.addComponent(this);
     }
 
-    // from ShutdownManager.Shutdowner
+    // from Lifecycle.ShutdownComponent
     public void shutdown ()
     {
         _executor.shutdown();

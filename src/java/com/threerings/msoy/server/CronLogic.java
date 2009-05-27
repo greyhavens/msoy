@@ -14,12 +14,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -35,18 +35,12 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class CronLogic
-    implements ShutdownManager.Shutdowner
+    implements Lifecycle.Component
 {
-    @Inject public CronLogic (ShutdownManager shutMan, PresentsDObjectMgr omgr)
+    @Inject public CronLogic (Lifecycle cycle, PresentsDObjectMgr omgr)
     {
-        shutMan.registerShutdowner(this);
-
-        // scheule our ticker to start running at 0 milliseconds after the minute; we'll randomize
-        // from there, but this reduces any initial bias
+        cycle.addComponent(this);
         _ticker = new JobTicker(omgr);
-        Calendar cal = Calendar.getInstance();
-        long curmils = cal.get(Calendar.SECOND) * 1000L + cal.get(Calendar.MILLISECOND);
-        _ticker.schedule(60 * 1000L - curmils);
     }
 
     /**
@@ -89,7 +83,17 @@ public class CronLogic
         }
     }
 
-    // from interface ShutdownManager.Shutdowner
+    // from interface Lifecycle.ShutdownComponent
+    public void init ()
+    {
+        // scheule our ticker to start running at 0 milliseconds after the minute; we'll randomize
+        // from there, but this reduces any initial bias
+        Calendar cal = Calendar.getInstance();
+        long curmils = cal.get(Calendar.SECOND) * 1000L + cal.get(Calendar.MILLISECOND);
+        _ticker.schedule(60 * 1000L - curmils);
+    }
+
+    // from interface Lifecycle.ShutdownComponent
     public void shutdown ()
     {
         _ticker.cancel();

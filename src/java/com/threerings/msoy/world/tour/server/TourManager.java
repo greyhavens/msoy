@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.util.StreamableArrayIntSet;
 
@@ -19,7 +20,6 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 
@@ -41,17 +41,15 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class TourManager
-    implements TourProvider, ShutdownManager.Shutdowner
+    implements TourProvider, Lifecycle.Component
 {
-    @Inject public TourManager (InvocationManager invmgr, ShutdownManager shutmgr)
+    @Inject public TourManager (InvocationManager invmgr, Lifecycle cycle)
     {
         invmgr.registerDispatcher(new TourDispatcher(this), MsoyCodes.WORLD_GROUP);
-        shutmgr.registerShutdowner(this);
+        cycle.addComponent(this);
     }
 
-    /**
-     * Called when the server is ready to roll.
-     */
+    // from interface Lifecycle.Component
     public void init ()
     {
         loadNewRoomSet();
@@ -63,7 +61,7 @@ public class TourManager
         _roomSetRefresher.schedule(ROOM_SET_REFRESH, true);
     }
 
-    // from interface ShutdownManager.Shutdowner
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         _roomSetRefresher.cancel();

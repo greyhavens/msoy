@@ -8,6 +8,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.BlockingThread;
@@ -15,7 +16,6 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -30,29 +30,11 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
  */
 @Singleton
 public class MoneyExchange
-    implements ShutdownManager.Shutdowner
+    implements Lifecycle.Component
 {
-    @Inject public MoneyExchange (ShutdownManager shutmgr)
+    @Inject public MoneyExchange (Lifecycle cycle)
     {
-        shutmgr.registerShutdowner(this);
-        //runTests();
-    }
-
-    /**
-     * Initialize the money exchange once the database is ready to roll.
-     */
-    @BlockingThread
-    public void init ()
-    {
-        // create the recalculating interval
-        _recalcInterval = new Interval(_invoker) {
-            public void expired () {
-                recalculateRate();
-            }
-        };
-
-        recalculateRate();
-        _runtime.money.addListener(_moneyListener);
+        cycle.addComponent(this);
     }
 
     /**
@@ -157,8 +139,20 @@ public class MoneyExchange
 ///        recalculateRate();
     }
 
-    // from interface ShutdownManager.Shutdowner
-    @EventThread
+    // from interface Lifecycle.Component
+    public void init ()
+    {
+        // create the recalculating interval
+        _recalcInterval = new Interval(_invoker) {
+            public void expired () {
+                recalculateRate();
+            }
+        };
+        recalculateRate();
+        _runtime.money.addListener(_moneyListener);
+    }
+
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         _recalcInterval.cancel();
@@ -297,11 +291,6 @@ public class MoneyExchange
 //        System.err.println("bars:1000000, coins: " + p.getCoins());
 //    }
 
-    /** The interval to recalculate the exchange rate every minute,
-     * (because transactions can take place on other peers)
-     * or null if we're shutting down. */
-    protected Interval _recalcInterval;
-
     /** Listens for changes to the desired bar pool size and makes adjustments as necessary. */
     protected AttributeChangeListener _moneyListener = new AttributeChangeListener() {
         @EventThread
@@ -336,6 +325,10 @@ public class MoneyExchange
             }
         }
     };
+
+    /** The interval to recalculate the exchange rate every minute, (because transactions can take
+     * place on other peers) or null if we're shutting down. */
+    protected Interval _recalcInterval;
 
     /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
     protected float _rate;

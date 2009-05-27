@@ -18,12 +18,12 @@ import com.google.inject.Injector;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.Logger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.server.SunSignalHandler;
-import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.NativeSignalHandler;
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.peer.server.persist.NodeRecord;
@@ -40,7 +40,7 @@ import static com.threerings.msoy.Log.log;
  * Operates a bureau launcher client for an msoy server.
  */
 public class BureauLauncher
-    implements ShutdownManager.Shutdowner
+    implements Lifecycle.ShutdownComponent
 {
     /** Guice module for bureau launcher. */
     public static class Module extends AbstractModule
@@ -57,6 +57,7 @@ public class BureauLauncher
                 new PersistenceContext("msoy", provider, null));
             bind(RunQueue.class).annotatedWith(EventQueue.class).toInstance(_runner);
             bind(Runner.class).toInstance(_runner);
+            bind(Lifecycle.class).toInstance(new Lifecycle());
         }
 
         @EventQueue
@@ -168,9 +169,9 @@ public class BureauLauncher
     /**
      * Creates a new bureau launcher.
      */
-    @Inject public BureauLauncher (ShutdownManager shutmgr)
+    @Inject public BureauLauncher (Lifecycle cycle)
     {
-        shutmgr.registerShutdowner(this);
+        cycle.addComponent(this);
     }
 
     /**
@@ -219,6 +220,20 @@ public class BureauLauncher
         return _runner;
     }
 
+    public BureauLauncherInfo getInfo ()
+    {
+        BureauLauncherInfo info = new BureauLauncherInfo();
+        info.hostname = BureauLauncherConfig.serverHost;
+        info.bureaus = new BureauLauncherInfo.BureauInfo[_bureaus.size()];
+        info.connections = _connections.getActive();
+
+        int idx = 0;
+        for (Bureau bureau : _bureaus.values()) {
+            info.bureaus[idx++] = bureau.getInfo();
+        }
+        return info;
+    }
+
     // from BureauLauncherReceiver
     public void launchThane (String bureauId, String token, String server, int port)
     {
@@ -244,21 +259,7 @@ public class BureauLauncher
         shutdown();
     }
 
-    public BureauLauncherInfo getInfo ()
-    {
-        BureauLauncherInfo info = new BureauLauncherInfo();
-        info.hostname = BureauLauncherConfig.serverHost;
-        info.bureaus = new BureauLauncherInfo.BureauInfo[_bureaus.size()];
-        info.connections = _connections.getActive();
-
-        int idx = 0;
-        for (Bureau bureau : _bureaus.values()) {
-            info.bureaus[idx++] = bureau.getInfo();
-        }
-        return info;
-    }
-
-    // from ShutdownManager.Shutdowner
+    // from Lifecycle.ShutdownComponent
     public void shutdown ()
     {
         log.info("Shutting down bureau launcher");

@@ -26,6 +26,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -36,7 +37,6 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
-import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
 
@@ -126,36 +126,20 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class GameGameRegistry
-    implements ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver,
+    implements Lifecycle.Component, LobbyManager.ShutdownObserver,
                AVRGameManager.LifecycleObserver, LobbyProvider, AVRProvider, GameGameProvider
 {
     /** Used by {@link #updateGameMetrics}. */
     public enum MetricType { SINGLE_PLAYER, MULTI_PLAYER, AVRG }
 
-    @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
+    @Inject public GameGameRegistry (Lifecycle cycle, InvocationManager invmgr)
     {
-        // register to hear when the server is shutdown
-        shutmgr.registerShutdowner(this);
+        cycle.addComponent(this);
 
         // register game-related bootstrap services
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
         invmgr.registerDispatcher(new GameGameDispatcher(this), MsoyCodes.GAME_GROUP);
-    }
-
-    /**
-     * Provides this registry with an injector it can use to create manager instances.
-     */
-    public void init (Injector injector)
-    {
-        _injector = injector;
-
-        // periodically purge old game logs
-        new Interval(_invoker) {
-            @Override public void expired () {
-                _mgameRepo.purgeTraceLogs();
-            }
-        }.schedule(LOG_DELETION_INTERVAL, LOG_DELETION_INTERVAL);
     }
 
     /**
@@ -510,7 +494,18 @@ public class GameGameRegistry
         });
     }
 
-    // from interface PresentsServer.Shutdowner
+    // from interface Lifecycle.Component
+    public void init ()
+    {
+        // periodically purge old game logs
+        new Interval(_invoker) {
+            @Override public void expired () {
+                _mgameRepo.purgeTraceLogs();
+            }
+        }.schedule(LOG_DELETION_INTERVAL, LOG_DELETION_INTERVAL);
+    }
+
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         // shutdown our active lobbies
@@ -1263,9 +1258,6 @@ public class GameGameRegistry
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loadingAVRGames = new HashIntMap<ResultListenerList>();
 
-    /** We use this to inject dependencies into managers we create. */
-    protected Injector _injector;
-
     /** Content objects for all games (lobbied or avrg). */
     protected IntMap<GameContent> _gameContent = new HashIntMap<GameContent>();
 
@@ -1274,6 +1266,7 @@ public class GameGameRegistry
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BureauRegistry _bureauReg;
     @Inject protected GameWatcherManager _watchmgr;
+    @Inject protected Injector _injector;
     @Inject protected InvocationManager _invmgr;
     @Inject protected LocationManager _locmgr;
     @Inject protected MemberManager _memmgr;

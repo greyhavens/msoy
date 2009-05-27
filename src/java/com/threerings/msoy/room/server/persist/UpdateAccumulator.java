@@ -9,11 +9,13 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
@@ -28,26 +30,13 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
  * Converts sequences of furniture modification updates into a single large update, which is then
  * committed to the database.
  */
+@Singleton
 public class UpdateAccumulator
-    implements ShutdownManager.Shutdowner
+    implements Lifecycle.Component
 {
-    @Inject public UpdateAccumulator (ShutdownManager shutmgr)
+    @Inject public UpdateAccumulator (Lifecycle cycle)
     {
-        shutmgr.registerShutdowner(this);
-    }
-
-    public void init (MsoySceneRepository repo)
-    {
-        _repo = repo;
-        _flusher = new Interval(_invoker) {
-            public void expired () {
-                checkAll(false);
-            }
-            public String toString () {
-                return "UpdateAccumulator.checkAll";
-            }
-        };
-        _flusher.schedule(FLUSH_INTERVAL, true);
+        cycle.addComponent(this);
     }
 
     /**
@@ -76,7 +65,21 @@ public class UpdateAccumulator
         wrapper.accumulate((FurniUpdate)update);
     }
 
-    // from interface ShutdownManager.Shutdowner
+    // from interface Lifecycle.Component
+    public void init ()
+    {
+        _flusher = new Interval(_invoker) {
+            public void expired () {
+                checkAll(false);
+            }
+            public String toString () {
+                return "UpdateAccumulator.checkAll";
+            }
+        };
+        _flusher.schedule(FLUSH_INTERVAL, true);
+    }
+
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         // stop our flushing interval
@@ -184,15 +187,13 @@ public class UpdateAccumulator
      * pending accumulated updates. */
     protected IntMap<UpdateWrapper> _pending = IntMaps.newHashIntMap();
 
-    /** Repository reference. */
-    protected MsoySceneRepository _repo;
-
     /** Handles flushing our room updates periodically. Note that we're setting up an Interval that
      * posts to the invoker thread. */
     protected Interval _flusher;
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MsoySceneRepository _repo;
 
     /** How often accumulated updates should be checked, in milliseconds between checks. */
     protected static final long FLUSH_INTERVAL = 2000;

@@ -9,10 +9,9 @@ import java.nio.ByteBuffer;
 import com.google.inject.Inject;
 
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.server.ServerConfig;
@@ -33,20 +32,18 @@ import static com.threerings.msoy.Log.log;
  * the appropriate action in the money service.
  */
 public class MoneyMessageListener
-    implements Shutdowner
+    implements Lifecycle.Component
 {
     /**
      * Constructs a new receiver.  This will not automatically start.
      */
-    @Inject public MoneyMessageListener (ShutdownManager sm)
+    @Inject public MoneyMessageListener (Lifecycle cycle)
     {
-        sm.registerShutdowner(this);
+        cycle.addComponent(this);
     }
 
-    /**
-     * Begins listening for incoming messages.
-     */
-    public void start ()
+    // from interface Lifecycle.Component
+    public void init ()
     {
         // Start listening on buy bars queue.  If bars are purchased, call MoneyLogic.boughtBars().
         _barsBoughtListener = listen("messaging.whirled.barsBought.address", new MessageListener() {
@@ -92,9 +89,7 @@ public class MoneyMessageListener
         }
     }
 
-    /**
-     * Closes any listeners when shutting down.
-     */
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         if (_barsBoughtListener != null) {

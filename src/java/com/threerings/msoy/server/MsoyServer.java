@@ -192,13 +192,11 @@ public class MsoyServer extends MsoyBaseServer
         _adminMan.init(_invmgr, _cacheMgr);
         _memberMan.init();
         _friendMan.init();
-        _jabberMan.init();
         _itemMan.init();
         _wgameReg.init();
         _ggameReg.init(injector);
         _partyReg.init();
         _moneyLogic.init(_cacheMgr);
-        _tourMan.init();
 
         // tell our dictionary manager where to find its dictionaries
         _dictMan.init("data/dictionary");

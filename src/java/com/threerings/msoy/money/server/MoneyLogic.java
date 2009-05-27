@@ -111,10 +111,6 @@ public class MoneyLogic
     public void init (CacheManager cacheMgr)
     {
         _priceCache.init(cacheMgr);
-        _exchange.init();
-        _msgReceiver.start();
-        _blingDistributor.start();
-        _expirer.start();
     }
 
     /**

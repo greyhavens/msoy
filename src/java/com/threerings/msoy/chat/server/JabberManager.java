@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
+import com.samskivert.util.Lifecycle;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
@@ -49,7 +50,6 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatProvider;
@@ -72,22 +72,18 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class JabberManager
-    implements ShutdownManager.Shutdowner, ClientManager.ClientObserver, JabberProvider,
-               ConnectionListener
+    implements Lifecycle.Component, ClientManager.ClientObserver, JabberProvider, ConnectionListener
 {
     public static boolean DEBUG = false;
 
-    @Inject public JabberManager (ShutdownManager shutmgr, ClientManager clmgr,
-                                  InvocationManager invmgr)
+    @Inject public JabberManager (Lifecycle cycle, ClientManager clmgr, InvocationManager invmgr)
     {
-        shutmgr.registerShutdowner(this);
+        cycle.addComponent(this);
         clmgr.addClientObserver(this);
         invmgr.registerDispatcher(new JabberDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
-    /**
-     * Initializes this manager during server startup.
-     */
+    // from interface Lifecycle.Component
     public void init ()
     {
         String host = ServerConfig.config.getValue("jabber.host", "localhost");
@@ -114,7 +110,7 @@ public class JabberManager
         handshake();
     }
 
-    // from interface MsoyServer.Shutdowner
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         if (_reconnectInterval != null) {

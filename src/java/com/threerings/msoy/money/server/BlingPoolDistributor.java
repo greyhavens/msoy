@@ -27,10 +27,9 @@ import org.quartz.spi.TriggerFiredBundle;
 import com.google.inject.Inject;
 
 import com.samskivert.util.CalendarUtil;
+import com.samskivert.util.Lifecycle;
 
 import com.threerings.util.MessageBundle;
-
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -51,30 +50,25 @@ import static com.threerings.msoy.Log.log;
 /**
  * Responsible for distributing bling to creators of games that players have played on a daily
  * basis.  The amount to distribute is governed by the {@link MoneyConfigObject#blingPoolSize}
- * run-time configuration.  This is scheduled to run at 3:00a every day.  The amount of bling
- * each game creator receives is based on the amount of time players played their game, compared
- * to the total amount of time that players played games that day.
+ * run-time configuration.  This is scheduled to run at 3:00a every day.  The amount of bling each
+ * game creator receives is based on the amount of time players played their game, compared to the
+ * total amount of time that players played games that day.
  *
- * This class will guarantee that no other thread or process is running the distributor at the
+ * <p> This class will guarantee that no other thread or process is running the distributor at the
  * same time, though all world servers will attempt to execute this at the same time.  This allows
  * for redundancy in case any one server is down.
- *
- * @author Kyle Sampson <kyle@threerings.net>
  */
 public class BlingPoolDistributor
-    implements ShutdownManager.Shutdowner
+    implements Lifecycle.Component
 {
-    @Inject
-    public BlingPoolDistributor (RuntimeConfig runtime, MoneyRepository repo,
-        MsoyGameRepository mgameRepo, ShutdownManager sm, MemberRepository memberRepo)
+    @Inject public BlingPoolDistributor (Lifecycle cycle)
     {
-        _runtime = runtime;
-        _repo = repo;
-        _mgameRepo = mgameRepo;
-        _memberRepo = memberRepo;
+        cycle.addComponent(this);
+    }
 
-        sm.registerShutdowner(this);
-
+    // from interface Lifecycle.Component
+    public void init ()
+    {
         try {
             // Create the quartz scheduler, with 1 thread.
             DirectSchedulerFactory.getInstance().createVolatileScheduler(1);
@@ -85,18 +79,13 @@ public class BlingPoolDistributor
             final CronTrigger trigger = new CronTrigger("Bling Distributor", GROUP);
             trigger.setCronExpression(EXECUTE_SCHEDULE);
             _scheduler.scheduleJob(job, trigger);
+
         } catch (SchedulerException se) {
             throw new IllegalStateException(se);
         } catch (ParseException pe) {
             throw new IllegalStateException(pe);
         }
-    }
 
-    /**
-     * Starts the distributor, which will be invoked at a later time.
-     */
-    public void start ()
-    {
         // Get the money config record, automatically creating it if it doesn't currently exist.
         MoneyConfigRecord confRecord = _repo.getMoneyConfig(false);
 
@@ -112,6 +101,7 @@ public class BlingPoolDistributor
         }
     }
 
+    // from interface Lifecycle.Component
     public void shutdown ()
     {
         try {
@@ -277,12 +267,6 @@ public class BlingPoolDistributor
         }
     }
 
-    /** Schedule to execute this distributor.  Daily at 3:00a. */
-    protected static final String EXECUTE_SCHEDULE = "0 0 3 * * ?";
-
-    /** Default group for scheduled jobs and triggers. */
-    protected static final String GROUP = "group1";
-
     protected Scheduler _scheduler;
 
     // dependencies
@@ -290,4 +274,10 @@ public class BlingPoolDistributor
     @Inject protected MoneyRepository _repo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected RuntimeConfig _runtime;
+
+    /** Schedule to execute this distributor.  Daily at 3:00a. */
+    protected static final String EXECUTE_SCHEDULE = "0 0 3 * * ?";
+
+    /** Default group for scheduled jobs and triggers. */
+    protected static final String GROUP = "group1";
 }
