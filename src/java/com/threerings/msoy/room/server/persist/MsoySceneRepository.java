@@ -577,9 +577,6 @@ public class MsoySceneRepository extends DepotRepository
         for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
             checkCreateStockScene(stock);
         }
-
-        // initialize our update accumulator
-        _accumulator.init(this);
     }
 
     protected static SQLExpression getRatingExpression ()
