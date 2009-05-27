@@ -207,7 +207,7 @@ public class DoListItemPopup extends VerticalPanel
             pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
 
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
-            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
+            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 7, 7), 1, null);
             int cost = (listing == null) ? DEFAULT_COIN_COST : listing.quote.getListedAmount();
             _cost.setNumber(cost);
 
