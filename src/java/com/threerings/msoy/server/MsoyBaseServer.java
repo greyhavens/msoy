@@ -61,6 +61,11 @@ public abstract class MsoyBaseServer extends WhirledServer
         // initialize event logger
         _eventLog.init(getIdent());
 
+        // initialize our persistence context and repositories; run schema and data migrations
+        ConnectionProvider conprov = ServerConfig.createConnectionProvider();
+        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
+        _perCtx.initializeRepositories(true);
+
         super.init(injector);
 
         // when we shutdown, the batch invoker needs to do some jockeying
@@ -80,13 +85,6 @@ public abstract class MsoyBaseServer extends WhirledServer
         _invoker.setProfilingParameters(50, 40);
         _authInvoker.setProfilingParameters(50, 40);
         _batchInvoker.setProfilingParameters(500, 30);
-
-        // initialize our persistence context
-        ConnectionProvider conprov = ServerConfig.createConnectionProvider();
-        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
-
-        // initialize our depot repositories; running all of our schema and data migrations
-        _perCtx.initializeRepositories(true);
 
         // set up our default object access controller
         _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
