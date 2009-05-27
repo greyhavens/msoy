@@ -31,8 +31,6 @@ import static com.threerings.msoy.Log.log;
 /**
  * Responsible for receiving messages from outside systems (such as billing) and calling
  * the appropriate action in the money service.
- *
- * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyMessageListener
     implements Shutdowner
@@ -55,11 +53,9 @@ public class MoneyMessageListener
             public void received (final byte[] message, final Replier replier)
             {
                 _invoker.postUnit(new Invoker.Unit("money/barsBought") {
-                    @Override
-                    public boolean invoke ()
-                    {
-                        final BarsBoughtMessage bbm = new BarsBoughtMessage(message);
-                        final MemberRecord member = _memberRepo.loadMember(bbm.accountName);
+                    @Override public boolean invoke () {
+                        BarsBoughtMessage bbm = new BarsBoughtMessage(message);
+                        MemberRecord member = _memberRepo.loadMember(bbm.accountName);
                         _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
                         return false;
                     }
@@ -71,21 +67,19 @@ public class MoneyMessageListener
         }
 
         // Start listening get bars count queue.  Send a reply with the number of bars
-        _getBarCountListener = listen("messaging.whirled.getBarCount.address", new MessageListener() {
-            public void received (final byte[] message, final Replier replier)
-            {
+        _getBarCountListener = listen("messaging.whirled.getBarCount.address",
+            new MessageListener() {
+            public void received (final byte[] message, final Replier replier) {
                 _invoker.postUnit(new Invoker.Unit("money/getBarCount") {
-                    @Override
-                    public boolean invoke ()
-                    {
-                        final GetBarCountMessage gbcm = new GetBarCountMessage(message);
-                        final MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
+                    @Override public boolean invoke () {
+                        GetBarCountMessage gbcm = new GetBarCountMessage(message);
+                        MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
 
                         try {
-                            final MemberMoney money = _logic.getMoneyFor(member.memberId);
+                            MemberMoney money = _logic.getMoneyFor(member.memberId);
                             replier.reply(new IntMessage(money.bars));
                             return false;
-                        } catch (final IOException ioe) {
+                        } catch (IOException ioe) {
                             throw new RuntimeException(
                                 "Could not send a reply for getBarCount.", ioe);
                         }
@@ -106,14 +100,14 @@ public class MoneyMessageListener
         if (_barsBoughtListener != null) {
             try {
                 _barsBoughtListener.close();
-            } catch (final IOException ioe) {
+            } catch (IOException ioe) {
                 log.warning("Could not close bars bought listener.", ioe);
             }
         }
         if (_getBarCountListener != null) {
             try {
                 _getBarCountListener.close();
-            } catch (final IOException ioe) {
+            } catch (IOException ioe) {
                 log.warning("Could not close get bar count listener.", ioe);
             }
         }
@@ -125,10 +119,9 @@ public class MoneyMessageListener
      */
     protected ConnectedListener listen (final String configKey, final MessageListener listener)
     {
-        final String barsBoughtStr = ServerConfig.config.getValue(
-            configKey, "");
+        String barsBoughtStr = ServerConfig.config.getValue(configKey, "");
         if (!"".equals(barsBoughtStr)) {
-            final DestinationAddress addr = new DestinationAddress(barsBoughtStr);
+            DestinationAddress addr = new DestinationAddress(barsBoughtStr);
             return _conn.listen(addr.getRoutingKey(), addr, listener);
         }
         return null;
@@ -141,9 +134,9 @@ public class MoneyMessageListener
     {
         public final String accountName;
 
-        public GetBarCountMessage (final byte[] bytes)
+        public GetBarCountMessage (byte[] bytes)
         {
-            final ByteBuffer buf = ByteBuffer.wrap(bytes);
+            ByteBuffer buf = ByteBuffer.wrap(bytes);
             byte[] msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
             accountName = new String(msgBuf);
@@ -167,7 +160,7 @@ public class MoneyMessageListener
 
         public BarsBoughtMessage (final byte[] bytes)
         {
-            final ByteBuffer buf = ByteBuffer.wrap(bytes);
+            ByteBuffer buf = ByteBuffer.wrap(bytes);
             byte[] msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
             accountName = new String(msgBuf);
