@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import org.apache.mina.common.IoAcceptor;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -370,12 +370,8 @@ public class MsoyServer extends MsoyBaseServer
             }
 
             // if someone is online, delay the reboot
-            if (Iterators.any(
-                _clmgr.enumerateClientObjects(), new Predicate<ClientObject>() {
-                    public boolean apply (ClientObject clobj) {
-                        return (clobj instanceof MemberObject);
-                    }
-                })) {
+            if (Iterators.any(_clmgr.enumerateClientObjects(),
+                    Predicates.instanceOf(MemberObject.class))) {
                 return;
             }
 
