@@ -11,19 +11,26 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic;
+
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.gwt.ABTest;
+import com.threerings.msoy.server.persist.EntryVectorRecord;
 
 /**
  * Maintains persistent data for a/b tests
@@ -101,6 +108,34 @@ public class ABTestRepository extends DepotRepository
     }
 
     /**
+     * Summarizes the results of the specified test. This is expensive.
+     */
+    public void summarizeTest (int testId)
+    {
+        // first determine the number of visitors assigned to the test groups
+        IntMap<ABGroupSummaryRecord> groups = IntMaps.newHashIntMap();
+        for (GroupCountRecord rec : findAll(
+                 GroupCountRecord.class, new FromOverride(ABGroupRecord.class),
+                 new Where(ABGroupRecord.TEST_ID, testId))) {
+            ABGroupSummaryRecord sumrec = new ABGroupSummaryRecord();
+            sumrec.testId = testId;
+            sumrec.group = rec.group;
+            sumrec.assigned = rec.count;
+            groups.put(sumrec.group, sumrec);
+        }
+
+        // now determine how many of those members registered
+        for (GroupCountRecord rec : findAll(
+                 GroupCountRecord.class, new FromOverride(ABGroupRecord.class),
+                 new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
+                 new Where(ABGroupRecord.TEST_ID, testId))) {
+            // TODO
+        }
+
+        // TODO
+    }
+
+    /**
      * Ends any tests that are not already marked as ended and are not in the supplied set of
      * active tests. Summarizes the data for those tests and purges the raw data.
      */
@@ -117,7 +152,18 @@ public class ABTestRepository extends DepotRepository
             return;
         }
 
-        // TODO: summarize
+        // summarize and purge the tests that we just ended
+        for (ABTestRecord rec : findAll(ABTestRecord.class, new Where(ABTestRecord.ENDED, now))) {
+            summarizeTest(rec.testId);
+            deleteAll(ABGroupRecord.class, new Where(ABGroupRecord.TEST_ID, rec.testId), null);
+            deleteAll(ABActionRecord.class, new Where(ABActionRecord.TEST_ID, rec.testId), null);
+        }
+    }
+
+    @Computed
+    protected static class GroupCountRecord extends PersistentRecord {
+        public int group;
+        @Computed(fieldDefinition="count(*)") public int count;
     }
 
     @Override // from DepotRepository
@@ -125,6 +171,8 @@ public class ABTestRepository extends DepotRepository
     {
         classes.add(ABTestRecord.class);
         classes.add(ABGroupRecord.class);
+        classes.add(ABGroupSummaryRecord.class);
         classes.add(ABActionRecord.class);
+        classes.add(ABActionSummaryRecord.class);
     }
 }

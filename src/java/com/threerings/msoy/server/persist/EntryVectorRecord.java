@@ -37,7 +37,7 @@ public class EntryVectorRecord extends PersistentRecord
     public String vector;
 
     /** The member that this visitor eventually turned into, or 0 if never. This column is indexed
-     * because we periodically delete all 0 memberId rows older than a week. */
+     * because we periodically delete all 0 memberId rows older than two weeks. */
     @Index public int memberId;
 
     /** The time at which this record was created. */
