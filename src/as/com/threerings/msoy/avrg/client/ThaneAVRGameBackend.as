@@ -489,7 +489,7 @@ public class ThaneAVRGameBackend
         data["orient"] = loc.orient;
         data["moveSpeed"] = 1.0; // TODO moveSpeed
         data["isMoving"] = false; // TODO isMoving
-        data["isIdle"] = actorInfo.isIdle();
+        data["isIdle"] = actorInfo.isIdleOrAFK();
         data["bounds"] = null; // TODO: bounds
         data["name"] = actorInfo.username.toString(); // deprecated, only for _v1
         return data;

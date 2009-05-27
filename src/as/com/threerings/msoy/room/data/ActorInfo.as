@@ -60,11 +60,19 @@ public class ActorInfo extends OccupantInfo
     }
 
     /**
-     * Returns true if this actor is idle (IDLE or AWAY).
+     * Returns true if this actor is idle.
      */
     public function isIdle () :Boolean
     {
-        return (status == OccupantInfo.IDLE || status == MsoyBodyObject.AWAY);
+        return (status == OccupantInfo.IDLE);
+    }
+
+    /**
+     * Returns true if this actor is idle or AFK.
+     */
+    public function isIdleOrAFK () :Boolean
+    {
+        return (isIdle() || status == MsoyBodyObject.AWAY);
     }
 
     override public function clone () :Object

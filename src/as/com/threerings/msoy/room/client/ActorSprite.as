@@ -63,6 +63,9 @@ public class ActorSprite extends OccupantSprite
      */
     public function isIdle () :Boolean
     {
+        // this needs to be ONLY idle, and not AWAY (AFK), otherwise we break nearly every avatar,
+        // and as of this writing we still publish a Body.as script that can't handle going
+        // from moving -> sleeping directly.
         return (_occInfo as ActorInfo).isIdle();
     }
 
