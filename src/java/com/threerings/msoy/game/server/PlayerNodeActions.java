@@ -102,7 +102,7 @@ public class PlayerNodeActions
         }
 
         protected void execute (MemberObject memObj) {
-            _gameReg.updatePlayerOnPeer(memObj, _game);
+            _gameReg.updatePlayerGame(memObj, _game);
         }
 
         protected GameSummary _game;

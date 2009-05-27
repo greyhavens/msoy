@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.server.GameUtil;
@@ -38,5 +39,11 @@ public class GameContent
     public boolean isDevelopmentVersion ()
     {
         return GameUtil.isDevelopmentVersion(gameId);
+    }
+
+    public GameSummary toGameSummary ()
+    {
+        return new GameSummary(game.gameId, isDevelopmentVersion(), game.name, game.description,
+                               game.isAVRG, game.getThumbMedia());
     }
 }

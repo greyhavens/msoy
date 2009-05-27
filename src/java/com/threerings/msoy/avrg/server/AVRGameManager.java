@@ -702,8 +702,7 @@ public class AVRGameManager extends PlaceManager
 
         // note that this player is playing this game (note that we don't have to clear the player
         // game because that is done automatically when the player logs off of the game server)
-        _playerActions.updatePlayerGame(
-            player, _contentDelegate.getContent().game.toGameSummary());
+        _playerActions.updatePlayerGame(player, _contentDelegate.getContent().toGameSummary());
     }
 
     @Override

@@ -27,7 +27,6 @@ import com.threerings.msoy.item.data.all.Prop;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.TrophySource;
 
-import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -198,14 +197,6 @@ public class GameInfoRecord extends PersistentRecord
         info.integrated = integrated;
         info.playersOnline = playersOnline;
         return info;
-    }
-
-    /**
-     * Creates a {@link GameSummary} record for this game.
-     */
-    public GameSummary toGameSummary ()
-    {
-        return new GameSummary(gameId, name, description, isAVRG, getThumbMedia());
     }
 
     /**

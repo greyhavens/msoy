@@ -967,7 +967,7 @@ public class GameGameRegistry
         log.info("Setting up AVRG manager", "game", content.game);
 
         AVRGameConfig config = new AVRGameConfig();
-        config.init(content.gameId, content.game.toGameSummary(), def, content.code.splashMedia);
+        config.init(content.gameId, content.toGameSummary(), def, content.code.splashMedia);
 
         List<PlaceManagerDelegate> delegates = createGameDelegates(config, content);
 

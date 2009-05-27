@@ -129,7 +129,7 @@ public class LobbyManager
         // update the lobby object
         _lobj.startTransaction();
         try {
-            _lobj.setGame(_content.game.toGameSummary());
+            _lobj.setGame(_content.toGameSummary());
             _lobj.setGameDef(gameDef);
             _lobj.setGroupId(ServerConfig.getGameGroupId(_content.game.groupId));
             _lobj.setSplashMedia(_content.code.splashMedia);
