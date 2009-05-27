@@ -4,16 +4,18 @@
 package com.threerings.msoy.bureau.server;
 
 import java.io.File;
+
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
-import com.threerings.msoy.Log;
+
+import com.threerings.msoy.server.persist.RepositoryUtil;
+
+import static com.threerings.msoy.Log.log;
 
 /**
- * Provides access to installation specific configuration. Properties that
- * are specific to a particular burl server installation are accessed via
- * this class.
+ * Provides access to installation specific configuration. Properties that are specific to a
+ * particular burl server installation are accessed via this class.
  */
 public class BureauLauncherConfig
 {
@@ -48,7 +50,7 @@ public class BureauLauncherConfig
     public static ConnectionProvider createConnectionProvider ()
         throws Exception
     {
-        return new StaticConnectionProvider(config.getSubProperties("db"));
+        return RepositoryUtil.createConnectionProvider(config);
     }
 
     /**
@@ -61,7 +63,7 @@ public class BureauLauncherConfig
         if (StringUtil.isBlank(serverHost)) {
             serverHost = System.getProperty("hostname");
             if (StringUtil.isBlank(serverHost)) {
-                Log.log.warning("Neither server_host nor hostname is configured, using localhost");
+                log.warning("Neither server_host nor hostname is configured, using localhost");
                 serverHost = "localhost";
             }
         }
