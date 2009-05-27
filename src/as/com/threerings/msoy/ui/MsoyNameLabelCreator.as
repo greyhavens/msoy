@@ -91,6 +91,7 @@ class LabelBox extends HBox
         addEventListener(MouseEvent.ROLL_OUT, handleRoll);
     }
 
+    // from NameLabel
     public function setStatus (status :String) :void
     {
         // translate the PlayerList status into an OccupantInfo status
