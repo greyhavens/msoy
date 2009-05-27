@@ -308,9 +308,8 @@ public class OccupantSprite extends MsoySprite
     protected function isNameChangeRequired (oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
         // see if we need to update the name label or the status
-        var newName :String = newInfo.username.toString();
-        return oldInfo == null || (oldInfo.status != newInfo.status) ||
-            (oldInfo.username.toString() !== newName);
+        return (oldInfo == null) || (oldInfo.status != newInfo.status) ||
+            (oldInfo.username.toString() !== newInfo.username.toString());
     }
 
     /**
