@@ -194,7 +194,6 @@ public class MsoyServer extends MsoyBaseServer
         _friendMan.init();
         _itemMan.init();
         _wgameReg.init();
-        _ggameReg.init(injector);
         _partyReg.init();
         _moneyLogic.init(_cacheMgr);
 
