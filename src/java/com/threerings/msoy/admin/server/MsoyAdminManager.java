@@ -70,17 +70,13 @@ import static com.threerings.msoy.Log.log;
 public class MsoyAdminManager
     implements PeerAdminProvider
 {
-    @Inject public MsoyAdminManager (PresentsServer server, RootDObjectManager omgr,
-                                     PulseManager pulseMan)
+    @Inject public MsoyAdminManager (PulseManager pulseMan)
     {
         // we need to register our records before the server gets around to initing the repos
         pulseMan.registerRecorder(JVMPulseRecorder.class);
         pulseMan.registerRecorder(PresentsPulseRecorder.class);
         pulseMan.registerRecorder(PeerPulseRecorder.class);
         pulseMan.registerRecorder(MsoyPulseRecorder.class);
-
-        // create our reboot manager
-        _rebmgr = new MsoyRebootManager(server, omgr);
     }
 
     /**
@@ -92,7 +88,7 @@ public class MsoyAdminManager
         _snapshotLogger = new SnapshotLogger();
         _snapshotLogger.schedule(0, STATS_DELAY);
 
-        // initialize our reboot manager
+        // create and initialize our reboot manager
         _rebmgr.init();
 
         // register our peer service
@@ -185,11 +181,18 @@ public class MsoyAdminManager
     }
 
     /** Used to manage automatic reboots. */
-    protected class MsoyRebootManager extends RebootManager
+    @Singleton
+    protected static class MsoyRebootManager extends RebootManager
         implements AttributeChangeListener
     {
-        public MsoyRebootManager (PresentsServer server, RootDObjectManager omgr) {
+        @Inject public MsoyRebootManager (PresentsServer server, RootDObjectManager omgr) {
             super(server, omgr);
+        }
+
+        @Override // from RebootManager
+        public void init ()
+        {
+            super.init();
             _runtime.server.addListener(this);
             _runtime.server.setCustomRebootMsg("");
         }
@@ -274,6 +277,11 @@ public class MsoyAdminManager
             // is a "regularly scheduled reboot"
             return MessageBundle.taint(_runtime.server.customRebootMsg);
         }
+
+        @Inject protected MailSender _sender;
+        @Inject protected MemberManager _memberMan;
+        @Inject protected MsoyPeerManager _peerMan;
+        @Inject protected RuntimeConfig _runtime;
     }
 
     /** Logs a 'snapshot' of the server state on a regular basis. */
@@ -307,24 +315,19 @@ public class MsoyAdminManager
     /** Logs a snapshot of the running server every 10 minutes. */
     protected SnapshotLogger _snapshotLogger;
 
-    /** Handles our reboot coordinations. */
-    protected MsoyRebootManager _rebmgr;
-
     /** A mapping of registered stat collectors. */
     protected Map<StatsModel.Type, StatCollector> _collectors = Maps.newHashMap();
 
     @Inject protected Lifecycle _lifecycle;
-    @Inject protected MailSender _sender;
     @Inject protected MemberLocator _locator;
-    @Inject protected MemberManager _memberMan;
     @Inject protected MoneyExchange _exchange;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MsoyRebootManager _rebmgr;
     @Inject protected PersistenceContext _perCtx;
     @Inject protected PulseManager _pulseMan;
     @Inject protected RPCProfiler _rpcProfiler;
     @Inject protected RootDObjectManager _omgr;
-    @Inject protected RuntimeConfig _runtime;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;
