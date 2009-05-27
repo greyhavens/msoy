@@ -53,7 +53,6 @@ public class ABTestListPanel extends FlowPanel
         // header row
         int col = 0;
         contents.setText(0, col++, _msgs.abTestName());
-        contents.setText(0, col++, _msgs.abTestEnabled());
         contents.setText(0, col++, _msgs.abTestStarted());
         contents.setText(0, col++, _msgs.abTestEnded());
         contents.getRowFormatter().addStyleName(0, "Header");
@@ -62,7 +61,6 @@ public class ABTestListPanel extends FlowPanel
             int row = contents.getRowCount();
             col = 0;
             contents.setText(row, col++, test.name);
-            contents.setText(row, col++, ""+test.enabled);
             contents.setText(row, col++, MsoyUI.formatDate(test.started));
             contents.setText(row, col++, MsoyUI.formatDate(test.ended));
         }
