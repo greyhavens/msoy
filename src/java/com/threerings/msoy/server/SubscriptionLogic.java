@@ -15,8 +15,6 @@ import com.threerings.msoy.server.persist.SubscriptionRepository;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.server.MoneyLogic;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Manages user subscriptions.
  */

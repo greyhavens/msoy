@@ -24,7 +24,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
-import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
@@ -42,7 +41,6 @@ import com.samskivert.depot.operator.Sub;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.ABTestSummary;
 import com.threerings.msoy.server.persist.EntryVectorRecord;
 import com.threerings.msoy.server.persist.MemberRecord;

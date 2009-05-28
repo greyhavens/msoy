@@ -1080,7 +1080,7 @@ public class MoneyLogic
     {
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         // FixedExchange
-        return securePrice(buyerId, (Object)item, listedCurrency, listedAmount,
+        return securePrice(buyerId, item, listedCurrency, listedAmount,
             (listedCurrency == Currency.COINS));
 /// FixedExchange
 ///        return securePrice(buyerId, (Object)item, listedCurrency, listedAmount);

@@ -13,8 +13,6 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 

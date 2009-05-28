@@ -881,12 +881,12 @@ public class ItemLogic
     public boolean isSuitableBasis (byte type, int creatorId, CatalogRecord basisRec,
                                     Currency currency, int cost)
     {
-        if (type != basisRec.item.getType() || !Item.supportsDerivation(type)) {
+        if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
+            basisRec.item.creatorId == creatorId) {
             return false;
         }
 
-        if (basisRec == null || basisRec.item == null || basisRec.basisId != 0 ||
-            basisRec.item.creatorId == creatorId) {
+        if (type != basisRec.item.getType() || !Item.supportsDerivation(type)) {
             return false;
         }
 
