@@ -8,21 +8,13 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.shell.Page;
-import client.ui.MsoyUI;
 
 public class IssuesPage extends Page
 {
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        if (CShell.isGuest()) {
-            // if we have no creds, just display a message saying logon
-            setContent(MsoyUI.createLabel(_msgs.logon(), "infoLabel"));
-            return;
-        }
-
         String action = args.get(0, "");
 
         if (action.equals("mine")) {
