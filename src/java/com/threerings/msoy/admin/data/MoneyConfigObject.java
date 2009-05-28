@@ -26,6 +26,9 @@ public class MoneyConfigObject extends ConfigObject
     /** The field name of the <code>payoutFactorReassessment</code> field. */
     public static final String PAYOUT_FACTOR_REASSESSMENT = "payoutFactorReassessment";
 
+    /** The field name of the <code>monthlySubscriberBarGrant</code> field. */
+    public static final String MONTHLY_SUBSCRIBER_BAR_GRANT = "monthlySubscriberBarGrant";
+
     /** The field name of the <code>creatorPercentage</code> field. */
     public static final String CREATOR_PERCENTAGE = "creatorPercentage";
 
@@ -69,6 +72,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The number of player minutes between reassessments of a game's payout factor. */
     public int payoutFactorReassessment = 240;
+
+    /** The number of bars we grant subscribers each month. */
+    public int monthlySubscriberBarGrant = 45;
 
     /** The percentage of the purchase price that will be awarded to the creator of an item when it
      * is bought. */
@@ -187,6 +193,22 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             PAYOUT_FACTOR_REASSESSMENT, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.payoutFactorReassessment = value;
+    }
+
+    /**
+     * Requests that the <code>monthlySubscriberBarGrant</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMonthlySubscriberBarGrant (int value)
+    {
+        int ovalue = this.monthlySubscriberBarGrant;
+        requestAttributeChange(
+            MONTHLY_SUBSCRIBER_BAR_GRANT, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.monthlySubscriberBarGrant = value;
     }
 
     /**

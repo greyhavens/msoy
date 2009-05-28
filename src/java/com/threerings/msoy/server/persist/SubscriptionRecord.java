@@ -19,7 +19,7 @@ public class SubscriptionRecord extends PersistentRecord
     public static final Class<SubscriptionRecord> _R = SubscriptionRecord.class;
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     public static final ColumnExp END_DATE = colexp(_R, "endDate");
-    public static final ColumnExp LAST_BAR_DISTRIBUTION = colexp(_R, "lastBarDistribution");
+    public static final ColumnExp LAST_GRANT = colexp(_R, "lastGrant");
     // AUTO-GENERATED: FIELDS END
 
     /** To be updated when the structure of this class changes. */
@@ -34,8 +34,9 @@ public class SubscriptionRecord extends PersistentRecord
      * ex-subscribers. */
     public Timestamp endDate;
 
-    /** The last time bars have been distributed to this subscriber. */
-    public Timestamp lastBarDistribution;
+    /** The last time bars and/or special items have been granted to this subscriber,
+     *  which happens on a monthly basis. */
+    public Timestamp lastGrant;
 
     // AUTO-GENERATED: METHODS START
     /**

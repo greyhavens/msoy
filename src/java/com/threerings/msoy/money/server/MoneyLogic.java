@@ -207,6 +207,27 @@ public class MoneyLogic
     }
 
     /**
+     * The member has been granted some bars for being a subscriber.
+     * This will add the number of bars to their account, fulfilling the transaction.
+     *
+     * @param memberId ID of the member receiving bars.
+     * @param numBars Number of bars to add to their account.
+     * @return a result Transaction
+     */
+    public MoneyTransaction grantSubscriberBars (int memberId, int numBars)
+    {
+        Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
+
+        UserAction action = UserAction.subscriptionBars(memberId);
+        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
+            Currency.BARS, numBars, TransactionType.SUBSCRIBER_GRANT, action.description,
+            null, true);
+        _nodeActions.moneyUpdated(tx, true);
+        logAction(action, tx);
+        return tx.toMoneyTransaction();
+    }
+
+    /**
      * The member has his purse poked by support staff. This adds or lowers their currency by some
      * amount as logged transaction.
      *

@@ -44,6 +44,7 @@ public class UserAction extends SimpleStreamableObject
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), /*obsolete(52),*/ SUPPORT_ADJUST(53),
         EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55), RECEIVED_FRIEND_AWARD(56),
+        SUBSCRIPTION_BARS(57),
 
         // buying shit from OOO
         BOUGHT_ROOM(100), BOUGHT_GROUP(101), BOUGHT_BROADCAST(102), BOUGHT_PARTY(103),
@@ -88,7 +89,7 @@ public class UserAction extends SimpleStreamableObject
     /**
      * Look up an {@link UserAction} by its numerical representation and return it.
      */
-    public static Type getActionByNumber (final int num)
+    public static Type getActionByNumber (int num)
     {
         return _reverse.get(num);
     }
@@ -163,6 +164,11 @@ public class UserAction extends SimpleStreamableObject
     {
         String descrip = MessageBundle.tcompose("m.bought_bars", payment);
         return new UserAction(Type.BOUGHT_BARS, memberId, descrip);
+    }
+
+    public static UserAction subscriptionBars (int memberId)
+    {
+        return new UserAction(Type.SUBSCRIPTION_BARS, memberId, "m.sub_bar_grant");
     }
 
     public static UserAction receivedPayout (int memberId)
