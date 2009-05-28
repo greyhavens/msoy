@@ -48,13 +48,16 @@ public class SubscriptionLogic
         }
         // create or update their subscription record
         _subscripRepo.noteSubscription(mrec.memberId, endTime);
-        // TODO: FFS, turn them into a subscriber instantly, whereever they are
-        // grant them their monthly bar allowance
+        // TODO: FFS, turn them into a subscriber instantly, whereever they are.
+
+        // Grant them their monthly bar allowance.
         int bars = _runtime.money.monthlySubscriberBarGrant;
         if (bars > 0) {
             _moneyLogic.grantSubscriberBars(mrec.memberId, bars);
         }
-        // TODO: give them the current Item Of The Month
+        // TODO: give them the current Item Of The Month. However, if they already received the
+        // item of the month; because they were a subscriber when it came out, or if we don't
+        // quite update it monthly and they already got it during the last billing cycle; don't.
     }
 
     @Inject protected MoneyLogic _moneyLogic;
