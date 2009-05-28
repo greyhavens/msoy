@@ -155,7 +155,10 @@ public class WorldController extends MsoyController
     /** Command to view a "stuff" page. Arg: [ itemType ] */
     public static const VIEW_STUFF :String= "ViewStuff";
 
-    /** Command to view a "shop" page. Arg: [ itemType ] */
+    /** Command to view a "shop" page.
+     * Args: nothing to view the general shop,
+     * or [ itemType ] to view a category
+     * or [ itemType, itemId ] to view a specific listing. */
     public static const VIEW_SHOP :String= "ViewShop";
 
     /** Command to view the "mail" page. */
@@ -392,16 +395,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the VIEW_COMMENTED_ITEM command.
-     */
-    public function handleViewCommentedItem (itemType :int, itemId :int) :void
-    {
-        // in this case we are looking for an item that we were told was commented, so we can
-        // assume that it's listed in the shop
-        displayPage("shop", "l_" + itemType + "_" + itemId);
-    }
-
-    /**
      * Handles the VIEW_ITEM command.
      */
     public function handleViewItem (ident :ItemIdent) :void
@@ -572,9 +565,13 @@ public class WorldController extends MsoyController
     /**
      * Handles the VIEW_SHOP command.
      */
-    public function handleViewShop (itemType :int = Item.NOT_A_TYPE) :void
+    public function handleViewShop (itemType :int = Item.NOT_A_TYPE, itemId :int = 0) :void
     {
-        displayPage("shop", (itemType == Item.NOT_A_TYPE) ? "" : (""+itemType));
+        var page :String = "";
+        if (itemType != Item.NOT_A_TYPE) {
+            page += (itemId == 0) ? itemType : ("l_" + itemType + "_" + itemId);
+        }
+        displayPage("shop", page);
     }
 
     /**
