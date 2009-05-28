@@ -4,10 +4,14 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.display.DisplayObject;
-import flash.utils.ByteArray;
+
 import flash.events.Event;
+
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
@@ -257,6 +261,8 @@ public class AVRGameBackend extends ControlBackend
         o["game_getOccupantName_v1"] = game_getOccupantName_v1;
         o["getLevelPacks_v2"] = getLevelPacks_v2;
         o["getItemPacks_v1"] = getItemPacks_v1;
+        o["loadLevelPackData_v1"] = loadLevelPackData_v1;
+        o["loadItemPackData_v1"] = loadItemPackData_v1;
         _partyHelper.populateProperties(o);
 
         // RoomSubControl
@@ -356,6 +362,22 @@ public class AVRGameBackend extends ControlBackend
     protected function getItemPacks_v1 (filter :Function = null) :Array
     {
         return BackendUtils.getItemPacks(_gameObj.gameData, filter);
+    }
+
+    // GameSubControl
+    protected function loadLevelPackData_v1 (
+        ident :String, onLoaded :Function, onFailure :Function) :void
+    {
+        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.LEVEL_DATA,
+                                  onLoaded, onFailure);
+    }
+
+    // GameSubControl
+    protected function loadItemPackData_v1 (
+        ident :String, onLoaded :Function, onFailure :Function) :void
+    {
+        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.ITEM_DATA,
+                                  onLoaded, onFailure);
     }
 
     // RoomSubControl
@@ -1032,5 +1054,8 @@ public class AVRGameBackend extends ControlBackend
     protected var _avatarAdapter :BackendAvatarAdapter;
 
     protected var _contentListener :ContentListener;
+
+    /** URL -> boolean for data packs that have been loaded */
+    protected var _loadedPacks :Dictionary = new Dictionary();
 }
 }
