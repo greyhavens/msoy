@@ -5,9 +5,11 @@ package com.threerings.msoy.server.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
@@ -24,11 +26,12 @@ public class ExternalMapRecord extends PersistentRecord
     public static final ColumnExp PARTNER_ID = colexp(_R, "partnerId");
     public static final ColumnExp EXTERNAL_ID = colexp(_R, "externalId");
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp SESSION_KEY = colexp(_R, "sessionKey");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The partner that maintains the external user id. See {@link ExternalAuther}. */
     @Id public int partnerId;
@@ -40,6 +43,19 @@ public class ExternalMapRecord extends PersistentRecord
     /** The id of the Whirled account associated with the specified external account. */
     @Index(name="ixMemberId")
     public int memberId;
+
+    /** The most recent session key provided by the external site, for use in making API requests
+     * to said site based on our most recently active session. */
+    @Column(nullable=true)
+    public String sessionKey;
+
+    /**
+     * Returns a where clause that matches the specified (non-primary) key.
+     */
+    public static Where getMemberKey (ExternalAuther auther, int memberId)
+    {
+        return new Where(PARTNER_ID, auther.toByte(), MEMBER_ID, memberId);
+    }
 
     // AUTO-GENERATED: METHODS START
     /**

@@ -1095,6 +1095,33 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads up and returns the most recently provided external session key for the specified
+     * member. Returns null if the member has no mapping for that authentication source or no saved
+     * session key.
+     */
+    public String lookupExternalSessionKey (ExternalAuther auther, int memberId)
+    {
+        ExternalMapRecord record = load(
+            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
+        return (record == null) ? null : record.sessionKey;
+    }
+
+    /**
+     * Updates the supplied member's session key mapping for the specified external authentication
+     * source.
+     */
+    public void updateExternalSessionKey (ExternalAuther auther, int memberId, String sessionKey)
+    {
+        // load the record so that we can do our update using the primary key
+        ExternalMapRecord record = load(
+            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
+        if (record != null) {
+            updatePartial(ExternalMapRecord.getKey(record.partnerId, record.externalId),
+                          ExternalMapRecord.SESSION_KEY, sessionKey);
+        }
+    }
+
+    /**
      * Creates a temp ban record for a member, or updates a pre-existing temp ban record.
      */
     public void tempBanMember (int memberId, Timestamp expires, String warning)
