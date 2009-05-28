@@ -111,14 +111,14 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         };
         controls.setWidget(0, 1, _ignoreThread);
 
-        // add a button for editing this thread's flags
-        _editFlags = new Button(_mmsgs.editThread(), new ClickHandler() {
+        // add a button for editing this thread's flags and subject
+        _editThread = new Button(_mmsgs.editThread(), new ClickHandler() {
             public void onClick (ClickEvent event) {
-                _parent.editFlags();
+                _parent.editThread();
             }
         });
-        _editFlags.setEnabled(false);
-        controls.setWidget(0, 2, _editFlags);
+        _editThread.setEnabled(false);
+        controls.setWidget(0, 2, _editThread);
     }
 
     @Override // from PagedGrid
@@ -131,7 +131,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             _parent.gotThread(_tmodel.getThread());
             boolean canReply = _tmodel.canPostReply() && !_tmodel.getThread().isLocked();
             _postReply.setEnabled(canReply || CShell.isSupport());
-            _editFlags.setEnabled(_tmodel.isManager() || CShell.isSupport());
+            _editThread.setEnabled(_tmodel.isManager() || CShell.isSupport());
         }
 
         super.displayResults(start, count, list);
@@ -372,8 +372,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     /** A button for ignoring this thread. */
     protected Button _ignoreThread;
 
-    /** A button for editing this thread's flags. */
-    protected Button _editFlags;
+    /** A button for editing this thread's flags and subject. */
+    protected Button _editThread;
 
     protected static final MsgsImages _images = GWT.create(MsgsImages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);

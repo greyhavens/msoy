@@ -78,7 +78,7 @@ public class ThreadPanel extends TitledListPanel
                                              "f", _thread.group.getGroupId()));
     }
 
-    public void editFlags ()
+    public void editThread ()
     {
         if (MsoyUI.requireValidated()) {
             new ThreadEditorPanel().show();
