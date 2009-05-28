@@ -27,4 +27,7 @@ public interface ProfileCodes extends ServiceCodes
 
     /** An error code returned by the profile service. */
     public static final String E_MEMBER_DOES_NOT_EXIST = "e.member_does_not_exist";
+
+    /** An error code returned by the profile service. */
+    public static final String E_TOO_YOUNG = "e.too_young";
 }

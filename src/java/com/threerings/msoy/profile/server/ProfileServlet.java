@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.profile.server;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -65,6 +66,7 @@ import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.GalleryLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -199,7 +201,14 @@ public class ProfileServlet extends MsoyServiceServlet
             }
         }
 
-        // TODO: whatever filtering and profanity checking that we want
+        // figure out this player's 13th birthday (based on their claim)
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(ProfileRecord.fromDateVec(profile.birthday));
+        cal.add(Calendar.YEAR, 13);
+        // if that's in the future, protest
+        if (cal.after(Calendar.getInstance())) {
+            throw new ServiceException(ProfileCodes.E_TOO_YOUNG);
+        }
 
         // load their old profile record for "first time configuration" purposes
         final ProfileRecord orec = _profileRepo.loadProfile(memberId);
@@ -312,7 +321,7 @@ public class ProfileServlet extends MsoyServiceServlet
             // if they were on 0 ms, divide by 1, if they were on a year ago, divide by 2
             mids.put(memberId, rankFromId.apply(memberId) / (1 + age));
         }
-        
+
         // finally sort the results using our rank mapping for the ordering
         Collections.sort(results, new Comparator<MemberCard>() {
             public int compare (MemberCard o1, MemberCard o2) {
