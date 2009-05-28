@@ -30,6 +30,9 @@ public class Comment
     /** An entity type code indicating a comment on a game. */
     public static final int TYPE_GAME = 66;
 
+    /** Bounds the special (non-item) comment types. */
+    public static final int MAX_SPECIAL_TYPE = TYPE_GAME;
+
     /** The maximum length of comment text. */
     public static final int MAX_TEXT_LENGTH = 1024;
 

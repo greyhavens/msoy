@@ -229,15 +229,8 @@ public class CommentServlet extends MsoyServiceServlet
         if (entityType >= Comment.TYPE_ITEM_MIN && entityType <= Comment.TYPE_ITEM_MAX) {
             return Item.getClassForType((byte)entityType) != null;
         }
-
         // otherwise make sure we have a constant defined for this type
-        switch (entityType) {
-        case Comment.TYPE_ROOM:
-        case Comment.TYPE_PROFILE_WALL:
-            return true;
-        default:
-            return false;
-        }
+        return (entityType > Comment.TYPE_ITEM_MAX && entityType <= Comment.MAX_SPECIAL_TYPE);
     }
 
     // our dependencies
