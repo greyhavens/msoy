@@ -44,7 +44,7 @@ public class PrizeRecord extends IdentGameItemRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Update this version if you change fields specific to this derived class. */
-    public static final int ITEM_VERSION = 1;
+    public static final int ITEM_VERSION = 2;
 
     /** This combines {@link #ITEM_VERSION} with {@link #BASE_SCHEMA_VERSION} to create a version
      * that allows us to make ItemRecord-wide changes and specific derived class changes. */
