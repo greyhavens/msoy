@@ -31,6 +31,7 @@ import client.util.ArrayUtil;
 import client.util.InfoCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 
 /**
  * Displays a list of threads. Subclasses determine the specifics of accessing the threads on the
@@ -88,7 +89,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
      * Performs a search on the contents of this thread list using the current value of
      * {@link #_query}. This will normally involve a call to a model from {@link ForumModels}.
      */
-    protected abstract void doSearch (AsyncCallback<List<ForumThread>> callback);
+    protected abstract void doSearch (String query, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * Same as {@link #setPage(String, int)}, but optionally forces the model to be reset to that
@@ -101,11 +102,11 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
             displayPage(page, false);
 
         } else {
-            if ((_query = query).length() == 0) {
+            if (StringUtil.isBlank(_query = query)) {
                 setModel(getThreadListModel(), page);
 
             } else {
-                doSearch(new InfoCallback<List<ForumThread>>() {
+                doSearch(_query, new InfoCallback<List<ForumThread>>() {
                     public void onSuccess (List<ForumThread> threads) {
                         setModel(new SimpleDataModel<ForumThread>(threads), 0);
                     }

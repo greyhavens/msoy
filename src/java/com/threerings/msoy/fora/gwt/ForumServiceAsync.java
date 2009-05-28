@@ -35,9 +35,9 @@ public interface ForumServiceAsync
                       AsyncCallback<List<ForumThread>> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#findUnreadThreads}.
+     * The asynchronous version of {@link ForumService#findMyThreads}.
      */
-    void findUnreadThreads (String query, int limit, AsyncCallback<List<ForumThread>> callback);
+    void findMyThreads (String query, int limit, AsyncCallback<List<ForumThread>> callback);
 
     /**
      * The asynchronous version of {@link ForumService#loadMessages}.

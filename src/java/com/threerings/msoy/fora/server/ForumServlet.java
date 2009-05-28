@@ -166,7 +166,7 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public List<ForumThread> findUnreadThreads (String search, int limit)
+    public List<ForumThread> findMyThreads (String search, int limit)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -177,15 +177,9 @@ public class ForumServlet extends MsoyServiceServlet
             groups.put(card.name.getGroupId(), card.name);
         }
 
-        // find the thread records
-        List<ForumThreadRecord> thrrecs;
-        if (groups.size() == 0) {
-            thrrecs = Collections.emptyList();
-        } else {
-            thrrecs = _forumRepo.findUnreadThreads(mrec.memberId, groups.keySet(), search, limit);
-        }
-
-        // turn ForumThreadRecords into ForumThreads by combining with group information
+        // find the thread records and resolve them
+        List<ForumThreadRecord> thrrecs = _forumRepo.findThreadsIn(
+            mrec.memberId, groups.keySet(), search, limit);
         return _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
     }
 

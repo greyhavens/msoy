@@ -80,9 +80,9 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
-     * Searches the subjects and messages in all unread threads
+     * Searches the subjects and messages in all threads in groups to which the caller belongs
      */
-    List<ForumThread> findUnreadThreads (String search, int limit)
+    List<ForumThread> findMyThreads (String search, int limit)
         throws ServiceException;
 
     /**

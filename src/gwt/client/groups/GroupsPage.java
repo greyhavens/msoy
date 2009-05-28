@@ -130,15 +130,10 @@ public class GroupsPage extends Page
 
     protected void showForumPanel (ForumPanel.Mode mode, int groupId, String search, int page)
     {
-        if (_fpanel == null || !_fpanel.isInMode(mode, groupId)) {
-            _fpanel = new ForumPanel(_fmodels, mode, groupId);
-        }
-        _fpanel.setPage(search, page);
-        setContent(_msgs.forumsTitle(), _fpanel);
+        setContent(_msgs.forumsTitle(), new ForumPanel(_fmodels, mode, groupId, search, page));
     }
 
     protected ForumModels _fmodels = new ForumModels();
-    protected ForumPanel _fpanel;
     protected GroupDetailPanel _detail = new GroupDetailPanel();
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);

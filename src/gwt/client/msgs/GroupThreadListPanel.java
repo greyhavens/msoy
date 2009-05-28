@@ -31,9 +31,9 @@ public class GroupThreadListPanel extends ThreadListPanel
     }
 
     @Override // from ThreadListPanel
-    protected void doSearch (AsyncCallback<List<ForumThread>> callback)
+    protected void doSearch (String query, AsyncCallback<List<ForumThread>> callback)
     {
-        _fmodels.searchGroupThreads(_groupId, _query, callback);
+        _fmodels.searchGroupThreads(_groupId, query, callback);
     }
 
     @Override // from ThreadListPanel

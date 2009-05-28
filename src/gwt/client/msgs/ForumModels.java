@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ListenerList;
@@ -18,6 +19,7 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
+import client.shell.CShell;
 import client.util.PagedServiceDataModel;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
@@ -64,13 +66,13 @@ public class ForumModels
          * Get the information from the server to be able to accurately respond to the above
          * requests.
          */
-        public void doFetch (final AsyncCallback<Void> callback) {
+        public void doFetch (final Command onFetched) {
             doFetchRows(0, 1, new AsyncCallback<List<ForumThread>>() {
                 public void onFailure (Throwable caught) {
-                    callback.onFailure(caught);
+                    CShell.log("doFetch failed", caught);
                 }
                 public void onSuccess (List<ForumThread> result) {
-                    callback.onSuccess(null);
+                    onFetched.execute();
                 }
             });
         }
@@ -408,21 +410,12 @@ public class ForumModels
      * Searches a group's threads for a string and invokes a callback when the results are ready.
      */
     public void searchGroupThreads (int groupId, String query,
-        AsyncCallback<List<ForumThread>> callback)
+                                    AsyncCallback<List<ForumThread>> callback)
     {
         if (_search == null || !_search.equals(groupId, query)) {
             _search = new Search(groupId, query);
         }
         _search.execute(callback);
-    }
-
-    /**
-     * Searches the user's unread threads for a string and invokes a callback when the results are
-     * ready.
-     */
-    public void searchUnreadThreads (String query, AsyncCallback<List<ForumThread>> callback)
-    {
-        searchGroupThreads(0, query, callback);
     }
 
     /**
@@ -503,7 +496,7 @@ public class ForumModels
 
         protected void doSearch (AsyncCallback<List<ForumThread>> callback) {
             if (_groupId == 0) {
-                _forumsvc.findUnreadThreads(_query, MAX_RESULTS, callback);
+                _forumsvc.findMyThreads(_query, MAX_RESULTS, callback);
             } else {
                 _forumsvc.findThreads(_groupId, _query, MAX_RESULTS, callback);
             }

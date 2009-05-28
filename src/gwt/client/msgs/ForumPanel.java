@@ -4,8 +4,8 @@
 package client.msgs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -21,7 +21,9 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
+import client.util.InfoCallback;
 import client.util.Link;
+import client.util.StringUtil;
 
 /**
  * Displays group threads, unread threads, or new thread starter.
@@ -49,62 +51,48 @@ public class ForumPanel extends TitledListPanel
      * should always be 0. For GROUP and UNREAD modes, the panel will not be functional until
      * {@link #setPage(String, int)} is called for the first time.
      */
-    public ForumPanel (ForumModels fmodels, Mode mode, final int groupId)
+    public ForumPanel (ForumModels fmodels, Mode mode, final int groupId, String query, int page)
     {
         _fmodels = fmodels;
         _mode = mode;
         _groupId = groupId;
+
         switch (mode) {
         case GROUP:
             _threads = new GroupThreadListPanel(this, _fmodels, groupId);
             setContents(createHeader(_mmsgs.groupThreadListHeader(), _threads), _threads);
 
             // set up a callback to configure our page title when we learn this group's name
-            _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
+            _fmodels.getGroupThreads(groupId).addGotNameListener(new InfoCallback<GroupName>() {
                 public void onSuccess (GroupName result) {
                     CShell.frame.setTitle(result.toString());
                     setGroupTitle(groupId, result.toString());
                 }
-                public void onFailure (Throwable error) { /* not used */ }
             });
             break;
+
         case UNREAD:
             _threads = new UnreadThreadListPanel(this, _fmodels);
-            setContents(createHeader(_mmsgs.msgUnreadThreadsHeader(), _threads), _threads);
+            String title = StringUtil.isBlank(query) ?
+                _mmsgs.msgUnreadThreadsHeader() : _mmsgs.msgSearchMyThreadsHeader();
+            setContents(createHeader(title, _threads), _threads);
             break;
+
         case FRIENDS:
             _threads = new FriendThreadListPanel(this, _fmodels);
             // TODO: enable searching friend threads
             setContents(createHeader(_mmsgs.msgFriendThreadsHeader(), null), _threads);
             break;
+
         case NEW_THREAD:
             startNewThread(groupId);
             break;
         }
-    }
 
-    /**
-     * Determines if this panel is in the given mode for the given group id.
-     */
-    public boolean isInMode (Mode mode, int groupId)
-    {
-        return _mode == mode && _groupId == groupId;
-    }
-
-    /**
-     * Goes to the given page of the given search results. If the query is blank, the full thread
-     * list is shown.
-     */
-    public void setPage (String query, int page)
-    {
-        query = query == null ? "" : query.trim();
         if (_searchBox != null) {
             _searchBox.setText(query);
         }
-        switch (_mode) {
-        case GROUP:
-        case FRIENDS:
-        case UNREAD:
+        if (_threads != null) {
             _threads.setPage(query, page);
         }
     }
@@ -124,16 +112,15 @@ public class ForumPanel extends TitledListPanel
         }
 
         if (gthreads.isFetched()) {
-            setContents(_mmsgs.ntpTitle(), MsoyUI.createLabel(
-                _mmsgs.errNoPermissionsToPost(), null));
+            setContents(_mmsgs.ntpTitle(),
+                        MsoyUI.createLabel(_mmsgs.errNoPermissionsToPost(), null));
             return;
         }
 
-        gthreads.doFetch(new AsyncCallback<Void>() {
-            public void onSuccess (Void result) {
+        gthreads.doFetch(new Command() {
+            public void execute () {
                 startNewThread(groupId);
             }
-            public void onFailure (Throwable caught) {} // not used
         });
     }
 

@@ -197,12 +197,16 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Finds all unread threads in a list of groups that match the specified search in their
-     * subject or for which one or more of their messages matches the supplied search.
+     * Finds all threads in a list of groups that match the specified search in their subject or
+     * for which one or more of their messages matches the supplied search.
      */
-    public List<ForumThreadRecord> findUnreadThreads (int memberId, Set<Integer> groupIds,
-        String search, int limit)
+    public List<ForumThreadRecord> findThreadsIn (
+        int memberId, Set<Integer> groupIds, String search, int limit)
     {
+        if (groupIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         SQLExpression cacheJoinAnd = new And(
             new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
             new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
@@ -211,12 +215,8 @@ public class ForumRepository extends DepotRepository
             new In(ForumThreadRecord.GROUP_ID, groupIds),
             new Or(new FullText(ForumThreadRecord.class,
                                 ForumThreadRecord.FTS_SUBJECT, search).match(),
-                new FullText(ForumMessageRecord.class,
-                             ForumMessageRecord.FTS_MESSAGE, search).match()),
-            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
-                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
-                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
-                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+                   new FullText(ForumMessageRecord.class,
+                                ForumMessageRecord.FTS_MESSAGE, search).match()));
 
         // consult the cache for records, but not for the keyset
         return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
