@@ -6,12 +6,10 @@ package client.adminz;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -21,8 +19,6 @@ import org.gwt.advanced.client.ui.widget.DatePicker;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.admin.gwt.AdminService;
-import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.DateUtil;
@@ -35,30 +31,22 @@ import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
 /**
  * Displays all contests registered with the system, allows adding, editing and deletion.
  */
-public class ContestsEditor extends FlowPanel
+public class ContestsEditor extends AdminDataPanel<List<Contest>>
 {
     public ContestsEditor ()
     {
-        setStyleName("contestsEditor");
-        add(MsoyUI.createLabel(_msgs.contestsLoading(), null));
-
-        _adminsvc.loadContests(new InfoCallback<List<Contest>>() {
-            public void onSuccess (List<Contest> contests) {
-                init(contests);
-            }
-        });
+        super("contestsEditor");
+        _adminsvc.loadContests(createCallback());
     }
 
+    @Override // from AdminDataPanel
     protected void init (List<Contest> contests)
     {
-        clear();
-
         final SmartTable create = new SmartTable("Create", 0, 10);
         int row = 0;
         create.setHTML(row++, 0, _msgs.contestsIntro(), 2, "Intro");
@@ -306,10 +294,6 @@ public class ContestsEditor extends FlowPanel
 
     /** The row currently being edited, or -1 */
     int _editingRow = -1;
-
-    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 
     protected static final int[] THE_FUTURE = { 2099, 0, 1 };
 }

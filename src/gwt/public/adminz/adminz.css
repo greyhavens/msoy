@@ -325,15 +325,17 @@
 /* ------------------------------------
    BroadcastHistoryPanel
 -------------------------------------*/
-.BroadcastHistory {
+
+.broadcastHistory {
   font-size: 12px;
+  border: 10px solid white;
 }
 
-.BroadcastHistory .table .row1 {
+.broadcastHistory .table .row1 {
   background: #dbeffc;
 }
 
-.BroadcastHistory .table .header {
+.broadcastHistory .table .header {
   background: #ff992b;
   color: white;
   text-align: center;
@@ -341,11 +343,11 @@
   font-size: 14px;
 }
 
-.BroadcastHistory .table .col2 {
+.broadcastHistory .table .col2 {
   text-align: center;
 }
 
-.BroadcastHistory .table .col3 {
+.broadcastHistory .table .col3 {
   width: 55%;
   font-size: 10px;
   vertical-align: center;

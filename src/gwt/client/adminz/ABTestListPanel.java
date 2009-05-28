@@ -28,7 +28,7 @@ public class ABTestListPanel extends AdminDataPanel<List<ABTest>>
     protected void init (List<ABTest> tests)
     {
         if (tests.size() == 0) {
-            add(MsoyUI.createLabel("No tests", "infoLabel"));
+            addNoDataMessage("No tests.");
             return;
         }
 

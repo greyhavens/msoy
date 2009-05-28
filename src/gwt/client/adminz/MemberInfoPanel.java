@@ -6,7 +6,6 @@ package client.adminz;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -24,8 +23,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.admin.gwt.AdminService;
-import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
@@ -40,44 +37,44 @@ import client.util.ClickCallback;
 import client.util.Link;
 import client.util.InfoCallback;
 
-import client.util.ServiceUtil;
-
 /**
  * Displays admin info for a particular member.
  */
-public class MemberInfoPanel extends SmartTable
+public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
 {
     public MemberInfoPanel (int memberId)
     {
-        super("memberInfo", 0, 5);
+        super("memberInfo");
 
-        _adminsvc.getMemberInfo(memberId, new InfoCallback<MemberAdminInfo>() {
-            public void onSuccess (MemberAdminInfo info) {
-                init(info);
-            }
-        });
+        _adminsvc.getMemberInfo(memberId, createCallback());
     }
 
+    @Override // from AdminDataPanel
     protected void init (final MemberAdminInfo info)
     {
         if (info == null) {
-            setText(0, 0, "No member with that id.");
+            addNoDataMessage("No member with that id.");
             return;
         }
 
-        int row;
-        setWidget(0, 0, Link.memberView(info.name), 2, "Name");
-        setWidget(1, 0, Link.transactionsView("Transaction history", info.name.getMemberId()));
-        setWidget(2, 0, new Anchor(BillingUtil.getUserStatusPage(info.accountName, info.permaName),
-            "Billing Transactions", "_blank"));
-        setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF,
-                                    Item.AVATAR, info.name.getMemberId()));
+        final SmartTable table = new SmartTable(5, 0);
+        add(table);
 
-        row = addText("Display name:", 1, "Label");
+        int row;
+        table.setWidget(0, 0, Link.memberView(info.name), 2, "Name");
+        table.setWidget(1, 0, Link.transactionsView(
+                            "Transaction history", info.name.getMemberId()));
+        table.setWidget(2, 0, new Anchor(BillingUtil.getUserStatusPage(
+                                             info.accountName, info.permaName),
+                                         "Billing Transactions", "_blank"));
+        table.setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF,
+                                          Item.AVATAR, info.name.getMemberId()));
+
+        row = table.addText("Display name:", 1, "Label");
         final TextBox dispName = MsoyUI.createTextBox(
             info.name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 30);
         Button saveName = MsoyUI.createCrUpdateButton(false, null);
-        setWidget(row, 1, MsoyUI.createButtonPair(dispName, saveName));
+        table.setWidget(row, 1, MsoyUI.createButtonPair(dispName, saveName));
         new ClickCallback<Void>(saveName) {
             @Override protected boolean callService () {
                 _adminsvc.setDisplayName(info.name.getMemberId(), dispName.getText(), this);
@@ -89,14 +86,14 @@ public class MemberInfoPanel extends SmartTable
             }
         };
 
-        row = addText("Account name:", 1, "Label");
-        setText(row, 1, info.accountName);
+        row = table.addText("Account name:", 1, "Label");
+        table.setText(row, 1, info.accountName);
 
-        row = addText("Validated?:", 1, "Label");
-        setText(row, 1, String.valueOf(info.validated));
+        row = table.addText("Validated?:", 1, "Label");
+        table.setText(row, 1, String.valueOf(info.validated));
 
-        row = addText("Perma name:", 1, "Label");
-        setText(row, 1, info.permaName == null ? "" : info.permaName);
+        row = table.addText("Perma name:", 1, "Label");
+        table.setText(row, 1, info.permaName == null ? "" : info.permaName);
 
         final ListBox role = new ListBox();
         for (WebCreds.Role rtype : EnumSet.allOf(WebCreds.Role.class)) {
@@ -128,31 +125,31 @@ public class MemberInfoPanel extends SmartTable
             protected WebCreds.Role _role;
         };
 
-        row = addText("Role:", 1, "Label");
-        setWidget(row, 1, role);
+        row = table.addText("Role:", 1, "Label");
+        table.setWidget(row, 1, role);
 
-        row = addText("Coins:", 1, "Label");
-        setText(row, 1, ""+info.flow);
+        row = table.addText("Coins:", 1, "Label");
+        table.setText(row, 1, ""+info.flow);
 
-        row = addText("Accum Coins:", 1, "Label");
-        setText(row, 1, ""+info.accFlow);
+        row = table.addText("Accum Coins:", 1, "Label");
+        table.setText(row, 1, ""+info.accFlow);
 
-        row = addText("Bars:", 1, "Label");
-        setText(row, 1, ""+info.gold);
+        row = table.addText("Bars:", 1, "Label");
+        table.setText(row, 1, ""+info.gold);
 
-        row = addText("Sessions:", 1, "Label");
-        setText(row, 1, ""+info.sessions);
+        row = table.addText("Sessions:", 1, "Label");
+        table.setText(row, 1, ""+info.sessions);
 
-        row = addText("Session Mins:", 1, "Label");
-        setText(row, 1, ""+info.sessionMinutes);
+        row = table.addText("Session Mins:", 1, "Label");
+        table.setText(row, 1, ""+info.sessionMinutes);
 
-        row = addText("Last session:", 1, "Label");
-        setText(row, 1, ""+info.lastSession);
+        row = table.addText("Last session:", 1, "Label");
+        table.setText(row, 1, ""+info.lastSession);
 
-        row = addText("Humanity:", 1, "Label");
+        row = table.addText("Humanity:", 1, "Label");
         final Label humanityLabel = new Label(""+info.humanity);
         Button resetHumanity = new Button("Reset");
-        setWidget(row, 1, MsoyUI.createButtonPair(humanityLabel, resetHumanity));
+        table.setWidget(row, 1, MsoyUI.createButtonPair(humanityLabel, resetHumanity));
         new ClickCallback<Integer>(resetHumanity) {
             @Override protected boolean callService () {
                 _adminsvc.resetHumanity(info.name.getMemberId(), this);
@@ -165,14 +162,14 @@ public class MemberInfoPanel extends SmartTable
             }
         };
 
-        row = addText("Affiliate:", 1, "Label");
+        row = table.addText("Affiliate:", 1, "Label");
         if (info.affiliate != null) {
-            setWidget(row, 1, infoLink(info.affiliate));
+            table.setWidget(row, 1, infoLink(info.affiliate));
         } else {
-            setText(row, 1, "none");
+            table.setText(row, 1, "none");
         }
 
-        row = addText("Affiliate of:", 1, "Label");
+        row = table.addText("Affiliate of:", 1, "Label");
         FlowPanel affiliateOf = new FlowPanel();
         int maxInline = AFFILIATE_OF_ROWS * AFFILIATE_OF_COLS;
         for (int ii = 0; ii < Math.min(maxInline, info.affiliateOf.size()); ii++) {
@@ -185,31 +182,31 @@ public class MemberInfoPanel extends SmartTable
             final int affiliateOfRow = row;
             Button more = new Button("More...", new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    setWidget(affiliateOfRow, 1, new AffiliateOfGrid(info.affiliateOf));
+                    table.setWidget(affiliateOfRow, 1, new AffiliateOfGrid(info.affiliateOf));
                 }
             });
             affiliateOf.add(more);
         }
-        setWidget(row, 1, affiliateOf);
+        table.setWidget(row, 1, affiliateOf);
 
         final CheckBox charity = new CheckBox();
         charity.setValue(info.charity);
-        row = addWidget(charity, 1, "Label");
-        setText(row, 1, "Make this member a charity");
+        row = table.addWidget(charity, 1, "Label");
+        table.setText(row, 1, "Make this member a charity");
 
         final CheckBox coreCharity = new CheckBox(
             "This charity can be selected randomly when a member " +
             "making a purchase has not already selected a charity.");
         coreCharity.setValue(info.coreCharity);
         coreCharity.setEnabled(charity.getValue());
-        setWidget(++row, 1, coreCharity);
+        table.setWidget(++row, 1, coreCharity);
 
-        row = addText("Charity Description:", 1, "Label");
+        row = table.addText("Charity Description:", 1, "Label");
         final TextArea charityDescription = new TextArea();
         charityDescription.setText(info.charityDescription);
         charityDescription.setEnabled(charity.getValue());
         charityDescription.setStylePrimaryName("CharityDescription");
-        setWidget(row, 1, charityDescription);
+        table.setWidget(row, 1, charityDescription);
 
         charity.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -225,7 +222,7 @@ public class MemberInfoPanel extends SmartTable
             }
         });
 
-        setWidget(++row, 1, new Button("Update Charity Info",  new ClickHandler() {
+        table.setWidget(++row, 1, new Button("Update Charity Info",  new ClickHandler() {
             public void onClick (ClickEvent event) {
                 final boolean isCharity = charity.getValue();
                 final boolean isCoreCharity = coreCharity.getValue();
@@ -265,28 +262,21 @@ public class MemberInfoPanel extends SmartTable
 
     protected static class AffiliateOfGrid extends PagedGrid<MemberName>
     {
-        public AffiliateOfGrid (List<MemberName> affiliateOf)
-        {
+        public AffiliateOfGrid (List<MemberName> affiliateOf) {
             super(AFFILIATE_OF_ROWS, AFFILIATE_OF_COLS);
             setModel(new SimpleDataModel<MemberName>(affiliateOf), 1);
             addStyleName("AffiliateOf");
         }
 
-        protected Widget createWidget (MemberName item)
-        {
+        protected Widget createWidget (MemberName item) {
             return infoLink(item);
         }
 
-        protected String getEmptyMessage ()
-        {
+        protected String getEmptyMessage () {
             return "No one";
         }
     }
 
     protected static final int AFFILIATE_OF_ROWS = 10;
     protected static final int AFFILIATE_OF_COLS = 4;
-
-    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

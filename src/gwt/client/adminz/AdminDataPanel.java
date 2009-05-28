@@ -26,6 +26,11 @@ public abstract class AdminDataPanel<T> extends FlowPanel
 
     protected abstract void init (T data);
 
+    protected void addNoDataMessage (String message)
+    {
+        add(MsoyUI.createLabel(message, "infoLabel"));
+    }
+
     protected PageCallback<T> createCallback ()
     {
         return new PageCallback<T>(this) {

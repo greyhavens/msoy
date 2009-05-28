@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.adminz;
 
 import java.util.ArrayList;
@@ -33,8 +36,9 @@ public class BroadcastHistoryPanel extends VerticalPanel
      */
     public BroadcastHistoryPanel ()
     {
-        setStyleName("BroadcastHistory");
+        setStyleName("broadcastHistory");
         setWidth("100%");
+
         PagedTable<BroadcastHistory> table = new PagedTable<BroadcastHistory>(20) {
             @Override protected List<Widget> createHeader () {
                 List<Widget> labels = new ArrayList<Widget>();

@@ -29,7 +29,7 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
     protected void init (ABTestSummary test)
     {
         if (test == null) {
-            add(MsoyUI.createLabel(_msgs.tspUnknown(), "infoLabel"));
+            addNoDataMessage(_msgs.tspUnknown());
             return;
         }
 

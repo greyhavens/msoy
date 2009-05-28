@@ -6,12 +6,10 @@ package client.adminz;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -21,8 +19,6 @@ import org.gwt.advanced.client.ui.widget.DatePicker;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.admin.gwt.AdminService;
-import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -35,30 +31,22 @@ import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
 /**
  * Displays all promotions registered with the system, allows adding and deletion.
  */
-public class PromotionEditor extends FlowPanel
+public class PromotionEditor extends AdminDataPanel<List<Promotion>>
 {
     public PromotionEditor ()
     {
-        setStyleName("promoEditor");
-        add(MsoyUI.createLabel(_msgs.promoLoading(), null));
-
-        _adminsvc.loadPromotions(new InfoCallback<List<Promotion>>() {
-            public void onSuccess (List<Promotion> promos) {
-                init(promos);
-            }
-        });
+        super("promoEditor");
+        _adminsvc.loadPromotions(createCallback());
     }
 
+    @Override // from AdminDataPanel
     protected void init (List<Promotion> promos)
     {
-        clear();
-
         // set up the header
         int col = 0;
         _ptable.setText(0, col++, _msgs.promoId(), 1, "Header");
@@ -234,10 +222,6 @@ public class PromotionEditor extends FlowPanel
     protected LimitedTextArea _blurb;
     protected MediaDesc _promoIcon;
     protected int _previewRow;
-
-    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 
     protected static final int[] THE_FUTURE = { 2099, 0, 1 };
 }

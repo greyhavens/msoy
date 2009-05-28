@@ -64,7 +64,7 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.viewABTests(), "testlist"));
             admin.add(makeLink(_msgs.viewBureaus(), "bureaus"));
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
-            admin.add(makeLink(_msgs.viewSurveys(), "survey_e"));
+            admin.add(makeLink(_msgs.viewSurveys(), "survey", "e"));
             setWidget(row, col, admin);
             getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);
 
@@ -105,7 +105,7 @@ public class DashboardPanel extends SmartTable
         });
     }
 
-    protected Widget makeLink (String title, String args)
+    protected Widget makeLink (String title, Object... args)
     {
         Widget link = Link.create(title, Pages.ADMINZ, args);
         link.removeStyleName("inline");
