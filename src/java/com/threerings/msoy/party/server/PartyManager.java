@@ -47,6 +47,8 @@ import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.party.data.PartySummary;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages a particular party, living on a single node.
  */
@@ -373,7 +375,17 @@ public class PartyManager
         MsoyNodeObject nodeObj = (MsoyNodeObject) _peerMgr.getNodeObject();
 
         if (set) {
-            nodeObj.addToMemberParties(new MemberParty(memberId, _partyObj.id));
+            MemberParty mp = new MemberParty(memberId, _partyObj.id);
+            MemberParty omp = nodeObj.memberParties.get(mp.memberId);
+            if (omp == null) {
+                nodeObj.addToMemberParties(mp); // normal case
+            } else if (omp.partyId != mp.partyId) {
+                log.warning("Wha? Replacing stale MemberParty", "mp", mp, "omp", omp);
+                nodeObj.updateMemberParties(mp);
+            } 
+            // otherwise: no need to update anything. This can happen in normal circumstances
+            // when a user logs in over themselves
+
         } else {
             nodeObj.removeFromMemberParties(memberId);
         }
