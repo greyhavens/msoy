@@ -105,9 +105,9 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
-     * Updates the specified thread's flags.
+     * Updates the specified thread's flags and subject.
      */
-    void updateThreadFlags (int threadId, int flags)
+    void updateThread (int threadId, int flags, String subject)
         throws ServiceException;
 
     /**

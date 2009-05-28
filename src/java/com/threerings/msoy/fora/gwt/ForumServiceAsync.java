@@ -60,7 +60,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#updateThreadFlags}.
      */
-    void updateThreadFlags (int threadId, int flags, AsyncCallback<Void> callback);
+    void updateThread (int threadId, int flags, String subject, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ForumService#ignoreThread}.

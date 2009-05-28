@@ -291,11 +291,12 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
-     * Updates the flags of the specified thread.
+     * Updates the flags and subject of the specified thread.
      */
-    public void updateThreadFlags (int threadId, int flags)
+    public void updateThread (int threadId, int flags, String subject)
     {
         updatePartial(ForumThreadRecord.class, threadId,
+                      ForumThreadRecord.SUBJECT, subject,
                       ForumThreadRecord.FLAGS, flags,
                       ForumThreadRecord.STICKY, (flags & ForumThread.FLAG_STICKY) != 0);
     }

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -80,7 +81,7 @@ public class ThreadPanel extends TitledListPanel
     public void editFlags ()
     {
         if (MsoyUI.requireValidated()) {
-            new ThreadFlagsEditorPanel().show();
+            new ThreadEditorPanel().show();
         }
     }
 
@@ -257,9 +258,9 @@ public class ThreadPanel extends TitledListPanel
         protected MessageEditor _editor;
     }
 
-    protected class ThreadFlagsEditorPanel extends BorderedDialog
+    protected class ThreadEditorPanel extends BorderedDialog
     {
-        public ThreadFlagsEditorPanel ()
+        public ThreadEditorPanel ()
         {
             setHeaderTitle(_mmsgs.tfepTitle());
 
@@ -269,6 +270,11 @@ public class ThreadPanel extends TitledListPanel
             int row = 0;
             main.setText(row, 0, _mmsgs.tfepIntro());
             main.getFlexCellFormatter().setColSpan(row++, 0, 2);
+
+            main.setText(row, 0, _mmsgs.tfepSubject());
+            main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
+            main.setWidget(row++, 1, _subject = new TextBox());
+            _subject.setText(_thread.subject);
 
             main.setText(row, 0, _mmsgs.tfepAnnouncement());
             main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
@@ -288,7 +294,7 @@ public class ThreadPanel extends TitledListPanel
 
             addButton(new Button(_cmsgs.cancel(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    ThreadFlagsEditorPanel.this.hide();
+                    ThreadEditorPanel.this.hide();
                 }
             }));
 
@@ -298,13 +304,14 @@ public class ThreadPanel extends TitledListPanel
                     _flags |= (_announce.getValue() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
                     _flags |= (_sticky.getValue() ? ForumThread.FLAG_STICKY : 0);
                     _flags |= (_locked.getValue() ? ForumThread.FLAG_LOCKED : 0);
-                    _forumsvc.updateThreadFlags(_thread.threadId, _flags, this);
+                    _forumsvc.updateThread(_thread.threadId, _flags, _subject.getText(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
                     _thread.flags = _flags;
+                    _thread.subject = _subject.getText();
                     MsoyUI.info(_mmsgs.tfepUpdated());
-                    ThreadFlagsEditorPanel.this.hide();
+                    ThreadEditorPanel.this.hide();
                     // update the thread panel title
                     gotThread(_thread);
                     return true;
@@ -315,6 +322,7 @@ public class ThreadPanel extends TitledListPanel
         }
 
         protected CheckBox _announce, _sticky, _locked;
+        protected TextBox _subject;
     }
 
     protected int _threadId;

@@ -330,7 +330,7 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public void updateThreadFlags (int threadId, int flags)
+    public void updateThread (int threadId, int flags, String subject)
         throws ServiceException
     {
         MemberRecord mrec = requireValidatedUser();
@@ -347,8 +347,13 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
-        // if we made it this far, then update the flags
-        _forumRepo.updateThreadFlags(ftr.threadId, flags);
+        // if the subject changed, check for thread creation permission
+        if (!subject.equals(ftr.subject)) {
+            checkAccess(mrec, ftr.groupId, Group.Access.THREAD, flags);
+        }
+
+        // if we made it this far, then update
+        _forumRepo.updateThread(ftr.threadId, flags, subject);
     }
 
     // from interface ForumService

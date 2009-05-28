@@ -112,7 +112,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         controls.setWidget(0, 1, _ignoreThread);
 
         // add a button for editing this thread's flags
-        _editFlags = new Button(_mmsgs.editFlags(), new ClickHandler() {
+        _editFlags = new Button(_mmsgs.editThread(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _parent.editFlags();
             }
