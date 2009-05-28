@@ -119,10 +119,11 @@ import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
 
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 class RoomOccupantRecord
-    implements Hashable
+    implements Hashable, Comparable
 {
     /** The username. */
     public var name :Name;
@@ -155,11 +156,11 @@ class RoomOccupantRecord
         var that :RoomOccupantRecord = RoomOccupantRecord(other);
         if (this.subscriber != that.subscriber) {
             // subscribers sort to the top
-            return this.subscriber ? 1 : -1;
+            return this.subscriber ? -1 : 1;
 
         } else {
             // otherwise: based on name
-            return this.name.compareTo(that.name);
+            return MemberName.BY_DISPLAY_NAME(this.name, that.name);
         }
     }
 }
