@@ -50,19 +50,41 @@ public class MoneyMessageListener
     // from interface Lifecycle.Component
     public void init ()
     {
-        listen("messaging.whirled.subscription.address", new MessageListener() {
+        // Subscription start messages
+        listen("messaging.whirled.subscriptionStart.address", new MessageListener() {
             public void received (final byte[] message, Replier replier)
             {
-                _invoker.postUnit(new Invoker.Unit("money/subscription") {
+                _invoker.postUnit(new Invoker.Unit("money/subscriptionStart") {
                     @Override public boolean invoke () {
-                        SubscriptionMessage sm = null;
+                        SubscriptionStartMessage ssm = null;
                         try {
-                            sm = new SubscriptionMessage(message);
-                            _subLogic.noteSubscriptionStarted(sm.accountName, sm.endTime);
+                            ssm = new SubscriptionStartMessage(message);
+                            _subLogic.noteSubscriptionStarted(ssm.accountName, ssm.endTime);
                         } catch (Exception e) {
                             log.warning("Holy Bajizzwax! We've fouled-up trying to " +
-                                "note a subscription",
-                                "accountName", (sm == null) ? "<unknown>" : sm.accountName, e);
+                                "note a subscription start",
+                                "accountName", (ssm == null) ? "<unknown>" : ssm.accountName, e);
+                        }
+                        return false;
+                    }
+                });
+            }
+        });
+
+        // Subscription end messages
+        listen("messaging.whirled.subscriptionEnd.address", new MessageListener() {
+            public void received (final byte[] message, Replier replier)
+            {
+                _invoker.postUnit(new Invoker.Unit("money/subscriptionEnd") {
+                    @Override public boolean invoke () {
+                        SubscriptionEndMessage sem = null;
+                        try {
+                            sem = new SubscriptionEndMessage(message);
+                            _subLogic.noteSubscriptionEnded(sem.accountName);
+                        } catch (Exception e) {
+                            log.warning("Holy Bajizzwax! We've fouled-up trying to " +
+                                "note a subscription end",
+                                "accountName", (sem == null) ? "<unknown>" : sem.accountName, e);
                         }
                         return false;
                     }
@@ -196,24 +218,40 @@ public class MoneyMessageListener
     /**
      * Message indicating a subscription payment was processed.
      */
-    protected static final class SubscriptionMessage
+    protected static class SubscriptionEndMessage
     {
-        public final String accountName;
-        public final long endTime;
+        public String accountName;
 
-        public SubscriptionMessage (byte[] bytes)
+        public SubscriptionEndMessage (byte[] bytes)
         {
-            ByteBuffer buf = ByteBuffer.wrap(bytes);
+            init(ByteBuffer.wrap(bytes));
+        }
+
+        public void init (ByteBuffer buf)
+        {
             byte[] msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
             accountName = new String(msgBuf);
-            endTime = buf.getLong();
+        }
+    }
+
+    /**
+     * Message indicating a subscription payment was processed.
+     */
+    protected static class SubscriptionStartMessage extends SubscriptionEndMessage
+    {
+        public long endTime;
+
+        public SubscriptionStartMessage (byte[] bytes)
+        {
+            super(bytes);
         }
 
         @Override
-        public String toString ()
+        public void init (ByteBuffer buf)
         {
-            return "accountName: " + accountName + ", endTime: " + endTime;
+            super.init(buf);
+            endTime = buf.getLong();
         }
     }
 

@@ -15,6 +15,8 @@ import com.threerings.msoy.server.persist.SubscriptionRepository;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.server.MoneyLogic;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages user subscriptions.
  */
@@ -45,7 +47,7 @@ public class SubscriptionLogic
             _memberRepo.storeFlags(mrec);
         }
         // create or update their subscription record
-        _subscripRepo.noteSubscription(mrec.memberId, endTime);
+        _subscripRepo.noteSubscriptionStarted(mrec.memberId, endTime);
         // TODO: FFS, turn them into a subscriber instantly, whereever they are.
 
         // Grant them their monthly bar allowance.
@@ -56,6 +58,33 @@ public class SubscriptionLogic
         // TODO: give them the current Item Of The Month. However, if they already received the
         // item of the month; because they were a subscriber when it came out, or if we don't
         // quite update it monthly and they already got it during the last billing cycle; don't.
+    }
+
+    /**
+     * Note that the specified user's subscription has ended.
+     *
+     * @throws Exception We freak the fuck out if anything goes wrong.
+     */
+    @BlockingThread
+    public void noteSubscriptionEnded (String accountName)
+        throws Exception
+    {
+        MemberRecord mrec = _memberRepo.loadMember(accountName);
+        if (mrec == null) {
+            throw new Exception("Could not locate MemberRecord");
+        }
+        if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, false)) {
+            _memberRepo.storeFlags(mrec);
+        } else {
+            log.warning("Weird! A subscription-end message arrived for a non-subscriber",
+                "accountName", accountName);
+            return;
+        }
+
+        // look up their subscription record and make sure the end time is now.
+        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
+
+        // TODO: update their runtime subscription state
     }
 
     @Inject protected MoneyLogic _moneyLogic;
