@@ -186,7 +186,7 @@ public class ABTestRepository extends DepotRepository
         // first determine the number of visitors assigned to the test groups
         IntMap<ABGroupSummaryRecord> groups = IntMaps.newHashIntMap();
         for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, new GroupBy(ABGroupRecord.GROUP),
+                 GroupCountRecord.class, CacheStrategy.NONE, new GroupBy(ABGroupRecord.GROUP),
                  new Where(ABGroupRecord.TEST_ID, testId))) {
             ABGroupSummaryRecord sumrec = new ABGroupSummaryRecord();
             sumrec.testId = testId;
@@ -197,7 +197,7 @@ public class ABTestRepository extends DepotRepository
 
         // now determine how many of those members registered
         for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, new GroupBy(ABGroupRecord.GROUP),
+                 GroupCountRecord.class, CacheStrategy.NONE, new GroupBy(ABGroupRecord.GROUP),
                  new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
                  new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
                                    new NotEquals(EntryVectorRecord.MEMBER_ID, 0))))) {
@@ -206,7 +206,7 @@ public class ABTestRepository extends DepotRepository
 
         // now determine how many of those members were retained
         for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, new GroupBy(ABGroupRecord.GROUP),
+                 GroupCountRecord.class, CacheStrategy.NONE, new GroupBy(ABGroupRecord.GROUP),
                  new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
                  new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
                  new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
@@ -223,7 +223,8 @@ public class ABTestRepository extends DepotRepository
 
         // lastly summarize the actions
         for (ActionCountRecord rec : findAll(
-                 ActionCountRecord.class, new GroupBy(ABGroupRecord.GROUP, ABActionRecord.ACTION),
+                 ActionCountRecord.class, CacheStrategy.NONE,
+                 new GroupBy(ABGroupRecord.GROUP, ABActionRecord.ACTION),
                  new Join(ABActionRecord.VISITOR_ID, ABGroupRecord.VISITOR_ID),
                  new Where(ABActionRecord.TEST_ID, testId))) {
             ABActionSummaryRecord sumrec = new ABActionSummaryRecord();
