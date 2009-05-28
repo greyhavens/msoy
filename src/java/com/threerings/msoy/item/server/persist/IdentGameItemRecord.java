@@ -20,7 +20,7 @@ public abstract class IdentGameItemRecord extends GameItemRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<IdentGameItemRecord> _R = IdentGameItemRecord.class;
     public static final ColumnExp IDENT = colexp(_R, "ident");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

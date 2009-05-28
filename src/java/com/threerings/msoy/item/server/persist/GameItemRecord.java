@@ -19,7 +19,7 @@ public abstract class GameItemRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<GameItemRecord> _R = GameItemRecord.class;
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
@@ -41,10 +41,8 @@ public abstract class GameItemRecord extends ItemRecord
     public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
-    // TODO: migrate suiteId to gameId after the other major migration is done
-
     /** The game to which this item belongs. See {@link GameItem#gameId}. */
-    @Index(name="ixSuiteId") public int suiteId;
+    @Index(name="ixGameId") public int gameId;
 
     @Override // from ItemRecord
     public void prepareForListing (ItemRecord oldListing)
@@ -52,14 +50,14 @@ public abstract class GameItemRecord extends ItemRecord
         super.prepareForListing(oldListing);
 
         // we need to flip from the dev game id to the published game id
-        suiteId = Math.abs(suiteId);
+        gameId = Math.abs(gameId);
     }
 
     @Override // from ItemRecord
     public Item toItem ()
     {
         GameItem item = (GameItem)super.toItem();
-        item.gameId = suiteId;
+        item.gameId = gameId;
         return item;
     }
 
@@ -69,6 +67,6 @@ public abstract class GameItemRecord extends ItemRecord
         super.fromItem(item);
 
         GameItem sitem = (GameItem)item;
-        suiteId = sitem.gameId;
+        gameId = sitem.gameId;
     }
 }

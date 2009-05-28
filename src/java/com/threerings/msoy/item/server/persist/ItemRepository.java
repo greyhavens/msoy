@@ -224,6 +224,19 @@ public abstract class ItemRepository<T extends ItemRecord>
         // drop the now unused ItemRecord.rating column
         _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(
                                    getMigrationVersion(getItemClass(), 21), "rating"));
+
+        // change suiteId -> gameId
+        if (PropRecord.class.isAssignableFrom(getItemClass())) {
+            _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(
+                                       getMigrationVersion(getItemClass(), 22), "gameId"));
+        }
+        if (GameItemRecord.class.isAssignableFrom(getItemClass())) {
+            _ctx.registerMigration(getItemClass(), new SchemaMigration.DropIndex(
+                                       getMigrationVersion(getItemClass(), 22), "ixSuiteId"));
+            _ctx.registerMigration(getItemClass(), new SchemaMigration.Rename(
+                                       getMigrationVersion(getItemClass(), 22),
+                                       "suiteId", GameItemRecord.GAME_ID));
+        }
     }
 
     /**
@@ -266,147 +279,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         });
         // END TEMP
     }
-
-// TEMP
-    public void migrateSuites (IntIntMap migs)
-    {
-        log.info("Migrating suites for " + getItemClass().getName());
-
-        // we need to generate a map of suiteId -> itemIds so that we can migrate everything based
-        // on itemId to avoid collisions while we're in the process of migrating suites because our
-        // old suite number space and our new number space could overlap
-        Multimap<Integer, Integer> migmap = HashMultimap.create();
-        for (IntIntMap.IntIntEntry entry : migs.entrySet()) {
-            int sourceSuiteId = entry.getIntKey();
-            int destSuiteId = entry.getIntValue();
-            Where where = new Where(new Equals(getItemColumn(GameItemRecord.SUITE_ID),
-                                               sourceSuiteId));
-            for (Key<T> key : findAllKeys(getItemClass(), false, where)) {
-                migmap.put(destSuiteId, (Integer)key.getValues()[0]);
-            }
-        }
-
-        // now go through and "set suiteId = S where itemId in (IIDS)"
-        for (Map.Entry<Integer, Collection<Integer>> entry : migmap.asMap().entrySet()) {
-            updatePartial(getItemClass(),
-                          new Where(new In(getItemColumn(ItemRecord.ITEM_ID), entry.getValue())),
-                          null, getItemColumn(GameItemRecord.SUITE_ID), entry.getKey());
-        }
-    }
-
-    public void migrateLaunchers ()
-    {
-        // copy the IdSequences for GAME_* to LAUNCHER_*
-        _ctx.invoke(new Modifier() {
-            @Override
-            protected int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tname = liaison.tableSQL("IdSequences");
-                String sname = liaison.columnSQL("sequence");
-                String vname = liaison.columnSQL("value");
-                Statement stmt = conn.createStatement();
-                int mods = 0;
-                try {
-                    for (String suffix : new String[] { "", "_CATALOG", "_CLONE" }) {
-                        String gseq = "'GAME" + suffix + "'";
-                        String lseq = "'LAUNCHER" + suffix + "'";
-                        String query;
-                        if (liaison instanceof MySQLLiaison) {
-                            // fucking braindead mysql
-                            query = "update " + tname + " set " + vname + " = " +
-                                "(select " + vname + " from" +
-                                " (select " + vname + " from " + tname +
-                                "  where " + sname + " = " + gseq + ") as SUB) " +
-                                "where " + sname + " = " + lseq;
-                        } else {
-                            query = "update " + tname + " set " + vname + " = " +
-                                "(select " + vname + " from " + tname +
-                                " where " + sname + " = " + gseq + ") " +
-                                "where " + sname + " = " + lseq;
-                        }
-                        mods += stmt.executeUpdate(query);
-                    }
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-                return mods;
-            }
-        });
-
-        // create launcher records for all extant game records
-        int recs = 0, clrecs = 0, catrecs = 0;
-        for (GameRecord grec : findAll(GameRecord.class, CacheStrategy.NONE,
-                                       Lists.<QueryClause>newArrayList())) {
-            LauncherRecord lrec = new LauncherRecord();
-            lrec.itemId = grec.itemId;
-            lrec.creatorId = grec.creatorId;
-            lrec.ownerId = grec.ownerId;
-            lrec.catalogId = grec.catalogId;
-            lrec.ratingSum = grec.ratingSum;
-            lrec.ratingCount = grec.ratingCount;
-            lrec.used = grec.used;
-            lrec.location = grec.location;
-            lrec.lastTouched = grec.lastTouched;
-            lrec.name = grec.name;
-            lrec.description = StringUtil.truncate(grec.description, Item.MAX_DESCRIPTION_LENGTH);
-            lrec.mature = grec.mature;
-            lrec.thumbMediaHash = grec.thumbMediaHash;
-            lrec.thumbMimeType = grec.thumbMimeType;
-            lrec.thumbConstraint = grec.thumbConstraint;
-            lrec.furniMediaHash = grec.furniMediaHash;
-            lrec.furniMimeType = grec.furniMimeType;
-            lrec.furniConstraint = grec.furniConstraint;
-            lrec.suiteId = grec.gameId;
-            lrec.isAVRG = GameCode.detectIsInWorld(grec.config);
-            store(lrec);
-            recs++;
-        }    
-        for (GameCloneRecord grec : findAll(GameCloneRecord.class, CacheStrategy.NONE,
-                                            Lists.<QueryClause>newArrayList())) {
-            LauncherCloneRecord lrec = new LauncherCloneRecord();
-            lrec.itemId = grec.itemId;
-            lrec.originalItemId = grec.originalItemId;
-            lrec.ownerId = grec.ownerId;
-            lrec.purchaseTime = grec.purchaseTime;
-            lrec.currency = grec.currency;
-            lrec.amountPaid = grec.amountPaid;
-            lrec.used = grec.used;
-            lrec.location = grec.location;
-            lrec.lastTouched = grec.lastTouched;
-            lrec.name = grec.name;
-            lrec.mediaHash = grec.mediaHash;
-            lrec.mediaStamp = grec.mediaStamp;
-            store(lrec);
-            clrecs++;
-        }
-        for (GameCatalogRecord grec : findAll(GameCatalogRecord.class, CacheStrategy.NONE,
-                                              Lists.<QueryClause>newArrayList())) {
-            LauncherCatalogRecord lrec = new LauncherCatalogRecord();
-            lrec.catalogId = grec.catalogId;
-            lrec.listedItemId = grec.listedItemId;
-            lrec.originalItemId = grec.originalItemId;
-            lrec.listedDate = grec.listedDate;
-            lrec.currency = grec.currency;
-            lrec.cost = grec.cost;
-            lrec.pricing = grec.pricing;
-            lrec.salesTarget = grec.salesTarget;
-            lrec.purchases = grec.purchases;
-            lrec.returns = grec.returns;
-            lrec.favoriteCount = grec.favoriteCount;
-            lrec.basisId = grec.basisId;
-            lrec.derivationCount = grec.derivationCount;
-            store(lrec);
-            catrecs++;
-        }
-
-        // switch all scene furni records over from game to launcher
-        int furni = updatePartial(SceneFurniRecord.class,
-                                  new Where(SceneFurniRecord.ITEM_TYPE, Item.GAME), null,
-                                  SceneFurniRecord.ITEM_TYPE, Item.LAUNCHER);
-
-        log.info("Migrated launchers", "recs", recs, "clones", clrecs, "catrecs", catrecs,
-                 "furni", furni);
-    }
-// END TEMP
 
     /**
      * Returns the item type constant for the type of item handled by this repository.
@@ -499,7 +371,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> loadGameOriginals (int gameId)
     {
-        return findAll(getItemClass(), new Where(getItemColumn(GameItemRecord.SUITE_ID), gameId));
+        return findAll(getItemClass(), new Where(getItemColumn(GameItemRecord.GAME_ID), gameId));
     }
 
     /**
@@ -507,7 +379,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> loadGameOriginals (int gameId, int ownerId)
     {
-        return findAll(getItemClass(), new Where(getItemColumn(GameItemRecord.SUITE_ID), gameId,
+        return findAll(getItemClass(), new Where(getItemColumn(GameItemRecord.GAME_ID), gameId,
                                                  getItemColumn(ItemRecord.OWNER_ID), ownerId));
     }
 
@@ -524,7 +396,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> loadGameClones (int gameId, int ownerId)
     {
-        return loadClonedItems(new Where(getItemColumn(GameItemRecord.SUITE_ID), gameId,
+        return loadClonedItems(new Where(getItemColumn(GameItemRecord.GAME_ID), gameId,
                                          getCloneColumn(CloneRecord.OWNER_ID), ownerId));
     }
 
@@ -1616,7 +1488,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         if (gameId != 0 && GameItemRecord.class.isAssignableFrom(getItemClass())) {
-            whereBits.add(new Equals(getItemColumn(GameItemRecord.SUITE_ID), gameId));
+            whereBits.add(new Equals(getItemColumn(GameItemRecord.GAME_ID), gameId));
             significantlyConstrained = true;
         }
 

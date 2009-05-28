@@ -20,7 +20,6 @@ public class PropRecord extends IdentGameItemRecord
     public static final Class<PropRecord> _R = PropRecord.class;
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp IDENT = colexp(_R, "ident");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
@@ -49,9 +48,6 @@ public class PropRecord extends IdentGameItemRecord
      * that allows us to make ItemRecord-wide changes and specific derived class changes. */
     public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
-    /** The id of the game with which we're associated. */
-    public int gameId;
-
     @Override // from ItemRecord
     public byte getType ()
     {
@@ -64,14 +60,14 @@ public class PropRecord extends IdentGameItemRecord
         super.fromItem(item);
 
         // Prop temp = (Prop)item;
-        // gameId is not extracted here, we get it from our parent
+        // nothing to do
     }
 
     @Override // from ItemRecord
     protected Item createItem ()
     {
         Prop object = new Prop();
-        object.gameId = gameId;
+        // nothing to do
         return object;
     }
 

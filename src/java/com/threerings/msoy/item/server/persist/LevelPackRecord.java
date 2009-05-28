@@ -20,7 +20,7 @@ public class LevelPackRecord extends IdentGameItemRecord
     public static final Class<LevelPackRecord> _R = LevelPackRecord.class;
     public static final ColumnExp PREMIUM = colexp(_R, "premium");
     public static final ColumnExp IDENT = colexp(_R, "ident");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

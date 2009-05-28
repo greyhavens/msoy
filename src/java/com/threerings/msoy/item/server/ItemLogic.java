@@ -497,7 +497,7 @@ public class ItemLogic
 
             } else if (nrecord instanceof IdentGameItemRecord &&
                        ((IdentGameItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
-                int gameId = ((IdentGameItemRecord)nrecord).suiteId;
+                int gameId = ((IdentGameItemRecord)nrecord).gameId;
                 if (gameId != 0) {
                     // notify any server hosting this game that its data is updated
                     _gameActions.gameUpdated(gameId);
@@ -543,11 +543,11 @@ public class ItemLogic
                    ((IdentGameItem)record.toItem()).getSuiteMasterType() == Item.GAME) {
             IdentGameItemRecord srecord = (IdentGameItemRecord)record;
             // see if the owner of this game is playing a game right now
-            if (srecord.suiteId != 0 &&
+            if (srecord.gameId != 0 &&
                 _peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
                 // notify the game that the user has purchased some game content
                 _playerActions.gameContentPurchased(
-                    record.ownerId, srecord.suiteId, srecord.getType(), srecord.ident);
+                    record.ownerId, srecord.gameId, srecord.getType(), srecord.ident);
             }
         }
 

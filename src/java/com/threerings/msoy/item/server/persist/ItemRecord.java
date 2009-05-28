@@ -60,7 +60,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** This is the version of the base class persistent data. It is combined with ITEM_VERSION to
      * create the actual version for each ItemRecord derived class. */
-    public static final int BASE_SCHEMA_VERSION = 21;
+    public static final int BASE_SCHEMA_VERSION = 22;
 
     /** This is used to combine {@link #BASE_SCHEMA_VERSION} with ITEM_VERSION to create our
      * per-record SCHEMA_VERSION. */

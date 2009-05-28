@@ -25,7 +25,7 @@ public class TrophySourceRecord extends IdentGameItemRecord
     public static final ColumnExp SORT_ORDER = colexp(_R, "sortOrder");
     public static final ColumnExp SECRET = colexp(_R, "secret");
     public static final ColumnExp IDENT = colexp(_R, "ident");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

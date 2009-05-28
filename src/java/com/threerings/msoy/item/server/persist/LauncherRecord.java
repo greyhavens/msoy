@@ -19,7 +19,7 @@ public class LauncherRecord extends GameItemRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<LauncherRecord> _R = LauncherRecord.class;
     public static final ColumnExp IS_AVRG = colexp(_R, "isAVRG");
-    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
     public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");

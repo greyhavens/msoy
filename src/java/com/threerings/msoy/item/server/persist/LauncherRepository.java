@@ -34,12 +34,6 @@ public class LauncherRepository extends ItemRepository<LauncherRecord>
     @Inject public LauncherRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        registerMigration(new DataMigration("2009_05_18_launchers") {
-            @Override public void invoke () {
-                migrateLaunchers();
-            }
-        });
     }
 
     @Override
