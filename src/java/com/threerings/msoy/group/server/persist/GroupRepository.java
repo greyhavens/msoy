@@ -328,13 +328,13 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Deletes the specified group from the repository. This assumes that the group has no members
-     * and thus does not remove any {@link GroupMembershipRecord} rows. It also assumes the caller
-     * will take care of deleting the group's scenes.
+     * Hides the specified group by setting its policy to {@link Group.Policy#EXCLUSIVE}. Since 
+     * the group has no members, it will no longer be visible to anyone except support. Does no
+     * verification on the emptiness of the group.
      */
-    public void deleteGroup (int groupId)
+    public void hideEmptyGroup (int groupId)
     {
-        delete(GroupRecord.class, groupId);
+        updatePartial(GroupRecord.class, groupId, GroupRecord.POLICY, Group.Policy.EXCLUSIVE);
     }
 
     /**

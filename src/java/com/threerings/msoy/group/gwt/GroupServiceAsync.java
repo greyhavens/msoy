@@ -41,11 +41,6 @@ public interface GroupServiceAsync
     void getGroupInfo (int groupId, AsyncCallback<GroupService.GroupInfo> callback);
 
     /**
-     * The asynchronous version of {@link GroupService#getGroupHomeId}
-     */
-    void getGroupHomeId (int groupId, AsyncCallback<Integer> callback);
-
-    /**
      * The asynchronous version of {@link GroupService#getMembershipGroups}
      */
     void getMembershipGroups (int memberId, boolean canInvite,

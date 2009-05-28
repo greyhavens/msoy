@@ -112,12 +112,6 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Look up a group by id and return the id of its home scene.
-     */
-    Integer getGroupHomeId (int groupId)
-        throws ServiceException;
-
-    /**
      * Fetch a list of {@link GroupMembership} records, one for each group of which memberId is a
      * member. If canInvite is true, only include groups to which the member can invite.
      */

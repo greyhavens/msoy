@@ -22,4 +22,7 @@ public interface GroupCodes extends ServiceCodes
 
     /** An error code to indicate that a group may not be made exclusive while it has tags. */
     public static final String E_GROUP_TAGS_ON_EXCLUSIVE = "e.group_tags_on_exclusive";
+
+    /** An error code reported when a group is not found or inaccessible. */
+    public static final String E_INVALID_GROUP = "e.invalid_group";
 }

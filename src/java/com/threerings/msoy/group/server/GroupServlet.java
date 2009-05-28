@@ -30,7 +30,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
-import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -165,6 +164,11 @@ public class GroupServlet extends MsoyServiceServlet
             detail.myRankAssigned = minfo.right;
         }
 
+        // check visibility
+        if (!mrec.isSupport() && !isVisible(grec.policy, detail.myRank)) {
+            return null;
+        }
+
         // load up recent threads for this group (ordered by thread id)
         List<ForumThreadRecord> thrrecs = _forumRepo.loadRecentThreads(groupId, 3);
         Map<Integer,GroupName> gmap =
@@ -243,14 +247,13 @@ public class GroupServlet extends MsoyServiceServlet
         if (mrec != null) {
             info.rank = _groupRepo.getRank(groupId, mrec.memberId);
         }
-        return info;
-    }
 
-    // from GroupService
-    public Integer getGroupHomeId (final int groupId)
-        throws ServiceException
-    {
-        return _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        // check visibility
+        if (!mrec.isSupport() && !isVisible(grec.policy, info.rank)) {
+            return null;
+        }
+
+        return info;
     }
 
     // from interface GroupService
@@ -333,12 +336,12 @@ public class GroupServlet extends MsoyServiceServlet
         // if we made it this far, go ahead and remove the member from the group
         _groupRepo.leaveGroup(groupId, memberId);
 
-        // if the group has no members left, remove the group as well
+        // if the group has no members left, hide the group so staff can still see it and we
+        // don't orphan threads, posts, scenes and medals
         if (_groupRepo.countMembers(groupId) == 0) {
-            // TODO: delete this group's scenes
-            log.warning("Group deleted, but we haven't implemented group scene deletion!",
-                "groupId", groupId);
-            _groupRepo.deleteGroup(groupId);
+            // TODO: means of purging old empty groups
+            log.info("Hiding group with no members", "groupId", groupId);
+            _groupRepo.hideEmptyGroup(groupId);
         }
 
         // let the dobj world know that this member has been removed
@@ -544,10 +547,19 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
         GroupService.MedalsResult result = new GroupService.MedalsResult();
-        result.groupName = _groupRepo.loadGroupName(groupId);
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            throw new ServiceException(GroupCodes.E_INVALID_GROUP);
+        }
+        result.groupName = grec.toGroupName();
         result.medals = Lists.newArrayList();
         result.rank = mrec == null ? Rank.NON_MEMBER :
             _groupRepo.getMembership(groupId, mrec.memberId).left;
+
+        // check visibility
+        if (!mrec.isSupport() && !isVisible(grec.policy, result.rank)) {
+            throw new ServiceException(GroupCodes.E_INVALID_GROUP);
+        }
 
         // we could do a Join to accomplish a similar result, but we need to make sure we return
         // Medals that have not been earned by anybody yet, so we need to first grab the full set
@@ -585,6 +597,8 @@ public class GroupServlet extends MsoyServiceServlet
     public List<Medal> getMedals (int groupId)
         throws ServiceException
     {
+        // Note that the user must already have loaded the group detail in order to be calling this
+        // If the client is hacked, let 'em see the medals, no great shakes 
         return Lists.newArrayList(
             Lists.transform(_medalRepo.loadGroupMedals(groupId), MedalRecord.TO_MEDAL));
     }
@@ -676,6 +690,8 @@ public class GroupServlet extends MsoyServiceServlet
     public Medal getMedal (int medalId)
         throws ServiceException
     {
+        // Note: no access checking here, if someone manages to figure out the medal id of a medal
+        // for a group they don't belong to, let 'em see it
         MedalRecord medalRec = _medalRepo.loadMedal(medalId);
         return medalRec == null ? null : medalRec.toMedal();
     }
@@ -754,6 +770,12 @@ public class GroupServlet extends MsoyServiceServlet
         }));
     }
 
+    protected static boolean isVisible (Group.Policy policy, GroupMembership.Rank rank)
+    {
+        rank = (rank == null ? GroupMembership.Rank.NON_MEMBER : rank);
+        return policy != Group.Policy.EXCLUSIVE || rank != GroupMembership.Rank.NON_MEMBER;
+    }
+
     // our dependencies
     @Inject protected FeedRepository _feedRepo;
     @Inject protected ForumLogic _forumLogic;
@@ -761,7 +783,6 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
-    @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyChatChannelManager _channelMan;
