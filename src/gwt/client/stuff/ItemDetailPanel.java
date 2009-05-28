@@ -264,6 +264,13 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                                        Pages.GAMES, "d", ((GameItem)_item).gameId));
         }
 
+        // if this was purchased from the shop, add a link to the original listing
+        if (_item.isCatalogClone()) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            _details.add(createTipLink(_msgs.detailCanViewShop(), _msgs.detailViewShop(),
+                                       Pages.SHOP, "l", _item.getType(), _item.catalogId));
+        }
+
         adjustForUsage();
     }
 
