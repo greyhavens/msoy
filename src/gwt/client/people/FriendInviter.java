@@ -5,7 +5,6 @@ package client.people;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;

@@ -53,7 +53,6 @@ import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MemberName;

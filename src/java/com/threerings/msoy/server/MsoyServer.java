@@ -30,7 +30,6 @@ import com.threerings.messaging.MessageConnection;
 import com.threerings.messaging.amqp.AMQPMessageConfig;
 import com.threerings.messaging.amqp.AMQPMessageConnection;
 
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
