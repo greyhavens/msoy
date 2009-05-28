@@ -170,41 +170,33 @@
 }
 
 /* ------------------------------------
-   A/B TESTS
+   A/B Test List and Summary
 -------------------------------------*/
 
-.abTestListPanel {
-  padding: 10px;
+.abTestList, .abTestSummary {
+  border: 10px white solid;
 }
 
-.abTestListPanel .Tests {
+.abTestList .Tests {
   border: solid black 1px;
-  margin: 10px auto;
   width: 100%;
 }
 
-.abTestListPanel .Tests .Header {
+.abTestList .Tests .Header, .abTestSummary .Results .Header {
   background-color: #C8DFED;
 }
 
-.abTestEditorDialog {
-  padding: 10px;
+.abTestSummary .Info .Title {
+  font-weight: bold;
 }
 
-.abTestEditorDialog .Label {
-  clear: both;
-  float: left;
-  width: 150px;
+.abTestSummary .Results {
+  border: solid black 1px;
 }
 
-.abTestEditorDialog .Element {
-  float: left;
-  margin-bottom: 10px;
-}
-
-.abTestEditorDialog .ButtonPair {
-  clear: both;
-}
+/* ------------------------------------
+   Cash out panel
+-------------------------------------*/
 
 .cashOutWidget {
   padding: 5px 0px;
