@@ -65,6 +65,7 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.viewBureaus(), "bureaus"));
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
             admin.add(makeLink(_msgs.viewSurveys(), "survey", "e"));
+            admin.add(makeLink(_msgs.entriesButton(), "entries"));
             setWidget(row, col, admin);
             getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);
 
@@ -90,7 +91,6 @@ public class DashboardPanel extends SmartTable
         support.add(makeLink(_msgs.promosButton(), "promos"));
         support.add(makeLink(_msgs.contestsButton(), "contests"));
         support.add(makeLink(_msgs.broadcastButton(), "broadcasts"));
-        support.add(makeLink(_msgs.entriesButton(), "entries"));
         setWidget(row, col, support);
         getFlexCellFormatter().setVerticalAlignment(row++, col++, HasAlignment.ALIGN_TOP);
     }

@@ -392,6 +392,10 @@
    EntrySummaryPanel
 -------------------------------------*/
 
+.entrySummary {
+  border: 10px solid white;
+}
+
 .entrySummary .Header {
   font-weight: bold;
 }
