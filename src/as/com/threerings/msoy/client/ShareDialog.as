@@ -298,9 +298,7 @@ public class ShareDialog extends FloatingPanel
             }
             box.addChild(text = new CopyableText(createLink()));
         }
-        _autoFriend.addEventListener(Event.CHANGE, Util.adapt(function () :void {
-            updateLink();
-        }));
+        _autoFriend.addEventListener(Event.CHANGE, Util.adapt(updateLink));
         updateLink();
         return box;
     }
