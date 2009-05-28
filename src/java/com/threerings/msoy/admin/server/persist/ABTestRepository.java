@@ -28,6 +28,7 @@ import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.IntervalExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
@@ -211,7 +212,7 @@ public class ABTestRepository extends DepotRepository
                  new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
                  new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
                                    new GreaterThan(new Sub(MemberRecord.LAST_SESSION,
-                                                           new LiteralExp("interval '7 day'")),
+                                                           IntervalExp.days(7)),
                                                    MemberRecord.CREATED))))) {
             groups.get(rec.group).retained = rec.count;
         }
