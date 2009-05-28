@@ -61,10 +61,8 @@ import com.samskivert.depot.operator.LessThanEquals;
 import com.samskivert.depot.operator.Like;
 import com.samskivert.depot.operator.NotEquals;
 import com.samskivert.depot.operator.Or;
-import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
@@ -785,38 +783,6 @@ public class MemberRepository extends DepotRepository
         record.sessionMinutes += minutes;
         record.lastSession = nowStamp;
         update(record);
-    }
-
-    /**
-     * Returns the NeighborFriendRecords for all the established friends of a given member, through
-     * an inner join between {@link MemberRecord} and {@link FriendshipRecord}.
-     */
-    public List<NeighborFriendRecord> getNeighborhoodFriends (int memberId)
-    {
-        SQLOperator joinCondition = new And(
-            new Equals(FriendshipRecord.MEMBER_ID, memberId),
-            new Equals(FriendshipRecord.VALID, true),
-            new Equals(FriendshipRecord.FRIEND_ID, MemberRecord.MEMBER_ID));
-        return findAll(
-            NeighborFriendRecord.class,
-            new FromOverride(MemberRecord.class),
-            OrderBy.descending(MemberRecord.LAST_SESSION),
-            new Join(FriendshipRecord.class, joinCondition));
-    }
-
-    /**
-     * Returns the NeighborFriendRecords for all the given members.
-     */
-    public List<NeighborFriendRecord> getNeighborhoodMembers (int[] memberIds)
-    {
-        if (memberIds.length == 0) {
-            return Collections.emptyList();
-        }
-        Comparable<?>[] idArr = IntListUtil.box(memberIds);
-        return findAll(
-            NeighborFriendRecord.class,
-            new FromOverride(MemberRecord.class),
-            new Where(new In(MemberRecord.MEMBER_ID, idArr)));
     }
 
     /**
