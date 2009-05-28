@@ -240,6 +240,10 @@ public class SpamLogic
          */
         public String getGroupURL ()
         {
+            // TODO: remove check when group deletion is fixed
+            if (_thread.group == null) {
+                return Pages.GROUPS.makeURL();
+            }
             return Pages.GROUPS.makeURL(String.valueOf(_thread.group.getGroupId()));
         }
 
@@ -248,6 +252,11 @@ public class SpamLogic
          */
         public String getGroupName ()
         {
+            // TODO: remove check when group deletion is fixed
+            if (_thread.group == null) {
+                log.warning("Null group in retention mailing", "threadId", _thread.threadId);
+                return "?";
+            }
             return _thread.group.toString();
         }
 
