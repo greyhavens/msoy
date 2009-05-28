@@ -111,7 +111,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         };
         controls.setWidget(0, 1, _ignoreThread);
 
-        // add a button for editing this thread's flags and subject
+        // add a button for editing this thread's metadata
         _editThread = new Button(_mmsgs.editThread(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 _parent.editThread();
@@ -366,14 +366,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     /** The panel to which we want to scroll once our page is laid out. */
     protected Widget _scrollTarget;
 
-    /** A button for posting a reply message. */
-    protected Button _postReply;
-
-    /** A button for ignoring this thread. */
-    protected Button _ignoreThread;
-
-    /** A button for editing this thread's flags and subject. */
-    protected Button _editThread;
+    protected Button _postReply, _ignoreThread, _editThread;
 
     protected static final MsgsImages _images = GWT.create(MsgsImages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);

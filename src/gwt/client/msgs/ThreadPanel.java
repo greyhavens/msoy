@@ -273,8 +273,8 @@ public class ThreadPanel extends TitledListPanel
 
             main.setText(row, 0, _mmsgs.tfepSubject());
             main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-            main.setWidget(row++, 1, _subject = new TextBox());
-            _subject.setText(_thread.subject);
+            main.setWidget(row++, 1, _subject = MsoyUI.createTextBox(
+                _thread.subject, ForumThread.MAX_SUBJECT_LENGTH, 24));
 
             main.setText(row, 0, _mmsgs.tfepAnnouncement());
             main.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
