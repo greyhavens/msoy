@@ -21,19 +21,26 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.Not;
+import com.samskivert.depot.operator.NotEquals;
+import com.samskivert.depot.operator.Sub;
 
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.server.persist.EntryVectorRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Maintains persistent data for a/b tests
@@ -119,6 +126,7 @@ public class ABTestRepository extends DepotRepository
         IntMap<ABGroupSummaryRecord> groups = IntMaps.newHashIntMap();
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, new FromOverride(ABGroupRecord.class),
+                 new GroupBy(ABGroupRecord.GROUP),
                  new Where(ABGroupRecord.TEST_ID, testId))) {
             ABGroupSummaryRecord sumrec = new ABGroupSummaryRecord();
             sumrec.testId = testId;
@@ -131,11 +139,43 @@ public class ABTestRepository extends DepotRepository
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, new FromOverride(ABGroupRecord.class),
                  new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
-                 new Where(ABGroupRecord.TEST_ID, testId))) {
-            // TODO
+                 new GroupBy(ABGroupRecord.GROUP),
+                 new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
+                                   new NotEquals(EntryVectorRecord.MEMBER_ID, 0))))) {
+            groups.get(rec.group).registered = rec.count;
         }
 
-        // TODO
+        // now determine how many of those members were retained
+        for (GroupCountRecord rec : findAll(
+                 GroupCountRecord.class, new FromOverride(ABGroupRecord.class),
+                 new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
+                 new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
+                 new GroupBy(ABGroupRecord.GROUP),
+                 new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
+                                   new GreaterThan(new Sub(MemberRecord.LAST_SESSION,
+                                                           new LiteralExp("interval '7 day'")),
+                                                   MemberRecord.CREATED))))) {
+            groups.get(rec.group).retained = rec.count;
+        }
+
+        // now store the group summary records
+        for (ABGroupSummaryRecord sumrec : groups.values()) {
+            store(sumrec);
+        }
+
+        // lastly summarize the actions
+        for (ActionCountRecord rec : findAll(
+                 ActionCountRecord.class, new FromOverride(ABActionRecord.class),
+                 new Join(ABActionRecord.VISITOR_ID, ABGroupRecord.VISITOR_ID),
+                 new GroupBy(ABGroupRecord.GROUP, ABActionRecord.ACTION),
+                 new Where(ABActionRecord.TEST_ID, testId))) {
+            ABActionSummaryRecord sumrec = new ABActionSummaryRecord();
+            sumrec.testId = testId;
+            sumrec.group = rec.group;
+            sumrec.action = rec.action;
+            sumrec.takers = rec.count;
+            store(sumrec);
+        }
     }
 
     /**
@@ -166,6 +206,13 @@ public class ABTestRepository extends DepotRepository
     @Computed
     protected static class GroupCountRecord extends PersistentRecord {
         public int group;
+        @Computed(fieldDefinition="count(*)") public int count;
+    }
+
+    @Computed
+    protected static class ActionCountRecord extends PersistentRecord {
+        public int group;
+        public String action;
         @Computed(fieldDefinition="count(*)") public int count;
     }
 
