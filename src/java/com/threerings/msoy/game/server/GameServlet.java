@@ -553,9 +553,14 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(code.gameId, mrec);
+        if (!code.isDevelopment) {
+            log.warning("Refusing update to non-development code.", "who", mrec.who(),
+                        "game", code);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
         _mgameRepo.updateGameCode(GameCodeRecord.fromGameCode(code));
         // notify any server hosting this game that its data is updated
-        _gameActions.gameUpdated(code.isDevelopment ? GameInfo.toDevId(code.gameId) : code.gameId);
+        _gameActions.gameUpdated(GameInfo.toDevId(code.gameId));
     }
 
     // from interface GameService
@@ -565,6 +570,8 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(gameId, mrec);
         _mgameRepo.publishGameCode(gameId);
+        // notify any server hosting this game that its data is updated
+        _gameActions.gameUpdated(gameId);
     }
 
     // from interface GameService
