@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ExpiringReference;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -23,6 +24,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.web.gwt.ABTestCard;
 
+import com.threerings.msoy.admin.gwt.ABTestSummary;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 
@@ -114,6 +116,23 @@ public class ABTestLogic
         _testRepo.noteABAction(trec.testId, info.id, action);
     }
 
+    /**
+     * Returns the summary for the specified test.
+     */
+    public ABTestSummary getSummary (int testId)
+    {
+        // because we resummarize on every load and summarizing is expensive, we maintain a cache
+        ExpiringReference<ABTestSummary> ref = _sums.get(testId);
+        ABTestSummary sum = (ref == null) ? null : ref.getValue();
+        if (sum == null) {
+            sum = _testRepo.loadSummary(testId);
+            if (sum != null) {
+                _sums.put(testId, ExpiringReference.create(sum, SUM_EXPIRE_TIME));
+            }
+        }
+        return sum;
+    }
+
     protected void registerTest (String name, int numGroups, boolean onlyNewVisitors,
                                  boolean landingCookie)
     {
@@ -145,6 +164,7 @@ public class ABTestLogic
     }
 
     protected Map<String, ABTestRecord> _tests = Maps.newHashMap();
+    protected Map<Integer, ExpiringReference<ABTestSummary>> _sums = Maps.newHashMap();
 
     @Inject protected ABTestRepository _testRepo;
     @Inject protected MsoyEventLogger _eventLog;
@@ -160,4 +180,6 @@ public class ABTestLogic
             return record.toCard();
         }
     };
+
+    protected static final long SUM_EXPIRE_TIME = 5 * 60 * 1000L;
 }

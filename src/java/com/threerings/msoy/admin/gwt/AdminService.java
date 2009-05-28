@@ -121,6 +121,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Returns the summary for the specified A/B test.
+     */
+    ABTestSummary getABTestSummary (int testId)
+        throws ServiceException;
+
+    /**
      * Fetches a page of item flags from the database and some more information to display them.
      */
     ItemFlagsResult getItemFlags (int from, int count, boolean needCount)

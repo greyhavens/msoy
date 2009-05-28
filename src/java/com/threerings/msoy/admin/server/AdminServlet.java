@@ -28,6 +28,13 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.Invoker.Unit;
 
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager.NodeAction;
+
+import com.whirled.bureau.data.BureauTypes;
+
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
@@ -77,21 +84,18 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
+import com.threerings.msoy.admin.gwt.ABTestSummary;
 import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.EntrySummary;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.StatsModel;
-import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
+import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager.NodeAction;
-import com.whirled.bureau.data.BureauTypes;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -228,7 +232,16 @@ public class AdminServlet extends MsoyServiceServlet
     public List<ABTest> getABTests ()
         throws ServiceException
     {
+        requireSupportUser();
         return Lists.newArrayList(Iterables.transform(_testRepo.loadTests(), ABTestRecord.TO_TEST));
+    }
+
+    // from interface AdminService
+    public ABTestSummary getABTestSummary (int testId)
+        throws ServiceException
+    {
+        requireSupportUser();
+        return _testLogic.getSummary(testId);
     }
 
     // from interface AdminService
@@ -824,6 +837,7 @@ public class AdminServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject @MainInvoker Invoker _invoker;
+    @Inject protected ABTestLogic _testLogic;
     @Inject protected ABTestRepository _testRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected ContestRepository _contestRepo;

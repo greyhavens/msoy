@@ -50,6 +50,11 @@ public interface AdminServiceAsync
     void getABTests (AsyncCallback<List<ABTest>> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#getABTestSummary}.
+     */
+    void getABTestSummary (int testId, AsyncCallback<ABTestSummary> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#getItemFlags}.
      */
     void getItemFlags (int start, int count, boolean needCount,

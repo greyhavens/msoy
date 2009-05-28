@@ -84,11 +84,18 @@ public class ABTestRecord extends PersistentRecord
     }
 
     /**
-     * Build a POJO version of this Record, for use outside the persistence system.
+     * Converts this persistent record into a runtime record.
      */
     public ABTest toTest ()
     {
-        ABTest test = new ABTest();
+        return toTest(new ABTest());
+    }
+
+    /**
+     * Initializes the supplied runtime record with info from this persistent record.
+     */
+    public <T extends ABTest> T toTest (T test)
+    {
         test.testId = testId;
         test.name = name;
         test.numGroups = numGroups;

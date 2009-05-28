@@ -7,7 +7,11 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -39,6 +43,7 @@ import com.samskivert.depot.operator.Sub;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.gwt.ABTest;
+import com.threerings.msoy.admin.gwt.ABTestSummary;
 import com.threerings.msoy.server.persist.EntryVectorRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -115,6 +120,49 @@ public class ABTestRepository extends DepotRepository
         } catch (DuplicateKeyException dke) {
             // not a problem, they can take each action up to once
         }
+    }
+
+    /**
+     * Loads a summary of the supplied test. If the test is still running, the current summary will
+     * first be regenerated.
+     *
+     * @return the summary record or null if no test exists with the supplied id.
+     */
+    public ABTestSummary loadSummary (int testId)
+    {
+        ABTestRecord record = load(ABTestRecord.class, testId);
+        if (record == null) {
+            return null;
+        }
+
+        // if the test is still running, then resummarize before loading our data
+        if (record.ended == null) {
+            summarizeTest(testId);
+        }
+
+        ABTestSummary sum = record.toTest(new ABTestSummary());
+        sum.groups = Lists.newArrayList();
+
+        Multimap<Integer, ABActionSummaryRecord> actions = HashMultimap.create();
+        for (ABActionSummaryRecord arec : findAll(
+                 ABActionSummaryRecord.class, new Where(ABActionSummaryRecord.TEST_ID, testId))) {
+            actions.put(arec.group, arec);
+        }
+
+        for (ABGroupSummaryRecord gsum : findAll(
+                 ABGroupSummaryRecord.class, new Where(ABGroupSummaryRecord.TEST_ID, testId))) {
+            ABTestSummary.Group group = new ABTestSummary.Group();
+            group.group = gsum.group;
+            group.assigned = gsum.assigned;
+            group.registered = gsum.registered;
+            group.retained = gsum.retained;
+            group.actions = Maps.newHashMap();
+            for (ABActionSummaryRecord arec : actions.get(group.group)) {
+                group.actions.put(arec.action, arec.takers);
+            }
+        }
+
+        return sum;
     }
 
     /**
