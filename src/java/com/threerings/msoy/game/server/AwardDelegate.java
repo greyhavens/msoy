@@ -273,7 +273,7 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // record that games were played and potentially update our payout factor
-        if (_content.isDevelopmentVersion()) {
+        if (!_content.isDevelopmentVersion()) {
             MetricType type = isMultiplayer() ? MetricType.MULTI_PLAYER : MetricType.SINGLE_PLAYER;
             _gameReg.updateGameMetrics(_content.metrics, type, totalMinutes,
                                        _totalTrackedGames, _totalAwardedFlow);
