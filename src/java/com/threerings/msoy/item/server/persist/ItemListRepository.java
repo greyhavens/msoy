@@ -18,16 +18,20 @@ import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.GreaterThanEquals;
+import com.samskivert.depot.operator.LessThan;
+import com.samskivert.depot.operator.LessThanEquals;
+import com.samskivert.depot.operator.Sub;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -286,13 +290,11 @@ public class ItemListRepository extends DepotRepository
     protected void shiftItemsRight (final int listId, final short fromIndex)
     {
         Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
-        Conditionals.GreaterThanEquals after =
-            new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE, fromIndex);
-        Logic.And condition = new Logic.And(findList, after);
+        GreaterThanEquals after = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, fromIndex);
+        And condition = new And(findList, after);
 
         Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
-        shift.put(ItemListElementRecord.SEQUENCE,
-                  new Arithmetic.Add(ItemListElementRecord.SEQUENCE, 1));
+        shift.put(ItemListElementRecord.SEQUENCE, new Add(ItemListElementRecord.SEQUENCE, 1));
 
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -313,12 +315,11 @@ public class ItemListRepository extends DepotRepository
     protected void shiftItemsLeft (final int listId, final short fromIndex)
     {
         Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
-        Conditionals.GreaterThan after =
-            new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
-        Logic.And condition = new Logic.And(findList, after);
+        GreaterThan after = new GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
+        And condition = new And(findList, after);
         Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
         shift.put(ItemListElementRecord.SEQUENCE,
-                  new Arithmetic.Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
+                  new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
 
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -346,14 +347,12 @@ public class ItemListRepository extends DepotRepository
 
         if (fromIndex < toIndex) {
             // shift all affected items to the left
-            Conditionals.GreaterThan min =
-                new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
-            Conditionals.LessThanEquals max =
-                new Conditionals.LessThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
-            range = new Logic.And(min, max);
+            GreaterThan min = new GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
+            LessThanEquals max = new LessThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
+            range = new And(min, max);
 
             shift.put(ItemListElementRecord.SEQUENCE,
-                      new Arithmetic.Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
+                      new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
 
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -365,14 +364,12 @@ public class ItemListRepository extends DepotRepository
 
         } else {
             // shift affected items to the right (increment by one)
-            Conditionals.GreaterThanEquals min =
-                new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
-            Conditionals.LessThan max =
-                new Conditionals.LessThan(ItemListElementRecord.SEQUENCE, fromIndex);
-            range = new Logic.And(min, max);
+            GreaterThanEquals min = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
+            LessThan max = new LessThan(ItemListElementRecord.SEQUENCE, fromIndex);
+            range = new And(min, max);
 
             shift.put(ItemListElementRecord.SEQUENCE,
-                      new Arithmetic.Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
+                      new Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
 
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -384,7 +381,7 @@ public class ItemListRepository extends DepotRepository
         }
 
         Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
-        Logic.And condition = new Logic.And(findList, range);
+        And condition = new And(findList, range);
 
         // update all of the affected items
         updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);

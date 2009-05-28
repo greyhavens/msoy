@@ -10,15 +10,15 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -117,9 +117,9 @@ public class BadgeRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(EarnedBadgeRecord.class,
-                  new Where(new Conditionals.In(EarnedBadgeRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(EarnedBadgeRecord.MEMBER_ID, memberIds)));
         deleteAll(InProgressBadgeRecord.class,
-                  new Where(new Conditionals.In(InProgressBadgeRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(InProgressBadgeRecord.MEMBER_ID, memberIds)));
     }
 
     @Override

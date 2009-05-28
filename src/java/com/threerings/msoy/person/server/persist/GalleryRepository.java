@@ -16,10 +16,10 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.IsNull;
-import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.IsNull;
 
 import com.threerings.msoy.person.gwt.Gallery;
 
@@ -106,8 +106,7 @@ public class GalleryRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(GalleryRecord.class,
-                  new Where(new Conditionals.In(GalleryRecord.OWNER_ID, memberIds)));
+        deleteAll(GalleryRecord.class, new Where(new In(GalleryRecord.OWNER_ID, memberIds)));
     }
 
     /**

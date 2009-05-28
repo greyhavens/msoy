@@ -21,7 +21,7 @@ import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.operator.Conditionals.In;
+import com.samskivert.depot.operator.In;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.presents.annotation.BlockingThread;

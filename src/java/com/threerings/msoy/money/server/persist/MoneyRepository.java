@@ -40,10 +40,16 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.GreaterThanEquals;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.IsNull;
+import com.samskivert.depot.operator.LessThan;
 import com.samskivert.depot.operator.SQLOperator;
+import com.samskivert.depot.operator.Sub;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.util.Logger;
 
@@ -136,10 +142,10 @@ public class MoneyRepository extends DepotRepository
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
         ImmutableMap.Builder<ColumnExp, SQLExpression> builder = ImmutableMap.builder();
-        builder.put(currencyCol, new Arithmetic.Add(currencyCol, amount));
+        builder.put(currencyCol, new Add(currencyCol, amount));
         if (updateAcc) {
             ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
-            builder.put(currencyAccCol, new Arithmetic.Add(currencyAccCol, amount));
+            builder.put(currencyAccCol, new Add(currencyAccCol, amount));
         }
 
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
@@ -171,12 +177,12 @@ public class MoneyRepository extends DepotRepository
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
         Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(currencyCol, new Arithmetic.Sub(currencyCol, amount))
+            .put(currencyCol, new Sub(currencyCol, amount))
             .build();
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
         Where where = new Where(new And(
-            new Conditionals.Equals(MemberAccountRecord.MEMBER_ID, memberId),
-            new Conditionals.GreaterThanEquals(currencyCol, amount)));
+            new Equals(MemberAccountRecord.MEMBER_ID, memberId),
+            new GreaterThanEquals(currencyCol, amount)));
 
         int count = updateLiteral(MemberAccountRecord.class, where, key, updates);
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
@@ -253,7 +259,7 @@ public class MoneyRepository extends DepotRepository
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.currency);
         Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(currencyCol, new Arithmetic.Add(currencyCol, -deduction.amount))
+            .put(currencyCol, new Add(currencyCol, -deduction.amount))
             .build();
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(deduction.memberId);
 
@@ -311,8 +317,8 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);
         Where where = new Where(
-            new And(new Conditionals.Equals(MoneyTransactionRecord.CURRENCY, currency),
-                    new Conditionals.LessThan(MoneyTransactionRecord.TIMESTAMP, cutoff)));
+            new And(new Equals(MoneyTransactionRecord.CURRENCY, currency),
+                    new LessThan(MoneyTransactionRecord.TIMESTAMP, cutoff)));
         return deleteAll(MoneyTransactionRecord.class, where, null /* no cache invalidation */);
     }
 
@@ -373,9 +379,8 @@ public class MoneyRepository extends DepotRepository
     public void recordExchange (int barDelta, int coinDelta, float rate, int referenceTxId)
     {
         Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL, barDelta))
-            .put(BarPoolRecord.COIN_BALANCE,
-                new Arithmetic.Add(BarPoolRecord.COIN_BALANCE, coinDelta))
+            .put(BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, barDelta))
+            .put(BarPoolRecord.COIN_BALANCE, new Add(BarPoolRecord.COIN_BALANCE, coinDelta))
             .build();
         updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, updates);
 
@@ -398,7 +403,7 @@ public class MoneyRepository extends DepotRepository
     public void adjustBarPool (int delta)
     {
         Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL, delta))
+            .put(BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, delta))
             .build();
         updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, updates);
     }
@@ -411,7 +416,7 @@ public class MoneyRepository extends DepotRepository
     public int deleteOldExchangeRecords (long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        return deleteAll(ExchangeRecord.class, new Where(new Conditionals.LessThan(
+        return deleteAll(ExchangeRecord.class, new Where(new LessThan(
             ExchangeRecord.TIMESTAMP, new Timestamp(oldestTimestamp))));
     }
 
@@ -478,8 +483,8 @@ public class MoneyRepository extends DepotRepository
     public int commitBlingCashOutRequest (int memberId, int actualAmount)
     {
         Where where = new Where(new And(
-            new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID, memberId),
-            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED)));
+            new Equals(BlingCashOutRecord.MEMBER_ID, memberId),
+            new IsNull(BlingCashOutRecord.TIME_FINISHED)));
         return updatePartial(BlingCashOutRecord.class, where,
             new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
@@ -498,8 +503,8 @@ public class MoneyRepository extends DepotRepository
     public int cancelBlingCashOutRequest (int memberId, String reason)
     {
         Where where = new Where(new And(
-            new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID, memberId),
-            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED)));
+            new Equals(BlingCashOutRecord.MEMBER_ID, memberId),
+            new IsNull(BlingCashOutRecord.TIME_FINISHED)));
         return updatePartial(BlingCashOutRecord.class, where,
             new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
@@ -535,8 +540,8 @@ public class MoneyRepository extends DepotRepository
     public BlingCashOutRecord getCurrentCashOutRequest (int memberId)
     {
         return load(BlingCashOutRecord.class, new Where(new And(
-            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED),
-            new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID, memberId))));
+            new IsNull(BlingCashOutRecord.TIME_FINISHED),
+            new Equals(BlingCashOutRecord.MEMBER_ID, memberId))));
     }
 
     /**
@@ -547,7 +552,7 @@ public class MoneyRepository extends DepotRepository
     {
         // select * from CashOutRecord where timeCompleted is null
         return findAll(BlingCashOutRecord.class, new Where(
-            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED)));
+            new IsNull(BlingCashOutRecord.TIME_FINISHED)));
     }
 
     /**
@@ -557,7 +562,7 @@ public class MoneyRepository extends DepotRepository
     public BlingCashOutRecord getMostRecentBlingCashout (int memberId)
     {
         List<BlingCashOutRecord> cashouts = findAll(BlingCashOutRecord.class,
-            new Where (new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID, memberId)),
+            new Where (new Equals(BlingCashOutRecord.MEMBER_ID, memberId)),
             OrderBy.descending(BlingCashOutRecord.TIME_REQUESTED), new Limit(0, 1));
         return cashouts.size() > 0 ? cashouts.get(0) : null;
     }
@@ -569,9 +574,9 @@ public class MoneyRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(MemberAccountRecord.class,
-                  new Where(new Conditionals.In(MemberAccountRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(MemberAccountRecord.MEMBER_ID, memberIds)));
         deleteAll(MoneyTransactionRecord.class,
-                  new Where(new Conditionals.In(MoneyTransactionRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(MoneyTransactionRecord.MEMBER_ID, memberIds)));
     }
 
     /**
@@ -581,7 +586,7 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp limit = new Timestamp(time);
         return load(CountRecord.class, CacheStrategy.NONE,
-            new Where(new Conditionals.GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
+            new Where(new GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
             new FromOverride(BroadcastHistoryRecord.class)).count;
     }
 
@@ -644,13 +649,12 @@ public class MoneyRepository extends DepotRepository
     {
         List<SQLOperator> where = Lists.newArrayList();
 
-        where.add(new Conditionals.Equals(MoneyTransactionRecord.MEMBER_ID, memberId));
+        where.add(new Equals(MoneyTransactionRecord.MEMBER_ID, memberId));
         if (transactionTypes != null) {
-            where.add(
-                new Conditionals.In(MoneyTransactionRecord.TRANSACTION_TYPE, transactionTypes));
+            where.add(new In(MoneyTransactionRecord.TRANSACTION_TYPE, transactionTypes));
         }
         if (currency != null) {
-            where.add(new Conditionals.Equals(MoneyTransactionRecord.CURRENCY, currency));
+            where.add(new Equals(MoneyTransactionRecord.CURRENCY, currency));
         }
 
         clauses.add(new Where(new And(where)));
@@ -660,9 +664,9 @@ public class MoneyRepository extends DepotRepository
     {
         MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
         List<SQLOperator> where = Lists.newArrayList();
-        where.add(new Conditionals.Equals(MoneyTransactionRecord.SUBJECT_TYPE, subj.type));
-        where.add(new Conditionals.Equals(MoneyTransactionRecord.SUBJECT_ID_TYPE, subj.idType));
-        where.add(new Conditionals.Equals(MoneyTransactionRecord.SUBJECT_ID, subj.id));
+        where.add(new Equals(MoneyTransactionRecord.SUBJECT_TYPE, subj.type));
+        where.add(new Equals(MoneyTransactionRecord.SUBJECT_ID_TYPE, subj.idType));
+        where.add(new Equals(MoneyTransactionRecord.SUBJECT_ID, subj.id));
         return new Where(new And(where));
     }
 

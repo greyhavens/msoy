@@ -32,9 +32,13 @@ import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Div;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.IsNull;
+import com.samskivert.depot.operator.Not;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -120,8 +124,8 @@ public class MsoySceneRepository extends DepotRepository
     public int getRoomCount (int memberId)
     {
         Where where = new Where(
-            new Logic.And(new Equals(SceneRecord.OWNER_TYPE, MsoySceneModel.OWNER_TYPE_MEMBER),
-                          new Equals(SceneRecord.OWNER_ID, memberId)));
+            new And(new Equals(SceneRecord.OWNER_TYPE, MsoySceneModel.OWNER_TYPE_MEMBER),
+                    new Equals(SceneRecord.OWNER_ID, memberId)));
         return load(CountRecord.class, new FromOverride(SceneRecord.class), where).count;
     }
 
@@ -130,8 +134,8 @@ public class MsoySceneRepository extends DepotRepository
      */
     public List<SceneRecord> getOwnedScenes (byte ownerType, int memberId)
     {
-        Where where = new Where(new Logic.And(new Equals(SceneRecord.OWNER_TYPE, ownerType),
-                                              new Equals(SceneRecord.OWNER_ID, memberId)));
+        Where where = new Where(new And(new Equals(SceneRecord.OWNER_TYPE, ownerType),
+                                        new Equals(SceneRecord.OWNER_ID, memberId)));
         return findAll(SceneRecord.class, where);
     }
 
@@ -305,10 +309,9 @@ public class MsoySceneRepository extends DepotRepository
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // only load public, published rooms
-        clauses.add(new Where(new Logic.And(
-                new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED)),
-                new Equals(SceneRecord.ACCESS_CONTROL, MsoySceneModel.ACCESS_EVERYONE)
-        )));
+        clauses.add(new Where(new And(new Not(new IsNull(SceneRecord.LAST_PUBLISHED)),
+                                      new Equals(SceneRecord.ACCESS_CONTROL,
+                                                 MsoySceneModel.ACCESS_EVERYONE))));
 
         exprs.add(NEW_AND_HOT_ORDER);
         orders.add(OrderBy.Order.DESC);
@@ -583,7 +586,7 @@ public class MsoySceneRepository extends DepotRepository
     {
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
-        return new Arithmetic.Div(
+        return new Div(
             SceneRecord.RATING_SUM,
             new FunctionExp("GREATEST", SceneRecord.RATING_COUNT, new LiteralExp("1.0")));
     }
@@ -609,9 +612,9 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
-        new Arithmetic.Add(getRatingExpression(), new Arithmetic.Div(
-            new EpochSeconds(SceneRecord.LAST_PUBLISHED),
-            // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
-            // TODO: with parameters. So we trick Depot using a literal expression here. :/
-            new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
+        new Add(getRatingExpression(), new Div(new EpochSeconds(SceneRecord.LAST_PUBLISHED),
+                                               // TODO: PostgreSQL flips out when you CREATE INDEX
+                                               // using a prepared statement with parameters. So we
+                                               // trick Depot using a literal expression here. :/
+                                               new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
 }

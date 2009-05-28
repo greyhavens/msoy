@@ -14,9 +14,9 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
-import com.samskivert.depot.operator.Conditionals.LessThanEquals;
-import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.GreaterThanEquals;
+import com.samskivert.depot.operator.LessThanEquals;
 
 import com.threerings.msoy.web.gwt.Promotion;
 

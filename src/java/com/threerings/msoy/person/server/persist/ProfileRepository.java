@@ -23,8 +23,11 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.FullText;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.IsNull;
+import com.samskivert.depot.operator.LessThanEquals;
 
 import com.threerings.presents.annotation.BlockingThread;
 

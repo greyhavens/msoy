@@ -30,10 +30,16 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Arithmetic.*;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic.*;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.FullText;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.IsNull;
+import com.samskivert.depot.operator.Not;
+import com.samskivert.depot.operator.Or;
+import com.samskivert.depot.operator.Sub;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -441,7 +447,7 @@ public class ForumRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(ReadTrackingRecord.class,
-                  new Where(new Conditionals.In(ReadTrackingRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(ReadTrackingRecord.MEMBER_ID, memberIds)));
     }
 
     protected List<QueryClause> getUnreadThreadsClauses (int memberId, Set<Integer> groupIds)

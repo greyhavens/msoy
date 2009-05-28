@@ -22,8 +22,9 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.impl.Modifier;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.In;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 
@@ -121,8 +122,8 @@ public class MemoryRepository extends DepotRepository
     public void purgeMemories (byte itemType, Collection<Integer> itemIds)
     {
         deleteAll(MemoriesRecord.class, new Where(
-            new Logic.And(new Conditionals.Equals(MemoriesRecord.ITEM_TYPE, itemType),
-                          new Conditionals.In(MemoriesRecord.ITEM_ID, itemIds))));
+                      new And(new Equals(MemoriesRecord.ITEM_TYPE, itemType),
+                              new In(MemoriesRecord.ITEM_ID, itemIds))));
     }
 
     @Override // from DepotRepository

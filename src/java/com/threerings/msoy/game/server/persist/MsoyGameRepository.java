@@ -37,10 +37,19 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic.*;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Div;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.FullText;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.GreaterThanEquals;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.LessThan;
+import com.samskivert.depot.operator.NotEquals;
+import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
+import com.samskivert.depot.operator.Sub;
 
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.item.server.persist.GameRatingRecord;
@@ -306,7 +315,7 @@ public class MsoyGameRepository extends DepotRepository
             // if we have no search ranking, sort by descending average rating
             FunctionExp count = new FunctionExp(
                 "GREATEST", GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
-            clauses.add(OrderBy.descending(new Arithmetic.Div(GameInfoRecord.RATING_SUM, count)));
+            clauses.add(OrderBy.descending(new Div(GameInfoRecord.RATING_SUM, count)));
         }
 
         // filter out games that aren't integrated with Whirled
@@ -456,8 +465,8 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        SQLExpression add = new Arithmetic.Add(GameMetricsRecord.GAMES_PLAYED, playerGames);
-        SQLExpression sub = new Arithmetic.Sub(GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
+        SQLExpression add = new Add(GameMetricsRecord.GAMES_PLAYED, playerGames);
+        SQLExpression sub = new Sub(GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
         updateLiteral(GameMetricsRecord.class, Math.abs(gprec.gameId),
                       ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,

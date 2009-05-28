@@ -21,8 +21,8 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -244,9 +244,9 @@ public class SurveyRepository extends DepotRepository
     protected List<QueryClause> getResponseClauses (int surveyId, int questionIndex)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Where(new Logic.And(
-            new Conditionals.Equals(SurveyResponseRecord.SURVEY_ID, surveyId),
-            new Conditionals.Equals(SurveyResponseRecord.QUESTION_INDEX, questionIndex))));
+        clauses.add(new Where(
+                        new And(new Equals(SurveyResponseRecord.SURVEY_ID, surveyId),
+                                new Equals(SurveyResponseRecord.QUESTION_INDEX, questionIndex))));
         return clauses;
     }
 

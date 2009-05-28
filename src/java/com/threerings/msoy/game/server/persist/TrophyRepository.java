@@ -17,10 +17,10 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.GreaterThan;
-import com.samskivert.depot.operator.Conditionals.In;
-import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 

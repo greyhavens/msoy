@@ -21,11 +21,14 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.IsNull;
+import com.samskivert.depot.operator.Not;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -144,8 +147,8 @@ public class ABTestRepository extends DepotRepository
         Timestamp now = new Timestamp(System.currentTimeMillis());
         int mods = updateLiteral(
             ABTestRecord.class, new Where(
-                new Logic.And(new Conditionals.IsNull(ABTestRecord.ENDED),
-                              new Logic.Not(new Conditionals.In(ABTestRecord.TEST_ID, activeIds)))),
+                new And(new IsNull(ABTestRecord.ENDED),
+                        new Not(new In(ABTestRecord.TEST_ID, activeIds)))),
             null, ImmutableMap.of(ABTestRecord.ENDED, new ValueExp(now)));
         if (mods == 0) {
             // if we modded no rows, either there's nothing to summarize or another server is on it

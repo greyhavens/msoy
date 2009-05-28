@@ -15,8 +15,9 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.In;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
@@ -111,7 +112,7 @@ public class AVRGameRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(PlayerGameStateRecord.class,
-                  new Where(new Conditionals.In(PlayerGameStateRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(PlayerGameStateRecord.MEMBER_ID, memberIds)));
     }
 
     /**
@@ -120,17 +121,15 @@ public class AVRGameRepository extends DepotRepository
     public Set<Integer> getPropertiedMembers (int gameId, Set<Integer> memberIds)
     {
         List<QueryClause> clauses = Lists.newArrayList(
-            new Where(new Logic.And(
-                new Conditionals.Equals(PlayerGameStateRecord.GAME_ID, gameId),
-                new Conditionals.In(PlayerGameStateRecord.MEMBER_ID, memberIds))),
+            new Where(new And(new Equals(PlayerGameStateRecord.GAME_ID, gameId),
+                              new In(PlayerGameStateRecord.MEMBER_ID, memberIds))),
             new GroupBy(PlayerGameStateRecord.MEMBER_ID),
             new FromOverride(PlayerGameStateRecord.class));
-
-        memberIds = Sets.newHashSet();
+        Set<Integer> propIds = Sets.newHashSet();
         for (HasPropertyRecord prop : findAll(HasPropertyRecord.class, clauses)) {
-            memberIds.add(prop.memberId);
+            propIds.add(prop.memberId);
         }
-        return memberIds;
+        return propIds;
     }
 
     @Override

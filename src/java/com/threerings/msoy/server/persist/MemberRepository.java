@@ -49,9 +49,18 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 
-import com.samskivert.depot.operator.Arithmetic.*;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic.*;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.BitAnd;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.FullText;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.GreaterThanEquals;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.LessThan;
+import com.samskivert.depot.operator.LessThanEquals;
+import com.samskivert.depot.operator.Like;
+import com.samskivert.depot.operator.NotEquals;
+import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.ArrayIntSet;

@@ -16,7 +16,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.In;
+import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 

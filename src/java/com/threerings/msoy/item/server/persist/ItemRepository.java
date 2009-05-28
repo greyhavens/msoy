@@ -51,7 +51,6 @@ import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
-import com.samskivert.depot.impl.Modifier;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FieldDefinition;
@@ -68,9 +67,22 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic.*;
+import com.samskivert.depot.impl.Modifier;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Case;
+import com.samskivert.depot.operator.Div;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.Exists;
+import com.samskivert.depot.operator.FullText;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.GreaterThanEquals;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.LessThan;
+import com.samskivert.depot.operator.LessThanEquals;
+import com.samskivert.depot.operator.Mul;
+import com.samskivert.depot.operator.Not;
+import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -1066,7 +1078,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
-                        new Arithmetic.Add(getCatalogColumn(CatalogRecord.PURCHASES), 1));
+                        new Add(getCatalogColumn(CatalogRecord.PURCHASES), 1));
 
             int purchases = record.purchases + 1; // for below calculations
             switch (record.pricing) {
@@ -1086,8 +1098,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
 
         } else {
-            updates.put(CatalogRecord.RETURNS,
-                        new Arithmetic.Add(getCatalogColumn(CatalogRecord.RETURNS), 1));
+            updates.put(CatalogRecord.RETURNS, new Add(getCatalogColumn(CatalogRecord.RETURNS), 1));
         }
 
         // finally update the columns we actually modified
@@ -1252,8 +1263,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             };
         Where where = new Where(getCatalogColumn(CatalogRecord.BASIS_ID), basisId);
         ColumnExp cost = getCatalogColumn(CatalogRecord.COST);
-        Arithmetic.Add add = new Arithmetic.Add(cost, change);
-        return updatePartial(getCatalogClass(), where, invalidator, cost, add);
+        return updatePartial(getCatalogClass(), where, invalidator, cost, new Add(cost, change));
     }
 
     /**
@@ -1393,7 +1403,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void incrementFavoriteCount (int catalogId, int increment)
     {
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
-        updates.put(CatalogRecord.FAVORITE_COUNT, new Arithmetic.Add(
+        updates.put(CatalogRecord.FAVORITE_COUNT, new Add(
                         getCatalogColumn(CatalogRecord.FAVORITE_COUNT), increment));
         if (updateLiteral(getCatalogClass(), catalogId, updates) == 0) {
             log.warning("Could not update favorite count on catalog record.",
@@ -1439,8 +1449,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void noteBasisAssigned (int catalogId, boolean add)
     {
         ColumnExp count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
-        SQLExpression addExp = new Arithmetic.Add(count, add ? 1 : -1);
-        updatePartial(getCatalogClass(), catalogId, count, addExp);
+        updatePartial(getCatalogClass(), catalogId, count, new Add(count, add ? 1 : -1));
     }
 
     /**
@@ -1640,10 +1649,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         // - We know that Currency.COINS=0, Currency.BARS=1
         // - if the exchange rate was less than 1, this would value coins and bars equally
         //   instead of making bars worth less... that shouldn't happen though.
-        exprs.add(new Arithmetic.Mul(getCatalogColumn(CatalogRecord.COST),
-            new FunctionExp("GREATEST", new ValueExp(1),
-                new Arithmetic.Mul(getCatalogColumn(CatalogRecord.CURRENCY),
-                                   new ValueExp(_exchange.getRate())))));
+        exprs.add(new Mul(getCatalogColumn(CatalogRecord.COST),
+                          new FunctionExp("GREATEST", new ValueExp(1),
+                                          new Mul(getCatalogColumn(CatalogRecord.CURRENCY),
+                                                  new ValueExp(_exchange.getRate())))));
         orders.add(order);
     }
 
@@ -1656,11 +1665,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
-        exprs.add(new Arithmetic.Add(
-            getRatingExpression(),
-            new Arithmetic.Div(
-                new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)),
-                HotnessConfig.DROPOFF_SECONDS)));
+        exprs.add(new Add(getRatingExpression(),
+                          new Div(new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)),
+                                  HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1676,16 +1683,17 @@ public abstract class ItemRepository<T extends ItemRecord>
             // entirely unknown. We only give it a tiny linear shift so that the creator and
             // tag factors below have something non-zero to work with when there is no full
             // text hit at all
-            new Arithmetic.Add(new ValueExp(0.1), context.fullTextRank()),
+            new Add(new ValueExp(0.1), context.fullTextRank()),
 
             // adjust the FTS rank by (5 + rating), which means a 5-star item is rated
             // (approximately) twice as high rated as a 1-star item
-            new Arithmetic.Add(new ValueExp(1.0), getRatingExpression()),
+            new Add(new ValueExp(1.0), getRatingExpression()),
 
             // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            new Arithmetic.Add(new ValueExp(3.0), new FunctionExp("LOG",
-                new Arithmetic.Add(new ValueExp(1.0), getCatalogColumn(CatalogRecord.PURCHASES)))),
+            new Add(new ValueExp(3.0),
+                    new FunctionExp("LOG", new Add(new ValueExp(1.0),
+                                                   getCatalogColumn(CatalogRecord.PURCHASES)))),
         };
 
         SQLOperator tagExistsExp =
@@ -1703,7 +1711,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Case(madeByExp, new ValueExp(1.5), new ValueExp(1.0)));
         }
 
-        exprs.add(new Arithmetic.Mul(ops));
+        exprs.add(new Mul(ops));
         orders.add(OrderBy.Order.DESC);
 
         exprs.add(getRatingExpression());
@@ -1759,9 +1767,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected SQLExpression getRatingExpression ()
     {
-        return new Arithmetic.Div(
-            getItemColumn(ItemRecord.RATING_SUM),
-            new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT), new ValueExp(1.0)));
+        return new Div(getItemColumn(ItemRecord.RATING_SUM),
+                       new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT),
+                                       new ValueExp(1.0)));
     }
 
     @Override // from DepotRepository

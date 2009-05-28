@@ -35,19 +35,18 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Arithmetic.Add;
-import com.samskivert.depot.operator.Arithmetic.Div;
-import com.samskivert.depot.operator.Arithmetic.Mul;
-import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Case;
+import com.samskivert.depot.operator.Div;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.Exists;
+import com.samskivert.depot.operator.FullText;
+import com.samskivert.depot.operator.In;
+import com.samskivert.depot.operator.Mul;
+import com.samskivert.depot.operator.Not;
+import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
-import com.samskivert.depot.operator.Conditionals.Case;
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.Exists;
-import com.samskivert.depot.operator.Conditionals.FullText;
-import com.samskivert.depot.operator.Conditionals.In;
-import com.samskivert.depot.operator.Logic.And;
-import com.samskivert.depot.operator.Logic.Or;
-import com.samskivert.depot.operator.Logic.Not;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
@@ -563,7 +562,7 @@ public class GroupRepository extends DepotRepository
         // note: if these members were the last manager of any groups, they are left high and dry;
         // given that we only purge permaguests currently, this is a non-issue
         deleteAll(GroupMembershipRecord.class,
-                  new Where(new Conditionals.In(GroupMembershipRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(GroupMembershipRecord.MEMBER_ID, memberIds)));
         _tagRepo.purgeMembers(memberIds);
     }
 

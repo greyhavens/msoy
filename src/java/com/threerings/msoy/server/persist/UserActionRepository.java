@@ -18,8 +18,8 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Add;
+import com.samskivert.depot.operator.In;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.data.UserAction;
@@ -94,9 +94,8 @@ public class UserActionRepository extends DepotRepository
 
         // update their action summary counts
         for (final IntIntMap.IntIntEntry entry : actionCounts.entrySet()) {
-            fieldMap.put(
-                MemberActionSummaryRecord.COUNT,
-                new Arithmetic.Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
+            fieldMap.put(MemberActionSummaryRecord.COUNT,
+                         new Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
             final int rows = updateLiteral(
                 MemberActionSummaryRecord.class,
                 MemberActionSummaryRecord.MEMBER_ID, memberId,
@@ -126,9 +125,9 @@ public class UserActionRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(MemberActionLogRecord.class,
-                  new Where(new Conditionals.In(MemberActionLogRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(MemberActionLogRecord.MEMBER_ID, memberIds)));
         deleteAll(MemberActionSummaryRecord.class,
-                  new Where(new Conditionals.In(MemberActionSummaryRecord.MEMBER_ID, memberIds)));
+                  new Where(new In(MemberActionSummaryRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

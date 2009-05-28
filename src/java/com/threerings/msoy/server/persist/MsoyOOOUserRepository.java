@@ -16,9 +16,9 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.servlet.user.UserUtil;
@@ -108,16 +108,13 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     public void purgeMembers (Collection<String> emails)
     {
         List<Integer> userIds = Lists.transform(
-            findAllKeys(OOOUserRecord.class, false,
-                        new Where(new Conditionals.In(OOOUserRecord.EMAIL, emails))),
+            findAllKeys(OOOUserRecord.class, false, new Where(new In(OOOUserRecord.EMAIL, emails))),
             RecordFunctions.<OOOUserRecord>getIntKey());
         if (!userIds.isEmpty()) {
-            deleteAll(OOOUserRecord.class,
-                      new Where(new Conditionals.In(OOOUserRecord.USER_ID, userIds)));
+            deleteAll(OOOUserRecord.class, new Where(new In(OOOUserRecord.USER_ID, userIds)));
             deleteAll(HistoricalUserRecord.class,
-                      new Where(new Conditionals.In(HistoricalUserRecord.USER_ID, userIds)));
-            deleteAll(UserIdentRecord.class,
-                      new Where(new Conditionals.In(UserIdentRecord.USER_ID, userIds)));
+                      new Where(new In(HistoricalUserRecord.USER_ID, userIds)));
+            deleteAll(UserIdentRecord.class, new Where(new In(UserIdentRecord.USER_ID, userIds)));
         }
     }
 

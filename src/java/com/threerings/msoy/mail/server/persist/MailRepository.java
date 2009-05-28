@@ -20,14 +20,16 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Equals;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.In;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Logic;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -64,14 +66,13 @@ public class MailRepository extends DepotRepository
      */
     public int loadUnreadConvoCount (int memberId)
     {
-        SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID, memberId);
-        SQLExpression isNew = new Conditionals.GreaterThan(
-            ConversationRecord.LAST_SENT, ParticipantRecord.LAST_READ);
+        SQLExpression isMe = new Equals(ParticipantRecord.PARTICIPANT_ID, memberId);
+        SQLExpression isNew = new GreaterThan(ConversationRecord.LAST_SENT,
+                                              ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
                     new FromOverride(ParticipantRecord.class),
-                    new Join(ParticipantRecord.CONVERSATION_ID,
-                             ConversationRecord.CONVERSATION_ID),
-                    new Where(new Logic.And(isMe, isNew))).count;
+                    new Join(ParticipantRecord.CONVERSATION_ID, ConversationRecord.CONVERSATION_ID),
+                    new Where(new And(isMe, isNew))).count;
     }
 
     /**
@@ -286,10 +287,9 @@ public class MailRepository extends DepotRepository
         // who had participant records for their convos; since we only purge permaguests (who can't
         // converse) this is a non-issue for now
         deleteAll(ParticipantRecord.class,
-                  new Where(new Conditionals.In(ParticipantRecord.PARTICIPANT_ID, memberIds)));
+                  new Where(new In(ParticipantRecord.PARTICIPANT_ID, memberIds)));
         deleteAll(ConversationComplaintRecord.class,
-                  new Where(new Conditionals.In(ConversationComplaintRecord.COMPLAINER_ID,
-                                                memberIds)));
+                  new Where(new In(ConversationComplaintRecord.COMPLAINER_ID, memberIds)));
     }
 
     @Override // from DepotRepository
