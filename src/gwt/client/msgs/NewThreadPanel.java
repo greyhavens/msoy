@@ -32,9 +32,8 @@ public class NewThreadPanel extends TableFooterPanel
         addStyleName("newThreadPanel");
         _groupId = groupId;
 
-        addRow(_mmsgs.ntpSubject(), _subject = new TextBox());
-        _subject.setMaxLength(ForumThread.MAX_SUBJECT_LENGTH);
-        _subject.setVisibleLength(40);
+        addRow(_mmsgs.ntpSubject(), _subject =
+            MsoyUI.createTextBox("", ForumThread.MAX_SUBJECT_LENGTH, 40));
 
         final Button[] spambuts = new Button[2];
         if (isManager) {
