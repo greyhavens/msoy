@@ -6,7 +6,6 @@ package com.threerings.msoy.item.server.persist;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.annotation.Entity;
 

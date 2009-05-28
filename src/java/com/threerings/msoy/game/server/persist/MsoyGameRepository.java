@@ -17,14 +17,11 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
@@ -51,22 +48,12 @@ import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Sub;
 
-import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.item.server.persist.GameRatingRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.LevelPackRepository;
-import com.threerings.msoy.item.server.persist.PrizeRepository;
-import com.threerings.msoy.item.server.persist.PropRepository;
-import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
-import com.threerings.msoy.game.gwt.GameInfo;
 
 import static com.threerings.msoy.Log.log;
 

@@ -5,10 +5,6 @@ package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -23,24 +19,18 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.MySQLLiaison;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
-import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.DataMigration;
@@ -67,7 +57,6 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.impl.Modifier;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
@@ -87,7 +76,6 @@ import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -102,7 +90,6 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
-import com.threerings.msoy.room.server.persist.SceneFurniRecord;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;

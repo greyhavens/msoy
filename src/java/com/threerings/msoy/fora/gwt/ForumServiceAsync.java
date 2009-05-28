@@ -58,7 +58,7 @@ public interface ForumServiceAsync
                        AsyncCallback<ForumThread> callback);
 
     /**
-     * The asynchronous version of {@link ForumService#updateThreadFlags}.
+     * The asynchronous version of {@link ForumService#updateThread}.
      */
     void updateThread (int threadId, int flags, String subject, AsyncCallback<Void> callback);
 
