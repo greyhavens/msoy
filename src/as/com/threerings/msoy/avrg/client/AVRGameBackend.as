@@ -72,6 +72,7 @@ public class AVRGameBackend extends ControlBackend
         _gameObj = gameObj;
 
         _partyHelper.init(gameObj, callUserCode);
+        _partyHelper.clientInit(gctx);
 
         _playerObj = _gctx.getPlayerObject();
 

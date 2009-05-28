@@ -9,6 +9,8 @@ import com.whirled.game.client.Thumbnail;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
+import com.threerings.msoy.game.client.GameContext;
+
 import com.threerings.msoy.group.data.all.Group;
 
 import com.threerings.msoy.party.data.PartySummary;
@@ -18,6 +20,11 @@ import com.threerings.msoy.party.data.PartySummary;
  */
 public class PartyGameClientHelper extends PartyGameHelper
 {
+    public function clientInit (gctx :GameContext) :void
+    {
+        _localPlayerId = gctx.getMyId();
+    }
+
     override public function populateProperties (o :Object) :void
     {
         super.populateProperties(o);
@@ -33,5 +40,15 @@ public class PartyGameClientHelper extends PartyGameHelper
         }
         return new Thumbnail(ScalingMediaContainer.createView(Group.logo(party.icon)));
     }
+
+    override protected function player_getPartyId_v1 (playerId :int) :int
+    {
+        if (playerId == 0) {
+            playerId = _localPlayerId;
+        }
+        return super.player_getPartyId_v1(playerId);
+    }
+
+    protected var _localPlayerId :int;
 }
 }

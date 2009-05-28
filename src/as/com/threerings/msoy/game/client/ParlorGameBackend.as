@@ -40,6 +40,7 @@ public class ParlorGameBackend extends WhirledGameBackend
         super(ctx, gameObj, ctrl);
 
         _partyHelper.init(gameObj, callUserCode);
+        _partyHelper.clientInit(ctx);
     }
 
     override public function shutdown () :void
