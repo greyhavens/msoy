@@ -228,7 +228,7 @@ public class MsoyAuthenticator extends Authenticator
     {
         if (creds.sessionToken != null) {
             final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
-            if (member == null) {
+            if (member == null || member.isDeleted()) {
                 throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
             }
             return authenticateMember(creds, rdata, member, false, member.accountName,
@@ -310,12 +310,12 @@ public class MsoyAuthenticator extends Authenticator
         // handle tainted idents; so we load up the member record for this account
         if (member == null) {
             member = _memberRepo.loadMember(account.accountName);
-            // if this is their first logon, create them a member record
             if (member == null) {
                 log.warning("Missing member record for authenticated user",
                             "email", account.accountName);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             } else {
+                // if this is their first logon, make a note of it
                 account.firstLogon = (member.sessions == 0);
             }
         }
