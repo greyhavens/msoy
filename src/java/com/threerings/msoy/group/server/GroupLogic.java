@@ -180,7 +180,6 @@ public class GroupLogic
             }
 
             Map<ColumnExp, Object> updates = grec.findUpdates(group, extras);
-
             if (updates.size() > 0) {
                 _groupRepo.updateGroup(group.groupId, updates);
             }

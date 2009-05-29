@@ -267,7 +267,6 @@ public class GroupRecord extends PersistentRecord
         if (extrasDef.catalogTag != null && !extrasDef.catalogTag.equals(catalogTag)) {
             updates.put(CATALOG_TAG, extrasDef.catalogTag);
         }
-
         return updates;
     }
 
