@@ -4,7 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
