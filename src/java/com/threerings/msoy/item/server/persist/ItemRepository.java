@@ -210,18 +210,18 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // drop the now unused ItemRecord.rating column
         _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(
-                                   getMigrationVersion(getItemClass(), 21), "rating"));
+                                   21 * ItemRecord.BASE_MULTIPLIER, "rating"));
 
         // change suiteId -> gameId
         if (PropRecord.class.isAssignableFrom(getItemClass())) {
             _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(
-                                       getMigrationVersion(getItemClass(), 22), "gameId"));
+                                       22 * ItemRecord.BASE_MULTIPLIER, "gameId"));
         }
         if (GameItemRecord.class.isAssignableFrom(getItemClass())) {
             _ctx.registerMigration(getItemClass(), new SchemaMigration.DropIndex(
-                                       getMigrationVersion(getItemClass(), 22), "ixSuiteId"));
+                                       22 * ItemRecord.BASE_MULTIPLIER, "ixSuiteId"));
             _ctx.registerMigration(getItemClass(), new SchemaMigration.Rename(
-                                       getMigrationVersion(getItemClass(), 22),
+                                       22 * ItemRecord.BASE_MULTIPLIER,
                                        "suiteId", GameItemRecord.GAME_ID));
         }
     }
@@ -1680,26 +1680,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * persistent record class.
      */
     protected abstract TagHistoryRecord createTagHistoryRecord ();
-
-    /**
-     * Returns the correct migration version for an item when {@link ItemRecord} is changing rather
-     * than the derived class.
-     *
-     * @param clazz the ItemRecord derivation being migrated.
-     * @param baseVersion the {@link ItemRecord#BASE_SCHEMA_VERSION} value for the new version of
-     * the class.
-     */
-    protected static int getMigrationVersion (Class<? extends ItemRecord> clazz, int baseVersion)
-    {
-        try {
-            Field ivfield = clazz.getField("ITEM_VERSION");
-            int itemVersion = (Integer)ivfield.get(null);
-            return baseVersion * ItemRecord.BASE_MULTIPLIER + itemVersion;
-        } catch (Exception e) {
-            throw new RuntimeException(
-                "Failed to compute " + clazz.getName() + " migration version.", e);
-        }
-    }
 
     /** Used to coerce CatalogRecord derivations when implementing {@link #getCatalogClass}. */
     protected static Class<CatalogRecord> coerceCatalog (Class<? extends CatalogRecord> clazz)
