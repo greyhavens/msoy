@@ -71,6 +71,7 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.data.WorldCredentials;
 
 import com.threerings.msoy.data.all.ContactEntry;
@@ -1084,18 +1085,20 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function getPlaceInfo () :Array
+    override public function getPlaceInfo () :PlaceInfo
     {
-        if (getCurrentGameId() != 0) {
-            return [ true, _wctx.getGameDirector().getGameName(), getCurrentGameId() ];
-        } else {
-            const scene :Scene = _wctx.getSceneDirector().getScene();
-            if (scene != null) {
-                return [ false, scene.getName(), scene.getId() ];
-            } else {
-                return [ false, null, 0 ];
-            }
-        }
+        var plinfo :PlaceInfo = new PlaceInfo();
+
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        plinfo.sceneId = (scene == null) ? 0 : scene.getId();
+        plinfo.sceneName = (scene == null) ? null : scene.getName();
+
+        var gdir :GameDirector = _wctx.getGameDirector();
+        plinfo.gameId = gdir.getGameId();
+        plinfo.gameName = gdir.getGameName();
+        plinfo.avrGame = gdir.isAVRGame();
+
+        return plinfo;
     }
 
     // from MsoyController

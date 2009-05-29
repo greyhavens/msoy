@@ -56,6 +56,7 @@ import com.threerings.presents.client.LogonError;
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -236,12 +237,11 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Returns an array containing [ isGame, name, id ] for either our current room or our current
-     * game.
+     * Returns information about the place or places the user is currently in.
      */
-    public function getPlaceInfo () :Array
+    public function getPlaceInfo () :PlaceInfo
     {
-        return [ false, null, 0 ];
+        return new PlaceInfo();
     }
 
     /**

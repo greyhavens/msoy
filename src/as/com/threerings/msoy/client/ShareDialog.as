@@ -40,7 +40,7 @@ import com.threerings.util.Command;
 import com.threerings.util.MailUtil;
 import com.threerings.util.Util;
 
-import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -51,12 +51,9 @@ public class ShareDialog extends FloatingPanel
         super(ctx);
 
         // find out about our current place
-        var pinfo :Array = _ctx.getMsoyController().getPlaceInfo();
-        _inGame = Boolean(pinfo[0]);
-        _placeName = (pinfo[1] as String);
-        _placeId = int(pinfo[2]);
+        _place = _ctx.getMsoyController().getPlaceInfo();
 
-        title = Msgs.GENERAL.get(_inGame ? "t.share_game" : "t.share_room");
+        title = Msgs.GENERAL.get(_place.inGame ? "t.share_game" : "t.share_room");
         showCloseButton = true;
 
         _autoFriend = new CheckBox();
@@ -106,7 +103,7 @@ public class ShareDialog extends FloatingPanel
 
     public function getEmbedCode (size :int) :String
     {
-        var flashVars :String = VisitorInfo.makeFlashVars(_placeId, _inGame);
+        var flashVars :String = _place.makeEmbedVars();
         flashVars = includeAffiliate(flashVars);
         if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
@@ -215,18 +212,18 @@ public class ShareDialog extends FloatingPanel
 
     protected function createStubBox () :VBox
     {
-        const roomOrGame :String = (_inGame ? "game" : "room");
+        const roomOrGame :String = (_place.inGame ? "game" : "room");
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");
         box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 400));
         var stub :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload,
-            [ stubURL(roomOrGame), "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
+            [ stubURL(roomOrGame), "Whirled-" + roomOrGame + "-" + _place.id + "-stub.swf" ]);
         stub.styleName = "orangeButton";
         box.addChild(stub);
         _downloadBtns.push(stub);
 
-        if (_inGame) {
+        if (_place.inGame) {
             // add an additional button for mochiad -enabled games
             box.addChild(FlexUtil.createSpacer(10, 10));
 
@@ -248,7 +245,7 @@ public class ShareDialog extends FloatingPanel
 
                     startDownload(stubURL(roomOrGame, true) +
                         "&mochiId=" + encodeURIComponent(mochiIdField.text),
-                        "Whirled-game-" + _placeId + "-mochi-stub.swf");
+                        "Whirled-game-" + _place.id + "-mochi-stub.swf");
                 });
             mochi.styleName = "orangeButton";
             hbox.addChild(mochi);
@@ -263,10 +260,10 @@ public class ShareDialog extends FloatingPanel
 
     protected function stubURL (roomOrGame :String, mochi :Boolean = false) :String
     {
-        var stubArgs :String = roomOrGame + "=" + _placeId;
+        var stubArgs :String = roomOrGame + "=" + _place.id;
         stubArgs = includeAffiliate(stubArgs);
         if (mochi) {
-            stubArgs += "&vec=e.mochi.games." + _placeId;
+            stubArgs += "&vec=e.mochi.games." + _place.id;
         }
         return DeploymentConfig.serverURL + "stubdlsvc?args=" + encodeURIComponent(stubArgs);
     }
@@ -347,7 +344,7 @@ public class ShareDialog extends FloatingPanel
         box.addChild(checks);
 
         // the small scenes cannot host non-rooms, at least for now
-        for (var ii :int = _inGame ? 2 : 0; ii < EMBED_SIZES.length; ii++) {
+        for (var ii :int = _place.inGame ? 2 : 0; ii < EMBED_SIZES.length; ii++) {
             checks.addChild(createSizeControl(ii));
         }
 
@@ -386,7 +383,7 @@ public class ShareDialog extends FloatingPanel
 
         // send the emails and messages off to the server for delivery
         (_ctx.getClient().requireService(MsoyService) as MsoyService).emailShare(
-            _ctx.getClient(), _inGame, _placeName, _placeId, emails, message,
+            _ctx.getClient(), _place.inGame, _place.name, _place.id, emails, message,
             getAutoFriend(), _ctx.confirmListener("m.share_email_sent"));
 
         close(); // and make like the proverbial audi 5000
@@ -398,10 +395,10 @@ public class ShareDialog extends FloatingPanel
     protected function createLink (forDigg :Boolean = false) :String
     {
         var page :String;
-        if (_inGame) {
-            page = "world-game_p_" + _placeId;
-        } else if (_placeId != 0) {
-            page = "world-s" + _placeId;
+        if (_place.inGame) {
+            page = "world-game_p_" + _place.gameId;
+        } else if (_place.sceneId != 0) {
+            page = "world-s" + _place.sceneId;
         }
         if (forDigg) {
             // we want everyone to "digg" the same URL, so we can't include affiliate information
@@ -442,8 +439,8 @@ public class ShareDialog extends FloatingPanel
 
     protected function getShareTitle () :String
     {
-        return Msgs.GENERAL.get(_inGame ? "m.social_share_game" : "m.social_share_room",
-            _placeName);
+        return Msgs.GENERAL.get(_place.inGame ? "m.social_share_game" : "m.social_share_room",
+            _place.name);
     }
 
     /**
@@ -483,7 +480,8 @@ public class ShareDialog extends FloatingPanel
     protected function popTwitter () :void
     {
         _ctx.getMsoyController().handleTweet(
-            Msgs.GENERAL.get("m.tweet_" + (_inGame ? "game" : "room"), _placeName, createLink()));
+            Msgs.GENERAL.get("m.tweet_" + (_place.inGame ? "game" : "room"), _place.name,
+            createLink()));
     }
 
     /**
@@ -528,9 +526,7 @@ public class ShareDialog extends FloatingPanel
         return args;
     }
 
-    protected var _inGame :Boolean;
-    protected var _placeName :String;
-    protected var _placeId :int;
+    protected var _place :PlaceInfo;
     protected var _autoFriend :CheckBox;
 
     /** We need to keep this in scope or the download will halt. */

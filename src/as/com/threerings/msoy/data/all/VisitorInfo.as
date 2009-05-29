@@ -65,31 +65,5 @@ public class VisitorInfo
         out.writeField(id);
         out.writeBoolean(isAuthoritative);
     }
-
-    /**
-     * Return a list of variables suitable for the FlashVars embed param.
-     *
-     * @param placeId id of the room to throw people into (sceneId/gameId)
-     * @param inGame true if the flash vars are for a game and placeId is a game lobby whirled
-     */
-    public static function makeFlashVars (placeId :int, inGame :Boolean) :String
-    {
-        // possibly create vars to direct the embed to a particular place
-        if (inGame) {
-            return "gameId=" + placeId + "&" +
-                VECTOR_ID + "=e.whirled." + GAME_VECTOR + "." + placeId;
-        } else if (placeId != 0) {
-            return "sceneId=" + placeId + "&" +
-                VECTOR_ID + "=e.whirled." + ROOM_VECTOR + "." + placeId;
-        } else {
-            return "";
-        }
-    }
-
-    /** This vector string represents an embedded room. */
-    protected static const ROOM_VECTOR :String = "rooms";
-
-    /** This vector string represents an embedded game. */
-    protected static const GAME_VECTOR :String = "games";
 }
 }

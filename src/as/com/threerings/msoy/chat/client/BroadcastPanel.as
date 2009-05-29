@@ -19,6 +19,7 @@ import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
@@ -82,10 +83,10 @@ public class BroadcastPanel extends FloatingPanel
         var vbox :VBox = new VBox();
         vbox.setStyle("horizontalAlignment", "left");
         vbox.addChild(makeLinkOption("m.br_link_none", true, true));
-        var placeInfo :Array = _ctx.getMsoyController().getPlaceInfo();
+        var placeInfo :PlaceInfo = _ctx.getMsoyController().getPlaceInfo();
         vbox.addChild(makeLinkOption("m.br_link_room",
-            !Boolean(placeInfo[0]) && (placeInfo[2] != 0), false,
-            Msgs.CHAT.get("m.visit_room", placeInfo[2])));
+            placeInfo.sceneId != 0, false,
+            Msgs.CHAT.get("m.visit_room", placeInfo.sceneId)));
         vbox.addChild(makeLinkOption("m.br_link_party",
             WorldContext(_ctx).getPartyDirector().isInParty(), false,
             Msgs.CHAT.get("m.view_party", WorldContext(_ctx).getPartyDirector().getPartyId())));

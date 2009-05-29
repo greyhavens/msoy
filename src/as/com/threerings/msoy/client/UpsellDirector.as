@@ -17,6 +17,7 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.ui.BubblePopup;
 
@@ -47,8 +48,8 @@ public class UpsellDirector extends BasicDirector
      */
     public function locationUpdated () :void
     {
-        var placeInfo :Array = _mctx.getMsoyController().getPlaceInfo();
-        var newLocType :int = (placeInfo[1] == null) ? 0 : (Boolean(placeInfo[0]) ? 1 : 2);
+        var placeInfo :PlaceInfo = _mctx.getMsoyController().getPlaceInfo();
+        var newLocType :int = (placeInfo.gameId != 0) ? 1 : ((placeInfo.sceneId != 0) ? 2 : 0);
         if (_locType != newLocType) {
             _locType = newLocType;
             _timer.reset();
@@ -71,11 +72,11 @@ public class UpsellDirector extends BasicDirector
      */
     protected function handleTimer (event :TimerEvent) :void
     {
-        var placeInfo :Array = _mctx.getMsoyController().getPlaceInfo();
+        var placeInfo :PlaceInfo = _mctx.getMsoyController().getPlaceInfo();
         var embed :String = _mctx.getMsoyClient().isEmbedded() ? "embed" : "site";
         var guest :String = MemberObject(_mctx.getClient().getClientObject()).isPermaguest() ?
             "guest" : "mem";
-        var place :String = Boolean(placeInfo[0]) ? "game" : "room";
+        var place :String = placeInfo.inGame ? "game" : "room";
         var mins :String = (event == null) ? "-1" : String(_timer.currentCount);
 
         for (var ii :int = 0; ii < (1 << 4); ii++) {
@@ -94,7 +95,7 @@ public class UpsellDirector extends BasicDirector
             if (actualKey != null) {
                 // we're doing it, we're actually showing something!
                 var msg :String = Msgs.GENERAL.get(
-                    actualKey, String(placeInfo[1]), String(placeInfo[2]));
+                    actualKey, String(placeInfo.name), String(placeInfo.id));
                 if (isNotif) {
                     _mctx.getNotificationDirector().addGenericNotification(
                         MessageBundle.taint(msg), Notification.SYSTEM, null, null);
