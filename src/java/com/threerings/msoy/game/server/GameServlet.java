@@ -520,11 +520,11 @@ public class GameServlet extends MsoyServiceServlet
                         GroupMembership.Rank.MANAGER) < 0) {
                     throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
                 }
-                _groupRepo.updateGroup(info.groupId, GroupRecord.GAME_ID, info.gameId);
+                _groupRepo.updateGroupGame(info.groupId, info.gameId);
             }
             // clear out the game from the old group
             if (grec.groupId != GameInfo.NO_GROUP) {
-                _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID, 0);
+                _groupRepo.updateGroupGame(grec.groupId, 0);
             }
         }
 

@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -30,6 +31,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
@@ -295,23 +297,32 @@ public class GroupRepository extends DepotRepository
 
         SceneRecord newScene = _sceneRepo.createBlankRoom(
             MsoySceneModel.OWNER_TYPE_GROUP, record.groupId, record.name, null, true);
-        updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, newScene.sceneId);
+        updatePartial(GroupRecord.getKey(record.groupId),
+                      GroupRecord.HOME_SCENE_ID, newScene.sceneId);
 
         return record.groupId;
     }
 
     /**
-     * Updates the specified group record with field/value pairs, e.g.
-     *     updateGroup(groupId,
-     *                 GroupRecord.CHARTER, newCharter,
-     *                 GroupRecord.POLICY, Group.EXCLUSIVE);
+     * Updates the game associated with the specified group.
      */
-    public void updateGroup (int groupId, Object... fieldValues)
+    public void updateGroupGame (int groupId, int gameId)
     {
-        int rows = updatePartial(GroupRecord.getKey(groupId), fieldValues);
-        if (rows == 0) {
-            throw new DatabaseException("Couldn't find group for update [id=" + groupId + "]");
+        updatePartial(GroupRecord.getKey(groupId), GroupRecord.GAME_ID, gameId);
+    }
+
+    /**
+     * Updates the specified group record with supplied field/value mapping.
+     */
+    public void updateGroup (int groupId, Map<ColumnExp, Object> updates)
+    {
+        Object[] fieldsValues = new Object[updates.size()*2];
+        int idx = 0;
+        for (Map.Entry<ColumnExp,Object> entry : updates.entrySet()) {
+            fieldsValues[idx++] = entry.getKey();
+            fieldsValues[idx++] = entry.getValue();
         }
+        updatePartial(GroupRecord.getKey(groupId), fieldsValues);
     }
 
     /**
