@@ -36,7 +36,7 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
@@ -117,10 +117,9 @@ public class CommentServlet extends MsoyServiceServlet
         if (etype == Comment.TYPE_ROOM) {
             SceneRecord scene = _sceneRepo.loadScene(eid);
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                String data = scene.sceneId + "\t" + scene.name + "\t"
-                    + MediaDesc.mdToString(scene.getSnapshotThumb());
-                _feedRepo.publishSelfMessage(
-                    scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
+                _feedLogic.publishSelfMessage(
+                    scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT,
+                    scene.sceneId, scene.name, MediaDesc.mdToString(scene.getSnapshotThumb()));
                 ownerId = scene.ownerId;
                 entityName = scene.name;
             }
@@ -140,10 +139,10 @@ public class CommentServlet extends MsoyServiceServlet
                         entityName = item.name;
 
                         // when commenting on a listed item, post a self feed message
-                        String data = item.getType() + "\t" + listing.catalogId + "\t"
-                            + item.name + "\t" + MediaDesc.mdToString(item.getThumbMediaDesc());
-                        _feedRepo.publishSelfMessage(ownerId, mrec.memberId,
-                            FeedMessageType.SELF_ITEM_COMMENT, data);
+                        _feedLogic.publishSelfMessage(
+                            ownerId, mrec.memberId, FeedMessageType.SELF_ITEM_COMMENT,
+                            item.getType(), listing.catalogId, item.name,
+                            MediaDesc.mdToString(item.getThumbMediaDesc()));
                     }
                 }
 
@@ -235,7 +234,7 @@ public class CommentServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected CommentRepository _commentRepo;
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected NotificationManager _notifyMan;

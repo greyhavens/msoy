@@ -37,7 +37,7 @@ import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
@@ -308,10 +308,9 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // publish to the member's feed if it's not hidden
         if (pricing != CatalogListing.PRICING_HIDDEN) {
-            _feedRepo.publishMemberMessage(
-                mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name + "\t" +
-                String.valueOf(repo.getItemType()) + "\t" + catalogId + "\t" +
-                MediaDesc.mdToString(master.getThumbMediaDesc()));
+            _feedLogic.publishMemberMessage(
+                mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name,
+                repo.getItemType(), catalogId, MediaDesc.mdToString(master.getThumbMediaDesc()));
         }
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId
@@ -687,7 +686,7 @@ public class CatalogServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected CatalogLogic _catalogLogic;
     @Inject protected FavoritesRepository _faveRepo;
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;

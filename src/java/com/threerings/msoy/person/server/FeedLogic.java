@@ -15,30 +15,36 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
-import com.threerings.msoy.person.gwt.SelfFeedMessage;
-import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.presents.annotation.BlockingThread;
 
 /**
  * Provides new feed related services to servlets and other blocking thread entities.
@@ -201,6 +207,46 @@ public class FeedLogic
         }
 
         return messages;
+    }
+
+    /**
+     * Publishes a global message which will show up in all users' feeds. Note: global messages are
+     * never throttled.
+     */
+    public void publishGlobalMessage (FeedMessageType type, Object... args)
+    {
+        _feedRepo.publishGlobalMessage(type, StringUtil.join(args, "\t"));
+    }
+
+    /**
+     * Publishes a feed message to the specified actor's friends.
+     *
+     * @return true if the message was published, false if it was throttled because it would cause
+     * messages of the specified type to exceed their throttle period.
+     */
+    public boolean publishMemberMessage (int actorId, FeedMessageType type, Object... args)
+    {
+        return _feedRepo.publishMemberMessage(actorId, type, StringUtil.join(args, "\t"));
+    }
+
+    /**
+     * Publishes a feed message to the specified group's members.
+     *
+     * @return true if the message was published, false if it was throttled because it would cause
+     * messages of the specified type to exceed their throttle period.
+     */
+    public boolean publishGroupMessage (int groupId, FeedMessageType type, Object... args)
+    {
+        return _feedRepo.publishGroupMessage(groupId, type, StringUtil.join(args, "\t"));
+    }
+
+    /**
+     * Publishes a self feed message, that will show up on the target's profile. These are
+     * currently not throttled.
+     */
+    public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, Object...args)
+    {
+        _feedRepo.publishSelfMessage(targetId, actorId, type, StringUtil.join(args, "\t"));
     }
 
     @Inject protected FeedRepository _feedRepo;

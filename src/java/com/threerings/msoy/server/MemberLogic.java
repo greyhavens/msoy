@@ -60,6 +60,7 @@ import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
 import com.threerings.msoy.person.server.persist.InviteRepository;
@@ -155,10 +156,9 @@ public class MemberLogic
             _statLogic.incrementStat(friendId, StatType.FRIENDS_MADE, 1);
 
             // publish a message to the inviting member's feed
-            String data = friend.name.toString() + "\t" + friendId + "\t"
-                + MediaDesc.mdToString(friend.photo);
-            _feedRepo.publishMemberMessage(
-                memberId, FeedMessageType.FRIEND_ADDED_FRIEND, data);
+            _feedLogic.publishMemberMessage(
+                memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
+                friend.name, friendId, MediaDesc.mdToString(friend.photo));
 
             // add them to the friends list of both parties if/wherever they are online
             // TODO: Review and optimize
@@ -839,7 +839,7 @@ public class MemberLogic
 
     // general dependencies
     @Inject protected BadgeLogic _badgeLogic;
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
@@ -859,6 +859,7 @@ public class MemberLogic
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected CommentRepository _commentRepo;
     @Inject protected FavoritesRepository _faveRepo;
+    @Inject protected FeedRepository _feedRepo;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GalleryRepository _galleryRepo;
     @Inject protected GameCookieRepository _gcookRepo;

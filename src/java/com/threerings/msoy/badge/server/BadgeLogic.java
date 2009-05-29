@@ -27,7 +27,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -64,8 +64,8 @@ public class BadgeLogic
         }
 
         // publish a member message with {badgeCode, level} as the data
-        _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
-            brec.badgeCode + "\t" + brec.level);
+        _feedLogic.publishMemberMessage(
+            brec.memberId, FeedMessageType.FRIEND_WON_BADGE, brec.badgeCode, brec.level);
 
         // award the coins specified for earning this badge at this level
         _moneyLogic.awardCoins(brec.memberId, levelData.coinValue, true,
@@ -209,7 +209,7 @@ public class BadgeLogic
     }
 
     @Inject protected BadgeRepository _badgeRepo;
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
 }

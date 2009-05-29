@@ -104,8 +104,7 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Publishes a global message which will show up in all users' feeds. Note: global messages are
-     * never throttled.
+     * Use {@link FeedLogic#publishGlobalMessage}.
      */
     public void publishGlobalMessage (FeedMessageType type, String data)
     {
@@ -117,8 +116,7 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Publishes a self feed message, that will show up on the target's profile.  These are
-     * currently not throttled.
+     * Use {@link FeedLogic#publishSelfMessage}.
      */
     public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, String data)
     {
@@ -132,10 +130,7 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Publishes a feed message to the specified actor's friends.
-     *
-     * @return true if the message was published, false if it was throttled because it would cause
-     * messages of the specified type to exceed their throttle period.
+     * Use {@link FeedLogic#publishMemberMessage}.
      */
     public boolean publishMemberMessage (int actorId, FeedMessageType type, String data)
     {
@@ -165,7 +160,7 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Publishes a feed message to the specified group's members.
+     * Use {@link FeedLogic#publishGroupMessage}.
      */
     public boolean publishGroupMessage (int groupId, FeedMessageType type, String data)
     {

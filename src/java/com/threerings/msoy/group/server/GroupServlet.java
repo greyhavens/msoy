@@ -16,9 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
@@ -53,6 +50,8 @@ import com.threerings.msoy.chat.server.MsoyChatChannelManager;
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -681,9 +680,9 @@ public class GroupServlet extends MsoyServiceServlet
 
         // publish a member message with {medal name, medal image URL, group name, group id} as the
         // data
-        _feedRepo.publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_MEDAL,
-            medalRec.name + "\t" + MediaDesc.mdToString(medalRec.createIconMedia()) + "\t" +
-            groupRec.name + "\t" + groupRec.groupId);
+        _feedLogic.publishMemberMessage(
+            memberId, FeedMessageType.FRIEND_WON_MEDAL, medalRec.name,
+            MediaDesc.mdToString(medalRec.createIconMedia()), groupRec.name, groupRec.groupId);
     }
 
     // from GroupService
@@ -777,7 +776,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GroupLogic _groupLogic;

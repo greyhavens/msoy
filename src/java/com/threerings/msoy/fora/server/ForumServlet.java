@@ -52,7 +52,7 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.fora.gwt.ForumCodes;
@@ -303,8 +303,8 @@ public class ForumServlet extends MsoyServiceServlet
 
         // if we're posting to the announcement group, add a global feed post about it
         if (groupId == ServerConfig.getAnnounceGroupId()) {
-            _feedRepo.publishGlobalMessage(
-                FeedMessageType.GLOBAL_ANNOUNCEMENT, subject + "\t" + thread.threadId);
+            _feedLogic.publishGlobalMessage(
+                FeedMessageType.GLOBAL_ANNOUNCEMENT, subject, thread.threadId);
 
             // spam our players with this message if requested
             if (spam) {
@@ -314,10 +314,9 @@ public class ForumServlet extends MsoyServiceServlet
 
         // otherwise, if the thread is an announcement thread, post a feed message about it
         } else if (thread.isAnnouncement()) {
-            _feedRepo.publishGroupMessage(
+            _feedLogic.publishGroupMessage(
                 groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
-                group.name + "\t" + subject + "\t" + thread.threadId + "\t"
-                    + MediaDesc.mdToString(group.getLogo()));
+                group.name, subject, thread.threadId, MediaDesc.mdToString(group.getLogo()));
         }
 
         return thread;
@@ -386,8 +385,9 @@ public class ForumServlet extends MsoyServiceServlet
 
         // add a feed item for the poster of the message being replied to
         if (inReplyToMemberId != 0 && inReplyToMemberId != mrec.memberId) {
-            _feedRepo.publishSelfMessage(inReplyToMemberId, mrec.memberId,
-                FeedMessageType.SELF_FORUM_REPLY, ftr.threadId + "\t" + ftr.subject);
+            _feedLogic.publishSelfMessage(
+                inReplyToMemberId, mrec.memberId, FeedMessageType.SELF_FORUM_REPLY,
+                ftr.threadId, ftr.subject);
         }
 
         // and create and return the runtime record for the post
@@ -678,7 +678,7 @@ public class ForumServlet extends MsoyServiceServlet
         ")(welcome/[0-9]+/|friend/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
 
     // dependencies
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected GroupLogic _groupLogic;

@@ -78,7 +78,7 @@ import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.room.data.EntityMemories;
@@ -799,8 +799,8 @@ public class MemberManager
                     // record the new level
                     _memberRepo.setUserLevel(memberId, newLevel);
                     // mark the level gain in their feed
-                    _feedRepo.publishMemberMessage(
-                        memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
+                    _feedLogic.publishMemberMessage(
+                        memberId, FeedMessageType.FRIEND_GAINED_LEVEL, newLevel);
                     // see if we should award a bar to anyone
                     _memberLogic.maybeAwardFriendBar(memberId, oldLevel, newLevel);
                 }
@@ -966,7 +966,7 @@ public class MemberManager
     @Inject protected MsoyManager _msoyMan;
     @Inject protected ClientManager _clmgr;
     @Inject protected CronLogic _cronLogic;
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;

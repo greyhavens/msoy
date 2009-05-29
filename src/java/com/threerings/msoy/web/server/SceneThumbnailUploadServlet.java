@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -96,15 +96,13 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         Timestamp oneMinuteAgo = new Timestamp((new Date()).getTime() - 60 * 1000L);
         if (sceneRecord.lastPublished != null && sceneRecord.lastPublished.after(oneMinuteAgo)) {
             if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                _feedRepo.publishMemberMessage(sceneRecord.ownerId,
-                    FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t" +
-                        sceneRecord.name + "\t" +
-                        MediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
+                _feedLogic.publishMemberMessage(
+                    sceneRecord.ownerId, FeedMessageType.FRIEND_UPDATED_ROOM, sceneId,
+                    sceneRecord.name, MediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
             } else {
-                _feedRepo.publishGroupMessage(sceneRecord.ownerId,
-                    FeedMessageType.GROUP_UPDATED_ROOM, String.valueOf(sceneId) + "\t" +
-                        sceneRecord.name + "\t" +
-                        MediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
+                _feedLogic.publishGroupMessage(
+                    sceneRecord.ownerId, FeedMessageType.GROUP_UPDATED_ROOM, sceneId,
+                    sceneRecord.name, MediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
             }
         }
     }
@@ -135,7 +133,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
     }
 
     // our dependencies
-    @Inject protected FeedRepository _feedRepo;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
 }

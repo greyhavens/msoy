@@ -91,7 +91,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -375,10 +375,9 @@ public class GameGameRegistry
 
                 if (!GameUtil.isDevelopmentVersion(trophy.gameId)) {
                     // publish the trophy earning event to the member's feed
-                    _feedRepo.publishMemberMessage(
+                    _feedLogic.publishMemberMessage(
                         trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                        trophy.name + "\t" + trophy.gameId +
-                        "\t" + MediaDesc.mdToString(trec.trophyMedia));
+                        trophy.name, trophy.gameId, MediaDesc.mdToString(trec.trophyMedia));
 
                     // report the trophy award to panopticon
                     _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
@@ -1265,6 +1264,7 @@ public class GameGameRegistry
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected BureauRegistry _bureauReg;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GameWatcherManager _watchmgr;
     @Inject protected Injector _injector;
     @Inject protected InvocationManager _invmgr;
@@ -1283,7 +1283,6 @@ public class GameGameRegistry
 
     // various and sundry repositories for loading persistent data
     @Inject protected AVRGameRepository _avrgRepo;
-    @Inject protected FeedRepository _feedRepo;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
