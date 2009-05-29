@@ -316,13 +316,7 @@ public class GroupRepository extends DepotRepository
      */
     public void updateGroup (int groupId, Map<ColumnExp, Object> updates)
     {
-        Object[] fieldsValues = new Object[updates.size()*2];
-        int idx = 0;
-        for (Map.Entry<ColumnExp,Object> entry : updates.entrySet()) {
-            fieldsValues[idx++] = entry.getKey();
-            fieldsValues[idx++] = entry.getValue();
-        }
-        updatePartial(GroupRecord.getKey(groupId), fieldsValues);
+        updatePartial(GroupRecord.getKey(groupId), updates);
     }
 
     /**
