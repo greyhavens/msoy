@@ -85,7 +85,7 @@ public class ArcadePanel extends FlowPanel
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
-            ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", genre.genre);
+            ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", genre.genre.toByte());
             header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre_" + genre.genre), onClick));
 
             for (GameCard game : genre.games) {
