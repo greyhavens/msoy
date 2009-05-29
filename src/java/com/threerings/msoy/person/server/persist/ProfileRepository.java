@@ -77,7 +77,7 @@ public class ProfileRepository extends DepotRepository
      */
     public ProfileRecord loadProfile (int memberId)
     {
-        return load(ProfileRecord.class, memberId);
+        return load(ProfileRecord.getKey(memberId));
     }
 
     /**

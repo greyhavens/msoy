@@ -84,7 +84,7 @@ public class ForumRepository extends DepotRepository
     {
         List<QueryClause> clauses = getUnreadThreadsClauses(memberId, groupIds);
         clauses.add(new FromOverride(ForumThreadRecord.class));
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
@@ -254,7 +254,7 @@ public class ForumRepository extends DepotRepository
      */
     public ForumThreadRecord loadThread (int threadId)
     {
-        return load(ForumThreadRecord.class, threadId);
+        return load(ForumThreadRecord.getKey(threadId));
     }
 
     /**
@@ -340,7 +340,7 @@ public class ForumRepository extends DepotRepository
      */
     public ForumMessageRecord loadMessage (int messageId)
     {
-        return load(ForumMessageRecord.class, messageId);
+        return load(ForumMessageRecord.getKey(messageId));
     }
 
     /**

@@ -44,7 +44,7 @@ public class InviteRepository extends DepotRepository
         insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
 
         if (inviterId > 0) {
-            InviterRecord inviterRec = load(InviterRecord.class, inviterId);
+            InviterRecord inviterRec = load(InviterRecord.getKey(inviterId));
             if (inviterRec == null) {
                 inviterRec = new InviterRecord();
                 inviterRec.memberId = inviterId;
@@ -70,7 +70,7 @@ public class InviteRepository extends DepotRepository
      */
     public void linkInvite (String inviteId, MemberRecord member)
     {
-        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
+        InvitationRecord invRec = load(InvitationRecord.getKey(inviteId));
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
     }
@@ -92,7 +92,7 @@ public class InviteRepository extends DepotRepository
      */
     public InvitationRecord loadInvite (String inviteId, boolean markViewed)
     {
-        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
+        InvitationRecord invRec = load(InvitationRecord.getKey(inviteId));
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
             update(invRec, InvitationRecord.VIEWED);
@@ -136,7 +136,7 @@ public class InviteRepository extends DepotRepository
      */
     public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
     {
-        return load(GameInvitationRecord.class, inviteeEmail);
+        return load(GameInvitationRecord.getKey(inviteeEmail));
     }
 
     /**

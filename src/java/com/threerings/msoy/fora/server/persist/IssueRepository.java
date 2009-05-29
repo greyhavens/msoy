@@ -82,7 +82,7 @@ public class IssueRepository extends DepotRepository
      */
     public IssueRecord loadIssue (int issueId)
     {
-        return load(IssueRecord.class, issueId);
+        return load(IssueRecord.getKey(issueId));
     }
 
     /**

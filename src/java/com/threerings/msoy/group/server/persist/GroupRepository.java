@@ -231,7 +231,7 @@ public class GroupRepository extends DepotRepository
 
         List<QueryClause> clauses = buildSearchClauses(search, tagId);
         clauses.add(new FromOverride(GroupRecord.class));
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
@@ -239,7 +239,7 @@ public class GroupRepository extends DepotRepository
      */
     public GroupRecord loadGroup (int groupId)
     {
-        return load(GroupRecord.class, groupId);
+        return load(GroupRecord.getKey(groupId));
     }
 
     /**
@@ -544,7 +544,7 @@ public class GroupRepository extends DepotRepository
      */
     public int getHomeSceneId (int groupId)
     {
-        GroupRecord rec = load(GroupRecord.class, groupId);
+        GroupRecord rec = load(GroupRecord.getKey(groupId));
         if (rec == null) {
             throw new DatabaseException("Group not found in getHomeSceneId! [" + groupId + "]");
         }

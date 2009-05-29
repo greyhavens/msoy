@@ -50,7 +50,7 @@ public class MedalRepository extends DepotRepository
      */
     public MedalRecord loadMedal (int medalId)
     {
-        return load(MedalRecord.class, medalId);
+        return load(MedalRecord.getKey(medalId));
     }
 
     public List<MedalRecord> loadMedals (Collection<Integer> medalIds)
@@ -81,7 +81,7 @@ public class MedalRepository extends DepotRepository
 
     public EarnedMedalRecord loadEarnedMedal (int memberId, int medalId)
     {
-        return load(EarnedMedalRecord.class, EarnedMedalRecord.getKey(medalId, memberId));
+        return load(EarnedMedalRecord.getKey(medalId, memberId));
     }
 
     /**

@@ -118,7 +118,7 @@ public class MoneyRepository extends DepotRepository
      */
     public MemberAccountRecord load (int memberId)
     {
-        return load(MemberAccountRecord.class, memberId);
+        return load(MemberAccountRecord.getKey(memberId));
     }
 
     /**
@@ -310,7 +310,7 @@ public class MoneyRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MoneyTransactionRecord.class));
         populateSearch(clauses, memberId, transactionTypes, currency);
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     public int deleteOldTransactions (Currency currency, long maxAge)
@@ -355,7 +355,7 @@ public class MoneyRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MoneyTransactionRecord.class));
         clauses.add(makeSubjectSearch(subject));
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
@@ -586,8 +586,8 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp limit = new Timestamp(time);
         return load(CountRecord.class, CacheStrategy.NONE,
-            new Where(new GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
-            new FromOverride(BroadcastHistoryRecord.class)).count;
+                    new Where(new GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
+                    new FromOverride(BroadcastHistoryRecord.class)).count;
     }
 
     /**

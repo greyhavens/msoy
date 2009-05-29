@@ -112,7 +112,7 @@ public class ItemListRepository extends DepotRepository
      */
     public ItemListInfoRecord loadInfo (int listId)
     {
-        return load(ItemListInfoRecord.class, listId);
+        return load(ItemListInfoRecord.getKey(listId));
     }
 
     /**

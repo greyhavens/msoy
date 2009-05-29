@@ -60,7 +60,7 @@ public class GalleryRepository extends DepotRepository
      */
     public GalleryRecord loadGallery (int galleryId)
     {
-        return load(GalleryRecord.class, GalleryRecord.GALLERY_ID, galleryId);
+        return load(GalleryRecord.getKey(galleryId));
     }
 
     /**

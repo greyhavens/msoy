@@ -50,7 +50,7 @@ public class SpamRepository extends DepotRepository
      */
     public boolean hasOptedOut (String email)
     {
-        return load(OptOutRecord.class, email.toLowerCase()) != null;
+        return load(OptOutRecord.getKey(email.toLowerCase())) != null;
     }
 
     /**
@@ -58,7 +58,7 @@ public class SpamRepository extends DepotRepository
      */
     public SpamRecord loadSpamRecord (Integer memberId)
     {
-        return load(SpamRecord.class, memberId);
+        return load(SpamRecord.getKey(memberId));
     }
 
     /**

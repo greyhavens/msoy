@@ -124,7 +124,7 @@ public class CommentRepository extends DepotRepository
         clauses.add(new FromOverride(CommentRecord.class));
         clauses.add(new Where(CommentRecord.ENTITY_TYPE, entityType,
                               CommentRecord.ENTITY_ID, entityId));
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**

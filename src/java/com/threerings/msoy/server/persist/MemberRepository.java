@@ -139,7 +139,7 @@ public class MemberRepository extends DepotRepository
      */
     public MemberRecord loadMember (int memberId)
     {
-        return load(MemberRecord.class, memberId);
+        return load(MemberRecord.getKey(memberId));
     }
 
     /**
@@ -470,11 +470,11 @@ public class MemberRepository extends DepotRepository
      */
     public MemberRecord loadMemberForSession (String sessionToken)
     {
-        SessionRecord session = load(SessionRecord.class, sessionToken);
+        SessionRecord session = load(SessionRecord.getKey(sessionToken));
         if (session != null && session.expires.getTime() < System.currentTimeMillis()) {
             session = null;
         }
-        return (session == null) ? null : load(MemberRecord.class, session.memberId);
+        return (session == null) ? null : load(MemberRecord.getKey(session.memberId));
     }
 
     /**
@@ -525,7 +525,7 @@ public class MemberRepository extends DepotRepository
      */
     public MemberRecord refreshSession (String token, int expireDays)
     {
-        SessionRecord sess = load(SessionRecord.class, token);
+        SessionRecord sess = load(SessionRecord.getKey(token));
         if (sess == null) {
             return null;
         }
@@ -878,10 +878,8 @@ public class MemberRepository extends DepotRepository
      */
     public int countFullFriends (int memberId)
     {
-        QueryClause[] clauses = new QueryClause[2];
-        clauses[0] = fullFriendWhere(memberId);
-        clauses[1] = new FromOverride(FriendshipRecord.class);
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, new FromOverride(FriendshipRecord.class),
+                    fullFriendWhere(memberId)).count;
     }
 
     /**
@@ -1163,7 +1161,7 @@ public class MemberRepository extends DepotRepository
      */
     public MemberWarningRecord loadMemberWarningRecord (int memberId)
     {
-        return load(MemberWarningRecord.class, memberId);
+        return load(MemberWarningRecord.getKey(memberId));
     }
 
     /**
@@ -1258,7 +1256,7 @@ public class MemberRepository extends DepotRepository
      */
     public CharityRecord getCharityRecord (int memberId)
     {
-        return load(CharityRecord.class, memberId);
+        return load(CharityRecord.getKey(memberId));
     }
 
     /**

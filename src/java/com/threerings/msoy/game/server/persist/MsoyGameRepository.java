@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server.persist;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,9 @@ public class MsoyGameRepository extends DepotRepository
      */
     public List<GameInfoRecord> loadPublishedGames (Collection<Integer> gameIds)
     {
+        if (gameIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         return findAll(
             GameInfoRecord.class,
             new Where(new And(new In(GameInfoRecord.GAME_ID, gameIds),
@@ -201,7 +205,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public GameInfoRecord loadGame (int gameId)
     {
-        return load(GameInfoRecord.class, Math.abs(gameId));
+        return load(GameInfoRecord.getKey(Math.abs(gameId)));
     }
 
     /**
@@ -212,8 +216,7 @@ public class MsoyGameRepository extends DepotRepository
     {
         CacheStrategy cache = skipCache ? CacheStrategy.NONE : CacheStrategy.BEST;
         boolean isDevelopment = (gameId < 0);
-        GameCodeRecord code = load(GameCodeRecord.class, cache,
-                                   GameCodeRecord.getKey(Math.abs(gameId), isDevelopment));
+        GameCodeRecord code = load(GameCodeRecord.getKey(Math.abs(gameId), isDevelopment), cache);
         return (code != null) ? code.toGameCode() : null;
     }
 
@@ -222,7 +225,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public GameMetricsRecord loadGameMetrics (int gameId)
     {
-        return load(GameMetricsRecord.class, Math.abs(gameId));
+        return load(GameMetricsRecord.getKey(Math.abs(gameId)));
     }
 
     /**
@@ -231,7 +234,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public FacebookInfo loadFacebookInfo (int gameId)
     {
-        FacebookInfoRecord info = load(FacebookInfoRecord.class, gameId);
+        FacebookInfoRecord info = load(FacebookInfoRecord.getKey(gameId));
         if (info != null) {
             return info.toFacebookInfo();
         }
@@ -412,7 +415,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public String loadInstructions (int gameId)
     {
-        InstructionsRecord irec = load(InstructionsRecord.class, gameId);
+        InstructionsRecord irec = load(InstructionsRecord.getKey(gameId));
         return (irec == null) ? null : irec.instructions;
     }
 
@@ -433,7 +436,7 @@ public class MsoyGameRepository extends DepotRepository
 
     public GameTraceLogRecord loadTraceLog (int logId)
     {
-        return load(GameTraceLogRecord.class, logId);
+        return load(GameTraceLogRecord.getKey(logId));
     }
 
     public List<GameTraceLogEnumerationRecord> enumerateTraceLogs (int gameId)

@@ -52,8 +52,7 @@ public class GameTraceLogRecord
     }
 
     /** The primary key of this log record. */
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     public int logId;
 
     /** The id of the game whose logs we're recording. */

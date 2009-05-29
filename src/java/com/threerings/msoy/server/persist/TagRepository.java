@@ -204,7 +204,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public TagNameRecord getTag (int tagId)
     {
-        return load(TagNameRecord.class, tagId);
+        return load(TagNameRecord.getKey(tagId));
     }
 
     /**

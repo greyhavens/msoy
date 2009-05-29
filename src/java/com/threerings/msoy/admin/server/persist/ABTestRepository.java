@@ -142,7 +142,7 @@ public class ABTestRepository extends DepotRepository
      */
     public ABTestSummary loadSummary (int testId)
     {
-        ABTestRecord record = load(ABTestRecord.class, testId);
+        ABTestRecord record = load(ABTestRecord.getKey(testId));
         if (record == null) {
             return null;
         }

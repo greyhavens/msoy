@@ -52,7 +52,7 @@ public class SurveyRepository extends DepotRepository
      */
     public SurveyRecord loadSurvey (int surveyId)
     {
-        return load(SurveyRecord.class, surveyId);
+        return load(SurveyRecord.getKey(surveyId));
     }
 
     /**
@@ -171,10 +171,8 @@ public class SurveyRepository extends DepotRepository
      */
     public int countQuestions (int surveyId)
     {
-        List<QueryClause> clauses = new ArrayList<QueryClause>();
-        clauses.add(new Where(SurveyQuestionRecord.SURVEY_ID, surveyId));
-        clauses.add(new FromOverride(SurveyQuestionRecord.class));
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, new Where(SurveyQuestionRecord.SURVEY_ID, surveyId),
+                    new FromOverride(SurveyQuestionRecord.class)).count;
     }
 
     /**
@@ -218,7 +216,7 @@ public class SurveyRepository extends DepotRepository
     {
         List<QueryClause> clauses = getResponseClauses(surveyId, questionIndex);
         clauses.add(new FromOverride(SurveyResponseRecord.class));
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**

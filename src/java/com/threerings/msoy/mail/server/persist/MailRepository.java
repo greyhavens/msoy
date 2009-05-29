@@ -93,7 +93,7 @@ public class MailRepository extends DepotRepository
      */
     public ConversationRecord loadConversation (int conversationId)
     {
-        return load(ConversationRecord.class, conversationId);
+        return load(ConversationRecord.getKey(conversationId));
     }
 
     /**
@@ -221,7 +221,7 @@ public class MailRepository extends DepotRepository
         }
 
         // if the conversation is already gone somehow, just delete our participant record
-        ConversationRecord conrec = load(ConversationRecord.class, conversationId);
+        ConversationRecord conrec = load(ConversationRecord.getKey(conversationId));
         if (conrec == null) {
             delete(parrec);
             return true;

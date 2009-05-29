@@ -321,7 +321,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public T loadOriginalItem (int itemId)
     {
-        return load(getItemClass(), itemId);
+        return load(getItemKey(itemId));
     }
 
     /**
@@ -493,7 +493,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public CloneRecord loadCloneRecord (int itemId)
     {
-        return load(getCloneClass(), itemId);
+        return load(getCloneKey(itemId));
     }
 
     /**
@@ -681,7 +681,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, 0);
 
         // finally fetch all the catalog records of interest
-        return load(CountRecord.class, clauses).count;
+        return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
     }
 
     /**
@@ -919,9 +919,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public CatalogRecord loadListing (int catalogId, boolean loadListedItem)
     {
-        CatalogRecord record = load(getCatalogClass(), catalogId);
+        CatalogRecord record = load(getCatalogKey(catalogId));
         if (record != null && loadListedItem) {
-            record.item = load(getItemClass(), record.listedItemId);
+            record.item = load(getItemKey(record.listedItemId));
         }
         return record;
     }
@@ -1188,11 +1188,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void deleteItem (final int itemId)
     {
         if (itemId < 0) {
-            delete(Key.newKey(getCloneClass(), getCloneColumn(CloneRecord.ITEM_ID), itemId));
+            delete(getCloneKey(itemId));
 
         } else {
             // delete the item in question
-            delete(Key.newKey(getItemClass(), getItemColumn(ItemRecord.ITEM_ID), itemId));
+            delete(getItemKey(itemId));
 
             // delete rating records for this item (and invalidate the cache properly)
             _ratingRepo.deleteRatings(itemId);
@@ -1241,14 +1241,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (item.itemId < 0) {
             where = new Where(getCloneColumn(ItemRecord.ITEM_ID), item.itemId,
                               getCloneColumn(ItemRecord.OWNER_ID), item.ownerId);
-            key = Key.newKey(getCloneClass(), CloneRecord.ITEM_ID, item.itemId);
+            key = getCloneKey(item.itemId);
         } else {
             where = new Where(getItemColumn(ItemRecord.ITEM_ID), item.itemId,
                               getItemColumn(ItemRecord.OWNER_ID), item.ownerId);
-            key = Key.newKey(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
+            key = getItemKey(item.itemId);
         }
         int modifiedRows = updatePartial(
-            item.itemId < 0 ? getCloneClass() : getItemClass(), where, key,
+            key.getPersistentClass(), where, key,
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         if (modifiedRows == 0) {
@@ -1630,6 +1630,16 @@ public abstract class ItemRepository<T extends ItemRecord>
         return new Div(getItemColumn(ItemRecord.RATING_SUM),
                        new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT),
                                        new ValueExp(1.0)));
+    }
+
+    protected Key<T> getItemKey (int itemId)
+    {
+        return Key.newKey(getItemClass(), getItemColumn(ItemRecord.ITEM_ID), itemId);
+    }
+
+    protected Key<CloneRecord> getCloneKey (int itemId)
+    {
+        return Key.newKey(getCloneClass(), getCloneColumn(CloneRecord.ITEM_ID), itemId);
     }
 
     protected Key<CatalogRecord> getCatalogKey (int catalogId)
