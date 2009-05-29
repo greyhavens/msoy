@@ -139,8 +139,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             Where where = new Where(
                 new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
                         new In(getTagColumn(TagRecord.TAG_ID), _tagIds)));
-            return new Exists<TagRecord>(new SelectClause<TagRecord>(
-                getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID.name }, where));
+            return new Exists(new SelectClause(getTagRepository().getTagClass(),
+                                               new String[] { TagRecord.TAG_ID.name }, where));
         }
 
         public SQLOperator madeByExpression ()
