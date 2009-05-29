@@ -49,7 +49,7 @@ public abstract class RatingRepository extends DepotRepository
     {
         super(ctx);
 
-        _id = id;
+        _targetId = id;
         _ratingSum = ratingSum;
         _ratingCount = ratingCount;
     }
@@ -69,7 +69,7 @@ public abstract class RatingRepository extends DepotRepository
 
         RatingExtractionRecord targetRec = load(RatingExtractionRecord.class,
             new FromOverride(getTargetClass()),
-            new Where(_id, targetId),
+            new Where(_targetId, targetId),
             new FieldDefinition("ratingCount", _ratingCount),
             new FieldDefinition("ratingSum", _ratingSum));
 
@@ -122,11 +122,10 @@ public abstract class RatingRepository extends DepotRepository
             targetRec.ratingSum += deltaSum;
             if (newRating) {
                 targetRec.ratingCount ++;
-                updatePartial(getTargetClass(), targetId,
-                    _ratingSum, targetRec.ratingSum,
-                    _ratingCount, targetRec.ratingCount);
+                updatePartial(getTargetKey(targetId),
+                              _ratingSum, targetRec.ratingSum, _ratingCount, targetRec.ratingCount);
             } else {
-                updatePartial(getTargetClass(), targetId, _ratingSum, targetRec.ratingSum);
+                updatePartial(getTargetKey(targetId), _ratingSum, targetRec.ratingSum);
             }
         }
 
@@ -147,8 +146,7 @@ public abstract class RatingRepository extends DepotRepository
         updatePartial(
             getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), oldTargetId),
             new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
-                @Override
-                public boolean testForEviction (Serializable key, RatingRecord record) {
+                @Override public boolean testForEviction (Serializable key, RatingRecord record) {
                     return (record.targetId == oldTargetId);
                 }
             }, RatingRecord.TARGET_ID, newTargetId);
@@ -188,10 +186,13 @@ public abstract class RatingRepository extends DepotRepository
 
     protected Key<RatingRecord> getRatingKey (int targetId, int memberId)
     {
-        return new Key<RatingRecord>(getRatingClass(),
-                                     new ColumnExp[] { getRatingColumn(RatingRecord.TARGET_ID),
-                                                       getRatingColumn(RatingRecord.MEMBER_ID) },
-                                     new Comparable[] { targetId, memberId });
+        return Key.newKey(getRatingClass(),getRatingColumn(RatingRecord.TARGET_ID), targetId,
+                          getRatingColumn(RatingRecord.MEMBER_ID), memberId);
+    }
+
+    protected Key<? extends PersistentRecord> getTargetKey (int targetId)
+    {
+        return Key.newKey(getTargetClass(), _targetId, targetId);
     }
 
     @Override // from DepotRepository
@@ -200,5 +201,5 @@ public abstract class RatingRepository extends DepotRepository
         classes.add(getRatingClass());
     }
 
-    protected ColumnExp _id, _ratingSum, _ratingCount;
+    protected ColumnExp _targetId, _ratingSum, _ratingCount;
 }
