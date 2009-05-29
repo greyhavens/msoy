@@ -188,7 +188,7 @@ public class MsoyController extends Controller
             new LocationAdapter(null, this.locationDidChange, null));
 
         var stage :Stage = mctx.getStage();
-        setControlledPanel(stage);
+        setControlledPanel(topPanel.systemManager);
 //        stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, handleStageKeyDown, false, int.MAX_VALUE);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, false, int.MAX_VALUE);
