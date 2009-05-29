@@ -49,6 +49,11 @@ public interface IssueServiceAsync
     /**
      * The asynchronous version of {@link IssueService#updateIssue}.
      */
+    void reopenIssue (int issueId, String newDescription, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link IssueService#updateIssue}.
+     */
     void updateIssue (Issue issue, AsyncCallback<Issue> callback);
 
     /**

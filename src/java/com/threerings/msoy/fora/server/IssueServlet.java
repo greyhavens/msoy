@@ -115,6 +115,19 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
+    public void reopenIssue (int issueId, String newDescription)
+        throws ServiceException
+    {
+        requireSupportUser();
+
+        IssueRecord irec = _issueRepo.loadIssue(issueId);
+        if (irec.state == Issue.STATE_OPEN) {
+            throw new ServiceException(IssueCodes.E_INTERNAL_ERROR);
+        }
+        _issueRepo.reopenIssue(issueId, newDescription);
+    }
+
+    // from interface IssueService
     public Issue updateIssue (Issue issue)
         throws ServiceException
     {

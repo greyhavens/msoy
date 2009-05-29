@@ -146,6 +146,33 @@ public class EditIssuePanel extends SmartTable
         if (_issue.state != Issue.STATE_OPEN) {
             setText(row++, 0, _msgs.iComment(), 3, "SubTitle");
             setText(row++, 0, StringUtil.getOr(_issue.closeComment, _msgs.noComment()), 3, null);
+
+            if (CShell.isSupport()) {
+                Button reopen = new Button(_msgs.iReopen());
+                new ClickCallback<Void>(reopen) {
+                    @Override protected boolean callService () {
+                        String newDescription = _issue.description;
+                        if (_issue.closeComment != null && !_issue.closeComment.trim().isEmpty()) {
+                            newDescription += "\n" + _msgs.oldCloseComment(_issue.closeComment);
+                        }
+                        if (_issue.owner == null) {
+                            // reopening an unowned issue (weird) makes it yours
+                            _issue.owner = CShell.creds.name;
+                        }
+                        _issuesvc.reopenIssue(_issue.issueId, newDescription, this);
+                        return true;
+                    }
+                    @Override protected boolean gotResult (Void nothing) {
+                        if (_imodels != null) {
+                            _imodels.flush();
+                        }
+                        History.back();
+                        return false;
+                    }
+                };
+                setWidget(row++, 0, reopen);
+            }
+
         }
 
         if (_messageId > 0) {

@@ -135,6 +135,19 @@ public class IssueRepository extends DepotRepository
                     null : new Timestamp(System.currentTimeMillis())));
     }
 
+    /**
+     * Reopens an issue with an updated description, clearing the close comment and the
+     * close time in the process.
+     */
+    public void reopenIssue (int issueId, String newDescription)
+    {
+        updatePartial(IssueRecord.class, issueId,
+            IssueRecord.STATE, Issue.STATE_OPEN,
+            IssueRecord.DESCRIPTION, newDescription,
+            IssueRecord.CLOSE_COMMENT, null,
+            IssueRecord.CLOSED_TIME, null);
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

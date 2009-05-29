@@ -65,6 +65,12 @@ public interface IssueService extends RemoteService
         throws ServiceException;
 
     /**
+     * Reopens a closed issue.
+     */
+    void reopenIssue (int issueId, String newDescription)
+        throws ServiceException;
+
+    /**
      * Updates an issue.
      */
     Issue updateIssue (Issue issue)
