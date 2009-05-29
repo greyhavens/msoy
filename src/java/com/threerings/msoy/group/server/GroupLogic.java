@@ -180,8 +180,15 @@ public class GroupLogic
             }
 
             Map<ColumnExp, Object> updates = grec.findUpdates(group, extras);
+
             if (updates.size() > 0) {
-                _groupRepo.updateGroup(group.groupId, updates);
+                Object[] fieldsValues = new Object[updates.size()*2];
+                int idx = 0;
+                for (Map.Entry<ColumnExp,Object> entry : updates.entrySet()) {
+                    fieldsValues[idx++] = entry.getKey();
+                    fieldsValues[idx++] = entry.getValue();
+                }
+                _groupRepo.updateGroup(group.groupId, fieldsValues);
             }
 
         } catch (DuplicateKeyException dke) {
