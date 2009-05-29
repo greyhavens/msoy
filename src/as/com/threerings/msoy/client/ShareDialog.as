@@ -523,7 +523,7 @@ public class ShareDialog extends FloatingPanel
             if (args.length > 0) {
                 args += "&";
             }
-            args += "aff=" + getAutoFriend() ? -id : id;
+            args += "aff=" + (getAutoFriend() ? -id : id);
         }
         return args;
     }
