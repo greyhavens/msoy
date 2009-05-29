@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -31,7 +30,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
@@ -317,18 +315,7 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Updates the specified group record with supplied field/value mapping.
-     */
-    public void updateGroup (int groupId, Map<ColumnExp, Object> updates)
-    {
-        int rows = updatePartial(GroupRecord.getKey(groupId), updates);
-        if (rows == 0) {
-            throw new DatabaseException("Couldn't find group for update [id=" + groupId + "]");
-        }
-    }
-
-    /**
-     * Hides the specified group by setting its policy to {@link Group.Policy#EXCLUSIVE}. Since 
+     * Hides the specified group by setting its policy to {@link Group.Policy#EXCLUSIVE}. Since
      * the group has no members, it will no longer be visible to anyone except support. Does no
      * verification on the emptiness of the group.
      */
