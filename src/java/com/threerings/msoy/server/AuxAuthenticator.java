@@ -88,8 +88,8 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                     }
                 }
 
-                // a brand new guest
-                if (guest == null) {
+                // a brand new guest (or one returning after a long sojourn)
+                if (guest == null || guest.isDeleted()) {
                     guest = _accountLogic.createGuestAccount(
                         conn.getInetAddress().toString(), creds.visitorId,
                         AffiliateCookie.fromCreds(creds.affiliateId));
@@ -102,7 +102,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
 
             } else {
                 MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
-                if (member == null) {
+                if (member == null || member.isDeleted()) {
                     throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                 }
                 memberId = member.memberId;
