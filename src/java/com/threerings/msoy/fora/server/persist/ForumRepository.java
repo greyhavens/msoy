@@ -322,9 +322,8 @@ public class ForumRepository extends DepotRepository
                       ForumThreadRecord.MOST_RECENT_POST_TIME, fmr.created,
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
 
-        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
-        updates.put(ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS, 1));
-        updateLiteral(ForumThreadRecord.getKey(thread.threadId), updates);
+        updatePartial(ForumThreadRecord.getKey(thread.threadId),
+                      ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS, 1));
 
         // update thread object to match its persistent record
         thread.posts++;
@@ -412,7 +411,7 @@ public class ForumRepository extends DepotRepository
                 updates.put(ForumThreadRecord.MOST_RECENT_POST_TIME, new ValueExp(last.created));
             }
         }
-        updateLiteral(ForumThreadRecord.getKey(fmr.threadId), updates);
+        updatePartial(ForumThreadRecord.getKey(fmr.threadId), updates);
     }
 
     /**

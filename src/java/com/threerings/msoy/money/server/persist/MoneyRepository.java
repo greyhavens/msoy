@@ -149,7 +149,7 @@ public class MoneyRepository extends DepotRepository
         }
 
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
-        int count = updateLiteral(MemberAccountRecord.class, key, key, builder.build());
+        int count = updatePartial(MemberAccountRecord.class, key, key, builder.build());
         if (count == 0) {
             // accumulate should always work, so if we mod'd 0 rows, it means there's no member
             throw new DatabaseException(
@@ -176,15 +176,13 @@ public class MoneyRepository extends DepotRepository
         Preconditions.checkArgument(amount >= 0, "Amount to deduct must be 0 or greater.");
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
-        Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(currencyCol, new Sub(currencyCol, amount))
-            .build();
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
         Where where = new Where(new And(
             new Equals(MemberAccountRecord.MEMBER_ID, memberId),
             new GreaterThanEquals(currencyCol, amount)));
 
-        int count = updateLiteral(MemberAccountRecord.class, where, key, updates);
+        int count = updatePartial(MemberAccountRecord.class, where, key,
+                                  currencyCol, new Sub(currencyCol, amount));
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         MemberAccountRecord mar = load(MemberAccountRecord.class, key);
         if (mar == null) {
@@ -252,19 +250,12 @@ public class MoneyRepository extends DepotRepository
      */
     public void rollbackDeduction (MoneyTransactionRecord deduction)
     {
-        Preconditions.checkArgument(deduction.amount <= 0,
-            "Only deductions can be rolled back.");
-        Preconditions.checkArgument(deduction.id == 0,
-            "Transaction has already been inserted!");
-
+        Preconditions.checkArgument(deduction.amount <= 0, "Only deductions can be rolled back.");
+        Preconditions.checkArgument(deduction.id == 0, "Transaction has already been inserted!");
         ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.currency);
-        Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(currencyCol, new Add(currencyCol, -deduction.amount))
-            .build();
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(deduction.memberId);
-
-        int count = updateLiteral(MemberAccountRecord.class, key, key, updates);
-        if (count == 0) {
+        if (updatePartial(MemberAccountRecord.class, key, key,
+                          currencyCol, new Add(currencyCol, -deduction.amount)) == 0) {
             log.warning("Missing member for rollback?!", "mtr", deduction);
         }
     }
@@ -378,12 +369,9 @@ public class MoneyRepository extends DepotRepository
      */
     public void recordExchange (int barDelta, int coinDelta, float rate, int referenceTxId)
     {
-        Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, barDelta))
-            .put(BarPoolRecord.COIN_BALANCE, new Add(BarPoolRecord.COIN_BALANCE, coinDelta))
-            .build();
-        updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, updates);
-
+        updatePartial(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY,
+                      BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, barDelta),
+                      BarPoolRecord.COIN_BALANCE, new Add(BarPoolRecord.COIN_BALANCE, coinDelta));
         insert(new ExchangeRecord(barDelta, coinDelta, rate, referenceTxId));
     }
 
@@ -402,10 +390,8 @@ public class MoneyRepository extends DepotRepository
      */
     public void adjustBarPool (int delta)
     {
-        Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
-            .put(BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, delta))
-            .build();
-        updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, updates);
+        updatePartial(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY,
+                      BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, delta));
     }
 
     public int getExchangeDataCount ()

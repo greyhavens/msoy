@@ -289,13 +289,6 @@ public class ItemListRepository extends DepotRepository
      */
     protected void shiftItemsRight (final int listId, final short fromIndex)
     {
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
-        GreaterThanEquals after = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, fromIndex);
-        And condition = new And(findList, after);
-
-        Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
-        shift.put(ItemListElementRecord.SEQUENCE, new Add(ItemListElementRecord.SEQUENCE, 1));
-
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -303,8 +296,11 @@ public class ItemListRepository extends DepotRepository
                 return record.listId == listId && record.sequence >= fromIndex;
             }
         };
-
-        updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
+        GreaterThanEquals after = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, fromIndex);
+        And condition = new And(findList, after);
+        updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
+                      ItemListElementRecord.SEQUENCE, new Add(ItemListElementRecord.SEQUENCE, 1));
     }
 
     /**
@@ -317,10 +313,6 @@ public class ItemListRepository extends DepotRepository
         Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
         GreaterThan after = new GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
         And condition = new And(findList, after);
-        Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
-        shift.put(ItemListElementRecord.SEQUENCE,
-                  new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
-
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -328,8 +320,9 @@ public class ItemListRepository extends DepotRepository
                 return record.listId == listId && record.sequence > fromIndex;
             }
         };
-
-        updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);
+        updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
+                      ItemListElementRecord.SEQUENCE,
+                      new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
     }
 
     /**
@@ -343,17 +336,14 @@ public class ItemListRepository extends DepotRepository
     {
         CacheInvalidator invalidator;
         SQLExpression range;
-        Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
+        SQLExpression shift;
 
         if (fromIndex < toIndex) {
             // shift all affected items to the left
             GreaterThan min = new GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
             LessThanEquals max = new LessThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
             range = new And(min, max);
-
-            shift.put(ItemListElementRecord.SEQUENCE,
-                      new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
-
+            shift = new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {
@@ -367,10 +357,7 @@ public class ItemListRepository extends DepotRepository
             GreaterThanEquals min = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
             LessThan max = new LessThan(ItemListElementRecord.SEQUENCE, fromIndex);
             range = new And(min, max);
-
-            shift.put(ItemListElementRecord.SEQUENCE,
-                      new Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
-
+            shift = new Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {
@@ -384,7 +371,8 @@ public class ItemListRepository extends DepotRepository
         And condition = new And(findList, range);
 
         // update all of the affected items
-        updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);
+        updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
+                      ItemListElementRecord.SEQUENCE, shift);
     }
 
     /**

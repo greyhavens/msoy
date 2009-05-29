@@ -116,7 +116,7 @@ public class GroupRepository extends DepotRepository
                 new Equals(_tagRepo.getTagColumn(GroupTagRecord.TARGET_ID), GroupRecord.GROUP_ID),
                 new In(_tagRepo.getTagColumn(GroupTagRecord.TAG_ID), _tagIds)));
             return new Exists(new SelectClause(GroupTagRecord.class,
-                                               new String[] { TagRecord.TAG_ID.name }, where));
+                                               new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
 
         protected WordSearch (String search)

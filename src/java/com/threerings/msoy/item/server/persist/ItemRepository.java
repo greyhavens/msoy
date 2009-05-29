@@ -140,7 +140,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
                         new In(getTagColumn(TagRecord.TAG_ID), _tagIds)));
             return new Exists(new SelectClause(getTagRepository().getTagClass(),
-                                               new String[] { TagRecord.TAG_ID.name }, where));
+                                               new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
 
         public SQLOperator madeByExpression ()
@@ -957,7 +957,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // finally update the columns we actually modified
-        updateLiteral(getCatalogKey(record.catalogId), updates);
+        updatePartial(getCatalogKey(record.catalogId), updates);
         return newCost;
     }
 
@@ -1255,10 +1255,8 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void incrementFavoriteCount (int catalogId, int increment)
     {
-        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
-        updates.put(CatalogRecord.FAVORITE_COUNT, new Add(
-                        getCatalogColumn(CatalogRecord.FAVORITE_COUNT), increment));
-        if (updateLiteral(getCatalogKey(catalogId), updates) == 0) {
+        SQLExpression add = new Add(getCatalogColumn(CatalogRecord.FAVORITE_COUNT), increment);
+        if (updatePartial(getCatalogKey(catalogId), CatalogRecord.FAVORITE_COUNT, add) == 0) {
             log.warning("Could not update favorite count on catalog record.",
                         "catalogId", catalogId, "increment", increment);
         }

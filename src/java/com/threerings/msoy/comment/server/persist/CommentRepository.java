@@ -195,7 +195,7 @@ public class CommentRepository extends DepotRepository
             if (record != null) {
                 updates.put(CommentRecord.TOTAL_RATINGS, new Add(CommentRecord.TOTAL_RATINGS, 1));
             }
-            updateLiteral(CommentRecord.class, comment, comment, updates);
+            updatePartial(CommentRecord.class, comment, comment, updates);
             return adjustment;
 
         } catch (DuplicateKeyException dke) {

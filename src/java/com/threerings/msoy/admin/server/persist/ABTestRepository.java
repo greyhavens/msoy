@@ -244,7 +244,7 @@ public class ABTestRepository extends DepotRepository
     public void endAndSummarizeTests (Set<Integer> activeIds)
     {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        int mods = updateLiteral(
+        int mods = updatePartial(
             ABTestRecord.class, new Where(
                 new And(new IsNull(ABTestRecord.ENDED),
                         new Not(new In(ABTestRecord.TEST_ID, activeIds)))),

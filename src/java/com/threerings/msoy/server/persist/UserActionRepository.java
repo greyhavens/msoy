@@ -90,14 +90,12 @@ public class UserActionRepository extends DepotRepository
             helper.noteRecord(record);
         }
 
-        final Map<ColumnExp, SQLExpression> fieldMap = Maps.newHashMap();
-
         // update their action summary counts
         for (final IntIntMap.IntIntEntry entry : actionCounts.entrySet()) {
-            fieldMap.put(MemberActionSummaryRecord.COUNT,
-                         new Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
-            final int rows = updateLiteral(
-                MemberActionSummaryRecord.getKey(memberId, entry.getIntKey()), fieldMap);
+            final int rows = updatePartial(
+                MemberActionSummaryRecord.getKey(memberId, entry.getIntKey()),
+                MemberActionSummaryRecord.COUNT,
+                new Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
             // if no row was modified, this must be a first time action by this member
             if (rows == 0) {
                 // so create a new row

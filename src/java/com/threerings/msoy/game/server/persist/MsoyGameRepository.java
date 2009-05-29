@@ -328,7 +328,7 @@ public class MsoyGameRepository extends DepotRepository
         // update our games played and flow to next recalc in the detail record
         SQLExpression add = new Add(GameMetricsRecord.GAMES_PLAYED, playerGames);
         SQLExpression sub = new Sub(GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
-        updateLiteral(GameMetricsRecord.getKey(Math.abs(gprec.gameId)),
+        updatePartial(GameMetricsRecord.getKey(Math.abs(gprec.gameId)),
                       ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,
                                       GameMetricsRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
