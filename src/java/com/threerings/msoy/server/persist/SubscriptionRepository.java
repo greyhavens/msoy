@@ -5,14 +5,24 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.GreaterThan;
+import com.samskivert.depot.operator.LessThan;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -57,6 +67,39 @@ public class SubscriptionRepository extends DepotRepository
         if (now.before(rec.endDate)) {
             rec.endDate = now;
             update(rec);
+        }
+    }
+
+    /**
+     * Load the memberIds of any subscribers that are due for their monthly bar grants.
+     */
+    public List<Integer> loadSubscribersNeedingBarGrants ()
+    {
+        // TODO: this need double-checking and testing, and some more checking
+        Calendar cal = Calendar.getInstance();
+        Timestamp now = new Timestamp(cal.getTimeInMillis());
+        cal.add(Calendar.MONTH, -1);
+        Timestamp monthAgo = new Timestamp(cal.getTimeInMillis());
+        List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
+            new Where(new And(
+                new GreaterThan(SubscriptionRecord.END_DATE, now),
+                new LessThan(SubscriptionRecord.LAST_GRANT, monthAgo))));
+        return Lists.transform(keys, new Function<Key<SubscriptionRecord>,Integer>() {
+            public Integer apply (Key<SubscriptionRecord> key) {
+                return (Integer) key.getValues()[0];
+            }
+        });
+    }
+
+    /**
+     * Note that the specified subscriber has had their bars granted them.
+     */
+    public void noteBarsGranted (int memberId)
+    {
+        int count = updatePartial(SubscriptionRecord.getKey(memberId),
+            SubscriptionRecord.LAST_GRANT, new Timestamp(System.currentTimeMillis()));
+        if (count == 0) {
+            throw new RuntimeException("SubscriptionRecord not found for " + memberId);
         }
     }
 

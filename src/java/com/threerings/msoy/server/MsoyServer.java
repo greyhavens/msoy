@@ -228,6 +228,9 @@ public class MsoyServer extends MsoyBaseServer
         // kick off spam jobs
         _spamLogic.init();
 
+        // and subscription mangement
+        _subscripLogic.init();
+
         log.info("Msoy server initialized.");
     }
 
@@ -467,6 +470,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** The spam logic mail sender, it needs to be told to kick off its jobs. */
     @Inject protected SpamLogic _spamLogic;
+
+    /** Manages subscriptions. */
+    @Inject protected SubscriptionLogic _subscripLogic;
 
     /** Prune the feeds once every 3 hours. On all servers at once? @TODO Fix. */
     protected static final long FEED_PRUNING_INTERVAL = 3 * 60 * 60 * 1000;

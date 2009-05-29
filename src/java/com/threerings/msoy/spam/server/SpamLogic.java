@@ -339,7 +339,7 @@ public class SpamLogic
     public void init ()
     {
         // run nightly at 1am
-        _cronLogic.scheduleAt(1, new Runnable () {
+        _cronLogic.scheduleAt(1, new Runnable() {
             public void run () {
                 sendRetentionEmails();
             }

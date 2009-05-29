@@ -3,11 +3,16 @@
 
 package com.threerings.msoy.server;
 
+import java.util.List;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Invoker;
+
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
@@ -25,6 +30,28 @@ public class SubscriptionLogic
 {
     public SubscriptionLogic ()
     {
+    }
+
+    /**
+     * Initialize our subscription logic.
+     */
+    public void init ()
+    {
+        // let's grant bars to subscribers that need them, every hour
+        _cronLogic.scheduleAt(1, new Runnable() {
+            public void run () {
+                _batchInvoker.postUnit(new Invoker.Unit("SubscriptionLogic.grantBars") {
+                    public boolean invoke () {
+                        grantBars();
+                        return false;
+                    }
+                });
+            }
+
+            public String toString () {
+                return "SubscriptionLogic.grantBars";
+            }
+        });
     }
 
     /**
@@ -87,8 +114,34 @@ public class SubscriptionLogic
         // TODO: update their runtime subscription state
     }
 
+    /**
+     * Grant bars to any subscribers that are quarterly or yearly and need their monthly bars.
+     */
+    @BlockingThread
+    protected void grantBars ()
+    {
+        // figure out how many bars we're going to be granting
+        int bars = _runtime.money.monthlySubscriberBarGrant;
+        List<Integer> memberIds = _subscripRepo.loadSubscribersNeedingBarGrants();
+        for (Integer memberId : memberIds) {
+            // let's do each one in turn, don't let one booch hork the whole set
+            try {
+                if (bars > 0) {
+                    _moneyLogic.grantSubscriberBars(memberId, bars);
+                }
+                // always note the granting, even if it was 0.
+                _subscripRepo.noteBarsGranted(memberId);
+            } catch (Exception e) {
+                log.warning("Unable to grant a subscriber their monthly bars",
+                    "memberId", memberId, e);
+            }
+        }
+    }
+
+    @Inject protected CronLogic _cronLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SubscriptionRepository _subscripRepo;
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
 }
