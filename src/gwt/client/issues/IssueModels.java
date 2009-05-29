@@ -99,7 +99,6 @@ public class IssueModels
     public void flush ()
     {
         _imodels.clear();
-        _imodels.clear();
     }
 
     /**
