@@ -88,8 +88,7 @@ public class ArcadePanel extends FlowPanel
             ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", genre.genre);
             header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre_" + genre.genre), onClick));
 
-            for (int i = 0; i < genre.games.length; i++) {
-                GameCard game = genre.games[i];
+            for (GameCard game : genre.games) {
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
                 genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
@@ -102,7 +101,7 @@ public class ArcadePanel extends FlowPanel
             }
 
             add(Link.createBlock(_msgs.genreMore(""+genre.gameCount), "ViewAll",
-                                 Pages.GAMES, "g", genre.genre));
+                                 Pages.GAMES, "g", genre.genre.toByte()));
         }
     }
 
