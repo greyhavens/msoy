@@ -313,6 +313,9 @@ public class EditIssuePanel extends SmartTable
 //             _issue.category = Issue.CATEGORY_VALUES[_categoryBox.getSelectedIndex()];
             if (_ownerBox.getSelectedIndex() > 0) {
                 _issue.owner = _ownerNames.get(_ownerBox.getSelectedIndex() - 1);
+            } else if (_issue.owner != null) {
+                // if issue was previously assigned, this is a deliberately unassignment
+                _issue.owner = null;
             } else if (_issue.issueId != 0) {
                 // updating an ownerless issue makes it yours
                 _issue.owner = CShell.creds.name;
