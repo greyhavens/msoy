@@ -325,7 +325,7 @@ public class MsoyGameRepository extends DepotRepository
         // update our games played and flow to next recalc in the detail record
         SQLExpression add = new Add(GameMetricsRecord.GAMES_PLAYED, playerGames);
         SQLExpression sub = new Sub(GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
-        updateLiteral(GameMetricsRecord.class, Math.abs(gprec.gameId),
+        updateLiteral(GameMetricsRecord.getKey(Math.abs(gprec.gameId)),
                       ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,
                                       GameMetricsRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
@@ -422,7 +422,7 @@ public class MsoyGameRepository extends DepotRepository
     public void updateInstructions (int gameId, String instructions)
     {
         if (StringUtil.isBlank(instructions)) {
-            delete(InstructionsRecord.class, gameId);
+            delete(InstructionsRecord.getKey(gameId));
         } else {
             InstructionsRecord irec = new InstructionsRecord();
             irec.gameId = gameId;
@@ -513,8 +513,8 @@ public class MsoyGameRepository extends DepotRepository
      */
     protected void purgeGame (int gameId)
     {
-        delete(GameInfoRecord.class, gameId);
-        delete(InstructionsRecord.class, gameId);
+        delete(GameInfoRecord.getKey(gameId));
+        delete(InstructionsRecord.getKey(gameId));
         deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId));
         deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId));
     }

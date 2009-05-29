@@ -97,7 +97,7 @@ public class GalleryRepository extends DepotRepository
      */
     public int deleteGallery (int galleryId)
     {
-        return delete(GalleryRecord.class, galleryId);
+        return delete(GalleryRecord.getKey(galleryId));
     }
 
     /**

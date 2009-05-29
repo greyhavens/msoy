@@ -129,7 +129,7 @@ public class MedalRepository extends DepotRepository
 
     public boolean deleteEarnedMedal (int memberId, int medalId)
     {
-        int result = delete(EarnedMedalRecord.class, EarnedMedalRecord.getKey(medalId, memberId));
+        int result = delete(EarnedMedalRecord.getKey(medalId, memberId));
         return result > 0;
     }
 

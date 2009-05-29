@@ -106,8 +106,7 @@ public class BadgeRepository extends DepotRepository
      */
     public boolean deleteInProgressBadge (int memberId, int badgeCode)
     {
-        return (delete(InProgressBadgeRecord.class,
-                       InProgressBadgeRecord.getKey(memberId, badgeCode)) > 0);
+        return (delete(InProgressBadgeRecord.getKey(memberId, badgeCode)) > 0);
     }
 
     /**

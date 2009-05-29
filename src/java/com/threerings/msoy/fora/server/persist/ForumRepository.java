@@ -324,7 +324,7 @@ public class ForumRepository extends DepotRepository
 
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
         updates.put(ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS, 1));
-        updateLiteral(ForumThreadRecord.class, thread.threadId, updates);
+        updateLiteral(ForumThreadRecord.getKey(thread.threadId), updates);
 
         // update thread object to match its persistent record
         thread.posts++;
@@ -381,7 +381,7 @@ public class ForumRepository extends DepotRepository
     public void deleteMessage (int messageId)
     {
         ForumMessageRecord fmr = loadMessage(messageId);
-        if (fmr == null || delete(ForumMessageRecord.class, messageId) == 0) {
+        if (fmr == null || delete(ForumMessageRecord.getKey(messageId)) == 0) {
             return;
         }
 
@@ -392,7 +392,7 @@ public class ForumRepository extends DepotRepository
 
         // if this was the only post in the thread, delete the thread
         if (ftr.posts == 1) {
-            delete(ForumThreadRecord.class, ftr.threadId);
+            delete(ForumThreadRecord.getKey(ftr.threadId));
             return;
         }
 
@@ -413,7 +413,7 @@ public class ForumRepository extends DepotRepository
                 updates.put(ForumThreadRecord.MOST_RECENT_POST_TIME, new ValueExp(last.created));
             }
         }
-        updateLiteral(ForumThreadRecord.class, fmr.threadId, updates);
+        updateLiteral(ForumThreadRecord.getKey(fmr.threadId), updates);
     }
 
     /**

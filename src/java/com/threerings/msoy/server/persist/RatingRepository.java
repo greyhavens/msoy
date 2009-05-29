@@ -13,6 +13,7 @@ import com.samskivert.util.Tuple;
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
@@ -77,10 +78,8 @@ public abstract class RatingRepository extends DepotRepository
                 "Asked to rate a non-existent record [targetId=" + targetId + "]");
         }
 
-        RatingRecord ratingRec = load(getRatingClass(),
-            CacheStrategy.NONE, new Where(
-                getRatingColumn(RatingRecord.TARGET_ID), targetId,
-                getRatingColumn(RatingRecord.MEMBER_ID), memberId));
+        RatingRecord ratingRec = load(
+            getRatingClass(), CacheStrategy.NONE, getRatingKey(targetId, memberId));
 
         boolean newRating;
         int deltaSum;
@@ -161,8 +160,7 @@ public abstract class RatingRepository extends DepotRepository
      */
     public byte getRating (int targetId, int memberId)
     {
-        RatingRecord record = load(
-            getRatingClass(), RatingRecord.TARGET_ID, targetId, RatingRecord.MEMBER_ID, memberId);
+        RatingRecord record = load(getRatingKey(targetId, memberId));
         return (record == null) ? (byte)0 : record.rating;
     }
 
@@ -186,6 +184,14 @@ public abstract class RatingRepository extends DepotRepository
     protected ColumnExp getRatingColumn (ColumnExp col)
     {
         return new ColumnExp(getRatingClass(), col.name);
+    }
+
+    protected Key<RatingRecord> getRatingKey (int targetId, int memberId)
+    {
+        return new Key<RatingRecord>(getRatingClass(),
+                                     new ColumnExp[] { getRatingColumn(RatingRecord.TARGET_ID),
+                                                       getRatingColumn(RatingRecord.MEMBER_ID) },
+                                     new Comparable[] { targetId, memberId });
     }
 
     @Override // from DepotRepository

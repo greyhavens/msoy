@@ -73,7 +73,7 @@ public class ContestRepository extends DepotRepository
      */
     public void deleteContest (String contestId)
     {
-        delete(ContestRecord.class, contestId);
+        delete(ContestRecord.getKey(contestId));
     }
 
     @Override // from DepotRepository

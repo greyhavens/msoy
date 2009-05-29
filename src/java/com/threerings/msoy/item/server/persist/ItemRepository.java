@@ -961,7 +961,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // finally update the columns we actually modified
-        updateLiteral(getCatalogClass(), record.catalogId, updates);
+        updateLiteral(getCatalogKey(record.catalogId), updates);
         return newCost;
     }
 
@@ -1135,7 +1135,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     public boolean removeListing (CatalogRecord listing)
     {
         // remove the catalog listing record
-        delete(getCatalogClass(), listing.catalogId);
+        delete(getCatalogKey(listing.catalogId));
+
         // clear out the listing mappings for the original item
         if (listing.originalItemId != 0) {
             noteListing(listing.originalItemId, 0);
@@ -1187,11 +1188,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void deleteItem (final int itemId)
     {
         if (itemId < 0) {
-            delete(getCloneClass(), itemId);
+            delete(Key.newKey(getCloneClass(), getCloneColumn(CloneRecord.ITEM_ID), itemId));
 
         } else {
             // delete the item in question
-            delete(getItemClass(), itemId);
+            delete(Key.newKey(getItemClass(), getItemColumn(ItemRecord.ITEM_ID), itemId));
 
             // delete rating records for this item (and invalidate the cache properly)
             _ratingRepo.deleteRatings(itemId);
@@ -1240,11 +1241,11 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (item.itemId < 0) {
             where = new Where(getCloneColumn(ItemRecord.ITEM_ID), item.itemId,
                               getCloneColumn(ItemRecord.OWNER_ID), item.ownerId);
-            key = new Key<CloneRecord>(getCloneClass(), CloneRecord.ITEM_ID, item.itemId);
+            key = Key.newKey(getCloneClass(), CloneRecord.ITEM_ID, item.itemId);
         } else {
             where = new Where(getItemColumn(ItemRecord.ITEM_ID), item.itemId,
                               getItemColumn(ItemRecord.OWNER_ID), item.ownerId);
-            key = new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
+            key = Key.newKey(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
         }
         int modifiedRows = updatePartial(
             item.itemId < 0 ? getCloneClass() : getItemClass(), where, key,
@@ -1264,7 +1265,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
         updates.put(CatalogRecord.FAVORITE_COUNT, new Add(
                         getCatalogColumn(CatalogRecord.FAVORITE_COUNT), increment));
-        if (updateLiteral(getCatalogClass(), catalogId, updates) == 0) {
+        if (updateLiteral(getCatalogKey(catalogId), updates) == 0) {
             log.warning("Could not update favorite count on catalog record.",
                         "catalogId", catalogId, "increment", increment);
         }
@@ -1629,6 +1630,11 @@ public abstract class ItemRepository<T extends ItemRecord>
         return new Div(getItemColumn(ItemRecord.RATING_SUM),
                        new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT),
                                        new ValueExp(1.0)));
+    }
+
+    protected Key<CatalogRecord> getCatalogKey (int catalogId)
+    {
+        return Key.newKey(getCatalogClass(), getCatalogColumn(CatalogRecord.CATALOG_ID), catalogId);
     }
 
     @Override // from DepotRepository

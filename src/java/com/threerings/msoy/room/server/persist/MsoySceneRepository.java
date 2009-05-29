@@ -379,8 +379,7 @@ public class MsoySceneRepository extends DepotRepository
             update(new SceneFurniRecord(update.getSceneId(), ((FurniUpdate)update).data));
 
         } else if (update instanceof FurniUpdate.Remove) {
-            delete(SceneFurniRecord.class,
-                   SceneFurniRecord.getKey(update.getSceneId(), ((FurniUpdate)update).data.id));
+            delete(SceneFurniRecord.getKey(update.getSceneId(), ((FurniUpdate)update).data.id));
 
         } else if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate scup = (SceneAttrsUpdate)update;

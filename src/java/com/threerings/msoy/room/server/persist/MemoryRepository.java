@@ -113,7 +113,7 @@ public class MemoryRepository extends DepotRepository
      */
     public void deleteMemories (byte itemType, int itemId)
     {
-        delete(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
+        delete(MemoriesRecord.getKey(itemType, itemId));
     }
 
     /**

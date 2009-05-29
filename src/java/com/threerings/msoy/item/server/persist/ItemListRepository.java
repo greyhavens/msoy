@@ -72,7 +72,7 @@ public class ItemListRepository extends DepotRepository
         deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID, listId));
 
         // delete the list info
-        delete(ItemListInfoRecord.class, listId);
+        delete(ItemListInfoRecord.getKey(listId));
     }
 
     /**

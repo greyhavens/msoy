@@ -81,7 +81,7 @@ public class PromotionRepository extends DepotRepository
      */
     public void deletePromotion (String promoId)
     {
-        delete(PromotionRecord.class, promoId);
+        delete(PromotionRecord.getKey(promoId));
     }
 
     @Override // from DepotRepository

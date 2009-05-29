@@ -97,10 +97,7 @@ public class UserActionRepository extends DepotRepository
             fieldMap.put(MemberActionSummaryRecord.COUNT,
                          new Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
             final int rows = updateLiteral(
-                MemberActionSummaryRecord.class,
-                MemberActionSummaryRecord.MEMBER_ID, memberId,
-                MemberActionSummaryRecord.ACTION_ID, entry.getIntKey(),
-                fieldMap);
+                MemberActionSummaryRecord.getKey(memberId, entry.getIntKey()), fieldMap);
             // if no row was modified, this must be a first time action by this member
             if (rows == 0) {
                 // so create a new row

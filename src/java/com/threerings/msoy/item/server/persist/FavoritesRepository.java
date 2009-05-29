@@ -108,7 +108,7 @@ public class FavoritesRepository extends DepotRepository
      */
     public void clearFavorite (int memberId, byte itemType, int catalogId)
     {
-        delete(FavoriteItemRecord.class, FavoriteItemRecord.getKey(memberId, itemType, catalogId));
+        delete(FavoriteItemRecord.getKey(memberId, itemType, catalogId));
     }
 
     /**

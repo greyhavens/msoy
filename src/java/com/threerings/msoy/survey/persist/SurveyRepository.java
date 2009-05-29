@@ -131,7 +131,7 @@ public class SurveyRepository extends DepotRepository
             throw new RuntimeException("Question index " + questionIndex +
                 " out of range (" + size + ")" + " for survey " + surveyId);
         }
-        delete(SurveyQuestionRecord.class, SurveyQuestionRecord.getKey(surveyId, questionIndex));
+        delete(SurveyQuestionRecord.getKey(surveyId, questionIndex));
         for (int ii = questionIndex + 1; ii < size; ++ii) {
             updateQuestionIndex(surveyId, ii, ii - 1);
         }

@@ -64,8 +64,8 @@ public class MsoyOOOUserRepository extends DepotUserRepository
      */
     public void uncreateUser (int userId)
     {
-        delete(OOOUserRecord.class, userId);
-        delete(HistoricalUserRecord.class, userId);
+        delete(OOOUserRecord.getKey(userId));
+        delete(HistoricalUserRecord.getKey(userId));
         deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID, userId));
     }
 

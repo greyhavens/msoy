@@ -542,7 +542,7 @@ public class MemberRepository extends DepotRepository
      */
     public void clearSession (String sessionToken)
     {
-        delete(SessionRecord.class, sessionToken);
+        delete(SessionRecord.getKey(sessionToken));
     }
 
     /**
@@ -1018,7 +1018,7 @@ public class MemberRepository extends DepotRepository
     public void clearFriendship (int memberId, int friendId)
     {
         // clear our friendiness right on out
-        delete(FriendshipRecord.class, FriendshipRecord.getKey(memberId, friendId));
+        delete(FriendshipRecord.getKey(memberId, friendId));
 
         // but keep the friend marked as liking us, if and only if they already had a record
         Key<FriendshipRecord> friendKey = FriendshipRecord.getKey(friendId, memberId);
@@ -1154,7 +1154,7 @@ public class MemberRepository extends DepotRepository
      */
     public void clearMemberWarning (int memberId)
     {
-        delete(MemberWarningRecord.class, memberId);
+        delete(MemberWarningRecord.getKey(memberId));
         updateSpanked(memberId, false);
     }
 
@@ -1232,7 +1232,7 @@ public class MemberRepository extends DepotRepository
      */
     public void deleteCharity (int memberId)
     {
-        delete(CharityRecord.class, memberId);
+        delete(CharityRecord.getKey(memberId));
     }
 
     /**

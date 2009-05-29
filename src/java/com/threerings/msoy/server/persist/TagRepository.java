@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.FromOverride;
@@ -211,7 +213,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public TagHistoryRecord tag (int targetId, int tagId, int taggerId, long now)
     {
-        TagRecord tag = load(getTagClass(), TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
+        TagRecord tag = load(getTagKey(tagId, targetId));
         if (tag != null) {
             return null;
         }
@@ -237,7 +239,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public TagHistoryRecord untag (int targetId, int tagId, int taggerId, long now)
     {
-        TagRecord tag = load(getTagClass(), TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
+        TagRecord tag = load(getTagKey(tagId, targetId));
         if (tag == null) {
             return null;
         }
@@ -320,6 +322,14 @@ public abstract class TagRepository extends DepotRepository
         // note: this is a full table scan, but currently probably ok
         deleteAll(getTagHistoryClass(),
                   new Where(new In(getTagHistoryColumn(TagHistoryRecord.MEMBER_ID), memberIds)));
+    }
+
+    protected Key<TagRecord> getTagKey (int tagId, int targetId)
+    {
+        return new Key<TagRecord>(getTagClass(),
+                                  new ColumnExp[] { getTagColumn(TagRecord.TAG_ID),
+                                                    getTagColumn(TagRecord.TARGET_ID) },
+                                  new Comparable[] { tagId, targetId });
     }
 
     @Override // from DepotRepository

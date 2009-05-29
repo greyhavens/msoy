@@ -214,7 +214,7 @@ public class CommentRepository extends DepotRepository
         Timestamp postedStamp = new Timestamp(posted);
 
         // delete the comment
-        delete(CommentRecord.class, CommentRecord.getKey(entityType, entityId, postedStamp));
+        delete(CommentRecord.getKey(entityType, entityId, postedStamp));
 
         // delete all its ratings
         deleteAll(CommentRatingRecord.class,
