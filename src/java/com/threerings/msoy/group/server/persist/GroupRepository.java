@@ -310,7 +310,7 @@ public class GroupRepository extends DepotRepository
      */
     public void updateGroup (int groupId, Object... fieldValues)
     {
-        int rows = updatePartial(GroupRecord.class, groupId, fieldValues);
+        int rows = updatePartial(GroupRecord.getKey(groupId), fieldValues);
         if (rows == 0) {
             throw new DatabaseException("Couldn't find group for update [id=" + groupId + "]");
         }
@@ -321,7 +321,7 @@ public class GroupRepository extends DepotRepository
      */
     public void updateGroup (int groupId, Map<ColumnExp, Object> updates)
     {
-        int rows = updatePartial(GroupRecord.class, groupId, updates);
+        int rows = updatePartial(GroupRecord.getKey(groupId), updates);
         if (rows == 0) {
             throw new DatabaseException("Couldn't find group for update [id=" + groupId + "]");
         }
@@ -334,7 +334,7 @@ public class GroupRepository extends DepotRepository
      */
     public void hideEmptyGroup (int groupId)
     {
-        updatePartial(GroupRecord.class, groupId, GroupRecord.POLICY, Group.Policy.EXCLUSIVE);
+        updatePartial(GroupRecord.getKey(groupId), GroupRecord.POLICY, Group.Policy.EXCLUSIVE);
     }
 
     /**
@@ -536,7 +536,7 @@ public class GroupRepository extends DepotRepository
      */
     public void setHomeSceneId (int groupId, int sceneId)
     {
-        updatePartial(GroupRecord.class, groupId, GroupRecord.HOME_SCENE_ID, sceneId);
+        updatePartial(GroupRecord.getKey(groupId), GroupRecord.HOME_SCENE_ID, sceneId);
     }
 
     /**
@@ -581,7 +581,7 @@ public class GroupRepository extends DepotRepository
 
     protected void updateMemberCount (int groupId)
     {
-        updatePartial(GroupRecord.class, groupId, GroupRecord.MEMBER_COUNT, countMembers(groupId));
+        updatePartial(GroupRecord.getKey(groupId), GroupRecord.MEMBER_COUNT, countMembers(groupId));
     }
 
     /**

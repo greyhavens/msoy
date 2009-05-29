@@ -42,8 +42,9 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
      */
     public void updateScale (int avatarId, float newScale)
     {
-        int result = updatePartial((avatarId > 0) ? getItemClass() : getCloneClass(),
-            avatarId, (avatarId > 0) ? AvatarRecord.SCALE : AvatarCloneRecord.SCALE, newScale);
+        int result = (avatarId > 0) ?
+            updatePartial(getItemKey(avatarId), AvatarRecord.SCALE, newScale) :
+            updatePartial(getCloneKey(avatarId), AvatarCloneRecord.SCALE, newScale);
         if (0 == result) {
             log.warning("Unable to find avatar to update scale [avatarId=" + avatarId + "].");
         }

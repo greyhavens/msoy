@@ -303,7 +303,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void updatePayoutFactor (int gameId, int newFactor, int flowToNextRecalc)
     {
-        updatePartial(GameMetricsRecord.class, Math.abs(gameId),
+        updatePartial(GameMetricsRecord.getKey(Math.abs(gameId)),
                       GameMetricsRecord.PAYOUT_FACTOR, newFactor,
                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc);
     }
@@ -396,7 +396,7 @@ public class MsoyGameRepository extends DepotRepository
                  ", aph=" + awardedPerHour + ", payoutRatio=" + payoutRatio + "].");
 
         // update the detail record
-        updatePartial(GameMetricsRecord.class, gameId,
+        updatePartial(GameMetricsRecord.getKey(gameId),
                       GameMetricsRecord.PAYOUT_FACTOR, payoutFactor,
                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowToNextRecalc,
                       GameMetricsRecord.AVG_SINGLE_DURATION, avgSingleDuration,

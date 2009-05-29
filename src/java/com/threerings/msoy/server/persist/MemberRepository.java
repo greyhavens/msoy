@@ -578,7 +578,7 @@ public class MemberRepository extends DepotRepository
         insert(member);
 
         // note that this visitor id/entry vector pair is now associated with a member record
-        updatePartial(EntryVectorRecord.class, member.visitorId,
+        updatePartial(EntryVectorRecord.getKey(member.visitorId),
                       EntryVectorRecord.MEMBER_ID, member.memberId);
     }
 
@@ -598,7 +598,7 @@ public class MemberRepository extends DepotRepository
     public void configureAccountName (int memberId, String accountName)
     {
         accountName = accountName.toLowerCase(); // account name must always be lower case
-        updatePartial(MemberRecord.class, memberId,
+        updatePartial(MemberRecord.getKey(memberId),
                       MemberRecord.ACCOUNT_NAME, accountName.toLowerCase());
     }
 
@@ -608,7 +608,7 @@ public class MemberRepository extends DepotRepository
      */
     public void updateAffiliateMemberId (int memberId, int affiliateMemberId)
     {
-        updatePartial(MemberRecord.class, memberId,
+        updatePartial(MemberRecord.getKey(memberId),
                       MemberRecord.AFFILIATE_MEMBER_ID, affiliateMemberId);
     }
 
@@ -617,7 +617,7 @@ public class MemberRepository extends DepotRepository
      */
     public void configureDisplayName (int memberId, String name)
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.NAME, name);
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.NAME, name);
     }
 
     /**
@@ -626,7 +626,7 @@ public class MemberRepository extends DepotRepository
     public void configurePermaName (int memberId, String permaName)
     {
         // permaName will be a non-null lower-case string
-        updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName);
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.PERMA_NAME, permaName);
     }
 
     /**
@@ -634,7 +634,7 @@ public class MemberRepository extends DepotRepository
      */
     public void storeFlags (MemberRecord mrec)
     {
-        updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.FLAGS, mrec.flags);
+        updatePartial(MemberRecord.getKey(mrec.memberId), MemberRecord.FLAGS, mrec.flags);
     }
 
     /**
@@ -642,8 +642,8 @@ public class MemberRepository extends DepotRepository
      */
     public void storeExperiences (MemberRecord mrec)
     {
-        updatePartial(MemberRecord.class, mrec.memberId,
-            MemberRecord.EXPERIENCES, mrec.experiences);
+        updatePartial(MemberRecord.getKey(mrec.memberId),
+                      MemberRecord.EXPERIENCES, mrec.experiences);
     }
 
     /**
@@ -651,7 +651,7 @@ public class MemberRepository extends DepotRepository
      */
     public void configureAvatarId (int memberId, int avatarId)
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.AVATAR_ID, avatarId);
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.AVATAR_ID, avatarId);
     }
 
     /**
@@ -659,7 +659,7 @@ public class MemberRepository extends DepotRepository
      */
     public void updateBadgesVersion (int memberId, short badgesVersion)
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.BADGES_VERSION, badgesVersion);
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.BADGES_VERSION, badgesVersion);
     }
 
     /**
@@ -679,7 +679,7 @@ public class MemberRepository extends DepotRepository
     {
         // we have to do this one at a time
         for (int memberId : memberIds) {
-            updatePartial(MemberRecord.class, memberId,
+            updatePartial(MemberRecord.getKey(memberId),
                           MemberRecord.ACCOUNT_NAME, memberId + MemberRecord.DELETED_SUFFIX);
         }
         // NOTE: currently, the OOOUserRecord will have been deleted for all of these member
@@ -720,7 +720,7 @@ public class MemberRepository extends DepotRepository
      */
     public void setHomeSceneId (int memberId, int homeSceneId)
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.HOME_SCENE_ID, homeSceneId);
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.HOME_SCENE_ID, homeSceneId);
     }
 
     /**
@@ -790,7 +790,7 @@ public class MemberRepository extends DepotRepository
      */
     public void setUserLevel (int memberId, int level)
     {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
+        updatePartial(MemberRecord.getKey(memberId), MemberRecord.LEVEL, level);
     }
 
     /**
@@ -825,7 +825,7 @@ public class MemberRepository extends DepotRepository
      */
     public boolean isMuted (int muterId, int muteeId)
     {
-        return (null != load(MuteRecord.class, MuteRecord.getKey(muterId, muteeId)));
+        return (null != load(MuteRecord.getKey(muterId, muteeId)));
     }
 
     /**
@@ -850,10 +850,9 @@ public class MemberRepository extends DepotRepository
      */
     public Friendship getFriendship (int memberId, int friendId)
     {
-        FriendshipRecord frec = load(FriendshipRecord.class,
-            FriendshipRecord.getKey(memberId, friendId));
-        return (frec == null) ? Friendship.NOT_FRIENDS
-                              : frec.valid ? Friendship.FRIENDS : Friendship.INVITED;
+        FriendshipRecord frec = load(FriendshipRecord.getKey(memberId, friendId));
+        return (frec == null) ? Friendship.NOT_FRIENDS :
+            (frec.valid ? Friendship.FRIENDS : Friendship.INVITED);
     }
 
     /**
@@ -1019,8 +1018,7 @@ public class MemberRepository extends DepotRepository
         delete(FriendshipRecord.getKey(memberId, friendId));
 
         // but keep the friend marked as liking us, if and only if they already had a record
-        Key<FriendshipRecord> friendKey = FriendshipRecord.getKey(friendId, memberId);
-        updatePartial(FriendshipRecord.class, friendKey, friendKey, FriendshipRecord.VALID, false);
+        updatePartial(FriendshipRecord.getKey(friendId, memberId), FriendshipRecord.VALID, false);
     }
 
     /**
@@ -1044,8 +1042,7 @@ public class MemberRepository extends DepotRepository
      */
     public int lookupExternalAccount (ExternalAuther auther, String externalId)
     {
-        ExternalMapRecord record = load(
-            ExternalMapRecord.class, ExternalMapRecord.getKey(auther.toByte(), externalId));
+        ExternalMapRecord record = load(ExternalMapRecord.getKey(auther.toByte(), externalId));
         return (record == null) ? 0 : record.memberId;
     }
 
@@ -1137,7 +1134,7 @@ public class MemberRepository extends DepotRepository
      */
     public void updateMemberWarning (int memberId, String warning)
     {
-        if (updatePartial(MemberWarningRecord.class, memberId,
+        if (updatePartial(MemberWarningRecord.getKey(memberId),
                           MemberWarningRecord.WARNING, warning) == 0) {
             MemberWarningRecord record = new MemberWarningRecord();
             record.memberId = memberId;
@@ -1212,7 +1209,7 @@ public class MemberRepository extends DepotRepository
 
     public boolean updateHumanity (int memberId, int humanity)
     {
-        return 1 == updatePartial(MemberRecord.class, memberId,
+        return 1 == updatePartial(MemberRecord.getKey(memberId),
             MemberRecord.HUMANITY, humanity,
             MemberRecord.LAST_HUMANITY_ASSESSMENT, new Timestamp(System.currentTimeMillis()));
     }
@@ -1266,7 +1263,7 @@ public class MemberRepository extends DepotRepository
     {
         Preconditions.checkArgument(
             charityMemberId >= 0, "Charity member ID must be zero or positive.");
-        updatePartial(MemberRecord.class, memberId,
+        updatePartial(MemberRecord.getKey(memberId),
                       MemberRecord.CHARITY_MEMBER_ID, charityMemberId);
     }
 

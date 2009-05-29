@@ -122,17 +122,17 @@ public class IssueRepository extends DepotRepository
      */
     public void updateIssue (Issue issue)
     {
-        updatePartial(IssueRecord.class, issue.issueId,
-                IssueRecord.OWNER_ID, (issue.owner != null ? issue.owner.getMemberId() : -1),
-                IssueRecord.SUMMARY, issue.summary,
-                IssueRecord.DESCRIPTION, issue.description,
-                IssueRecord.STATE, issue.state,
-                IssueRecord.PRIORITY, issue.priority,
-                IssueRecord.TYPE, issue.type,
-                IssueRecord.CATEGORY, issue.category,
-                IssueRecord.CLOSE_COMMENT, issue.closeComment,
-                IssueRecord.CLOSED_TIME, (issue.closeComment == null ?
-                    null : new Timestamp(System.currentTimeMillis())));
+        updatePartial(IssueRecord.getKey(issue.issueId),
+                      IssueRecord.OWNER_ID, (issue.owner != null ? issue.owner.getMemberId() : -1),
+                      IssueRecord.SUMMARY, issue.summary,
+                      IssueRecord.DESCRIPTION, issue.description,
+                      IssueRecord.STATE, issue.state,
+                      IssueRecord.PRIORITY, issue.priority,
+                      IssueRecord.TYPE, issue.type,
+                      IssueRecord.CATEGORY, issue.category,
+                      IssueRecord.CLOSE_COMMENT, issue.closeComment,
+                      IssueRecord.CLOSED_TIME, (issue.closeComment == null ?
+                                                null : new Timestamp(System.currentTimeMillis())));
     }
 
     /**
@@ -141,11 +141,11 @@ public class IssueRepository extends DepotRepository
      */
     public void reopenIssue (int issueId, String newDescription)
     {
-        updatePartial(IssueRecord.class, issueId,
-            IssueRecord.STATE, Issue.STATE_OPEN,
-            IssueRecord.DESCRIPTION, newDescription,
-            IssueRecord.CLOSE_COMMENT, null,
-            IssueRecord.CLOSED_TIME, null);
+        updatePartial(IssueRecord.getKey(issueId),
+                      IssueRecord.STATE, Issue.STATE_OPEN,
+                      IssueRecord.DESCRIPTION, newDescription,
+                      IssueRecord.CLOSE_COMMENT, null,
+                      IssueRecord.CLOSED_TIME, null);
     }
 
     @Override // from DepotRepository

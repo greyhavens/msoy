@@ -168,7 +168,7 @@ public class MsoySceneRepository extends DepotRepository
      */
     public void publishScene (int sceneId)
     {
-        updatePartial(SceneRecord.class, sceneId,
+        updatePartial(SceneRecord.getKey(sceneId),
             SceneRecord.LAST_PUBLISHED, new Timestamp(System.currentTimeMillis()));
     }
 
@@ -359,7 +359,7 @@ public class MsoySceneRepository extends DepotRepository
         }
         if (sceneId != 0) {
             try {
-                updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
+                updatePartial(SceneRecord.getKey(sceneId), SceneRecord.VERSION, finalVersion);
             } catch (Exception e) {
                 log.warning("Failed to update scene to final version", "id", sceneId,
                         "fvers", finalVersion, e);
@@ -383,15 +383,14 @@ public class MsoySceneRepository extends DepotRepository
 
         } else if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate scup = (SceneAttrsUpdate)update;
-            updatePartial(
-                SceneRecord.class, update.getSceneId(),
-                SceneRecord.NAME, scup.name,
-                SceneRecord.ACCESS_CONTROL, scup.accessControl,
-                SceneRecord.PLAYLIST_CONTROL, scup.playlistControl,
-                SceneRecord.DECOR_ID, scup.decor.itemId,
-                SceneRecord.ENTRANCE_X, scup.entrance.x,
-                SceneRecord.ENTRANCE_Y, scup.entrance.y,
-                SceneRecord.ENTRANCE_Z, scup.entrance.z);
+            updatePartial(SceneRecord.getKey(update.getSceneId()),
+                          SceneRecord.NAME, scup.name,
+                          SceneRecord.ACCESS_CONTROL, scup.accessControl,
+                          SceneRecord.PLAYLIST_CONTROL, scup.playlistControl,
+                          SceneRecord.DECOR_ID, scup.decor.itemId,
+                          SceneRecord.ENTRANCE_X, scup.entrance.x,
+                          SceneRecord.ENTRANCE_Y, scup.entrance.y,
+                          SceneRecord.ENTRANCE_Z, scup.entrance.z);
 
         } else if (update instanceof SceneOwnershipUpdate) {
             SceneOwnershipUpdate sou = (SceneOwnershipUpdate)update;
@@ -401,7 +400,7 @@ public class MsoySceneRepository extends DepotRepository
             if (sou.lockToOwner) {
                 updates.put(SceneRecord.ACCESS_CONTROL, MsoySceneModel.ACCESS_OWNER_ONLY);
             }
-            updatePartial(SceneRecord.class, update.getSceneId(), updates);
+            updatePartial(SceneRecord.getKey(update.getSceneId()), updates);
 
         } else {
             log.warning("Unable to apply unknown furni update", "class", update.getClass(),
@@ -496,7 +495,7 @@ public class MsoySceneRepository extends DepotRepository
     public void setCanonicalImage (int sceneId, byte[] canonicalHash, byte canonicalType,
         byte[] thumbnailHash, byte thumbnailType)
     {
-        updatePartial(SceneRecord.class, sceneId,
+        updatePartial(SceneRecord.getKey(sceneId),
             SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash,
             SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
             SceneRecord.THUMBNAIL_HASH, thumbnailHash,

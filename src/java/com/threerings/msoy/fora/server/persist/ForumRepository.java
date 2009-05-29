@@ -295,7 +295,7 @@ public class ForumRepository extends DepotRepository
      */
     public void updateThread (int threadId, int flags, String subject)
     {
-        updatePartial(ForumThreadRecord.class, threadId,
+        updatePartial(ForumThreadRecord.getKey(threadId),
                       ForumThreadRecord.SUBJECT, subject,
                       ForumThreadRecord.FLAGS, flags,
                       ForumThreadRecord.STICKY, (flags & ForumThread.FLAG_STICKY) != 0);
@@ -317,7 +317,7 @@ public class ForumRepository extends DepotRepository
         insert(fmr);
 
         // update the post count and last post information for the thread
-        updatePartial(ForumThreadRecord.class, thread.threadId,
+        updatePartial(ForumThreadRecord.getKey(thread.threadId),
                       ForumThreadRecord.MOST_RECENT_POST_ID, fmr.messageId,
                       ForumThreadRecord.MOST_RECENT_POST_TIME, fmr.created,
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
@@ -360,7 +360,7 @@ public class ForumRepository extends DepotRepository
     public Timestamp updateMessage (int messageId, String message)
     {
         Timestamp lastEdited = new Timestamp(System.currentTimeMillis());
-        updatePartial(ForumMessageRecord.class, messageId,
+        updatePartial(ForumMessageRecord.getKey(messageId),
                       ForumMessageRecord.LAST_EDITED, lastEdited,
                       ForumMessageRecord.MESSAGE, message);
         return lastEdited;
@@ -371,8 +371,7 @@ public class ForumRepository extends DepotRepository
      */
     public void updateMessageIssue (int messageId, int issueId)
     {
-        updatePartial(ForumMessageRecord.class, messageId,
-                      ForumMessageRecord.ISSUE_ID, issueId);
+        updatePartial(ForumMessageRecord.getKey(messageId), ForumMessageRecord.ISSUE_ID, issueId);
     }
 
     /**

@@ -254,8 +254,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                                 new GreaterThan(getRatingExpression(), rating-1),
                                 new LessThan(getCatalogColumn(CatalogRecord.COST), minPrice)));
                     for (CatalogRecord crec : findAll(getCatalogClass(), join, where)) {
-                        updatePartial(getCatalogClass(), crec.catalogId,
-                                      CatalogRecord.COST, minPrice);
+                        updatePartial(getCatalogKey(crec.catalogId), CatalogRecord.COST, minPrice);
                         adjusted++;
                         byrating[rating-1]++;
                     }
@@ -536,19 +535,16 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void markItemUsage (Collection<Integer> itemIds, Item.UsedAs usageType, int location)
     {
-        Class<T> iclass = getItemClass();
-        Class<CloneRecord> cclass = getCloneClass();
-
         Timestamp now = new Timestamp(System.currentTimeMillis());
         for (int itemId : itemIds) {
             int result;
             if (itemId > 0) {
                 result = updatePartial(
-                    iclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
+                    getItemKey(itemId), ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
                     ItemRecord.LAST_TOUCHED, now);
             } else {
                 result = updatePartial(
-                    cclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
+                    getCloneKey(itemId), ItemRecord.USED, usageType, ItemRecord.LOCATION, location,
                     ItemRecord.LAST_TOUCHED, now);
             }
             // if the item didn't update, point that out to log readers
@@ -1008,11 +1004,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         Timestamp now = new Timestamp(System.currentTimeMillis());
         cloneRec.lastTouched = now;
         cloneRec.mediaStamp = (cloneRec.mediaHash == null) ? null : now;
-
-        updatePartial(getCloneClass(), cloneRec.itemId,
-            CloneRecord.MEDIA_HASH, cloneRec.mediaHash,
-            CloneRecord.MEDIA_STAMP, cloneRec.mediaStamp,
-            CloneRecord.LAST_TOUCHED, cloneRec.lastTouched);
+        updatePartial(getCloneKey(cloneRec.itemId),
+                      CloneRecord.MEDIA_HASH, cloneRec.mediaHash,
+                      CloneRecord.MEDIA_STAMP, cloneRec.mediaStamp,
+                      CloneRecord.LAST_TOUCHED, cloneRec.lastTouched);
     }
 
     /**
@@ -1022,10 +1017,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void updateCloneName (CloneRecord cloneRec)
     {
         cloneRec.lastTouched = new Timestamp(System.currentTimeMillis());
-
-        updatePartial(getCloneClass(), cloneRec.itemId,
-            CloneRecord.NAME, cloneRec.name,
-            CloneRecord.LAST_TOUCHED, cloneRec.lastTouched);
+        updatePartial(getCloneKey(cloneRec.itemId),
+                      CloneRecord.NAME, cloneRec.name,
+                      CloneRecord.LAST_TOUCHED, cloneRec.lastTouched);
     }
 
     /**
@@ -1080,7 +1074,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void updatePricing (int catalogId, int pricing, int salesTarget,
                                Currency currency, int cost, long updateTime)
     {
-        updatePartial(getCatalogClass(), catalogId,
+        updatePartial(getCatalogKey(catalogId),
                       // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
                       CatalogRecord.PRICING, pricing,
                       CatalogRecord.SALES_TARGET, salesTarget,
@@ -1094,8 +1088,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void updateBasis (CatalogRecord record, int newBasisId)
     {
-        updatePartial(getCatalogClass(), record.catalogId,
-                      CatalogRecord.BASIS_ID, newBasisId);
+        updatePartial(getCatalogKey(record.catalogId), CatalogRecord.BASIS_ID, newBasisId);
         if (record.basisId > 0) {
             noteBasisAssigned(record.basisId, false);
         }
@@ -1300,7 +1293,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     protected void noteListing (int itemId, int catalogId)
     {
-        updatePartial(getItemClass(), itemId, ItemRecord.CATALOG_ID, catalogId);
+        updatePartial(getItemKey(itemId), ItemRecord.CATALOG_ID, catalogId);
     }
 
     /**
@@ -1309,7 +1302,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void noteBasisAssigned (int catalogId, boolean add)
     {
         ColumnExp count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
-        updatePartial(getCatalogClass(), catalogId, count, new Add(count, add ? 1 : -1));
+        updatePartial(getCatalogKey(catalogId), count, new Add(count, add ? 1 : -1));
     }
 
     /**

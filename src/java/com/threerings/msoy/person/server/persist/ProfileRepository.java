@@ -159,7 +159,7 @@ public class ProfileRepository extends DepotRepository
 
     public void updateHeadline (int memberId, String headline)
     {
-        updatePartial(ProfileRecord.class, memberId, ProfileRecord.HEADLINE, headline);
+        updatePartial(ProfileRecord.getKey(memberId), ProfileRecord.HEADLINE, headline);
     }
 
     /**
@@ -168,8 +168,8 @@ public class ProfileRepository extends DepotRepository
      */
     public void updateProfileAward (int memberId, int badgeCode, int medalId)
     {
-        updatePartial(ProfileRecord.class, memberId, ProfileRecord.PROFILE_BADGE_CODE, badgeCode,
-            ProfileRecord.PROFILE_MEDAL_ID, medalId);
+        updatePartial(ProfileRecord.getKey(memberId), ProfileRecord.PROFILE_BADGE_CODE, badgeCode,
+                      ProfileRecord.PROFILE_MEDAL_ID, medalId);
     }
 
     /**

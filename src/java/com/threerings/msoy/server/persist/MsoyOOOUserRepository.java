@@ -89,7 +89,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
 
         // if we found one, update its expires time and reuse it
         if (session != null) {
-            updatePartial(SessionRecord.class, session.token, SessionRecord.EXPIRES, expires);
+            updatePartial(SessionRecord.getKey(session.token), SessionRecord.EXPIRES, expires);
 
         // otherwire create a new one and insert it into the table
         } else {
@@ -154,6 +154,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, expireDays);
         Date expires = new Date(cal.getTime().getTime());
-        return updatePartial(SessionRecord.class, sessionKey, SessionRecord.EXPIRES, expires) == 1;
+        return updatePartial(SessionRecord.getKey(sessionKey), SessionRecord.EXPIRES, expires) == 1;
     }
 }

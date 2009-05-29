@@ -181,7 +181,7 @@ public class MailRepository extends DepotRepository
         insert(record);
 
         // update the conversation record
-        updatePartial(ConversationRecord.class, conrec.conversationId,
+        updatePartial(ConversationRecord.getKey(conrec.conversationId),
                       ConversationRecord.LAST_SENT, record.sent,
                       ConversationRecord.LAST_AUTHOR_ID, authorId,
                       ConversationRecord.LAST_SNIPPET,
