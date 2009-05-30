@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.google.gwt.i18n.client.NumberFormat;
+
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.admin.gwt.ABTestSummary;
@@ -92,8 +94,8 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
     protected String format (int value, int total)
     {
         StringBuilder result = new StringBuilder().append(value);
-        if (total > 0) {
-            result.append(" (").append((10000*value/(float)total)/100).append("%)");
+        if (value > 0 && total > 0) {
+            result.append(" (").append(_fmt.format(value/(float)total)).append(")");
         }
         return result.toString();
     }
@@ -104,4 +106,6 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
         table.setText(row, 1, (data == null) ? "" : data.toString(), 1, null);
         return row;
     }
+
+    protected static final NumberFormat _fmt = NumberFormat.getFormat("#.##%");
 }
