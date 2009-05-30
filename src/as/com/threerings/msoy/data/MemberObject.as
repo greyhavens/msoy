@@ -9,6 +9,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.io.ObjectInputStream;
 
+import com.threerings.util.Comparators;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MemberExperience;
@@ -249,12 +250,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function getSortedGateways () :Array
     {
-        var gateways :Array = this.gateways.toArray();
-        gateways = gateways.sort(
-            function (g1 :GatewayEntry, g2 :GatewayEntry) :int {
-                return g1.compareTo(g2);
-            });
-        return gateways;
+        return this.gateways.toArray().sort(Comparators.COMPARABLE);
     }
 
     /**
@@ -264,14 +260,10 @@ public class MemberObject extends MsoyBodyObject
     {
         var contacts :Array = this.imContacts.toArray();
         contacts = contacts.filter(
-            function (ce :ContactEntry, index :int, array :Array) :Boolean {
+            function (ce :ContactEntry, ... ignored) :Boolean {
                 return ce.getGateway() == gateway;
             });
-        contacts = contacts.sort(
-            function (ce1 :ContactEntry, ce2 :ContactEntry) :int {
-                return ce1.compareTo(ce2);
-            });
-        return contacts;
+        return contacts.sort(Comparators.COMPARABLE);
     }
 
     // documentation inherited
