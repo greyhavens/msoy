@@ -64,19 +64,24 @@ public class FacebookServlet extends HttpServlet
         /** The session key of the viewing user (may be null). */
         public String sessionKey;
 
-        // from ExternalCreds
+        @Override // from ExternalCreds
         public ExternalAuther getAuthSource () {
             return ExternalAuther.FACEBOOK;
         }
 
-        // from ExternalCreds
+        @Override // from ExternalCreds
         public String getUserId () {
             return uid;
         }
 
-        // from ExternalCreds
+        @Override // from ExternalCreds
         public String getPlaceholderAddress () {
             return uid + "@facebook.com";
+        }
+
+        @Override // from ExternalCreds
+        public String getSessionKey () {
+            return sessionKey;
         }
     }
 
@@ -131,12 +136,6 @@ public class FacebookServlet extends HttpServlet
             if (vinfo.id.equals(mrec.visitorId)) {
                 _memberLogic.noteNewVisitor(
                     vinfo, true, StringUtil.deNull(req.getPathInfo()), req.getHeader("Referrer"));
-            }
-
-            // update their last known FB session key
-            if (creds.sessionKey != null) {
-                _memberRepo.updateExternalSessionKey(
-                    ExternalAuther.FACEBOOK, mrec.memberId, creds.sessionKey);
             }
 
             // activate a session for them
