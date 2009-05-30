@@ -144,6 +144,11 @@ public class MsoyAuthenticator extends Authenticator
                     throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
                 }
                 checkWarnAndBan(mrec.memberId);
+                // if they have an external session key, update that here
+                if (creds.getSessionKey() != null) {
+                    _memberRepo.updateExternalSessionKey(
+                        creds.getAuthSource(), mrec.memberId, creds.getSessionKey());
+                }
                 return mrec;
             }
 
@@ -155,6 +160,12 @@ public class MsoyAuthenticator extends Authenticator
             MemberRecord mrec = _accountLogic.createExternalAccount(
                 creds.getPlaceholderAddress(), info.displayName, vinfo, affiliate,
                 creds.getAuthSource(), creds.getUserId());
+
+            // if they have an external session key, update that here
+            if (creds.getSessionKey() != null) {
+                _memberRepo.updateExternalSessionKey(
+                    creds.getAuthSource(), mrec.memberId, creds.getSessionKey());
+            }
 
             // wire them up to any friends they might have
             if (info.friendIds != null) {

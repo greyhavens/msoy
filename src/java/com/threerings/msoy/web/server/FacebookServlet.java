@@ -133,6 +133,12 @@ public class FacebookServlet extends HttpServlet
                     vinfo, true, StringUtil.deNull(req.getPathInfo()), req.getHeader("Referrer"));
             }
 
+            // update their last known FB session key
+            if (creds.sessionKey != null) {
+                _memberRepo.updateExternalSessionKey(
+                    ExternalAuther.FACEBOOK, mrec.memberId, creds.sessionKey);
+            }
+
             // activate a session for them
             String authtok = _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
             SwizzleServlet.setCookie(req, rsp, authtok);

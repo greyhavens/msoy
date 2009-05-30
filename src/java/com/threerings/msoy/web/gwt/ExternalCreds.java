@@ -26,6 +26,9 @@ public abstract class ExternalCreds
     /** Returns a placeholder email address to use when auto-creating an account for this user. */
     public abstract String getPlaceholderAddress ();
 
+    /** Returns the external session key associated with this user's session, if any. */
+    public abstract String getSessionKey ();
+
     @Override // from Object
     public String toString ()
     {

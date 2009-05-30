@@ -52,6 +52,12 @@ public class FacebookCreds extends ExternalCreds
         return uid + "@facebook.com";
     }
 
+    @Override // from ExternalCreds
+    public String getSessionKey ()
+    {
+        return sessionKey;
+    }
+
     @Override // from Object
     public String toString ()
     {
