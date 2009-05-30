@@ -13,6 +13,7 @@ import flash.utils.ByteArray;
 import com.threerings.util.HashMap;
 import com.threerings.util.ImmutableProxyObject;
 import com.threerings.util.Name;
+import com.threerings.util.Predicates;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -257,9 +258,7 @@ public class RoomObjectView extends RoomView
      */
     public function getPets () :Array /* of PetSprite */
     {
-        return _occupants.values().filter(function (o :*, ... ignored) :Boolean {
-            return (o is PetSprite);
-        });
+        return _occupants.values().filter(Predicates.instanceOf(PetSprite));
     }
 
     // from interface AttributeChangedListener

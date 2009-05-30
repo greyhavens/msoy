@@ -556,7 +556,7 @@ public class RoomEditorController
             function(furni :FurniData, i :*, a :*) :ItemIdent {
                 return furni.getItemIdent();
             });
-        var defs :Array = _names.values().filter(function (def :Object, i :*, a :*) :Boolean {
+        var defs :Array = _names.values().filter(function (def :Object, ... ignored) :Boolean {
             return ArrayUtil.contains(idents, def.data);
         });
 

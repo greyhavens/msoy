@@ -9,6 +9,7 @@ import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.util.Name;
+import com.threerings.util.Predicates;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
@@ -74,9 +75,7 @@ public class TableSummaryPanel extends HBox
             _info.text = Msgs.GAME.get("m.tsp_in_progress",
                 (pcount == 0) ? table.watchers.length : pcount);
         } else if (table.players != null) {
-            var open :int = table.players.filter(function (pname :Name, ... rest) :Boolean {
-                return (pname == null);
-            }).length;
+            var open :int = table.players.filter(Predicates.isNull()).length;
             _info.text = Msgs.GAME.get("m.tsp_players", table.players.length, open);
         } else {
             _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
