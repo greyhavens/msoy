@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -96,8 +97,9 @@ public class EntrySummaryPanel extends AdminDataPanel<List<EntrySummary>>
         table.setText(row, col++, ""+entries, 1, "rightLabel");
         table.setText(row, col++, ""+registrations, 1, "rightLabel");
         if (entries > 0) {
-            float convert = Math.round(10000*registrations/entries)/100f;
-            table.setText(row, col++, _msgs.espConvert(""+convert), 1, "rightLabel");
+            table.setText(row, col++, _fmt.format(registrations/(float)entries), 1, "rightLabel");
         }
     }
+
+    protected static final NumberFormat _fmt = NumberFormat.getFormat("#.##%");
 }
