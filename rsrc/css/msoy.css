@@ -392,6 +392,13 @@ TabNavigator, TabBar {
   selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
+SpriteInfoPanel {
+  paddingTop: 0;
+  paddingLeft: 0;
+  paddingBottom: 0;
+  paddingRight: 0;
+}
+
 .menuTitle {
   disabledColor: white;
   fontWeight: bold;

@@ -168,6 +168,25 @@ public class RoomView extends Sprite
         }
     }
 
+    /**
+     * Pop up a dialog for viewing details on every item in the room.
+     */
+    public function viewRoomItems () :void
+    {
+        if (_spriteInfoPanel != null) {
+            _spriteInfoPanel.close();
+        }
+
+        // make a list of all the itemIdents
+        var sprites :Array = _furni.values();
+        sprites.unshift(_bg); // put the background first
+        _spriteInfoPanel = new SpriteInfoPanel(_ctx, sprites);
+        _spriteInfoPanel.addCloseCallback(function () :void {
+            _spriteInfoPanel = null;
+        });
+        _spriteInfoPanel.open();
+    }
+
     // from ContextMenuProvider
     public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
     {
@@ -472,6 +491,10 @@ public class RoomView extends Sprite
         removeAll(_furni);
         setBackground(null);
         _scene = null;
+
+        if (_spriteInfoPanel != null) {
+            _spriteInfoPanel.close();
+        }
 
         Mouse.show(); // re-show the mouse, in case something hid it
     }
@@ -1083,6 +1106,9 @@ public class RoomView extends Sprite
 
     /** Transparent bitmap on which we can draw the room backdrop.*/
     protected var _backdropOverlay :BackdropOverlay;
+
+    /** A popup showing item info. */
+    protected var _spriteInfoPanel :SpriteInfoPanel;
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
