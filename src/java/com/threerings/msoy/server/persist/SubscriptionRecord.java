@@ -18,21 +18,25 @@ public class SubscriptionRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<SubscriptionRecord> _R = SubscriptionRecord.class;
     public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
-    public static final ColumnExp END_DATE = colexp(_R, "endDate");
+    public static final ColumnExp SUBSCRIBER = colexp(_R, "subscriber");
+    public static final ColumnExp GRANTS_LEFT = colexp(_R, "grantsLeft");
     public static final ColumnExp LAST_GRANT = colexp(_R, "lastGrant");
+    public static final ColumnExp SPECIAL_ITEM_TYPE = colexp(_R, "specialItemType");
+    public static final ColumnExp SPECIAL_ITEM_ID = colexp(_R, "specialItemId");
     // AUTO-GENERATED: FIELDS END
 
     /** To be updated when the structure of this class changes. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The memberId of the subscriber. */
     @Id
     public int memberId;
 
-    /** The time at which the subscription ends. This may be in the past if this
-     * represents an expired subscription. It is useful to us to see people that are
-     * ex-subscribers. */
-    public Timestamp endDate;
+    /** Are they currently a subscriber? */
+    public boolean subscriber;
+
+    /** How many bar grants do they have left? */
+    public int grantsLeft;
 
     /** The last time bars and/or special items have been granted to this subscriber,
      *  which happens on a monthly basis. */
@@ -40,7 +44,14 @@ public class SubscriptionRecord extends PersistentRecord
     // The special items are granted to all subscribers when they are released, and to any
     // new subscriber who has not yet received the item. So probably we just want a ItemIdent
     // indicating the last special item granted to each subscriber.
+    @Column(nullable=true)
     public Timestamp lastGrant;
+
+    /** The type of the last special item granted to this subscriber. */
+    public byte specialItemType;
+
+    /** The item id of the last special item granted to this subscriber. */
+    public int specialItemId;
 
     // AUTO-GENERATED: METHODS START
     /**

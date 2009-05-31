@@ -61,7 +61,7 @@ public class SubscriptionLogic
      * @throws Exception We freak the fuck out if anything goes wrong.
      */
     @BlockingThread
-    public void noteSubscriptionStarted (String accountName, long endTime)
+    public void noteSubscriptionStarted (String accountName, int months)
         throws Exception
     {
         // first, look up the record of the member
@@ -74,12 +74,13 @@ public class SubscriptionLogic
             _memberRepo.storeFlags(mrec);
         }
         // create or update their subscription record
-        _subscripRepo.noteSubscriptionStarted(mrec.memberId, endTime);
+        int barGrantsLeft = months; // make explicit this equivalence
+        boolean grantBars = _subscripRepo.noteSubscriptionStarted(mrec.memberId, barGrantsLeft);
         // TODO: FFS, turn them into a subscriber instantly, whereever they are.
 
         // Grant them their monthly bar allowance.
         int bars = _runtime.money.monthlySubscriberBarGrant;
-        if (bars > 0) {
+        if (grantBars && bars > 0) {
             _moneyLogic.grantSubscriberBars(mrec.memberId, bars);
         }
         // TODO: give them the current Item Of The Month. However, if they already received the
@@ -109,7 +110,11 @@ public class SubscriptionLogic
         }
 
         // look up their subscription record and make sure the end time is now.
-        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
+        int barGrantsLeft = _subscripRepo.noteSubscriptionEnded(mrec.memberId);
+        if (barGrantsLeft != 0) {
+            log.warning("Shazbot! Bars left to be granted is not 0!",
+                "accountName", accountName, "grantsLeft", barGrantsLeft, new Exception());
+        }
 
         // TODO: update their runtime subscription state
     }

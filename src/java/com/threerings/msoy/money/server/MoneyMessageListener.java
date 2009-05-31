@@ -59,7 +59,7 @@ public class MoneyMessageListener
                         SubscriptionStartMessage ssm = null;
                         try {
                             ssm = new SubscriptionStartMessage(message);
-                            _subLogic.noteSubscriptionStarted(ssm.accountName, ssm.endTime);
+                            _subLogic.noteSubscriptionStarted(ssm.accountName, ssm.months);
                         } catch (Exception e) {
                             log.warning("Holy Bajizzwax! We've fouled-up trying to " +
                                 "note a subscription start",
@@ -240,7 +240,7 @@ public class MoneyMessageListener
      */
     protected static class SubscriptionStartMessage extends SubscriptionEndMessage
     {
-        public long endTime;
+        public int months;
 
         public SubscriptionStartMessage (byte[] bytes)
         {
@@ -251,7 +251,7 @@ public class MoneyMessageListener
         public void init (ByteBuffer buf)
         {
             super.init(buf);
-            endTime = buf.getLong();
+            months = buf.getInt();
         }
     }
 
