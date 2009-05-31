@@ -18,7 +18,7 @@ import java.util.Set;
 import net.jcip.annotations.NotThreadSafe;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
 
 import com.google.inject.Inject;
@@ -141,15 +141,15 @@ public class MoneyRepository extends DepotRepository
         Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
-        ImmutableMap.Builder<ColumnExp, SQLExpression> builder = ImmutableMap.builder();
-        builder.put(currencyCol, new Add(currencyCol, amount));
+        Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
+        updates.put(currencyCol, new Add(currencyCol, amount));
         if (updateAcc) {
             ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
-            builder.put(currencyAccCol, new Add(currencyAccCol, amount));
+            updates.put(currencyAccCol, new Add(currencyAccCol, amount));
         }
 
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
-        int count = updatePartial(MemberAccountRecord.class, key, key, builder.build());
+        int count = updatePartial(key, updates);
         if (count == 0) {
             // accumulate should always work, so if we mod'd 0 rows, it means there's no member
             throw new DatabaseException(
