@@ -100,7 +100,7 @@ public class MoneyConfigObject extends ConfigObject
     public int barPoolSize = 100000;
 
     /** The target bar/coin exchange rate. */
-    public float targetExchangeRate = 3000;
+    public float targetExchangeRate = 10000;
 
     /** The amount of USD cents each bar currently costs (for display purposes). */
     public int barCost = 9;
