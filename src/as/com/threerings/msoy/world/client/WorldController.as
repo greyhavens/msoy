@@ -117,9 +117,6 @@ public class WorldController extends MsoyController
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
 
-    /** Command to open a dialog viewing all the room items. */
-    public static const VIEW_ROOM_ITEMS :String = "ViewRoomItems";
-
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
 
@@ -385,7 +382,7 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.GENERAL.get("b.editScene"), icon: ROOM_EDIT_ICON,
             command: ROOM_EDIT, enabled: roomView.getRoomController().canManageRoom() });
         menuData.push({ label: Msgs.GENERAL.get("b.viewItems"),
-            command: VIEW_ROOM_ITEMS });
+            callback: roomView.viewRoomItems });
         menuData.push({ label: Msgs.GENERAL.get("b.comment"), icon: CommentButton,
             command: MsoyController.VIEW_COMMENT_PAGE });
         menuData.push({ label: Msgs.GENERAL.get("b.snapshot"), icon: SNAPSHOT_ICON,
@@ -420,14 +417,6 @@ public class WorldController extends MsoyController
         };
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
         isvc.getCatalogId(_wctx.getClient(), ident, _wctx.resultListener(resultHandler));
-    }
-
-    /**
-     * Handles the VIEW_ROOM_ITEMS command.
-     */
-    public function handleViewRoomItems () :void
-    {
-        RoomView(_wctx.getPlaceView()).viewRoomItems();
     }
 
     /**
