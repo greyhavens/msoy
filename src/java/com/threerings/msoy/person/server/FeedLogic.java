@@ -3,12 +3,15 @@
 
 package com.threerings.msoy.person.server;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -22,12 +25,19 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
+import com.google.code.facebookapi.IFeedImage;
+import com.google.code.facebookapi.FeedImage;
+
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.gwt.ExternalAuther;
 
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -45,6 +55,8 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides new feed related services to servlets and other blocking thread entities.
@@ -249,6 +261,54 @@ public class FeedLogic
         _feedRepo.publishSelfMessage(targetId, actorId, type, StringUtil.join(args, "\t"));
     }
 
+    /**
+     * Publishes a feed message to the specified member's friends indicating that they earned a
+     * trophy. Handles the further publication of that trophy to Facebook or other external sources
+     * as appropriate.
+     */
+    public void publishTrophyEarned (int memberId, String name, MediaDesc trophyMedia,
+                                     int gameId, String gameName, String gameDesc)
+    {
+        // publish to our local Whirled feed
+        publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
+                             name, gameId, MediaDesc.mdToString(trophyMedia));
+
+        // if the member has a Facebook session key, try publishing to Facebook as well
+        String sessionKey = _memberRepo.lookupExternalSessionKey(ExternalAuther.FACEBOOK, memberId);
+        if (sessionKey == null || gameDesc == null) {
+            return;
+        }
+
+        // TODO: if the game has its own Facebook app and has configured a trophy story, we want to
+        // emit that story to that app rather than to Whirled
+
+        String actionURL = DeploymentConfig.facebookCanvasUrl +
+            "?game=" + gameId + "&vec=v.fbtrophy";
+        Map<String, String> data = ImmutableMap.of(
+            "trophy", name, "game", gameName, "game_desc", gameDesc, "action_url", actionURL);
+
+        List<IFeedImage> images = Lists.newArrayList();
+        try {
+            images.add(new FeedImage(new URL(trophyMedia.getMediaPath()), new URL(actionURL)));
+        } catch (MalformedURLException mue) {
+            log.warning("Failed to add image to trophy story", "trophy", trophyMedia.getMediaPath(),
+                        "action", actionURL, "error", mue);
+            // post the image anyway without images
+        }
+
+        Long storyId = 80254483363L; // TODO
+        try {
+            if (!_faceLogic.getFacebookClient(sessionKey).feed_publishUserAction(
+                    storyId, data, images, Collections.<Long>emptyList(), null, 0)) {
+                log.info("Failed to publish trophy story", "storyId", storyId, "for", memberId);
+            }
+        } catch (Exception e) {
+            log.warning("Failed to post trophy to Facebook", "memId", memberId, "name", name,
+                        "error", e);
+        }
+    }
+
+    @Inject protected FacebookLogic _faceLogic;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;

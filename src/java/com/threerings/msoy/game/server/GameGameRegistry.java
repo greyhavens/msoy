@@ -64,7 +64,6 @@ import com.whirled.game.server.PropertySpaceDelegate;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -90,7 +89,6 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
-import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.avrg.client.AVRService;
@@ -364,6 +362,10 @@ public class GameGameRegistry
         final Trophy trec = trophy.toTrophy();
         trec.description = description;
 
+        // look up the game's description which we should have around
+        LobbyManager lmgr = _lobbies.get(trophy.gameId);
+        final String gameDesc = (lmgr == null) ? null : lmgr.getGameContent().game.description;
+
         _invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             @Override
             public void invokePersistent () throws Exception {
@@ -375,9 +377,8 @@ public class GameGameRegistry
 
                 if (!GameUtil.isDevelopmentVersion(trophy.gameId)) {
                     // publish the trophy earning event to the member's feed
-                    _feedLogic.publishMemberMessage(
-                        trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                        trophy.name, trophy.gameId, MediaDesc.mdToString(trec.trophyMedia));
+                    _feedLogic.publishTrophyEarned(trophy.memberId, trophy.name, trec.trophyMedia,
+                                                   trophy.gameId, gameName, gameDesc);
 
                     // report the trophy award to panopticon
                     _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);

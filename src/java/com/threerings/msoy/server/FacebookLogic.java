@@ -25,8 +25,7 @@ public class FacebookLogic
      */
     public FacebookJaxbRestClient getFacebookClient ()
     {
-        return new FacebookJaxbRestClient(SERVER_URL, requireAPIKey(), requireSecret(),
-                                          null, CONNECT_TIMEOUT, READ_TIMEOUT);
+        return getFacebookClient((String)null);
     }
 
     /**
@@ -34,8 +33,15 @@ public class FacebookLogic
      */
     public FacebookJaxbRestClient getFacebookClient (FacebookCreds creds)
     {
-        return new FacebookJaxbRestClient(SERVER_URL, requireAPIKey(), requireSecret(),
-                                          creds.sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
+        return getFacebookClient(creds.sessionKey);
+    }
+
+    /**
+     * Returns a Facebook client bound to the supplied user's session.
+     */
+    public FacebookJaxbRestClient getFacebookClient (String sessionKey)
+    {
+        return getFacebookClient(requireAPIKey(), requireSecret(), sessionKey);
     }
 
     /**
@@ -43,8 +49,14 @@ public class FacebookLogic
      */
     public FacebookJaxbRestClient getFacebookClient (FacebookServlet.FacebookAppCreds creds)
     {
-        return new FacebookJaxbRestClient(SERVER_URL, creds.apiKey, creds.appSecret,
-                                          creds.sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
+        return getFacebookClient(creds.apiKey, creds.appSecret, creds.sessionKey);
+    }
+
+    protected FacebookJaxbRestClient getFacebookClient (
+        String apiKey, String appSecret, String sessionKey)
+    {
+        return new FacebookJaxbRestClient(
+            SERVER_URL, apiKey, appSecret, sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
     }
 
     protected String requireAPIKey ()
