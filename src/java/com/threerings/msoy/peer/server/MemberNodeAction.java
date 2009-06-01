@@ -12,8 +12,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.server.MemberLocator;
 
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-
 /**
  * An action to be invoked on every server on which a member is logged in. You must read {@link
  * PeerManager.NodeAction} for caveats before using this class.
@@ -23,6 +21,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     public MemberNodeAction (int memberId)
     {
         _memberId = memberId;
+        _memberKey = MsoyAuthName.makeKey(memberId);
     }
 
     public MemberNodeAction ()
@@ -32,7 +31,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {
-        return ((MsoyNodeObject)nodeobj).clients.containsKey(MsoyAuthName.makeKey(_memberId));
+        return nodeobj.clients.containsKey(_memberKey);
     }
 
     @Override // from PeerManager.NodeAction
@@ -47,6 +46,8 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     protected abstract void execute (MemberObject memobj);
 
     protected int _memberId;
+
+    protected transient MsoyAuthName _memberKey;
 
     /** Used to look up member objects. */
     @Inject protected transient MemberLocator _locator;
