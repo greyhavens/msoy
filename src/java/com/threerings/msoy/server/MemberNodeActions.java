@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -29,6 +30,7 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.MsoyUserOccupantInfo;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -320,13 +322,29 @@ public class MemberNodeActions
 
         @Override protected void execute (MemberObject memobj) {
             memobj.setTokens(_tokens);
+            updateOccInfo(memobj);
         }
 
         @Override protected void execute (PlayerObject plobj) {
             plobj.setTokens(_tokens);
+            updateOccInfo(plobj);
+        }
+
+        /**
+         * Update the OccupantInfo of the specified body object.
+         */
+        protected void updateOccInfo (BodyObject body)
+        {
+            _bodyMan.updateOccupantInfo(body, new OccupantInfo.Updater<OccupantInfo>() {
+                public boolean update (OccupantInfo info) {
+                    return ((MsoyUserOccupantInfo) info).updateTokens(_tokens);
+                }
+            });
         }
 
         protected MsoyTokenRing _tokens;
+
+        @Inject protected transient BodyManager _bodyMan;
     }
 
     protected static class ReportUnreadMail extends MemberNodeAction

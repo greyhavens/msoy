@@ -117,7 +117,8 @@ public class MemberSprite extends ActorSprite
                                                       newInfo :OccupantInfo) :Boolean
     {
         return super.isNameChangeRequired(oldInfo, newInfo) || // is true if oldInfo == null
-            MemberInfo(oldInfo).isAway() != MemberInfo(newInfo).isAway();
+            (MemberInfo(oldInfo).isSubscriber() != MemberInfo(newInfo).isSubscriber()) ||
+            (MemberInfo(oldInfo).isAway() != MemberInfo(newInfo).isAway());
     }
 
     // from OccupantSprite

@@ -5,6 +5,7 @@ package com.threerings.msoy.game.data;
 
 import com.whirled.game.data.WhirledGameOccupantInfo;
 
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 
 import com.threerings.msoy.party.data.PartyOccupantInfo;
@@ -23,7 +24,7 @@ public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
         super(plObj);
         PartySummary party = plObj.getParty();
         updatePartyId((party == null) ? 0 : party.id);
-        _subscriber = plObj.tokens.isSubscriber();
+        updateTokens(plObj.tokens);
     }
 
     // from MsoyUserOccupantInfo
@@ -48,6 +49,17 @@ public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
         return false;
     }
 
+    // from MsoyUserOccupantInfo
+    public boolean updateTokens (MsoyTokenRing tokens)
+    {
+        boolean changed = false;
+        if (isSubscriber() != tokens.isSubscriber()) {
+            _subscriber = !_subscriber;
+            changed = true;
+        }
+        return changed;
+    }
+
     @Override
     protected void toString (StringBuilder buf)
     {
@@ -57,4 +69,5 @@ public class ParlorGameOccupantInfo extends WhirledGameOccupantInfo
 
     protected int _partyId;
     protected boolean _subscriber;
+    // if we add more flags, we can create a _flags byte and combine subscriber into it
 }

@@ -201,8 +201,9 @@ class RoomOccupantRenderer extends HBox
             var record :RoomOccupantRecord = dataArray[1] as RoomOccupantRecord;
             var name :VizMemberName = record.name as VizMemberName;
             if (_currentName == null || !_currentName.equals(name) ||
-                _currentName.toString() != name.toString() ||
-                !_currentName.getPhoto().equals(name.getPhoto())) {
+                    _currentName.toString() != name.toString() ||
+                    _currentSubscriber != record.subscriber ||
+                    !_currentName.getPhoto().equals(name.getPhoto())) {
                 if (_currentLabel != null && contains(DisplayObject(_currentLabel))) {
                     removeChild(DisplayObject(_currentLabel));
                 }
@@ -210,6 +211,7 @@ class RoomOccupantRenderer extends HBox
                 addChild(DisplayObject(_currentLabel));
                 _currentLabel.percentWidth = 100;
                 _currentName = name;
+                _currentSubscriber = record.subscriber;
             }
         } else {
             if (_currentLabel != null && contains(DisplayObject(_currentLabel))) {
@@ -222,4 +224,5 @@ class RoomOccupantRenderer extends HBox
 
     protected var _currentLabel :NameLabel;
     protected var _currentName :VizMemberName;
+    protected var _currentSubscriber :Boolean;
 }

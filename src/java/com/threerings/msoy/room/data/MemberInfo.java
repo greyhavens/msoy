@@ -5,6 +5,7 @@ package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -44,11 +45,7 @@ public class MemberInfo extends ActorInfo
         updateIsManager(memobj);
         updatePartyId(memobj.partyId);
         updateIsAway(memobj);
-
-        // indicate if the member is a subscriber (don't worry about changing it while in a room)
-        if (memobj.tokens.isSubscriber()) {
-            _flags |= SUBSCRIBER;
-        }
+        updateTokens(memobj.tokens);
     }
 
     /** Used for unserialization. */
@@ -119,6 +116,17 @@ public class MemberInfo extends ActorInfo
         } else {
             _flags &= ~MANAGER;
         }
+    }
+
+    // from MsoyUserOccupantInfo
+    public boolean updateTokens (MsoyTokenRing tokens)
+    {
+        boolean changed = false;
+        if (isSubscriber() != tokens.isSubscriber()) {
+            _flags ^= SUBSCRIBER;
+            changed = true;
+        }
+        return changed;
     }
 
     /**

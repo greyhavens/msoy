@@ -8,9 +8,12 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -40,7 +43,7 @@ public class SubscriptionLogic
         // let's grant bars to subscribers that need them, every hour
         _cronLogic.scheduleAt(1, new Runnable() {
             public void run () {
-                _batchInvoker.postUnit(new Invoker.Unit("SubscriptionLogic.grantBars") {
+                _batchInvoker.postUnit(new Invoker.Unit(toString()) {
                     public boolean invoke () {
                         grantBars();
                         return false;
@@ -52,6 +55,30 @@ public class SubscriptionLogic
                 return "SubscriptionLogic.grantBars";
             }
         });
+
+//        // TEMP TEMP TEMP
+//        if (DeploymentConfig.devDeployment) {
+//            new Interval(_batchInvoker) {
+//                public void expired () {
+//                    flip = !flip;
+//                    try {
+//                        if (flip) {
+//                            noteSubscriptionStarted("ray@bogocorp.com", 1);
+//                            System.err.println("==== Made ray a subscriber");
+//                        } else {
+//                            noteSubscriptionEnded("ray@bogocorp.com");
+//                            System.err.println("==== Made ray NOT a subscriber");
+//                        }
+//                    } catch (Exception e) {
+//                        log.warning("Test problem", e);
+//                    }
+//                }
+//
+//                protected boolean flip;
+//
+//            }.schedule(15 * 1000, true);
+//        }
+//        // END: TEMP TEMP TEMP
     }
 
     /**
@@ -72,6 +99,7 @@ public class SubscriptionLogic
         // make them a subscriber if not already
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {
             _memberRepo.storeFlags(mrec);
+            MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
         }
         // create or update their subscription record
         int barGrantsLeft = months; // make explicit this equivalence
@@ -103,6 +131,7 @@ public class SubscriptionLogic
         }
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, false)) {
             _memberRepo.storeFlags(mrec);
+            MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
         } else {
             log.warning("Weird! A subscription-end message arrived for a non-subscriber",
                 "accountName", accountName);
@@ -112,11 +141,9 @@ public class SubscriptionLogic
         // look up their subscription record and make sure the end time is now.
         int barGrantsLeft = _subscripRepo.noteSubscriptionEnded(mrec.memberId);
         if (barGrantsLeft != 0) {
-            log.warning("Shazbot! Bars left to be granted is not 0!",
+            log.warning("Shazbot! Bars grants left is not 0!",
                 "accountName", accountName, "grantsLeft", barGrantsLeft, new Exception());
         }
-
-        // TODO: update their runtime subscription state
     }
 
     /**
