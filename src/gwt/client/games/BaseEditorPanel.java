@@ -68,7 +68,7 @@ public class BaseEditorPanel extends SmartTable
     protected int addTip (String text)
     {
         int row = getRowCount();
-        setText(row, 1, text, 1, "tipLabel");
+        setWidget(row, 1, MsoyUI.createHTML(text, null), 1, "tipLabel");
         return row;
     }
 

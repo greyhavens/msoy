@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
@@ -159,6 +160,18 @@ public class CodeEditorPanel extends BaseEditorPanel
             }
         });
 
+        addSpacer();
+
+        final TextArea params = MsoyUI.createTextArea(config.params, 40, 3);
+        addRow(_msgs.egParams(), params, new Command() {
+            public void execute () {
+                config.params = params.getText().trim();
+            }
+        });
+        addTip(_msgs.egParamsTip());
+
+        addSpacer();
+
         // add a special binder that recreates our XML configuration from the POJO
         _binders.add(new Command() {
             public void execute () {
@@ -166,8 +179,6 @@ public class CodeEditorPanel extends BaseEditorPanel
                 code.config = formatConfig(config);
             }
         });
-
-        addSpacer();
 
         // add our confirmation ui and update interface
         Button save = addSaveRow();
@@ -239,6 +250,20 @@ public class CodeEditorPanel extends BaseEditorPanel
         config.noprogress = (xml.getElementsByTagName("noprogress").getLength() > 0);
         config.agentMPOnly = (xml.getElementsByTagName("agentmponly").getLength() > 0);
         config.roomless = (xml.getElementsByTagName("roomless").getLength() > 0);
+
+        // extract our custom parameters
+        NodeList params = xml.getElementsByTagName("params");
+        config.params = "";
+        if (params.getLength() > 0) {
+            Element param = (Element)params.item(0);
+            Node child = param.getFirstChild();
+            while (child != null) {
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
+                    config.params += child + "\n";
+                }
+                child = child.getNextSibling();
+            }
+        }
 
         return config;
     }
