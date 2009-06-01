@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.server.persist;
+package com.threerings.msoy.room.server;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -46,30 +45,14 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
-import com.threerings.whirled.server.persist.SceneRepository;
-import com.threerings.whirled.util.NoSuchSceneException;
-import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
-import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.RecordFunctions;
-import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.persist.AudioRepository;
-import com.threerings.msoy.item.server.persist.DecorRecord;
-import com.threerings.msoy.item.server.persist.DecorRepository;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
@@ -77,7 +60,6 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.data.SceneOwnershipUpdate;
-import com.threerings.msoy.room.server.RoomExtras;
 
 import static com.threerings.msoy.Log.log;
 
@@ -86,7 +68,6 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @BlockingThread
 public class MsoySceneRepository extends DepotRepository
-    implements SceneRepository
 {
     @Inject public MsoySceneRepository (PersistenceContext ctx)
     {
@@ -185,100 +166,15 @@ public class MsoySceneRepository extends DepotRepository
         return names;
     }
 
-    // from interface SceneRepository
-    public void applyAndRecordUpdate (SceneModel model, SceneUpdate update)
+    /**
+     * Loads all of the furni records for the specified scene.
+     */
+    public List<SceneFurniRecord> loadFurni (int sceneId)
     {
-        // ensure that the update has been applied
-        int targetVers = update.getSceneVersion() + update.getVersionIncrement();
-        if (model.version != targetVers) {
-            log.warning("Refusing to apply update, wrong version [want=" + model.version +
-                        ", have=" + targetVers + ", update=" + update + "].");
-            return;
-        }
-        // now pass it to the accumulator who will take it from here
-        _accumulator.add(update);
-    }
-
-    // from interface SceneRepository
-    public SceneModel loadSceneModel (int sceneId)
-        throws NoSuchSceneException
-    {
-        SceneRecord scene = loadScene(sceneId);
-        if (scene == null) {
-            throw new NoSuchSceneException(sceneId);
-        }
-        MsoySceneModel model = scene.toSceneModel();
-
-        // populate the name of the owner
-        switch (model.ownerType) {
-        case MsoySceneModel.OWNER_TYPE_MEMBER:
-            model.ownerName = _memberRepo.loadMemberName(model.ownerId);
-            break;
-
-        case MsoySceneModel.OWNER_TYPE_GROUP:
-            GroupRecord grec = _groupRepo.loadGroup(model.ownerId);
-            if (grec != null) {
-                model.ownerName = grec.toGroupName();
-                model.gameId = grec.gameId;
-            }
-            break;
-
-        default:
-            log.warning("Unable to populate owner name, unknown ownership type", new Exception());
-            break;
-        }
-
-        // load up all of our furni data, specifically using a safe caching strategy
-        List<SceneFurniRecord> records = findAll(
-            SceneFurniRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-                new Where(SceneFurniRecord.SCENE_ID, sceneId)));
-        List<FurniData> flist = Lists.newArrayList();
-        for (SceneFurniRecord furni : records) {
-            flist.add(furni.toFurniData());
-        }
-        model.furnis = flist.toArray(new FurniData[flist.size()]);
-
-        // load up our room decor
-        if (model.decor.itemId != 0) {
-            DecorRecord record = _decorRepo.loadItem(model.decor.itemId);
-            if (record != null) {
-                model.decor = (Decor) record.toItem();
-            }
-        }
-        if (model.decor.itemId == 0) { // still the default?
-            // the scene specified no or an invalid decor, just load up the default
-            model.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-        }
-
-        return model;
-    }
-
-    // from interface SceneRepository
-    public UpdateList loadUpdates (int sceneId)
-    {
-        return new UpdateList(); // we don't do scene updates
-    }
-
-    // from interface SceneRepository
-    public Object loadExtras (int sceneId, SceneModel model)
-    {
-        MsoySceneModel mmodel = (MsoySceneModel) model;
-        Set<ItemIdent> memoryIds = Sets.newHashSet();
-        for (FurniData furni : mmodel.furnis) {
-            if (furni.itemType != Item.NOT_A_TYPE) {
-                memoryIds.add(furni.getItemIdent());
-            }
-        }
-        if (mmodel.decor != null) {
-            memoryIds.add(mmodel.decor.getIdent());
-        }
-        RoomExtras extras = new RoomExtras();
-        if (memoryIds.size() > 0) {
-            extras.memories = _memoryRepo.loadMemories(memoryIds);
-        }
-        extras.playlist = Lists.transform(_audioRepo.loadItemsByLocation(sceneId),
-            new ItemRecord.ToItem<Audio>());
-        return extras;
+        // load up all of our furni data, specifically using a safe caching strategy (TODO: do we
+        // need to be skipping the cache here? we're smarter about collection caching...)
+        return findAll(SceneFurniRecord.class, CacheStrategy.RECORDS,
+                       new Where(SceneFurniRecord.SCENE_ID, sceneId));
     }
 
     /**
@@ -334,7 +230,7 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Saves the specified update to the database.
      */
-    protected void persistUpdate (SceneUpdate update)
+    public void persistUpdate (SceneUpdate update)
     {
         int finalVersion = update.getSceneVersion() + update.getVersionIncrement();
         persistUpdates(Collections.singleton(update), finalVersion);
@@ -345,7 +241,7 @@ public class MsoySceneRepository extends DepotRepository
      * updates are caught and logged so that one update application failure does not prevent
      * subsequent updates from failing.
      */
-    protected void persistUpdates (Iterable<? extends SceneUpdate> updates, int finalVersion)
+    public void persistUpdates (Iterable<? extends SceneUpdate> updates, int finalVersion)
     {
         int sceneId = 0;
         for (SceneUpdate update : updates) {
@@ -599,14 +495,6 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     protected RatingRepository _ratingRepo;
-
-    // dependencies
-    @Inject protected AudioRepository _audioRepo;
-    @Inject protected DecorRepository _decorRepo;
-    @Inject protected GroupRepository _groupRepo;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected MemoryRepository _memoryRepo;
-    @Inject protected UpdateAccumulator _accumulator;
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
