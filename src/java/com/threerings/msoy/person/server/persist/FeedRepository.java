@@ -30,6 +30,7 @@ import com.samskivert.depot.operator.SQLOperator;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.server.persist.RepositoryUtil;
 
 import static com.threerings.msoy.Log.log;

@@ -92,7 +92,7 @@ public class CatalogLogic
 
     /**
      * A simplified method for loading catalog listings. The caller must pass the results to {@link
-     * #resolveCardNames} if they want the creator names resolved.
+     * ItemLogic#resolveCardNames} if they want the creator names resolved.
      */
     public List<ListingCard> loadCatalog (MemberRecord mrec, byte itemType, byte sortBy, int rows)
         throws ServiceException

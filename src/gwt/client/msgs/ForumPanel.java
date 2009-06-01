@@ -48,8 +48,7 @@ public class ForumPanel extends TitledListPanel
 
     /**
      * Creates a new panel in the given mode with the given group id. For UNREAD mode, the groupId
-     * should always be 0. For GROUP and UNREAD modes, the panel will not be functional until
-     * {@link #setPage(String, int)} is called for the first time.
+     * should always be 0.
      */
     public ForumPanel (ForumModels fmodels, Mode mode, final int groupId, String query, int page)
     {

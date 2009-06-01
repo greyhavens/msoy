@@ -95,8 +95,6 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ItemPrices;
 
-import com.threerings.msoy.money.server.MoneyExchange;
-
 import static com.threerings.msoy.Log.log;
 
 /**

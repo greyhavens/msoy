@@ -5,10 +5,8 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -16,8 +14,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.In;
 import com.samskivert.util.IntIntMap;

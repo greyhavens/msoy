@@ -28,7 +28,6 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
-import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 
@@ -1090,7 +1089,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads up and returns the most recently provided external session key for the specified
+     * Loads up and returns the most recently saved external session key for the specified
      * member. Returns null if the member has no mapping for that authentication source or no saved
      * session key.
      */
