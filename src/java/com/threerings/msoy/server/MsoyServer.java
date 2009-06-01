@@ -80,11 +80,11 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.server.MsoySceneFactory;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.SceneLogic;
 import com.threerings.msoy.spam.server.SpamLogic;
 import com.threerings.msoy.web.server.MsoyHttpServer;
-import com.threerings.msoy.world.tour.server.TourManager;
 import com.threerings.msoy.world.server.WorldManager;
+import com.threerings.msoy.world.tour.server.TourManager;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -108,7 +108,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(CrowdPeerManager.class).to(MsoyPeerManager.class);
             bind(ChatChannelManager.class).to(MsoyChatChannelManager.class);
             // vilya whirled dependencies
-            bind(SceneRepository.class).to(MsoySceneRepository.class);
+            bind(SceneRepository.class).to(SceneLogic.class);
             bind(SceneFactory.class).to(MsoySceneFactory.class);
             bind(SceneRegistry.class).to(MsoySceneRegistry.class);
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
