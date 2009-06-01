@@ -66,6 +66,17 @@ public abstract class MsoyBaseServer extends WhirledServer
         _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
         _perCtx.initializeRepositories(true);
 
+        // create and set up our configuration registry, admin service and runtime config (so that
+        // our runtime config values are loaded and ready before any other initialization happens)
+        final ConfigRegistry confReg = createConfigRegistry();
+        AdminProvider.init(_invmgr, confReg);
+        _runtime.init(_omgr, confReg);
+
+        // increase highest bucket for invoker profiling and decrease resolution for batch invoker
+        _invoker.setProfilingParameters(50, 40);
+        _authInvoker.setProfilingParameters(50, 40);
+        _batchInvoker.setProfilingParameters(500, 30);
+
         super.init(injector);
 
         // when we shutdown, the batch invoker needs to do some jockeying
@@ -80,25 +91,14 @@ public abstract class MsoyBaseServer extends WhirledServer
         // start the batch invoker thread
         _batchInvoker.start();
 
-        // increase the highest bucket for invoker profiling and decrease resolution for
-        // batch invoker
-        _invoker.setProfilingParameters(50, 40);
-        _authInvoker.setProfilingParameters(50, 40);
-        _batchInvoker.setProfilingParameters(500, 30);
-
         // set up our default object access controller
         _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
-        // create and set up our configuration registry, admin service and runtime config
-        final ConfigRegistry confReg = createConfigRegistry();
-        AdminProvider.init(_invmgr, confReg);
-        _runtime.init(_omgr, confReg);
-
-        // initialize our bureau manager
-        _bureauMgr.init(getListenPorts()[0]);
-
         // set up the right client factories
         configSessionFactory();
+
+        // initialize our bureau manager, then set its additional factories
+        _bureauMgr.init(getListenPorts()[0]);
         _bureauMgr.configClientFactories();
     }
 
