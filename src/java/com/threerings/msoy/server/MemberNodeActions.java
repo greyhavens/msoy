@@ -34,6 +34,8 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.game.data.PlayerObject;
+
 import com.threerings.msoy.group.data.all.GroupMembership;
 
 import com.threerings.msoy.item.server.ItemManager;
@@ -47,6 +49,7 @@ import com.threerings.msoy.party.server.PartyRegistry;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MemberPlayerNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -305,7 +308,7 @@ public class MemberNodeActions
         @Inject protected transient BodyManager _bodyMan;
     }
 
-    protected static class TokensChanged extends MemberNodeAction
+    protected static class TokensChanged extends MemberPlayerNodeAction
     {
         public TokensChanged (int memberId, MsoyTokenRing tokens) {
             super(memberId);
@@ -317,6 +320,10 @@ public class MemberNodeActions
 
         @Override protected void execute (MemberObject memobj) {
             memobj.setTokens(_tokens);
+        }
+
+        @Override protected void execute (PlayerObject plobj) {
+            plobj.setTokens(_tokens);
         }
 
         protected MsoyTokenRing _tokens;
