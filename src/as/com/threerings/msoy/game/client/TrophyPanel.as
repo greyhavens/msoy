@@ -11,8 +11,6 @@ import mx.core.ScrollPolicy;
 import mx.controls.Label;
 import mx.controls.Text;
 
-import com.threerings.util.Predicates;
-
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
@@ -51,7 +49,9 @@ public class TrophyPanel extends FloatingPanel
         if (trophies == null) {
             return [];
         }
-        return trophies.filter(Predicates.notNull());
+        return trophies.filter(function (trophy :Trophy, ... ignored) :Boolean {
+            return (trophy.whenEarned != null);
+        });
     }
 
     public function TrophyPanel (ctx :GameContext, trophies :Array, gameName :String,
