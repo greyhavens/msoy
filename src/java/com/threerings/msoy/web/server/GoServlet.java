@@ -251,9 +251,6 @@ public class GoServlet extends HttpServlet
         Object[] argArray = new Object[args.size()];
         args.toArray(argArray);
         outputGoogle(rsp, title, desc, upLink, argArray);
-        if (++_googlePages <= MAX_GOOGLE_PAGES_TO_LOG) {
-            log.info("Served google bot page", "title", title);
-        }
     }
 
     /**
@@ -293,6 +290,11 @@ public class GoServlet extends HttpServlet
             out.println("</body></html>");
         } finally {
             StreamUtil.close(out);
+        }
+
+        // TEMP
+        if (++_googlePages <= MAX_GOOGLE_PAGES_TO_LOG) {
+            log.info("Served google bot page", "title", title);
         }
     }
 
