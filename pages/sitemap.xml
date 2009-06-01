@@ -15,4 +15,9 @@
         <changefreq>always</changefreq>
         <priority>0.6</priority>
     </url>
+    <url>
+        <loc>http://www.whirled.com/go/groups</loc>
+        <changefreq>always</changefreq>
+        <priority>0.6</priority>
+    </url>
 </urlset>
