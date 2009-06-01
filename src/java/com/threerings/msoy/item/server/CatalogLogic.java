@@ -9,12 +9,15 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Tuple;
+
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.BuyResult;
+import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
@@ -22,6 +25,8 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -34,6 +39,32 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class CatalogLogic
 {
+    /** Used by {@link #loadCatalog} variants. */
+    public static class Query
+    {
+        public byte itemType;
+        public byte sortBy;
+        public String tag;
+        public int tagId;
+        public String search;
+        public int creatorId;
+        public int gameId;
+
+        public Query (byte itemType, byte sortBy) {
+            this.itemType = itemType;
+            this.sortBy = sortBy;
+        }
+
+        public Query (CatalogQuery query, int gameId) {
+            this.itemType = query.itemType;
+            this.sortBy = query.sortBy;
+            this.tag = query.tag;
+            this.search = query.search;
+            this.creatorId = query.creatorId;
+            this.gameId = gameId;
+        }
+    }
+
     /**
      * Purchase a particular catalog listing at its current listed price.
      *
@@ -57,6 +88,55 @@ public class CatalogLogic
     {
         return purchaseItem(buyer, itemType, _itemLogic.requireListing(itemType, catalogId, true),
                             currency, authedCost, memories);
+    }
+
+    /**
+     * A simplified method for loading catalog listings. The caller must pass the results to {@link
+     * #resolveCardNames} if they want the creator names resolved.
+     */
+    public List<ListingCard> loadCatalog (MemberRecord mrec, byte itemType, byte sortBy, int rows)
+        throws ServiceException
+    {
+        return Lists.transform(loadCatalog(mrec, new Query(itemType, sortBy), 0, rows),
+                               CatalogRecord.TO_CARD);
+    }
+
+    /**
+     * Loads raw catalog listings.
+     */
+    public List<CatalogRecord> loadCatalog (MemberRecord mrec, Query query, int offset, int rows)
+        throws ServiceException
+    {
+        return loadCatalog(mrec, query, offset, rows, false).left;
+    }
+
+    /**
+     * Loads catalog listings and the total count of matching listings.
+     */
+    public Tuple<List<CatalogRecord>, Integer> loadCatalog (
+        MemberRecord mrec, Query query, int offset, int rows, boolean loadCount)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
+
+        // resolve the id of the tag if one is needed
+        if (query.tagId == 0 && query.tag != null) {
+            query.tagId = repo.getTagRepository().getTagId(query.tag);
+        }
+
+        // build our word search once and share it for loadCatalog() and countListings()
+        ItemRepository<ItemRecord>.WordSearch context = repo.buildWordSearch(query.search);
+
+        // load the records themselves
+        List<CatalogRecord> records = repo.loadCatalog(
+            query.sortBy, showMature(mrec), context, query.tagId, query.creatorId, null,
+            query.gameId, offset, rows, _exchange.getRate());
+
+        // load the count, if desired
+        int count = !loadCount ? 0 :
+            repo.countListings(showMature(mrec), context, query.tagId, query.creatorId, null);
+
+        return Tuple.newTuple(records, count);
     }
 
     protected BuyResult<Item> purchaseItem (
@@ -117,8 +197,14 @@ public class CatalogLogic
         });
     }
 
+    protected static boolean showMature (MemberRecord mrec)
+    {
+        return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
+    }
+
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemoryRepository _memoryRepo;
+    @Inject protected MoneyExchange _exchange;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
 }

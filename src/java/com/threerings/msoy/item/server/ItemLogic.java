@@ -585,18 +585,6 @@ public class ItemLogic
     }
 
     /**
-     * Loads the specified number of records from the catalog using the supplied sort order. The
-     * caller must pass the results to {@link #resolveCardNames} if they want the creator names
-     * resolved.
-     */
-    public List<ListingCard> loadCatalog (byte itemType, byte sortBy, int count)
-        throws ServiceException
-    {
-        return Lists.transform(getRepository(itemType).loadCatalog(sortBy, count),
-                               CatalogRecord.TO_CARD);
-    }
-
-    /**
      * Resolves the member names in the supplied list of listing cards.
      */
     public void resolveCardNames (List<ListingCard> list)

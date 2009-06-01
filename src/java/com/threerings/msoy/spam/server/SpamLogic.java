@@ -41,6 +41,7 @@ import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.server.CatalogLogic;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -654,7 +655,8 @@ public class SpamLogic
 
         // load up items from new & hot and staff picks (x2), no dupes
         Set<ListingCard> resultSet = Sets.newHashSet();
-        resultSet.addAll(_itemLogic.loadCatalog(itemType, CatalogQuery.SORT_BY_NEW_AND_HOT, count));
+        resultSet.addAll(_catalogLogic.loadCatalog(
+                             null, itemType, CatalogQuery.SORT_BY_NEW_AND_HOT, count));
         resultSet.addAll(_itemLogic.resolveFavorites(
                              _faveRepo.loadRecentFavorites(memberIds, count * 2, itemType)));
 
@@ -1073,16 +1075,17 @@ public class SpamLogic
     protected MessageBundle _dmsgs;
 
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected CatalogLogic _catalogLogic;
     @Inject protected CronLogic _cronLogic;
+    @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected GroupLogic _groupLogic;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MailSender _mailSender;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected SpamRepository _spamRepo;
-    @Inject protected ItemLogic _itemLogic;
-    @Inject protected FavoritesRepository _faveRepo;
 
     /** Map of result codes to results. */
     protected static IntMap<Status> _lookup = IntMaps.newHashIntMap();

@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.StatType;
@@ -118,34 +119,21 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
         CatalogResult result = new CatalogResult();
-        List<ListingCard> list = Lists.newArrayList();
+        result.listings = Lists.newArrayList();
 
-        // if the type in question is not salable, return an empty list
+        // if the type in question is not salable, return an empty result
         if (!isSalable(query.itemType)) {
-            result.listings = list;
             return result;
         }
 
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
-        int tagId = (query.tag != null) ? repo.getTagRepository().getTagId(query.tag) : 0;
+        // pass the complexity buck off to the catalog logic
+        Tuple<List<CatalogRecord>, Integer> data = _catalogLogic.loadCatalog(
+            mrec, new CatalogLogic.Query(query, 0), offset, rows, includeCount);
+        result.listingCount = data.right;
 
-        // build our word search once and share it for loadCatalog() and countListings()
-        ItemRepository<ItemRecord>.WordSearch context = repo.buildWordSearch(query.search);
-
-        // fetch catalog records and loop over them
-        list.addAll(Lists.transform(repo.loadCatalog(query.sortBy, showMature(mrec), context, tagId,
-                                                     query.creatorId, null, 0, offset, rows),
-                                    CatalogRecord.TO_CARD));
-
-        // resolve the creator names for these listings
-        _itemLogic.resolveCardNames(list);
-
-        // if they want the total number of matches, compute that as well
-        if (includeCount) {
-            result.listingCount = repo.countListings(
-                showMature(mrec), context, tagId, query.creatorId, null);
-        }
-        result.listings = list;
+        // convert the listings to runtime records and resolve their names
+        result.listings.addAll(Lists.transform(data.left, CatalogRecord.TO_CARD));
+        _itemLogic.resolveCardNames(result.listings);
 
         // log this for posterity
         final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
@@ -606,10 +594,10 @@ public class CatalogServlet extends MsoyServiceServlet
             if (!sitem.isSalable()) {
                 continue;
             }
-            ItemRepository<ItemRecord> srepo = _itemLogic.getRepository(sitem.getType());
-            List<CatalogRecord> slist = srepo.loadCatalog(
-                CatalogQuery.SORT_BY_LIST_DATE, showMature(mrec), null, 0,
-                0, null, info.suiteId, 0, Short.MAX_VALUE);
+            CatalogLogic.Query query = new CatalogLogic.Query(
+                sitem.getType(), CatalogQuery.SORT_BY_LIST_DATE);
+            query.gameId = info.suiteId;
+            List<CatalogRecord> slist = _catalogLogic.loadCatalog(mrec, query, 0, Short.MAX_VALUE);
             info.listings.addAll(Lists.transform(slist, CatalogRecord.TO_CARD));
         }
 
@@ -619,10 +607,12 @@ public class CatalogServlet extends MsoyServiceServlet
                 info.suiteTag);
             if (tagId != 0) {
                 for (byte tagType : SUITE_TAG_TYPES) {
-                    ItemRepository<ItemRecord> trepo = _itemLogic.getRepository(tagType);
-                    List<CatalogRecord> tlist = trepo.loadCatalog(
-                        CatalogQuery.SORT_BY_LIST_DATE, showMature(mrec), null, tagId,
-                        info.creatorId, null, 0, 0, Short.MAX_VALUE);
+                    CatalogLogic.Query tquery = new CatalogLogic.Query(
+                        tagType, CatalogQuery.SORT_BY_LIST_DATE);
+                    tquery.tagId = tagId;
+                    tquery.creatorId = info.creatorId;
+                    List<CatalogRecord> tlist = _catalogLogic.loadCatalog(
+                        mrec, tquery, 0, Short.MAX_VALUE);
                     info.listings.addAll(Lists.transform(tlist, CatalogRecord.TO_CARD));
                 }
             }
@@ -632,21 +622,6 @@ public class CatalogServlet extends MsoyServiceServlet
         _itemLogic.resolveCardNames(info.listings);
 
         return info;
-    }
-
-    /**
-     * Helper function for {@link #loadShopData}.
-     */
-    protected ListingCard[] loadTopItems (MemberRecord mrec, byte type)
-        throws ServiceException
-    {
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-        List<ListingCard> cards = Lists.newArrayList();
-        for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_NEW_AND_HOT,
-            showMature(mrec), null, 0, 0, null, 0, 0, ShopData.TOP_ITEM_COUNT)) {
-            cards.add(crec.toListingCard());
-        }
-        return cards.toArray(new ListingCard[cards.size()]);
     }
 
     /**
@@ -676,11 +651,6 @@ public class CatalogServlet extends MsoyServiceServlet
                         "action", action, "item", iid);
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
-    }
-
-    protected boolean showMature (MemberRecord mrec)
-    {
-        return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
     }
 
     // our dependencies

@@ -680,14 +680,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * A simplified method for loading the top catalog records.
-     */
-    public List<CatalogRecord> loadCatalog (byte sortBy, int rows)
-    {
-        return loadCatalog(sortBy, false, null, 0, 0, null, 0, 0, rows);
-    }
-
-    /**
      * Loads all items in the catalog.
      *
      * TODO: This method currently fetches CatalogRecords through a join against ItemRecord,
@@ -698,7 +690,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CatalogRecord> loadCatalog (
         byte sortBy, boolean mature, WordSearch context, int tag, int creator,
-        Float minRating, int gameId, int offset, int rows)
+        Float minRating, int gameId, int offset, int rows, float exchangeRate)
     {
         LinkedList<QueryClause> clauses = Lists.newLinkedList();
         clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
@@ -716,14 +708,14 @@ public abstract class ItemRepository<T extends ItemRecord>
             break;
         case CatalogQuery.SORT_BY_RATING:
             addOrderByRating(obExprs, obOrders);
-            addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC, exchangeRate);
             break;
         case CatalogQuery.SORT_BY_PRICE_ASC:
-            addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC);
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.ASC, exchangeRate);
             addOrderByRating(obExprs, obOrders);
             break;
         case CatalogQuery.SORT_BY_PRICE_DESC:
-            addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC);
+            addOrderByPrice(obExprs, obOrders, OrderBy.Order.DESC, exchangeRate);
             addOrderByRating(obExprs, obOrders);
             break;
         case CatalogQuery.SORT_BY_PURCHASES:
@@ -1490,7 +1482,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
-                                    OrderBy.Order order)
+                                    OrderBy.Order order, float exchangeRate)
     {
         // Multiply bar prices by the current exchange rate.
         //     adjustedCost = cost * Math.max(1, currencyByteVal * exchangeRate)
@@ -1502,7 +1494,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         exprs.add(new Mul(getCatalogColumn(CatalogRecord.COST),
                           new FunctionExp("GREATEST", new ValueExp(1),
                                           new Mul(getCatalogColumn(CatalogRecord.CURRENCY),
-                                                  new ValueExp(_exchange.getRate())))));
+                                                  new ValueExp(exchangeRate)))));
         orders.add(order);
     }
 
@@ -1722,7 +1714,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
-    @Inject protected MoneyExchange _exchange;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;
