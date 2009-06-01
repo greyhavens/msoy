@@ -35,7 +35,6 @@ import client.comment.CommentsPanel;
 import client.game.GameNamePanel;
 import client.game.PlayButton;
 import client.shell.CShell;
-import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.NaviTabPanel;
 import client.ui.Rating;
@@ -95,7 +94,7 @@ public class GameDetailPanel extends SmartTable
         HorizontalPanel mbits = new HorizontalPanel();
         mbits.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         mbits.add(MsoyUI.makeShareButton(
-                      Pages.GAMES, Args.compose("d", _gameId), _dmsgs.xlate("itemType" + Game.GAME),
+                      Pages.GAMES, Args.compose("d", _gameId), _msgs.gdpGame(),
                       info.name, info.description, info.shotMedia));
         shot.add(mbits);
         setWidget(0, 0, shot);
@@ -211,7 +210,6 @@ public class GameDetailPanel extends SmartTable
     protected int _gameId;
     protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
 
-    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
