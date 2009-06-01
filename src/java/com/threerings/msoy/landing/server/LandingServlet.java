@@ -14,6 +14,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
+import com.threerings.msoy.item.server.CatalogLogic;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 
@@ -78,8 +79,8 @@ public class LandingServlet extends MsoyServiceServlet
         data.topGames = _gameLogic.loadTopGames(pps, true);
 
         // select the top rated avatars
-        List<ListingCard> cards = _itemLogic.loadCatalog(
-            Item.AVATAR, CatalogQuery.SORT_BY_RATING, ShopData.TOP_ITEM_COUNT);
+        List<ListingCard> cards = _catalogLogic.loadCatalog(
+            null, Item.AVATAR, CatalogQuery.SORT_BY_RATING, ShopData.TOP_ITEM_COUNT);
         _itemLogic.resolveCardNames(cards);
         data.topAvatars = cards.toArray(new ListingCard[cards.size()]);
 
@@ -91,6 +92,7 @@ public class LandingServlet extends MsoyServiceServlet
     protected ExpiringReference<LandingData> _landingData;
 
     // our dependencies
+    @Inject protected CatalogLogic _catalogLogic;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
