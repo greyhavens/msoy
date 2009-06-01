@@ -38,6 +38,10 @@ import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
@@ -83,7 +87,7 @@ public class CloakedPageLogic
         throws IOException
     {
         List<Object> args = Lists.newArrayList();
-        if (ALL_GAMES_PREFIX.equals(path)) {
+        if (ALL_GAMES.equals(path)) {
             // load the top 100 games
             for (GameInfoRecord game : _mgameRepo.loadGenre(GameGenre.ALL, 100)) {
                 args.add(game.getShotMedia());
@@ -112,10 +116,10 @@ public class CloakedPageLogic
             }
             args.add(GAME_DETAIL_PREFIX + (gameId + 1));
             args.add("next game");
-            outputGoogle(rsp, name, desc, ALL_GAMES_PREFIX, args);
+            outputGoogle(rsp, name, desc, ALL_GAMES, args);
             return true;
 
-        } else if (path.equals(PEOPLE_PREFIX)) {
+        } else if (path.equals(PEOPLE)) {
             // show up to 100 greeters
             List<Integer> greeters = _memberRepo.loadGreeterIds();
             if (greeters.size() > 100) {
@@ -146,7 +150,43 @@ public class CloakedPageLogic
             }
             args.add(PROFILE_PREFIX + (memberId + 1));
             args.add("next player");
-            outputGoogle(rsp, name, desc, PEOPLE_PREFIX, args);
+            outputGoogle(rsp, name, desc, PEOPLE, args);
+            return true;
+
+        } else if (path.equals(GROUPS)) {
+            // show 100 new & hot groups
+            for (GroupRecord group : _groupRepo.getGroups(100)) {
+                MediaDesc logo = group.toLogo();
+                if (logo != null) {
+                    args.add(logo);
+                }
+                args.add(GROUP_DETAIL_PREFIX + group.groupId);
+                args.add(group.name);
+            }
+            outputGoogle(rsp, "Top 100 groups", "Whirled has many community groups", "", args);
+            return true;
+
+        } else if (path.startsWith(GROUP_DETAIL_PREFIX)) {
+            int groupId = Integer.parseInt(path.substring(GROUP_DETAIL_PREFIX.length()));
+            GroupRecord group = _groupRepo.loadGroup(groupId);
+            if (group.policy == Group.Policy.EXCLUSIVE) {
+                group = null; // pretend it doesn't exist
+            }
+            String name = (group != null) ? group.name : "No such group";
+            String desc = (group != null) ? group.blurb : "No such group";
+            if (group != null) {
+                MediaDesc logo = group.toLogo();
+                if (logo != null) {
+                    args.add(logo);
+                }
+            }
+            if (groupId > 1) {
+                args.add(GROUP_DETAIL_PREFIX + (groupId - 1));
+                args.add("previous group");
+            }
+            args.add(GROUP_DETAIL_PREFIX + (groupId + 1));
+            args.add("next group");
+            outputGoogle(rsp, name, desc, GROUPS, args);
             return true;
         }
 
@@ -305,11 +345,14 @@ public class CloakedPageLogic
     /** Number of google bot pages served. */
     protected int _googlePages;
 
-    protected static final String ALL_GAMES_PREFIX = Pages.GAMES.getPath();
+    protected static final String ALL_GAMES = Pages.GAMES.getPath();
     protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.getPath() + "-d_";
 
-    protected static final String PEOPLE_PREFIX = Pages.PEOPLE.getPath();
+    protected static final String PEOPLE = Pages.PEOPLE.getPath();
     protected static final String PROFILE_PREFIX = Pages.PEOPLE.getPath() + "-";
+
+    protected static final String GROUPS = Pages.GROUPS.getPath();
+    protected static final String GROUP_DETAIL_PREFIX = Pages.GROUPS.getPath() + "-d_";
 
     protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.getPath() + "-s";
     protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_p_";
@@ -319,6 +362,7 @@ public class CloakedPageLogic
     protected static final int MAX_GOOGLE_PAGES_TO_LOG = 50;
 
     // our dependencies
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
