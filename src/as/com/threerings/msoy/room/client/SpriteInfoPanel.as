@@ -12,10 +12,13 @@ import com.threerings.util.Util;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.flex.CommandButton;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -27,6 +30,17 @@ import com.threerings.msoy.ui.FloatingPanel
  */
 public class SpriteInfoPanel extends FloatingPanel
 {
+    /**
+     * A predicate indicating if the specified ident is kosher to pass to getItemNames()?
+     */
+    public static function isRealIdent (ident :ItemIdent) :Boolean
+    {
+        return (ident != null) && (ident.type > 0) && (ident.itemId != 0);
+    }
+
+    /**
+     * Construct a SpriteInfoPanel.
+     */
     public function SpriteInfoPanel (ctx :WorldContext, sprites :Array /* of MsoySprite */)
     {
         super(ctx, Msgs.WORLD.get("t.item_info"));
@@ -65,12 +79,15 @@ public class SpriteInfoPanel extends FloatingPanel
         Prefs.events.removeEventListener(Prefs.BLEEPED_MEDIA, bleepChanged);
     }
 
-    /**
-     * Is the specified ident kosher to pass to getItemNames()?
-     */
-    public static function isRealIdent (ident :ItemIdent) :Boolean
+    override protected function didOpen () :void
     {
-        return (ident != null) && (ident.type > 0) && (ident.itemId != 0);
+        super.didOpen();
+
+        // make sure we're not highlighting all items, it screws with our hover highlight
+        var btn :CommandButton = WorldControlBar(_ctx.getControlBar()).hotZoneBtn;
+        if (btn.selected) {
+            btn.activate();
+        }
     }
 
     /**
@@ -105,6 +122,8 @@ public class SpriteInfoPanel extends FloatingPanel
 }
 }
 
+import flash.events.MouseEvent;
+
 import mx.containers.HBox;
 import mx.controls.Label;
 import mx.core.ScrollPolicy;
@@ -136,6 +155,9 @@ class SpriteInfoRenderer extends HBox
 
         _info = new CommandButton(Msgs.GENERAL.get("b.view_info"));
         _bleep = new CommandButton();
+
+        addEventListener(MouseEvent.ROLL_OVER, handleRoll);
+        addEventListener(MouseEvent.ROLL_OUT, handleRoll);
     }
 
     override public function set data (value :Object) :void
@@ -172,6 +194,11 @@ class SpriteInfoRenderer extends HBox
         addChild(_name);
         addChild(_info);
         addChild(_bleep);
+    }
+
+    protected function handleRoll (event :MouseEvent) :void
+    {
+        MsoySprite(data[0]).setHovered(event.type == MouseEvent.ROLL_OVER);
     }
 
     protected var _type :Label;
