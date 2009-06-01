@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,14 +17,19 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerMessages;
 
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -31,6 +37,9 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -73,8 +82,8 @@ public class CloakedPageLogic
         HttpServletRequest req, HttpServletResponse rsp, String path)
         throws IOException
     {
+        List<Object> args = Lists.newArrayList();
         if (ALL_GAMES_PREFIX.equals(path)) {
-            List<Object> args = Lists.newArrayList();
             // load the top 100 games
             for (GameInfoRecord game : _mgameRepo.loadGenre(GameGenre.ALL, 100)) {
                 args.add(game.getShotMedia());
@@ -87,16 +96,57 @@ public class CloakedPageLogic
         } else if (path.startsWith(GAME_DETAIL_PREFIX)) {
             int gameId = Integer.parseInt(path.substring(GAME_DETAIL_PREFIX.length()));
             GameInfoRecord game = _mgameRepo.loadGame(gameId);
-            if (game == null) {
-                outputGoogle(rsp, "No such game", "No such game", ALL_GAMES_PREFIX,
-                    GAME_DETAIL_PREFIX + (gameId - 1), "previous game",
-                    GAME_DETAIL_PREFIX + (gameId + 1), "next game");
-            } else {
-                outputGoogle(rsp, game.name, game.description, ALL_GAMES_PREFIX,
-                    game.getShotMedia(),
-                    GAME_DETAIL_PREFIX + (gameId - 1), "previous game",
-                    GAME_DETAIL_PREFIX + (gameId + 1), "next game");
+            String name = (game != null) ? game.name : "No such game";
+            String desc = (game != null) ? game.description : "No such game";
+            if (game != null) {
+                args.add(game.getShotMedia());
+                MemberRecord mrec = _memberRepo.loadMember(game.creatorId);
+                if (mrec != null) {
+                    args.add(PROFILE_PREFIX + mrec.memberId);
+                    args.add("Created by " + mrec.name);
+                }
             }
+            if (gameId > 1) {
+                args.add(GAME_DETAIL_PREFIX + (gameId - 1));
+                args.add("previous game");
+            }
+            args.add(GAME_DETAIL_PREFIX + (gameId + 1));
+            args.add("next game");
+            outputGoogle(rsp, name, desc, ALL_GAMES_PREFIX, args);
+            return true;
+
+        } else if (path.equals(PEOPLE_PREFIX)) {
+            // show up to 100 greeters
+            List<Integer> greeters = _memberRepo.loadGreeterIds();
+            if (greeters.size() > 100) {
+                greeters.subList(100, greeters.size()).clear();
+            }
+            for (Integer id : greeters) {
+                args.add(PROFILE_PREFIX + id);
+                args.add("A friendly person");
+            }
+            outputGoogle(rsp, "Friendly people", "People who are friendly", "", args);
+            return true;
+
+        } else if (path.startsWith(PROFILE_PREFIX)) {
+            int memberId = Integer.parseInt(path.substring(PROFILE_PREFIX.length()));
+            MemberRecord mrec = _memberRepo.loadMember(memberId);
+            String name = (mrec != null) ? mrec.name : "No such player";
+            String desc;
+            if (mrec != null) {
+                ProfileRecord profile = _profileRepo.loadProfile(memberId);
+                args.add((profile != null) ? profile.getPhoto() : MemberCard.DEFAULT_PHOTO);
+                desc = (profile != null) ? profile.headline : "";
+            } else {
+                desc = "No such player";
+            }
+            if (memberId > 1) {
+                args.add(PROFILE_PREFIX + (memberId - 1));
+                args.add("previous player");
+            }
+            args.add(PROFILE_PREFIX + (memberId + 1));
+            args.add("next player");
+            outputGoogle(rsp, name, desc, PEOPLE_PREFIX, args);
             return true;
         }
 
@@ -175,15 +225,6 @@ public class CloakedPageLogic
         return true;
     }
 
-    protected void outputGoogle (
-        HttpServletResponse rsp, String title, String desc, String upLink, List<Object> args)
-        throws IOException
-    {
-        Object[] argArray = new Object[args.size()];
-        args.toArray(argArray);
-        outputGoogle(rsp, title, desc, upLink, argArray);
-    }
-
     /**
      * Output a generated page for google.
      *
@@ -192,7 +233,7 @@ public class CloakedPageLogic
      *         String - a /go/-based url, always followed by another String: link text
      */
     protected void outputGoogle (
-        HttpServletResponse rsp, String title, String desc, String upLink, Object... args)
+        HttpServletResponse rsp, String title, String desc, String upLink, List<Object> args)
         throws IOException
     {
         // TODO: some sort of html templating? Ah, Pfile, you rocked, little guy!
@@ -203,20 +244,24 @@ public class CloakedPageLogic
             out.println("<body>");
             out.println("<h1>" + title + "</h1>");
             out.println(desc);
-            out.println("<a href=\"/go/" + upLink + "\">Go back</a>");
 
-            for (int ii = 0; ii < args.length; ii++) {
-                if (args[ii] instanceof MediaDesc) {
-                    out.println("<img src=\"" + ((MediaDesc) args[ii]).getMediaPath() + "\">");
+            for (Iterator itr = args.iterator(); itr.hasNext(); ) {
+                Object arg = itr.next();
+                if (arg instanceof MediaDesc) {
+                    out.println("<img src=\"" + ((MediaDesc) arg).getMediaPath() + "\">");
 
-                } else if (args[ii] instanceof String) {
-                    String link = (String) args[ii];
-                    String text = (String) args[++ii];
+                } else if (arg instanceof String) {
+                    String link = (String) arg;
+                    String text = (String) itr.next();
                     out.println("<a href=\"/go/" + link + "\">" + text + "</a>");
 
                 } else {
-                    log.warning("Don't undertand arg: " + args[ii]);
+                    log.warning("Don't undertand arg: " + arg);
                 }
+            }
+
+            if (!StringUtil.isBlank(upLink)) {
+                out.println("<a href=\"/go/" + upLink + "\">Go back</a>");
             }
             out.println("</body></html>");
         } finally {
@@ -263,6 +308,9 @@ public class CloakedPageLogic
     protected static final String ALL_GAMES_PREFIX = Pages.GAMES.getPath();
     protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.getPath() + "-d_";
 
+    protected static final String PEOPLE_PREFIX = Pages.PEOPLE.getPath();
+    protected static final String PROFILE_PREFIX = Pages.PEOPLE.getPath() + "-";
+
     protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.getPath() + "-s";
     protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_p_";
     protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
@@ -272,7 +320,9 @@ public class CloakedPageLogic
 
     // our dependencies
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected ProfileRepository _profileRepo;
     @Inject protected ServerMessages _serverMsgs;
 }
