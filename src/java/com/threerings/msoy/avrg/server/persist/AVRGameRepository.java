@@ -120,14 +120,16 @@ public class AVRGameRepository extends DepotRepository
      */
     public Set<Integer> getPropertiedMembers (int gameId, Set<Integer> memberIds)
     {
-        List<QueryClause> clauses = Lists.newArrayList(
-            new Where(new And(new Equals(PlayerGameStateRecord.GAME_ID, gameId),
-                              new In(PlayerGameStateRecord.MEMBER_ID, memberIds))),
-            new GroupBy(PlayerGameStateRecord.MEMBER_ID),
-            new FromOverride(PlayerGameStateRecord.class));
         Set<Integer> propIds = Sets.newHashSet();
-        for (HasPropertyRecord prop : findAll(HasPropertyRecord.class, clauses)) {
-            propIds.add(prop.memberId);
+        if (!memberIds.isEmpty()) {
+            List<QueryClause> clauses = Lists.newArrayList(
+                new Where(new And(new Equals(PlayerGameStateRecord.GAME_ID, gameId),
+                                  new In(PlayerGameStateRecord.MEMBER_ID, memberIds))),
+                new GroupBy(PlayerGameStateRecord.MEMBER_ID),
+                new FromOverride(PlayerGameStateRecord.class));
+            for (HasPropertyRecord prop : findAll(HasPropertyRecord.class, clauses)) {
+                propIds.add(prop.memberId);
+            }
         }
         return propIds;
     }
