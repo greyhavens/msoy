@@ -91,9 +91,13 @@ public class GroupsPage extends Page
             showForumPanel(ForumPanel.Mode.NEW_THREAD, args.get(1, 0), null, 0);
 
         } else if (page == Nav.THREAD) {
-            ThreadPanel tpanel = new ThreadPanel();
+            ThreadPanel tpanel;
+            if (getContent() instanceof ThreadPanel) {
+                tpanel = (ThreadPanel)getContent();
+            } else {
+                setContent(_msgs.forumsTitle(), tpanel = new ThreadPanel());
+            }
             tpanel.showThread(_fmodels, args.get(1, 0), args.get(2, 0), args.get(3, 0));
-            setContent(_msgs.forumsTitle(), tpanel);
 
         } else if (page == Nav.MEDALS) {
             int groupId = args.get(1, 0);

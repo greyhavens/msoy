@@ -56,7 +56,7 @@ public class ThreadPanel extends TitledListPanel
     public void showThread (ForumModels fmodels, int threadId, int page, int scrollToId)
     {
         _threadId = threadId;
-        _mpanel = new MessagesPanel(this, fmodels.getThreadMessages(threadId), page, scrollToId);
+        _mpanel.display(fmodels.getThreadMessages(_threadId), page, scrollToId);
         showMessages();
     }
 
@@ -329,7 +329,7 @@ public class ThreadPanel extends TitledListPanel
     protected ForumThread _thread;
     protected SmartTable _theader;
     protected SearchBox _search;
-    protected MessagesPanel _mpanel;
+    protected MessagesPanel _mpanel = new MessagesPanel(this);
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);

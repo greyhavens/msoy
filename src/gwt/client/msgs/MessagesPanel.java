@@ -44,8 +44,7 @@ import client.util.ServiceUtil;
  */
 public class MessagesPanel extends PagedGrid<ForumMessage>
 {
-    public MessagesPanel (ThreadPanel parent, ForumModels.ThreadMessages model,
-                          int page, int scrollToId)
+    public MessagesPanel (ThreadPanel parent)
     {
         super(ForumThread.MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_TOP);
@@ -54,9 +53,12 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         setHeight("100%");
 
         _parent = parent;
-        _scrollToId = scrollToId;
-        _tmodel = model;
+    }
 
+    public void display (ForumModels.ThreadMessages model, int page, int scrollToId)
+    {
+        _tmodel = model;
+        _scrollToId = scrollToId;
         setModel(_tmodel, page);
     }
 
