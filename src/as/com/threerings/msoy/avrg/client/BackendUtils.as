@@ -7,6 +7,7 @@ import flash.errors.IOError;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.net.URLLoader;
+import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
@@ -220,7 +221,7 @@ public class BackendUtils
     }
 
     public static function loadPackData (
-        loadedPacks :Dictionary, gameObj :AVRGameObject, ident :String, type :int,
+        gameObj :AVRGameObject, ident :String, type :int,
         onLoaded :Function, onFailure :Function) :void
     {
         var data :GameData = getGameData(gameObj, ident, type);
@@ -231,24 +232,13 @@ public class BackendUtils
             return;
         }
 
-        if (loadedPacks[data.mediaURL]) {
-            // TODO: too draconian? should we cache these on the server?
-            if (onFailure != null) {
-                onFailure(new Error("Data pack has already been loaded this session: " + ident));
-            }
-            return;
-        }
-
-        // we'll call it loaded even when it's just loading
-        loadedPacks[data.mediaURL] = true;
-
         var loader :URLLoader = new URLLoader();
+        loader.dataFormat = URLLoaderDataFormat.BINARY;
+
         loader.addEventListener(IOErrorEvent.IO_ERROR, function (evt :IOErrorEvent) :void {
             if (onFailure != null) {
                 onFailure(new IOError("I/O Error: " + evt.text));
             }
-            // give the game a chance to try again
-            delete loadedPacks[data.mediaURL];
         });
         loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
             // TODO: setting the position=0 should happen at a lower level

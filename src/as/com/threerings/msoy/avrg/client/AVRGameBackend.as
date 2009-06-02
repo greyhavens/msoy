@@ -369,7 +369,7 @@ public class AVRGameBackend extends ControlBackend
     protected function loadLevelPackData_v1 (
         ident :String, onLoaded :Function, onFailure :Function) :void
     {
-        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.LEVEL_DATA,
+        BackendUtils.loadPackData(_gameObj, ident, GameData.LEVEL_DATA,
                                   onLoaded, onFailure);
     }
 
@@ -377,7 +377,7 @@ public class AVRGameBackend extends ControlBackend
     protected function loadItemPackData_v1 (
         ident :String, onLoaded :Function, onFailure :Function) :void
     {
-        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.ITEM_DATA,
+        BackendUtils.loadPackData(_gameObj, ident, GameData.ITEM_DATA,
                                   onLoaded, onFailure);
     }
 
@@ -1055,8 +1055,5 @@ public class AVRGameBackend extends ControlBackend
     protected var _avatarAdapter :BackendAvatarAdapter;
 
     protected var _contentListener :ContentListener;
-
-    /** URL -> boolean for data packs that have been loaded */
-    protected var _loadedPacks :Dictionary = new Dictionary();
 }
 }

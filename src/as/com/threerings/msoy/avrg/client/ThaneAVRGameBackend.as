@@ -369,14 +369,14 @@ public class ThaneAVRGameBackend
     protected function loadLevelPackData_v1 (
         ident :String, onLoaded :Function, onFailure :Function) :void
     {
-        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.LEVEL_DATA,
+        BackendUtils.loadPackData(_gameObj, ident, GameData.LEVEL_DATA,
                                   onLoaded, onFailure);
     }
 
     protected function loadItemPackData_v1 (
         ident :String, onLoaded :Function, onFailure :Function) :void
     {
-        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.ITEM_DATA,
+        BackendUtils.loadPackData(_gameObj, ident, GameData.ITEM_DATA,
                                   onLoaded, onFailure);
     }
 
@@ -886,9 +886,6 @@ public class ThaneAVRGameBackend
     protected var _gameAgentObj :AVRGameAgentObject;
 
     protected var _offline :int = 0;
-
-    /** URL -> boolean for data packs that have been loaded */
-    protected var _loadedPacks :Dictionary = new Dictionary();
 
     protected var _privateMessageAdapter :BackendNetAdapter;
 }
