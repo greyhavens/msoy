@@ -10,12 +10,10 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.presents.annotation.EventThread;
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
@@ -50,24 +48,22 @@ public class SubscriptionLogic
      */
     public void init ()
     {
-        // let's grant bars to subscribers that need them, every hour
+        // check for bar and special item grants every hour
         _cronLogic.scheduleAt(1, new Runnable() {
             public void run () {
                 _batchInvoker.postUnit(new Invoker.Unit(toString()) {
                     public boolean invoke () {
                         grantBars();
+                        grantSpecialItem();
                         return false;
                     }
                 });
             }
 
             public String toString () {
-                return "SubscriptionLogic.grantBars";
+                return "SubscriptionLogic.grants";
             }
         });
-
-        // listen for changes to the special item
-        _runtime.subscription.addListener(_configListener);
 
 //        // TEMP TEMP TEMP
 //        if (DeploymentConfig.devDeployment) {
@@ -216,35 +212,24 @@ public class SubscriptionLogic
         }
     }
 
+    /**
+     * Resolve the CatalogRecord of the current special item, or null if none.
+     */
     @BlockingThread
     protected CatalogRecord getSpecialItem ()
     {
-        try {
-            ItemIdent ident = ItemIdent.fromString(_runtime.subscription.specialItem);
-            return _itemLogic.requireListing(ident.type, ident.itemId, true);
+        String specialItem = _runtime.subscription.specialItem;
+        if (!StringUtil.isBlank(specialItem) && !"0:0".equals(specialItem)) {
+            try {
+                ItemIdent ident = ItemIdent.fromString(specialItem);
+                return _itemLogic.requireListing(ident.type, ident.itemId, true);
 
-        } catch (Exception e) {
-            log.warning("Trouble resolving special item",
-                "ident", _runtime.subscription.specialItem, e);
+            } catch (Exception e) {
+                log.warning("Trouble resolving special item", "ident", specialItem, e);
+            }
         }
         return null;
     }
-
-    /** Listens for changes to the special item. */
-    protected AttributeChangeListener _configListener = new AttributeChangeListener() {
-        @EventThread
-        public void attributeChanged (AttributeChangedEvent event)
-        {
-            String name = event.getName();
-            if (SubscriptionConfigObject.SPECIAL_ITEM.equals(name)) {
-                _batchInvoker.postRunnable(new Runnable() {
-                    public void run () {
-                        grantSpecialItem();
-                    }
-                });
-            }
-        }
-    };
 
     @Inject protected CronLogic _cronLogic;
     @Inject protected ItemLogic _itemLogic;
