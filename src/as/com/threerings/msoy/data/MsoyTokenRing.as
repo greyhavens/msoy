@@ -16,6 +16,12 @@ public class MsoyTokenRing extends TokenRing
     /** Indicates that the user has maintainer privileges. */
     public static const MAINTAINER :int = (1 << 2);
 
+    /** Indicates that the user has greeter privileges. */
+    public static const GREETER :int = (1 << 3);
+
+    /** Indicates that the user has subscriber privileges. */
+    public static const SUBSCRIBER :int = (1 << 4);
+
     /**
      * Constructs a token ring with the supplied set of tokens.
      */
