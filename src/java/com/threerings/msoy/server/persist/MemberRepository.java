@@ -762,11 +762,15 @@ public class MemberRepository extends DepotRepository
      */
     public void noteSessionEnded (int memberId, int minutes, int humanityReassessFreq)
     {
-        long now = System.currentTimeMillis();
         MemberRecord record = loadMember(memberId);
-        Timestamp nowStamp = new Timestamp(now);
+        if (record == null) {
+            log.warning("Non-existent member's session ended?", "id", memberId);
+            return;
+        }
 
         // reassess their humanity if the time has come
+        long now = System.currentTimeMillis();
+        Timestamp nowStamp = new Timestamp(now);
         int secsSinceLast = TimeUtil.elapsedSeconds(record.lastHumanityAssessment.getTime(), now);
         if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
             record.humanity = _actionRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
