@@ -30,6 +30,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.depot.DataMigration;
@@ -1371,10 +1372,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public WordSearch buildWordSearch (String query)
     {
-        if (query != null && query.trim().length() > 0) {
-            return new WordSearch(query);
-        }
-        return null;
+        return StringUtil.isBlank(query) ? null : new WordSearch(query);
     }
 
     /**
