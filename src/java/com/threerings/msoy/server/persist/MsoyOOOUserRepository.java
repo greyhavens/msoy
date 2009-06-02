@@ -113,7 +113,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
             deleteAll(UserIdentRecord.class, new Where(new In(UserIdentRecord.USER_ID, userIds)));
             // blank out the password field which will prevent logins to this account
             updatePartial(OOOUserRecord.class, new Where(new In(OOOUserRecord.USER_ID, userIds)),
-                          OOOUserRecord.PASSWORD, "");
+                          null, OOOUserRecord.PASSWORD, "");
         }
     }
 
