@@ -9,8 +9,13 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.BroadcastHandler;
+import com.threerings.crowd.chat.client.SpeakService;
+import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -30,23 +35,48 @@ public class MsoyBroadcastHandler extends BroadcastHandler
             ((user is PlayerObject) && !PlayerObject(user).isPermaguest());
     }
 
+    override public function handleCommand (
+        ctx :CrowdContext, speakSvc :SpeakService,
+        cmd :String, args :String, history :Array) :String
+    {
+        // TODO SUBSCRIPTION
+        if (DeploymentConfig.devDeployment &&
+                !MsoyTokenRing(getBody(ctx).getTokens()).isSubscriberPlus()) {
+            getMsoyContext(ctx).displayFeedback(MsoyCodes.CHAT_MSGS, "m.broadcast_subscriber_only");
+            return ChatCodes.SUCCESS; // because we want to clear the chat entry field
+        }
+
+        return super.handleCommand(ctx, speakSvc, cmd, args, history);
+    }
+
     override protected function doBroadcast (ctx :CrowdContext, msg :String) :void
     {
         // if they have access to the normal broadcast, that's what they get
-        if (super.checkAccess(BodyObject(ctx.getClient().getClientObject()))) {
-            if (StringUtil.startsWith(msg, "pay ")) {
+        if (super.checkAccess(getBody(ctx))) {
+            // if the whole of the message is pay, or starts with pay, let an admin access the pay
+            if ("pay" === StringUtil.trim(StringUtil.truncate(msg, 4)).toLowerCase()) {
                 msg = msg.substring(4);
             } else {
                 super.doBroadcast(ctx, msg);
                 return;
             }
         }
+        new BroadcastPanel(getMsoyContext(ctx), msg);
+    }
 
+    protected function getBody (ctx :CrowdContext) :BodyObject
+    {
+        return BodyObject(ctx.getClient().getClientObject());
+    }
+
+    protected function getMsoyContext (ctx :CrowdContext) :MsoyContext
+    {
+        // this is fucked-up, but due to the fact that we actually have two ChatDirectors...
         var mctx :MsoyContext = ctx as MsoyContext;
         if (mctx == null) {
             mctx = GameContext(ctx).getWorldContext();
         }
-        new BroadcastPanel(mctx, msg);
+        return mctx;
     }
 }
 }

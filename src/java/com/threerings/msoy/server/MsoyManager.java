@@ -18,6 +18,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.PersistingUnit;
@@ -29,6 +30,7 @@ import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -182,6 +184,13 @@ public class MsoyManager
         InvocationService.ResultListener listener)
         throws InvocationException
     {
+        MemberObject member = (MemberObject) caller;
+
+        // TODO SUBSCRIPTION
+        if (DeploymentConfig.devDeployment && !member.tokens.isSubscriberPlus()) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
+
         final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
         final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
         final int memberId = ((MemberObject)caller).getMemberId();

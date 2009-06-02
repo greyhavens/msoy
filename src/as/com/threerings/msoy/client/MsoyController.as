@@ -152,6 +152,9 @@ public class MsoyController extends Controller
     /** Command to tweet an invite to a specific game. */
     public static const TWEET_GAME :String = "TweetGame";
 
+    /** Command to show users the subscribe page. */
+    public static const SUBSCRIBE :String = "Subscribe";
+
     // NOTE:
     // Any commands defined in this class should be handled in this class.
     // Currently, this is not the case. Some commands are here without even an abstract or
@@ -513,6 +516,15 @@ public class MsoyController extends Controller
         var tweet :String = Msgs.GAME.get("m.invite_twitter" + (party ? "_party" : ""),
             gameName, shareLink);
         handleTweet(tweet);
+    }
+
+    /**
+     * Handles SUBSCRIBE.
+     */
+    public function handleSubscribe () :void
+    {
+        // TODO SUBSCRIPTION
+        handleViewUrl(DeploymentConfig.serverURL + "#subscribe");
     }
 
     /**
