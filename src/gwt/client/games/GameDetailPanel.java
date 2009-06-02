@@ -130,12 +130,11 @@ public class GameDetailPanel extends SmartTable
         getFlexCellFormatter().setRowSpan(0, 0, 3);
         getFlexCellFormatter().setRowSpan(1, 1, 2);
 
-        _tabs = new NaviTabPanel(Pages.GAMES) {
+        setWidget(3, 0, _tabs = new NaviTabPanel(Pages.GAMES) {
             protected Args getTabArgs (int tabIdx) {
                 return NaviUtil.gameDetail(_gameId, getTabCode(tabIdx));
             }
-        };
-        addWidget(_tabs, 3, null);
+        }, 3, null);
 
         // add the about/instructions tab
         addTab(GameDetails.INSTRUCTIONS, _msgs.tabInstructions(), new InstructionsPanel(detail));
