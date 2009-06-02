@@ -19,6 +19,7 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
@@ -44,14 +45,17 @@ public class CreatePartyPanel extends FloatingPanel
         super(ctx, Msgs.PARTY.get("t.create"));
         setButtonWidth(0);
 
-        _buyPanel = new BuyPanel(_ctx, createParty);
-        
-        // if we have no price quote, fire off a request for one
-        if (quote != null) {
-            _buyPanel.setPriceQuote(quote);
+        // TODO SUBSCRIPTION
+        if (!DeploymentConfig.devDeployment) {
+            _buyPanel = new BuyPanel(_ctx, createParty);
+            
+            // if we have no price quote, fire off a request for one
+            if (quote != null) {
+                _buyPanel.setPriceQuote(quote);
 
-        } else {
-            WorldContext(_ctx).getPartyDirector().getCreateCost(_buyPanel.setPriceQuote);
+            } else {
+                WorldContext(_ctx).getPartyDirector().getCreateCost(_buyPanel.setPriceQuote);
+            }
         }
     }
 
@@ -111,11 +115,23 @@ public class CreatePartyPanel extends FloatingPanel
         GridUtil.addRow(grid, Msgs.PARTY.get("l.invite_friends"), _inviteAll);
         addChild(grid);
 
-        addChild(_buyPanel);
-
-        addButtons(CANCEL_BUTTON);
+        // TODO SUBSCRIPTION
+        if (DeploymentConfig.devDeployment) {
+            addButtons(CANCEL_BUTTON, OK_BUTTON);
+        } else {
+            addChild(_buyPanel);
+            addButtons(CANCEL_BUTTON);
+        }
     }
 
+    override protected function okButtonClicked () :void
+    {
+        // TODO SUBSCRIPTION
+        WorldContext(_ctx).getPartyDirector().createParty(
+            Currency.COINS, 0, _name.text, int(_group.selectedData), _inviteAll.selected);
+    }
+
+    // TODO SUBSCRIPTION
     protected function createParty (currency :Currency, authedCost :int) :void
     {
         WorldContext(_ctx).getPartyDirector().createParty(

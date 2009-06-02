@@ -42,6 +42,7 @@ import com.threerings.whirled.data.ScenePlace;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocator;
@@ -301,6 +302,7 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider
+    // TODO SUBSCRIPTION remove all this
     public void getCreateCost (ClientObject caller, InvocationService.ResultListener rl)
         throws InvocationException
     {
@@ -311,6 +313,7 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider
+    // TODO SUBSCRIPTION remove the costs
     public void createParty (
         ClientObject caller, final Currency currency, final int authedAmount,
         final String name, final int groupId, final boolean inviteAllFriends,
@@ -318,6 +321,11 @@ public class PartyRegistry
         throws InvocationException
     {
         final MemberObject member = (MemberObject)caller;
+
+        // TODO SUBSCRIPTION
+        if (DeploymentConfig.devDeployment && !member.tokens.isSubscriberPlus()) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
 
         if (member.partyId != 0) {
             // TODO: possibly a better error? Surely this will be blocked on the client
@@ -329,6 +337,7 @@ public class PartyRegistry
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR); // shouldn't happen
         }
 
+        // TODO: SUBSCRIPTION: remove the cost/money crap
         final int cost = getPartyCoinCost();
         _invoker.postUnit(new ServiceUnit("createParty", jl) {
             public void invokePersistent () throws Exception {
@@ -337,6 +346,10 @@ public class PartyRegistry
                         ((_group.partyPerms == Group.Perm.MANAGER) &&
                         (groupInfo.rank.compareTo(Rank.MANAGER) < 0))) {
                     throw new InvocationException(PartyCodes.E_GROUP_MGR_REQUIRED);
+                }
+                // TODO SUBSCRIPTION
+                if (DeploymentConfig.devDeployment) {
+                    return; // skip the money part
                 }
                 _moneyLogic.buyParty(member.getMemberId(), PARTY_PURCHASE_KEY,
                     currency, authedAmount, Currency.COINS, cost);

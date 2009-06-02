@@ -42,7 +42,7 @@ public class MsoyBroadcastHandler extends BroadcastHandler
         // TODO SUBSCRIPTION
         if (DeploymentConfig.devDeployment &&
                 !MsoyTokenRing(getBody(ctx).getTokens()).isSubscriberPlus()) {
-            getMsoyContext(ctx).displayFeedback(MsoyCodes.CHAT_MSGS, "m.broadcast_subscriber_only");
+            getMsoyContext(ctx).displayFeedback(MsoyCodes.GENERAL_MSGS, "e.subscription_required");
             return ChatCodes.SUCCESS; // because we want to clear the chat entry field
         }
 
