@@ -154,6 +154,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         if (message.messageId == _scrollToId) {
             _scrollToId = 0;
             _scrollTarget = panel;
+        } else if (_scrollTarget == null) {
+            _scrollTarget = panel;
         }
         return panel;
     }
