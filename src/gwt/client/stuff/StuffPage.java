@@ -234,9 +234,10 @@ public class StuffPage extends Page
     /** A mapping from game sub-item type to tab index. Oh so fragile! */
     protected static final Map<Byte, Integer> GAME_TYPES = new HashMap<Byte, Integer>();
     static {
-        GAME_TYPES.put(Item.TROPHY_SOURCE, 4);
-        GAME_TYPES.put(Item.ITEM_PACK, 5);
-        GAME_TYPES.put(Item.LEVEL_PACK, 6);
-        GAME_TYPES.put(Item.PRIZE, 7);
+        GAME_TYPES.put(Item.LAUNCHER, 4);
+        GAME_TYPES.put(Item.TROPHY_SOURCE, 5);
+        GAME_TYPES.put(Item.ITEM_PACK, 6);
+        GAME_TYPES.put(Item.LEVEL_PACK, 7);
+        GAME_TYPES.put(Item.PRIZE, 8);
     }
 }

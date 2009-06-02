@@ -104,6 +104,7 @@ public class EditGamePanel extends FlowPanel
     protected int _gameId;
     protected NaviTabPanel _tabs;
 
+    // NOTE: if you add a subitem here, you have to adjust the constants in StuffPage
     protected static final byte[] SUBITEM_TYPES = {
         Item.LAUNCHER, Item.TROPHY_SOURCE, Item.ITEM_PACK, Item.LEVEL_PACK, Item.PRIZE };
 
