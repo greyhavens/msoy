@@ -658,7 +658,7 @@ public class ChatOverlay
             return false;
         }
         if ((type == PAID_BROADCAST) && _ctx.getMsoyClient().isEmbedded() &&
-                Boolean(_ctx.getMsoyController().getPlaceInfo()[0])) {
+                _ctx.getMsoyController().getPlaceInfo().inGame) {
             return false; // Omit PAID_BROADCASTS if we're embedded and in a game
         }
 
