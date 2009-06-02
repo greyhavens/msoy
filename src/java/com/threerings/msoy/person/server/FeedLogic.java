@@ -35,6 +35,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.FacebookLogic;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
@@ -296,7 +297,10 @@ public class FeedLogic
             // post the image anyway without images
         }
 
-        Long storyId = 80254483363L; // TODO
+        long storyId = ServerConfig.config.getValue("facebook.trophy_story_id", 0L);
+        if (storyId == 0L) {
+            return; // no story ids, not publishing to facebook
+        }
         try {
             if (!_faceLogic.getFacebookClient(sessionKey).feed_publishUserAction(
                     storyId, data, images, Collections.<Long>emptyList(), null, 0)) {
