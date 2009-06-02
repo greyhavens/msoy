@@ -299,7 +299,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // mark this thread as read by the poster
         _forumRepo.noteLastReadPostId(
-            mrec.memberId, thread.threadId, thread.mostRecentPostId, 1);
+            mrec.memberId, thread.threadId, thread.mostRecentPostId, 0);
 
         // if we're posting to the announcement group, add a global feed post about it
         if (groupId == ServerConfig.getAnnounceGroupId()) {
@@ -354,7 +354,7 @@ public class ForumServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, 0);
+        _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
 
     // from interface ForumService
@@ -381,7 +381,7 @@ public class ForumServlet extends MsoyServiceServlet
         _eventLog.forumMessagePosted(mrec.memberId, mrec.visitorId, fmr.threadId, ftr.posts);
 
         // mark this thread as read by the poster
-        _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts+1);
+        _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts-1);
 
         // add a feed item for the poster of the message being replied to
         if (inReplyToMemberId != 0 && inReplyToMemberId != mrec.memberId) {

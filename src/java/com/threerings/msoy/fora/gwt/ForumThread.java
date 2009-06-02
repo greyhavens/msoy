@@ -122,7 +122,7 @@ public class ForumThread
         // (but since your first unread post is first, that's basically what you want)
         // Also, do not exceed the number of posts lest we show an empty page. This can only
         // happen as far as I know in the case of an earlier read post being deleted and the
-        // new number of posts being an even multiple of the number per page.
+        // new number of posts being a multiple of the number per page.
         int pidx = Math.min(lastReadPostIndex+1, posts-1);
         return getArgs(pidx, lastReadPostId);
     }

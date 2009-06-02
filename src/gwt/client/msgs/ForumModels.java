@@ -259,7 +259,7 @@ public class ForumModels
             _thread.posts++;
             // mark our thread as read up to this message
             _thread.lastReadPostId = message.messageId;
-            _thread.lastReadPostIndex = _thread.posts;
+            _thread.lastReadPostIndex = _thread.posts - 1;
         }
 
         @Override // from ServiceBackedDataModel
@@ -347,7 +347,7 @@ public class ForumModels
     {
         // mark this thread as already read
         thread.lastReadPostId = thread.mostRecentPostId;
-        thread.lastReadPostIndex = thread.posts;
+        thread.lastReadPostIndex = thread.posts - 1;
 
         // if we already have this model loaded, let it know about the new thread
         GroupThreads gmodel = _gmodels.get(thread.group.getGroupId());
