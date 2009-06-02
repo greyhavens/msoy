@@ -600,11 +600,7 @@ public class WebUserServlet extends MsoyServiceServlet
     protected static String generateDeleteSecret (MemberRecord mrec)
         throws ServiceException
     {
-        String serverSecret = ServerConfig.accountDeletionSecret;
-        if (StringUtil.isBlank(serverSecret)) {
-            throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
-        }
-        return StringUtil.md5hex(mrec.accountName + mrec.memberId + serverSecret);
+        return StringUtil.md5hex(mrec.accountName + mrec.memberId + ServerConfig.sharedSecret);
     }
 
     // our dependencies

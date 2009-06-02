@@ -58,7 +58,8 @@ public class ServerConfig
     /** The port on which game servers start listening. */
     public static int gameServerPort;
 
-    /** The secret used to authenticate other servers in our cluster. */
+    /** A secret used wherever we need secret information shared between servers or between the
+     * server now and the server in the near future. */
     public static String sharedSecret;
 
     /** The local directory where dictionary files are stored. */
@@ -120,9 +121,6 @@ public class ServerConfig
 
     /** True if the server should restart when code changes. */
     public static boolean autoRestart;
-
-    /** The secret used to authenticate account deletions. */
-    public static String accountDeletionSecret;
 
     /**
      * Returns a provider of JDBC connections.
@@ -391,6 +389,5 @@ public class ServerConfig
         localBureaus = config.getValue("local_bureaus", true);
         windowSharedSecret = config.getValue("window_secret", "");
         autoRestart = config.getValue("auto_restart", false);
-        accountDeletionSecret = config.getValue("account_deletion_secret", "");
     }
 }

@@ -218,6 +218,3 @@ local_bureaus = true
 # URL Whirled should send the user to when they need to go to billing
 
 billing_url = https://billing.dev.whirled.com/billing/
-
-# used to hash with someone's email address when attempting to delete their account
-# account_deletion_secret = Unguessable!
