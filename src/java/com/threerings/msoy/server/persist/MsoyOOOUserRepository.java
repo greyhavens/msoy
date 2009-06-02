@@ -5,11 +5,11 @@ package com.threerings.msoy.server.persist;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import java.sql.Date;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -22,6 +22,7 @@ import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.servlet.user.UserUtil;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.user.OOOUser;
@@ -105,15 +106,28 @@ public class MsoyOOOUserRepository extends DepotUserRepository
      */
     public void purgeMembers (Collection<String> emails)
     {
-        List<Integer> userIds = Lists.transform(
-            findAllKeys(OOOUserRecord.class, false, new Where(new In(OOOUserRecord.EMAIL, emails))),
-            RecordFunctions.<OOOUserRecord>getIntKey());
-        if (!userIds.isEmpty()) {
-            // delete this member's random crap
-            deleteAll(UserIdentRecord.class, new Where(new In(UserIdentRecord.USER_ID, userIds)));
-            // blank out the password field which will prevent logins to this account
-            updatePartial(OOOUserRecord.class, new Where(new In(OOOUserRecord.USER_ID, userIds)),
-                          null, OOOUserRecord.PASSWORD, "");
+        // map these emails to user ids
+        Map<Integer, String> idmap = Maps.newHashMap();
+        for (OOOUserRecord record : findAll(OOOUserRecord.class,
+                                            new Where(new In(OOOUserRecord.EMAIL, emails)))) {
+            idmap.put(record.userId, record.email);
+        }
+
+        // delete these members' random crap
+        if (!idmap.isEmpty()) {
+            deleteAll(UserIdentRecord.class,
+                      new Where(new In(UserIdentRecord.USER_ID, idmap.keySet())));
+        }
+
+        // change the username and email to deleted thunks and null out their password
+        for (Map.Entry<Integer, String> entry : idmap.entrySet()) {
+            // change foo@bar.com to deleted:id:foo:bar.com
+            String thunk = StringUtil.truncate(
+                "deleted:"+ entry.getKey() + ":" + entry.getValue().replace("@", ":"), 128);
+            updatePartial(OOOUserRecord.getKey(entry.getKey()),
+                          OOOUserRecord.USERNAME, thunk,
+                          OOOUserRecord.EMAIL, thunk,
+                          OOOUserRecord.PASSWORD, "");
         }
     }
 
