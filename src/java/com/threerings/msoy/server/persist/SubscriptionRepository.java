@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -30,9 +29,14 @@ import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.operator.LessThan;
+import com.samskivert.depot.operator.NotEquals;
 import com.samskivert.depot.operator.Sub;
 
+import com.samskivert.util.Tuple;
+
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -50,19 +54,35 @@ public class SubscriptionRepository extends DepotRepository
 
     /**
      * Note a payment made to a new or existing subscription.
+     *
+     * @return Tuple<grantBarsNow, grantItem>
      */
-    public boolean noteSubscriptionStarted (int memberId, int barGrantsLeft)
+    public Tuple<Boolean,Boolean> noteSubscriptionStarted (
+        int memberId, int barGrantsLeft, ItemIdent specialItem)
     {
-        // always just create a new record and blast away anything previous
-        // TODO: review that decision
-        boolean grantBarsNow = (barGrantsLeft > 0);
-        SubscriptionRecord rec = new SubscriptionRecord();
-        rec.memberId = memberId;
+        SubscriptionRecord rec = load(SubscriptionRecord.getKey(memberId));
+        if (rec == null) {
+            rec = new SubscriptionRecord(); // that's ok, they are fresh meat
+            rec.memberId = memberId;
+        } else {
+            barGrantsLeft += rec.grantsLeft;
+        }
+
         rec.subscriber = true;
+        boolean grantSpecial = (specialItem != null) &&
+            ((specialItem.type != rec.specialItemType) ||
+             (specialItem.itemId != rec.specialItemId));
+        boolean grantBarsNow = (barGrantsLeft > 0);
+        if (grantBarsNow) {
+            rec.lastGrant = new Timestamp(System.currentTimeMillis());
+        }
         rec.grantsLeft = Math.max(0, barGrantsLeft - 1);
-        rec.lastGrant = grantBarsNow ? new Timestamp(System.currentTimeMillis()) : null;
+        if (grantSpecial) {
+            rec.specialItemType = specialItem.type;
+            rec.specialItemId = specialItem.itemId;
+        }
         store(rec);
-        return grantBarsNow;
+        return Tuple.newTuple(grantBarsNow, grantSpecial);
     }
 
     /**
@@ -70,8 +90,7 @@ public class SubscriptionRepository extends DepotRepository
      */
     public int noteSubscriptionEnded (int memberId)
     {
-        SubscriptionRecord rec =
-            load(SubscriptionRecord.class, SubscriptionRecord.getKey(memberId));
+        SubscriptionRecord rec = load(SubscriptionRecord.getKey(memberId));
         if (rec == null) {
             log.warning("That's weird: unable to find SubscriptionRecord to note ending.",
                 "memberId", "memberId", new Exception());
@@ -99,11 +118,20 @@ public class SubscriptionRepository extends DepotRepository
                 new Equals(SubscriptionRecord.SUBSCRIBER, true),
                 new GreaterThan(SubscriptionRecord.GRANTS_LEFT, 0),
                 new LessThan(SubscriptionRecord.LAST_GRANT, monthAgo))));
-        return Lists.transform(keys, new Function<Key<SubscriptionRecord>,Integer>() {
-            public Integer apply (Key<SubscriptionRecord> key) {
-                return (Integer) key.getValues()[0];
-            }
-        });
+        return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
+    }
+
+    /**
+     * Load the memberIds of any subscribers that should be granted the specified special item.
+     */
+    public List<Integer> loadSubscribersNeedingItem (ItemIdent specialItem)
+    {
+        List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
+            new Where(new And(
+                new Equals(SubscriptionRecord.SUBSCRIBER, true),
+                new NotEquals(SubscriptionRecord.SPECIAL_ITEM_TYPE, specialItem.type),
+                new NotEquals(SubscriptionRecord.SPECIAL_ITEM_ID, specialItem.itemId))));
+        return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
     }
 
     /**
@@ -115,6 +143,21 @@ public class SubscriptionRepository extends DepotRepository
         updates.put(SubscriptionRecord.LAST_GRANT,
             new ValueExp(new Timestamp(System.currentTimeMillis())));
         updates.put(SubscriptionRecord.GRANTS_LEFT, new Sub(SubscriptionRecord.GRANTS_LEFT, 1));
+
+        int count = updatePartial(SubscriptionRecord.getKey(memberId), updates);
+        if (count == 0) {
+            throw new RuntimeException("SubscriptionRecord not found for " + memberId);
+        }
+    }
+
+    /**
+     * Note that the specified subscriber has been granted the specified item.
+     */
+    public void noteSpecialItemGranted (int memberId, ItemIdent specialItem)
+    {
+        Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
+        updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, new ValueExp(specialItem.type));
+        updates.put(SubscriptionRecord.SPECIAL_ITEM_ID, new ValueExp(specialItem.itemId));
 
         int count = updatePartial(SubscriptionRecord.getKey(memberId), updates);
         if (count == 0) {

@@ -10,8 +10,12 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
@@ -20,7 +24,13 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
 
+import com.threerings.msoy.admin.data.SubscriptionConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import static com.threerings.msoy.Log.log;
@@ -55,6 +65,9 @@ public class SubscriptionLogic
                 return "SubscriptionLogic.grantBars";
             }
         });
+
+        // listen for changes to the special item
+        _runtime.subscription.addListener(_configListener);
 
 //        // TEMP TEMP TEMP
 //        if (DeploymentConfig.devDeployment) {
@@ -101,19 +114,26 @@ public class SubscriptionLogic
             _memberRepo.storeFlags(mrec);
             MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
         }
+        CatalogRecord listing = getSpecialItem();
+        ItemIdent ident = (listing == null)
+            ? null
+            : new ItemIdent(listing.item.getType(), listing.item.itemId);
+
         // create or update their subscription record
         int barGrantsLeft = months; // make explicit this equivalence
-        boolean grantBars = _subscripRepo.noteSubscriptionStarted(mrec.memberId, barGrantsLeft);
-        // TODO: FFS, turn them into a subscriber instantly, whereever they are.
+        Tuple<Boolean,Boolean> doGrants =
+            _subscripRepo.noteSubscriptionStarted(mrec.memberId, barGrantsLeft, ident);
 
         // Grant them their monthly bar allowance.
-        int bars = _runtime.money.monthlySubscriberBarGrant;
-        if (grantBars && bars > 0) {
+        int bars = _runtime.subscription.monthlyBarGrant;
+        if (doGrants.left && bars > 0) {
             _moneyLogic.grantSubscriberBars(mrec.memberId, bars);
         }
-        // TODO: give them the current Item Of The Month. However, if they already received the
-        // item of the month; because they were a subscriber when it came out, or if we don't
-        // quite update it monthly and they already got it during the last billing cycle; don't.
+
+        // Grant them the special item
+        if (doGrants.right) {
+            _itemLogic.grantItem(mrec, listing);
+        }
     }
 
     /**
@@ -153,7 +173,7 @@ public class SubscriptionLogic
     protected void grantBars ()
     {
         // figure out how many bars we're going to be granting
-        int bars = _runtime.money.monthlySubscriberBarGrant;
+        int bars = _runtime.subscription.monthlyBarGrant;
         List<Integer> memberIds = _subscripRepo.loadSubscribersNeedingBarGrants();
         for (Integer memberId : memberIds) {
             // let's do each one in turn, don't let one booch hork the whole set
@@ -170,7 +190,64 @@ public class SubscriptionLogic
         }
     }
 
+    /**
+     * Grant the special item to any current subscribers, if they haven't gotten it already.
+     */
+    @BlockingThread
+    protected void grantSpecialItem ()
+    {
+        CatalogRecord listing = getSpecialItem();
+        if (listing == null) {
+            return;
+        }
+
+        ItemIdent ident = new ItemIdent(listing.item.getType(), listing.item.itemId);
+        List<Integer> memberIds = _subscripRepo.loadSubscribersNeedingItem(ident);
+        for (Integer memberId : memberIds) {
+            // do each one separately
+            try {
+                MemberRecord mrec = _memberRepo.loadMember(memberId);
+                _itemLogic.grantItem(mrec, listing);
+                _subscripRepo.noteSpecialItemGranted(memberId, ident);
+            } catch (Exception e) {
+                log.warning("Unable to grant a subscriber their special item",
+                    "memberId", memberId, e);
+            }
+        }
+    }
+
+    @BlockingThread
+    protected CatalogRecord getSpecialItem ()
+    {
+        try {
+            ItemIdent ident = ItemIdent.fromString(_runtime.subscription.specialItem);
+            return _itemLogic.requireListing(ident.type, ident.itemId, true);
+
+        } catch (Exception e) {
+            log.warning("Trouble resolving special item",
+                "ident", _runtime.subscription.specialItem, e);
+        }
+        return null;
+    }
+
+    /** Listens for changes to the special item. */
+    protected AttributeChangeListener _configListener = new AttributeChangeListener() {
+        @EventThread
+        public void attributeChanged (AttributeChangedEvent event)
+        {
+            String name = event.getName();
+            if (SubscriptionConfigObject.SPECIAL_ITEM.equals(name)) {
+                _batchInvoker.postRunnable(new Runnable() {
+                    public void run () {
+                        grantSpecialItem();
+                    }
+                });
+            }
+        }
+    };
+
     @Inject protected CronLogic _cronLogic;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected RuntimeConfig _runtime;

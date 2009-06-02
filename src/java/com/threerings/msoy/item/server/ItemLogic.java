@@ -465,6 +465,19 @@ public class ItemLogic
     }
 
     /**
+     * Very minimal logic to grant a subscriber the free item of the month.
+     */
+    public Item grantItem (MemberRecord grantee, CatalogRecord listing)
+        throws ServiceException
+    {
+        // I hate copying this apart from normal buying, but it's very special, you see.
+        ItemRepository<ItemRecord> repo = getRepository(listing.item.getType());
+        ItemRecord clone = repo.insertClone(listing.item, grantee.memberId, Currency.BARS, 0);
+        itemPurchased(clone, Currency.BARS, 0);
+        return clone.toItem();
+    }
+
+    /**
      * Transfer all the items used in the specified scene to the new owner.
      */
     public void transferRoomItems (int oldOwnerId, int newOwnerId, int sceneId)

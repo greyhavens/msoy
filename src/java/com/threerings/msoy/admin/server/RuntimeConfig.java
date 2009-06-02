@@ -21,6 +21,7 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
+import com.threerings.msoy.admin.data.SubscriptionConfigObject;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.money.server.MoneyExchange;
@@ -42,6 +43,9 @@ public class RuntimeConfig
     /** Contains costs of wares configuration data. */
     public final CostsConfigObject costs = new CostsConfigObject();
 
+    /** Contains subscription configuration. */
+    public final SubscriptionConfigObject subscription = new SubscriptionConfigObject();
+
     /**
      * Creates and registers the runtime configuration objects.
      */
@@ -50,6 +54,7 @@ public class RuntimeConfig
         registerObject(omgr, confReg, "server", server);
         registerObject(omgr, confReg, "money", money);
         registerObject(omgr, confReg, "costs", costs);
+        registerObject(omgr, confReg, "subscription", subscription);
     }
 
     /**

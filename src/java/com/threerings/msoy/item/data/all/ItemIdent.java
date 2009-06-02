@@ -13,6 +13,18 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ItemIdent
     implements Comparable<ItemIdent>, Streamable, IsSerializable
 {
+    /**
+     * Create an ItemIdent from a String.
+     */
+    public static ItemIdent fromString (String s)
+    {
+        String[] tokens = s.split(":");
+        if (tokens.length != 2) {
+            throw new IllegalArgumentException("Format is '<type>:<id>'");
+        }
+        return new ItemIdent(Byte.parseByte(tokens[0]), Integer.parseInt(tokens[1]));
+    }
+
     /** The item type identifier. */
     public byte type;
 
