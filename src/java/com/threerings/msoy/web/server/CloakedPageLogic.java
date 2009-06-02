@@ -285,7 +285,7 @@ public class CloakedPageLogic
             out.println("<h1>" + title + "</h1>");
             out.println(desc);
 
-            for (Iterator itr = args.iterator(); itr.hasNext(); ) {
+            for (Iterator<Object> itr = args.iterator(); itr.hasNext(); ) {
                 Object arg = itr.next();
                 if (arg instanceof MediaDesc) {
                     out.println("<img src=\"" + ((MediaDesc) arg).getMediaPath() + "\">");

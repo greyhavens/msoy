@@ -8,21 +8,17 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
 
-import com.threerings.msoy.admin.data.SubscriptionConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.item.data.all.ItemIdent;

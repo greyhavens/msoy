@@ -18,9 +18,6 @@ import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.presents.server.ReportManager;
 
-import com.threerings.admin.server.AdminProvider;
-import com.threerings.admin.server.ConfigRegistry;
-
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
