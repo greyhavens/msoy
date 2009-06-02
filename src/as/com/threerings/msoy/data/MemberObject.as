@@ -250,7 +250,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function getSortedGateways () :Array
     {
-        return this.gateways.toArray().sort(Comparators.COMPARABLE);
+        return gateways.toArray().sort(Comparators.COMPARABLE);
     }
 
     /**
@@ -258,7 +258,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function getSortedImContacts (gateway :String) :Array
     {
-        var contacts :Array = this.imContacts.toArray();
+        var contacts :Array = imContacts.toArray();
         contacts = contacts.filter(
             function (ce :ContactEntry, ... ignored) :Boolean {
                 return ce.getGateway() == gateway;

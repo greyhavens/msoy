@@ -45,5 +45,21 @@ public class MsoyTokenRing extends TokenRing
     {
         return holdsAnyToken(ADMIN | MAINTAINER);
     }
+
+    /**
+     * Convenience function for checking if the user is a subscriber, allowing support+, too.
+     */
+    public function isSubscriberPlus () :Boolean
+    {
+        return holdsAnyToken(SUPPORT | ADMIN | MAINTAINER | SUBSCRIBER);
+    }
+
+    /**
+     * Is this user a subscriber, not counting support+.
+     */
+    public function isSubscriber () :Boolean
+    {
+        return holdsToken(SUBSCRIBER);
+    }
 }
 }
