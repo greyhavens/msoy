@@ -20,6 +20,11 @@ public class SharedNaviUtil
             return _code;
         }
 
+        public Args args (int gameId)
+        {
+            return Args.compose("d", gameId, code());
+        }
+
         GameDetails (String code) {
             _code = code;
         }
@@ -40,9 +45,4 @@ public class SharedNaviUtil
 
         protected String _code;
     }        
-
-    public static Args gameDetail (int gameId, GameDetails tab)
-    {
-        return Args.compose("d", gameId, tab.code());
-    }
 }

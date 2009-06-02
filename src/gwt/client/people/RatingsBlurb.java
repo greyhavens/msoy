@@ -82,8 +82,7 @@ public class RatingsBlurb extends Blurb
 
             ClickHandler gameClick = new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    Link.go(Pages.GAMES, NaviUtil.gameDetail(
-                                entry.gameId, NaviUtil.GameDetails.MYRANKINGS));
+                    Link.go(Pages.GAMES, NaviUtil.GameDetails.MYRANKINGS.args(entry.gameId));
                 }
             };
             setWidget(0, 0, MediaUtil.createMediaView(

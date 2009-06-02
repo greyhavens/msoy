@@ -325,8 +325,7 @@ public class FeedItemGenerator
 
         case TROPHIES:
             return _builder.createLink(message.data[0], Pages.GAMES,
-                                   SharedNaviUtil.gameDetail(Integer.valueOf(message.data[1]),
-                                                       SharedNaviUtil.GameDetails.TROPHIES));
+                SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
 
         case LISTED_ITEMS:
             return _messages.describeItem(
@@ -417,8 +416,8 @@ public class FeedItemGenerator
             if (media == null) {
                 return null;
             }
-            return _builder.createMedia(media, Pages.GAMES, SharedNaviUtil.gameDetail(
-                Integer.valueOf(message.data[1]), SharedNaviUtil.GameDetails.TROPHIES));
+            return _builder.createMedia(media, Pages.GAMES,
+                SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
 
         case LISTED_ITEMS:
             if (message.data.length < 4) {

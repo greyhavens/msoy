@@ -29,7 +29,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
         table.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         table.setText(0, 1, _msgs.awardTitle());
-        Args args = NaviUtil.gameDetail(_payload.gameId, NaviUtil.GameDetails.TROPHIES);
+        Args args = NaviUtil.GameDetails.TROPHIES.args(_payload.gameId);
         table.setWidget(0, 2, Link.create(_payload.gameName, Pages.GAMES, args));
 
         switch (_payload.awardType) {

@@ -37,8 +37,7 @@ public class TrophyGrid extends FlexTable
             final Trophy trophy = trophies[ii];
             ClickHandler trophyClick = new ClickHandler() {
                 public void onClick (ClickEvent event) {
-                    Link.go(Pages.GAMES, NaviUtil.gameDetail(
-                                trophy.gameId, NaviUtil.GameDetails.TROPHIES));
+                    Link.go(Pages.GAMES, NaviUtil.GameDetails.TROPHIES.args(trophy.gameId));
                 }
             };
 

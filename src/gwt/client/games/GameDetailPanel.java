@@ -40,7 +40,6 @@ import client.ui.Rating;
 import client.ui.ThumbBox;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -132,7 +131,7 @@ public class GameDetailPanel extends SmartTable
 
         setWidget(3, 0, _tabs = new NaviTabPanel(Pages.GAMES) {
             protected Args getTabArgs (int tabIdx) {
-                return NaviUtil.gameDetail(_gameId, getTabCode(tabIdx));
+                return getTabCode(tabIdx).args(_gameId);
             }
         }, 3, null);
 
