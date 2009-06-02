@@ -19,6 +19,7 @@ import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
 
+import com.threerings.admin.server.AdminManager;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
@@ -67,11 +68,12 @@ import static com.threerings.msoy.Log.log;
  * Handles administrative bits for the MetaSOY server.
  */
 @EventThread @Singleton
-public class MsoyAdminManager
+public class MsoyAdminManager extends AdminManager
     implements PeerAdminProvider
 {
-    @Inject public MsoyAdminManager (PulseManager pulseMan)
+    @Inject public MsoyAdminManager (PulseManager pulseMan, InvocationManager invmgr)
     {
+        super(invmgr);
         // we need to register our records before the server gets around to initing the repos
         pulseMan.registerRecorder(JVMPulseRecorder.class);
         pulseMan.registerRecorder(PresentsPulseRecorder.class);
@@ -91,7 +93,7 @@ public class MsoyAdminManager
         // initialize our reboot manager
         _rebmgr.init();
 
-        // register our peer service
+        // register our peer service (now that the peer node object is created)
         ((MsoyNodeObject)_peerMan.getNodeObject()).setPeerAdminService(
             invmgr.registerDispatcher(new PeerAdminDispatcher(this)));
 

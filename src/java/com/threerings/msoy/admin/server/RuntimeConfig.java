@@ -49,12 +49,12 @@ public class RuntimeConfig
     /**
      * Creates and registers the runtime configuration objects.
      */
-    public void init (RootDObjectManager omgr, ConfigRegistry confReg)
+    public void init (RootDObjectManager omgr)
     {
-        registerObject(omgr, confReg, "server", server);
-        registerObject(omgr, confReg, "money", money);
-        registerObject(omgr, confReg, "costs", costs);
-        registerObject(omgr, confReg, "subscription", subscription);
+        registerObject(omgr, _confReg, "server", server);
+        registerObject(omgr, _confReg, "money", money);
+        registerObject(omgr, _confReg, "costs", costs);
+        registerObject(omgr, _confReg, "subscription", subscription);
     }
 
     /**
@@ -159,5 +159,6 @@ public class RuntimeConfig
     };
 
     // our dependencies
+    @Inject protected ConfigRegistry _confReg;
     @Inject protected MoneyExchange _exchange;
 }

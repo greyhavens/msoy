@@ -66,11 +66,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
         _perCtx.initializeRepositories(true);
 
-        // create and set up our configuration registry, admin service and runtime config (so that
-        // our runtime config values are loaded and ready before any other initialization happens)
-        final ConfigRegistry confReg = createConfigRegistry();
-        AdminProvider.init(_invmgr, confReg);
-        _runtime.init(_omgr, confReg);
+        // set up our runtime config now so it's ready before any other initialization happens
+        _runtime.init(_omgr);
 
         // increase highest bucket for invoker profiling and decrease resolution for batch invoker
         _invoker.setProfilingParameters(50, 40);
@@ -130,12 +127,6 @@ public abstract class MsoyBaseServer extends WhirledServer
      * generating log files.
      */
     protected abstract String getIdent ();
-
-    /**
-     * Creates the admin config registry for use by this server.
-     */
-    protected abstract ConfigRegistry createConfigRegistry ()
-        throws Exception;
 
     /** Used for caching things. */
     protected CacheManager _cacheMgr = CacheManager.getInstance();

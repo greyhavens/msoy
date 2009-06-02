@@ -44,6 +44,7 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.admin.server.AdminManager;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
@@ -102,6 +103,8 @@ public class MsoyServer extends MsoyBaseServer
             bind(PresentsServer.class).to(MsoyServer.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
             bind(ReportManager.class).to(QuietReportManager.class);
+            bind(ConfigRegistry.class).to(PeeredDatabaseConfigRegistry.class);
+            bind(AdminManager.class).to(MsoyAdminManager.class);
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
             bind(PlaceRegistry.class).to(RoomRegistry.class);
@@ -291,13 +294,6 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
-    protected ConfigRegistry createConfigRegistry ()
-        throws Exception
-    {
-        return _peerConfReg;
-    }
-
-    @Override // from MsoyBaseServer
     protected void configSessionFactory ()
     {
         // configure our primary client factory
@@ -461,9 +457,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides money services. */
     @Inject protected MoneyLogic _moneyLogic;
-
-    /** Provides our peer-aware runtime configuration. */
-    @Inject protected PeeredDatabaseConfigRegistry _peerConfReg;
 
     /** The feed repository, so that we may prune. */
     @Inject protected FeedRepository _feedRepo;
