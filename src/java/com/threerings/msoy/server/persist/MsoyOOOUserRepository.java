@@ -26,7 +26,6 @@ import com.samskivert.servlet.user.UserUtil;
 import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.user.OOOUser;
 import com.threerings.user.depot.DepotUserRepository;
-import com.threerings.user.depot.HistoricalUserRecord;
 import com.threerings.user.depot.OOOUserRecord;
 import com.threerings.user.depot.UserIdentRecord;
 
@@ -65,7 +64,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     public void uncreateUser (int userId)
     {
         delete(OOOUserRecord.getKey(userId));
-        delete(HistoricalUserRecord.getKey(userId));
         deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID, userId));
     }
 
@@ -102,8 +100,8 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     }
 
     /**
-     * Deletes all data associated with the supplied members. This is done as a part of purging
-     * member accounts.
+     * Deletes all data associated with the supplied members (except the OOOUserRecord which is
+     * only disabled). This is done as a part of purging member accounts.
      */
     public void purgeMembers (Collection<String> emails)
     {
@@ -111,10 +109,11 @@ public class MsoyOOOUserRepository extends DepotUserRepository
             findAllKeys(OOOUserRecord.class, false, new Where(new In(OOOUserRecord.EMAIL, emails))),
             RecordFunctions.<OOOUserRecord>getIntKey());
         if (!userIds.isEmpty()) {
-            deleteAll(OOOUserRecord.class, new Where(new In(OOOUserRecord.USER_ID, userIds)));
-            deleteAll(HistoricalUserRecord.class,
-                      new Where(new In(HistoricalUserRecord.USER_ID, userIds)));
+            // delete this member's random crap
             deleteAll(UserIdentRecord.class, new Where(new In(UserIdentRecord.USER_ID, userIds)));
+            // blank out the password field which will prevent logins to this account
+            updatePartial(OOOUserRecord.class, new Where(new In(OOOUserRecord.USER_ID, userIds)),
+                          OOOUserRecord.PASSWORD, "");
         }
     }
 
