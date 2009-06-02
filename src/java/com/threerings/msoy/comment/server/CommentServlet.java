@@ -128,7 +128,7 @@ public class CommentServlet extends MsoyServiceServlet
             ownerId = eid;
 
         // comment on an item
-        } else {
+        } else  if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
             try {
                 ItemRepository<?> repo = _itemLogic.getRepository((byte)etype);
                 CatalogRecord listing = repo.loadListing(eid, true);
