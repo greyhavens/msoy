@@ -752,13 +752,13 @@ public class ThaneAVRGameBackend
     protected function getCoins_v1 (playerId :int) :int
     {
         var player :PlayerObject = _controller.getPlayerForUser(playerId);
-        return (player == null) ? 0 : player.coins;
+        return (_gameObj.isApproved && player != null) ? player.coins : 0;
     }
 
     protected function getBars_v1 (playerId :int) :int
     {
         var player :PlayerObject = _controller.getPlayerForUser(playerId);
-        return (player == null) ? 0 : player.bars;
+        return (_gameObj.isApproved && player != null) ? player.bars : 0;
     }
 
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void

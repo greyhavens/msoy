@@ -90,6 +90,9 @@ public class AVRGameObject extends PlaceObject
     /** Used to communicate with the AVRGameManager. */
     public var propertiesService :PropertySpaceMarshaller;
 
+    /** Can this game control the horizontal and the vertical? */
+    public var isApproved :Boolean;
+
      // from PropertySpaceObject
     public function getUserProps () :Object
     {

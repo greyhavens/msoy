@@ -237,6 +237,7 @@ public class AVRGameManager extends PlaceManager
         super.didStartup();
 
         _gameObj = (AVRGameObject)_plobj;
+        _gameObj.setIsApproved(_contentDelegate.getContent().isApproved);
         _gameObj.setAvrgService(addDispatcher(new AVRGameDispatcher(this)));
         _gameObj.setContentService(addDispatcher(new ContentDispatcher(this)));
         _gameObj.setPrizeService(addDispatcher(new PrizeDispatcher(this)));
@@ -277,7 +278,7 @@ public class AVRGameManager extends PlaceManager
                     }
                 }
             })));
-        
+
         _sceneCheck = new Interval(_omgr) {
             public void expired () {
                 checkScenes();
@@ -333,7 +334,7 @@ public class AVRGameManager extends PlaceManager
                                  InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        if (!_contentDelegate.getContent().isApproved) {
+        if (!_gameObj.isApproved) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
         _contentDelegate.purchaseItemPack(getPlayer(caller, playerId), ident, listener);
@@ -345,7 +346,7 @@ public class AVRGameManager extends PlaceManager
         throws InvocationException
     {
         // if this comes from the agent then only approved games are allowed
-        if (isAgent(caller) && !_contentDelegate.getContent().isApproved) {
+        if (isAgent(caller) && !_gameObj.isApproved) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
         _contentDelegate.consumeItemPack(getPlayer(caller, playerId), ident, listener);

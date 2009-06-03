@@ -75,6 +75,9 @@ public class AVRGameObject extends PlaceObject
 
     /** The field name of the <code>propertiesService</code> field. */
     public static final String PROPERTIES_SERVICE = "propertiesService";
+
+    /** The field name of the <code>isApproved</code> field. */
+    public static final String IS_APPROVED = "isApproved";
     // AUTO-GENERATED: FIELDS END
 
     /**
@@ -107,6 +110,9 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to set game properties. */
     public PropertySpaceMarshaller propertiesService;
+
+    /** Can this game control the horizontal and the vertical? */
+    public boolean isApproved;
 
     // from PropertySpaceObject
     public Map<String, Object> getUserProps ()
@@ -373,6 +379,22 @@ public class AVRGameObject extends PlaceObject
         requestAttributeChange(
             PROPERTIES_SERVICE, value, ovalue);
         this.propertiesService = value;
+    }
+
+    /**
+     * Requests that the <code>isApproved</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setIsApproved (boolean value)
+    {
+        boolean ovalue = this.isApproved;
+        requestAttributeChange(
+            IS_APPROVED, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.isApproved = value;
     }
     // AUTO-GENERATED: METHODS END
 

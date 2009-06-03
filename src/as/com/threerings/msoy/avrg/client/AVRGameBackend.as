@@ -635,13 +635,13 @@ public class AVRGameBackend extends ControlBackend
     // PlayerSubControl
     protected function getCoins_v1 (targetId :int /* ignored */) :int
     {
-        return _gctx.getPlayerObject().coins;
+        return _gameObj.isApproved ? _gctx.getPlayerObject().coins : 0;
     }
 
     // PlayerSubControl
     protected function getBars_v1 (targetId :int /* ignored */) :int
     {
-        return _gctx.getPlayerObject().bars;
+        return _gameObj.isApproved ? _gctx.getPlayerObject().bars : 0;
     }
 
     // PlayerSubControl
