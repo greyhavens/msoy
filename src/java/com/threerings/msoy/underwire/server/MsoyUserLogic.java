@@ -142,18 +142,18 @@ public class MsoyUserLogic extends SupportUserLogic
     protected String getUsername (String username)
         throws UnderwireException
     {
-        MemberName name;
         try {
-            name = _memberRepo.loadMemberName(username);
+            MemberName name = _memberRepo.loadMemberName(username);
+            if (name == null) {
+                log.warning("Unable to find member information [email=" + username + "].");
+                return null;
+            }
+            return String.valueOf(name.getMemberId());
+
         } catch (Exception e) {
             log.warning("Error looking up member", e);
-            name = null; // handled with the next check
-        }
-        if (name == null) {
-            log.warning("Unable to find member information [email=" + username + "].");
             throw new UnderwireException("m.internal_error");
         }
-        return String.valueOf(name.getMemberId());
     }
 
     @Override // from SupportUserLogic
