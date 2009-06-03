@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="Config,com.whirled.contrib.simplegame.Config,hostSprite,keyDispatcher,maxAudioChannels" name="keywords">
+<meta content="Config,com.whirled.contrib.simplegame.Config,externalResourceManager,maxAudioChannels" name="keywords">
 <title>com.whirled.contrib.simplegame.Config</title>
 </head>
 <body>
@@ -51,12 +51,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#hostSprite">hostSprite</a> : Sprite<div class="summaryTableDescription"> The Sprite that is hosting this SimpleGame.</div>
-</td><td class="summaryTableOwnerCol">Config</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#keyDispatcher">keyDispatcher</a> : IEventDispatcher<div class="summaryTableDescription">
-     The EventDispatcher that will deliver keyboard events to the SimpleGame.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#externalResourceManager">externalResourceManager</a> : <a href="resource/ResourceManager.html">ResourceManager</a>
+<div class="summaryTableDescription">
+     If not null, externalResourceManager will be used in place of a new ResourceManager.</div>
 </td><td class="summaryTableOwnerCol">Config</td>
 </tr>
 <tr class="">
@@ -72,25 +69,17 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="hostSprite"></a>
+<a name="externalResourceManager"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">hostSprite</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">externalResourceManager</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public var hostSprite:Sprite</code><p> The Sprite that is hosting this SimpleGame. Required. </p></div>
-<a name="keyDispatcher"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">keyDispatcher</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var keyDispatcher:IEventDispatcher</code><p>
-     The EventDispatcher that will deliver keyboard events to the SimpleGame.
-     In games connected to Whirled, this should be set to the game's LocalSubControl.
-     Otherwise, it can be left as null.
+<code>public var externalResourceManager:<a href="resource/ResourceManager.html">ResourceManager</a></code><p>
+     If not null, externalResourceManager will be used in place of a new ResourceManager.
+     externalResourceManager will not be shut down when the SimpleGame is.
+     Defaults to null.
      </p></div>
 <a name="maxAudioChannels"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

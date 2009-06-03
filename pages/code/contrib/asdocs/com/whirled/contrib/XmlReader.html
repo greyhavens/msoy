@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="XmlReader,com.whirled.contrib.XmlReader,getAttr,getBooleanAttr,getEnumAttr,getIntAttr,getNumberAttr,getSingleChild,getStringAttr,getUintAttr,hasAttribute,hasChild,parseEnum" name="keywords">
+<meta content="XmlReader,com.whirled.contrib.XmlReader,getAttr,getBooleanAttr,getEnumAttr,getIntAttr,getNumberAttr,getSingleChild,getStringArrayAttr,getStringAttr,getUintAttr,hasAttribute,hasChild,parseStringMember" name="keywords">
 <title>com.whirled.contrib.XmlReader</title>
 </head>
 <body>
@@ -67,7 +67,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getEnumAttr()">getEnumAttr</a>(xml:XML, name:String, stringMapping:Array, defaultValue:*):int</div>
+<a class="signatureLink" href="#getEnumAttr()">getEnumAttr</a>(xml:XML, name:String, enumClazz:Class, defaultValue:*):*</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">XmlReader</td>
 </tr>
@@ -89,6 +89,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getSingleChild()">getSingleChild</a>(xml:XML, name:String, defaultValue:*):XML</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">XmlReader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getStringArrayAttr()">getStringArrayAttr</a>(xml:XML, name:String, stringMapping:Array, defaultValue:*):int</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">XmlReader</td>
 </tr>
@@ -132,7 +139,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#parseEnum()">parseEnum</a>(stringVal:String, stringMapping:Array):int</div>
+<a class="signatureLink" href="#parseStringMember()">parseStringMember</a>(stringVal:String, stringMapping:Array):int</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">XmlReader</td>
 </tr>
@@ -224,7 +231,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getEnumAttr(xml:XML, name:String, stringMapping:Array, defaultValue:*):int</code><span class="label">Parameters</span>
+<code>public static function getEnumAttr(xml:XML, name:String, enumClazz:Class, defaultValue:*):*</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">xml</span>:XML</code></td>
@@ -239,7 +246,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">stringMapping</span>:Array</code></td>
+<td width="20px"></td><td><code><span class="label">enumClazz</span>:Class</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -252,7 +259,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>int</code></td>
+<td width="20"></td><td><code>*</code></td>
 </tr>
 </table>
 </div>
@@ -352,6 +359,45 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>XML</code></td>
+</tr>
+</table>
+</div>
+<a name="getStringArrayAttr()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getStringArrayAttr</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getStringArrayAttr(xml:XML, name:String, stringMapping:Array, defaultValue:*):int</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">xml</span>:XML</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">stringMapping</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">defaultValue</span>:*</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -475,14 +521,14 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="parseEnum()"></a>
+<a name="parseStringMember()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">parseEnum</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">parseStringMember</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static function parseEnum(stringVal:String, stringMapping:Array):int</code><span class="label">Parameters</span>
+<code>protected static function parseStringMember(stringVal:String, stringMapping:Array):int</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">stringVal</span>:String</code></td>

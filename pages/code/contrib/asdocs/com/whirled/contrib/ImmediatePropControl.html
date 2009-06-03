@@ -45,9 +45,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- Provides a safe way of managing properties on a client, as long as the client is
- the ONLY entity modifying those properties.
-  All property values are stored locally, so the client will always be working with the latest
+ Provides a safe way of managing "immediate" properties on an entity, as long as the entity is
+ the ONLY thing modifying those properties.
+  All property values are stored locally, so the entity will always be working with the latest
  values as long as nobody else is writing to the same properties.
  <p></p>
 <br>

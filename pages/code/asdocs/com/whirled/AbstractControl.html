@@ -197,6 +197,8 @@ showHideInherited();
      the results will not come back as a unit. So, for instance, when you receive the
      PropertyChangedEvent for "board", checking the value of "scores" will still return
      the old value.
+          It is NOT an error to call doBatch again from within the function passed to doBatch.
+     All batched messages will be sent when the outermost doBatch function completes.
      <p></p>
 </div>
 <a name="isConnected()"></a>

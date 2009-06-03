@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MenuUtil,com.threerings.flash.MenuUtil,createControllerMenuItem" name="keywords">
+<meta content="MenuUtil,com.threerings.flash.MenuUtil,createCommandContextMenuItem" name="keywords">
 <title>com.threerings.flash.MenuUtil</title>
 </head>
 <body>
@@ -53,9 +53,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createControllerMenuItem()">createControllerMenuItem</a>(caption:String, cmdOrFn:Object, arg:Object = null, separatorBefore:Boolean = false, enabled:Boolean = true, visible:Boolean = true):ContextMenuItem</div>
+<a class="signatureLink" href="#createCommandContextMenuItem()">createCommandContextMenuItem</a>(caption:String, cmdOrFn:Object, arg:Object = null, separatorBefore:Boolean = false, enabled:Boolean = true):ContextMenuItem</div>
 <div class="summaryTableDescription">[static]
-     Create a menu item that will submit a controller command when selected.</div>
+     Create a context menu item that will submit a command when selected.</div>
 </td><td class="summaryTableOwnerCol">MenuUtil</td>
 </tr>
 </table>
@@ -67,15 +67,15 @@ showHideInherited();
 <div class="MainContent">
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="createControllerMenuItem()"></a>
+<a name="createCommandContextMenuItem()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">createControllerMenuItem</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">createCommandContextMenuItem</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function createControllerMenuItem(caption:String, cmdOrFn:Object, arg:Object = null, separatorBefore:Boolean = false, enabled:Boolean = true, visible:Boolean = true):ContextMenuItem</code><p>
-     Create a menu item that will submit a controller command when selected.
+<code>public static function createCommandContextMenuItem(caption:String, cmdOrFn:Object, arg:Object = null, separatorBefore:Boolean = false, enabled:Boolean = true):ContextMenuItem</code><p>
+     Create a context menu item that will submit a command when selected.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -104,12 +104,6 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">enabled</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">visible</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
 </tr>
 </table>
 <p></p>

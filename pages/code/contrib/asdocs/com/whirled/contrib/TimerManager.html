@@ -104,7 +104,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createTimer()">createTimer</a>(delay:Number, repeatCount:int, timerCallback:Function, completeCallback:Function = null):<a href="../contrib/ManagedTimer.html">ManagedTimer</a>
+<a class="signatureLink" href="#createTimer()">createTimer</a>(delay:Number, repeatCount:int, timerCallback:Function = null, completeCallback:Function = null):<a href="../contrib/ManagedTimer.html">ManagedTimer</a>
 </div>
 <div class="summaryTableDescription">
      Creates, but doesn't run, a new ManagedTimer.</div>
@@ -254,7 +254,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function createTimer(delay:Number, repeatCount:int, timerCallback:Function, completeCallback:Function = null):<a href="../contrib/ManagedTimer.html">ManagedTimer</a></code><p>
+<code>public function createTimer(delay:Number, repeatCount:int, timerCallback:Function = null, completeCallback:Function = null):<a href="../contrib/ManagedTimer.html">ManagedTimer</a></code><p>
      Creates, but doesn't run, a new ManagedTimer.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -271,7 +271,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">timerCallback</span>:Function</code></td>
+<td width="20px"></td><td><code><span class="label">timerCallback</span>:Function</code> (default = <code>null</code>)<code></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>

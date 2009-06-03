@@ -162,7 +162,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addSceneObject()">addSceneObject</a>(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null):<a href="../simplegame/SimObjectRef.html">SimObjectRef</a>
+<a class="signatureLink" href="#addSceneObject()">addSceneObject</a>(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null, displayIdx:int = -1):<a href="../simplegame/SimObjectRef.html">SimObjectRef</a>
 </div>
 <div class="summaryTableDescription">
      A convenience function that adds the given SceneObject to the mode and attaches its
@@ -460,7 +460,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function addSceneObject(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null):<a href="../simplegame/SimObjectRef.html">SimObjectRef</a></code><p>
+<code>public function addSceneObject(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null, displayIdx:int = -1):<a href="../simplegame/SimObjectRef.html">SimObjectRef</a></code><p>
      A convenience function that adds the given SceneObject to the mode and attaches its
      DisplayObject to the display list.
           </p><span class="label">Parameters</span>
@@ -468,13 +468,21 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">obj</span>:<a href="SimObject.html">SimObject</a></code> &mdash; the parent to attach the DisplayObject to, or null to attach
      directly to the AppMode's modeSprite.
+          </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">displayParent</span>:DisplayObjectContainer</code> (default = <code>null</code>)<code></code> &mdash; the index at which the object will be added to displayParent,
+     or -1 to add to the end of displayParent
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">displayParent</span>:DisplayObjectContainer</code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">displayIdx</span>:int</code> (default = <code>-1</code>)<code></code></td>
 </tr>
 </table>
 <p></p>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PlayerSubControlServer,com.whirled.avrg.PlayerSubControlServer,awardPrize,awardTrophy,getPlayerId,getPlayerName,sendMessage" name="keywords">
+<meta content="PlayerSubControlServer,com.whirled.avrg.PlayerSubControlServer,awardPrize,awardTrophy,consumeItemPack,getPlayerId,getPlayerName,purchaseItemPack,sendMessage" name="keywords">
 <title>com.whirled.avrg.PlayerSubControlServer</title>
 </head>
 <body>
@@ -126,6 +126,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      This method calculates and awards a coin payout for the player.</div>
 </td><td class="summaryTableOwnerCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#consumeItemPack()">consumeItemPack</a>(ident:String):Boolean</div>
+<div class="summaryTableDescription">
+     Consumes the specified item pack for this player.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControlServer</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -143,6 +151,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Execute the specified function as a batch of commands that will be sent to the server
      together.</div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractSubControl.html">AbstractSubControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="PlayerSubControlBase.html#getBars()">getBars</a>():int</div>
+<div class="summaryTableDescription">
+     Returns this player's current bar balance.</div>
+</td><td class="summaryTableOwnerCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="PlayerSubControlBase.html#getCoins()">getCoins</a>():int</div>
+<div class="summaryTableDescription">
+     Returns this player's current coin balance.</div>
+</td><td class="summaryTableOwnerCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -235,6 +259,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Plays an action on this players avatar.</div>
 </td><td class="summaryTableOwnerCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#purchaseItemPack()">purchaseItemPack</a>(ident:String):void</div>
+<div class="summaryTableDescription">
+     Purchases the item pack with the specified identifier on behalf of the player.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControlServer</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -399,6 +431,36 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="consumeItemPack()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">consumeItemPack</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function consumeItemPack(ident:String):Boolean</code><p>
+     Consumes the specified item pack for this player. The player must currently own at least one
+     copy of the item pack. On success, a GameContentEvent.PLAYER_CONTENT_CONSUMED event will be
+     dispatched on this control (on both the client and server).
+          </p><p> Note: this funtionality is only allowed for approved games. This method will silently
+     fail for unapproved games. The approval process is still being developed. </p>
+          <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the identifier of the item pack to be consumed.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the consume request was sent, false if the the player is known not to own at
+     least one copy of the item pack.
+     </td>
+</tr>
+</table>
+</div>
 <a name="getPlayerId()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -431,6 +493,27 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="purchaseItemPack()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">purchaseItemPack</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function purchaseItemPack(ident:String):void</code><p>
+     Purchases the item pack with the specified identifier on behalf of the player. If the
+     purchase cannot be completed due to a lack of funds or other reason the player will be
+     notified via chat feedback. A GameContentEvent.PLAYER_CONTENT_ADDED event will be issued if
+     the purchase succeeds.
+          </p><p> Note: this funtionality is only allowed for approved games. This method will silently
+     fail for unapproved games. The approval process is still being developed. </p>
+     <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code></td>
 </tr>
 </table>
 </div>

@@ -140,7 +140,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#MainLoop()">MainLoop</a>(ctx:<a href="SGContext.html">SGContext</a>, hostSprite:Sprite, keyDispatcher:IEventDispatcher = null)</div>
+<a class="signatureLink" href="#MainLoop()">MainLoop</a>(ctx:<a href="SGContext.html">SGContext</a>)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
@@ -210,7 +210,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#run()">run</a>():void</div>
+<a class="signatureLink" href="#run()">run</a>(hostSprite:Sprite, keyDispatcher:IEventDispatcher = null):void</div>
 <div class="summaryTableDescription">
      Kicks off the MainLoop.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
@@ -504,22 +504,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function MainLoop(ctx:<a href="SGContext.html">SGContext</a>, hostSprite:Sprite, keyDispatcher:IEventDispatcher = null)</code><span class="label">Parameters</span>
+<code>public function MainLoop(ctx:<a href="SGContext.html">SGContext</a>)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">ctx</span>:<a href="SGContext.html">SGContext</a></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">hostSprite</span>:Sprite</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">keyDispatcher</span>:IEventDispatcher</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -729,10 +717,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function run():void</code><p>
+<code>public function run(hostSprite:Sprite, keyDispatcher:IEventDispatcher = null):void</code><p>
      Kicks off the MainLoop. Game updates will start happening after this
      function is called.
-     </p></div>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">hostSprite</span>:Sprite</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">keyDispatcher</span>:IEventDispatcher</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
 <a name="setup()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

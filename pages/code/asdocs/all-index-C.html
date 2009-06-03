@@ -206,7 +206,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ExpiringSet.html#checkTimer()">checkTimer</a>(... rest) &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ExpiringSet.html">ExpiringSet</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Remove probably just one element from the front of the expiration queue, and
+     schedule a wakeup for the time to the new head's expiration time.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html#clamp()">clamp</a>(n, min, max) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MathUtil.html">MathUtil</a></td>
@@ -760,6 +762,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      </td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html#consumeItemPack()">consumeItemPack</a>(ident) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Consumes the specified item pack for this player.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html#containerDimensionsUpdated()">containerDimensionsUpdated</a>(newWidth, newHeight) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html">MediaContainer</a></td>
 </tr>
 <tr>
@@ -953,11 +962,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("CÂ
      Create a bag containing the specified values, clearing any previous bag with the same name.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MenuUtil.html#createControllerMenuItem()">createControllerMenuItem</a>(caption, cmdOrFn, arg, separatorBefore, enabled, visible) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MenuUtil.html">MenuUtil</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MenuUtil.html#createCommandContextMenuItem()">createCommandContextMenuItem</a>(caption, cmdOrFn, arg, separatorBefore, enabled) &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MenuUtil.html">MenuUtil</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a menu item that will submit a controller command when selected.</td>
+     Create a context menu item that will submit a command when selected.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ImageUtil.html#createErrorBitmap()">createErrorBitmap</a>() &mdash; Static method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/ImageUtil.html">ImageUtil</a></td>
