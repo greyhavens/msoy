@@ -175,7 +175,12 @@ public class GameDetailPanel extends SmartTable
             });
             addTab(GameDetails.LOGS, _msgs.tabLogs(), new LazyPanel() {
                 protected Widget createWidget  () {
-                    return new GameLogsPanel(_gameId);
+                    return new GameLogsPanel(info.gameId);
+                }
+            });
+            addTab(GameDetails.DEV_LOGS, _msgs.tabDevLogs(), new LazyPanel() {
+                protected Widget createWidget  () {
+                    return new GameLogsPanel(GameInfo.toDevId(info.gameId));
                 }
             });
         }

@@ -14,14 +14,13 @@ public class SharedNaviUtil
 {
     public enum GameDetails {
         INSTRUCTIONS("i"), COMMENTS("c"), TROPHIES("t"), MYRANKINGS("mr"),
-        TOPRANKINGS("tr"), METRICS("m"), LOGS("l");
+        TOPRANKINGS("tr"), METRICS("m"), LOGS("l"), DEV_LOGS("d");
 
         public String code () {
             return _code;
         }
 
-        public Args args (int gameId)
-        {
+        public Args args (int gameId) {
             return Args.compose("d", gameId, code());
         }
 

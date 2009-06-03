@@ -50,7 +50,7 @@ public class GameLogsPanel extends VerticalPanel
         clear();
 
         if (logs.logIds.length == 0) {
-            add(new Label(_msgs.glpNoLogs()));
+            add(new Label(_gameId < 0 ? _msgs.glpNoDevLogs() : _msgs.glpNoLogs()));
             return;
         }
 
