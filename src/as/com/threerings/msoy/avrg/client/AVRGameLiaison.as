@@ -106,7 +106,7 @@ public class AVRGameLiaison extends GameLiaison
         }
 
         // if we started the game afk/idle, tell the server
-        if (_wctx.getWorldController().isGameIdle()) {
+        if (_wctx.getWorldController().isIdle()) {
             getAVRGameController().setIdle(true);
         }
     }

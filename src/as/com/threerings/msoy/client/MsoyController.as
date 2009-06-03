@@ -272,14 +272,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Are we currently idle as far as games concerns? This is the logical union of idle and away.
-     */
-    public function isGameIdle () :Boolean
-    {
-        return _idle || _away;
-    }
-
-    /**
      * Adds a place exit handler to be invoked whenever the user requests to leave the current
      * place. The function should take no arguments and return a Boolean. A true return value means
      * carry on closing the place view. A false value means ignore the current request. In the
@@ -313,15 +305,6 @@ public class MsoyController extends Controller
             var msvc :MemberService =
                 _mctx.getClient().requireService(MemberService) as MemberService;
             msvc.setAway(_mctx.getClient(), nowAway, message);
-
-            // either way, we're not idle anymore
-            _idle = false;
-
-            // Disabled -- Bruno
-            /*if (nowAway) {
-                // throw up a modal dialog with a "back" button
-                new BackFromAwayDialog(_mctx, message);
-            }*/
         }
     }
 
@@ -785,8 +768,7 @@ public class MsoyController extends Controller
             _byebyeTimer.start();
         }
 
-        // we can only update our idle status if we're not away.
-        if (!_away && nowIdle != _idle) {
+        if (nowIdle != _idle) {
             _idle = nowIdle;
             var bsvc :BodyService = _mctx.getClient().getService(BodyService) as BodyService;
             // the service may be null if we're in the studio viewer, so just don't worry about it

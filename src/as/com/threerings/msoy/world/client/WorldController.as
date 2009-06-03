@@ -1475,35 +1475,17 @@ public class WorldController extends MsoyController
     // from MsoyController
     override protected function setIdle (nowIdle :Boolean) :void
     {
-        const wasGameIdle :Boolean = isGameIdle();
+        const wasIdle :Boolean = isIdle();
 
         super.setIdle(nowIdle);
 
         // only change game idleness when it truly changes
-        if (wasGameIdle != isGameIdle()) {
+        if (wasIdle != isIdle()) {
             // let AVRGs know about our idleness changes
             var gd :GameDirector = _wctx.getGameDirector();
             if (gd != null) { // studio has no GameDirector
                 // game idleness = whirled idle or whirled away
-                gd.setIdle(isGameIdle());
-            }
-        }
-    }
-
-    // from MsoyController
-    override public function setAway (nowAway :Boolean, message :String = null) :void
-    {
-        const wasGameIdle :Boolean = isGameIdle();
-
-        super.setAway(nowAway, message);
-
-        // only change game idleness when it truly changes
-        if (wasGameIdle != isGameIdle()) {
-            // let AVRGs know about our idleness changes
-            var gd :GameDirector = _wctx.getGameDirector();
-            if (gd != null) { // studio has no GameDirector
-                // game idleness = whirled idle or whirled away
-                gd.setIdle(isGameIdle());
+                gd.setIdle(isIdle());
             }
         }
     }
