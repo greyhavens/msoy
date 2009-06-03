@@ -121,12 +121,22 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         public SQLOperator fullTextMatch ()
         {
-            return _fts.match();
+            return _itemFts.match();
         }
 
         public SQLOperator fullTextRank ()
         {
-            return _fts.rank();
+            return _itemFts.rank();
+        }
+
+        public SQLOperator cloneTextMatch ()
+        {
+            return _cloneFts.match();
+        }
+
+        public SQLOperator cloneTextRank ()
+        {
+            return _cloneFts.rank();
         }
 
         public SQLOperator tagExistsExpression (ColumnExp itemColumn)
@@ -171,12 +181,14 @@ public abstract class ItemRepository<T extends ItemRecord>
                 _memberIds.addAll(_memberRepo.findMembersByExactDisplayName(term, 100));
             }
 
-            _fts = new FullText(getItemClass(), ItemRecord.FTS_ND, search);
+            _itemFts = new FullText(getItemClass(), ItemRecord.FTS_ND, search);
+            _cloneFts = new FullText(getCloneClass(), CloneRecord.FTS_N, search);
+
         }
 
         protected IntSet _tagIds;
         protected IntSet _memberIds;
-        protected FullText _fts;
+        protected FullText _itemFts, _cloneFts;
     }
 
     public ItemRepository (PersistenceContext ctx)
@@ -408,6 +420,9 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (queryContext != null) {
             addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), queryContext);
         }
+
+        // and add renamed clones to the full text search
+        matches.add(queryContext.cloneTextMatch());
 
         // add all matching cloned items
         results.addAll(loadClonedItems(new Where(
@@ -1111,7 +1126,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Removes the listing for the specified item from the catalog. This does not address the rules
      * pertaining to basis items: the caller must deal with derivative listings.
-     * 
+     *
      * @return true if the catalog master was deleted, false if it was left around because it had
      * been purchased one or more times.
      */
@@ -1352,7 +1367,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addTextMatchClause (List<SQLOperator> matches, WordSearch search)
     {
         // search item name and description
-        matches.add(search._fts.match());
+        matches.add(search.fullTextMatch());
     }
 
     /**

@@ -12,7 +12,9 @@ import com.samskivert.depot.annotation.*; // for Depot annotations
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.money.data.all.Currency;
 
-@Entity
+@Entity(fullTextIndices={
+    @FullTextIndex(name=CloneRecord.FTS_N, fields={ "name" })
+})
 public abstract class CloneRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -31,7 +33,10 @@ public abstract class CloneRecord extends PersistentRecord
     public static final ColumnExp MEDIA_STAMP = colexp(_R, "mediaStamp");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 8;
+    /** The identifier for the full text search index on Name */
+    public static final String FTS_N = "N";
+
+    public static final int BASE_SCHEMA_VERSION = 9;
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
