@@ -24,7 +24,6 @@ import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.servlet.user.UserUtil;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.user.OOOUser;
 import com.threerings.user.depot.DepotUserRepository;
 import com.threerings.user.depot.OOOUserRecord;
