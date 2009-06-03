@@ -3,15 +3,19 @@
 
 package com.threerings.msoy.avrg.data;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.threerings.bureau.data.AgentObject;
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.server.PropertySpaceHelper;
 
 /**
  * The data shared between server and agent for an AVR game.
@@ -47,7 +51,7 @@ public class AVRGameAgentObject extends AgentObject
 
     /** Service for agent requests. */
     public AVRGameAgentMarshaller agentService;
-    
+
     /** Used to set game properties. */
     public PropertySpaceMarshaller propertiesService;
 
@@ -175,7 +179,29 @@ public class AVRGameAgentObject extends AgentObject
         this.propertiesService = value;
     }
     // AUTO-GENERATED: METHODS END
-    
+
+    /**
+     * A custom serialization method.
+     */
+    public void writeObject (ObjectOutputStream out)
+        throws IOException
+    {
+        out.defaultWriteObject();
+
+        PropertySpaceHelper.writeProperties(this, out);
+    }
+
+    /**
+     * A custom serialization method.
+     */
+    public void readObject (ObjectInputStream ins)
+        throws IOException, ClassNotFoundException
+    {
+        ins.defaultReadObject();
+
+        PropertySpaceHelper.readProperties(this, ins);
+    }
+
     /**
      * The current state of game data.
      * On the server, this will be a byte[] for normal properties and a byte[][] for array

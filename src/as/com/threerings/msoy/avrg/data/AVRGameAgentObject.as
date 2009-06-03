@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.data {
 
 import com.threerings.bureau.data.AgentObject;
+import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.threerings.presents.dobj.DSet;
@@ -53,6 +54,19 @@ public class AVRGameAgentObject extends AgentObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+
+        // first read any regular bits
+        readDefaultFields(ins);
+
+        // then user properties
+        PropertySpaceHelper.readProperties(this, ins);
+    }
+
+    /**
+     * Reads the fields written by the default serializer for this instance.
+     */
+    protected function readDefaultFields (ins :ObjectInputStream) :void
+    {
         scenes = DSet(ins.readObject());
         gameOid = ins.readInt();
         gameId = ins.readInt();

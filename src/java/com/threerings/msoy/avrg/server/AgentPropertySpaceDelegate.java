@@ -18,12 +18,12 @@ public abstract class AgentPropertySpaceDelegate extends PlayManagerDelegate
     protected abstract Map<String, byte[]> initialStateFromStore ();
     protected abstract void writeDirtyStateToStore (Map<String, byte[]> dirtyProps);
 
-    public void agentStarted (AVRGameAgentObject obj)
+    public void initializeAgent (AVRGameAgentObject obj)
     {
         _psObj = obj;
-        
+
         PropertySpaceHelper.initWithProperties(
-            _psObj, PropertySpaceHelper.recordsToProperties(initialStateFromStore()));
+            _psObj, PropertySpaceHelper.recordsToProperties(initialStateFromStore()), false);
     }
 
     @Override

@@ -631,7 +631,7 @@ public class RoomManager extends SpotSceneManager
                 "Mob spawn request without name [gameId=" + gameId + ", mobId=" + mobId + "]");
         }
 
-        // these two messages will only ever show up in an AVRG server agent log 
+        // these two messages will only ever show up in an AVRG server agent log
         if (countMobs(gameId) >= MAX_MOBS_PER_GAME) {
             throw new InvocationException("e.too_many_mobs");
         }
@@ -666,7 +666,7 @@ public class RoomManager extends SpotSceneManager
 
         MobObject mobObj = getMob(gameId, mobId);
         if (mobObj == null) {
-            // this will only ever show up in an AVRG server agent log 
+            // this will only ever show up in an AVRG server agent log
             throw new InvocationException("e.mob_not_found " + mobId);
         }
 
@@ -688,7 +688,7 @@ public class RoomManager extends SpotSceneManager
             _locmgr.leaveOccupiedPlace(mobObj);
             _omgr.destroyObject(mobObj.getOid());
         } else {
-            // this will only ever show up in an AVRG server agent log 
+            // this will only ever show up in an AVRG server agent log
             listener.requestFailed("e.mob_not_found " + mobId);
         }
     }
@@ -1231,7 +1231,7 @@ public class RoomManager extends SpotSceneManager
 
                 // Populate
                 PropertySpaceHelper.initWithProperties(
-                    props, PropertySpaceHelper.recordsToProperties(propRecsMap));
+                    props, PropertySpaceHelper.recordsToProperties(propRecsMap), true);
 
                 // Set members
                 props.setPropertiesService(

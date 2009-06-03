@@ -163,11 +163,10 @@ public class AVRGameManager extends PlaceManager
 
         } else if (delegate instanceof AgentTraceDelegate) {
             _traceDelegate = (AgentTraceDelegate) delegate;
-        
+
         } else if (delegate instanceof AgentPropertySpaceDelegate) {
             _agentPropertySpaceDelegate = (AgentPropertySpaceDelegate) delegate;
         }
-        
     }
 
     // from PlayManager
@@ -268,7 +267,7 @@ public class AVRGameManager extends PlaceManager
                     return AVRGameManager.this.isAgent(caller);
                 }
             })));
-        
+
         _gameObj.setPropertiesService(addDispatcher(new PropertySpaceDispatcher(
             new PropertySpaceHandler(_gameObj) {
                 @Override protected void validateUser (ClientObject caller)
@@ -304,9 +303,12 @@ public class AVRGameManager extends PlaceManager
             return;
         }
 
-        // else ask the bureau to start it and wait for its initialization
+        // else set it up with any persistent agent-private properties
+        _agentPropertySpaceDelegate.initializeAgent(_gameAgentObj);
+
+        // then ask the bureau to start it and wait for its initialization
         _gameAgentObj.gameOid = _gameObj.getOid();
-        
+
         _breg.startAgent(_gameAgentObj);
 
         // inform the observer if the agent dies and we didn't kill it
@@ -430,7 +432,7 @@ public class AVRGameManager extends PlaceManager
                 }
                 // initialize the property space object
                 PropertySpaceHelper.initWithProperties(
-                    offlineProps, PropertySpaceHelper.recordsToProperties(offlineState));
+                    offlineProps, PropertySpaceHelper.recordsToProperties(offlineState), false);
 
                 // and finally send back the result
                 listener.requestProcessed(offlineProps);
@@ -515,7 +517,6 @@ public class AVRGameManager extends PlaceManager
         log.debug("AVRG Agent ready", "clientOid", caller.getOid(),
                   "agentOid", _gameAgentObj.getOid());
         _agentStarted = true;
-        _agentPropertySpaceDelegate.agentStarted(_gameAgentObj);
         _lifecycleObserver.avrGameReady(this);
     }
 
@@ -783,7 +784,7 @@ public class AVRGameManager extends PlaceManager
             // if we're not already playing this avrg, initialize our property space from the
             // database records
             if (initialProps != null) {
-                PropertySpaceHelper.initWithProperties(player, initialProps);
+                PropertySpaceHelper.initWithProperties(player, initialProps, true);
             }
 
             // when we're ready, move the player into the AVRG 'place'
@@ -1101,7 +1102,7 @@ public class AVRGameManager extends PlaceManager
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;
-    
+
     protected AgentPropertySpaceDelegate _agentPropertySpaceDelegate;
 
     // our dependencies
