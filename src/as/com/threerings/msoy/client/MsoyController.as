@@ -125,9 +125,6 @@ public class MsoyController extends Controller
     /** Command to display the comment page for the current scene or game. */
     public static const VIEW_COMMENT_PAGE :String = "ViewCommentPage";
 
-    /** Command to go to a running game (gameId + placeOid). */
-    public static const GO_GAME :String = "GoGame";
-
     /** Command to view a member's profile, arg is [ memberId ] */
     public static const VIEW_MEMBER :String = "ViewMember";
 

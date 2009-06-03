@@ -144,9 +144,6 @@ public class WorldController extends MsoyController
     /** Command to logoff an im account. */
     public static const UNREGISTER_IM :String = "UnregisterIM";
 
-    /** Command to view a game, arg is [ gameId ] */
-    public static const VIEW_GAME :String = "ViewGame";
-
     /** Command to view the trophies awarded by a game, arg is [ gameId ] */
     public static const VIEW_TROPHIES :String = "ViewTrophies";
 
@@ -519,21 +516,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the VIEW_GAME command.
-     */
-    public function handleViewGame (gameId :int) :void
-    {
-// (MDB) for now we're always sending players right into the game; we can link to the detail from
-// there if we like
-//
-//         // when a player clicks a game in the whirled, we try to display that game's detail page,
-//         // but if we can't do that, then fall back to displaying the game lobby
-//         if (!inGWTApp() || !displayPage("games", "d_" + gameId)) {
-            handlePlayGame(gameId);
-//         }
-    }
-
-    /**
      * Handles the VIEW_TROPHIES command.
      */
     public function handleViewTrophies (gameId :int) :void
@@ -646,14 +628,6 @@ public class WorldController extends MsoyController
             // fall back to breaking the back button
             _wctx.getLocationDirector().moveTo(placeOid);
         }
-    }
-
-    /**
-     * Handles the GO_GAME command to go to a game.
-     */
-    public function handleGoGame (gameId :int, placeOid :int) :void
-    {
-        _wctx.getGameDirector().enterGame(gameId, placeOid);
     }
 
     /**
