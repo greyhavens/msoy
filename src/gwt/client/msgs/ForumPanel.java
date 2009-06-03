@@ -55,6 +55,7 @@ public class ForumPanel extends TitledListPanel
         _fmodels = fmodels;
         _mode = mode;
         _groupId = groupId;
+        _query = (query == null) ? "" : query;
 
         switch (mode) {
         case GROUP:
@@ -93,6 +94,24 @@ public class ForumPanel extends TitledListPanel
         }
         if (_threads != null) {
             _threads.setPage(query, page);
+        }
+    }
+
+    /**
+     * Determines if this panel is in the given mode for the given group id and query.
+     */
+    public boolean isInMode (Mode mode, int groupId, String query)
+    {
+        return _mode == mode && _groupId == groupId && _query.equals(query);
+    }
+
+    /**
+     * Navigates to the given page if we are currently displaying a thread list.
+     */
+    public void setPage (int page)
+    {
+        if (_threads != null) {
+            _threads.setPage(_query, page);
         }
     }
 
@@ -186,6 +205,9 @@ public class ForumPanel extends TitledListPanel
 
     /** Title for the page, set to group name after data load */
     protected SimplePanel _title;
+
+    /** Query used when constructing the panel. */
+    protected String _query;
 
     protected static final MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);

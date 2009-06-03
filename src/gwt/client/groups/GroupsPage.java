@@ -134,6 +134,13 @@ public class GroupsPage extends Page
 
     protected void showForumPanel (ForumPanel.Mode mode, int groupId, String search, int page)
     {
+        if (getContent() instanceof ForumPanel) {
+            ForumPanel fpanel = (ForumPanel)getContent();
+            if (fpanel.isInMode(mode, groupId, search)) {
+                fpanel.setPage(page);
+                return;
+            }
+        }
         setContent(_msgs.forumsTitle(), new ForumPanel(_fmodels, mode, groupId, search, page));
     }
 
