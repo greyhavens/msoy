@@ -165,7 +165,7 @@ public class MemberSprite extends ActorSprite
         var reconfig :Boolean = super.configureDecorations(oldInfo, newInfo);
 
         // check whether our idle status has changed
-        if (isVisiblyIdle(newInfo) == (_idleIcon == null)) {
+        if (isVisiblyIdle(newInfo as MemberInfo) == (_idleIcon == null)) {
             if (_idleIcon == null) {
                 _idleIcon = (new IDLE_ICON() as DisplayObject);
                 addDecoration(_idleIcon, {
@@ -226,7 +226,7 @@ public class MemberSprite extends ActorSprite
     // don't show our idleness if we're AFK
     protected function isVisiblyIdle (info :MemberInfo) :Boolean
     {
-        return info.status == OccupantIdle && !info.isAway();
+        return (info.status == OccupantInfo.IDLE) && !info.isAway();
     }
 
     /**
