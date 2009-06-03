@@ -47,7 +47,7 @@ public class GamesPage extends Page
                                           args.get(3, null)));
 
         } else if (action.equals("m")) {
-            setContent(new MyGamesPanel(GameInfo.Sort.fromToken(args.get(2, ""))));
+            setContent(new MyGamesPanel(GameInfo.Sort.fromToken(args.get(1, ""))));
 
         } else if (action.equals("c")) {
             setContent(_msgs.cgTitle(), new CreateGamePanel());
