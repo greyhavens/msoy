@@ -7,6 +7,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
+import com.threerings.msoy.game.data.TablesWaiting;
 import com.threerings.msoy.party.data.MemberParty;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartySummary;
@@ -39,6 +40,9 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>memberParties</code> field. */
     public static final String MEMBER_PARTIES = "memberParties";
 
+    /** The field name of the <code>tablesWaiting</code> field. */
+    public static final String TABLES_WAITING = "tablesWaiting";
+
     /** The field name of the <code>msoyPeerService</code> field. */
     public static final String MSOY_PEER_SERVICE = "msoyPeerService";
 
@@ -69,6 +73,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Contains the current partyId of all members partying on this server. */
     public DSet<MemberParty> memberParties = DSet.newDSet();
+
+    /** Contains gameId/names of games where there are people waiting for other players. */
+    public DSet<TablesWaiting> tablesWaiting = DSet.newDSet();
 
     /** Handles special communication between MSOY peers. */
     public MsoyPeerMarshaller msoyPeerService;
@@ -407,6 +414,53 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(MEMBER_PARTIES, value, this.memberParties);
         DSet<MemberParty> clone = (value == null) ? null : value.typedClone();
         this.memberParties = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>tablesWaiting</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToTablesWaiting (TablesWaiting elem)
+    {
+        requestEntryAdd(TABLES_WAITING, tablesWaiting, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>tablesWaiting</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromTablesWaiting (Comparable<?> key)
+    {
+        requestEntryRemove(TABLES_WAITING, tablesWaiting, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>tablesWaiting</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateTablesWaiting (TablesWaiting elem)
+    {
+        requestEntryUpdate(TABLES_WAITING, tablesWaiting, elem);
+    }
+
+    /**
+     * Requests that the <code>tablesWaiting</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setTablesWaiting (DSet<TablesWaiting> value)
+    {
+        requestAttributeChange(TABLES_WAITING, value, this.tablesWaiting);
+        DSet<TablesWaiting> clone = (value == null) ? null : value.typedClone();
+        this.tablesWaiting = clone;
     }
 
     /**
