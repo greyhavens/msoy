@@ -75,6 +75,7 @@ public class GameLiaison
 
         // make sure we're not touring
         _wctx.getTourDirector().endTour();
+        _wctx.getWorldController().showTablesWaiting(false);
     }
 
     public function getGameContext () :GameContext
