@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
@@ -295,9 +296,7 @@ public class PartyRegistry
         // Note: perhaps create a data structure that only saves the top N items and rolls
         // the rest off.
         QuickSort.sort(list);
-        if (list.size() > PARTIES_PER_BOARD) {
-            list.subList(PARTIES_PER_BOARD, list.size()).clear();
-        }
+        CollectionUtil.limit(list, PARTIES_PER_BOARD);
         rl.requestProcessed(list);
     }
 

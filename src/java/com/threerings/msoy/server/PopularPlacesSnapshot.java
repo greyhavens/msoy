@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -253,10 +254,7 @@ public class PopularPlacesSnapshot
     protected static void sortAndPrune (List<Place> list)
     {
         Collections.sort(list);
-        int size = list.size();
-        if (size > MAX_TRACKED_PLACES) {
-            list.subList(MAX_TRACKED_PLACES, size).clear();
-        }
+        CollectionUtil.limit(list, MAX_TRACKED_PLACES);
     }
 
     /** The total number of people in the Whirled. */

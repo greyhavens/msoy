@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
@@ -130,13 +131,14 @@ public class GameServlet extends MsoyServiceServlet
             }
 
             // filter out all the games in this genre
-            List<GameCard> ggames = Lists.newArrayList();
+            int max = 3 * ArcadeData.Genre.HIGHLIGHTED_GAMES;
+            List<GameCard> ggames = Lists.newArrayListWithCapacity(max);
             for (GameInfoRecord grec : games.values()) {
                 // games rated less than 3 don't get on the main page
                 if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
                     ggames.add(grec.toGameCard(getGamePop(pps, grec.gameId)));
                     // stop when we've got 3*HIGHLIGHTED_GAMES
-                    if (ggames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
+                    if (ggames.size() == max) {
                         break;
                     }
                 }
@@ -149,11 +151,9 @@ public class GameServlet extends MsoyServiceServlet
                     return Comparators.compare(two.playersOnline, one.playersOnline);
                 }
             });
-
             // finally take N from that shuffled list as the games to show
-            List<GameCard> hgames = ggames.subList(
-                0, Math.min(ggames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
-            genre.games = hgames.toArray(new GameCard[hgames.size()]);
+            CollectionUtil.limit(ggames, ArcadeData.Genre.HIGHLIGHTED_GAMES);
+            genre.games = ggames.toArray(new GameCard[ggames.size()]);
 
             genres.add(genre);
         }

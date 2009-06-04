@@ -14,6 +14,8 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.CollectionUtil;
+
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -202,10 +204,10 @@ public class BadgeLogic
         int memberId, short badgesVersion, int maxBadges)
     {
         // Read in our in-progress badges and choose a number of them randomly
-        List<InProgressBadge> allBadges = getInProgressBadges(memberId, badgesVersion, false);
-        Collections.shuffle(allBadges); // always randomize order
-        return (allBadges.size() <= maxBadges) ? allBadges :
-            Lists.newArrayList(allBadges.subList(0, maxBadges));
+        List<InProgressBadge> badges = getInProgressBadges(memberId, badgesVersion, false);
+        Collections.shuffle(badges); // always randomize order
+        CollectionUtil.limit(badges, maxBadges); // limit to the first maxBadges
+        return badges;
     }
 
     @Inject protected BadgeRepository _badgeRepo;

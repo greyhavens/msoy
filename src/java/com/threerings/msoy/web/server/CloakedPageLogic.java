@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
@@ -122,9 +123,7 @@ public class CloakedPageLogic
         } else if (path.equals(PEOPLE)) {
             // show up to 100 greeters
             List<Integer> greeters = _memberRepo.loadGreeterIds();
-            if (greeters.size() > 100) {
-                greeters.subList(100, greeters.size()).clear();
-            }
+            CollectionUtil.limit(greeters, 100);
             for (Integer id : greeters) {
                 args.add(PROFILE_PREFIX + id);
                 args.add("A friendly person");

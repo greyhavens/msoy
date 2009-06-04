@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
@@ -245,13 +246,9 @@ public class WorldGameRegistry
                 return null; // Void
             }
         });
-        // randomize
+        // randomize and return up to N
         Collections.shuffle(games);
-        // only return up to 100 or whatever
-        int size = games.size();
-        if (size > MAX_TABLES_WAITING) {
-            games.subList(MAX_TABLES_WAITING, size).clear();
-        }
+        CollectionUtil.limit(games, MAX_TABLES_WAITING);
         rl.requestProcessed(games);
     }
 
