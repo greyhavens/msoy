@@ -253,7 +253,7 @@ public class BackendUtils
         gameObj :AVRGameObject, ident :String, type :int) :GameData
     {
         for each (var data :GameData in gameObj.gameData) {
-            if (data.getType() != GameData.ITEM_DATA || data.ident == ident) {
+            if (data.getType() == type && data.ident == ident) {
                 return data;
             }
         }
