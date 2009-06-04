@@ -71,12 +71,17 @@ public class MsoyParameters
         }
     }
 
+    /**
+     * Converts old skool embed parameters to new world order.
+     */
     protected static function massageStubParams (disp :DisplayObject) :void
     {
         const gameId :int = int(_params["game"]);
         const roomId :int = int(_params["room"]);
+        const avrGameId :int = int(_params["avrgame"]);
         delete _params["game"];
         delete _params["room"];
+        delete _params["avrgame"];
 
         // maybe set up a vector if none already provided
         if (!("vec" in _params)) {
@@ -97,7 +102,11 @@ public class MsoyParameters
         }
 
         // and our other params
-        if (gameId != 0) {
+        if (avrGameId != 0) {
+            _params["worldGame"] = avrGameId;
+            _params["gameRoomId"] = roomId;
+
+        } else if (gameId != 0) {
             _params["gameId"] = gameId;
 
         } else if (roomId != 0) {

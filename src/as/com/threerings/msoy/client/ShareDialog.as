@@ -212,13 +212,12 @@ public class ShareDialog extends FloatingPanel
 
     protected function createStubBox () :VBox
     {
-        const roomOrGame :String = (_place.inGame ? "game" : "room");
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");
         box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 400));
         var stub :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
-            startDownload,
-            [ stubURL(roomOrGame), "Whirled-" + roomOrGame + "-" + _place.id + "-stub.swf" ]);
+            startDownload, [ stubURL(), "Whirled-" + (_place.inGame ? "game" : "room") + "-" +
+                             _place.id + "-stub.swf" ]);
         stub.styleName = "orangeButton";
         box.addChild(stub);
         _downloadBtns.push(stub);
@@ -243,7 +242,7 @@ public class ShareDialog extends FloatingPanel
                         return;
                     }
 
-                    startDownload(stubURL(roomOrGame, true) +
+                    startDownload(stubURL(true) +
                         "&mochiId=" + encodeURIComponent(mochiIdField.text),
                         "Whirled-game-" + _place.id + "-mochi-stub.swf");
                 });
@@ -258,9 +257,19 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
-    protected function stubURL (roomOrGame :String, mochi :Boolean = false) :String
+    protected function stubURL (mochi :Boolean = false) :String
     {
-        var stubArgs :String = roomOrGame + "=" + _place.id;
+        // NOTE: these parameters are used for embedding our games on other flash game sites, so
+        // backwards compatibility is important. See MsoyParameters.massageEmbedParameters
+        var stubArgs :String;
+        if (_place.inGame && _place.avrGame) {
+            stubArgs = "avrgame=" + _place.gameId;
+            if (_place.sceneId != 0) {
+                stubArgs += "&room=" + _place.sceneId;
+            }
+        } else {
+            stubArgs = (_place.inGame ? "game" : "room") + "=" + _place.id;
+        }
         stubArgs = includeAffiliate(stubArgs);
         if (mochi) {
             stubArgs += "&vec=e.mochi.games." + _place.id;
