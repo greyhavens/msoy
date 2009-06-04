@@ -42,7 +42,7 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
         MemberObject memobj = _locator.lookupMember(_memberId);
         if (memobj != null) {
             if (!memobj.isActive()) {
-                log.warning("WTF? Got an inactive member from the locator?", "who", memobj.who());
+                log.warning("Got an inactive member from the locator!?", "who", memobj.username);
             } else {
                 execute(memobj);
             }
