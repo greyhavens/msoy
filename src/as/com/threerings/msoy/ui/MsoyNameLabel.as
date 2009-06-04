@@ -105,7 +105,7 @@ public class MsoyNameLabel extends Sprite
     protected static const FORMAT :TextFormat =
         TextFieldUtil.createFormat({ font: "_sans", size: 12, bold: true });
 
-    [Embed(source="../../../../../../pages/images/ui/subscriber.gif")]
+    [Embed(source="../../../../../../pages/images/ui/clubwhirled.png")]
     protected static const SUBSCRIBER :Class;
 }
 }

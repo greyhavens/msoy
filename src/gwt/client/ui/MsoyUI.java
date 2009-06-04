@@ -532,7 +532,7 @@ public class MsoyUI
             break;
         case SUBSCRIBER:
             roleName = _cmsgs.roleSubscriber();
-            iconPath = "/images/ui/subscriber.gif";
+            iconPath = "/images/ui/clubwhirled.png";
             break;
         case PERMAGUEST:
             roleName = _cmsgs.roleGuest();
