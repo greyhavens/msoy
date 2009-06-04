@@ -14,6 +14,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
 
@@ -50,81 +51,54 @@ public class MoneyMessageListener
     // from interface Lifecycle.Component
     public void init ()
     {
-        // Subscription start messages
-        listen("messaging.whirled.subscriptionStart.address", new MessageListener() {
-            public void received (final byte[] message, Replier replier)
-            {
-                _invoker.postUnit(new Invoker.Unit("money/subscriptionStart") {
-                    @Override public boolean invoke () {
-                        SubscriptionStartMessage ssm = null;
-                        try {
-                            ssm = new SubscriptionStartMessage(message);
-                            _subLogic.noteSubscriptionStarted(ssm.accountName, ssm.months);
-                        } catch (Exception e) {
-                            log.warning("Holy Bajizzwax! We've fouled-up trying to " +
-                                "note a subscription start",
+        // Handle subscription billed messages
+        listen("messaging.whirled.subscriptionBilled.address", new MessageListener() {
+            public void received (final byte[] message, Replier replier) {
+                SubscriptionBilledMessage ssm = null;
+                try {
+                    ssm = new SubscriptionBilledMessage(message);
+                    _subLogic.noteSubscriptionBilled(ssm.accountName, ssm.months);
+                } catch (Exception e) {
+                    log.warning("Fouled-up trying to note a subscription billing",
                                 "accountName", (ssm == null) ? "<unknown>" : ssm.accountName, e);
-                        }
-                        return false;
-                    }
-                });
+                }
             }
         });
 
-        // Subscription end messages
-        listen("messaging.whirled.subscriptionEnd.address", new MessageListener() {
-            public void received (final byte[] message, Replier replier)
-            {
-                _invoker.postUnit(new Invoker.Unit("money/subscriptionEnd") {
-                    @Override public boolean invoke () {
-                        SubscriptionEndMessage sem = null;
-                        try {
-                            sem = new SubscriptionEndMessage(message);
-                            _subLogic.noteSubscriptionEnded(sem.accountName);
-                        } catch (Exception e) {
-                            log.warning("Holy Bajizzwax! We've fouled-up trying to " +
-                                "note a subscription end",
+        // Handle subscription ended messages
+        listen("messaging.whirled.subscriptionEnded.address", new MessageListener() {
+            public void received (final byte[] message, Replier replier) {
+                SubscriptionEndedMessage sem = null;
+                try {
+                    sem = new SubscriptionEndedMessage(message);
+                    _subLogic.noteSubscriptionEnded(sem.accountName);
+                } catch (Exception e) {
+                    log.warning("Fouled-up trying to note a subscription end",
                                 "accountName", (sem == null) ? "<unknown>" : sem.accountName, e);
-                        }
-                        return false;
-                    }
-                });
+                }
             }
         });
 
-        // Start listening on buy bars queue.  If bars are purchased, call MoneyLogic.boughtBars().
+        // Handle bars bought messages
         listen("messaging.whirled.barsBought.address", new MessageListener() {
-            public void received (final byte[] message, final Replier replier)
-            {
-                _invoker.postUnit(new Invoker.Unit("money/barsBought") {
-                    @Override public boolean invoke () {
-                        BarsBoughtMessage bbm = new BarsBoughtMessage(message);
-                        MemberRecord member = _memberRepo.loadMember(bbm.accountName);
-                        _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
-                        return false;
-                    }
-                });
+            public void received (final byte[] message, final Replier replier) {
+                BarsBoughtMessage bbm = new BarsBoughtMessage(message);
+                MemberRecord member = _memberRepo.loadMember(bbm.accountName);
+                _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
             }
         });
 
-        // Start listening get bars count queue.  Send a reply with the number of bars
+        // Handle get bar count messages
         listen("messaging.whirled.getBarCount.address", new MessageListener() {
             public void received (final byte[] message, final Replier replier) {
-                _invoker.postUnit(new Invoker.Unit("money/getBarCount") {
-                    @Override public boolean invoke () {
-                        GetBarCountMessage gbcm = new GetBarCountMessage(message);
-                        MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
-
-                        try {
-                            MemberMoney money = _logic.getMoneyFor(member.memberId);
-                            replier.reply(new IntMessage(money.bars));
-                            return false;
-                        } catch (IOException ioe) {
-                            throw new RuntimeException(
-                                "Could not send a reply for getBarCount.", ioe);
-                        }
-                    }
-                });
+                GetBarCountMessage gbcm = new GetBarCountMessage(message);
+                MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
+                try {
+                    MemberMoney money = _logic.getMoneyFor(member.memberId);
+                    replier.reply(new IntMessage(money.bars));
+                } catch (IOException ioe) {
+                    throw new RuntimeException("Could not send a reply for getBarCount.", ioe);
+                }
             }
         });
     }
@@ -152,6 +126,7 @@ public class MoneyMessageListener
             log.debug("Not configured to listen", "configKey", configKey);
             return;
         }
+
         DestinationAddress addr = new DestinationAddress(source);
         ConnectedListener cl = _conn.listen(addr.getRoutingKey(), addr, listener);
         if (cl.isClosed()) {
@@ -170,18 +145,15 @@ public class MoneyMessageListener
     {
         public final String accountName;
 
-        public GetBarCountMessage (byte[] bytes)
-        {
+        public GetBarCountMessage (byte[] bytes) {
             ByteBuffer buf = ByteBuffer.wrap(bytes);
             byte[] msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
             accountName = new String(msgBuf);
         }
 
-        @Override
-        public String toString ()
-        {
-            return "accountName: " + accountName;
+        @Override public String toString () {
+            return StringUtil.fieldsToString(this);
         }
     }
 
@@ -194,8 +166,7 @@ public class MoneyMessageListener
         public final int numBars;
         public final String payment; // something like "$2.95", I'm hoping
 
-        public BarsBoughtMessage (byte[] bytes)
-        {
+        public BarsBoughtMessage (byte[] bytes) {
             ByteBuffer buf = ByteBuffer.wrap(bytes);
             byte[] msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
@@ -206,52 +177,51 @@ public class MoneyMessageListener
             payment = new String(msgBuf);
         }
 
-        @Override
-        public String toString ()
-        {
-            return "accountName: " + accountName +
-                ", numBars: " + numBars +
-                ", payment: " + payment;
+        @Override public String toString () {
+            return StringUtil.fieldsToString(this);
         }
     }
 
     /**
      * Message indicating a subscription payment was processed.
      */
-    protected static class SubscriptionEndMessage
+    protected static class SubscriptionEndedMessage
     {
         public String accountName;
 
-        public SubscriptionEndMessage (byte[] bytes)
-        {
+        public SubscriptionEndedMessage (byte[] bytes) {
             init(ByteBuffer.wrap(bytes));
         }
 
-        public void init (ByteBuffer buf)
-        {
+        public void init (ByteBuffer buf){
             byte[] msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
             accountName = new String(msgBuf);
         }
+
+        @Override public String toString () {
+            return StringUtil.fieldsToString(this);
+        }
     }
 
     /**
      * Message indicating a subscription payment was processed.
      */
-    protected static class SubscriptionStartMessage extends SubscriptionEndMessage
+    protected static class SubscriptionBilledMessage extends SubscriptionEndedMessage
     {
         public int months;
 
-        public SubscriptionStartMessage (byte[] bytes)
-        {
+        public SubscriptionBilledMessage (byte[] bytes) {
             super(bytes);
         }
 
-        @Override
-        public void init (ByteBuffer buf)
-        {
+        @Override public void init (ByteBuffer buf) {
             super.init(buf);
             months = buf.getInt();
+        }
+
+        @Override public String toString () {
+            return StringUtil.fieldsToString(this);
         }
     }
 

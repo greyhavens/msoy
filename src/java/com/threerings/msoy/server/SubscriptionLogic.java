@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Calendar;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -68,7 +69,7 @@ public class SubscriptionLogic
 //                    flip = !flip;
 //                    try {
 //                        if (flip) {
-//                            noteSubscriptionStarted("ray@bogocorp.com", 1);
+//                            noteSubscriptionBilled("ray@bogocorp.com", 1);
 //                            System.err.println("==== Made ray a subscriber");
 //                        } else {
 //                            noteSubscriptionEnded("ray@bogocorp.com");
@@ -87,13 +88,13 @@ public class SubscriptionLogic
     }
 
     /**
-     * Note that the specified user has purchased a subscription, either interactively or
+     * Note that the specified user has been billed for a subscription, either interactively or
      * through a recurring billing.
      *
      * @throws Exception We freak the fuck out if anything goes wrong.
      */
     @BlockingThread
-    public void noteSubscriptionStarted (String accountName, int months)
+    public void noteSubscriptionBilled (String accountName, int months)
         throws Exception
     {
         // first, look up the record of the member
@@ -101,20 +102,21 @@ public class SubscriptionLogic
         if (mrec == null) {
             throw new Exception("Could not locate MemberRecord");
         }
+
         // make them a subscriber if not already
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {
             _memberRepo.storeFlags(mrec);
             MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
         }
+
+        int barGrantsLeft = months;
         CatalogRecord listing = getSpecialItem();
         ItemIdent ident = (listing == null)
-            ? null
-            : new ItemIdent(listing.item.getType(), listing.item.itemId);
+            ? null : new ItemIdent(listing.item.getType(), listing.item.itemId);
 
         // create or update their subscription record
-        int barGrantsLeft = months; // make explicit this equivalence
         Tuple<Boolean,Boolean> doGrants =
-            _subscripRepo.noteSubscriptionStarted(mrec.memberId, barGrantsLeft, ident);
+            _subscripRepo.noteSubscriptionBilled(mrec.memberId, barGrantsLeft, ident);
 
         // Grant them their monthly bar allowance.
         int bars = _runtime.subscription.monthlyBarGrant;

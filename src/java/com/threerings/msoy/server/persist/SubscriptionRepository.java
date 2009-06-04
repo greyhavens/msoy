@@ -57,7 +57,7 @@ public class SubscriptionRepository extends DepotRepository
      *
      * @return Tuple<grantBarsNow, grantItem>
      */
-    public Tuple<Boolean,Boolean> noteSubscriptionStarted (
+    public Tuple<Boolean,Boolean> noteSubscriptionBilled (
         int memberId, int barGrantsLeft, ItemIdent specialItem)
     {
         SubscriptionRecord rec = load(SubscriptionRecord.getKey(memberId));
