@@ -337,7 +337,8 @@ public class MemberNodeActions
         {
             _bodyMan.updateOccupantInfo(body, new OccupantInfo.Updater<OccupantInfo>() {
                 public boolean update (OccupantInfo info) {
-                    return ((MsoyUserOccupantInfo) info).updateTokens(_tokens);
+                    return (info instanceof MsoyUserOccupantInfo) &&
+                        ((MsoyUserOccupantInfo) info).updateTokens(_tokens);
                 }
             });
         }
