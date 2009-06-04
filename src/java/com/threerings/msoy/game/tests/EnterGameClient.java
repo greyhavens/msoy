@@ -126,7 +126,7 @@ public class EnterGameClient
             // first locate the game since that's what a normal client would do
             _client.requireService(WorldGameService.class).locateGame(
                 _client, gameId, new WorldGameService.LocationListener() {
-                public void gameLocated (String host, int port) {
+                public void gameLocated (String host, int port, boolean isAVRG) {
                     log.info(_id + " locateGame -> " + host + ":" + port);
                     playGame(gameId);
                 }

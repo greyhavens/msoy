@@ -4,10 +4,13 @@
 package com.threerings.msoy.peer.data;
 
 /**
- * Represents a hosted game lobby on a particular server.
+ * Represents a hosted game on a particular server.
  */
 public class HostedGame extends HostedPlace
 {
+    /** True if this game is an AVRG. */
+    public boolean isAVRG;
+
     /**
      * Empty constructor used for unserializing
      */
@@ -18,9 +21,9 @@ public class HostedGame extends HostedPlace
     /**
      * Creates a hosted game record.
      */
-    public HostedGame (int placeId, String name)
+    public HostedGame (int placeId, String name, boolean isAVRG)
     {
         super(placeId, name);
-        // nothing special currently
+        this.isAVRG = isAVRG;
     }
 }

@@ -173,7 +173,7 @@ public class GameLiaison
     public function start (ghost :String = null, gport :int = 0) :void
     {
         if (ghost != null && gport != 0) {
-            gameLocated(ghost, gport);
+            gameLocated(ghost, gport, false);
 
         } else if (_wctx.getClient().isLoggedOn()) {
             log.info("Resolving location of game [id=" + _gameId + "].");
@@ -192,7 +192,7 @@ public class GameLiaison
                 // room so that when we get into the lobby, we'll be ready to roll
                 _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
 
-                gameLocated(bits[0], int(bits[1]));
+                gameLocated(bits[0], int(bits[1]), false);
             });
             // TODO: add listeners for failure events? give feedback on failure?
             loader.load(new URLRequest(DeploymentConfig.serverURL + "embed/g" + _gameId));
@@ -208,9 +208,10 @@ public class GameLiaison
     }
 
     // from interface WorldGameService_LocationListener
-    public function gameLocated (hostname :String, port :int) :void
+    public function gameLocated (hostname :String, port :int, isInWorld :Boolean) :void
     {
-        log.info("Game located - logging in", "gameId", _gameId, "host", hostname, "port", port);
+        log.info("Game located - logging in", "gameId", _gameId, "host", hostname, "port", port,
+                 "isInWorld", isInWorld);
 
         // grab & stash the session details (mainly only important if this is a permaguest login
         // but benign otherwise); the callback will be called after game server logon succeeds

@@ -21,7 +21,7 @@ public class WorldGameMarshaller_LocationMarshaller
         switch (methodId) {
         case GAME_LOCATED:
             (listener as WorldGameService_LocationListener).gameLocated(
-                (args[0] as String), (args[1] as int));
+                (args[0] as String), (args[1] as int), (args[2] as Boolean));
             return;
 
         default:

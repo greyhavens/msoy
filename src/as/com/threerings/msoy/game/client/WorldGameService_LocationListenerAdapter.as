@@ -23,10 +23,10 @@ public class WorldGameService_LocationListenerAdapter
     }
 
     // from Java WorldGameService_LocationListener
-    public function gameLocated (arg1 :String, arg2 :int) :void
+    public function gameLocated (arg1 :String, arg2 :int, arg3 :Boolean) :void
     {
         if (_gameLocated != null) {
-            _gameLocated(arg1, arg2);
+            _gameLocated(arg1, arg2, arg3);
         }
     }
 

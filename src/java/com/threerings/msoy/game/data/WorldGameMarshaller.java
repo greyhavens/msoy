@@ -30,12 +30,12 @@ public class WorldGameMarshaller extends InvocationMarshaller
         public static final int GAME_LOCATED = 1;
 
         // from interface LocationMarshaller
-        public void gameLocated (String arg1, int arg2)
+        public void gameLocated (String arg1, int arg2, boolean arg3)
         {
             _invId = null;
             omgr.postEvent(new InvocationResponseEvent(
                                callerOid, requestId, GAME_LOCATED,
-                               new Object[] { arg1, Integer.valueOf(arg2) }, transport));
+                               new Object[] { arg1, Integer.valueOf(arg2), Boolean.valueOf(arg3) }, transport));
         }
 
         @Override // from InvocationMarshaller
@@ -44,7 +44,7 @@ public class WorldGameMarshaller extends InvocationMarshaller
             switch (methodId) {
             case GAME_LOCATED:
                 ((LocationListener)listener).gameLocated(
-                    (String)args[0], ((Integer)args[1]).intValue());
+                    (String)args[0], ((Integer)args[1]).intValue(), ((Boolean)args[2]).booleanValue());
                 return;
 
             default:

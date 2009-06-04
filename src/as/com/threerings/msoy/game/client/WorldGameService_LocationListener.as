@@ -12,6 +12,6 @@ public interface WorldGameService_LocationListener
     extends InvocationService_InvocationListener
 {
     // from Java WorldGameService_LocationListener
-    function gameLocated (arg1 :String, arg2 :int) :void
+    function gameLocated (arg1 :String, arg2 :int, arg3 :Boolean) :void
 }
 }

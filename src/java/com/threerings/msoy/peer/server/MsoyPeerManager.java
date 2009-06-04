@@ -396,10 +396,10 @@ public class MsoyPeerManager extends CrowdPeerManager
      * Called by the WorldGameRegistry when we have established a new game server to host a
      * particular game.
      */
-    public void gameDidStartup (int gameId, String name)
+    public void gameDidStartup (int gameId, String name, boolean isAVRG)
     {
         log.debug("Hosting game", "id", gameId, "name", name);
-        _mnobj.addToHostedGames(new HostedGame(gameId, name));
+        _mnobj.addToHostedGames(new HostedGame(gameId, name, isAVRG));
     }
 
     /**
@@ -409,6 +409,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         log.debug("No longer hosting game", "id", gameId);
         _mnobj.removeFromHostedGames(gameId);
+    }
+
+    /**
+     * Returns the hosted game of the given game id, or null if we are not hosting it.
+     */
+    public HostedGame getHostedGame (int gameId)
+    {
+        return _mnobj.hostedGames.get(gameId);
     }
 
     /**

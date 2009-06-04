@@ -260,7 +260,7 @@ public class GameLogic
             super("locateGame(" + gameId + ")");
             this.gameId = gameId;
         }
-        public void gameLocated (String host, int port) {
+        public void gameLocated (String host, int port, boolean isAVRG) {
             postSuccess(new Tuple<String,Integer>(host, port));
         }
         public void requestFailed (String cause) {

@@ -93,7 +93,7 @@ public class WorldGameRegistry
      */
     public boolean isHosting (int gameId)
     {
-        return _games.contains(gameId) || _penders.containsKey(gameId);
+        return _peerMan.getHostedGame(gameId) != null || _penders.containsKey(gameId);
     }
 
     /**
@@ -160,7 +160,7 @@ public class WorldGameRegistry
      */
     public void clearGame (int gameId)
     {
-        if (!_games.remove(gameId)) {
+        if (_peerMan.getHostedGame(gameId) == null) {
             log.warning("Requested to clear game that we're not hosting?", "game", gameId);
         } else {
             log.info("No longer hosting game", "game", gameId);
@@ -173,9 +173,12 @@ public class WorldGameRegistry
                             WorldGameService.LocationListener listener)
         throws InvocationException
     {
+        HostedGame hosted = _peerMan.getHostedGame(gameId);
+
         // if we're already hosting this game, then report back immediately
-        if (_games.contains(gameId)) {
-            listener.gameLocated(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
+        if (hosted != null) {
+            listener.gameLocated(
+                ServerConfig.serverHost, ServerConfig.serverPorts[0], hosted.isAVRG);
             return;
         }
 
@@ -285,7 +288,7 @@ public class WorldGameRegistry
 
         // log.info("Sending game player to " + rhost.left + ":" + rhost.right + ".");
         listener.gameLocated(_peerMan.getPeerPublicHostName(rhost.left),
-                             _peerMan.getPeerPort(rhost.left));
+                             _peerMan.getPeerPort(rhost.left), rhost.right.isAVRG);
         return true;
     }
 
@@ -301,7 +304,7 @@ public class WorldGameRegistry
                     log.warning("Requested to resolve unknown game", "game", gameId);
                     resolver.fail();
                 } else {
-                    hostGame(gameId, _game.name, resolver);
+                    hostGame(gameId, _game.name, _game.isAVRG, resolver);
                 }
             }
             public void handleFailure (Exception e) {
@@ -312,16 +315,16 @@ public class WorldGameRegistry
         });
     }
 
-    protected void hostGame (int gameId, String name, GameResolver resolver)
+    protected void hostGame (int gameId, String name, boolean isAVRG, GameResolver resolver)
     {
-        if (!_games.add(gameId)) {
+        if (_peerMan.getHostedGame(gameId) != null) {
             log.warning("Requested to host game that we're already hosting?", "game", gameId);
         } else {
-            log.info("Hosting game", "game", gameId, "name", name);
-            _peerMan.gameDidStartup(gameId, name);
+            log.info("Hosting game", "game", gameId, "name", name, "isAVRG", isAVRG);
+            _peerMan.gameDidStartup(gameId, name, isAVRG);
         }
         // this will notify the waiting listeners, release our lock and clean itself up
-        resolver.finish(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
+        resolver.finish(ServerConfig.serverHost, ServerConfig.serverPorts[0], isAVRG);
     }
 
     /** Handles dispatching invitations to users wherever they may be. */
@@ -359,9 +362,9 @@ public class WorldGameRegistry
             _peerMan.acquireLock(MsoyPeerManager.getGameLock(_gameId), this);
         }
 
-        public void finish (String host, int port) {
+        public void finish (String host, int port, boolean isAVRG) {
             for (WorldGameService.LocationListener listener : lners) {
-                listener.gameLocated(host, port);
+                listener.gameLocated(host, port, isAVRG);
             }
             clear();
         }
@@ -378,7 +381,7 @@ public class WorldGameRegistry
                 Tuple<String, HostedGame> rhost = _peerMan.getGameHost(_gameId);
                 if (rhost != null) {
                     finish(_peerMan.getPeerPublicHostName(rhost.left),
-                           _peerMan.getPeerPort(rhost.left));
+                           _peerMan.getPeerPort(rhost.left), rhost.right.isAVRG);
                 } else {
                     log.warning("Failed to acquire lock but no registered host for game!?",
                                 "game", _gameId);
@@ -420,9 +423,6 @@ public class WorldGameRegistry
 
     /** The maximum numbers of TablesWaiting objects we return to a client. */
     protected static final int MAX_TABLES_WAITING = 50;
-
-    /** A map of all games hosted on this server. */
-    protected ArrayIntSet _games = new ArrayIntSet();
 
     /** A map of games pending resolution. */
     protected IntMap<GameResolver> _penders = IntMaps.newHashIntMap();

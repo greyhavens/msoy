@@ -14,7 +14,7 @@ public interface WorldGameService extends InvocationService
     /** Reports the server and port on which to connect to a requested game's server. */
     public static interface LocationListener extends InvocationListener
     {
-        void gameLocated (String host, int port);
+        void gameLocated (String host, int port, boolean inWorld);
     }
 
     /**
