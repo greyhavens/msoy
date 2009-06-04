@@ -148,6 +148,7 @@ public class AVRGameObject extends PlaceObject
         prizeService = PrizeMarshaller(ins.readObject());
         messageService = WhirledGameMessageMarshaller(ins.readObject());
         propertiesService = PropertySpaceMarshaller(ins.readObject());
+        isApproved = ins.readBoolean();
     }
 
     /** The raw properties set by the game. */
