@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -411,6 +412,9 @@ public class MsoyEventLogger
         public void appendReport (StringBuilder buffer, long now, long sinceLast,
                 boolean reset) {
             EventLoggerStats stats = _remote.getStats();
+            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+                DateFormat.LONG);
+            buffer.append("Time started: ").append(df.format(stats.getTimeStarted()));
             buffer.append("\nShut down: ").append(_remote.isDisposed() ? "Yes" : "No");
             buffer.append("\nConnected to server: ").append(
                 _remote.isConnectedToServer() ? "Yes" : "No");
@@ -418,9 +422,35 @@ public class MsoyEventLogger
             buffer.append("\nPersistence manager disposed: ").append(
                 _remote.isPersistenceManagerDisposed() ? "Yes" : "No");
             buffer.append("\nEvents in queue:\n\tCurrent: ").append(stats.getCurrentlyQueued());
+            buffer.append("\n\tTotal: ").append(stats.getTotalQueued());
+            buffer.append("\n\tLast queued: ").append(stats.getLastTimeQueued() == null ? "Never" :
+                df.format(stats.getLastTimeQueued()));
             buffer.append("\nEvents dropped:\n\tTotal: ").append(stats.getDropped());
+            buffer.append("\n\tLast dropped: ").append(stats.getLastTimeDropped() == null ?
+                "Never" : df.format(stats.getLastTimeDropped()));
+            buffer.append("\n\tReason for last drop: ").append(
+                stats.getLastPermFailure() == null ? "N/A" : stats.getLastPermFailure());
+            buffer.append("\nEvents sent:\n\tTotal: ").append(stats.getTotalSent());
+            buffer.append("\n\tLast sent: ").append(stats.getLastTimeSent() == null ? "Never" :
+                df.format(stats.getLastTimeSent()));
+            buffer.append("\nEvents overflowed to disk:\n\tCurrent: ").append(
+                stats.getOverflowedCount());
+            buffer.append("\n\tLast overflowed: ").append(stats.getLastTimeOverflowed() == null ?
+                "Never" : df.format(stats.getLastTimeOverflowed()));
+            buffer.append("\n\tLast requeued: ").append(stats.getLastTimeQueueOverflowed() == null ?
+                "Never" : df.format(stats.getLastTimeQueueOverflowed()));
             buffer.append("\nRetry mode:\n\tStatus: ").append(
                 _remote.isInRetryMode() ? "On" : "Off");
+            buffer.append("\n\tLast entered: ").append(stats.getLastTimeEnteredRetryMode() == null ?
+                "Never" : df.format(stats.getLastTimeEnteredRetryMode()));
+            buffer.append("\n\tLast recovered: ").append(
+                stats.getLastTimeRecoveredFromRetryMode() == null ? "Never" :
+                df.format(stats.getLastTimeRecoveredFromRetryMode()));
+            buffer.append("\nLast temporary failure: ").append(
+                stats.getLastTimeTempFailed() == null ? "Never" :
+                df.format(stats.getLastTimeTempFailed()));
+            buffer.append("\n\tReason for last failure: ").append(
+                stats.getLastTempFailure() == null ? "N/A" : stats.getLastTempFailure());
             buffer.append('\n');
         }
     }
