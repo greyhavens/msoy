@@ -12,6 +12,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthName;
 import com.threerings.msoy.server.MemberLocator;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * An action to be invoked on every server on which a member is logged in. You must read {@link
  * PeerManager.NodeAction} for caveats before using this class.
@@ -39,7 +41,11 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
     {
         MemberObject memobj = _locator.lookupMember(_memberId);
         if (memobj != null) {
-            execute(memobj);
+            if (!memobj.isActive()) {
+                log.warning("WTF? Got an inactive member from the locator?", "who", memobj.who());
+            } else {
+                execute(memobj);
+            }
         } // if not, oh well, they went away
     }
 
