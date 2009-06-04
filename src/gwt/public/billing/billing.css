@@ -4,6 +4,8 @@
  * CSS styles for the Billing interfaces.
  */
 
+/** SelectMethodPanel */
+
 .selectMethod {
   font-family: Helvetica, Arial, sans-serif;
   background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
@@ -45,4 +47,20 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   color: #FFFFFF;
   font-size: 10px;
+}
+
+/** SubscribePanel */
+
+.subscribe {
+  font-family: Helvetica, Arial, sans-serif;
+  background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
+  height: 100%;
+  padding: 0px 50px;
+}
+
+.subscribe .Title {
+  color: #2E6D8E;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 24px;
+  padding: 10px 0px;
 }

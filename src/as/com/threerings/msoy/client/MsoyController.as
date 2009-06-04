@@ -499,15 +499,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles SUBSCRIBE.
-     */
-    public function handleSubscribe () :void
-    {
-        // TODO SUBSCRIPTION
-        handleViewUrl(DeploymentConfig.serverURL + "#subscribe");
-    }
-
-    /**
      * Updates our header and control bars based on our current location. This is called
      * automatically when the world location changes but must be called explicitly by the game
      * services when we enter a game as the world services don't know about that.

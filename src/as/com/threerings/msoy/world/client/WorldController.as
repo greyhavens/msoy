@@ -865,6 +865,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles SUBSCRIBE.
+     */
+    public function handleSubscribe () :void
+    {
+        displayPage("billing", "subscribe");
+    }
+
+    /**
      * Displays a new page either in our GWT application or by reloading the current web page with
      * the full GWT application, restoring our current location and then displaying the page.
      */
