@@ -94,33 +94,66 @@ public class MsoyTableManager extends TableManager
         // want huge numbers of hidden single player tables clogging up our lobby object
         ParlorGameConfig config = (ParlorGameConfig)table.config;
         MsoyMatchConfig matchConfig = (MsoyMatchConfig)config.getGameDefinition().match;
-        return !table.inPlay() ||
-            !(config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable);
+        return !table.inPlay() || (config.getMatchType() == GameConfig.PARTY) ||
+            !matchConfig.unwatchable;
     }
 
     @Override
     protected void addTableToLobby (Table table)
     {
         super.addTableToLobby(table);
+        checkPublishPending();
+    }
 
-        if (!_publishedPending) {
-            // we know that super has added the table, so publish a pending game object
-            ((MsoyNodeObject) _peerMgr.getNodeObject()).addToTablesWaiting(
-                new TablesWaiting(_lobj.game.gameId, _lobj.game.name));
-            _publishedPending = true;
-        }
+    @Override
+    protected void updateTableInLobby (Table table)
+    {
+        super.updateTableInLobby(table);
+        checkPublishPending();
     }
 
     @Override
     protected void removeTableFromLobby (Integer tableId)
     {
         super.removeTableFromLobby(tableId);
+        checkPublishPending();
+    }
 
-        if (_publishedPending && (0 == _tlobj.getTables().size())) {
-            // if we are publishing, and the lobby is now empty, stop publishing
-            ((MsoyNodeObject) _peerMgr.getNodeObject()).removeFromTablesWaiting(_lobj.game.gameId);
-            _publishedPending = false;
+    /**
+     * Called whenever we update the tables in the lobby.
+     */
+    protected void checkPublishPending ()
+    {
+        if (_publishedPending != hasWaitingGames()) {
+            int gameId = _lobj.game.gameId;
+            if (_publishedPending) {
+                ((MsoyNodeObject) _peerMgr.getNodeObject()).removeFromTablesWaiting(gameId);
+            } else {
+                ((MsoyNodeObject) _peerMgr.getNodeObject()).addToTablesWaiting(
+                    new TablesWaiting(gameId, _lobj.game.name));
+            }
+            _publishedPending = !_publishedPending;
         }
+    }
+
+    /**
+     * Are there games in this lobby waiting for players?
+     */
+    protected boolean hasWaitingGames ()
+    {
+        // shortcut for single-player games
+        if (_lobj.gameDef.match.getMaximumPlayers() == 1) {
+            return false;
+        }
+        // otherwise check all tables. Call party games with only 1 player "waiting"
+        for (Table table : _tlobj.getTables()) {
+            if (!table.inPlay() ||
+                    ((table.config.getMatchType() == GameConfig.PARTY) &&
+                     (table.watchers.length == 1))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Are we currently advertising in the node object that there are pending tables? */
