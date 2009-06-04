@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
@@ -64,18 +65,7 @@ public class LobbyManager
             }
         };
 
-        _tableMgr = new MsoyTableManager(_omgr, invmgr, _plreg, _playerActions, this) {
-            @Override protected void tableCreated (Table table) {
-                super.tableCreated(table);
-                cancelShutdowner();
-            }
-            @Override protected void purgeTable (Table table) {
-                super.purgeTable(table);
-                if (_tables.size() == 0) {
-                    recheckShutdownInterval();
-                }
-            }
-        };
+        _tableMgr.init(this);
 
         // since we start empty, we need to immediately assume shutdown
         recheckShutdownInterval();
@@ -310,13 +300,14 @@ public class LobbyManager
     /** The metadata for the game for which we're lobbying. */
     protected GameContent _content;
 
-    /** Manages the actual tables. */
-    protected MsoyTableManager _tableMgr;
+    /** Manages the actual tables. This is not a singleton. */
+    @Inject protected MsoyTableManager _tableMgr;
 
     /** An interval to let us delay lobby shutdown for awhile. */
     protected Interval _shutdownInterval;
 
     // our dependencies
+    @Inject protected Injector _injector;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _plreg;

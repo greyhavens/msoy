@@ -52,6 +52,7 @@ import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.game.client.GameGameService;
 import com.threerings.msoy.game.client.ParlorGamePanel;
+import com.threerings.msoy.game.client.TablesWaitingPanel;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
@@ -151,16 +152,19 @@ public class WorldController extends MsoyController
     public static const VISIT_MEMBER :String = "VisitMember";
 
     /** Command to view a "stuff" page. Arg: [ itemType ] */
-    public static const VIEW_STUFF :String= "ViewStuff";
+    public static const VIEW_STUFF :String = "ViewStuff";
 
     /** Command to view a "shop" page.
      * Args: nothing to view the general shop,
      * or [ itemType ] to view a category
      * or [ itemType, itemId ] to view a specific listing. */
-    public static const VIEW_SHOP :String= "ViewShop";
+    public static const VIEW_SHOP :String = "ViewShop";
 
     /** Command to view the "mail" page. */
-    public static const VIEW_MAIL :String= "ViewMail";
+    public static const VIEW_MAIL :String = "ViewMail";
+
+    /** Command to view details for a specific game. Arg: [ gameId ] */
+    public static const VIEW_GAME :String = "ViewGame";
 
     /** Command to issue an invite to a current guest. */
     public static const INVITE_GUEST :String = "InviteGuest";
@@ -414,6 +418,14 @@ public class WorldController extends MsoyController
         };
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
         isvc.getCatalogId(_wctx.getClient(), ident, _wctx.resultListener(resultHandler));
+    }
+
+    /**
+     * Handles the VIEW_GAME command.
+     */
+    public function handleViewGame (gameId :int) :void
+    {
+        displayPage("game", "d_" + gameId);
     }
 
     /**
@@ -1532,6 +1544,7 @@ public class WorldController extends MsoyController
 
         CommandMenu.addSeparator(menuData);
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
+        menuData.push({ label: Msgs.GENERAL.get("b.games_waiting"), callback: showGamesWaiting });
         menuData.push({ label: Msgs.GENERAL.get("b.parties_awaiting"),
             callback: _wctx.getPartyDirector().showBoard, arg: PartyCodes.BOARD_AWAITING_PLAYERS });
         // and the world tour, baby!
@@ -1544,6 +1557,11 @@ public class WorldController extends MsoyController
             menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
                 enabled: (ourHomeId != curSceneId) });
         }
+    }
+
+    protected function showGamesWaiting () :void
+    {
+        new TablesWaitingPanel(_wctx).open();
     }
 
     protected function doSnapshot () :void

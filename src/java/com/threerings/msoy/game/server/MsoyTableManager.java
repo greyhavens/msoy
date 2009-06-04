@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
@@ -16,10 +18,14 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.TableManager;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.ParlorGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.TablesWaiting;
 
 /**
  * Customizes the basic table manager with MSOY specific bits.
@@ -27,16 +33,34 @@ import com.threerings.msoy.game.data.PlayerObject;
 @EventThread
 public class MsoyTableManager extends TableManager
 {
-    public MsoyTableManager (RootDObjectManager omgr, InvocationManager invmgr, PlaceRegistry plreg,
-                             PlayerNodeActions playerActions, LobbyManager lmgr)
+    @Inject public MsoyTableManager (
+        RootDObjectManager omgr, InvocationManager invmgr, PlaceRegistry plreg)
     {
-        super(omgr, invmgr, plreg, lmgr.getLobbyObject());
+        super(omgr, invmgr, plreg, null);
+        _allowBooting = true;
+    }
 
-        _playerActions = playerActions;
+    public void init (LobbyManager lmgr)
+    {
         _lmgr = lmgr;
         _lobj = lmgr.getLobbyObject();
+        setTableObject(_lobj);
+    }
 
-        _allowBooting = true;
+    @Override
+    protected void tableCreated (Table table)
+    {
+        super.tableCreated(table);
+        _lmgr.cancelShutdowner();
+    }
+
+    @Override
+    protected void purgeTable (Table table)
+    {
+        super.purgeTable(table);
+        if (_tables.size() == 0) {
+            _lmgr.recheckShutdownInterval();
+        }
     }
 
     @Override
@@ -74,7 +98,38 @@ public class MsoyTableManager extends TableManager
             !(config.getMatchType() != GameConfig.PARTY && matchConfig.unwatchable);
     }
 
+    @Override
+    protected void addTableToLobby (Table table)
+    {
+        super.addTableToLobby(table);
+
+        if (!_publishedPending) {
+            // we know that super has added the table, so publish a pending game object
+            ((MsoyNodeObject) _peerMgr.getNodeObject()).addToTablesWaiting(
+                new TablesWaiting(_lobj.game.gameId, _lobj.game.name));
+            _publishedPending = true;
+        }
+    }
+
+    @Override
+    protected void removeTableFromLobby (Integer tableId)
+    {
+        super.removeTableFromLobby(tableId);
+
+        if (_publishedPending && (0 == _tlobj.getTables().size())) {
+            // if we are publishing, and the lobby is now empty, stop publishing
+            ((MsoyNodeObject) _peerMgr.getNodeObject()).removeFromTablesWaiting(_lobj.game.gameId);
+            _publishedPending = false;
+        }
+    }
+
+    /** Are we currently advertising in the node object that there are pending tables? */
+    protected boolean _publishedPending;
+
     protected LobbyManager _lmgr;
     protected LobbyObject _lobj;
-    protected PlayerNodeActions _playerActions;
+
+    // our dependencies
+    @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected PlayerNodeActions _playerActions;
 }

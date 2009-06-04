@@ -5,6 +5,7 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 
@@ -53,8 +54,21 @@ public class WorldGameMarshaller extends InvocationMarshaller
         }
     }
 
+    /** The method id used to dispatch {@link #getTablesWaiting} requests. */
+    public static final int GET_TABLES_WAITING = 1;
+
+    // from interface WorldGameService
+    public void getTablesWaiting (Client arg1, InvocationService.ResultListener arg2)
+    {
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, GET_TABLES_WAITING, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #inviteFriends} requests. */
-    public static final int INVITE_FRIENDS = 1;
+    public static final int INVITE_FRIENDS = 2;
 
     // from interface WorldGameService
     public void inviteFriends (Client arg1, int arg2, int[] arg3)
@@ -65,7 +79,7 @@ public class WorldGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #locateGame} requests. */
-    public static final int LOCATE_GAME = 2;
+    public static final int LOCATE_GAME = 3;
 
     // from interface WorldGameService
     public void locateGame (Client arg1, int arg2, WorldGameService.LocationListener arg3)

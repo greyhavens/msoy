@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
@@ -35,6 +36,12 @@ public class WorldGameDispatcher extends InvocationDispatcher<WorldGameMarshalle
         throws InvocationException
     {
         switch (methodId) {
+        case WorldGameMarshaller.GET_TABLES_WAITING:
+            ((WorldGameProvider)provider).getTablesWaiting(
+                source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
         case WorldGameMarshaller.INVITE_FRIENDS:
             ((WorldGameProvider)provider).inviteFriends(
                 source, ((Integer)args[0]).intValue(), (int[])args[1]

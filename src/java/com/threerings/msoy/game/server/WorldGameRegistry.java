@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -20,11 +23,13 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -49,6 +54,7 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.game.data.TablesWaiting;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
@@ -224,6 +230,28 @@ public class WorldGameRegistry
         });
     }
 
+    // from interface MsoyGameProvider
+    public void getTablesWaiting (ClientObject caller, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        // add all the tables to a list
+        final List<TablesWaiting> games = Lists.newArrayList();
+        _peerMan.applyToNodes(new Function<NodeObject,Void>() {
+            public Void apply (NodeObject nodeObj) {
+                Iterables.addAll(games, ((MsoyNodeObject) nodeObj).tablesWaiting);
+                return null; // Void
+            }
+        });
+        // randomize
+        Collections.shuffle(games);
+        // only return up to 100 or whatever
+        int size = games.size();
+        if (size > MAX_TABLES_WAITING) {
+            games.subList(MAX_TABLES_WAITING, size).clear();
+        }
+        rl.requestProcessed(games);
+    }
+
     // from interface MsoyPeerManager.PeerObserver
     public void connectedToPeer (MsoyNodeObject peerobj)
     {
@@ -389,6 +417,9 @@ public class WorldGameRegistry
         protected int _gameId;
         protected MsoyNodeObject.Lock _lock; // filled in if we get the lock
     }
+
+    /** The maximum numbers of TablesWaiting objects we return to a client. */
+    protected static final int MAX_TABLES_WAITING = 50;
 
     /** A map of all games hosted on this server. */
     protected ArrayIntSet _games = new ArrayIntSet();

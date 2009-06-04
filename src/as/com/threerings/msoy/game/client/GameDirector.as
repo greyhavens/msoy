@@ -240,7 +240,7 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that the lobby for the specified game be joined and displayed.
      */
-    public function enterLobby (gameId :int, ghost :String, gport :int) :void
+    public function enterLobby (gameId :int, ghost :String = null, gport :int = 0) :void
     {
         resolveLobbyLiaison(gameId, ghost, gport);
         ParlorGameLiaison(_liaison).showLobby();

@@ -28,4 +28,10 @@ public interface WorldGameService extends InvocationService
      * play, they'll join the game if possible and watch otherwise.
      */
     void inviteFriends (Client client, int gameId, int[] friendIds);
+
+    /**
+     * Returns a list of TablesWaiting objects, detailing games that actually have people
+     * waiting to play.
+     */
+    void getTablesWaiting (Client client, ResultListener listener);
 }

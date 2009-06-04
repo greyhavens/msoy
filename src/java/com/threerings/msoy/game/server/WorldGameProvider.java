@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
@@ -13,6 +14,12 @@ import com.threerings.presents.server.InvocationProvider;
  */
 public interface WorldGameProvider extends InvocationProvider
 {
+    /**
+     * Handles a {@link WorldGameService#getTablesWaiting} request.
+     */
+    void getTablesWaiting (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
     /**
      * Handles a {@link WorldGameService#inviteFriends} request.
      */
