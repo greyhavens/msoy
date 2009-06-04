@@ -52,7 +52,7 @@ public class MoneyMessageListener
     public void init ()
     {
         // Handle subscription billed messages
-        listen("messaging.whirled.subscriptionBilled.address", new MessageListener() {
+        listen("subscriptionBilled", new MessageListener() {
             public void received (final byte[] message, Replier replier) {
                 SubscriptionBilledMessage ssm = null;
                 try {
@@ -66,7 +66,7 @@ public class MoneyMessageListener
         });
 
         // Handle subscription ended messages
-        listen("messaging.whirled.subscriptionEnded.address", new MessageListener() {
+        listen("subscriptionEnded", new MessageListener() {
             public void received (final byte[] message, Replier replier) {
                 SubscriptionEndedMessage sem = null;
                 try {
@@ -80,7 +80,7 @@ public class MoneyMessageListener
         });
 
         // Handle bars bought messages
-        listen("messaging.whirled.barsBought.address", new MessageListener() {
+        listen("barsBought", new MessageListener() {
             public void received (final byte[] message, final Replier replier) {
                 BarsBoughtMessage bbm = new BarsBoughtMessage(message);
                 MemberRecord member = _memberRepo.loadMember(bbm.accountName);
@@ -89,7 +89,7 @@ public class MoneyMessageListener
         });
 
         // Handle get bar count messages
-        listen("messaging.whirled.getBarCount.address", new MessageListener() {
+        listen("getBarCount", new MessageListener() {
             public void received (final byte[] message, final Replier replier) {
                 GetBarCountMessage gbcm = new GetBarCountMessage(message);
                 MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
@@ -117,25 +117,21 @@ public class MoneyMessageListener
 
     /**
      * Listens for messages on the destination address in the server configuration specified by
-     * configKey.  When messages come in, they will execute the given message listener.
+     * command.  When messages come in, they will execute the given message listener.
      */
-    protected void listen (String configKey, MessageListener listener)
+    protected void listen (String command, MessageListener listener)
     {
-        String source = ServerConfig.config.getValue(configKey, "");
-        if ("".equals(source)) {
-            log.debug("Not configured to listen", "configKey", configKey);
-            return;
+        if (ServerConfig.getAMQPMessageConfig() == null) {
+            return; // messaging is not activated, so no listening
         }
 
-        DestinationAddress addr = new DestinationAddress(source);
+        DestinationAddress addr = new DestinationAddress("whirled.money." + command + "@whirled");
         ConnectedListener cl = _conn.listen(addr.getRoutingKey(), addr, listener);
         if (cl.isClosed()) {
-            log.warning("Weird! Listener is already closed! That's bad?", "configKey", configKey);
+            log.warning("Weird! Listener is already closed! That's bad?", "command", command);
             return;
         }
-
         _listeners.add(cl);
-        log.info("Now listening", "configKey", configKey);
     }
 
     /**
