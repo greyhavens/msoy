@@ -425,7 +425,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewGame (gameId :int) :void
     {
-        displayPage("game", "d_" + gameId);
+        displayPage("games", "d_" + gameId);
     }
 
     /**
