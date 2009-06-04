@@ -36,6 +36,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -69,7 +70,6 @@ import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.ExternalCreds;
-import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;

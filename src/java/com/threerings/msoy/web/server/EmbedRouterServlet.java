@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
+import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;

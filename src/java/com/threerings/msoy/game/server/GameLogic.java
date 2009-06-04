@@ -20,6 +20,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
@@ -28,7 +29,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.ServletWaiter;
 
