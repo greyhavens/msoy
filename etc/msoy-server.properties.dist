@@ -192,6 +192,17 @@ oooauth.access_denied_url = /register/access_denied.wm
 # event_log_debug = false
 
 #
+# Messaging properties used to communicate with other systems, such as billing
+
+# messaging.server.addresses=localhost:5672
+# messaging.server.virtualhost=localhost
+# messaging.server.username=whirled
+# messaging.server.password=PASSWORD
+# messaging.server.realm=/data
+# messaging.server.heartbeat=0
+# messaging.server.replyTimeout=4000
+
+#
 # Jabber component configuration
 #
 # jabber.host = localhost
