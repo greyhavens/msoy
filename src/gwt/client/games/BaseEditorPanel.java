@@ -152,7 +152,7 @@ public class BaseEditorPanel extends SmartTable
 
     protected MediaDesc checkServerMedia (MediaDesc desc)
     {
-        if (desc == null || desc.mimeType != MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY) {
+        if (desc != null && desc.mimeType != MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY) {
             throw new ConfigException(_msgs.errInvalidServerCode());
         }
         return desc;
