@@ -15,10 +15,13 @@ import com.threerings.msoy.data.all.MemberName;
 /**
  * Contains information used to keep track of who we are in our GWT web application.
  */
-public class WebCreds implements IsSerializable
+public class WebCreds
+    implements IsSerializable
 {
     /** This user's role. Each successive role has more privileges than the last. */
-    public static enum Role {
+    public static enum Role
+        implements IsSerializable
+    {
         PERMAGUEST, REGISTERED, SUBSCRIBER, SUPPORT, ADMIN, MAINTAINER
     };
 
