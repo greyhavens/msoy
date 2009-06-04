@@ -493,34 +493,21 @@ public class MemberLogic
             return;
         }
 
-        // this will never happen... ha!
+        // check they are affiliated and validated (and by definition not a guest)
         MemberRecord mrec = _memberRepo.loadMember(friendId);
-        if (mrec == null) {
-            return;
-        }
-
-        // check they are affiliated
-        int payMemberId = mrec.affiliateMemberId;
-        if (payMemberId == 0) {
-            return;
-        }
-
-        // check they are not a permaguest
-        if (mrec.isPermaguest()) {
-            log.warning("Permaguest with a friend?", "permaguestId", friendId,
-                "friendId", payMemberId);
+        if (mrec == null || mrec.affiliateMemberId == 0 || !mrec.isValidated()) {
             return;
         }
 
         // do the award
         try {
-            _memberRepo.noteFriendPayment(friendId, payMemberId);
-            _moneyLogic.award(payMemberId, Currency.BARS, TransactionType.FRIEND_AWARD, 1, true,
-                UserAction.receivedFriendAward(payMemberId, friendId));
+            _memberRepo.noteFriendPayment(friendId, mrec.affiliateMemberId);
+            _moneyLogic.award(mrec.affiliateMemberId, Currency.BARS, TransactionType.FRIEND_AWARD,
+                1, true, UserAction.receivedFriendAward(mrec.affiliateMemberId, friendId));
 
         } catch (DuplicateKeyException dke) {
-            log.warning("Friend payment triggered twice?", "friend", friendId,
-                        "payee", payMemberId);
+            log.warning("Baby Jeeves! Friend payment triggered twice?", "friend", friendId,
+                        "payee", mrec.affiliateMemberId);
         }
     }
 
