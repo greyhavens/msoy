@@ -99,12 +99,7 @@ public class PartyBoardPanel extends FloatingPanel
             }));
         }
 
-        var buttons :Array = [ btn ];
-        if (_mode != PartyCodes.BOARD_NORMAL) {
-            buttons.unshift(new CommandButton(Msgs.PARTY.get("b.view_main"), viewMain));
-        }
-
-        addButtons.apply(this, buttons);
+        addButtons(btn);
         _buttonBar.styleName = "buttonPadding"; // pad out the buttons since we have no border
         _buttonBar.setStyle("buttonStyleName", "orangeButton"); // oh you're kidding me
         // TODO: if we need to add more buttons, and want to undo orangeness, we will
@@ -133,15 +128,6 @@ public class PartyBoardPanel extends FloatingPanel
             none.percentHeight = 100;
             _content.addChild(none);
         }
-    }
-
-    /**
-     * View the main party board.
-     */
-    protected function viewMain () :void
-    {
-        close();
-        _wctx.getPartyDirector().showBoard();
     }
 
     protected var _wctx :WorldContext;
