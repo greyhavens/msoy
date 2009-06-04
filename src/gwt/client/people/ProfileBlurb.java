@@ -24,6 +24,7 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -37,6 +38,7 @@ import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -87,11 +89,15 @@ public class ProfileBlurb extends Blurb
         // create our photo section with various buttons
         FlowPanel photo = MsoyUI.createFlowPanel("Photo");
         boolean hasProfileGallery = hasProfileGallery();
-        ThumbBox thumb = hasProfileGallery
-            ? new ThumbBox(_profile.photo,
-                Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId())
-            : new ThumbBox(_profile.photo);
-        photo.add(MsoyUI.createRoleCaptioner(thumb, _profile.role));
+        photo.add(!hasProfileGallery ? new ThumbBox(_profile.photo) :
+                  new ThumbBox(_profile.photo, Pages.PEOPLE,
+                               GalleryActions.VIEW_PROFILE, _name.getMemberId()));
+        // TODO SUBSCRIPTION
+        if (isMe && _profile.role == WebCreds.Role.REGISTERED && DeploymentConfig.devDeployment) {
+            photo.add(Link.create(_msgs.subscribeNow(), Pages.BILLING, "subscribe"));
+        } else {
+            photo.add(MsoyUI.createRoleLabel(_profile.role));
+        }
         if (hasProfileGallery) {
             photo.add(Link.create(_msgs.photosOfMe(),
                     Pages.PEOPLE, GalleryActions.VIEW_PROFILE, _name.getMemberId()));

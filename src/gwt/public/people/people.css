@@ -31,9 +31,12 @@
   font-size: 12px;
 }
 
-.profile .Profile .Photo .gwt-Image {
-  margin-left: auto;
-  margin-right: auto;
+.profile .Profile .Photo .thumbBox {
+  margin: auto auto;
+}
+
+.profile .Profile .Photo .gwt-Hyperlink {
+  display: block;
 }
 
 .profile .Profile .Info {

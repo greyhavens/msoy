@@ -36,7 +36,6 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -517,10 +516,9 @@ public class MsoyUI
     }
 
     /**
-     * Create a Widget that hosts a photo and captions it with the user's role.
-     * The ThumbBox is created externally so that you can add a link to it, yo.
+     * Creates a label that displays the specified role.
      */
-    public static Widget createRoleCaptioner (ThumbBox photo, WebCreds.Role role)
+    public static Widget createRoleLabel (WebCreds.Role role)
     {
         String roleName;
         String iconPath = null;
@@ -529,34 +527,23 @@ public class MsoyUI
         case MAINTAINER:
             roleName = _cmsgs.roleAdmin();
             break;
-
         case SUPPORT:
             roleName = _cmsgs.roleSupport();
             break;
-
         case SUBSCRIBER:
             roleName = _cmsgs.roleSubscriber();
             iconPath = "/images/ui/subscriber.gif";
             break;
-
         case PERMAGUEST:
             roleName = _cmsgs.roleGuest();
             break;
-
         default:
             roleName = _cmsgs.roleUser();
             break;
         }
-
-        SmartTable table = new SmartTable();
-        table.setWidget(0, 0, photo);
-        Widget roleUI = new InlineLabel(roleName);
-        if (iconPath != null) {
-            roleUI = createFlowPanel(null, MsoyUI.createInlineImage(iconPath), roleUI);
-        }
-        table.setWidget(1, 0, roleUI, 1, "caption");
-        table.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
-        return table;
+        return (iconPath == null) ? createLabel(roleName, "roleLabel") :
+            createFlowPanel("roleLabel", MsoyUI.createInlineImage(iconPath),
+                            new InlineLabel(roleName));
     }
 
     /**

@@ -41,13 +41,12 @@ public class MessagePanel extends FlexTable
             removeRow(0);
         }
 
-        ThumbBox box = getThumbBox(poster);
+        Widget box = getThumbBox(poster);
         if (box != null) {
             if (shouldShowRoleCaption()) {
-                setWidget(0, 0, MsoyUI.createRoleCaptioner(box, poster.role));
-            } else {
-                setWidget(0, 0, box);
+                box = MsoyUI.createFlowPanel("roleBox", box, MsoyUI.createRoleLabel(poster.role));
             }
+            setWidget(0, 0, box);
             if (text != null) {
                 getFlexCellFormatter().setRowSpan(0, 0, 2);
             }

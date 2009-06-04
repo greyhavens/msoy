@@ -965,14 +965,20 @@ img, embed, applet, object {
   padding: 15px 15px 0px 15px;
 }
 
+/** Role box and label styles */
+.roleBox {
+  display: table;
+}
+
+.roleLabel {
+  font-size: 11px;
+  text-align: center;
+}
+
 /** MessagePanel styles */
 .messagePanel .Photo {
   background: #EDEDED;
   padding: 5px;
-}
-
-.caption {
-  font-size: 11px;
 }
 
 .messagePanel .MsgInfo {
