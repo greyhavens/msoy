@@ -20,12 +20,6 @@ public class Prop extends IdentGameItem
         return PROP;
     }
 
-    @Override // from Item
-    public byte getSuiteMasterType ()
-    {
-        return GAME;
-    }
-
     @Override
     public boolean isConsistent ()
     {

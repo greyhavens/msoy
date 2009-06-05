@@ -508,13 +508,9 @@ public class ItemLogic
                     MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId);
                 }
 
-            } else if (nrecord instanceof IdentGameItemRecord &&
-                       ((IdentGameItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
-                int gameId = ((IdentGameItemRecord)nrecord).gameId;
-                if (gameId != 0) {
-                    // notify any server hosting this game that its data is updated
-                    _gameActions.gameUpdated(gameId);
-                }
+            } else if (nrecord instanceof IdentGameItemRecord) {
+                // notify any server hosting this game that its content has been updated
+                _gameActions.gameUpdated(((IdentGameItemRecord)nrecord).gameId);
             }
 
         } catch (Exception e) {
@@ -552,12 +548,10 @@ public class ItemLogic
         if (record.getType() == Item.AVATAR) {
             MemberNodeActions.avatarUpdated(record.ownerId, record.itemId);
 
-        } else if (record instanceof IdentGameItemRecord &&
-                   ((IdentGameItem)record.toItem()).getSuiteMasterType() == Item.GAME) {
+        } else if (record instanceof IdentGameItemRecord) {
             IdentGameItemRecord srecord = (IdentGameItemRecord)record;
             // see if the owner of this game is playing a game right now
-            if (srecord.gameId != 0 &&
-                _peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
+            if (_peerMan.locateClient(GameAuthName.makeKey(record.ownerId)) != null) {
                 // notify the game that the user has purchased some game content
                 _playerActions.gameContentPurchased(
                     record.ownerId, srecord.gameId, srecord.getType(), srecord.ident);

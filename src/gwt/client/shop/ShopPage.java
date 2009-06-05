@@ -65,7 +65,6 @@ public class ShopPage extends Page
         } else if (action.equals(GAME)) {
             final int gameId = args.get(1, 0);
             setContent(new SuiteCatalogPanel(_models, gameId));
-            addTypeNavi(Item.GAME);
 
         } else if (action.equals(REMIX)) {
             final byte type = getItemType(args, 1, Item.AVATAR);

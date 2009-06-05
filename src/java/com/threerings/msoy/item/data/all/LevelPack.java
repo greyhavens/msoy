@@ -20,12 +20,6 @@ public class LevelPack extends IdentGameItem
     }
 
     @Override // from Item
-    public byte getSuiteMasterType ()
-    {
-        return GAME;
-    }
-
-    @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
         return getThumbnailMedia();

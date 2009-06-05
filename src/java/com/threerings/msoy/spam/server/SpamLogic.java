@@ -310,13 +310,13 @@ public class SpamLogic
         protected EmailListing (ListingCard listing)
         {
             _listing = listing;
-            if (listing.itemType == Item.GAME) {
+            if (listing.itemType == Item.LAUNCHER) {
                 try{
-                    _gameId = ((GameRecord)_itemLogic.requireListing(
-                        Item.GAME, listing.catalogId, true).item).gameId;
+                    _gameId = ((LauncherRecord)_itemLogic.requireListing(
+                        Item.LAUNCHER, listing.catalogId, true).item).gameId;
                 } catch (ServiceException e) {
                     log.warning("Could not load game id for new & hot game",
-                        "catalogID", listing.catalogId);
+                                "catalogId", listing.catalogId);
                 }
             }
         }
@@ -636,7 +636,7 @@ public class SpamLogic
         ArrayIntSet memberIds = new ArrayIntSet(ServerConfig.getShopFavoriteMemberIds());
         try {
             filler.avatars = randomItems(memberIds, Item.AVATAR);
-            filler.games = randomItems(memberIds, Item.GAME);
+            filler.games = randomItems(memberIds, Item.LAUNCHER);
 
         } catch (ServiceException e) {
             throw new RuntimeException("Could not create feed mailing filler", e);

@@ -38,7 +38,7 @@ public class SuiteCatalogPanel extends SmartTable
 
     public SuiteCatalogPanel (CatalogModels models, int gameId)
     {
-        this(Item.GAME);
+        this(Item.NOT_A_TYPE);
         models.getSuite(gameId, new InfoCallback<CatalogService.SuiteResult>() {
             public void onSuccess (CatalogService.SuiteResult result) {
                 init(result);

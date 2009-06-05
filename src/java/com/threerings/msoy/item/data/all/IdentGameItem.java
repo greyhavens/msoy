@@ -14,12 +14,6 @@ public abstract class IdentGameItem extends GameItem
     /** An identifier for this sub-item, used to identify it from code. */
     public String ident;
 
-    /**
-     * Returns the type of this item's suite master or {@link #NOT_A_TYPE} if this type of item is
-     * not a subtype of some other item.
-     */
-    public abstract byte getSuiteMasterType ();
-
     @Override // from Item
     public boolean isConsistent ()
     {
