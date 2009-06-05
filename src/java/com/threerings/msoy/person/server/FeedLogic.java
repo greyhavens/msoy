@@ -290,7 +290,13 @@ public class FeedLogic
 
         List<IFeedImage> images = Lists.newArrayList();
         try {
-            images.add(new FeedImage(new URL(trophyMedia.getMediaPath()), new URL(actionURL)));
+            String imageUrl = trophyMedia.getMediaPath();
+            // facebook proxies images, presumably to keep their site from looking like ass, so
+            // give 'em something to proxy if specified in config
+            if (DeploymentConfig.facebookURLValidationHack) {
+                imageUrl = FAKE_PUBLIC_IMAGE_URL;
+            }
+            images.add(new FeedImage(new URL(imageUrl), new URL(actionURL)));
         } catch (MalformedURLException mue) {
             log.warning("Failed to add image to trophy story", "trophy", trophyMedia.getMediaPath(),
                         "action", actionURL, "error", mue);
@@ -302,8 +308,9 @@ public class FeedLogic
             return; // no story ids, not publishing to facebook
         }
         try {
+            int storySize = 2; // short story (facebook will auto-reduce if we lack permissions)
             if (!_faceLogic.getFacebookClient(sessionKey).feed_publishUserAction(
-                    storyId, data, images, Collections.<Long>emptyList(), null, 0)) {
+                    storyId, data, images, Collections.<Long>emptyList(), null, storySize)) {
                 log.info("Failed to publish trophy story", "storyId", storyId, "for", memberId);
             }
         } catch (Exception e) {
@@ -321,4 +328,6 @@ public class FeedLogic
     protected static final int MIN_PERSONAL_FEED_CUTOFF_DAYS = 2;
     protected static final int FRIENDS_PER_DAY = 25;
     protected static final int GROUP_FEED_CUTOFF_DAYS = 7;
+    protected static final String FAKE_PUBLIC_IMAGE_URL =
+        "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png";
 }
