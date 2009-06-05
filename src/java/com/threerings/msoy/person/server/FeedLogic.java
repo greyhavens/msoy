@@ -292,8 +292,8 @@ public class FeedLogic
         try {
             String imageUrl = trophyMedia.getMediaPath();
             // facebook proxies images, presumably to keep their site from looking like ass, so
-            // give 'em something to proxy if specified in config
-            if (DeploymentConfig.facebookURLValidationHack) {
+            // give 'em something to proxy if we are firewalled (iff dev for now)
+            if (DeploymentConfig.devDeployment) {
                 imageUrl = FAKE_PUBLIC_IMAGE_URL;
             }
             images.add(new FeedImage(new URL(imageUrl), new URL(actionURL)));

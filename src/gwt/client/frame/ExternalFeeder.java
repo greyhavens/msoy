@@ -48,7 +48,7 @@ public class ExternalFeeder
         // TODO: remove hackery if and when Facebook realize the value of testing
         String mediaURL = event.getMediaURL();
         String trophyURL = Pages.GAMES.makeURL("vec", vector, event.getGameId(), "d", "t");
-        if (DeploymentConfig.facebookURLValidationHack) {
+        if (DeploymentConfig.devDeployment) {
             mediaURL = "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png";
             trophyURL = "http://www.whirled.com/go/games-d_827_t";
         }
