@@ -735,11 +735,11 @@ public class WorldController extends MsoyController
 
     /**
      * Handles RESPOND_FOLLOW.
+     * Arg can be 0 to stop us from following anyone
      */
     public function handleRespondFollow (memberId :int) :void
     {
-        var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        msvc.followMember(_wctx.getClient(), memberId, _wctx.listener());
+        msvc().followMember(_wctx.getClient(), memberId, _wctx.listener());
     }
 
     /**
@@ -784,9 +784,7 @@ public class WorldController extends MsoyController
 
         } else {
             service = function (complaint :String) :void {
-                var msvc :MemberService =
-                    (_wctx.getClient().requireService(MemberService) as MemberService);
-                msvc.complainMember(_wctx.getClient(), memberId, complaint);
+                msvc().complainMember(_wctx.getClient(), memberId, complaint);
             };
         }
 
@@ -976,8 +974,7 @@ public class WorldController extends MsoyController
      */
     public function updateAvailability (availability :int) :void
     {
-        var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        msvc.updateAvailability(_wctx.getClient(), availability);
+        msvc().updateAvailability(_wctx.getClient(), availability);
         _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
     }
 
@@ -1159,19 +1156,56 @@ public class WorldController extends MsoyController
 
     // from MsoyController
     override public function addMemberMenuItems (
-        name :MemberName, menuItems :Array, addPlaceItems :Boolean = false,
-        addAvatarItems :Boolean = false) :void
+        name :MemberName, menuItems :Array, addWorldItems :Boolean = true) :void
     {
         const memId :int = name.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
+        const isMuted :Boolean = !isUs && _wctx.getMuteDirector().isMuted(name);
         const isSupport :Boolean = _wctx.getTokens().isSupport();
         var placeCtrl :Object = null;
-        if (addPlaceItems) {
+        if (addWorldItems) {
             placeCtrl = _wctx.getLocationDirector().getPlaceController();
             if (placeCtrl == null) {
                 // check the gamecontext's place
                 placeCtrl = _wctx.getGameDirector().getGameController();
+            }
+        }
+
+        var followItem :Object = null;
+        if (addWorldItems) {
+            var followItems :Array = [];
+            if (isUs) {
+                // if we have followers, add a menu item for clearing them
+                if (us.followers.size() > 0) {
+                    followItems.push({ label: Msgs.GENERAL.get("b.clear_followers"),
+                        callback: ditchFollower });
+                }
+                // if we're following someone, add a menu item for stopping
+                if (us.following != null) {
+                    followItems.push({ label: Msgs.GENERAL.get("b.stop_following"),
+                        callback: handleRespondFollow, arg: 0 });
+                }
+            } else {
+                // we could be following them...
+                if (name.equals(us.following)) {
+                    followItems.push({ label: Msgs.GENERAL.get("b.stop_following"),
+                        callback: handleRespondFollow, arg: 0 });
+                } else {
+                    followItems.push({ label: Msgs.GENERAL.get("b.follow_other"),
+                        callback: handleRespondFollow, arg: memId, enabled: !isMuted });
+                }
+                // and/or they could be following us...
+                if (us.followers.containsKey(memId)) {
+                    followItems.push({ label: Msgs.GENERAL.get("b.ditch_follower"),
+                        callback: ditchFollower, arg: memId });
+                } else {
+                    followItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
+                        callback: inviteFollow, arg: memId, enabled: !isMuted });
+                }
+            }
+            if (followItems.length > 0) {
+                followItem = { label: Msgs.GENERAL.get("l.following"), children: followItems };
             }
         }
 
@@ -1184,61 +1218,77 @@ public class WorldController extends MsoyController
                     enabled: (ii != us.availability) });
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
+            if (followItem != null) {
+                menuItems.push(followItem);
+            }
 
         } else {
             const onlineFriend :Boolean = us.isOnlineFriend(memId);
-
             // commented out: we are normally constructed from separated names, so we lose the viz
+// TODO: icon if avail?
 //            var icon :* = null;
 //            if (name is VizMemberName) {
 //                icon = MediaWrapper.createView(
 //                    VizMemberName(name).getPhoto(), MediaDesc.QUARTER_THUMBNAIL_SIZE);
 //            }
-            CommandMenu.addTitle(menuItems, name.toString()); // icon
-            var muted :Boolean = _mctx.getMuteDirector().isMuted(name);
-            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute"),
-                callback: _mctx.getMuteDirector().setMuted, arg: [ name, !muted ] });
-            if (addAvatarItems && (placeCtrl is RoomObjectController)) {
-                RoomObjectController(placeCtrl).addBleepAvatar(name, menuItems);
+            CommandMenu.addTitle(menuItems, name.toString());
+            // whisper
+            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"), icon: WHISPER_ICON,
+                command: OPEN_CHANNEL, arg: name, enabled: !muted });
+            // add as friend
+            if (!onlineFriend) { // TODO: this kinda sucks.. // TODO: jon has another icon!
+                menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"), icon: VISIT_ICON,
+                    command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
-            CommandMenu.addSeparator(menuItems);
-
-            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
-                             command: OPEN_CHANNEL, arg: name, enabled: !muted });
+            // visit
             if (onlineFriend || isSupport) {
                 var label :String = onlineFriend ?
                     Msgs.GENERAL.get("b.visit_friend") : "Visit (as agent)";
-                menuItems.push({ label: label, command: VISIT_MEMBER, arg: memId });
+                var canVisit :Boolean = !(placeCtrl is RoomObjectController) ||
+                    !RoomObjectController(placeCtrl).containsPlayer(name);
+                menuItems.push({ label: label, icon: VISIT_ICON,
+                    command: VISIT_MEMBER, arg: memId, enabled: canVisit });
             }
-            menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
-                             command: GO_MEMBER_HOME, arg: memId });
+// Visit Home disabled. Jon says it's pointless.
+//            menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
+//                command: GO_MEMBER_HOME, arg: memId });
+            // profile
             menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
-                             command: VIEW_MEMBER, arg: memId });
-            if (!onlineFriend) { // TODO: this kinda sucks
-                menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
-                                 command: INVITE_FRIEND, arg: memId, enabled: !muted });
+                command: VIEW_MEMBER, arg: memId });
+            // following
+            if (followItem != null) {
+                menuItems.push(followItem);
             }
-            menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
-                             command: COMPLAIN_MEMBER, arg: [memId, name] });
-
-            // possibly add a menu item for booting this user
-            if ((placeCtrl is BootablePlaceController) &&
-                    BootablePlaceController(placeCtrl).canBoot()) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
-                    callback: handleBootFromPlace, arg: memId });
-            }
-
+            // partying
             if (_wctx.getPartyDirector().canInviteToParty()) {
                 menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
                     command: INVITE_TO_PARTY, arg: memId,
                     enabled: !muted && !_wctx.getPartyDirector().partyContainsPlayer(memId) });
             }
+
+            CommandMenu.addSeparator(menuItems);
+            // muting
+            var muted :Boolean = _mctx.getMuteDirector().isMuted(name);
+            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute"),
+                icon: BLOCK_ICON,
+                callback: _mctx.getMuteDirector().setMuted, arg: [ name, !muted ] });
+            // booting
+            if ((placeCtrl is BootablePlaceController) &&
+                    BootablePlaceController(placeCtrl).canBoot()) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
+                    callback: handleBootFromPlace, arg: memId });
+            }
+            // reporting
+            menuItems.push({ label: Msgs.GENERAL.get("b.complain"), icon: REPORT_ICON,
+                command: COMPLAIN_MEMBER, arg: [ memId, name ] });
         }
 
-        if (addAvatarItems && (placeCtrl is RoomObjectController)) {
+        // now the items specific to the avatar
+        if (addWorldItems && (placeCtrl is RoomObjectController)) {
             RoomObjectController(placeCtrl).addAvatarMenuItems(name, menuItems);
         }
 
+        // login/logout
         if (isUs && _wctx.getMsoyClient().isEmbedded()) {
             if (_wctx.getMemberObject().isPermaguest()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
@@ -1249,7 +1299,7 @@ public class WorldController extends MsoyController
                 var creds :WorldCredentials = new WorldCredentials(null, null);
                 creds.ident = "";
                 menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
-                                 command: MsoyController.LOGON, arg: creds });
+                    command: MsoyController.LOGON, arg: creds });
             }
         }
     }
@@ -1261,12 +1311,13 @@ public class WorldController extends MsoyController
     {
         const ownerMuted :Boolean = _wctx.getMuteDirector().isOwnerMuted(petName);
         if (ownerMuted) {
-            menuItems.push({ label: Msgs.GENERAL.get("b.unmute_owner"),
+            menuItems.push({ label: Msgs.GENERAL.get("b.unmute_owner"), icon: BLOCK_ICON,
                 callback: _mctx.getMuteDirector().setMuted,
                 arg: [ new MemberName("", petName.getOwnerId()), false ] });
         } else {
             const isMuted :Boolean = _wctx.getMuteDirector().isMuted(petName);
             menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
+                icon: BLOCK_ICON,
                 callback: _wctx.getMuteDirector().setMuted, arg: [ petName, !isMuted ] });
         }
     }
@@ -1591,6 +1642,31 @@ public class WorldController extends MsoyController
         }
     }
 
+    /**
+     * Sends an invitation to the specified member to follow us.
+     */
+    protected function inviteFollow (memId :int) :void
+    {
+        msvc().inviteToFollow(_wctx.getClient(), memId, _wctx.listener());
+    }
+
+    /**
+     * Tells the server we no longer want someone following us. If target memberId is 0, all
+     * our followers are ditched.
+     */
+    protected function ditchFollower (memId :int = 0) :void
+    {
+        msvc().ditchFollower(_wctx.getClient(), memId, _wctx.listener());
+    }
+
+    /**
+     * Convenience.
+     */
+    protected function msvc () :MemberService
+    {
+        return MemberService(_wctx.getClient().requireService(MemberService));
+    }
+
     protected function doSnapshot () :void
     {
         if (_snapPanel == null) {
@@ -1668,5 +1744,17 @@ public class WorldController extends MsoyController
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/snapshot.png")]
     protected static const SNAPSHOT_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/block.png")]
+    protected static const BLOCK_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/report.png")]
+    protected static const REPORT_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/visit.png")]
+    protected static const VISIT_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/whisper.png")]
+    protected static const WHISPER_ICON :Class;
 }
 }

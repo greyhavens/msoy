@@ -146,14 +146,12 @@ public class RoomObjectController extends RoomController
         }
     }
 
-    public function addBleepAvatar (name :MemberName, menuItems :Array) :void
+    /**
+     * Is the specified player in this room?
+     */
+    public function containsPlayer (name :MemberName) :Boolean
     {
-        const avatar :MemberSprite = _roomObjectView.getOccupantByName(name) as MemberSprite;
-        if (avatar != null && avatar.isBleepable()) {
-            var key :String = avatar.isBleeped() ? "b.unbleep_avatar" : "b.bleep_avatar";
-            menuItems.push({ label: Msgs.GENERAL.get(key),
-                             callback: avatar.toggleBleeped, arg: _wdctx });
-        }
+        return (null != _roomObj.getOccupantInfo(name));
     }
 
     /**
@@ -174,68 +172,47 @@ public class RoomObjectController extends RoomController
         if (occInfo.bodyOid == us.getOid()) {
             // see if we can control our own avatar right now...
             const canControl :Boolean = _wdctx.worldProps.userControlsAvatar;
-
-            // if we have followers, add a menu item for clearing them
-            if (us.followers.size() > 0) {
-                menuItems.push({ label: Msgs.GENERAL.get("l.clear_followers"),
-                                 callback: ditchFollower});
-            }
-
-            // if we're following someone, add a menu item for stopping
-            if (us.following != null) {
-                menuItems.push({ label: Msgs.GENERAL.get("l.stop_following"),
-                                 callback: clearFollow });
-            }
-
             // if we're not a guest add a menu for changing avatars
             menuItems.push(createChangeAvatarMenu(us, canControl));
-
             // add our custom menu items (avatar actions and states)
             if (avatar != null) {
                 addSelfMenuItems(avatar, menuItems, canControl);
             }
 
         } else { // shown when clicking on someone else
-            var isMuted :Boolean = _wdctx.getMuteDirector().isMuted(occInfo.username);
-
-            menuItems.push({ label: Msgs.GENERAL.get("b.follow_other"),
-                             callback: followOther, arg: occInfo.username,
-                             enabled: !isMuted  });
-
-            // if they are following us...
-            if (us.followers.containsKey(occInfo.getMemberId())) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.ditch_follower"),
-                                 callback: ditchFollower, arg: occInfo.username });
-            } else {
-                menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
-                                 callback: inviteFollow, arg: occInfo.username,
-                                 enabled: !isMuted });
+            if (avatar == null) {
+                return;
+            }
+            var kind :String = Msgs.GENERAL.get(avatar.getDesc());
+            var flagItems :Array = [];
+            var bleepItem :Object = null;
+            if (avatar.isBleepable()) {
+                var key :String = avatar.isBleeped() ? "b.unbleep_avatar" : "b.bleep_avatar";
+                //var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
+                bleepItem = { label: Msgs.GENERAL.get(key), icon: BLEEP_ICON,
+                    callback: avatar.toggleBleeped, arg: _wdctx };
             }
 
-            if (avatar != null) {
-                var kind :String = Msgs.GENERAL.get(avatar.getDesc());
-                var flagItems :Array = [];
-
-                var ident :ItemIdent = avatar.getItemIdent();
-                if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
-                    flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
-                                     command: MsoyController.VIEW_ITEM, arg: ident });
-                    if (!us.isPermaguest()) {
-                        flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
-                                         command: MsoyController.FLAG_ITEM, arg: ident });
-                    }
+            var ident :ItemIdent = avatar.getItemIdent();
+            if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
+                flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+                    command: MsoyController.VIEW_ITEM, arg: ident });
+                if (!us.isPermaguest()) {
+                    flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
+                        command: MsoyController.FLAG_ITEM, arg: ident });
                 }
+            }
 
-                if (avatar.isBleepable()) {
-                    var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
-                    flagItems.push({ label: Msgs.GENERAL.get(key, kind),
-                                     callback: avatar.toggleBleeped, arg: _wdctx });
-                }
-
-                if (flagItems.length > 0) {
-                    menuItems.push({ label: Msgs.GENERAL.get("l.item_menu", kind),
-                                     children: flagItems });
-                }
+            // finally, add whatever makes sense
+            if (bleepItem != null || flagItems.length != 0) {
+                CommandMenu.addSeparator(menuItems);
+            }
+            if (bleepItem != null) {
+                menuItems.push(bleepItem);
+            }
+            if (flagItems.length > 0) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.item_menu", kind), icon: AVATAR_ICON,
+                    children: flagItems });
             }
         }
     }
@@ -287,40 +264,6 @@ public class RoomObjectController extends RoomController
         }
         throttle(ident, _roomObj.roomService.changeLocation, _wdctx.getClient(), ident, newloc);
         return true;
-    }
-
-    public function followOther (member :MemberName) :void
-    {
-        postAction(WorldController.RESPOND_FOLLOW, member.getMemberId());
-    }
-
-    /**
-     * Sends an invitation to the specified member to follow us.
-     */
-    public function inviteFollow (member :MemberName) :void
-    {
-        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(), _wdctx.listener());
-    }
-
-    /**
-     * Tells the server we no longer want to be following anyone.
-     */
-    public function clearFollow () :void
-    {
-        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.followMember(_ctx.getClient(), 0, _wdctx.listener());
-    }
-
-    /**
-     * Tells the server we no longer want someone following us. If target member is null, all
-     * our followers are ditched.
-     */
-    public function ditchFollower (member :MemberName = null) :void
-    {
-        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.ditchFollower(_ctx.getClient(), (member != null) ? member.getMemberId() : 0,
-            _wdctx.listener());
     }
 
     /**
@@ -435,8 +378,7 @@ public class RoomObjectController extends RoomController
         }
 
         var menuItems :Array = [];
-        _wdctx.getMsoyController().addMemberMenuItems(
-            occInfo.username as MemberName, menuItems, true, true);
+        _wdctx.getMsoyController().addMemberMenuItems(occInfo.username as MemberName, menuItems);
         popActorMenu(avatar, menuItems);
     }
 
@@ -491,7 +433,7 @@ public class RoomObjectController extends RoomController
         _wdctx.getWorldController().addPetMenuItems(PetName(occInfo.username), menuItems);
         if (pet.isBleepable()) {
             var key :String = pet.isBleeped() ? "b.unbleep_pet" : "b.bleep_pet";
-            menuItems.push({ label: Msgs.GENERAL.get(key),
+            menuItems.push({ label: Msgs.GENERAL.get(key), icon: BLEEP_ICON,
                              callback: pet.toggleBleeped, arg: _wdctx });
         }
 
@@ -1100,5 +1042,11 @@ public class RoomObjectController extends RoomController
     /** Listens for room attribute changes. */
     protected var _roomAttrListener :AttributeChangeAdapter =
         new AttributeChangeAdapter(roomAttrChanged);
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/avatar.png")]
+    protected static const AVATAR_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/bleep.png")]
+    protected static const BLEEP_ICON :Class;
 }
 }

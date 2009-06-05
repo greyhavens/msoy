@@ -179,7 +179,7 @@ public class PartyDirector extends BasicDirector
     {
         var menuItems :Array = [];
 
-        _wctx.getMsoyController().addMemberMenuItems(peep.name, menuItems);
+        _wctx.getMsoyController().addMemberMenuItems(peep.name, menuItems, false);
 
         if (_partyObj != null && partyId == _partyObj.id) {
             const peepId :int = peep.name.getMemberId();

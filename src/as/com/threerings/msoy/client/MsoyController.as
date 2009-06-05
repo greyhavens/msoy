@@ -518,8 +518,7 @@ public class MsoyController extends Controller
      * a result of clicking on another player (their name, or their avatar) somewhere in Whirled.
      */
     public function addMemberMenuItems (
-        member :MemberName, menuItems :Array, addPlaceItems :Boolean = false,
-        addAvatarItems :Boolean = false) :void
+        member :MemberName, menuItems :Array, addWorldItems :Boolean = true) :void
     {
         // nothing by default
     }

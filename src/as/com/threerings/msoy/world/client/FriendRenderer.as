@@ -70,7 +70,7 @@ public class FriendRenderer extends PlayerRenderer
         var friend :FriendEntry = this.data as FriendEntry;
         if (friend != null) {
             var menuItems :Array = [];
-            mctx.getMsoyController().addMemberMenuItems(friend.name, menuItems);
+            mctx.getMsoyController().addMemberMenuItems(friend.name, menuItems, true);
             CommandMenu.createMenu(menuItems, mctx.getTopPanel()).popUpAtMouse();
         }
     }
