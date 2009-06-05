@@ -3,10 +3,12 @@
 
 package client.billing;
 
-import client.shell.Page;
+import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.shell.Page;
 
 /**
  * The main entry point for the billing page.
@@ -18,9 +20,9 @@ public class BillingPage extends Page
     {
         String action = args.get(0, "");
         if (action.equals("subscribe")) {
-            setContent(new SubscribePanel());
+            setContent(_msgs.subscribeTitle(), new SubscribePanel());
         } else {
-            setContent(new SelectMethodPanel());
+            setContent(_msgs.selectTitle(), new SelectMethodPanel());
         }
     }
 
@@ -29,4 +31,6 @@ public class BillingPage extends Page
     {
         return Pages.BILLING;
     }
+
+    protected static final BillingMessages _msgs = GWT.create(BillingMessages.class);
 }

@@ -6,25 +6,40 @@ package client.billing;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.PushButton;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import client.ui.MsoyUI;
-import client.util.BillingUtil;
+import client.ui.RoundBox;
 
 /**
  * Displays an interface explaining subscription and linking to the billing system.
  */
-public class SubscribePanel extends FlowPanel
+public class SubscribePanel extends BillingPanel
 {
     public SubscribePanel ()
     {
-        setStyleName("subscribe");
+        super("/images/billing/join_club_whirled.png", _msgs.subscribeIntro());
+        addStyleName("subscribe");
 
-        add(MsoyUI.createLabel("Subscribe now! It's frawesome!", "Title"));
+        RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
+        add(box);
 
-        add(MsoyUI.createActionLabel("Subscribe now!", new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                BillingUtil.popBillingPage("subscribe.wm");
-            }
-        }));
+        box.add(MsoyUI.createHTML(_msgs.subscribeFeatures(), "Features"));
+
+        PushButton gobuy = new PushButton(
+            _images.cc_default().createImage(), _images.cc_down().createImage(),
+            new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    BillingUtil.popBillingPage("subscribe.wm");
+                }
+            });
+        gobuy.getUpHoveringFace().setImage(_images.cc_over().createImage());
+
+        SmartTable gotable = new SmartTable(0, 0);
+        gotable.setHTML(0, 0, _msgs.subscribeDoItNow(), 1, "GoBuy");
+        gotable.setWidget(0, 1, gobuy);
+        box.add(gotable);
     }
 }

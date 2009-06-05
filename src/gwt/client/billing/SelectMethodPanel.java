@@ -3,7 +3,6 @@
 
 package client.billing;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -13,31 +12,18 @@ import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.images.billing.BillingImages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
-import client.util.BillingUtil;
 
 /**
  * Displays the UI for selecting a payment method.
  */
-public class SelectMethodPanel extends FlowPanel
+public class SelectMethodPanel extends BillingPanel
 {
     public SelectMethodPanel ()
     {
-        setStyleName("selectMethod");
-
-        // TODO: special stuff if you're a guest or permaguest (or placeholder)
-
-        SmartTable header = new SmartTable("Header", 0, 0);
-        add(header);
-
-        header.setWidget(0, 0, new Image("/images/billing/tofuonbars.png"));
-        header.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        header.setWidget(0, 1, new Image("/images/billing/buy_some_bars.png"));
-        header.setWidget(1, 0, MsoyUI.createLabel(_msgs.selectIntro(), "Intro"));
-
-        add(MsoyUI.createLabel(_msgs.selectSelect(), "Select"));
+        super("/images/billing/buy_some_bars.png", _msgs.selectIntro());
+        addStyleName("selectMethod");
 
         SmartTable methods = new SmartTable("Methods", 0, 0);
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
@@ -75,9 +61,6 @@ public class SelectMethodPanel extends FlowPanel
             this.target = target;
         }
     }
-
-    protected static final BillingMessages _msgs = GWT.create(BillingMessages.class);
-    protected static final BillingImages _images = GWT.create(BillingImages.class);
 
     protected static final Method[] METHODS = {
         new Method(_images.cc_default(), _images.cc_over(), _images.cc_down(),

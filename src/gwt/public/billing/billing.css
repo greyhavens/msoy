@@ -4,23 +4,25 @@
  * CSS styles for the Billing interfaces.
  */
 
-/** SelectMethodPanel */
+/** BillingPanel */
 
-.selectMethod {
+.billing {
   font-family: Helvetica, Arial, sans-serif;
   background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
   height: 100%;
   padding: 0px 50px;
 }
 
-.selectMethod .Header {
+.billing .Header {
   margin-top: 15px;
 }
 
-.selectMethod .Intro {
+.billing .Intro {
   width: 410px;
   text-align: right;
 }
+
+/** SelectMethodPanel */
 
 .selectMethod .Select {
   color: #2E6D8E;
@@ -46,21 +48,26 @@
 .selectMethod .Balloons .Tip, .selectMethod .Balloons .Tip a {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   color: #FFFFFF;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 /** SubscribePanel */
 
-.subscribe {
-  font-family: Helvetica, Arial, sans-serif;
-  background: url(/images/ui/gradient_bg.jpg) repeat-x top  #63ABD3;
-  height: 100%;
-  padding: 0px 50px;
+.subscribe .Features, .subscribe .GoBuy {
+  color: #FFFFFF;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 16px;
 }
 
-.subscribe .Title {
-  color: #2E6D8E;
-  font-family: "Trebuchet MS", Arial, sans-serif;
-  font-size: 24px;
-  padding: 10px 0px;
+.subscribe .roundBox {
+  padding-top: 10px;
+}
+
+.subscribe .GoBuy {
+  padding-right: 10px;
+}
+
+.subscribe .roundBox em {
+  font-size: 20px;
+  font-style: normal;
 }
