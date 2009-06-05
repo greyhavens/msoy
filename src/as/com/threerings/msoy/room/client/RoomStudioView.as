@@ -91,6 +91,7 @@ public class RoomStudioView extends RoomView
 
         case UberClientModes.FURNI_VIEWER:
         case UberClientModes.TOY_VIEWER:
+        case UberClientModes.LAUNCHER_VIEWER:
             initViewFurni(params);
             break;
         }

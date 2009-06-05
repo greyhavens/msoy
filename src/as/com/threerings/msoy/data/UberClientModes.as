@@ -20,6 +20,7 @@ public class UberClientModes
     public static const TOY_VIEWER :int = 103;
     public static const DECOR_VIEWER :int = 104;
     public static const DECOR_EDITOR :int = 105;
+    public static const LAUNCHER_VIEWER :int = 106;
 
     public static const GENERIC_VIEWER :int = 199;
 

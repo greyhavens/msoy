@@ -15,6 +15,7 @@ public class UberClientModes
     public static final int TOY_VIEWER = 103;
     public static final int DECOR_VIEWER = 104;
     public static final int DECOR_EDITOR = 105;
+    public static final int LAUNCHER_VIEWER = 106;
 
     public static final int GENERIC_VIEWER = 199;
 }

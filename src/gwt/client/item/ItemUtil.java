@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Toy;
 
@@ -83,6 +84,8 @@ public class ItemUtil
             mode = UberClientModes.FURNI_VIEWER;
         } else if (item instanceof Toy) {
             mode = UberClientModes.TOY_VIEWER;
+        } else if (item instanceof Launcher) {
+            mode = UberClientModes.LAUNCHER_VIEWER;
         } else {
             w = 320;
             h = 240;
