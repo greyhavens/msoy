@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.billing;
+package client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
@@ -12,6 +12,7 @@ import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -26,15 +27,15 @@ public class BillingUtil
     public static void popBillingPage (String url)
     {
         if (CShell.isGuest()) {
-            MsoyUI.infoAction(_msgs.gobuyMustLogon(), _msgs.gobuyLogon(),
+            MsoyUI.infoAction(_cmsgs.gobuyMustLogon(), _cmsgs.gobuyLogon(),
                               Link.createHandler(Pages.ACCOUNT, "logon"));
 
         } else if (CShell.isPermaguest()) {
-            MsoyUI.infoAction(_msgs.gobuyMustRegister(), _msgs.gobuyRegister(),
+            MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
                               Link.createHandler(Pages.ACCOUNT, "create"));
 
         } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
-            MsoyUI.infoAction(_msgs.gobuyMustConfigure(), _msgs.gobuyConfigure(),
+            MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
                               Link.createHandler(Pages.ACCOUNT, "config"));
 
         } else {
@@ -66,5 +67,5 @@ public class BillingUtil
     }
 
     protected static final String BASE = capPath(DeploymentConfig.billingURL);
-    protected static final BillingMessages _msgs = GWT.create(BillingMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

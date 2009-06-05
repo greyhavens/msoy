@@ -14,6 +14,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
+import client.util.BillingUtil;
 
 /**
  * Displays the UI for selecting a payment method.

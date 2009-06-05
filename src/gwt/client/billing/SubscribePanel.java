@@ -12,6 +12,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
+import client.util.BillingUtil;
 
 /**
  * Displays an interface explaining subscription and linking to the billing system.
