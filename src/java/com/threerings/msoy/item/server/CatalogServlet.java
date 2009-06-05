@@ -49,9 +49,9 @@ import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -590,12 +590,12 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // load up all subitems of the master
         MemberRecord mrec = getAuthedUser();
-        for (IdentGameItem sitem : grec.getSuiteTypes()) {
-            if (!sitem.isSalable()) {
+        for (GameItem gitem : grec.getSuiteTypes()) {
+            if (!gitem.isSalable()) {
                 continue;
             }
             CatalogLogic.Query query = new CatalogLogic.Query(
-                sitem.getType(), CatalogQuery.SORT_BY_LIST_DATE);
+                gitem.getType(), CatalogQuery.SORT_BY_LIST_DATE);
             query.gameId = info.suiteId;
             List<CatalogRecord> slist = _catalogLogic.loadCatalog(mrec, query, 0, Short.MAX_VALUE);
             info.listings.addAll(Lists.transform(slist, CatalogRecord.TO_CARD));

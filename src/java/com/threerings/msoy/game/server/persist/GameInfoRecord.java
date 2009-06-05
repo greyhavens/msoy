@@ -13,6 +13,8 @@ import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
+
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -20,11 +22,12 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.data.all.TagCodes;
 
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.Launcher;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.Prop;
-import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.TrophySource;
 
 import com.threerings.msoy.game.gwt.GameCard;
@@ -154,13 +157,14 @@ public class GameInfoRecord extends PersistentRecord
     /**
      * Returns the item types in our suite.
      */
-    public IdentGameItem[] getSuiteTypes ()
+    public GameItem[] getSuiteTypes ()
     {
-        // TODO: add GameLauncher
-        return (isAVRG ? new IdentGameItem[] {
-                new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), new Prop() } :
-            new IdentGameItem[] {
-                new LevelPack(), new ItemPack(), new TrophySource(), new Prize(), });
+        GameItem[] types = new GameItem[] {
+            new Launcher(), new LevelPack(), new ItemPack(), new TrophySource(), new Prize() };
+        if (isAVRG) {
+            types = ArrayUtil.append(types, new Prop());
+        }
+        return types;
     }
 
     /**
