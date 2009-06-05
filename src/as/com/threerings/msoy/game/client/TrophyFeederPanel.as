@@ -53,7 +53,7 @@ public class TrophyFeederPanel extends FloatingPanel
     {
         // these trophies will always be earned 
         var tfp :TrophyFeederPanel;
-        tfp = new TrophyFeederPanel(ctx, trophies, gameName, MODE_NEW);
+        tfp = new TrophyFeederPanel(ctx, trophies, gameName, gameDescription, MODE_NEW);
         tfp.addCloseCallback(onClose);
         tfp.open();
     }
@@ -66,15 +66,16 @@ public class TrophyFeederPanel extends FloatingPanel
     public static function showExisting (ctx :MsoyContext, gameName :String,
         gameDescription :String, trophies :Array) :void
     {
-        new TrophyFeederPanel(ctx, trophies, gameName, MODE_EXISTING).open();
+        new TrophyFeederPanel(ctx, trophies, gameName, gameDescription, MODE_EXISTING).open();
     }
 
     public function TrophyFeederPanel (
-        ctx :MsoyContext, trophies :Array, gameName :String, mode :int)
+        ctx :MsoyContext, trophies :Array, gameName :String, gameDescription :String, mode :int)
     {
         super(ctx, Msgs.GAME.get("t.trophy_feeder"));
         _trophies = trophies;
         _gameName = gameName;
+        _gameDescription = gameDescription;
         _mode = mode;
     }
 
