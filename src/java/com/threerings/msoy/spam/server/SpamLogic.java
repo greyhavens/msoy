@@ -44,7 +44,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.server.CatalogLogic;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
-import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.LauncherRecord;
 
 import com.threerings.msoy.person.gwt.FeedItemGenerator;
 import com.threerings.msoy.person.gwt.FeedItemGenerator.Builder;
