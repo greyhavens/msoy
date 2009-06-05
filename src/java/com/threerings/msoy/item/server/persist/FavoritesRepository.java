@@ -11,6 +11,8 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -35,6 +37,15 @@ public class FavoritesRepository extends DepotRepository
     @Inject public FavoritesRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP: may be removed sometime after all servers have been updated past 2009-06-05
+        registerMigration(new DataMigration("2009_06_05_migration_game_favorites") {
+            public void invoke () throws DatabaseException {
+                updatePartial(FavoriteItemRecord.class,
+                    new Where(FavoriteItemRecord.ITEM_TYPE, Item.GAME), null,
+                    FavoriteItemRecord.ITEM_TYPE, Item.LAUNCHER);
+            }
+        });
     }
 
     /**
