@@ -66,9 +66,13 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "Games", Pages.GAMES);
             if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
-                addLink(null, "My Games", Pages.GAMES, "m");
+                if (!CShell.isFacebook()) {
+                    addLink(null, "My Games", Pages.GAMES, "m");
+                }
             }
-            addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
+            if (!CShell.isFacebook()) {
+                addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
+            }
             break;
 
         case ROOMS:
