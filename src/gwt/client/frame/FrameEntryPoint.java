@@ -114,7 +114,7 @@ public class FrameEntryPoint
         });
 
         // create our frame layout
-        _layout = Layout.getLayout(_header, new ClickHandler() {
+        _layout = Layout.getLayout(_header, CookieUtil.get(CookieNames.EMBED), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
@@ -446,6 +446,13 @@ public class FrameEntryPoint
         _membersvc.trackTestAction(test, action, getVisitorInfo(), new NoopAsyncCallback());
     }
 
+    // from interface Frame
+    public Embedding getEmbedding ()
+    {
+        // just delegate to the layout
+        return _layout.getEmbedding();
+    }
+
     protected void setPage (Pages page)
     {
         // clear out any old content
@@ -738,6 +745,8 @@ public class FrameEntryPoint
         case TEST_ACTION:
             reportTestAction(args[0], args[1]);
             return null;
+        case GET_EMBEDDING:
+            return new String[] {getEmbedding().toString()};
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached

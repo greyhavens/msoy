@@ -111,6 +111,9 @@ public abstract class Page
                 public void reportTestAction (String test, String action) {
                     frameCall(Frame.Calls.TEST_ACTION, test, action);
                 }
+                public Embedding getEmbedding () {
+                    return Enum.valueOf(Embedding.class, frameCall(Frame.Calls.GET_EMBEDDING)[0]);
+                }
             });
 
             // obtain our current credentials from the frame
@@ -172,6 +175,9 @@ public abstract class Page
                 }
                 public void reportTestAction (String test, String action) {
                     CShell.log("Test action", "test", test, "action", action);
+                }
+                public Embedding getEmbedding () {
+                    return Embedding.NONE; // test only in non-embedded mode
                 }
             });
 

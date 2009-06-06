@@ -170,6 +170,14 @@ public class CShell
     }
 
     /**
+     * Checks if we are embedded as a facebook app.
+     */
+    public static boolean isFacebook ()
+    {
+        return frame.getEmbedding() == Frame.Embedding.FACEBOOK;
+    }
+
+    /**
      * Records a log message to the JavaScript console.
      */
     protected static native void consoleLog (String message, Object error) /*-{

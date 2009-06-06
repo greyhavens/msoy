@@ -3,6 +3,8 @@
 
 package client.frame;
 
+import client.shell.Frame;
+
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -22,12 +24,22 @@ public abstract class Layout
 
     /**
      * Creates and returns a layout instance based on what we can figure out about where we're
-     * running by inspecting the DOM.
+     * running by inspecting the DOM, or by checking for specific embed values.
      */
-    public static Layout getLayout (FrameHeader header, ClickHandler onGoHome)
+    public static Layout getLayout (FrameHeader header, String embedCookie, ClickHandler onGoHome)
     {
-        Layout layout = isFramed() ? new FramedLayout() : new StandardLayout();
+        Layout layout;
+        Frame.Embedding embedding = Frame.Embedding.NONE;
+        if ("fb".equals(embedCookie)) {
+            layout = new FramedLayout();
+            embedding = Frame.Embedding.FACEBOOK;
+        } else if (isFramed()) {
+            layout = new FramedLayout();
+        } else {
+            layout = new StandardLayout();
+        }
         layout.init(header, onGoHome);
+        layout._embedding = embedding;
         return layout;
     }
 
@@ -43,6 +55,11 @@ public abstract class Layout
 
     public abstract void addNoClientIcon ();
 
+    public Frame.Embedding getEmbedding ()
+    {
+        return _embedding;
+    }
+
     protected void init (FrameHeader header, ClickHandler onGoHome)
     {
         _header = header;
@@ -55,6 +72,7 @@ public abstract class Layout
 
     protected FrameHeader _header;
     protected ClickHandler _onGoHome;
+    protected Frame.Embedding _embedding;
 
     protected static final String PAGE = "page";
 }

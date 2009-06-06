@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
+import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.Pages;
@@ -141,6 +143,11 @@ public class FacebookServlet extends HttpServlet
             // activate a session for them
             String authtok = _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
             SwizzleServlet.setCookie(req, rsp, authtok);
+
+            // let our app know it is embedded in facebook
+            Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
+            cookie.setPath("/");
+            rsp.addCookie(cookie);
 
             // and send them to the appropriate page
             if (info.gameId != 0) {
