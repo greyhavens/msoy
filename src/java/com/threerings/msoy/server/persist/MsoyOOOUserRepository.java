@@ -6,10 +6,12 @@ package com.threerings.msoy.server.persist;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import java.sql.Date;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -32,6 +34,8 @@ import com.threerings.user.depot.UserIdentRecord;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.underwire.server.persist.SupportRepository;
+
+import com.threerings.msoy.data.all.MemberMailUtil;
 
 /**
  * Whirled-specific table-compatible simulation of the parts of the user repository that we want.
@@ -107,18 +111,23 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     {
         // map these emails to user ids
         Map<Integer, String> idmap = Maps.newHashMap();
+        Set<Integer> guestIds = Sets.newHashSet();
         for (OOOUserRecord record : findAll(OOOUserRecord.class,
                                             new Where(new In(OOOUserRecord.EMAIL, emails)))) {
             idmap.put(record.userId, record.email);
+            // track permaguest ids separately
+            if (MemberMailUtil.isPermaguest(record.email)) {
+                guestIds.add(record.userId);
+            }
         }
 
-        // delete these members' random crap
-        if (!idmap.isEmpty()) {
-            deleteAll(UserIdentRecord.class,
-                      new Where(new In(UserIdentRecord.USER_ID, idmap.keySet())));
+        // delete ident mapping records for permaguests but leave them for members
+        if (!guestIds.isEmpty()) {
+            deleteAll(UserIdentRecord.class, new Where(new In(UserIdentRecord.USER_ID, guestIds)));
         }
 
         // change the username and email to deleted thunks and null out their password
+        // TODO: should we just delete the permaguest user records?
         for (Map.Entry<Integer, String> entry : idmap.entrySet()) {
             // change foo@bar.com to deleted:id:foo:bar.com
             String thunk = StringUtil.truncate(
