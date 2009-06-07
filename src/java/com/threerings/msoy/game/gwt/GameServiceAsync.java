@@ -23,6 +23,11 @@ public interface GameServiceAsync
     void loadArcadeData (AsyncCallback<ArcadeData> callback);
 
     /**
+     * The asynchronous version of {@link GameService#loadFBArcadeData}.
+     */
+    void loadFBArcadeData (AsyncCallback<ArcadeData> callback);
+
+    /**
      * The asynchronous version of {@link GameService#loadGameGenre}.
      */
     void loadGameGenre (GameGenre genre, String query, AsyncCallback<List<GameInfo>> callback);

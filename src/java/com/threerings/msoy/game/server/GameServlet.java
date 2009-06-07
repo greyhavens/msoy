@@ -163,6 +163,14 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public ArcadeData loadFBArcadeData ()
+        throws ServiceException
+    {
+        // TODO: specialize
+        return loadArcadeData();
+    }
+
+    // from interface GameService
     public List<GameInfo> loadGameGenre (GameGenre genre, String query)
         throws ServiceException
     {

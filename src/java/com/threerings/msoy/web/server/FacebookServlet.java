@@ -154,7 +154,7 @@ public class FacebookServlet extends HttpServlet
                 String action = info.chromeless ? "pc" : "p";
                 rsp.sendRedirect("/#" + Pages.WORLD.makeToken("game", action, info.gameId));
             } else {
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
+                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("fb"));
             }
 
         } catch (ServiceException se) {

@@ -60,6 +60,12 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads up information for the main facebook games page.
+     */
+    ArcadeData loadFBArcadeData ()
+        throws ServiceException;
+
+    /**
      * Loads up information on the specified game genre.
      */
     List<GameInfo> loadGameGenre (GameGenre genre, String query)

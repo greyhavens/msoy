@@ -61,6 +61,9 @@ public class GamesPage extends Page
             }
             panel.setGame(args.get(1, 0), args.get(2, 0));
 
+        } else if (action.equals("fb")) {
+            setContent(new FBArcadePanel());
+
         } else {
             setContent(new ArcadePanel());
         }
