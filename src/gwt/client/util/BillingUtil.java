@@ -49,13 +49,21 @@ public class BillingUtil
     }
 
     /**
-     * Returns a URL to the page showing transaction history for a particular user.  Must be
-     * logged in as admin in billing to see this page.
-     *
-     * @param accountName Account name of the user (login email address)
-     * @param permaName Permaname of the user, if chosen.
+     * Returns the billing account status page URL.
      */
-    public static String getUserStatusPage (String accountName, String permaName)
+    public static String getAccountStatusPage ()
+    {
+        return BASE + "status.wm?initUsername=" + URL.encodeComponent(CShell.creds.accountName);
+    }
+
+    /**
+     * Returns a URL to the page showing transaction history for a particular user.  Must be logged
+     * in as admin in billing to see this page.
+     *
+     * @param accountName account name of the user (login email address).
+     * @param permaName permaname of the user, if configured.
+     */
+    public static String getAdminStatusPage (String accountName, String permaName)
     {
         return BASE + "admin/user_status.wm?username=" +
             URL.encodeComponent(permaName == null ? accountName : permaName);

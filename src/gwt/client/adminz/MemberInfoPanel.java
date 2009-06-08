@@ -64,7 +64,7 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         table.setWidget(0, 0, Link.memberView(info.name), 2, "Name");
         table.setWidget(1, 0, Link.transactionsView(
                             "Transaction history", info.name.getMemberId()));
-        table.setWidget(2, 0, new Anchor(BillingUtil.getUserStatusPage(
+        table.setWidget(2, 0, new Anchor(BillingUtil.getAdminStatusPage(
                                              info.accountName, info.permaName),
                                          "Billing Transactions", "_blank"));
         table.setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF,
