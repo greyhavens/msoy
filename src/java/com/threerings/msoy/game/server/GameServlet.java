@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -655,11 +654,6 @@ public class GameServlet extends MsoyServiceServlet
         if (removed != null) {
             for (int gameId : removed) {
                 _mgameRepo.removeTopGame(page, gameId);
-                for (Iterator<TopGameRecord> ii = old.iterator(); ii.hasNext(); ) {
-                    if (ii.next().gameId == gameId) {
-                        ii.remove();
-                    }
-                }
             }
             old = Iterables.filter(old, new Predicate<TopGameRecord>() {
                 public boolean apply (TopGameRecord rec) {
