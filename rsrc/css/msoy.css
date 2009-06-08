@@ -1232,6 +1232,8 @@ ChatInput {
   verticalGap: 0;
 }
 
+/*
+ * The embedHeader is presently disabled for all clients.
 .embedHeaderPlaceName {
   fontWeight: bold;
   fontSize: 12;
@@ -1255,6 +1257,8 @@ ChatInput {
   overSkin: Embed(source="../media/skins/embedheader/allgames_over.jpg");
   downSkin: Embed(source="../media/skins/embedheader/allgames_down.jpg");
 }
+* End: embedHeader disable
+*/
 
 .noPlaceView {
   backgroundColor: black;
