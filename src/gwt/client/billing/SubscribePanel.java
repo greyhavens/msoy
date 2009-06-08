@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.BillingUtil;
@@ -26,6 +27,13 @@ public class SubscribePanel extends BillingPanel
 
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         add(box);
+
+        // if we're already a subscriber, just show a thank you and some useful links
+        if (CShell.isSubscriber()) {
+            box.add(MsoyUI.createHTML(_msgs.subscribeThanks(BillingUtil.getAccountStatusPage()),
+                                      "Features"));
+            return;
+        }
 
         box.add(MsoyUI.createHTML(_msgs.subscribeFeatures(), "Features"));
 
