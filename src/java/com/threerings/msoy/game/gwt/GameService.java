@@ -210,25 +210,25 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the games that are used to generate the given top game page.
+     * Loads the top games that are shown on the given arcade's page. Support only.
      */
     TopGamesResult loadTopGames (ArcadeData.Page page)
         throws ServiceException;
 
     /**
-     * Loads the games that are used to generate the given top game page.
+     * Loads the ids of the top games that are shown on the given arcade's page. Support only.
      */
     int[] loadTopGameIds (ArcadeData.Page page)
         throws ServiceException;
 
     /**
-     * Removes a top game from the given top game page.
+     * Removes a top game from the given arcade.
      */
     void removeTopGame (ArcadeData.Page page, int gameId)
         throws ServiceException;
 
     /**
-     * Adds a top game to the given top game page (at the end of the list).
+     * Adds a top game to the given arcade page (at the end of the list).
      */
     void addTopGame (ArcadeData.Page page, int gameId)
         throws ServiceException;
