@@ -568,6 +568,8 @@
         <filter token="announce_group_id" value="${announce_group_id}"/>
       </filterset>
     </copy>
+    <copy file="lib/framework_3.3.0.4852.swz" todir="pages/clients"/>
+    <copy file="lib/framework_3.3.0.4852.swf" todir="pages/clients"/>
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
