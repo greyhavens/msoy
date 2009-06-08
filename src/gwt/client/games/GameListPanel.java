@@ -6,18 +6,12 @@ package client.games;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -38,33 +32,55 @@ import client.util.MediaUtil;
  */
 public abstract class GameListPanel extends FlowPanel
 {
-    public GameListPanel (GameInfo.Sort sort)
+    /**
+     * Creates a new list.
+     */
+    public GameListPanel ()
     {
         setStyleName("gameList");
-
-        _sortBox = new ListBox();
-        for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
-            _sortBox.addItem(SORT_LABELS[ii]);
-            if (SORT_VALUES[ii] == sort) {
-                _sortBox.setSelectedIndex(ii);
-            }
-        }
-        _sortBox.addChangeHandler(new ChangeHandler() {
-            public void onChange (ChangeEvent event) {
-                onSortChanged(SORT_VALUES[_sortBox.getSelectedIndex()]);
-            }
-        });
     }
 
-    protected abstract void onSortChanged (GameInfo.Sort sort);
-
-    protected Widget createPlay (GameInfo game)
+    /**
+     * Creates a new widget for taking some action on a game in the game grid.
+     */
+    protected Widget createActionWidget (GameInfo game)
     {
         return PlayButton.createSmall(game.gameId);
     }
 
     /**
-     * Displays a grid of games with paging and sort
+     * Adds custom controls for the game grid at the given row. Returns the next available row
+     * for adding more custom controls.
+     */
+    protected int addCustomControls (FlexTable controls, int row) {
+        // add a row with table titles
+        FlowPanel headers = new FlowPanel();
+        headers.setStyleName("Titles");
+        controls.setWidget(row, 0, headers);
+        controls.getFlexCellFormatter().setColSpan(row, 0, 7);
+
+        headers.add(createTitle("Name", "NameTitle", GridColumn.NAME));
+        headers.add(createTitle("Rating", "RatingTitle", GridColumn.RATING));
+        headers.add(createTitle("Category", "CategoryTitle", GridColumn.CATEGORY));
+        headers.add(createTitle("Now Playing", "NowPlayingTitle", GridColumn.NOW_PLAYING));
+
+        return ++row;
+    }
+
+    /**
+     * Creates a widget representing a column of the game grid.
+     */
+    protected Widget createTitle (String text, String styleName, GridColumn column) {
+        return MsoyUI.createLabel(text, styleName);
+    }
+
+    /**
+     * The columns that appear in the game grid.
+     */
+    protected enum GridColumn { NAME, RATING, CATEGORY, NOW_PLAYING }
+
+    /**
+     * Displays a grid of games with paging.
      */
     protected class GameGrid extends PagedGrid<GameInfo>
     {
@@ -91,20 +107,7 @@ public abstract class GameListPanel extends FlowPanel
 
         @Override
         protected void addCustomControls (FlexTable controls) {
-            controls.setWidget(0, 0, new InlineLabel(_msgs.genreSortBy(), false, false, false));
-            controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
-            controls.setWidget(0, 1, _sortBox);
-
-            // add a second row with table titles
-            FlowPanel headers = new FlowPanel();
-            headers.setStyleName("Titles");
-            controls.setWidget(1, 0, headers);
-            controls.getFlexCellFormatter().setColSpan(1, 0, 7);
-
-            headers.add(createTitle("Name", "NameTitle", GameInfo.Sort.BY_NAME));
-            headers.add(createTitle("Rating", "RatingTitle", GameInfo.Sort.BY_RATING));
-            headers.add(createTitle("Category", "CategoryTitle", GameInfo.Sort.BY_GENRE));
-            headers.add(createTitle("Now Playing", "NowPlayingTitle", GameInfo.Sort.BY_ONLINE));
+            GameListPanel.this.addCustomControls(controls, 0);
         }
 
         @Override
@@ -112,14 +115,6 @@ public abstract class GameListPanel extends FlowPanel
             if (row % 2 == 1) {
                 formatter.addStyleName(row, col, "Alternating");
             }
-        }
-
-        protected Widget createTitle (String text, String styleName, final GameInfo.Sort sort) {
-            return MsoyUI.createActionLabel(text, styleName, new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    onSortChanged(sort);
-                }
-            });
         }
 
         protected class GameInfoPanel extends SmartTable
@@ -146,33 +141,14 @@ public abstract class GameListPanel extends FlowPanel
                 setText(0, col++, _dmsgs.xlate("genre_" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
-                setWidget(0, col, createPlay(game), 1, "PlayButtons");
+                setWidget(0, col, createActionWidget(game), 1, "PlayButtons");
                 getFlexCellFormatter().setHorizontalAlignment(0, col++, HasAlignment.ALIGN_CENTER);
             }
         }
     }
 
-    /** Dropdown of sort methods */
-    protected ListBox _sortBox;
-
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int GAMES_PER_PAGE = 10;
-
-    protected static final String[] SORT_LABELS = new String[] {
-        _msgs.genreSortByRating(),
-        _msgs.genreSortByNewest(),
-        _msgs.genreSortByAlphabetical(),
-        _msgs.genreSortByCategory(),
-        _msgs.genreSortByNowPlaying()
-    };
-
-    protected static final GameInfo.Sort[] SORT_VALUES = new GameInfo.Sort[] {
-        GameInfo.Sort.BY_RATING,
-        GameInfo.Sort.BY_NEWEST,
-        GameInfo.Sort.BY_NAME,
-        GameInfo.Sort.BY_GENRE,
-        GameInfo.Sort.BY_ONLINE
-    };
 }

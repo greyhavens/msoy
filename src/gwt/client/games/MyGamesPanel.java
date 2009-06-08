@@ -25,7 +25,7 @@ import client.util.ServiceUtil;
 /**
  * Displays the games created by the caller.
  */
-public class MyGamesPanel extends GameListPanel
+public class MyGamesPanel extends SortedGameListPanel
 {
     public MyGamesPanel (final GameInfo.Sort sort)
     {
@@ -50,7 +50,7 @@ public class MyGamesPanel extends GameListPanel
     }
 
     @Override // from GameListPanel
-    protected Widget createPlay (GameInfo game)
+    protected Widget createActionWidget (GameInfo game)
     {
         FlowPanel bits = new FlowPanel();
         // we want our play buttons to play the development version

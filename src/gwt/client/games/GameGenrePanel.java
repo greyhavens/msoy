@@ -22,7 +22,7 @@ import client.util.ServiceUtil;
  * Displays games in a particular genre, or of all genres for the "All Games" page.
  * For genre pages it displays a featured game; for "All Games" page displays a search.
  */
-public class GameGenrePanel extends GameListPanel
+public class GameGenrePanel extends SortedGameListPanel
 {
     public GameGenrePanel (GameGenre genre, final GameInfo.Sort sort, String query)
     {
