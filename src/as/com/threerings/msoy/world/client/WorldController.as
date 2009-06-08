@@ -698,7 +698,7 @@ public class WorldController extends MsoyController
         if (sceneId <= 0 || sceneId == getCurrentSceneId()) {
             _wctx.getGameDirector().activateAVRGame(
                 gameId, StringUtil.deNull(token), inviterMemberId);
-            if (sceneId != 0) {
+            if (sceneId != 0 && inGWTApp()) {
                 // the AVRG is not really a URL, so tell the browser to display the scene
                 // (do it later so the WorldClient javascript method can exit first)
                 MethodQueue.callLater(displayPage, ["world", "s" + sceneId]);
