@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
+import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
@@ -52,6 +54,7 @@ import com.samskivert.depot.operator.Sub;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 
+import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
@@ -190,6 +193,64 @@ public class MsoyGameRepository extends DepotRepository
         }
 
         return findAll(GameInfoRecord.class, clauses);
+    }
+
+    /**
+     * Loads the games defined as top games for the given arcade page.
+     */
+    public List<TopGameRecord> loadTopGames (ArcadeData.Page page)
+    {
+        return findAll(TopGameRecord.class, new Where(TopGameRecord.PAGE, page),
+            OrderBy.ascending(TopGameRecord.ORDER));
+    }
+
+    /**
+     * Adds a new game to the top games for the given arcade page.
+     */
+    public void addTopGame (ArcadeData.Page page, int gameId, boolean featured)
+    {
+        TopGameRecord rec = new TopGameRecord();
+        rec.page = page;
+        rec.gameId = gameId;
+        rec.featured = featured;
+        rec.order = Integer.MAX_VALUE;
+        insert(rec);
+    }
+
+    /**
+     * Removes a game from the given arcade page.
+     */
+    public void removeTopGame (ArcadeData.Page page, int gameId)
+    {
+        delete(TopGameRecord.getKey(page, gameId));
+    }
+
+    /**
+     * Sets or clears the featured flag for some games on the given arcade page. 
+     */
+    public void updateFeatured (ArcadeData.Page page, final Set<Integer> gameIds, boolean featured)
+    {
+        if (gameIds.size() > 0) {
+            Where where = new Where(new And(new Equals(TopGameRecord.PAGE, page),
+                new In(TopGameRecord.GAME_ID, gameIds)));
+            updatePartial(TopGameRecord.class, where,
+                new CacheInvalidator.TraverseWithFilter<TopGameRecord>(TopGameRecord.class) {
+                    @Override protected boolean testForEviction (
+                        Serializable key, TopGameRecord record) {
+                        return gameIds.contains(record.gameId);
+                    }
+                }, TopGameRecord.FEATURED, featured);
+        }
+    }
+
+    /**
+     * Updates the ordering of the top games on the given arcade page.
+     */
+    public void updateTopGamesOrder (ArcadeData.Page page, List<Integer> topGames)
+    {
+        for (int ii = 0, ll = topGames.size(); ii < ll; ++ii) {
+            updatePartial(TopGameRecord.getKey(page, topGames.get(ii)), TopGameRecord.ORDER, ii);
+        }
     }
 
     /**
@@ -532,6 +593,7 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(GamePlayRecord.class);
         classes.add(GameTraceLogRecord.class);
         classes.add(InstructionsRecord.class);
+        classes.add(TopGameRecord.class);
     }
 
     protected RatingRepository _ratingRepo;

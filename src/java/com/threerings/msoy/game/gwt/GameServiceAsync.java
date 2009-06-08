@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -124,4 +125,30 @@ public interface GameServiceAsync
      * The asynchronous version of {@link GameService#updateFacebookInfo}.
      */
     void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadTopGameIds}.
+     */
+    void loadTopGameIds (ArcadeData.Page page, AsyncCallback<int[]> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#loadTopGames}.
+     */
+    void loadTopGames (ArcadeData.Page page, AsyncCallback<GameService.TopGamesResult> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#removeTopGame}.
+     */
+    void removeTopGame (ArcadeData.Page page, int gameId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#addTopGame}.
+     */
+    void addTopGame (ArcadeData.Page page, int gameId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#updateTopGames}.
+     */
+    void updateTopGames (ArcadeData.Page page, List<Integer> topGames, Set<Integer> featured,
+        Set<Integer> removed, AsyncCallback<Void> callback);
 }

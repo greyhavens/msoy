@@ -7,16 +7,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntListUtil;
@@ -56,6 +61,7 @@ import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.game.server.persist.TopGameRecord;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -588,6 +594,93 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         requireIsGameCreator(info.gameId, mrec);
         _mgameRepo.updateFacebookInfo(info);
+    }
+
+    // from interface GameService
+    public TopGamesResult loadTopGames (ArcadeData.Page page)
+        throws ServiceException
+    {
+        requireSupportUser();
+        List<TopGameRecord> topGames = _mgameRepo.loadTopGames(page);
+        TopGamesResult result = new TopGamesResult();
+        result.topGames = new GameInfo[topGames.size()];
+        ArrayIntSet featured = new ArrayIntSet();
+        for (int ii = 0, ll = topGames.size(); ii < ll; ++ii) {
+            int gameId = topGames.get(ii).gameId;
+            int gamePop = getGamePop(_memberMan.getPPSnapshot(), gameId);
+            result.topGames[ii] = _mgameRepo.loadGame(gameId).toGameInfo(gamePop);
+            if (topGames.get(ii).featured) {
+                featured.add(gameId);
+            }
+        }
+        result.featured = featured.toIntArray();
+        return result;
+    }
+
+    // from interface GameService
+    public int[] loadTopGameIds (ArcadeData.Page page)
+        throws ServiceException
+    {
+        requireSupportUser();
+        ArrayIntSet topGameIds = new ArrayIntSet();
+        for (TopGameRecord rec : _mgameRepo.loadTopGames(page)) {
+            topGameIds.add(rec.gameId);
+        }
+        return topGameIds.toIntArray();
+    }
+
+    // from interface GameService
+    public void addTopGame (ArcadeData.Page page, int gameId)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _mgameRepo.addTopGame(page, gameId, false);
+    }
+
+    // from interface GameService
+    public void removeTopGame (ArcadeData.Page page, int gameId)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _mgameRepo.removeTopGame(page, gameId);
+    }
+
+    // from interface GameService
+    public void updateTopGames (ArcadeData.Page page, List<Integer> topGames, Set<Integer> featured,
+        final Set<Integer> removed)
+        throws ServiceException
+    {
+        requireSupportUser();
+        Iterable<TopGameRecord> old = _mgameRepo.loadTopGames(page);
+        if (removed != null) {
+            for (int gameId : removed) {
+                _mgameRepo.removeTopGame(page, gameId);
+                for (Iterator<TopGameRecord> ii = old.iterator(); ii.hasNext(); ) {
+                    if (ii.next().gameId == gameId) {
+                        ii.remove();
+                    }
+                }
+            }
+            old = Iterables.filter(old, new Predicate<TopGameRecord>() {
+                public boolean apply (TopGameRecord rec) {
+                   return !removed.contains(rec.gameId);
+                }
+            });
+        }
+        if (featured != null) {
+            Map<Boolean, ArrayIntSet> toUpdate = ImmutableMap.of(
+                true, new ArrayIntSet(), false, new ArrayIntSet());
+            for (TopGameRecord rec : old) {
+                if (rec.featured != featured.contains(rec.gameId)) {
+                    toUpdate.get(!rec.featured).add(rec.gameId);
+                }
+            }
+            _mgameRepo.updateFeatured(page, toUpdate.get(true), true);
+            _mgameRepo.updateFeatured(page, toUpdate.get(false), false);
+        }
+        if (topGames != null) {
+            _mgameRepo.updateTopGamesOrder(page, topGames);
+        }
     }
 
     protected PlayerRating[] toRatingResult (

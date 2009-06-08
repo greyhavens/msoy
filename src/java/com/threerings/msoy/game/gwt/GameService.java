@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -48,6 +49,19 @@ public interface GameService extends RemoteService
         public FacebookInfo facebook;
         public GameCode devCode;
         public GameCode pubCode;
+    }
+
+    /**
+     * Return result for {@link #loadTopGames}.
+     */
+    public static class TopGamesResult
+        implements IsSerializable
+    {
+        /** The info for the top games, in order. */
+        public GameInfo[] topGames;
+
+        /** The ids of the top games games that are also featured. */
+        public int[] featured;
     }
 
     /** The entry point for this service. */
@@ -193,5 +207,36 @@ public interface GameService extends RemoteService
      * Updates the Facebook info for the supplied game.
      */
     void updateFacebookInfo (FacebookInfo info)
+        throws ServiceException;
+
+    /**
+     * Loads the games that are used to generate the given top game page.
+     */
+    TopGamesResult loadTopGames (ArcadeData.Page page)
+        throws ServiceException;
+
+    /**
+     * Loads the games that are used to generate the given top game page.
+     */
+    int[] loadTopGameIds (ArcadeData.Page page)
+        throws ServiceException;
+
+    /**
+     * Removes a top game from the given top game page.
+     */
+    void removeTopGame (ArcadeData.Page page, int gameId)
+        throws ServiceException;
+
+    /**
+     * Adds a top game to the given top game page (at the end of the list).
+     */
+    void addTopGame (ArcadeData.Page page, int gameId)
+        throws ServiceException;
+
+    /**
+     * Updates top game information for a given arcade page.
+     */
+    void updateTopGames (ArcadeData.Page page, List<Integer> topGames, Set<Integer> featured,
+        Set<Integer> removed)
         throws ServiceException;
 }

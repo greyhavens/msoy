@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.samskivert.depot.ByteEnum;
 
 /**
  * Contains information displayed in the arcade.
@@ -29,6 +30,38 @@ public class ArcadeData
 
         /** The highlighted games in this genre. */
         public GameCard[] games;
+    }
+
+    /** The display modes and data sets for the arcade. */
+    public enum Page
+        implements ByteEnum, IsSerializable
+    {
+        MAIN(0),
+        FACEBOOK(1);
+
+        // for ByteEnum
+        public static Page fromByte (byte val)
+        {
+            for (Page ap : values()) {
+                if (ap.toByte() == val) {
+                    return ap;
+                }
+            }
+            throw new IllegalArgumentException();
+        }
+
+        @Override // from ByteEnum
+        public byte toByte ()
+        {
+            return _value;
+        }
+
+        Page (int value)
+        {
+            _value = (byte)value;
+        }
+
+        protected byte _value;
     }
 
     /** The number of featured games we show on the Arcade page. */
