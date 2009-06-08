@@ -421,16 +421,11 @@ SpriteInfoPanel {
 }
 
 .joinNowButton {
-  upSkin: Embed(source="../media/skins/button/joinnow_default.png");
-  overSkin: Embed(source="../media/skins/button/joinnow_over.png");
-  downSkin: Embed(source="../media/skins/button/joinnow_down.png");
+  image: url("/images/ui/joinnow.png");
 }
 
 .logonButton {
-  upSkin: Embed(source="../media/skins/button/logon_default.png");
-  overSkin: Embed(source="../media/skins/button/logon_over.png");
-  downSkin: Embed(source="../media/skins/button/logon_down.png");
-  disabledSkin: Embed(source="../media/skins/button/logon_disabled.png");
+  image: url("/images/ui/logon.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
@@ -547,6 +542,7 @@ SpriteInfoPanel {
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
 .controlBarPartyButton, .controlBarConfig,
 .headerBarBack,
+.joinNowButton, .logonButton,
 .roomEditScaleDown, .roomEditScaleUp, .roomEditMoveDown, .roomEditMoveUp,
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
