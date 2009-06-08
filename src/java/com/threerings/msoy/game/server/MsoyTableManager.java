@@ -5,6 +5,9 @@ package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
@@ -141,20 +144,28 @@ public class MsoyTableManager extends TableManager
      */
     protected boolean hasWaitingGames ()
     {
-        // shortcut for single-player games
-        if (_lobj.gameDef.match.getMaximumPlayers() == 1) {
-            return false;
-        }
-        // otherwise check all tables. Call party games with only 1 player "waiting"
-        for (Table table : _tlobj.getTables()) {
-            if (!table.inPlay() ||
-                    ((table.config.getMatchType() == GameConfig.PARTY) &&
-                     (table.watchers.length == 1))) {
+        // shortcut to quickly rule out single-player games,
+        return (_lobj.gameDef.match.getMaximumPlayers() > 1) &&
+            // ...and must have one table that's waiting for players.
+            Iterables.any(_tlobj.getTables(), IS_WAITING);
+    }
+
+    /** A predicate that returns true for a waiting table. */
+    protected static final Predicate<Table> IS_WAITING = new Predicate<Table>() {
+        public boolean apply (Table t) {
+            // no private tables
+            if (t.tconfig.privateTable) {
+                return false;
+            }
+            // yes to tables that haven't started
+            if (!t.inPlay()) {
                 return true;
             }
+            // otherwise, if started, needs to be 2-player or less party game
+            return (t.config.getMatchType() == GameConfig.PARTY) &&
+                (t.watchers.length < 3);
         }
-        return false;
-    }
+    };
 
     /** Are we currently advertising in the node object that there are pending tables? */
     protected boolean _publishedPending;
