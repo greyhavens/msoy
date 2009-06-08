@@ -596,7 +596,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public TopGamesResult loadTopGames (ArcadeData.Page page)
+    public TopGamesResult loadTopGames (ArcadeData.Portal page)
         throws ServiceException
     {
         requireSupportUser();
@@ -618,7 +618,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public int[] loadTopGameIds (ArcadeData.Page page)
+    public int[] loadTopGameIds (ArcadeData.Portal page)
         throws ServiceException
     {
         requireSupportUser();
@@ -631,32 +631,32 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void addTopGame (ArcadeData.Page page, int gameId)
+    public void addTopGame (ArcadeData.Portal portal, int gameId)
         throws ServiceException
     {
         requireSupportUser();
-        _mgameRepo.addTopGame(page, gameId, false);
+        _mgameRepo.addTopGame(portal, gameId, false);
     }
 
     // from interface GameService
-    public void removeTopGame (ArcadeData.Page page, int gameId)
+    public void removeTopGame (ArcadeData.Portal portal, int gameId)
         throws ServiceException
     {
         requireSupportUser();
-        _mgameRepo.removeTopGame(page, gameId);
+        _mgameRepo.removeTopGame(portal, gameId);
     }
 
     // from interface GameService
-    public void updateTopGames (ArcadeData.Page page, List<Integer> topGames, Set<Integer> featured,
+    public void updateTopGames (ArcadeData.Portal portal, List<Integer> topGames, Set<Integer> featured,
         final Set<Integer> removed)
         throws ServiceException
     {
         requireSupportUser();
         // this is only used for editing, so bypass the cache
-        Iterable<TopGameRecord> old = _mgameRepo.loadTopGames(page, false);
+        Iterable<TopGameRecord> old = _mgameRepo.loadTopGames(portal, false);
         if (removed != null) {
             for (int gameId : removed) {
-                _mgameRepo.removeTopGame(page, gameId);
+                _mgameRepo.removeTopGame(portal, gameId);
             }
             old = Iterables.filter(old, new Predicate<TopGameRecord>() {
                 public boolean apply (TopGameRecord rec) {
@@ -672,11 +672,11 @@ public class GameServlet extends MsoyServiceServlet
                     toUpdate.get(!rec.featured).add(rec.gameId);
                 }
             }
-            _mgameRepo.updateFeatured(page, toUpdate.get(true), true);
-            _mgameRepo.updateFeatured(page, toUpdate.get(false), false);
+            _mgameRepo.updateFeatured(portal, toUpdate.get(true), true);
+            _mgameRepo.updateFeatured(portal, toUpdate.get(false), false);
         }
         if (topGames != null) {
-            _mgameRepo.updateTopGamesOrder(page, topGames);
+            _mgameRepo.updateTopGamesOrder(portal, topGames);
         }
     }
 

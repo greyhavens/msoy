@@ -50,10 +50,10 @@ public class EditArcadePanel extends FlowPanel
     public EditArcadePanel ()
     {
         setStyleName("editArcadePanel");
-        setPage(ArcadeData.Page.MAIN);
+        setPage(ArcadeData.Portal.MAIN);
     }
 
-    protected void setPage (ArcadeData.Page page)
+    protected void setPage (ArcadeData.Portal portal)
     {
         clear();
         HorizontalPanel pagesList = new HorizontalPanel();
@@ -61,27 +61,27 @@ public class EditArcadePanel extends FlowPanel
         pagesList.setStyleName("Pages");
         pagesList.add(MsoyUI.createLabel(_msgs.editArcadePage(), null));
         pagesList.add(_pages = new ListBox());
-        for (ArcadeData.Page val : ArcadeData.Page.values()) {
+        for (ArcadeData.Portal val : ArcadeData.Portal.values()) {
             // TODO: i18n, this is just the enum name for now
             _pages.addItem(val.toString());
-            if (val == page) {
+            if (val == portal) {
                 _pages.setSelectedIndex(_pages.getItemCount() - 1);
             }
         }
 
         _pages.addChangeHandler(new ChangeHandler() {
             @Override public void onChange (ChangeEvent event) {
-                setPage(ArcadeData.Page.values()[_pages.getSelectedIndex()]);
+                setPage(ArcadeData.Portal.values()[_pages.getSelectedIndex()]);
             }
         });
 
-        if (page == null) {
+        if (portal == null) {
             return;
         }
 
         FlowPanel topGames = new FlowPanel();
         add(new TongueBox(_msgs.editArcadeTopGames(), topGames));
-        topGames.add(new TopGamesPanel(page));
+        topGames.add(new TopGamesPanel(portal));
     }
 
     /**
@@ -89,10 +89,10 @@ public class EditArcadePanel extends FlowPanel
      */
     protected static class TopGamesPanel extends GameListPanel
     {
-        public TopGamesPanel (ArcadeData.Page page)
+        public TopGamesPanel (ArcadeData.Portal portal)
         {
-            _page = page;
-            _gamesvc.loadTopGames(page, new InfoCallback<TopGamesResult>() {
+            _portal = portal;
+            _gamesvc.loadTopGames(portal, new InfoCallback<TopGamesResult>() {
                 @Override public void onSuccess (TopGamesResult result) {
                     _result = result;
                     init();
@@ -111,7 +111,7 @@ public class EditArcadePanel extends FlowPanel
                 _featured.add(gameId);
             }
 
-            add(Link.create(_msgs.etgAdd(), Pages.GAMES, "at", _page.toByte()));
+            add(Link.create(_msgs.etgAdd(), Pages.GAMES, "at", _portal.toByte()));
             add(_grid = new GameGrid(_topGames));
             FlowPanel buttons = new FlowPanel();
             buttons.setStyleName("Buttons");
@@ -146,7 +146,7 @@ public class EditArcadePanel extends FlowPanel
             }
             Set<Integer> featured = _featuredChanged ? _featured : null;
             Set<Integer> removed = _removed.size() > 0 ? _removed : null;
-            _gamesvc.updateTopGames(_page, gameIds, featured, removed, callback);
+            _gamesvc.updateTopGames(_portal, gameIds, featured, removed, callback);
             return true;
         }
 
@@ -241,7 +241,7 @@ public class EditArcadePanel extends FlowPanel
             }
         }
 
-        protected ArcadeData.Page _page;
+        protected ArcadeData.Portal _portal;
         protected TopGamesResult _result;
         protected List<GameInfo> _topGames;
         protected Set<Integer> _featured;

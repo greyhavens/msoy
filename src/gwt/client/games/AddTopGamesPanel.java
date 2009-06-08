@@ -29,10 +29,10 @@ import com.threerings.msoy.web.gwt.Pages;
  */
 public class AddTopGamesPanel extends GameGenrePanel
 {
-    public AddTopGamesPanel (ArcadeData.Page page, final Sort sort, String query)
+    public AddTopGamesPanel (ArcadeData.Portal page, final Sort sort, String query)
     {
         super(GameGenre.ALL, sort, query);
-        _gamesvc.loadTopGameIds(_page = page, new InfoCallback<int[]> () {
+        _gamesvc.loadTopGameIds(_portal = page, new InfoCallback<int[]> () {
             public void onSuccess (int[] result) {
                 _topGameIds = new HashSet<Integer>();
                 for (int gameId : result) {
@@ -48,7 +48,7 @@ public class AddTopGamesPanel extends GameGenrePanel
     @Override
     protected void onSortChanged (Sort sort)
     {
-        Link.go(Pages.GAMES, "at", _page.toByte(), sort.toToken(), _header.getQuery());
+        Link.go(Pages.GAMES, "at", _portal.toByte(), sort.toToken(), _header.getQuery());
     }
 
     @Override
@@ -78,9 +78,9 @@ public class AddTopGamesPanel extends GameGenrePanel
         new ClickCallback<Void>(button) {
             @Override protected boolean callService () {
                 if (topGame) {
-                    _gamesvc.removeTopGame(_page, gameId, this);
+                    _gamesvc.removeTopGame(_portal, gameId, this);
                 } else {
-                    _gamesvc.addTopGame(_page, gameId, this);
+                    _gamesvc.addTopGame(_portal, gameId, this);
                 }
                 return true;
             }
@@ -97,7 +97,7 @@ public class AddTopGamesPanel extends GameGenrePanel
         };
     }
 
-    protected ArcadeData.Page _page;
+    protected ArcadeData.Portal _portal;
     protected Set<Integer> _topGameIds;
     protected HashMap<Integer, FlowPanel> _actions = new HashMap<Integer, FlowPanel>();
 }

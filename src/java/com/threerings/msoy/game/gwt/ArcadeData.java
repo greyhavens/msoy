@@ -32,17 +32,17 @@ public class ArcadeData
         public GameCard[] games;
     }
 
-    /** The display modes and data sets for the arcade. */
-    public enum Page
+    /** Enumerates the various display modes and data sets for the arcade page (#games). */
+    public enum Portal
         implements ByteEnum, IsSerializable
     {
         MAIN(0),
         FACEBOOK(1);
 
         // for ByteEnum
-        public static Page fromByte (byte val)
+        public static Portal fromByte (byte val)
         {
-            for (Page ap : values()) {
+            for (Portal ap : values()) {
                 if (ap.toByte() == val) {
                     return ap;
                 }
@@ -56,7 +56,7 @@ public class ArcadeData
             return _value;
         }
 
-        Page (int value)
+        Portal (int value)
         {
             _value = (byte)value;
         }

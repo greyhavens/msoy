@@ -19,16 +19,16 @@ public class TopGameRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     public static final Class<TopGameRecord> _R = TopGameRecord.class;
-    public static final ColumnExp PAGE = colexp(_R, "page");
+    public static final ColumnExp PORTAL = colexp(_R, "portal");
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ORDER = colexp(_R, "order");
     public static final ColumnExp FEATURED = colexp(_R, "featured");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
-    /** We support multiple arcades (Whirled games page + Facebook portal). */
-    @Id public ArcadeData.Page page;
+    /** The portal this record is for (we support multiple games front pages). */
+    @Id public ArcadeData.Portal portal;
 
     /** ID of the game that is a top one. */
     @Id public int gameId;
@@ -44,12 +44,12 @@ public class TopGameRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link TopGameRecord}
      * with the supplied key values.
      */
-    public static Key<TopGameRecord> getKey (ArcadeData.Page page, int gameId)
+    public static Key<TopGameRecord> getKey (ArcadeData.Portal portal, int gameId)
     {
         return new Key<TopGameRecord>(
                 TopGameRecord.class,
-                new ColumnExp[] { PAGE, GAME_ID },
-                new Comparable[] { page, gameId });
+                new ColumnExp[] { PORTAL, GAME_ID },
+                new Comparable[] { portal, gameId });
     }
     // AUTO-GENERATED: METHODS END
 }

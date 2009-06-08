@@ -129,26 +129,26 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadTopGameIds}.
      */
-    void loadTopGameIds (ArcadeData.Page page, AsyncCallback<int[]> callback);
+    void loadTopGameIds (ArcadeData.Portal portal, AsyncCallback<int[]> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadTopGames}.
      */
-    void loadTopGames (ArcadeData.Page page, AsyncCallback<GameService.TopGamesResult> callback);
+    void loadTopGames (ArcadeData.Portal portal, AsyncCallback<GameService.TopGamesResult> callback);
 
     /**
      * The asynchronous version of {@link GameService#removeTopGame}.
      */
-    void removeTopGame (ArcadeData.Page page, int gameId, AsyncCallback<Void> callback);
+    void removeTopGame (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#addTopGame}.
      */
-    void addTopGame (ArcadeData.Page page, int gameId, AsyncCallback<Void> callback);
+    void addTopGame (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#updateTopGames}.
      */
-    void updateTopGames (ArcadeData.Page page, List<Integer> topGames, Set<Integer> featured,
+    void updateTopGames (ArcadeData.Portal portal, List<Integer> topGames, Set<Integer> featured,
         Set<Integer> removed, AsyncCallback<Void> callback);
 }
