@@ -817,3 +817,20 @@
 .gameItemEditor .Header {
   font-weight: bold;
 }
+
+/* ------------------------------------
+   EditArcadePanel
+-------------------------------------*/
+
+.editArcadePanel .moveUp {
+  background-image: url(/images/ui/move_up.png);
+  width: 13px;
+  height: 13px;
+}
+
+.editArcadePanel .moveDown {
+  background-image: url(/images/ui/move_down.png);
+  width: 13px;
+  height: 13px;
+}
+

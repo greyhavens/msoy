@@ -5,6 +5,7 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Args;
@@ -63,6 +64,14 @@ public class GamesPage extends Page
 
         } else if (action.equals("fb")) {
             setContent(new FBArcadePanel());
+
+        } else if (action.equals("ea")) {
+            setContent(new EditArcadePanel());
+
+        } else if (action.equals("at")) {
+            byte which = args.get(1, ArcadeData.Page.MAIN.toByte());
+            setContent(new AddTopGamesPanel(ArcadeData.Page.fromByte(which),
+                GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
         } else {
             setContent(new ArcadePanel());
