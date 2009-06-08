@@ -81,6 +81,14 @@ public class CShell
     }
 
     /**
+     * Returns true if we're logged in and are a subscriber or "greater", false otherwise.
+     */
+    public static boolean isSubscriber ()
+    {
+        return (creds != null) && creds.isSubscriber();
+    }
+
+    /**
      * Returns true if we're logged in and have support+ privileges.
      */
     public static boolean isSupport ()
