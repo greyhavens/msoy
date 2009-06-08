@@ -600,7 +600,8 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        List<TopGameRecord> topGames = _mgameRepo.loadTopGames(page);
+        // this is only used for editing, so bypass the cache
+        List<TopGameRecord> topGames = _mgameRepo.loadTopGames(page, false);
         TopGamesResult result = new TopGamesResult();
         result.topGames = new GameInfo[topGames.size()];
         ArrayIntSet featured = new ArrayIntSet();
@@ -622,7 +623,8 @@ public class GameServlet extends MsoyServiceServlet
     {
         requireSupportUser();
         ArrayIntSet topGameIds = new ArrayIntSet();
-        for (TopGameRecord rec : _mgameRepo.loadTopGames(page)) {
+        // this is only used for editing, so bypass the cache
+        for (TopGameRecord rec : _mgameRepo.loadTopGames(page, false)) {
             topGameIds.add(rec.gameId);
         }
         return topGameIds.toIntArray();
@@ -650,7 +652,8 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        Iterable<TopGameRecord> old = _mgameRepo.loadTopGames(page);
+        // this is only used for editing, so bypass the cache
+        Iterable<TopGameRecord> old = _mgameRepo.loadTopGames(page, false);
         if (removed != null) {
             for (int gameId : removed) {
                 _mgameRepo.removeTopGame(page, gameId);

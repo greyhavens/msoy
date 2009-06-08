@@ -198,9 +198,10 @@ public class MsoyGameRepository extends DepotRepository
     /**
      * Loads the games defined as top games for the given arcade page.
      */
-    public List<TopGameRecord> loadTopGames (ArcadeData.Page page)
+    public List<TopGameRecord> loadTopGames (ArcadeData.Page page, boolean useCache)
     {
-        return findAll(TopGameRecord.class, new Where(TopGameRecord.PAGE, page),
+        CacheStrategy cache = useCache ? CacheStrategy.BEST : CacheStrategy.NONE;
+        return findAll(TopGameRecord.class, cache, new Where(TopGameRecord.PAGE, page),
             OrderBy.ascending(TopGameRecord.ORDER));
     }
 
