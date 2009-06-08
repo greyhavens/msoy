@@ -1236,8 +1236,8 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"), icon: WHISPER_ICON,
                 command: OPEN_CHANNEL, arg: name, enabled: !muted });
             // add as friend
-            if (!onlineFriend) { // TODO: this kinda sucks.. // TODO: jon has another icon!
-                menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"), icon: VISIT_ICON,
+            if (!onlineFriend) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"), icon: ADDFRIEND_ICON,
                     command: INVITE_FRIEND, arg: memId, enabled: !muted });
             }
             // visit
@@ -1744,6 +1744,9 @@ public class WorldController extends MsoyController
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/snapshot.png")]
     protected static const SNAPSHOT_ICON :Class;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/menu/addfriend.png")]
+    protected static const ADDFRIEND_ICON :Class;
 
     [Embed(source="../../../../../../../rsrc/media/skins/menu/block.png")]
     protected static const BLOCK_ICON :Class;
