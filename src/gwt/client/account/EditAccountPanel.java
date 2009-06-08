@@ -31,6 +31,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
@@ -39,7 +40,9 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.TongueBox;
+import client.util.BillingUtil;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
 import client.util.ServiceUtil;
@@ -77,11 +80,12 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(null, makePermanameSection()));
         add(new TongueBox(_msgs.editEmailHeader(), makeChangeEmailSection()));
         add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
+        add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
-        add(new TongueBox(_msgs.deleteRequestHeader(), makeDeleteSection()));
-        add(new TongueBox(_msgs.charitiesHeader(), makeCharitySection()));
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
+        add(new TongueBox(_msgs.charitiesHeader(), makeCharitySection()));
+        add(new TongueBox(_msgs.deleteRequestHeader(), makeDeleteSection()));
     }
 
     protected void refresh ()
@@ -181,6 +185,20 @@ public class EditAccountPanel extends FlowPanel
             }
         });
         table.setWidget(1, 2, _upeprefs);
+        return table;
+    }
+
+    protected Widget makeSubscribeSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
+        if (CShell.isSubscriber()) {
+            table.setWidget(0, 0, MsoyUI.createHTML(_msgs.editSubscribeIs(
+                                                        BillingUtil.getAccountStatusPage()), null));
+        } else {
+            table.setText(0, 0, _msgs.editSubscribeIsnt());
+            table.setWidget(0, 1, Link.create(_msgs.editSubscribeJoin(),
+                                              Pages.BILLING, "subscribe"));
+        }
         return table;
     }
 
