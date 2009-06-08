@@ -21,12 +21,7 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadArcadeData}.
      */
-    void loadArcadeData (AsyncCallback<ArcadeData> callback);
-
-    /**
-     * The asynchronous version of {@link GameService#loadFBArcadeData}.
-     */
-    void loadFBArcadeData (AsyncCallback<ArcadeData> callback);
+    void loadArcadeData (ArcadeData.Portal portal, AsyncCallback<ArcadeData> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameGenre}.

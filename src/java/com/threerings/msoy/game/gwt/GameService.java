@@ -70,13 +70,7 @@ public interface GameService extends RemoteService
     /**
      * Loads up information for the arcade.
      */
-    ArcadeData loadArcadeData ()
-        throws ServiceException;
-
-    /**
-     * Loads up information for the main facebook games page.
-     */
-    ArcadeData loadFBArcadeData ()
+    ArcadeData loadArcadeData (ArcadeData.Portal portal)
         throws ServiceException;
 
     /**

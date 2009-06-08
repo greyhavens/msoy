@@ -165,8 +165,9 @@ public class GameLogic
      *
      * @param filter if true, games that are not integrated, and those with a ranking less than 4
      * stars not included.
+     * TODO: remove when manually edited arcade is released
      */
-    public GameInfo[] loadTopGames (PopularPlacesSnapshot pps, boolean filter)
+    public GameInfo[] loadFeaturedGames (PopularPlacesSnapshot pps, boolean filter)
     {
         // determine the games people are playing right now
         List<GameInfo> featured = Lists.newArrayList();

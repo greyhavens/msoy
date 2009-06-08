@@ -35,7 +35,7 @@ public class FBArcadePanel extends FlowPanel
     {
         setStyleName("arcade");
         add(MsoyUI.createNowLoading());
-        _gamesvc.loadFBArcadeData(new PageCallback<ArcadeData>(this) {
+        _gamesvc.loadArcadeData(ArcadeData.Portal.FACEBOOK, new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }

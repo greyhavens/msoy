@@ -28,7 +28,9 @@ public class FeaturedGamePanel extends AbsolutePanel
     {
         setStyleName("featuredGame");
         _games = games;
-        selectGame(0);
+        if (games.length > 0) {
+            selectGame(0);
+        }
     }
 
     protected void selectGame (final int index)

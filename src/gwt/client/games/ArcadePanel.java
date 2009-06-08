@@ -35,7 +35,7 @@ public class ArcadePanel extends FlowPanel
     {
         setStyleName("arcade");
         add(MsoyUI.createNowLoading());
-        _gamesvc.loadArcadeData(new PageCallback<ArcadeData>(this) {
+        _gamesvc.loadArcadeData(ArcadeData.Portal.MAIN, new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }

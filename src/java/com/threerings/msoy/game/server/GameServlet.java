@@ -66,6 +66,7 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
@@ -89,7 +90,7 @@ public class GameServlet extends MsoyServiceServlet
     implements GameService
 {
     // from interface GameService
-    public ArcadeData loadArcadeData ()
+    public ArcadeData loadArcadeData (ArcadeData.Portal portal)
         throws ServiceException
     {
         ArcadeData data = new ArcadeData();
@@ -101,8 +102,47 @@ public class GameServlet extends MsoyServiceServlet
             games.put(grec.gameId, grec);
         }
 
-        // determine the "featured" games
-        data.featuredGames = _gameLogic.loadTopGames(pps, false);
+        if (DeploymentConfig.devDeployment) {
+            List<GameInfo> featured =
+                Lists.newArrayListWithExpectedSize(ArcadeData.FEATURED_GAME_COUNT);
+            List<GameCard> top = Lists.newArrayListWithExpectedSize(ArcadeData.TOP_GAME_COUNT);
+            ArrayIntSet creators = new ArrayIntSet();
+            for (TopGameRecord topGame : _mgameRepo.loadTopGames(portal, true)) {
+                GameInfoRecord info = games.get(topGame.gameId);
+                if (info == null) {
+                    // this can happen if a creator hides a game that happens to be a top game
+                    continue;
+                }
+                Integer gamePop = null;
+                if (topGame.featured && featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
+                    gamePop = getGamePop(pps, topGame.gameId);
+                    featured.add(info.toGameInfo(getGamePop(pps, gamePop)));
+                    creators.add(info.creatorId);
+                }
+                if (top.size() < ArcadeData.TOP_GAME_COUNT) {
+                    if (gamePop == null) {
+                        gamePop = getGamePop(pps, topGame.gameId);
+                    }
+                    top.add(info.toGameCard(gamePop));
+                }
+            }
+            data.featuredGames = featured.toArray(new GameInfo[featured.size()]);
+            data.topGames = top;
+
+        } else {
+            // determine the "featured" games based on population
+            data.featuredGames = _gameLogic.loadFeaturedGames(pps, false);
+
+            // list of top N games by ranking
+            data.topGames = Lists.newArrayList();
+            for (GameInfoRecord game : games.values()) {
+                data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
+                if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
+                    break;
+                }
+            }
+
+        }
 
         // list of the top-200 games alphabetically (only include name and id)
         data.allGames = Lists.newArrayList();
@@ -110,15 +150,6 @@ public class GameServlet extends MsoyServiceServlet
             data.allGames.add(game.toGameCard(0)); // playersOnline not needed here
         }
         Collections.sort(data.allGames, GameCard.BY_NAME);
-
-        // list of top N games by ranking
-        data.topGames = Lists.newArrayList();
-        for (GameInfoRecord game : games.values()) {
-            data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
-            if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
-                break;
-            }
-        }
 
         // load up our genre counts
         Map<GameGenre, Integer> genreCounts = _mgameRepo.loadGenreCounts();
@@ -165,14 +196,6 @@ public class GameServlet extends MsoyServiceServlet
         data.genres = genres;
 
         return data;
-    }
-
-    // from interface GameService
-    public ArcadeData loadFBArcadeData ()
-        throws ServiceException
-    {
-        // TODO: specialize
-        return loadArcadeData();
     }
 
     // from interface GameService
