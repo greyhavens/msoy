@@ -21,6 +21,8 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
@@ -107,6 +109,7 @@ public class SubscriptionLogic
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {
             _memberRepo.storeFlags(mrec);
             MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
+            _feedLogic.publishMemberMessage(mrec.memberId, FeedMessageType.FRIEND_SUBSCRIBED);
         }
 
         int barGrantsLeft = months;
@@ -230,9 +233,10 @@ public class SubscriptionLogic
     }
 
     @Inject protected CronLogic _cronLogic;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SubscriptionRepository _subscripRepo;
     @Inject protected @BatchInvoker Invoker _batchInvoker;

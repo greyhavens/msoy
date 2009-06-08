@@ -164,6 +164,10 @@ public class FeedMessagePanel extends FocusPanel
                 case FRIEND_WON_MEDAL:
                     return _pmsgs.friendWonMedal(subject, object);
 
+                case FRIEND_SUBSCRIBED:
+                    return plural == Plural.SUBJECT ?
+                        _pmsgs.friendsSubscribed(subject) : _pmsgs.friendSubscribed(subject);
+
                 case GROUP_ANNOUNCEMENT:
                     return _pmsgs.groupAnnouncement(subject, object);
 

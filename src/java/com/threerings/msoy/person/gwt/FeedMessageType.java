@@ -25,6 +25,7 @@ public enum FeedMessageType
     FRIEND_GAINED_LEVEL(104, Category.LEVELS, 1, oneDay()),
     FRIEND_WON_BADGE(105, Category.BADGES, 3, oneDay()),
     FRIEND_WON_MEDAL(106, Category.MEDALS, 3, oneDay()),
+    FRIEND_SUBSCRIBED(107, Category.ANNOUNCEMENTS, 1, oneDay()),
 
     // group messages
     GROUP_ANNOUNCEMENT(200, Category.ANNOUNCEMENTS, 2, oneDay()),
