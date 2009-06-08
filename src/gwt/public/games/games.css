@@ -822,6 +822,14 @@
    EditArcadePanel
 -------------------------------------*/
 
+.editArcadePanel .Pages {
+  padding: 10px;
+}
+
+.editArcadePanel .tongueBox .TContent {
+  padding: 0;
+}
+
 .editArcadePanel .moveUp {
   background-image: url(/images/ui/move_up.png);
   width: 13px;
@@ -834,3 +842,27 @@
   height: 13px;
 }
 
+.editArcadePanel .gameList,
+.editArcadePanel .gameList .Games .Header .TopLeft,
+.editArcadePanel .gameList .Games .Header .TopRight {
+  background-color: white;
+}
+
+.editArcadePanel .gameList .Games .Titles div {
+  text-decoration: none;
+}
+
+.editArcadePanel .gameList .Buttons {
+  text-align: right;
+  padding: 10px;
+}
+
+.editArcadePanel .gameList .PlayButtons {
+  text-align: left;
+  color: black;
+  font-size: 10px;
+}
+
+.editArcadePanel .gameList .PlayButtons table.MoveButtons {
+  width: 60px;
+}

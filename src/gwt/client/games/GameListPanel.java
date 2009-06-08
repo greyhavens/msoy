@@ -75,6 +75,14 @@ public abstract class GameListPanel extends FlowPanel
     }
 
     /**
+     * Returns a message to display when the list is empty.
+     */
+    protected String getEmptyMessage ()
+    {
+        return _msgs.genreNoGames();
+    }
+
+    /**
      * The columns that appear in the game grid.
      */
     protected enum GridColumn { NAME, RATING, CATEGORY, NOW_PLAYING }
@@ -97,7 +105,7 @@ public abstract class GameListPanel extends FlowPanel
 
         @Override
         protected String getEmptyMessage () {
-            return _msgs.genreNoGames();
+            return GameListPanel.this.getEmptyMessage();
         }
 
         @Override

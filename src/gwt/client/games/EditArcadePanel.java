@@ -18,7 +18,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,10 +30,13 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.GameService.TopGamesResult;
 
+import com.threerings.msoy.web.gwt.Pages;
+
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
@@ -51,8 +56,11 @@ public class EditArcadePanel extends FlowPanel
     protected void setPage (ArcadeData.Page page)
     {
         clear();
-        add(_pages = new ListBox());
-        _pages.addItem(_msgs.editArcadeSelectPage());
+        HorizontalPanel pagesList = new HorizontalPanel();
+        add(pagesList);
+        pagesList.setStyleName("Pages");
+        pagesList.add(MsoyUI.createLabel(_msgs.editArcadePage(), null));
+        pagesList.add(_pages = new ListBox());
         for (ArcadeData.Page val : ArcadeData.Page.values()) {
             // TODO: i18n, this is just the enum name for now
             _pages.addItem(val.toString());
@@ -63,11 +71,7 @@ public class EditArcadePanel extends FlowPanel
 
         _pages.addChangeHandler(new ChangeHandler() {
             @Override public void onChange (ChangeEvent event) {
-                int sel = _pages.getSelectedIndex();
-                if (sel < 1) {
-                    return;
-                }
-                setPage(ArcadeData.Page.values()[sel - 1]);
+                setPage(ArcadeData.Page.values()[_pages.getSelectedIndex()]);
             }
         });
 
@@ -107,8 +111,12 @@ public class EditArcadePanel extends FlowPanel
                 _featured.add(gameId);
             }
 
+            add(Link.create(_msgs.etgAdd(), Pages.GAMES, "at", _page.toByte()));
             add(_grid = new GameGrid(_topGames));
-            add(_save = new Button(_msgs.etgSave()));
+            FlowPanel buttons = new FlowPanel();
+            buttons.setStyleName("Buttons");
+            buttons.add(_save = new Button(_msgs.etgSave()));
+            add(buttons);
             new ClickCallback<Void>(_save) {
                 @Override protected boolean callService () {
                     return saveChanges(this);
@@ -157,23 +165,26 @@ public class EditArcadePanel extends FlowPanel
         {
             final int index = getIndex(game.gameId);
             final int gameId = game.gameId;
-            FlowPanel buttons = new FlowPanel();
-            buttons.add(MsoyUI.createImageButton("moveUp", new ClickHandler() {
+            HorizontalPanel moveButtons = new HorizontalPanel();
+            moveButtons.setStyleName("MoveButtons");
+            moveButtons.add(MsoyUI.createImageButton("moveUp", new ClickHandler() {
                 @Override public void onClick (ClickEvent event) {
                     moveGame(index, -1);
                 }
             }));
-            buttons.add(MsoyUI.createImageButton("moveDown", new ClickHandler() {
+            moveButtons.add(MsoyUI.createImageButton("moveDown", new ClickHandler() {
                 @Override public void onClick (ClickEvent event) {
                     moveGame(index, 1);
                 }
             }));
-            buttons.add(MsoyUI.createCloseButton(new ClickHandler() {
+            moveButtons.add(MsoyUI.createCloseButton(new ClickHandler() {
                 @Override public void onClick (ClickEvent event) {
                     removeGame(index);
                 }
             }));
-            CheckBox feat = new CheckBox();
+            FlowPanel buttons = new FlowPanel();
+            buttons.add(moveButtons);
+            CheckBox feat = new CheckBox(_msgs.etgFeatured());
             feat.setValue(_featured.contains(gameId));
             feat.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                 public void onValueChange (ValueChangeEvent<Boolean> event) {
@@ -187,6 +198,18 @@ public class EditArcadePanel extends FlowPanel
             });
             buttons.add(feat);
             return buttons;
+        }
+
+        @Override
+        protected int addCustomControls (FlexTable controls, int row)
+        {
+            return super.addCustomControls(controls, ++row);
+        }
+
+        @Override
+        protected String getEmptyMessage ()
+        {
+            return _msgs.etgNoGames();
         }
 
         protected void moveGame (int index, int dir)
