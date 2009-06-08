@@ -210,6 +210,8 @@ public class CommentServlet extends MsoyServiceServlet
             link = Pages.ROOMS.makeURL("room", eid);
         } else if (etype == Comment.TYPE_PROFILE_WALL) {
             link = Pages.PEOPLE.makeURL(eid);
+        } else if (etype == Comment.TYPE_GAME) {
+            link = Pages.GAMES.makeURL("d", eid, "c");
         } else {
             link = null;
         }
