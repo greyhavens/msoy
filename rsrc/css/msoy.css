@@ -388,8 +388,6 @@ TabNavigator, TabBar {
   borderStyle: none;
   borderThickness: 0;
   tabHeight: 20;
-  tabStyleName: "msoyTabButton";
-  selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
 SpriteInfoPanel {
@@ -407,24 +405,6 @@ SpriteInfoPanel {
 .underLink {
   color: white;
   textDecoration: underline;
-}
-
-.msoyTabButton {
-  color: #b4cbd7;
-  fontFamily: Arial;
-  textRollOverColor: #b4cbd7;
-  overSkin: Embed(source="../media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedOverSkin: Embed(source="../media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  selectedUpSkin: Embed(source="../media/skins/tab/selected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
-  upSkin: Embed(source="../media/skins/tab/unselected.png",
-          scaleGridTop="3", scaleGridBottom="17",
-          scaleGridLeft="3", scaleGridRight="9");
 }
 
 .largeBlueButton {
