@@ -30,11 +30,11 @@ public abstract class Layout
     {
         Layout layout;
         Frame.Embedding embedding = Frame.Embedding.NONE;
-        if ("fb".equals(embedCookie)) {
+        if (isFramed()) {
             layout = new FramedLayout();
-            embedding = Frame.Embedding.FACEBOOK;
-        } else if (isFramed()) {
-            layout = new FramedLayout();
+            if ("fb".equals(embedCookie)) {
+                embedding = Frame.Embedding.FACEBOOK;
+            }
         } else {
             layout = new StandardLayout();
         }
