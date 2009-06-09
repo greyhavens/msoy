@@ -333,7 +333,7 @@ public class FeedItemGenerator
                         Args.compose("l", message.data[1], message.data[2])));
 
         case LEVELS:
-            return message.data[0];
+            return (message.data.length > 0) ? message.data[0] : null
 
         case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
