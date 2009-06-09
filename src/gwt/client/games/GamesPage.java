@@ -68,9 +68,9 @@ public class GamesPage extends Page
         } else if (action.equals("ea")) {
             setContent(new EditArcadePanel());
 
-        } else if (action.equals("at")) {
+        } else if (action.equals("aa")) {
             byte portal = args.get(1, ArcadeData.Portal.MAIN.toByte());
-            setContent(new AddTopGamesPanel(ArcadeData.Portal.fromByte(portal),
+            setContent(new AddArcadeEntriesPanel(ArcadeData.Portal.fromByte(portal),
                 GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
         } else {

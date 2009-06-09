@@ -54,14 +54,14 @@ public interface GameService extends RemoteService
     /**
      * Return result for {@link #loadTopGames}.
      */
-    public static class TopGamesResult
+    public static class ArcadeEntriesResult
         implements IsSerializable
     {
-        /** The info for the top games, in order. */
-        public GameInfo[] topGames;
+        /** The info for the arcade entries, in order. */
+        public List<GameInfo> entries;
 
-        /** The ids of the top games games that are also featured. */
-        public int[] featured;
+        /** The ids of the entries that are also featured. */
+        public List<Integer> featured;
     }
 
     /** The entry point for this service. */
@@ -204,33 +204,33 @@ public interface GameService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the top games that are shown in the given portal. Support only.
+     * Loads the arcade entries that are shown in the given portal. Support only.
      */
-    TopGamesResult loadTopGames (ArcadeData.Portal portal)
+    ArcadeEntriesResult loadArcadeEntries (ArcadeData.Portal portal)
         throws ServiceException;
 
     /**
-     * Loads the ids of the top games that are shown in the given portal. Support only.
+     * Loads the ids of the arcade entries that are shown in the given portal. Support only.
      */
-    int[] loadTopGameIds (ArcadeData.Portal portal)
+    int[] loadArcadeEntryIds (ArcadeData.Portal portal)
         throws ServiceException;
 
     /**
-     * Removes a top game from the given portal.
+     * Removes an arcade entry from the given portal. Support only.
      */
-    void removeTopGame (ArcadeData.Portal portal, int gameId)
+    void removeArcadeEntry (ArcadeData.Portal portal, int gameId)
         throws ServiceException;
 
     /**
-     * Adds a top game to the given portal (at the end of the list).
+     * Adds an arcade entry to the given portal (at the end of the list). Support only.
      */
-    void addTopGame (ArcadeData.Portal portal, int gameId)
+    void addArcadeEntry (ArcadeData.Portal portal, int gameId)
         throws ServiceException;
 
     /**
-     * Updates top game information for a given portal.
+     * Updates arcade entry information for a given portal. Support only.
      */
-    void updateTopGames (ArcadeData.Portal portal, List<Integer> topGames, Set<Integer> featured,
-        Set<Integer> removed)
+    void updateArcadeEntries (ArcadeData.Portal portal, List<Integer> entries,
+        Set<Integer> featured, Set<Integer> removed)
         throws ServiceException;
 }

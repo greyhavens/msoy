@@ -29,7 +29,7 @@ import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.game.gwt.GameService.TopGamesResult;
+import com.threerings.msoy.game.gwt.GameService.ArcadeEntriesResult;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -93,19 +93,19 @@ public class EditArcadePanel extends FlowPanel
         }
 
         add(new TongueBox(portal == ArcadeData.Portal.FACEBOOK ? _msgs.editArcadeApprovedGames() :
-            _msgs.editArcadeFeaturedGames(), new TopGamesPanel(portal)));
+            _msgs.editArcadeFeaturedGames(), new ArcadeEntriesPanel(portal)));
     }
 
     /**
-     * Panel for editing the top games in the arcade.
+     * Panel for editing the entries in the arcade.
      */
-    protected static class TopGamesPanel extends GameListPanel
+    protected static class ArcadeEntriesPanel extends GameListPanel
     {
-        public TopGamesPanel (ArcadeData.Portal portal)
+        public ArcadeEntriesPanel (ArcadeData.Portal portal)
         {
             _portal = portal;
-            _gamesvc.loadTopGames(portal, new InfoCallback<TopGamesResult>() {
-                @Override public void onSuccess (TopGamesResult result) {
+            _gamesvc.loadArcadeEntries(portal, new InfoCallback<ArcadeEntriesResult>() {
+                @Override public void onSuccess (ArcadeEntriesResult result) {
                     _result = result;
                     init();
                 }
@@ -114,29 +114,23 @@ public class EditArcadePanel extends FlowPanel
 
         protected void init ()
         {
-            _topGames = new ArrayList<GameInfo>(_result.topGames.length);
-            for (GameInfo topGame : _result.topGames) {
-                _topGames.add(topGame);
-            }
-            _featured = new HashSet<Integer>();
-            for (int gameId : _result.featured) {
-                _featured.add(gameId);
-            }
+            _entries = new ArrayList<GameInfo>(_result.entries);
+            _featured = new HashSet<Integer>(_result.featured);
 
             switch (_portal) {
             case FACEBOOK:
-                add(MsoyUI.createLabel(_msgs.etgFacebookTip(), "Tip"));
+                add(MsoyUI.createLabel(_msgs.eaeFacebookTip(), "Tip"));
                 break;
             case MAIN:
-                add(MsoyUI.createLabel(_msgs.etgMainTip(), "Tip"));
+                add(MsoyUI.createLabel(_msgs.eaeMainTip(), "Tip"));
                 break;
             }
-            add(_grid = new GameGrid(_topGames));
+            add(_grid = new GameGrid(_entries));
             HorizontalPanel buttons = new HorizontalPanel();
             buttons.setSpacing(10);
             buttons.setStyleName("Buttons");
-            buttons.add(_save = new Button(_msgs.etgSave()));
-            buttons.add(Link.create(_msgs.etgAdd(), Pages.GAMES, "at", _portal.toByte()));
+            buttons.add(_save = new Button(_msgs.eaeSave()));
+            buttons.add(Link.create(_msgs.eaeAdd(), Pages.GAMES, "aa", _portal.toByte()));
             add(buttons);
             new ClickCallback<Void>(_save) {
                 @Override protected boolean callService () {
@@ -145,7 +139,7 @@ public class EditArcadePanel extends FlowPanel
 
                 @Override
                 protected boolean gotResult (Void result) {
-                    MsoyUI.info(_msgs.etgSaved());
+                    MsoyUI.info(_msgs.eaeSaved());
                     return true;
                 }
             };
@@ -154,27 +148,27 @@ public class EditArcadePanel extends FlowPanel
         protected boolean saveChanges (AsyncCallback<Void> callback)
         {
             if (!_orderChanged && !_featuredChanged && _removed.size() == 0) {
-                MsoyUI.info(_msgs.etgNoChanges());
+                MsoyUI.info(_msgs.eaeNoChanges());
                 return false;
             }
 
             List<Integer> gameIds = null;
             if (_orderChanged) {
-                gameIds = new ArrayList<Integer>(_topGames.size());
-                for (GameInfo ginf : _topGames) {
+                gameIds = new ArrayList<Integer>(_entries.size());
+                for (GameInfo ginf : _entries) {
                     gameIds.add(ginf.gameId);
                 }
             }
             Set<Integer> featured = _featuredChanged ? _featured : null;
             Set<Integer> removed = _removed.size() > 0 ? _removed : null;
-            _gamesvc.updateTopGames(_portal, gameIds, featured, removed, callback);
+            _gamesvc.updateArcadeEntries(_portal, gameIds, featured, removed, callback);
             return true;
         }
 
         protected int getIndex (int gameId)
         {
-            for (int ii = 0, ll = _topGames.size(); ii < ll; ++ii) {
-                if (_topGames.get(ii).gameId == gameId) {
+            for (int ii = 0, ll = _entries.size(); ii < ll; ++ii) {
+                if (_entries.get(ii).gameId == gameId) {
                     return ii;
                 }
             }
@@ -206,7 +200,7 @@ public class EditArcadePanel extends FlowPanel
             FlowPanel buttons = new FlowPanel();
             buttons.add(moveButtons);
             if (_portal == ArcadeData.Portal.FACEBOOK) {
-                CheckBox feat = new CheckBox(_msgs.etgFeatured());
+                CheckBox feat = new CheckBox(_msgs.eaeFeatured());
                 feat.setValue(_featured.contains(gameId));
                 feat.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     public void onValueChange (ValueChangeEvent<Boolean> event) {
@@ -232,32 +226,32 @@ public class EditArcadePanel extends FlowPanel
         @Override
         protected String getEmptyMessage ()
         {
-            return _msgs.etgNoGames();
+            return _msgs.eaeNoGames();
         }
 
         protected void moveGame (int index, int dir)
         {
             int nindex = index + dir;
-            if (nindex < 0 || nindex >= _topGames.size()) {
+            if (nindex < 0 || nindex >= _entries.size()) {
                 return;
             }
-            GameInfo tmp = _topGames.get(index);
-            _topGames.set(index, _topGames.get(nindex));
-            _topGames.set(nindex, tmp);
+            GameInfo tmp = _entries.get(index);
+            _entries.set(index, _entries.get(nindex));
+            _entries.set(nindex, tmp);
             _orderChanged = true;
             refreshGrid();
         }
 
         protected void removeGame (int index)
         {
-            _removed.add(_topGames.get(index).gameId);
-            _topGames.remove(index);
+            _removed.add(_entries.get(index).gameId);
+            _entries.remove(index);
             refreshGrid();
         }
 
         protected void refreshGrid ()
         {
-            if (_grid.getOffset() >= _topGames.size()) {
+            if (_grid.getOffset() >= _entries.size()) {
                 _grid.displayPage(0, true);
             } else {
                 _grid.displayPage(_grid.getPage(), true);
@@ -265,8 +259,8 @@ public class EditArcadePanel extends FlowPanel
         }
 
         protected ArcadeData.Portal _portal;
-        protected TopGamesResult _result;
-        protected List<GameInfo> _topGames;
+        protected ArcadeEntriesResult _result;
+        protected List<GameInfo> _entries;
         protected Set<Integer> _featured;
         protected GameGrid _grid;
         protected Button _save;

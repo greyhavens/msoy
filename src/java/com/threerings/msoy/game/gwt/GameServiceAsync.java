@@ -122,28 +122,29 @@ public interface GameServiceAsync
     void updateFacebookInfo (FacebookInfo info, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GameService#loadTopGameIds}.
+     * The asynchronous version of {@link GameService#loadArcadeEntryIds}.
      */
-    void loadTopGameIds (ArcadeData.Portal portal, AsyncCallback<int[]> callback);
+    void loadArcadeEntryIds (ArcadeData.Portal portal, AsyncCallback<int[]> callback);
 
     /**
-     * The asynchronous version of {@link GameService#loadTopGames}.
+     * The asynchronous version of {@link GameService#loadArcadeEntries}.
      */
-    void loadTopGames (ArcadeData.Portal portal, AsyncCallback<GameService.TopGamesResult> callback);
+    void loadArcadeEntries (ArcadeData.Portal portal,
+        AsyncCallback<GameService.ArcadeEntriesResult> callback);
 
     /**
-     * The asynchronous version of {@link GameService#removeTopGame}.
+     * The asynchronous version of {@link GameService#removeArcadeEntry}.
      */
-    void removeTopGame (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
+    void removeArcadeEntry (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GameService#addTopGame}.
+     * The asynchronous version of {@link GameService#addArcadeEntry}.
      */
-    void addTopGame (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
+    void addArcadeEntry (ArcadeData.Portal portal, int gameId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GameService#updateTopGames}.
+     * The asynchronous version of {@link GameService#updateArcadeEntries}.
      */
-    void updateTopGames (ArcadeData.Portal portal, List<Integer> topGames, Set<Integer> featured,
-        Set<Integer> removed, AsyncCallback<Void> callback);
+    void updateArcadeEntries (ArcadeData.Portal portal, List<Integer> entries,
+        Set<Integer> featured, Set<Integer> removed, AsyncCallback<Void> callback);
 }

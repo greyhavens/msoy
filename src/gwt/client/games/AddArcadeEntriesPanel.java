@@ -27,16 +27,16 @@ import com.threerings.msoy.web.gwt.Pages;
  * with genre ALL except the right hand column shows an add or remove button instead of a play
  * button.
  */
-public class AddTopGamesPanel extends GameGenrePanel
+public class AddArcadeEntriesPanel extends GameGenrePanel
 {
-    public AddTopGamesPanel (ArcadeData.Portal page, final Sort sort, String query)
+    public AddArcadeEntriesPanel (ArcadeData.Portal page, final Sort sort, String query)
     {
         super(GameGenre.ALL, sort, query);
-        _gamesvc.loadTopGameIds(_portal = page, new InfoCallback<int[]> () {
+        _gamesvc.loadArcadeEntryIds(_portal = page, new InfoCallback<int[]> () {
             public void onSuccess (int[] result) {
-                _topGameIds = new HashSet<Integer>();
+                _entryIds = new HashSet<Integer>();
                 for (int gameId : result) {
-                    _topGameIds.add(gameId);
+                    _entryIds.add(gameId);
                 }
                 for (Integer gameId : _actions.keySet()) {
                     updateAction(gameId);
@@ -48,7 +48,7 @@ public class AddTopGamesPanel extends GameGenrePanel
     @Override
     protected void onSortChanged (Sort sort)
     {
-        Link.go(Pages.GAMES, "at", _portal.toByte(), sort.toToken(), _header.getQuery());
+        Link.go(Pages.GAMES, "aa", _portal.toByte(), sort.toToken(), _header.getQuery());
     }
 
     @Override
@@ -67,29 +67,29 @@ public class AddTopGamesPanel extends GameGenrePanel
             return;
         }
         action.clear();
-        if (_topGameIds == null) {
+        if (_entryIds == null) {
             action.add(new Label(_msgs.atgLoading()));
             return;
         }
-        final boolean topGame = _topGameIds.contains(gameId);
+        final boolean topGame = _entryIds.contains(gameId);
         String text = topGame ? _msgs.atgRemove() : _msgs.atgAdd();
         Button button = new Button(text);
         action.add(button);
         new ClickCallback<Void>(button) {
             @Override protected boolean callService () {
                 if (topGame) {
-                    _gamesvc.removeTopGame(_portal, gameId, this);
+                    _gamesvc.removeArcadeEntry(_portal, gameId, this);
                 } else {
-                    _gamesvc.addTopGame(_portal, gameId, this);
+                    _gamesvc.addArcadeEntry(_portal, gameId, this);
                 }
                 return true;
             }
 
             @Override protected boolean gotResult (Void result) {
                 if (topGame) {
-                    _topGameIds.remove(gameId);
+                    _entryIds.remove(gameId);
                 } else {
-                    _topGameIds.add(gameId);
+                    _entryIds.add(gameId);
                 }
                 updateAction(gameId);
                 return true;
@@ -98,6 +98,6 @@ public class AddTopGamesPanel extends GameGenrePanel
     }
 
     protected ArcadeData.Portal _portal;
-    protected Set<Integer> _topGameIds;
+    protected Set<Integer> _entryIds;
     protected HashMap<Integer, FlowPanel> _actions = new HashMap<Integer, FlowPanel>();
 }

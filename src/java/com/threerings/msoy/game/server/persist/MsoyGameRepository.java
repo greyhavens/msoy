@@ -25,7 +25,6 @@ import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
@@ -101,9 +100,6 @@ public class MsoyGameRepository extends DepotRepository
                 return coerceRating(MsoyGameRatingRecord.class);
             }
         };
-
-        ctx.registerMigration(TopGameRecord.class,
-            new SchemaMigration.Rename(2, "page", TopGameRecord.PORTAL));
     }
 
     /**
@@ -200,21 +196,21 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Loads the games defined as top games for the given arcade page.
+     * Loads the entries for the given arcade portal.
      */
-    public List<TopGameRecord> loadTopGames (ArcadeData.Portal portal, boolean useCache)
+    public List<ArcadeEntryRecord> loadArcadeEntries (ArcadeData.Portal portal, boolean useCache)
     {
         CacheStrategy cache = useCache ? CacheStrategy.BEST : CacheStrategy.NONE;
-        return findAll(TopGameRecord.class, cache, new Where(TopGameRecord.PORTAL, portal),
-            OrderBy.ascending(TopGameRecord.ORDER));
+        return findAll(ArcadeEntryRecord.class, cache, new Where(ArcadeEntryRecord.PORTAL, portal),
+            OrderBy.ascending(ArcadeEntryRecord.ORDER));
     }
 
     /**
-     * Adds a new game to the top games for the given arcade portal.
+     * Adds a new game to the arcade entries for the given portal.
      */
-    public void addTopGame (ArcadeData.Portal portal, int gameId, boolean featured)
+    public void addArcadeEntry (ArcadeData.Portal portal, int gameId, boolean featured)
     {
-        TopGameRecord rec = new TopGameRecord();
+        ArcadeEntryRecord rec = new ArcadeEntryRecord();
         rec.portal = portal;
         rec.gameId = gameId;
         rec.featured = featured;
@@ -223,38 +219,41 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Removes a game from the given arcade portal.
+     * Removes an entry from the given arcade portal.
      */
-    public void removeTopGame (ArcadeData.Portal portal, int gameId)
+    public void removeArcadeEntry (ArcadeData.Portal portal, int gameId)
     {
-        delete(TopGameRecord.getKey(portal, gameId));
+        delete(ArcadeEntryRecord.getKey(portal, gameId));
     }
 
     /**
-     * Sets or clears the featured flag for some games on the given arcade portal. 
+     * Sets or clears the featured flag for some entries on the given arcade portal. 
      */
-    public void updateFeatured (ArcadeData.Portal portal, final Set<Integer> gameIds, boolean featured)
+    public void updateFeatured (ArcadeData.Portal portal, final Set<Integer> gameIds,
+        boolean featured)
     {
         if (gameIds.size() > 0) {
-            Where where = new Where(new And(new Equals(TopGameRecord.PORTAL, portal),
-                new In(TopGameRecord.GAME_ID, gameIds)));
-            updatePartial(TopGameRecord.class, where,
-                new CacheInvalidator.TraverseWithFilter<TopGameRecord>(TopGameRecord.class) {
+            Where where = new Where(new And(new Equals(ArcadeEntryRecord.PORTAL, portal),
+                new In(ArcadeEntryRecord.GAME_ID, gameIds)));
+            updatePartial(ArcadeEntryRecord.class, where,
+                new CacheInvalidator.TraverseWithFilter<ArcadeEntryRecord>(
+                        ArcadeEntryRecord.class) {
                     @Override protected boolean testForEviction (
-                        Serializable key, TopGameRecord record) {
+                        Serializable key, ArcadeEntryRecord record) {
                         return gameIds.contains(record.gameId);
                     }
-                }, TopGameRecord.FEATURED, featured);
+                }, ArcadeEntryRecord.FEATURED, featured);
         }
     }
 
     /**
-     * Updates the ordering of the top games on the given arcade portal.
+     * Updates the ordering of the entries on the given arcade portal.
      */
-    public void updateTopGamesOrder (ArcadeData.Portal portal, List<Integer> topGames)
+    public void updateArcadeEntriesOrder (ArcadeData.Portal portal, List<Integer> entries)
     {
-        for (int ii = 0, ll = topGames.size(); ii < ll; ++ii) {
-            updatePartial(TopGameRecord.getKey(portal, topGames.get(ii)), TopGameRecord.ORDER, ii);
+        for (int ii = 0, ll = entries.size(); ii < ll; ++ii) {
+            updatePartial(ArcadeEntryRecord.getKey(portal, entries.get(ii)),
+                ArcadeEntryRecord.ORDER, ii);
         }
     }
 
@@ -598,7 +597,7 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(GamePlayRecord.class);
         classes.add(GameTraceLogRecord.class);
         classes.add(InstructionsRecord.class);
-        classes.add(TopGameRecord.class);
+        classes.add(ArcadeEntryRecord.class);
     }
 
     protected RatingRepository _ratingRepo;

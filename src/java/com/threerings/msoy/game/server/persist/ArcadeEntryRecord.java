@@ -15,17 +15,17 @@ import com.threerings.msoy.game.gwt.ArcadeData;
  * Holds information for a game that we want to feature on the games landing page.
  */
 @Entity
-public class TopGameRecord extends PersistentRecord
+public class ArcadeEntryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    public static final Class<TopGameRecord> _R = TopGameRecord.class;
+    public static final Class<ArcadeEntryRecord> _R = ArcadeEntryRecord.class;
     public static final ColumnExp PORTAL = colexp(_R, "portal");
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp ORDER = colexp(_R, "order");
     public static final ColumnExp FEATURED = colexp(_R, "featured");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 1;
 
     /** The portal this record is for (we support multiple games front pages). */
     @Id public ArcadeData.Portal portal;
@@ -41,13 +41,13 @@ public class TopGameRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link TopGameRecord}
+     * Create and return a primary {@link Key} to identify a {@link ArcadeEntryRecord}
      * with the supplied key values.
      */
-    public static Key<TopGameRecord> getKey (ArcadeData.Portal portal, int gameId)
+    public static Key<ArcadeEntryRecord> getKey (ArcadeData.Portal portal, int gameId)
     {
-        return new Key<TopGameRecord>(
-                TopGameRecord.class,
+        return new Key<ArcadeEntryRecord>(
+                ArcadeEntryRecord.class,
                 new ColumnExp[] { PORTAL, GAME_ID },
                 new Comparable[] { portal, gameId });
     }

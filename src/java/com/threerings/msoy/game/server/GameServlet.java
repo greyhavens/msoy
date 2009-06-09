@@ -62,7 +62,7 @@ import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.game.server.persist.TopGameRecord;
+import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -100,10 +100,10 @@ public class GameServlet extends MsoyServiceServlet
 
         // load the hand-picked "top games"
         boolean dev = DeploymentConfig.devDeployment;
-        List<TopGameRecord> topGames = dev ? _mgameRepo.loadTopGames(portal, true) : null;
-        Set<Integer> topGameIds = dev ? Sets.newHashSet(Lists.transform(topGames,
-            new Function<TopGameRecord, Integer>() {
-                public Integer apply (TopGameRecord rec) {
+        List<ArcadeEntryRecord> agames = dev ? _mgameRepo.loadArcadeEntries(portal, true) : null;
+        Set<Integer> agameIds = dev ? Sets.newHashSet(Lists.transform(agames,
+            new Function<ArcadeEntryRecord, Integer>() {
+                public Integer apply (ArcadeEntryRecord rec) {
                     return rec.gameId;
                 }
             })) : null;
@@ -112,8 +112,8 @@ public class GameServlet extends MsoyServiceServlet
         Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
         for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
             // for facebook, filter the whole map by the top games
-            if (topGameIds != null && portal == ArcadeData.Portal.FACEBOOK &&
-                !topGameIds.contains(grec.gameId)) {
+            if (agameIds != null && portal == ArcadeData.Portal.FACEBOOK &&
+                !agameIds.contains(grec.gameId)) {
                 continue;
             }
             games.put(grec.gameId, grec);
@@ -123,7 +123,7 @@ public class GameServlet extends MsoyServiceServlet
             // TODO: move to GameLogic
             ArrayIntSet creatorIds = new ArrayIntSet();
             List<GameInfo> featured = Lists.newArrayList();
-            for (TopGameRecord topGame : topGames) {
+            for (ArcadeEntryRecord topGame : agames) {
                 if (!topGame.featured) {
                     continue;
                 }
@@ -637,71 +637,71 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public TopGamesResult loadTopGames (ArcadeData.Portal page)
+    public ArcadeEntriesResult loadArcadeEntries (ArcadeData.Portal page)
         throws ServiceException
     {
         requireSupportUser();
         // this is only used for editing, so bypass the cache
-        List<TopGameRecord> topGames = _mgameRepo.loadTopGames(page, false);
-        TopGamesResult result = new TopGamesResult();
-        result.topGames = new GameInfo[topGames.size()];
+        List<ArcadeEntryRecord> entries = _mgameRepo.loadArcadeEntries(page, false);
+        ArcadeEntriesResult result = new ArcadeEntriesResult();
+        result.entries = Lists.newArrayListWithExpectedSize(entries.size());
         ArrayIntSet featured = new ArrayIntSet();
-        for (int ii = 0, ll = topGames.size(); ii < ll; ++ii) {
-            int gameId = topGames.get(ii).gameId;
+        for (int ii = 0, ll = entries.size(); ii < ll; ++ii) {
+            int gameId = entries.get(ii).gameId;
             int gamePop = getGamePop(_memberMan.getPPSnapshot(), gameId);
-            result.topGames[ii] = _mgameRepo.loadGame(gameId).toGameInfo(gamePop);
-            if (topGames.get(ii).featured) {
+            result.entries.add(_mgameRepo.loadGame(gameId).toGameInfo(gamePop));
+            if (entries.get(ii).featured) {
                 featured.add(gameId);
             }
         }
-        result.featured = featured.toIntArray();
+        result.featured = Lists.newArrayList(featured);
         return result;
     }
 
     // from interface GameService
-    public int[] loadTopGameIds (ArcadeData.Portal page)
+    public int[] loadArcadeEntryIds (ArcadeData.Portal page)
         throws ServiceException
     {
         requireSupportUser();
-        ArrayIntSet topGameIds = new ArrayIntSet();
+        ArrayIntSet entryIds = new ArrayIntSet();
         // this is only used for editing, so bypass the cache
-        for (TopGameRecord rec : _mgameRepo.loadTopGames(page, false)) {
-            topGameIds.add(rec.gameId);
+        for (ArcadeEntryRecord rec : _mgameRepo.loadArcadeEntries(page, false)) {
+            entryIds.add(rec.gameId);
         }
-        return topGameIds.toIntArray();
+        return entryIds.toIntArray();
     }
 
     // from interface GameService
-    public void addTopGame (ArcadeData.Portal portal, int gameId)
+    public void addArcadeEntry (ArcadeData.Portal portal, int gameId)
         throws ServiceException
     {
         requireSupportUser();
         boolean featured = portal == ArcadeData.Portal.MAIN;
-        _mgameRepo.addTopGame(portal, gameId, featured);
+        _mgameRepo.addArcadeEntry(portal, gameId, featured);
     }
 
     // from interface GameService
-    public void removeTopGame (ArcadeData.Portal portal, int gameId)
+    public void removeArcadeEntry (ArcadeData.Portal portal, int gameId)
         throws ServiceException
     {
         requireSupportUser();
-        _mgameRepo.removeTopGame(portal, gameId);
+        _mgameRepo.removeArcadeEntry(portal, gameId);
     }
 
     // from interface GameService
-    public void updateTopGames (ArcadeData.Portal portal, List<Integer> topGames, Set<Integer> featured,
-        final Set<Integer> removed)
+    public void updateArcadeEntries (ArcadeData.Portal portal, List<Integer> entries,
+        Set<Integer> featured, final Set<Integer> removed)
         throws ServiceException
     {
         requireSupportUser();
         // this is only used for editing, so bypass the cache
-        Iterable<TopGameRecord> old = _mgameRepo.loadTopGames(portal, false);
+        Iterable<ArcadeEntryRecord> old = _mgameRepo.loadArcadeEntries(portal, false);
         if (removed != null) {
             for (int gameId : removed) {
-                _mgameRepo.removeTopGame(portal, gameId);
+                _mgameRepo.removeArcadeEntry(portal, gameId);
             }
-            old = Iterables.filter(old, new Predicate<TopGameRecord>() {
-                public boolean apply (TopGameRecord rec) {
+            old = Iterables.filter(old, new Predicate<ArcadeEntryRecord>() {
+                public boolean apply (ArcadeEntryRecord rec) {
                    return !removed.contains(rec.gameId);
                 }
             });
@@ -709,7 +709,7 @@ public class GameServlet extends MsoyServiceServlet
         if (featured != null) {
             Map<Boolean, ArrayIntSet> toUpdate = ImmutableMap.of(
                 true, new ArrayIntSet(), false, new ArrayIntSet());
-            for (TopGameRecord rec : old) {
+            for (ArcadeEntryRecord rec : old) {
                 if (rec.featured != featured.contains(rec.gameId)) {
                     toUpdate.get(!rec.featured).add(rec.gameId);
                 }
@@ -717,8 +717,8 @@ public class GameServlet extends MsoyServiceServlet
             _mgameRepo.updateFeatured(portal, toUpdate.get(true), true);
             _mgameRepo.updateFeatured(portal, toUpdate.get(false), false);
         }
-        if (topGames != null) {
-            _mgameRepo.updateTopGamesOrder(portal, topGames);
+        if (entries != null) {
+            _mgameRepo.updateArcadeEntriesOrder(portal, entries);
         }
     }
 
