@@ -677,6 +677,7 @@ public class AdminServlet extends MsoyServiceServlet
             String tvector = sum.vector.substring(0, didx+1) + "...";
             EntrySummary tsum = map.get(tvector);
             if (tsum == null) {
+                sum.vector = tvector;
                 map.put(tvector, sum);
             } else {
                 tsum.entries += sum.entries;
