@@ -183,7 +183,8 @@ public class MemberRepository extends DepotRepository
         int deleted = deleteAll(
             EntryVectorRecord.class,
             new Where(new And(new Equals(EntryVectorRecord.MEMBER_ID, 0),
-                              new LessThan(EntryVectorRecord.CREATED, cutoff))));
+                              new LessThan(EntryVectorRecord.CREATED, cutoff))),
+            null); // no cache invalidator needed
         if (deleted > 0) {
             log.info("Purged " + deleted + " expired entry vector records.");
         }
