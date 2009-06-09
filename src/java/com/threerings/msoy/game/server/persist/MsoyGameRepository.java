@@ -58,6 +58,7 @@ import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
+import com.threerings.msoy.game.gwt.GameInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -577,19 +578,30 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Deletes all ephemeral data associated with the specified game.
+     * Deletes all information associated with the supplied game. This only handles data managed by
+     * this repository. See GameServlet.deleteGame for the full gamut of things deleted when a game
+     * is deleted.
      */
-    protected void purgeGame (int gameId)
+    public void deleteGame (int gameId)
     {
+        deleteAll(ArcadeEntryRecord.class, new Where(ArcadeEntryRecord.GAME_ID, gameId), null);
+        delete(FacebookInfoRecord.getKey(gameId));
+        delete(GameCodeRecord.getKey(gameId, true));
+        delete(GameCodeRecord.getKey(gameId, false));
         delete(GameInfoRecord.getKey(gameId));
+        delete(GameMetricsRecord.getKey(gameId));
+        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId), null);
+        int devGameId = GameInfo.toDevId(gameId);
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId), null);
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, devGameId), null);
         delete(InstructionsRecord.getKey(gameId));
-        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId));
-        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId));
+        _ratingRepo.deleteRatings(gameId);
     }
 
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
+        classes.add(ArcadeEntryRecord.class);
         classes.add(FacebookInfoRecord.class);
         classes.add(GameCodeRecord.class);
         classes.add(GameInfoRecord.class);
@@ -597,7 +609,6 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(GamePlayRecord.class);
         classes.add(GameTraceLogRecord.class);
         classes.add(InstructionsRecord.class);
-        classes.add(ArcadeEntryRecord.class);
     }
 
     protected RatingRepository _ratingRepo;

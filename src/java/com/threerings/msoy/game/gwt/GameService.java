@@ -52,7 +52,7 @@ public interface GameService extends RemoteService
     }
 
     /**
-     * Return result for {@link #loadTopGames}.
+     * Return result for {@link #loadArcadeEntries}.
      */
     public static class ArcadeEntriesResult
         implements IsSerializable
@@ -170,6 +170,13 @@ public interface GameService extends RemoteService
      * @return the id of the newly created game.
      */
     int createGame (boolean isAVRG, String name, MediaDesc thumbMedia, MediaDesc clientCode)
+        throws ServiceException;
+
+    /**
+     * Requests that the specified game be deleted. The caller must be the owner and the game must
+     * meet various criteria to allow it to be deleted. See the implementation for details.
+     */
+    void deleteGame (int gameId)
         throws ServiceException;
 
     /**

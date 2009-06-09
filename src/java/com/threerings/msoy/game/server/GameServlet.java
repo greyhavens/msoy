@@ -35,6 +35,7 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -42,6 +43,8 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
@@ -559,6 +562,35 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
+    public void deleteGame (int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        GameInfoRecord grec = requireIsGameCreator(gameId, mrec);
+
+        // make sure all of our subitems are delisted and deleted
+        for (GameItem item : grec.getSuiteTypes()) {
+            ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
+            if (repo.loadGameOriginals(gameId).size() > 0) {
+                throw new ServiceException("e.must_delete_all_subitems");
+            }
+        }
+
+        // delete this game's comments
+        _commentRepo.deleteComments(Comment.TYPE_GAME, gameId);
+
+        // delete the trophies awarded by this game
+        _trophyRepo.purgeGame(gameId);
+
+        // delete game rating and percentile data (single and multiplayer)
+        _ratingRepo.purgeGame(-gameId);
+        _ratingRepo.purgeGame(gameId);
+
+        // pass the buck onto the repository
+        _mgameRepo.deleteGame(gameId);
+    }
+
+    // from interface GameService
     public void updateGameInfo (GameInfo info)
         throws ServiceException
     {
@@ -829,12 +861,13 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected CommentRepository _commentRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameNodeActions _gameActions;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;

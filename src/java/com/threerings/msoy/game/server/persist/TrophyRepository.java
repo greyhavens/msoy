@@ -24,6 +24,7 @@ import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameUtil;
 
 import static com.threerings.msoy.Log.log;
@@ -116,6 +117,16 @@ public class TrophyRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(TrophyRecord.class, new Where(new In(TrophyRecord.MEMBER_ID, memberIds)));
+    }
+
+    /**
+     * Deletes all awarded trophies for the specified game.
+     */
+    public void purgeGame (int gameId)
+    {
+        deleteAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, gameId), null);
+        int devGameId = GameInfo.toDevId(gameId);
+        deleteAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, devGameId), null);
     }
 
     @Override // from DepotRepository

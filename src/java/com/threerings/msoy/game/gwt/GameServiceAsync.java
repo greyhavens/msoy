@@ -97,6 +97,11 @@ public interface GameServiceAsync
                      AsyncCallback<Integer> callback);
 
     /**
+     * The asynchronous version of {@link GameService#deleteGame}.
+     */
+    void deleteGame (int gameId, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link GameService#updateGameInfo}.
      */
     void updateGameInfo (GameInfo info, AsyncCallback<Void> callback);

@@ -4,7 +4,9 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.LazyPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,7 +20,9 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.NaviTabPanel;
+import client.util.ClickCallback;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
@@ -55,7 +59,22 @@ public class EditGamePanel extends FlowPanel
         SmartTable header = new SmartTable("Header", 0, 10);
         header.setText(0, 0, data.info.name, 1, "Title");
         header.setWidget(0, 1, MsoyUI.createHTML(_msgs.egTip(), null), 1, "Tip");
+        Button delete = new Button(_msgs.egDelete());
+        header.setWidget(0, 2, delete);
+        header.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
         add(header);
+
+        // wire up the delete button
+        new ClickCallback<Void>(delete, _msgs.egDeleteConfirm()) {
+            @Override protected boolean callService () {
+                _gamesvc.deleteGame(data.info.gameId, this);
+                return true;
+            }
+            @Override protected boolean gotResult (Void result) {
+                Link.go(Pages.GAMES, "m");
+                return true;
+            }
+        };
 
         // add our giant tab list of doom
         add(_tabs = new NaviTabPanel(Pages.GAMES) {

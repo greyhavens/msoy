@@ -207,6 +207,21 @@ public class CommentRepository extends DepotRepository
     }
 
     /**
+     * Deletes all comments for the specified entity.
+     */
+    public void deleteComments (int entityType, int entityId)
+    {
+        // delete the comments
+        deleteAll(CommentRecord.class, new Where(CommentRecord.ENTITY_TYPE, entityType,
+                                                 CommentRecord.ENTITY_ID, entityId), null);
+
+        // delete the comment ratings
+        deleteAll(CommentRatingRecord.class,
+                  new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
+                            CommentRatingRecord.ENTITY_ID, entityId), null);
+    }
+
+    /**
      * Deletes all data associated with the supplied members. This is done as a part of purging *
      * member accounts.
      */

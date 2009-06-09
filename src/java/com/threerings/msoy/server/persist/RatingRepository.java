@@ -133,10 +133,13 @@ public abstract class RatingRepository extends DepotRepository
             targetRec.ratingSum, targetRec.ratingCount), newRating);
     }
 
-    // TODO: Doc me
+    /**
+     * Purges all ratings for the specified target.
+     */
     public void deleteRatings (int targetId)
     {
-        deleteAll(getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
+        deleteAll(getRatingClass(),
+                  new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId), null);
     }
 
     // TODO: Doc me
