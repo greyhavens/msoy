@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 
-import client.person.FeedMessagePanel.BasicWidget;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -30,70 +29,25 @@ import client.util.InfoCallback;
  */
 public class PlayerFeedPanel extends FlowPanel
 {
-    public static interface FeedLoader
+    public PlayerFeedPanel (String emptyMessage, List<FeedMessage> feed)
     {
-        void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback);
-    }
-
-    public PlayerFeedPanel (String emptyMessage, FeedLoader feedLoader)
-    {
-        add(_feeds = new FeedList());
-        _emptyMessage = emptyMessage;
-
-        add(_moreLabel = MsoyUI.createActionLabel("", "FeedShowMore", new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                loadFeed(!_fullPage);
-            }
-        }));
-        _feedLoader = feedLoader;
-    }
-
-    public void setFeed (List<FeedMessage> feed, boolean fullPage)
-    {
-        _fullPage = fullPage;
-        _feeds.clear();
-        _feeds.populate(feed, _emptyMessage, _fullPage);
-        _moreLabel.setText(_fullPage ? _pmsgs.shortFeed() : _pmsgs.fullFeed());
-    }
-
-    protected void loadFeed (final boolean fullPage)
-    {
-        int feedDays = fullPage ? FULL_CUTOFF : SHORT_CUTOFF;
-        _feedLoader.loadFeed(feedDays, new InfoCallback<List<FeedMessage>>() {
-            public void onSuccess (List<FeedMessage> messages) {
-                setFeed(messages, fullPage);
-            }
-        });
+        if (feed.size() == 0) {
+            add(MsoyUI.createLabel(emptyMessage, null));
+        } else {
+            add(new FeedList(feed));
+        }
     }
 
     protected static class FeedList extends FlowPanel
     {
-        public FeedList ()
+        public FeedList (List<FeedMessage> messages)
         {
             setStyleName("FeedList");
-        }
 
-        public void populate (List<FeedMessage> messages, String emptyMessage, boolean fullPage)
-        {
-            if (messages.size() == 0) {
-                add(new BasicWidget(emptyMessage));
-                return;
-            }
-
-            // sort messages in descending order by posted
-            FeedMessage[] messageArray = messages.toArray(new FeedMessage[messages.size()]);
-            Arrays.sort(messageArray, new Comparator<FeedMessage> () {
-                public int compare (FeedMessage f1, FeedMessage f2) {
-                    return f2.posted > f1.posted ? 1 : (f1.posted > f2.posted ? -1 : 0);
-                }
-                public boolean equals (Object obj) {
-                    return obj == this;
-                }
-            });
-
-            // combine multiple actions by the same member, or multiple members performing the
-            // same action, grouping by date.
-            messages = FeedMessageAggregator.aggregate(messageArray, true);
+            // combine multiple actions by the same member, or multiple members performing the same
+            // action, grouping by date
+            messages = FeedMessageAggregator.aggregate(
+                messages.toArray(new FeedMessage[messages.size()]), true);
 
             long header = FeedMessageAggregator.startOfDay(System.currentTimeMillis());
             long yesterday = header - ONE_DAY;
@@ -102,12 +56,6 @@ public class PlayerFeedPanel extends FlowPanel
                     header = FeedMessageAggregator.startOfDay(message.posted);
                     if (yesterday < message.posted) {
                         add(new DateWidget(_pmsgs.yesterday()));
-                    } else if (!fullPage) {
-                        // stop after displaying today and yesterday; we let the server send us 48
-                        // hours of feed messages to account for timezone differences, but we
-                        // actually only want to see things that happened today and yesterday in
-                        // our timezone
-                        break;
                     } else {
                         add(new DateWidget(new Date(header)));
                     }
@@ -136,12 +84,6 @@ public class PlayerFeedPanel extends FlowPanel
             setText(label);
         }
     }
-
-    protected FeedList _feeds;
-    protected Label _moreLabel;
-    protected String _emptyMessage;
-    protected boolean _fullPage;
-    protected FeedLoader _feedLoader;
 
     protected static final DateTimeFormat _dateFormater = DateTimeFormat.getFormat("MMMM d:");
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

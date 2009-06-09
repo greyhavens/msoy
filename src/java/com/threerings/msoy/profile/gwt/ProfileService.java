@@ -133,12 +133,6 @@ public interface ProfileService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the self feed for the specified member
-     */
-    List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
-        throws ServiceException;
-
-    /**
      * For testing, sends the given user's retention email to the authenticated user's email
      * address.
      */

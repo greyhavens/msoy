@@ -176,50 +176,11 @@ public class FeedLogic
     }
 
     /**
-     * Resolves the necessary names and converts the supplied list of feed messages to runtime
-     * records.
+     * Loads time-sorted the raw feed for the specified member.
      */
-    public List<FeedMessage> resolveFeedMessages (List<FeedMessageRecord> records)
+    public List<FeedMessage> loadMemberFeed (int memberId, int limit)
     {
-        // find out which member and group names we'll need
-        IntSet memberIds = new ArrayIntSet(), groupIds = new ArrayIntSet();
-        for (FeedMessageRecord record : records) {
-            if (record instanceof FriendFeedMessageRecord) {
-                memberIds.add(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof GroupFeedMessageRecord) {
-                groupIds.add(((GroupFeedMessageRecord)record).groupId);
-            } else if (record instanceof SelfFeedMessageRecord) {
-                memberIds.add(((SelfFeedMessageRecord)record).actorId);
-            }
-        }
-
-        // generate a lookup for the member names
-        IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(memberIds);
-
-        // generate a lookup for the group names
-        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
-        for (GroupRecord group : _groupRepo.loadGroups(groupIds)) {
-            groupNames.put(group.groupId, group.toGroupName());
-        }
-
-        // create our list of feed messages
-        List<FeedMessage> messages = Lists.newArrayList();
-        for (FeedMessageRecord record : records) {
-            FeedMessage message = record.toMessage();
-            if (record instanceof FriendFeedMessageRecord) {
-                ((FriendFeedMessage)message).friend =
-                    memberNames.get(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof GroupFeedMessageRecord) {
-                ((GroupFeedMessage)message).group =
-                    groupNames.get(((GroupFeedMessageRecord)record).groupId);
-            } else if (record instanceof SelfFeedMessageRecord) {
-                ((SelfFeedMessage)message).actor =
-                    memberNames.get(((SelfFeedMessageRecord)record).actorId);
-            }
-            messages.add(message);
-        }
-
-        return messages;
+        return resolveFeedMessages(_feedRepo.loadMemberFeed(memberId, limit));
     }
 
     /**
@@ -317,6 +278,53 @@ public class FeedLogic
             log.warning("Failed to post trophy to Facebook", "memId", memberId, "name", name,
                         "error", e);
         }
+    }
+
+    /**
+     * Resolves the necessary names and converts the supplied list of feed messages to runtime
+     * records.
+     */
+    protected List<FeedMessage> resolveFeedMessages (List<FeedMessageRecord> records)
+    {
+        // find out which member and group names we'll need
+        IntSet memberIds = new ArrayIntSet(), groupIds = new ArrayIntSet();
+        for (FeedMessageRecord record : records) {
+            if (record instanceof FriendFeedMessageRecord) {
+                memberIds.add(((FriendFeedMessageRecord)record).actorId);
+            } else if (record instanceof GroupFeedMessageRecord) {
+                groupIds.add(((GroupFeedMessageRecord)record).groupId);
+            } else if (record instanceof SelfFeedMessageRecord) {
+                memberIds.add(((SelfFeedMessageRecord)record).actorId);
+            }
+        }
+
+        // generate a lookup for the member names
+        IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(memberIds);
+
+        // generate a lookup for the group names
+        IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
+        for (GroupRecord group : _groupRepo.loadGroups(groupIds)) {
+            groupNames.put(group.groupId, group.toGroupName());
+        }
+
+        // create our list of feed messages
+        List<FeedMessage> messages = Lists.newArrayList();
+        for (FeedMessageRecord record : records) {
+            FeedMessage message = record.toMessage();
+            if (record instanceof FriendFeedMessageRecord) {
+                ((FriendFeedMessage)message).friend =
+                    memberNames.get(((FriendFeedMessageRecord)record).actorId);
+            } else if (record instanceof GroupFeedMessageRecord) {
+                ((GroupFeedMessage)message).group =
+                    groupNames.get(((GroupFeedMessageRecord)record).groupId);
+            } else if (record instanceof SelfFeedMessageRecord) {
+                ((SelfFeedMessage)message).actor =
+                    memberNames.get(((SelfFeedMessageRecord)record).actorId);
+            }
+            messages.add(message);
+        }
+
+        return messages;
     }
 
     @Inject protected FacebookLogic _faceLogic;

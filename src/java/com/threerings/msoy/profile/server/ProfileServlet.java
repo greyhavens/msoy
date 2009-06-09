@@ -69,7 +69,6 @@ import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.GalleryLogic;
-import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
@@ -172,7 +171,7 @@ public class ProfileServlet extends MsoyServiceServlet
         result.groups = resolveGroupsData(memrec, tgtrec);
 
         // load feed
-        result.feed = loadFeed(memberId, DEFAULT_FEED_DAYS);
+        result.feed = _feedLogic.loadMemberFeed(memberId, MAX_FEED_ENTRIES);
 
         // load recent favorites
         result.faves = _itemLogic.resolveFavorites(
@@ -336,13 +335,6 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List<FeedMessage> loadSelfFeed (final int profileMemberId, final int cutoffDays)
-        throws ServiceException
-    {
-        return loadFeed(profileMemberId, cutoffDays);
-    }
-
-    // from interface ProfileService
     public void sendRetentionEmail (int profileMemberId)
         throws ServiceException
     {
@@ -351,16 +343,6 @@ public class ProfileServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
         _spamLogic.testRetentionEmail(profileMemberId, mrec.accountName);
-    }
-
-    /**
-     * Helper function for {@link #loadSelfFeed} and {@link #loadProfile}.
-     */
-    protected List<FeedMessage> loadFeed (final int profileMemberId, final int cutoffDays)
-    {
-        // load up the feed records for the target member
-        return _feedLogic.resolveFeedMessages(
-            _feedRepo.loadMemberFeed(profileMemberId, cutoffDays));
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
@@ -465,7 +447,6 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedLogic _feedLogic;
-    @Inject protected FeedRepository _feedRepo;
     @Inject protected GalleryLogic _galleryLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
@@ -487,5 +468,5 @@ public class ProfileServlet extends MsoyServiceServlet
     protected static final int MIN_GREETER_LEVEL = DeploymentConfig.devDeployment ? 5 : 10;
     protected static final int MIN_GREETER_FRIENDS = DeploymentConfig.devDeployment ? 3 : 20;
 
-    protected static final int DEFAULT_FEED_DAYS = 2;
+    protected static final int MAX_FEED_ENTRIES = 10;
 }

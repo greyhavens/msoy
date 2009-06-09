@@ -38,12 +38,6 @@ public interface ProfileServiceAsync
     void findProfiles (String search, AsyncCallback<List<MemberCard>> callback);
 
     /**
-     * The asynchronous version of {@link ProfileService#loadSelfFeed}.
-     */
-    void loadSelfFeed (int profileMemberId, int cutoffDays,
-                       AsyncCallback<List<FeedMessage>> callback);
-
-    /**
      * The asynchronous version of {@link ProfileService#sendRetentionEmail}.
      */
     void sendRetentionEmail (int profileMemberId, AsyncCallback<Void> callback);

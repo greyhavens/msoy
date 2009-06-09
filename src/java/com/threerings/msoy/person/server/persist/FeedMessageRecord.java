@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.ColumnExp;
@@ -29,6 +30,14 @@ public abstract class FeedMessageRecord extends PersistentRecord
     public static final ColumnExp DATA = colexp(_R, "data");
     public static final ColumnExp POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
+
+    /** Compares records by {@link #posted} time. Newer first. */
+    public static final Comparator<FeedMessageRecord> BY_POSTED =
+        new Comparator<FeedMessageRecord>() {
+        public int compare (FeedMessageRecord one, FeedMessageRecord two) {
+            return two.posted.compareTo(one.posted);
+        }
+    };
 
     /** A unique identifier for this message. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

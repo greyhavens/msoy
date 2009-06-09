@@ -30,16 +30,8 @@ public class FeedBlurb extends Blurb
     public void init (final ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-
         setHeader(_msgs.feedTitle());
-        String empty = _msgs.emptySelfFeed(pdata.name.toString());
-        PlayerFeedPanel feed = new PlayerFeedPanel(empty, new PlayerFeedPanel.FeedLoader() {
-            public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
-                _profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
-            }
-        });
-        feed.setFeed(pdata.feed, false);
-        setContent(feed);
+        setContent(new PlayerFeedPanel(_msgs.emptySelfFeed(""+pdata.name), pdata.feed));
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

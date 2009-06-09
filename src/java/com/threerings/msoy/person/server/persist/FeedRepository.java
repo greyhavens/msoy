@@ -5,6 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -12,12 +13,16 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.CollectionUtil;
+
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Equals;
@@ -90,17 +95,22 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Loads all applicable feed messages by the specified member.
-     *
-     * @param cutoffDays the number of days in the past before which not to load messages.
+     * Loads feed messages by the specified member up to the specified limit. They are sorted from
+     * most recently occurring to least.
      */
-    public List <FeedMessageRecord> loadMemberFeed (int memberId, int cutoffDays)
+    public List <FeedMessageRecord> loadMemberFeed (int memberId, int limit)
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
-        SQLOperator actor = new Equals(FriendFeedMessageRecord.ACTOR_ID, memberId);
-        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, cutoffDays);
-        SQLOperator self = new Equals(SelfFeedMessageRecord.TARGET_ID, memberId);
-        loadFeedMessages(messages, SelfFeedMessageRecord.class, self, cutoffDays);
+        messages.addAll(findAll(FriendFeedMessageRecord.class,
+                                new Where(FriendFeedMessageRecord.ACTOR_ID, memberId),
+                                OrderBy.descending(FriendFeedMessageRecord.POSTED),
+                                new Limit(0, limit)));
+        messages.addAll(findAll(SelfFeedMessageRecord.class,
+                                new Where(SelfFeedMessageRecord.TARGET_ID, memberId),
+                                OrderBy.descending(SelfFeedMessageRecord.POSTED),
+                                new Limit(0, limit)));
+        Collections.sort(messages, FeedMessageRecord.BY_POSTED);
+        CollectionUtil.limit(messages, limit);
         return messages;
     }
 
