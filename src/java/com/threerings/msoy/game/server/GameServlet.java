@@ -569,11 +569,21 @@ public class GameServlet extends MsoyServiceServlet
         GameInfoRecord grec = requireIsGameCreator(gameId, mrec);
 
         // make sure all of our subitems are delisted and deleted
+        int origs = 0, masters = 0;
         for (GameItem item : grec.getSuiteTypes()) {
             ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
-            if (repo.loadGameOriginals(gameId).size() > 0) {
-                throw new ServiceException("e.must_delete_all_subitems");
+            for (ItemRecord rec : repo.loadGameOriginals(gameId)) {
+                if (rec.ownerId != 0) {
+                    origs++;
+                } else {
+                    masters++;
+                }
             }
+        }
+        if (origs > 0) {
+            throw new ServiceException("e.must_delete_all_subitems");
+        } else if (masters > 0) {
+            throw new ServiceException("e.cannot_delete_sold_game");
         }
 
         // delete this game's comments
