@@ -71,7 +71,7 @@ public class MoneyTransactionExpirer
         int bling = _repo.deleteOldTransactions(Currency.BLING, BAR_MAX_AGE);
         int exchange = _repo.deleteOldExchangeRecords(EXCHANGE_MAX_AGE);
         if (coins > 0 || bars > 0 || bling > 0 || exchange > 0) {
-            log.info("Removed old money transacion records.",
+            log.info("Removed old money transaction records.",
                  "coins", coins, "bars", bars, "bling", bling, "exchange", exchange);
         }
     }
