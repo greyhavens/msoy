@@ -579,11 +579,13 @@
     <property name="swfname" value="world-client"/>
     <property name="dev_deployment" value="true"/>
     <property name="flex.extra-arg" value="-externs=DummyValueIgnore"/>
+    <property name="flex.extra-arg-2" value="-externs=DummyValueIgnore"/>
     <property name="copydir" value="pages/clients/${version}"/>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="${flex.extra-arg}"/>
+      <arg value="${flex.extra-arg-2}"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
@@ -692,9 +694,9 @@
   <target name="embedstub">
     <antcall target="ascompile">
       <param name="flex.extra-arg" value="-static-rsls=true"/>
+      <param name="flex.extra-arg-2" value="-use-network"/>
       <param name="aspath" value="applets/EmbedStub.as"/>
       <param name="swfname" value="embedstub-base"/>
-      <param name="flex.extra-arg" value="-use-network"/>
       <param name="copydir" value=""/> <!-- don't copy anywhere -->
     </antcall>
   </target>
@@ -702,9 +704,9 @@
   <target name="mochistub">
     <antcall target="ascompile">
       <param name="flex.extra-arg" value="-static-rsls=true"/>
+      <param name="flex.extra-arg-2" value="-use-network"/>
       <param name="aspath" value="applets/EmbedStubMochiAd.as"/>
       <param name="swfname" value="mochistub-base"/>
-      <param name="flex.extra-arg" value="-use-network"/>
       <param name="copydir" value=""/> <!-- don't copy anywhere -->
     </antcall>
   </target>
