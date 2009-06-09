@@ -6,6 +6,7 @@ package com.threerings.msoy.admin.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -661,8 +662,30 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        // pass the buck right on through to the repository
-        return _memberRepo.summarizeEntries();
+
+        // load the raw entry summary data
+        List<EntrySummary> sums = _memberRepo.summarizeEntries();
+
+        // now combine pages with random arguments into a single entry
+        Map<String, EntrySummary> map = Maps.newHashMap();
+        for (Iterator<EntrySummary> iter = sums.iterator(); iter.hasNext(); ) {
+            EntrySummary sum = iter.next();
+            int didx = sum.vector.indexOf("-");
+            if (didx == -1) {
+                continue;
+            }
+            String tvector = sum.vector.substring(0, didx+1) + "...";
+            EntrySummary tsum = map.get(tvector);
+            if (tsum == null) {
+                map.put(tvector, sum);
+            } else {
+                tsum.entries += sum.entries;
+                tsum.registrations += sum.registrations;
+                iter.remove();
+            }
+        }
+
+        return sums;
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
