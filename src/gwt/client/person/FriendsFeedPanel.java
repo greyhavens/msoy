@@ -3,7 +3,9 @@
 
 package client.person;
 
+import java.util.Arrays;
 import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -72,7 +74,8 @@ public class FriendsFeedPanel extends FlowPanel
         categoryPanel.add(MsoyUI.createLabel(categoryTitle, "FeedCategoryHeader"));
 
         // combine feed items performed by the same person
-        List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);
+        List<FeedMessage> messages = FeedMessageAggregator.aggregate(
+            Arrays.asList(category.messages), false);
         for (FeedMessage message : messages) {
             try {
                 categoryPanel.add(new FeedMessagePanel(message, true));

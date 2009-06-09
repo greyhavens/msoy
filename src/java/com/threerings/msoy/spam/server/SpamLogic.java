@@ -4,6 +4,7 @@
 package com.threerings.msoy.spam.server;
 
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -569,7 +570,7 @@ public class SpamLogic
             List<EmailFeedCategory> ecats = Lists.newArrayList();
             for (FeedCategory category : categories) {
                 List<EmailFeedItem> eitems = Lists.transform(
-                    FeedMessageAggregator.aggregate(category.messages, false),
+                    FeedMessageAggregator.aggregate(Arrays.asList(category.messages), false),
                     new Function<FeedMessage, EmailFeedItem>() {;
                         public EmailFeedItem apply (FeedMessage fm) {
                             return new EmailFeedItem(generators, mrec.memberId, fm);

@@ -22,23 +22,21 @@ public class FeedMessageAggregator
     public static final int MAX_AGGREGATED_ITEMS = 5;
 
     /**
-     * Aggregate any messages with the same actor (left aggregate) or the same action (right
-     * aggregate) and return a new message list containing aggregates and/or single messages to
+     * Aggregates any messages with the same actor (left aggregate) or the same action (right
+     * aggregate). Returns a new message list containing aggregates and/or single messages to
      * display.
-     * @param byDate If true, break up the aggregate messages by discrete days
+     *
+     * @param byDate if true, break up the aggregate messages by discrete days.
      */
-    public static List<FeedMessage> aggregate (FeedMessage[] oldMessages, boolean byDate)
+    public static List<FeedMessage> aggregate (List<FeedMessage> messages, boolean byDate)
     {
-        if (oldMessages.length == 0) {
-            return new ArrayList<FeedMessage>();
-        }
         List<FeedMessage> newMessages = new ArrayList<FeedMessage>();
+        if (messages.isEmpty()) {
+            return newMessages;
+        }
 
-        List<FeedMessage> messages = new ArrayList<FeedMessage>();
-        // messages needs to be mutable, and the list returned from Arrays.asList() is fixed
-        // size, resulting in an annoying messages-less break in execution in GWT1.5 compiled
-        // javascript
-        messages.addAll(Arrays.asList(oldMessages));
+        // copy messages because we're going to modify it
+        messages = new ArrayList<FeedMessage>(messages);
 
         HashMap<MessageKey, MessageAggregate> actions = new HashMap<MessageKey, MessageAggregate>();
         HashMap<MessageKey, MessageAggregate> actors = new HashMap<MessageKey, MessageAggregate>();

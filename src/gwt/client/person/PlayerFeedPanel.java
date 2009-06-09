@@ -46,8 +46,7 @@ public class PlayerFeedPanel extends FlowPanel
 
             // combine multiple actions by the same member, or multiple members performing the same
             // action, grouping by date
-            messages = FeedMessageAggregator.aggregate(
-                messages.toArray(new FeedMessage[messages.size()]), true);
+            messages = FeedMessageAggregator.aggregate(messages, true);
 
             long header = FeedMessageAggregator.startOfDay(System.currentTimeMillis());
             long yesterday = header - ONE_DAY;

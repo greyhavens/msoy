@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.tests;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.*;
@@ -39,13 +38,12 @@ public class FeedItemGeneratorUnitTest
     @Test public void testLevelGainAggregation ()
     {
         long now = System.currentTimeMillis();
-        List<FriendFeedMessage> levelGains = new ArrayList<FriendFeedMessage>();
+        List<FeedMessage> levelGains = Lists.newArrayList();
         for (int ii = 0; ii < 20; ++ii) {
             levelGains.add(newLevelGain(now, ii + 1));
         }
         int maxItems = FeedMessageAggregator.MAX_AGGREGATED_ITEMS;
-        List<FeedMessage> aggregated = FeedMessageAggregator.aggregate(
-            levelGains.toArray(new FeedMessage[levelGains.size()]), false);
+        List<FeedMessage> aggregated = FeedMessageAggregator.aggregate(levelGains, false);
         assertEquals(1, aggregated.size());
         assertTrue(aggregated.get(0) instanceof AggregateFeedMessage);
         assertEquals(maxItems, ((AggregateFeedMessage)aggregated.get(0)).messages.size());
