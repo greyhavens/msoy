@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.Calendar;
 import java.util.List;
 
 import com.google.inject.Inject;

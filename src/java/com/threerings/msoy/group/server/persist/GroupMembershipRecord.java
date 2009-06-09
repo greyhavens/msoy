@@ -19,7 +19,6 @@ import com.threerings.msoy.data.all.GroupName;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
-import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 
 /**

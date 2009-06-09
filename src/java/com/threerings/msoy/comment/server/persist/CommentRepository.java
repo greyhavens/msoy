@@ -31,7 +31,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.In;
-import com.samskivert.util.IntIntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
 

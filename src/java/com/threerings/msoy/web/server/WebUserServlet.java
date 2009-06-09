@@ -30,7 +30,6 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CharityInfo;

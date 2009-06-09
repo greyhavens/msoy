@@ -4,7 +4,6 @@
 package com.threerings.msoy.person.gwt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
