@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -90,9 +90,9 @@ public class EditGamePanel extends FlowPanel
                 return new FacebookInfoEditorPanel(data.facebook);
             }
         }, _msgs.egTabFacebook());
-        // NOTE: if you add a tab here, you have to adjust the constants in StuffPage
+        // NOTE: if you add a tab here, you have to adjust StuffPage.PRE_ITEM_TABS
 
-        for (final byte type : SUBITEM_TYPES) {
+        for (final byte type : GameItem.TYPES) {
             _tabs.add(new LazyPanel() {
                 protected Widget createWidget () {
                     return new GameItemEditorPanel(data.info.gameId, type);
@@ -103,10 +103,6 @@ public class EditGamePanel extends FlowPanel
 
     protected int _gameId;
     protected NaviTabPanel _tabs;
-
-    // NOTE: if you add a subitem here, you have to adjust the constants in StuffPage
-    protected static final byte[] SUBITEM_TYPES = {
-        Item.LAUNCHER, Item.TROPHY_SOURCE, Item.ITEM_PACK, Item.LEVEL_PACK, Item.PRIZE };
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

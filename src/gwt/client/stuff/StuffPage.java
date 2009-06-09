@@ -10,9 +10,10 @@ import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
+import com.threerings.msoy.item.data.all.GameItem;
+import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -231,13 +232,15 @@ public class StuffPage extends Page
         BULK_TYPES.add(Item.VIDEO);
     }
 
-    /** A mapping from game sub-item type to tab index. Oh so fragile! */
+    /** The number of tabs on the edit game page before we get to the subitems. */
+    protected static final int PRE_ITEM_TABS = 4;
+
+    /** A mapping from game sub-item type to edit game page tab index. */
     protected static final Map<Byte, Integer> GAME_TYPES = new HashMap<Byte, Integer>();
     static {
-        GAME_TYPES.put(Item.LAUNCHER, 4);
-        GAME_TYPES.put(Item.TROPHY_SOURCE, 5);
-        GAME_TYPES.put(Item.ITEM_PACK, 6);
-        GAME_TYPES.put(Item.LEVEL_PACK, 7);
-        GAME_TYPES.put(Item.PRIZE, 8);
+        int idx = PRE_ITEM_TABS;
+        for (byte type : GameItem.TYPES) {
+            GAME_TYPES.put(type, idx++);
+        }
     }
 }
