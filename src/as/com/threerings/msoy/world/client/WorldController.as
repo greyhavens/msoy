@@ -1224,6 +1224,8 @@ public class WorldController extends MsoyController
 
         } else {
             const onlineFriend :Boolean = us.isOnlineFriend(memId);
+            const isInOurRoom :Boolean = (placeCtrl is RoomObjectController) &&
+                RoomObjectController(placeCtrl).containsPlayer(name);
             // commented out: we are normally constructed from separated names, so we lose the viz
 // TODO: icon if avail?
 //            var icon :* = null;
@@ -1244,10 +1246,8 @@ public class WorldController extends MsoyController
             if (onlineFriend || isSupport) {
                 var label :String = onlineFriend ?
                     Msgs.GENERAL.get("b.visit_friend") : "Visit (as agent)";
-                var canVisit :Boolean = !(placeCtrl is RoomObjectController) ||
-                    !RoomObjectController(placeCtrl).containsPlayer(name);
                 menuItems.push({ label: label, icon: VISIT_ICON,
-                    command: VISIT_MEMBER, arg: memId, enabled: canVisit });
+                    command: VISIT_MEMBER, arg: memId, enabled: !isInOurRoom });
             }
 // Visit Home disabled. Jon says it's pointless.
 //            menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
@@ -1273,7 +1273,7 @@ public class WorldController extends MsoyController
                 icon: BLOCK_ICON,
                 callback: _mctx.getMuteDirector().setMuted, arg: [ name, !muted ] });
             // booting
-            if ((placeCtrl is BootablePlaceController) &&
+            if (addWorldItems && isInOurRoom && (placeCtrl is BootablePlaceController) &&
                     BootablePlaceController(placeCtrl).canBoot()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
                     callback: handleBootFromPlace, arg: memId });
