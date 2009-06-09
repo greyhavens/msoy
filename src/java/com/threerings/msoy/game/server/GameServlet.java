@@ -676,7 +676,8 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireSupportUser();
-        _mgameRepo.addTopGame(portal, gameId, false);
+        boolean featured = portal == ArcadeData.Portal.MAIN;
+        _mgameRepo.addTopGame(portal, gameId, featured);
     }
 
     // from interface GameService
