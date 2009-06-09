@@ -164,7 +164,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         // check visibility
-        if (!mrec.isSupport() && !isVisible(grec.policy, detail.myRank)) {
+        if (!isVisible(mrec, grec.policy, detail.myRank)) {
             return null;
         }
 
@@ -248,7 +248,7 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         // check visibility
-        if (!mrec.isSupport() && !isVisible(grec.policy, info.rank)) {
+        if (!isVisible(mrec, grec.policy, info.rank)) {
             return null;
         }
 
@@ -563,7 +563,7 @@ public class GroupServlet extends MsoyServiceServlet
             _groupRepo.getMembership(groupId, mrec.memberId).left;
 
         // check visibility
-        if (!mrec.isSupport() && !isVisible(grec.policy, result.rank)) {
+        if (!isVisible(mrec, grec.policy, result.rank)) {
             throw new ServiceException(GroupCodes.E_INVALID_GROUP);
         }
 
@@ -776,8 +776,12 @@ public class GroupServlet extends MsoyServiceServlet
         }));
     }
 
-    protected static boolean isVisible (Group.Policy policy, GroupMembership.Rank rank)
+    protected static boolean isVisible (
+        MemberRecord mrec, Group.Policy policy, GroupMembership.Rank rank)
     {
+        if (mrec != null && mrec.isSupport()) {
+            return true;
+        }
         rank = (rank == null ? GroupMembership.Rank.NON_MEMBER : rank);
         return policy != Group.Policy.EXCLUSIVE || rank != GroupMembership.Rank.NON_MEMBER;
     }
