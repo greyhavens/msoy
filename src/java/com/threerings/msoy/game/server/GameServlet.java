@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -18,6 +19,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -96,52 +98,68 @@ public class GameServlet extends MsoyServiceServlet
         ArcadeData data = new ArcadeData();
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
+        // load the hand-picked "top games"
+        boolean dev = DeploymentConfig.devDeployment;
+        List<TopGameRecord> topGames = dev ? _mgameRepo.loadTopGames(portal, true) : null;
+        Set<Integer> topGameIds = dev ? Sets.newHashSet(Lists.transform(topGames,
+            new Function<TopGameRecord, Integer>() {
+                public Integer apply (TopGameRecord rec) {
+                    return rec.gameId;
+                }
+            })) : null;
+
         // load the top N (where N is large) games and build everything from that list
         Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
         for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
+            // for facebook, filter the whole map by the top games
+            if (topGameIds != null && portal == ArcadeData.Portal.FACEBOOK &&
+                !topGameIds.contains(grec.gameId)) {
+                continue;
+            }
             games.put(grec.gameId, grec);
         }
 
-        if (DeploymentConfig.devDeployment) {
-            List<GameInfo> featured =
-                Lists.newArrayListWithExpectedSize(ArcadeData.FEATURED_GAME_COUNT);
-            List<GameCard> top = Lists.newArrayListWithExpectedSize(ArcadeData.TOP_GAME_COUNT);
-            ArrayIntSet creators = new ArrayIntSet();
-            for (TopGameRecord topGame : _mgameRepo.loadTopGames(portal, true)) {
-                GameInfoRecord info = games.get(topGame.gameId);
-                if (info == null) {
-                    // this can happen if a creator hides a game that happens to be a top game
+        if (dev) {
+            // TODO: move to GameLogic
+            ArrayIntSet creatorIds = new ArrayIntSet();
+            List<GameInfo> featured = Lists.newArrayList();
+            for (TopGameRecord topGame : topGames) {
+                if (!topGame.featured) {
                     continue;
                 }
-                Integer gamePop = null;
-                if (topGame.featured && featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-                    gamePop = getGamePop(pps, topGame.gameId);
-                    featured.add(info.toGameInfo(getGamePop(pps, gamePop)));
-                    creators.add(info.creatorId);
+                int gameId = topGame.gameId;
+                GameInfoRecord info = games.get(gameId);
+                if (info == null) {
+                    continue;
                 }
-                if (top.size() < ArcadeData.TOP_GAME_COUNT) {
-                    if (gamePop == null) {
-                        gamePop = getGamePop(pps, topGame.gameId);
-                    }
-                    top.add(info.toGameCard(gamePop));
-                }
-            }
-            data.featuredGames = featured.toArray(new GameInfo[featured.size()]);
-            data.topGames = top;
-
-        } else {
-            // determine the "featured" games based on population
-            data.featuredGames = _gameLogic.loadFeaturedGames(pps, false);
-
-            // list of top N games by ranking
-            data.topGames = Lists.newArrayList();
-            for (GameInfoRecord game : games.values()) {
-                data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
-                if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
+                featured.add(info.toGameInfo(getGamePop(pps, gameId)));
+                creatorIds.add(info.creatorId);
+                if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
                     break;
                 }
             }
 
+            // resolve creator names
+            IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
+            for (GameInfo info : featured) {
+                info.creator = memberNames.get(info.creator.getMemberId());
+            }
+
+            // finally convert to an array
+            data.featuredGames = featured.toArray(new GameInfo[featured.size()]);
+
+        } else {
+            // determine the "featured" games based on population
+            data.featuredGames = _gameLogic.loadFeaturedGames(pps, false);
+        }
+
+        // list of top N games by ranking
+        data.topGames = Lists.newArrayList();
+        for (GameInfoRecord game : games.values()) {
+            data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
+            if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
+                break;
+            }
         }
 
         // list of the top-200 games alphabetically (only include name and id)
