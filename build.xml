@@ -682,6 +682,7 @@
   <!-- builds the mediastub that's used to wrap SWF media -->
   <target name="mediastub">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/MediaStub.as"/>
       <param name="swfname" value="MediaStub"/>
       <param name="copydir" value="pages/media"/> <!-- this gets published specially -->
@@ -690,6 +691,7 @@
 
   <target name="embedstub">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/EmbedStub.as"/>
       <param name="swfname" value="embedstub-base"/>
       <param name="flex.extra-arg" value="-use-network"/>
@@ -699,6 +701,7 @@
 
   <target name="mochistub">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/EmbedStubMochiAd.as"/>
       <param name="swfname" value="mochistub-base"/>
       <param name="flex.extra-arg" value="-use-network"/>
@@ -722,6 +725,7 @@
 
   <target name="camerabutton" depends="asprepare">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/CameraButtonApp.as"/>
       <param name="swfname" value="camerabutton"/>
     </antcall>
@@ -730,6 +734,7 @@
   <!-- builds our media uploader -->
   <target name="uploader" depends="asprepare">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/UploaderApp.as"/>
       <param name="swfname" value="uploader"/>
     </antcall>
@@ -738,6 +743,7 @@
   <!-- builds our video player -->
   <target name="videoplayer" depends="asprepare">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/VideoPlayerApp.as"/>
       <param name="swfname" value="videoplayer"/>
     </antcall>
@@ -746,6 +752,7 @@
   <!-- builds our audio player -->
   <target name="audioplayer" depends="asprepare">
     <antcall target="ascompile">
+      <param name="flex.extra-arg" value="-static-rsls=true"/>
       <param name="aspath" value="applets/AudioPlayerApp.as"/>
       <param name="swfname" value="audioplayer"/>
     </antcall>
