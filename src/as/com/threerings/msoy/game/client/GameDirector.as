@@ -212,7 +212,7 @@ public class GameDirector extends BasicDirector
         if (_liaison.gameGroupId != GameUtil.NO_GROUP) {
             menuData.push({label: Msgs.GAME.get("b.gameGroup"),
                 command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
-            menuData.push({label :Msgs.GAME.get("b.game_whirled"),
+            menuData.push({label :Msgs.GAME.get("b.game_group_home"),
                 command: MsoyController.GO_GROUP_HOME, arg: _liaison.gameGroupId});
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
