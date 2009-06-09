@@ -826,10 +826,6 @@
   padding: 10px;
 }
 
-.editArcadePanel .tongueBox .TContent {
-  padding: 0;
-}
-
 .editArcadePanel .moveUp {
   background-image: url(/images/ui/move_up.png);
   width: 13px;
@@ -848,13 +844,12 @@
   background-color: white;
 }
 
-.editArcadePanel .gameList .Games .Titles div {
-  text-decoration: none;
+.editArcadePanel .gameList .Games {
+  margin: 0;
 }
 
-.editArcadePanel .gameList .Buttons {
-  text-align: right;
-  padding: 10px;
+.editArcadePanel .gameList .Games .Titles div {
+  text-decoration: none;
 }
 
 .editArcadePanel .gameList .PlayButtons {
@@ -866,3 +861,11 @@
 .editArcadePanel .gameList .PlayButtons table.MoveButtons {
   width: 60px;
 }
+
+.editArcadePanel .gameList .Tip {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: black;
+  font-size: 14px;
+}
+

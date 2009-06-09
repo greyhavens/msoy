@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -56,17 +57,29 @@ public class EditArcadePanel extends FlowPanel
     protected void setPage (ArcadeData.Portal portal)
     {
         clear();
-        HorizontalPanel pagesList = new HorizontalPanel();
-        add(pagesList);
-        pagesList.setStyleName("Pages");
-        pagesList.add(MsoyUI.createLabel(_msgs.editArcadePage(), null));
-        pagesList.add(_pages = new ListBox());
+        HorizontalPanel topBits = new HorizontalPanel();
+        add(topBits);
+
+        topBits.setStyleName("Pages");
+        topBits.add(MsoyUI.createLabel(_msgs.editArcadePage(), null));
+        topBits.add(WidgetUtil.makeShim(10, 10));
+        topBits.add(_pages = new ListBox());
         for (ArcadeData.Portal val : ArcadeData.Portal.values()) {
             // TODO: i18n, this is just the enum name for now
             _pages.addItem(val.toString());
             if (val == portal) {
                 _pages.setSelectedIndex(_pages.getItemCount() - 1);
             }
+        }
+
+        topBits.add(WidgetUtil.makeShim(10, 10));
+        switch (portal) {
+        case FACEBOOK:
+            topBits.add(Link.create(_msgs.editArcadeView(), "View", Pages.GAMES, "fb"));
+            break;
+        case MAIN:
+            topBits.add(Link.create(_msgs.editArcadeView(), "View", Pages.GAMES));
+            break;
         }
 
         _pages.addChangeHandler(new ChangeHandler() {
@@ -79,9 +92,8 @@ public class EditArcadePanel extends FlowPanel
             return;
         }
 
-        FlowPanel topGames = new FlowPanel();
-        add(new TongueBox(_msgs.editArcadeTopGames(), topGames));
-        topGames.add(new TopGamesPanel(portal));
+        add(new TongueBox(portal == ArcadeData.Portal.FACEBOOK ? _msgs.editArcadeApprovedGames() :
+            _msgs.editArcadeFeaturedGames(), new TopGamesPanel(portal)));
     }
 
     /**
@@ -111,11 +123,20 @@ public class EditArcadePanel extends FlowPanel
                 _featured.add(gameId);
             }
 
-            add(Link.create(_msgs.etgAdd(), Pages.GAMES, "at", _portal.toByte()));
+            switch (_portal) {
+            case FACEBOOK:
+                add(MsoyUI.createLabel(_msgs.etgFacebookTip(), "Tip"));
+                break;
+            case MAIN:
+                add(MsoyUI.createLabel(_msgs.etgMainTip(), "Tip"));
+                break;
+            }
             add(_grid = new GameGrid(_topGames));
-            FlowPanel buttons = new FlowPanel();
+            HorizontalPanel buttons = new HorizontalPanel();
+            buttons.setSpacing(10);
             buttons.setStyleName("Buttons");
             buttons.add(_save = new Button(_msgs.etgSave()));
+            buttons.add(Link.create(_msgs.etgAdd(), Pages.GAMES, "at", _portal.toByte()));
             add(buttons);
             new ClickCallback<Void>(_save) {
                 @Override protected boolean callService () {
@@ -184,19 +205,21 @@ public class EditArcadePanel extends FlowPanel
             }));
             FlowPanel buttons = new FlowPanel();
             buttons.add(moveButtons);
-            CheckBox feat = new CheckBox(_msgs.etgFeatured());
-            feat.setValue(_featured.contains(gameId));
-            feat.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                public void onValueChange (ValueChangeEvent<Boolean> event) {
-                    if (event.getValue()) {
-                        _featured.add(gameId);
-                    } else {
-                        _featured.remove(gameId);
+            if (_portal == ArcadeData.Portal.FACEBOOK) {
+                CheckBox feat = new CheckBox(_msgs.etgFeatured());
+                feat.setValue(_featured.contains(gameId));
+                feat.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    public void onValueChange (ValueChangeEvent<Boolean> event) {
+                        if (event.getValue()) {
+                            _featured.add(gameId);
+                        } else {
+                            _featured.remove(gameId);
+                        }
+                        _featuredChanged = true;
                     }
-                    _featuredChanged = true;
-                }
-            });
-            buttons.add(feat);
+                });
+                buttons.add(feat);
+            }
             return buttons;
         }
 
