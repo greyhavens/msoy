@@ -18,6 +18,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
@@ -27,6 +28,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.person.gwt.FeedMessageType;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
@@ -117,7 +120,7 @@ public class GroupLogic
                 try {
                     // create the group and then add the creator to it
                     _groupRepo.createGroup(grec);
-                    _groupRepo.joinGroup(grec.groupId, grec.creatorId, Rank.MANAGER);
+                    _groupRepo.addMember(grec.groupId, grec.creatorId, Rank.MANAGER);
                 } catch (DuplicateKeyException dke) {
                     // inform the user that the name is already in use
                     throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
@@ -134,6 +137,13 @@ public class GroupLogic
             MemberNodeActions.joinedGroup(grec.creatorId, gm);
         } catch (Exception e) { // don't let this booch the purchase
             log.warning("Error notifying of new group", "memberId", mrec.memberId, e);
+        }
+
+        // if the group is non-private, publish that they created it in their feed
+        if (grec.policy != Group.Policy.EXCLUSIVE) {
+            _feedLogic.publishMemberMessage(
+                mrec.memberId, FeedMessageType.FRIEND_CREATED_GROUP,
+                grec.groupId, grec.name, MediaDesc.mdToString(grec.toLogo()));
         }
 
         return result;
@@ -241,6 +251,7 @@ public class GroupLogic
     protected static final Object GROUP_PURCHASE_KEY = new Object();
 
     // our dependencies
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoySceneRepository _sceneRepo;

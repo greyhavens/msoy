@@ -332,7 +332,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Makes a given person a member of a given group.
      */
-    public void joinGroup (int groupId, int memberId, Rank rank)
+    public void addMember (int groupId, int memberId, Rank rank)
     {
         GroupMembershipRecord record = new GroupMembershipRecord();
         record.groupId = groupId;

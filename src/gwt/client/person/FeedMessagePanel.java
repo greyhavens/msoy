@@ -111,10 +111,6 @@ public class FeedMessagePanel extends FocusPanel
                 return _dmsgs.get("badge_" + hexCode, levelName);
             }
 
-            public String noGroupForMedal (String medalLink) {
-                return _pmsgs.medalNoGroup(medalLink);
-            }
-
             public String medal (String medal, String group) {
                 return _pmsgs.medal(medal, group);
             }
@@ -167,6 +163,17 @@ public class FeedMessagePanel extends FocusPanel
                 case FRIEND_SUBSCRIBED:
                     return plural == Plural.SUBJECT ?
                         _pmsgs.friendsSubscribed(subject) : _pmsgs.friendSubscribed(subject);
+
+                case FRIEND_CREATED_GROUP:
+                    return _pmsgs.friendCreatedGroup(subject, object);
+
+                case FRIEND_JOINED_GROUP:
+                    switch (plural) {
+                    default:
+                    case NONE: return _pmsgs.friendJoinedGroup(subject, object);
+                    case SUBJECT: return _pmsgs.friendsJoinedGroup(subject, object);
+                    case OBJECT: return _pmsgs.friendJoinedGroups(subject, object);
+                    }
 
                 case GROUP_ANNOUNCEMENT:
                     return _pmsgs.groupAnnouncement(subject, object);

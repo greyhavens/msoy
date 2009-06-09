@@ -368,7 +368,7 @@ public class GroupServlet extends MsoyServiceServlet
         // them the UI for joining; this will eventually be a problem
 
         // create a record indicating that we've joined this group
-        _groupRepo.joinGroup(groupId, mrec.memberId, Rank.MEMBER);
+        _groupRepo.addMember(groupId, mrec.memberId, Rank.MEMBER);
 
         // update this member's distributed object if they're online anywhere
         GroupMembership gm = new GroupMembership();
@@ -379,6 +379,13 @@ public class GroupServlet extends MsoyServiceServlet
         // also let the chat channel manager know that this group has a new member
         _channelMan.bodyAddedToChannel(
             MsoyChatChannel.makeGroupChannel(grec.toGroupName()), mrec.memberId);
+
+        // if the group is non-private, publish that they joined in their feed
+        if (grec.policy != Group.Policy.EXCLUSIVE) {
+            _feedLogic.publishMemberMessage(
+                mrec.memberId, FeedMessageType.FRIEND_JOINED_GROUP,
+                grec.groupId, grec.name, MediaDesc.mdToString(grec.toLogo()));
+        }
     }
 
     // from interface GroupService

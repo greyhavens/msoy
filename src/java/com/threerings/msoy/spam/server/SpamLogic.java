@@ -980,11 +980,6 @@ public class SpamLogic
         }
 
         // from Messages
-        public String noGroupForMedal (String medalLink) {
-            return _pmsgs.get("medalNoGroup", medalLink);
-        }
-
-        // from Messages
         public String medal (String medal, String group) {
             return _pmsgs.get("medal", medal, group);
         }

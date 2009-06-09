@@ -271,11 +271,6 @@ public class FeedItemGeneratorUnitTest
             return simpleToString("medal", "name", medal, "group", group);
         }
 
-        public String noGroupForMedal (String medalLink) {
-            calls.count();
-            return simpleToString("medal", "name", medalLink);
-        }
-
         public String typeName (String itemType) {
             calls.count();
             return simpleToString("itemtype", "type", itemType);

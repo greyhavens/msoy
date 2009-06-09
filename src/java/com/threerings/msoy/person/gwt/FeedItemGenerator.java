@@ -95,9 +95,6 @@ public class FeedItemGenerator
         /** Gets the name of a badge. */
         String badgeName (int code, String levelName);
 
-        /** Gets the name of a medal when no group was involved. */
-        String noGroupForMedal (String medalLink);
-
         /** Gets the name of a medal. */
         String medal (String medal, String group);
 
@@ -177,6 +174,8 @@ public class FeedItemGenerator
         case FRIEND_LISTED_ITEM:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
+        case FRIEND_CREATED_GROUP:
+        case FRIEND_JOINED_GROUP:
             addMedia(media, text);
             break;
 
@@ -347,13 +346,13 @@ public class FeedItemGenerator
             memberId = ((FriendFeedMessage)message).friend.getMemberId();
             String medalLink = _builder.createLink(
                 message.data[0], Pages.ME, Args.compose("medals", memberId));
-            if (message.data.length < 4) {
-                // legacy medal messages are missing group info.
-                return _messages.noGroupForMedal(medalLink);
-            }
             String groupLink = _builder.createLink(
                 message.data[2], Pages.GROUPS, Args.compose("d", message.data[3]));
             return _messages.medal(medalLink, groupLink);
+
+        case GROUPS:
+            return _builder.createLink(message.data[1], Pages.GROUPS,
+                                       Args.compose("d", message.data[0]));
 
         case COMMENTS:
             if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
@@ -444,6 +443,13 @@ public class FeedItemGenerator
             }
             int friendId = ((FriendFeedMessage)message).friend.getMemberId();
             return _builder.createMedia(media, Pages.ME, Args.compose("medals", friendId));
+
+        case GROUPS:
+            media = MediaDesc.stringToMD(message.data[2]);
+            if (media == null) {
+                return null;
+            }
+            return _builder.createMedia(media, Pages.GROUPS, Args.compose("d", message.data[0]));
 
         case ANNOUNCEMENTS:
             if (message.data.length < 4) {
