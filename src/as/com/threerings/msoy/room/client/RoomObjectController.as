@@ -290,6 +290,15 @@ public class RoomObjectController extends RoomController
     }
 
     /**
+     * A callback from the RoomObjectView to let us know that we may want to take a
+     * step with door editing.
+     */
+    public function backgroundFinishedLoading () :void
+    {
+        DoorTargetEditController.updateLocation();
+    }
+
+    /**
      * Handle the ROOM_EDIT command.
      */
     public function handleRoomEdit () :void

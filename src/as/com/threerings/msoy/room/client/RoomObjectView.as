@@ -65,8 +65,6 @@ import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.room.client.editor.DoorTargetEditController;
-
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;
@@ -609,9 +607,7 @@ public class RoomObjectView extends RoomView
         // play any music..
         updateBackgroundAudio();
 
-        // TODO: HOWSABOUT WE ONLY USE THE DOOR THINGY WHEN WE'RE MAKING DOORS!
-        // inform the "floating" door editor
-        DoorTargetEditController.updateLocation();
+        _octrl.backgroundFinishedLoading();
     }
 
     /**
