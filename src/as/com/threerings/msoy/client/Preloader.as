@@ -348,7 +348,7 @@ public class Preloader extends Sprite
 
     protected function handleProgress (event :ProgressEvent) :void
     {
-        _spinner.setProgress(event.bytesLoaded, event.bytesTotal);
+        _spinner.setProgress(event.bytesLoaded * PRELOADER_PERCENT, event.bytesTotal);
     }
 
     protected function handleComplete (event :Event) :void
@@ -375,6 +375,11 @@ public class Preloader extends Sprite
         [ "gameId", "world-game_p_" ],
         [ "game", "world-game_p_" ] // alias used by stubs
     ];
+
+    /** Specifies the "max value" of the preloader, to avoid going to 100% and then having more
+     * steps after that. In the future we may have a unified loader for:
+     * preloading, initializing/connecting, joining your first game/room. */
+    protected static const PRELOADER_PERCENT :Number = .8; // 80%
 
     /** The number of pixels below the center of the loading spinner that we put the blurb. */
     protected static const BLURB_Y_OFFSET :int = 175;
