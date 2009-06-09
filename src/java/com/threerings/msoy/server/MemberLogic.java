@@ -23,6 +23,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
+
+import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.whirled.game.server.persist.GameCookieRepository;
@@ -553,6 +555,7 @@ public class MemberLogic
             _mgameRepo.purgeMembers(purgeIds);
             _moneyRepo.purgeMembers(purgeIds);
             _profileRepo.purgeMembers(purgeIds);
+            _ratingRepo.purgePlayers(purgeIds);
             _sceneRepo.purgeMembers(purgeIds);
             _statRepo.purgePlayers(purgeIds);
             _trophyRepo.purgeMembers(purgeIds);
@@ -856,6 +859,7 @@ public class MemberLogic
     @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyOOOUserRepository _oooAuthRepo;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected RatingRepository _ratingRepo;
     @Inject protected StatRepository _statRepo;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected UserActionRepository _uactionRepo;
