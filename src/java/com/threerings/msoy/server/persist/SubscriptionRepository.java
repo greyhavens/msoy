@@ -26,6 +26,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
+import com.samskivert.depot.operator.Or;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -115,8 +116,9 @@ public class SubscriptionRepository extends DepotRepository
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
             new Where(new And(
                 SubscriptionRecord.SUBSCRIBER.eq(true),
-                SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(type),
-                SubscriptionRecord.SPECIAL_ITEM_ID.notEq(itemId))));
+                new Or(
+                    SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(type),
+                    SubscriptionRecord.SPECIAL_ITEM_ID.notEq(itemId)))));
         return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
     }
 
