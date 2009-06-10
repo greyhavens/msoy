@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -24,7 +23,6 @@ import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
-import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -163,7 +161,7 @@ public class LandingPanel extends FlowPanel
         // create our click callback that handles the actual registation process
         new ClickCallback<WebUserService.RegisterData>(doCreate) {
             @Override protected boolean callService () {
-                if (!tosBox.isChecked()) {
+                if (!tosBox.getValue()) {
                     MsoyUI.errorNear(_msgs.landingMustTOS(), tosBox);
                     return false;
                 }

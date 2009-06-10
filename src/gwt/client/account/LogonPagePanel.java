@@ -7,10 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.gwt.Pages;
-
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.NaviUtil;
 
 /**

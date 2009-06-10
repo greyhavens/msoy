@@ -15,7 +15,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
-import client.util.InfoCallback;
 import client.util.Link;
 import client.util.NaviUtil;
 
