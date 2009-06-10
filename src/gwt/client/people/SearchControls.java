@@ -36,7 +36,8 @@ public class SearchControls extends SmartTable
 
         PushButton action;
         if (CShell.isGuest()) {
-            action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchJoin(), NaviUtil.onSignUp());
+            action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchJoin(),
+                                         NaviUtil.onMustRegister());
         } else {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchInvite(),
                                          Link.createHandler(Pages.PEOPLE, "invites"));

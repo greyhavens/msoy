@@ -56,7 +56,7 @@ public class AccountPage extends Page
             if (CShell.isMember()) {
                 setContent(_msgs.editTitle(), new EditAccountPanel());
             } else {
-                NaviUtil.onSignUp().onClick(null); // guests/permaguest must register
+                NaviUtil.onMustRegister().onClick(null); // guests/permaguest must register
             }
 
         } else if (action.equals("delete")) {
@@ -69,7 +69,7 @@ public class AccountPage extends Page
                 setContent(_msgs.confirmDeleteTitle(), new ConfirmDeletePanel(args.get(1, "")));
             } else {
                 // redirect guests so logging on will brink them back here
-                NaviUtil.onSignUp().onClick(null);
+                NaviUtil.onMustRegister().onClick(null);
             }
 
         } else if (action.equals("config")) {

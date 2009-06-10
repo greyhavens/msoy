@@ -799,7 +799,7 @@ public class MsoyUI
         if (CShell.isRegistered()) {
             return true;
         }
-        infoAction(_cmsgs.requiresRegistered(), _cmsgs.goRegister(), NaviUtil.onSignUp());
+        infoAction(_cmsgs.requiresRegistered(), _cmsgs.goRegister(), NaviUtil.onMustRegister());
         return false;
     }
 

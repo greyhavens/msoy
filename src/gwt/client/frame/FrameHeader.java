@@ -133,7 +133,7 @@ public class FrameHeader extends SmartTable
                 public void onClick (ClickEvent event) {
                     // if a guest clicks on "me", send them to create account
                     if (NaviButton.this.page == Pages.ME && CShell.isGuest()) {
-                        NaviUtil.onSignUp().onClick(null);
+                        NaviUtil.onMustRegister().onClick(null);
                     } else {
                         Link.go(NaviButton.this.page, "");
                     }
@@ -160,13 +160,13 @@ public class FrameHeader extends SmartTable
     {
         public SignOrLogonPanel () {
             super(0, 0);
-            PushButton signup = new PushButton(_cmsgs.headerSignup(), NaviUtil.onSignUp());
+            PushButton signup = new PushButton(_cmsgs.headerSignup(), NaviUtil.onMustRegister());
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-            PushButton logon = new PushButton(_cmsgs.headerLogon(), NaviUtil.onSignUp());
+            PushButton logon = new PushButton(_cmsgs.headerLogon(), NaviUtil.onMustRegister());
             logon.setStyleName("LogonButton");
             logon.addStyleName("Button");
             setWidget(0, 2, logon);

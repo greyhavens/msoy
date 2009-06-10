@@ -33,8 +33,7 @@ import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**
- * An interface for buying a CatalogListing. Doesn't display anything but functional buy
- * buttons.
+ * An interface for buying a CatalogListing. Doesn't display anything but functional buy buttons.
  */
 public class ItemBuyPanel extends BuyPanel<Item>
 {
@@ -52,7 +51,8 @@ public class ItemBuyPanel extends BuyPanel<Item>
         Currency currency, int amount, AsyncCallback<PurchaseResult<Item>> listener)
     {
         if (CShell.isGuest()) {
-            MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(), NaviUtil.onSignUp());
+            MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
+                              NaviUtil.onMustRegister());
             return false;
 
         } else {

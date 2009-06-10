@@ -51,6 +51,11 @@ public class NaviUtil extends SharedNaviUtil
         return Link.createHandler(Pages.LANDING, "");
     }
 
+    public static ClickHandler onMustRegister ()
+    {
+        return Link.createHandler(Pages.ACCOUNT, "create");
+    }
+
     public static ClickHandler onGoBack ()
     {
         return new ClickHandler() {

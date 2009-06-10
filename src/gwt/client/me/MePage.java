@@ -55,7 +55,7 @@ public class MePage extends Page
             setContent(_msgs.titleSurvey(), new TakeSurveyPanel(args.get(1, 0)));
 
         } else if (CShell.isGuest() || CShell.isPermaguest()) {
-            NaviUtil.onSignUp().onClick(null); // guests/permaguest must register
+            NaviUtil.onMustRegister().onClick(null); // guests/permaguest must register
 
         } else {
             setContent(new MyWhirled());
