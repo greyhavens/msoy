@@ -195,7 +195,7 @@ public class ABTestRepository extends DepotRepository
         }
 
         // now determine how many of those members registered
-        exprs.add(new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID));
+        exprs.add(ABGroupRecord.VISITOR_ID.join(EntryVectorRecord.VISITOR_ID));
         where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0));
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
@@ -203,7 +203,7 @@ public class ABTestRepository extends DepotRepository
         }
 
         // now determine how many of those members validated their email
-        exprs.add(new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID));
+        exprs.add(EntryVectorRecord.MEMBER_ID.join(MemberRecord.MEMBER_ID));
         where = MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.VALIDATED.getBit()).notEq(0);
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
@@ -237,7 +237,7 @@ public class ABTestRepository extends DepotRepository
         for (ActionCountRecord rec : findAll(
                  ActionCountRecord.class, CacheStrategy.NONE,
                  new GroupBy(ABGroupRecord.GROUP, ABActionRecord.ACTION),
-                 new Join(ABActionRecord.VISITOR_ID, ABGroupRecord.VISITOR_ID),
+                 ABActionRecord.VISITOR_ID.join(ABGroupRecord.VISITOR_ID),
                  new Where(ABActionRecord.TEST_ID, testId))) {
             ABActionSummaryRecord sumrec = new ABActionSummaryRecord();
             sumrec.testId = testId;

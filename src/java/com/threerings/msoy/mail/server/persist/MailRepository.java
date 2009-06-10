@@ -69,7 +69,7 @@ public class MailRepository extends DepotRepository
                                               ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
                     new FromOverride(ParticipantRecord.class),
-                    new Join(ParticipantRecord.CONVERSATION_ID, ConversationRecord.CONVERSATION_ID),
+                    ParticipantRecord.CONVERSATION_ID.join(ConversationRecord.CONVERSATION_ID),
                     new Where(new And(isMe, isNew))).count;
     }
 
@@ -80,7 +80,7 @@ public class MailRepository extends DepotRepository
     public List<ConversationRecord> loadConversations (int participantId, int offset, int count)
     {
         return findAll(ConversationRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            new Join(ConversationRecord.CONVERSATION_ID, ParticipantRecord.CONVERSATION_ID),
+            ConversationRecord.CONVERSATION_ID.join(ParticipantRecord.CONVERSATION_ID),
             new Where(ParticipantRecord.PARTICIPANT_ID, participantId),
             new Limit(offset, count),
             OrderBy.descending(ConversationRecord.LAST_SENT)));

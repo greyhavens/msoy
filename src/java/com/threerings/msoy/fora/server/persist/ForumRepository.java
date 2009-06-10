@@ -187,7 +187,7 @@ public class ForumRepository extends DepotRepository
                                    new FullText(ForumMessageRecord.class,
                                                ForumMessageRecord.FTS_MESSAGE, search).match()));
         return findAll(ForumThreadRecord.class,
-                       new Join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID),
+                       ForumThreadRecord.THREAD_ID.join(ForumMessageRecord.THREAD_ID),
                        new Where(where), new Limit(0, limit));
     }
 
@@ -215,7 +215,7 @@ public class ForumRepository extends DepotRepository
 
         // consult the cache for records, but not for the keyset
         return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            new Join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID),
+            ForumThreadRecord.THREAD_ID.join(ForumMessageRecord.THREAD_ID),
             new Join(ReadTrackingRecord.class, cacheJoinAnd).setType(Join.Type.LEFT_OUTER),
             new Where(where),
             new Limit(0, limit)));

@@ -119,7 +119,7 @@ public abstract class TagRepository extends DepotRepository
             _popularTags = findAll(TagPopularityRecord.class,
                 new FromOverride(getTagClass()),
                 new Limit(0, rows),
-                new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID),
+                getTagColumn(TagRecord.TAG_ID).join(TagNameRecord.TAG_ID),
                 OrderBy.descending(TagPopularityRecord.COUNT),
                 new GroupBy(TagNameRecord.TAG_ID, TagNameRecord.TAG));
 
@@ -136,7 +136,7 @@ public abstract class TagRepository extends DepotRepository
     {
         return findAll(TagNameRecord.class,
                        new Where(getTagColumn(TagRecord.TARGET_ID), targetId),
-                       new Join(TagNameRecord.TAG_ID, getTagColumn(TagRecord.TAG_ID)));
+                       TagNameRecord.TAG_ID.join(getTagColumn(TagRecord.TAG_ID)));
     }
 
     /**

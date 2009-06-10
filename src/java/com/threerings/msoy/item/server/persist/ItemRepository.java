@@ -33,6 +33,7 @@ import com.samskivert.util.QuickSort;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
@@ -57,14 +58,11 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.Mul;
-import com.samskivert.depot.operator.Not;
-import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -138,7 +136,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 return null;
             }
             Where where = new Where(
-                new And(getTagColumn(TagRecord.TARGET_ID).eq(itemColumn),
+                Ops.and(getTagColumn(TagRecord.TARGET_ID).eq(itemColumn),
                         getTagColumn(TagRecord.TAG_ID).in(_tagIds)));
             return new Exists(new SelectClause(getTagRepository().getTagClass(),
                                                new ColumnExp[] { TagRecord.TAG_ID }, where));
@@ -250,7 +248,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                     // and cost < minPrice
                     Join join = new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
                                          getItemColumn(ItemRecord.ITEM_ID));
-                    Where where = new Where(new And(
+                    Where where = new Where(Ops.and(
                         getCatalogColumn(CatalogRecord.CURRENCY).eq(Currency.COINS.toByte()),
                         getRatingExpression().lessEq(rating),
                         getRatingExpression().greaterThan(rating-1),
@@ -405,7 +403,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // locate all matching original items
         List<T> results = findAll(getItemClass(), new Where(
-            new And(getItemColumn(ItemRecord.OWNER_ID).eq(ownerId),
+            Ops.and(getItemColumn(ItemRecord.OWNER_ID).eq(ownerId),
                     makeSearchClause(matches))));
 
         // now add the tag match as cloned items can match tags
@@ -418,7 +416,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // add all matching cloned items
         results.addAll(loadClonedItems(new Where(
-            new And(getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId),
+            Ops.and(getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId),
                     makeSearchClause(matches)))));
 
         return results;
@@ -864,8 +862,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         // listings on the part of the support staff more of a PITA, so we'll leave 'em for now
         List<Key<T>> origs = findAllKeys(
             getItemClass(), false,
-            new Where(new And(getItemColumn(ItemRecord.OWNER_ID).in(memberIds),
-                              new Not(getItemColumn(ItemRecord.CATALOG_ID).eq(0)))));
+            new Where(Ops.and(getItemColumn(ItemRecord.OWNER_ID).in(memberIds),
+                              Ops.not(getItemColumn(ItemRecord.CATALOG_ID).eq(0)))));
         deleteAll(getItemClass(), KeySet.newKeySet(getItemClass(), origs));
         deletedIds.addAll(Lists.transform(origs, RecordFunctions.<T>getIntKey()));
 
@@ -1268,9 +1266,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         List<QueryClause> clauses = Lists.newArrayList();
         SQLExpression derived = getCatalogColumn(CatalogRecord.BASIS_ID).eq(catalogId);
-        SQLExpression visible = new Not(
+        SQLExpression visible = Ops.not(
             getCatalogColumn(CatalogRecord.PRICING).eq(CatalogListing.PRICING_HIDDEN));
-        clauses.add(new Where(new And(derived, visible)));
+        clauses.add(new Where(Ops.and(derived, visible)));
         if (maximum > 0) {
             clauses.add(new Limit(0, maximum));
         }
@@ -1402,7 +1400,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected SQLOperator makeSearchClause (List<SQLOperator> matches)
     {
         // if we ended up with multiple match clauses, OR them all together
-        return (matches.size() == 1) ? matches.get(0) : new Or(matches);
+        return (matches.size() == 1) ? matches.get(0) : Ops.or(matches);
     }
 
     /**
@@ -1465,10 +1463,10 @@ public abstract class ItemRepository<T extends ItemRecord>
             significantlyConstrained = true;
         }
 
-        whereBits.add(new Not(getCatalogColumn(CatalogRecord.PRICING).eq(
+        whereBits.add(Ops.not(getCatalogColumn(CatalogRecord.PRICING).eq(
                                   CatalogListing.PRICING_HIDDEN)));
 
-        clauses.add(new Where(new And(whereBits)));
+        clauses.add(new Where(Ops.and(whereBits)));
         return significantlyConstrained;
     }
 

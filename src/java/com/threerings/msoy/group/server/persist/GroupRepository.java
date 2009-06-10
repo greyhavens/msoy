@@ -506,7 +506,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupRecord> getFullMemberships (int memberId, int limit)
     {
         return findAll(GroupRecord.class,
-                       new Join(GroupRecord.GROUP_ID, GroupMembershipRecord.GROUP_ID),
+                       GroupRecord.GROUP_ID.join(GroupMembershipRecord.GROUP_ID),
                        new Where(GroupMembershipRecord.MEMBER_ID, memberId),
                        OrderBy.descending(GroupRecord.MEMBER_COUNT),
                        new Limit(0, (limit > 0) ? limit : Integer.MAX_VALUE));
@@ -593,7 +593,7 @@ public class GroupRepository extends DepotRepository
 
         } else if (tagId > 0) {
             conditions.add(_tagRepo.getTagColumn(TagRecord.TAG_ID).eq(tagId));
-            clauses.add(new Join(GroupRecord.GROUP_ID, _tagRepo.getTagColumn(TagRecord.TARGET_ID)));
+            clauses.add(GroupRecord.GROUP_ID.join(_tagRepo.getTagColumn(TagRecord.TARGET_ID)));
 
         }
         if (conditions.size() > 0) {
