@@ -34,11 +34,11 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.CaptchaException;
 import com.threerings.msoy.web.gwt.RegisterInfo;
+import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
-import com.threerings.msoy.web.gwt.SessionData.Source;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -57,7 +57,6 @@ public class CreateAccountPanel extends FlowPanel
 {
     /** Modes for tweaking layout, text and behavior. */
     enum Mode {
-
         /** Standard text and layout. */
         NORMAL {
             public String getIntro () {
@@ -76,44 +75,25 @@ public class CreateAccountPanel extends FlowPanel
             public boolean logonOnBottom () {
                 return true;
             }
-        },
-
-        /** Standard text, logon last, shows a "wait for validation" message. */
-        VALIDATION_TEST {
-            public String getIntro () {
-                return _msgs.createCoins();
-            }
-            public boolean logonOnBottom () {
-                return true;
-            }
-            public boolean forceValidate () {
-                return true;
-            }
         };
 
         public abstract String getIntro ();
+
         public abstract boolean logonOnBottom ();
-        public boolean forceValidate ()
-        {
-            return false;
-        }
     }
 
     /**
      * Creates a new account creation panel in the given mode.
      */
-    public CreateAccountPanel (final Mode mode)
+    public CreateAccountPanel ()
     {
         setStyleName("createAccount");
 
-        // no shim and different banner for validation
-        if (mode == Mode.VALIDATION_TEST) {
-            add(new Image("/images/account/register_banner.jpg"));
-        } else {
-            add(WidgetUtil.makeShim(15, 15));
-            add(new Image("/images/account/create_bg_top.png"));
-        }
+        final Mode mode = CShell.isPermaguest() ?
+            CreateAccountPanel.Mode.PERMAGUEST : CreateAccountPanel.Mode.NORMAL;
 
+        add(WidgetUtil.makeShim(15, 15));
+        add(new Image("/images/account/create_bg_top.png"));
         final FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
@@ -188,41 +168,17 @@ public class CreateAccountPanel extends FlowPanel
                 }
                 RegisterInfo info = RegisterUtil.createRegInfo(_email, _password, _dateOfBirth);
                 setStatus(_msgs.creatingAccount());
-                _usersvc.register(DeploymentConfig.version, info, mode.forceValidate(), this);
+                _usersvc.register(DeploymentConfig.version, info, false, this);
                 return true;
             }
 
             @Override protected boolean gotResult (final WebUserService.RegisterData session) {
-                Widget[] trackers = {
-                    ConversionTrackingUtil.createAdWordsTracker(),
-                    ConversionTrackingUtil.createBeacon(session.entryVector)}; 
-
-                if (mode.forceValidate()) {
-                    // they are going to be clicking a link in an email and starting a new session
-                    // in a new window, so just set the status and leave the button disabled.
-                    // TODO: this may not be the right time to set the trackers
-                    FlowPanel p = new FlowPanel();
-                    content.clear();
-                    content.add(p);
-                    for (String msg : new String[] {
-                        _msgs.creatingValidationSentPt1(),
-                        _msgs.creatingValidationSentPt2(),
-                        _msgs.creatingValidationSentPt3()}) {
-                        p.add(MsoyUI.createLabel(msg, "ValidationSent"));
-                    }
-                    for (Widget w : trackers) {
-                        if (w != null) {
-                            p.add(w);
-                        }
-                    }
-                    p.add(WidgetUtil.makeShim(1, 150));
-                    return false;
-                }
-
-                // display a nice confirmation message, as an excuse to embed a tracking iframe.
+                // display a nice confirmation message, as an excuse to embed a tracking iframe;
                 // we'll show it for two seconds, and then rock on!
+                Widget[] trackers = { ConversionTrackingUtil.createAdWordsTracker(),
+                                      ConversionTrackingUtil.createBeacon(session.entryVector) };
                 setStatus(_msgs.creatingDone(), trackers);
-                session.source = Source.CREATE;
+                session.group = SessionData.Group.A;
                 new Timer() {
                     public void run () {
                         CShell.frame.dispatchDidLogon(session);
@@ -310,7 +266,6 @@ public class CreateAccountPanel extends FlowPanel
                 p.add(tracker);
             }
         }
-
         _status.setWidget(p);
     }
 

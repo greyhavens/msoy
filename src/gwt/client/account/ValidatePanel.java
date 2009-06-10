@@ -31,7 +31,6 @@ public class ValidatePanel extends FlowPanel
                     clear();
                     add(MsoyUI.createLabel(_msgs.emailInvalid(), "infoLabel"));
                 } else {
-                    data.source = SessionData.Source.CREATE;
                     CShell.frame.dispatchDidLogon(data); // will redirect
                 }
             }

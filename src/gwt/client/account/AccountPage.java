@@ -42,12 +42,7 @@ public class AccountPage extends Page
             }.schedule(2000);
 
         } else if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
-            setContent(_msgs.createTitle(), new CreateAccountPanel(CShell.isPermaguest() ?
-                CreateAccountPanel.Mode.PERMAGUEST : CreateAccountPanel.Mode.NORMAL));
-
-        } else if (action.equals("reg") && !CShell.isMember()) {
-            setContent(_msgs.createTitle(),
-                       new CreateAccountPanel(CreateAccountPanel.Mode.VALIDATION_TEST));
+            setContent(_msgs.createTitle(), new CreateAccountPanel());
 
         } else if (action.equals("regv") || action.equals("v")) {
             setContent(_msgs.validateTitle(), new ValidatePanel(args.get(1, 0), args.get(2, "")));

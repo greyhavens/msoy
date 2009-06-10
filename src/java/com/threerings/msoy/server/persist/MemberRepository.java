@@ -947,7 +947,7 @@ public class MemberRepository extends DepotRepository
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(fullFriendWhere(memberId));
-        clauses.add(MemberRecord.MEMBER_ID.join(FriendshipRecord.FRIEND_ID));
+        clauses.add(FriendshipRecord.FRIEND_ID.join(MemberRecord.MEMBER_ID));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
             clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));

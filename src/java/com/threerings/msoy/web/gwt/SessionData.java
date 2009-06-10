@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
@@ -15,8 +16,8 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public class SessionData implements IsSerializable
 {
-    /** Indicators for sources of session data that may require special handling. */
-    public enum Source { LOGIN, CREATE };
+    /** Identifies A/B groups assigned to sessions during the validation process. */
+    public enum Group { NONE, A, B, C };
 
     /** Our session credentials. */
     public WebCreds creds;
@@ -36,8 +37,8 @@ public class SessionData implements IsSerializable
     /** Registered user's visitor info structure. */
     public VisitorInfo visitor;
 
-    /** Source of the session data. */
-    public transient Source source = Source.LOGIN;
+    /** A/B test group associated with this session, or NONE. */
+    public Group group = Group.NONE;
 
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.
@@ -55,7 +56,7 @@ public class SessionData implements IsSerializable
         sdata.level = Integer.valueOf(data.next());
         sdata.newMailCount = Integer.valueOf(data.next());
         sdata.visitor = VisitorInfo.unflatten(data);
-        sdata.source = Source.valueOf(data.next());
+        sdata.group = Group.valueOf(data.next());
         return sdata;
     }
 
@@ -71,7 +72,7 @@ public class SessionData implements IsSerializable
         data.add(String.valueOf(level));
         data.add(String.valueOf(newMailCount));
         data.addAll(visitor.flatten());
-        data.add(String.valueOf(source));
+        data.add(String.valueOf(group));
         return data;
     }
 }

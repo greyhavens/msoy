@@ -22,6 +22,7 @@ public enum Pages
     MAIL(Tabs.ME),
     ME(Tabs.ME),
     PEOPLE(Tabs.ME),
+    PEEPACC(null, "people"), // people with no header
     ROOMS(Tabs.ROOMS),
     SHOP(Tabs.SHOP),
     STUFF(Tabs.STUFF),

@@ -228,9 +228,9 @@ public class FrameEntryPoint
         // just told us to do so)
         WorldClient.didLogon(data.creds);
 
-        // reboot the flash client (which will put them back where they are but logged in as their
-        // newly registered self)
-        if (FlashClients.clientExists() && data.source == SessionData.Source.CREATE) {
+        // if they just registered, reboot the flash client (which will put them back where they
+        // are but logged in as their newly registered self)
+        if (FlashClients.clientExists() && data.group != SessionData.Group.NONE) {
             rebootFlashClient();
         }
 
@@ -238,8 +238,12 @@ public class FrameEntryPoint
         // (which may get immediately removed if we're going directly into the world)...
         _layout.addNoClientIcon();
 
-        if (data.source == SessionData.Source.CREATE) {
+        if (data.group == SessionData.Group.A) {
             Link.go(Pages.PEOPLE, "confprof"); // send them to step 2: configure profile
+        } else if (data.group == SessionData.Group.B) {
+            Link.go(Pages.PEEPACC, "confprof"); // send them to step 2: configure profile
+        } else if (data.group == SessionData.Group.C) {
+            Link.go(Pages.ME); // send them to Me, which has next steps
         } else if (_page == Pages.LANDING || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {
