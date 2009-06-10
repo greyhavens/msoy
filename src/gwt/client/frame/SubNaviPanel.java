@@ -3,6 +3,7 @@
 
 package client.frame;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -12,6 +13,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -63,14 +65,18 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case GAMES:
+            boolean facebook = CShell.isFacebook();
             addLink(null, "Games", Pages.GAMES);
+            if (facebook) {
+                addTipper("Bookmark", _msgs.subNavBookmarkTip(), "BookmarkTip");
+            }
             if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
-                if (!CShell.isFacebook()) {
+                if (!facebook) {
                     addLink(null, "My Games", Pages.GAMES, "m");
                 }
             }
-            if (!CShell.isFacebook()) {
+            if (!facebook) {
                 addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
             }
             if (CShell.isSupport()) {
@@ -138,6 +144,12 @@ public class SubNaviPanel extends FlowPanel
         add(Link.create(label, page, args));
     }
 
+    public void addTipper (String link, String tip, String style)
+    {
+        addSeparator(true);
+        add(MsoyUI.createTipper(link, tip, style));
+    }
+
     public void addContextLink (String label, Pages page, Args args, int position)
     {
         // sanity check the position
@@ -163,4 +175,6 @@ public class SubNaviPanel extends FlowPanel
             add(new HTML("&nbsp;&nbsp;" + (sep ? "|&nbsp;&nbsp;" : "")));
         }
     }
+
+    protected static final ShellMessages _msgs = GWT.create(ShellMessages.class);
 }

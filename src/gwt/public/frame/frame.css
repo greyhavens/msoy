@@ -274,3 +274,9 @@
   margin-top: 15px;
   margin-right: 10px;
 }
+
+.BookmarkTip {
+  background: url(/images/facebook/bookmarktip.png) no-repeat top center;
+  width: 402px;
+  height: 145px;
+}

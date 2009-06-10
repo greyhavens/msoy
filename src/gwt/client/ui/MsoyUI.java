@@ -232,6 +232,25 @@ public class MsoyUI
     }
 
     /**
+     * Creates an action label, which when clicked will show a popup containing a label with the
+     * given tip. The given style is applied to the contents of the popup for sizing or attaching
+     * an image background.
+     */
+    public static Label createTipper (
+        String link, final String tip, final String contentStyle)
+    {
+        return createActionLabel(link, new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                FlowPanel content = new FlowPanel();
+                content.setStyleName(contentStyle);
+                content.add(new Label(tip));
+                final InfoPopup popup = new InfoPopup(content);
+                popup.show();
+            }
+        });
+    }
+
+    /**
      * Creates a label that triggers an action using the supplied text and listener. The label will
      * only be styled with the specified style.
      */
