@@ -25,7 +25,13 @@ public class ABTestSummary extends ABTest
         /** The number of visitors that eventually registered. */
         public int registered;
 
-        /** The number of visitors that "returned". */
+        /** The number of visitors that validated their addresses. */
+        public int validated;
+
+        /** The number of visitors that returned after two days. */
+        public int returned;
+
+        /** The number of visitors that returned after one week. */
         public int retained;
 
         /** The count of visitors in this group that took actions. */

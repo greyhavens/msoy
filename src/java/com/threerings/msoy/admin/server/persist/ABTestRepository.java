@@ -27,16 +27,14 @@ import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.clause.GroupBy;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.IntervalExp;
+import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.Not;
-import com.samskivert.depot.operator.NotEquals;
 import com.samskivert.depot.operator.Sub;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -167,6 +165,8 @@ public class ABTestRepository extends DepotRepository
             group.group = gsum.group;
             group.assigned = gsum.assigned;
             group.registered = gsum.registered;
+            group.validated = gsum.validated;
+            group.returned = gsum.returned;
             group.retained = gsum.retained;
             group.actions = Maps.newHashMap();
             for (ABActionSummaryRecord arec : actions.get(group.group)) {
@@ -183,11 +183,14 @@ public class ABTestRepository extends DepotRepository
      */
     public void summarizeTest (int testId)
     {
+        List<QueryClause> exprs = Lists.newArrayList();
+        exprs.add(new GroupBy(ABGroupRecord.GROUP));
+
         // first determine the number of visitors assigned to the test groups
         IntMap<ABGroupSummaryRecord> groups = IntMaps.newHashIntMap();
+        SQLExpression where = ABGroupRecord.TEST_ID.eq(testId);
         for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, new GroupBy(ABGroupRecord.GROUP),
-                 new Where(ABGroupRecord.TEST_ID, testId))) {
+                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             ABGroupSummaryRecord sumrec = new ABGroupSummaryRecord();
             sumrec.testId = testId;
             sumrec.group = rec.group;
@@ -196,23 +199,36 @@ public class ABTestRepository extends DepotRepository
         }
 
         // now determine how many of those members registered
+        exprs.add(new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID));
+        where = new And(ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0));
         for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, new GroupBy(ABGroupRecord.GROUP),
-                 new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
-                 new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
-                                   new NotEquals(EntryVectorRecord.MEMBER_ID, 0))))) {
+                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).registered = rec.count;
         }
 
-        // now determine how many of those members were retained
+        // now determine how many of those members validated their email
+        exprs.add(new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID));
+        where = MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.VALIDATED.getBit()).notEq(0);
         for (GroupCountRecord rec : findAll(
-                 GroupCountRecord.class, CacheStrategy.NONE, new GroupBy(ABGroupRecord.GROUP),
-                 new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID),
-                 new Join(EntryVectorRecord.MEMBER_ID, MemberRecord.MEMBER_ID),
-                 new Where(new And(new Equals(ABGroupRecord.TEST_ID, testId),
-                                   new GreaterThan(new Sub(MemberRecord.LAST_SESSION,
-                                                           IntervalExp.days(7)),
-                                                   MemberRecord.CREATED))))) {
+                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+            groups.get(rec.group).validated = rec.count;
+        }
+
+        // now determine how many of those members returned
+        SQLExpression since = MemberRecord.LAST_SESSION.minus(IntervalExp.days(2)).
+            greaterThan(MemberRecord.CREATED);
+        where = new And(ABGroupRecord.TEST_ID.eq(testId), since);
+        for (GroupCountRecord rec : findAll(
+                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+            groups.get(rec.group).returned = rec.count;
+        }
+
+        // now determine how many of those members were retained
+        since = MemberRecord.LAST_SESSION.minus(IntervalExp.days(7)).
+            greaterThan(MemberRecord.CREATED);
+        where = new And(ABGroupRecord.TEST_ID.eq(testId), since);
+        for (GroupCountRecord rec : findAll(
+                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).retained = rec.count;
         }
 
@@ -245,8 +261,8 @@ public class ABTestRepository extends DepotRepository
         Timestamp now = new Timestamp(System.currentTimeMillis());
         int mods = updatePartial(
             ABTestRecord.class, new Where(
-                new And(new IsNull(ABTestRecord.ENDED),
-                        new Not(new In(ABTestRecord.TEST_ID, activeIds)))),
+                new And(ABTestRecord.ENDED.isNull(),
+                        new Not(ABTestRecord.TEST_ID.in(activeIds)))),
             null, ImmutableMap.of(ABTestRecord.ENDED, new ValueExp(now)));
         if (mods == 0) {
             // if we modded no rows, either there's nothing to summarize or another server is on it
@@ -259,6 +275,11 @@ public class ABTestRepository extends DepotRepository
             deleteAll(ABGroupRecord.class, new Where(ABGroupRecord.TEST_ID, rec.testId), null);
             deleteAll(ABActionRecord.class, new Where(ABActionRecord.TEST_ID, rec.testId), null);
         }
+    }
+
+    protected List<QueryClause> where (List<QueryClause> exprs, SQLExpression where)
+    {
+        return Lists.asList(new Where(where), exprs.toArray(new QueryClause[exprs.size()]));
     }
 
     @Override // from DepotRepository

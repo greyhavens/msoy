@@ -24,7 +24,7 @@ public class ABGroupSummaryRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The test to which this record pertains. */
     @Id public int testId;
@@ -38,8 +38,13 @@ public class ABGroupSummaryRecord extends PersistentRecord
     /** The number of those visitors that registered. */
     public int registered;
 
-    /** The number of registrants whose last session is greater than their registration date by at
-     * least one week. */
+    /** The number of the registrants that validated their email. */
+    public int validated;
+
+    /** The number of the registrants that returned after two days. */
+    public int returned;
+
+    /** The number of the registrants that returned after one week. */
     public int retained;
 
     // AUTO-GENERATED: METHODS START
