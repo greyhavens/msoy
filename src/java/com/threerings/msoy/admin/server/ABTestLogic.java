@@ -44,7 +44,8 @@ public class ABTestLogic
     // from Lifecycle.InitComponent
     public void init ()
     {
-        registerTest("2009 05 landing take 2", 4, true, true);
+        // register new tests here
+        // registerTest("NAME", 4 /* num groups */, false /* only new */, false /* landing */);
 
         // mark any tests that are no longer registered as ended, purge really old tests
         ArrayIntSet activeIds = new ArrayIntSet();

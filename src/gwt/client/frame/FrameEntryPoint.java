@@ -29,7 +29,6 @@ import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.web.gwt.ABTestCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.Invitation;
@@ -196,35 +195,6 @@ public class FrameEntryPoint
         boolean newUser = StringUtil.isBlank(CookieUtil.get(CookieNames.WHO));
         if (newUser) {
             getVisitorInfo(); // creates a visitorId and reports it
-        }
-
-        // do different things for new users on landing
-        if (page == Pages.LANDING && args.get(0, "").equals("") && newUser) {
-            ABTestCard test = LandingTestCookie.getTest("2009 05 landing take 2");
-            int landingGroup = test == null ? -1 : test.getGroup(getVisitorInfo());
-            switch (landingGroup) {
-            case 1:  // group A: normal
-                break;
-            case 2:  // group B: go home and see hpg
-                page = Pages.WORLD;
-                args = Args.fromToken("hplaces");
-                break;
-            case 3:  // group C: register NOW + force validate
-                page = Pages.LANDACC;
-                args = Args.fromToken("reg");
-                break;
-            case 4: // group D: compact landing page
-                page = Pages.LANDING;
-                args = Args.fromToken("compact");
-                break;
-            }
-            // log the result to the server
-            if (landingGroup > 0) {
-                _membersvc.logLandingABTestGroup(getVisitorInfo(), test.name, landingGroup,
-                    new NoopAsyncCallback());
-                CShell.log("Displaying alternate page", "page", page, "args", args,
-                    "group", landingGroup);
-            }
         }
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
@@ -817,8 +787,8 @@ public class FrameEntryPoint
     {
         _membersvc.getMemberCard(CShell.getMemberId(), new AsyncCallback<MemberCard>() {
             public void onFailure (Throwable caught) {
+                // nada
             }
-
             public void onSuccess (MemberCard result) {
                 if (result != null) {
                     dispatchEvent(new NameChangeEvent(result.name.toString()));

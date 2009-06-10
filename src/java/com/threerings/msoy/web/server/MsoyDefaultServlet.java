@@ -87,12 +87,14 @@ public class MsoyDefaultServlet extends DefaultServlet
             // Give new users all the names and number of groups for tests designated as
             // occurring on landing. The client will compute the group that the user is
             // assigned to when the visitor id is calculated.
-            StringBuilder cookieValue = new StringBuilder();
+            StringBuilder cookie = new StringBuilder();
             for (ABTestCard test : _testLogic.getTestsWithLandingCookies()) {
-                test.flatten(cookieValue);
+                test.flatten(cookie);
             }
-            rsp.addCookie(new Cookie(CookieNames.LANDING_TEST, cookieValue.toString()));
-            log.info("Sending landing cookie", "value", cookieValue);
+            if (cookie.length() > 0) {
+                rsp.addCookie(new Cookie(CookieNames.LANDING_TEST, cookie.toString()));
+                log.info("Sending landing cookie", "value", cookie);
+            }
         }
     }
 
