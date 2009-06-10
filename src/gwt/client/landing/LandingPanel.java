@@ -45,7 +45,7 @@ public class LandingPanel extends FlowPanel
         setStyleName("landing");
 
         // create a UI explaining briefly what Whirled is
-        FlowPanel explain = new FlowPanel();
+        FlowPanel explain = MsoyUI.createFlowPanel("Explain");
         explain.add(MsoyUI.createLabel(_msgs.landingIntro(), "Title"));
         explain.add(MsoyUI.createLabel(_msgs.landingIntroSub(), "Subtitle"));
         final SimplePanel video = new SimplePanel();

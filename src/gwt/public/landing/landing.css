@@ -126,6 +126,10 @@
   font-size: 12px;
 }
 
+.landing .Explain .Subtitle {
+  white-space: nowrap;
+}
+
 .landing .Regbits {
   width: 310px;
   margin-left: 20px;
