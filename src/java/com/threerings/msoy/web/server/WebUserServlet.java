@@ -440,19 +440,19 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public boolean validateEmail (int memberId, String code)
+    public SessionData validateEmail (int memberId, String code)
         throws ServiceException
     {
         MemberRecord mrec = _memberRepo.loadMember(memberId);
         if (mrec == null) {
-            return false;
+            return null;
         }
         if (!_accountLogic.generateValidationCode(mrec).equals(code)) {
-            return false;
+            return null;
         }
         mrec.setFlag(MemberRecord.Flag.VALIDATED, true);
         _memberRepo.storeFlags(mrec);
-        return true;
+        return startSession(mrec, 1); // TODO: expire days?
     }
 
     // from interface WebUserService

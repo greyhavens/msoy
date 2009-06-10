@@ -222,8 +222,6 @@ public class CreateAccountPanel extends FlowPanel
                         }
                     }
                     p.add(WidgetUtil.makeShim(1, 150));
-                    session.source = Source.VALIDATED_CREATE;
-                    CShell.frame.dispatchDidLogon(session);
                     return false;
                 }
 

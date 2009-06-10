@@ -108,7 +108,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#validateEmail}.
      */
-    void validateEmail (int memberId, String code, AsyncCallback<Boolean> callback);
+    void validateEmail (int memberId, String code, AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#requestAccountDeletion}.

@@ -144,11 +144,10 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
-     * Marks the specified account valid if the supplied validation code checks out as valid.
-     *
-     * @return true if the code is valid, false if not.
+     * Marks the specified account valid if the supplied validation code checks out as valid. Logs
+     * the caller in as the validated member in the process.
      */
-    boolean validateEmail (int memberId, String code)
+    SessionData validateEmail (int memberId, String code)
         throws ServiceException;
 
     /**
