@@ -175,8 +175,6 @@ public class LandingPanel extends FlowPanel
 
             @Override protected boolean gotResult (final WebUserService.RegisterData session) {
                 setRegiComplete(register, session);
-                // session.source = Source.VALIDATED_CREATE;
-                CShell.frame.dispatchDidLogon(session);
                 return false;
             }
 
