@@ -21,6 +21,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 import client.util.TextBoxUtil;
 
 /**
@@ -35,8 +36,7 @@ public class SearchControls extends SmartTable
 
         PushButton action;
         if (CShell.isGuest()) {
-            action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchJoin(),
-                                         Link.createHandler(Pages.ACCOUNT, "create"));
+            action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchJoin(), NaviUtil.onSignUp());
         } else {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchInvite(),
                                          Link.createHandler(Pages.PEOPLE, "invites"));

@@ -51,6 +51,9 @@ import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
+import client.util.ConversionTrackingUtil;
+import client.util.RecaptchaUtil;
+import client.util.RegisterUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -137,11 +140,6 @@ public class CreateAccountPanel extends FlowPanel
                            _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
                            _msgs.createEmailTip()));
         _email.addKeyDownHandler(_onKeyDown);
-        Invitation invite = CShell.frame.getActiveInvitation();
-        if (invite != null && invite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
-            // provide the invitation email as the default
-            _email.setText(invite.inviteeEmail);
-        }
 
         content.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
                            _msgs.createPasswordTip()));
@@ -165,8 +163,7 @@ public class CreateAccountPanel extends FlowPanel
         // optionally add the recaptcha component
         if (RecaptchaUtil.isEnabled()) {
             content.add(new LabeledBox(_msgs.createCaptcha(),
-                               new HTML("<div id=\"recaptchaDiv\"></div>"), null));
-            content.add(new HTML("<div id=\"recaptchaDiv\"></div>"));
+                                       RecaptchaUtil.createDiv("recaptchaDiv"), null));
         }
 
         content.add(new LabeledBox("", _tosBox = new CheckBox(_msgs.createTOSAgree(), true), null));
@@ -182,51 +179,22 @@ public class CreateAccountPanel extends FlowPanel
         controls.add(create);
         content.add(controls);
 
+        // initialize our UI components
+        RegisterUtil.initRegiUI(_email);
+
         // create our click callback that handles the actual registation process
         new ClickCallback<WebUserService.RegisterData>(create) {
             @Override protected boolean callService () {
                 if (!validateData()) {
                     return false;
                 }
-
-                String[] today = new Date().toString().split(" ");
-                String thirteenYearsAgo = "";
-                for (int ii = 0; ii < today.length; ii++) {
-                    if (today[ii].matches("[0-9]{4}")) {
-                        int year = Integer.valueOf(today[ii]).intValue();
-                        today[ii] = "" + (year - 13);
-                    }
-                    thirteenYearsAgo += today[ii] + " ";
-                }
-
-                Date dob = DateUtil.toDate(_dateOfBirth.getDate());
-                if (DateUtil.newDate(thirteenYearsAgo).compareTo(dob) < 0) {
+                if (!RegisterUtil.checkIsThirteen(_dateOfBirth)) {
                     setStatus(_msgs.createNotThirteen());
                     return false;
                 }
-
-                RegisterInfo info = new RegisterInfo();
-                info.email = _email.getText().trim();
-                info.password = CShell.frame.md5hex(_password.getText().trim());
-//                 info.displayName = _name.getText().trim();
-                info.displayName = "???";
-                info.birthday = _dateOfBirth.getDate();
-                info.info = new AccountInfo();
-//                 info.info.realName = _rname.getText().trim();
-                info.info.realName = "";
-                info.expireDays = 1; // TODO: unmagick?
-                Invitation invite = CShell.frame.getActiveInvitation();
-                info.inviteId = (invite == null) ? null : invite.inviteId;
-                info.permaguestId = CShell.isPermaguest() ? CShell.getMemberId() : 0;
-                info.visitor = CShell.frame.getVisitorInfo();
-                info.captchaChallenge =
-                    RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
-                info.captchaResponse =
-                    RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
-
+                RegisterInfo info = RegisterUtil.createRegInfo(_email, _password, _dateOfBirth);
                 setStatus(_msgs.creatingAccount());
-                _usersvc.register(DeploymentConfig.version, info, mode.forceValidate(),
-                                  this);
+                _usersvc.register(DeploymentConfig.version, info, mode.forceValidate(), this);
                 return true;
             }
 

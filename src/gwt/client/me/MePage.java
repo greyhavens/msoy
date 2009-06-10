@@ -13,6 +13,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.survey.TakeSurveyPanel;
 import client.util.Link;
+import client.util.NaviUtil;
 
 public class MePage extends Page
 {
@@ -54,7 +55,7 @@ public class MePage extends Page
             setContent(_msgs.titleSurvey(), new TakeSurveyPanel(args.get(1, 0)));
 
         } else if (CShell.isGuest() || CShell.isPermaguest()) {
-            Link.go(Pages.ACCOUNT, "create"); // guests/permaguest must register
+            NaviUtil.onSignUp().onClick(null); // guests/permaguest must register
 
         } else {
             setContent(new MyWhirled());

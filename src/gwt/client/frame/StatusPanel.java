@@ -131,8 +131,7 @@ public class StatusPanel extends SmartTable
         // "sign up" or "invite friends" on top left
         PushButton action;
         if (permaguest) {
-            action = new PushButton(
-                _cmsgs.headerSignup(), Link.createHandler(Pages.ACCOUNT, "create"));
+            action = new PushButton(_cmsgs.headerSignup(), NaviUtil.onSignUp());
             action.setStyleName("SignupButton");
             action.addStyleName("Button");
             _promoButton = null;

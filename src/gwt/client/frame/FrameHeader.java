@@ -32,6 +32,7 @@ import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Displays our navigation buttons, member status and/or logon/signup buttons.
@@ -132,7 +133,7 @@ public class FrameHeader extends SmartTable
                 public void onClick (ClickEvent event) {
                     // if a guest clicks on "me", send them to create account
                     if (NaviButton.this.page == Pages.ME && CShell.isGuest()) {
-                        Link.go(Pages.ACCOUNT, "create");
+                        NaviUtil.onSignUp().onClick(null);
                     } else {
                         Link.go(NaviButton.this.page, "");
                     }
@@ -159,15 +160,13 @@ public class FrameHeader extends SmartTable
     {
         public SignOrLogonPanel () {
             super(0, 0);
-            PushButton signup = new PushButton(
-                _cmsgs.headerSignup(), Link.createHandler(Pages.ACCOUNT, "create"));
+            PushButton signup = new PushButton(_cmsgs.headerSignup(), NaviUtil.onSignUp());
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-            PushButton logon = new PushButton(
-                _cmsgs.headerLogon(), Link.createHandler(Pages.ACCOUNT, "create"));
+            PushButton logon = new PushButton(_cmsgs.headerLogon(), NaviUtil.onSignUp());
             logon.setStyleName("LogonButton");
             logon.addStyleName("Button");
             setWidget(0, 2, logon);

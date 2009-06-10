@@ -106,6 +106,68 @@
    LANDING PAGE
 -------------------------------------*/
 
+.landing {
+  background: #89C6E3;
+  height: 100%;
+}
+
+.landing .Content {
+  background: url(/images/account/create_bg_mid.png) #287099 no-repeat bottom;
+  margin: 0 auto;
+  width: 657px;
+  color: #D0E6F7;
+}
+
+.landing .Content, .landing .Content a {
+  color: #D0E6F7;
+}
+
+.landing .Content, .landing .Content td {
+  font-size: 12px;
+}
+
+.landing .Regbits {
+  width: 310px;
+  margin-left: 20px;
+}
+
+.landing .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+}
+
+.landing .Subtitle {
+  font-size: 16px;
+}
+
+.landing .Right {
+  text-align: right;
+  width: 100px;
+}
+
+.landing .Video {
+  padding: 30px 0px 0px 35px;
+}
+
+.landing .Video .gwt-Image {
+  margin: 0px;
+}
+
+.landing .gwt-TextBox, .landing .gwt-PasswordTextBox, .landing .gwt-ListBox {
+  border: 1px solid #5C5D61;
+}
+
+.landing .gwt-TextBox, .landing .gwt-PasswordTextBox {
+  width: 175px;
+}
+
+.landing .NoCaptcha {
+  width: 318px;
+  height: 129px;
+  text-align: center;
+  border: 1px solid;
+}
+
 /* Spans the entire width of the page */
 .LandingPanel {
   background: #63ABD3 url(/images/landing/bg_gradient.jpg) repeat-x top center;

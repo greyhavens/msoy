@@ -29,6 +29,7 @@ import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
+import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -51,8 +52,7 @@ public class ItemBuyPanel extends BuyPanel<Item>
         Currency currency, int amount, AsyncCallback<PurchaseResult<Item>> listener)
     {
         if (CShell.isGuest()) {
-            MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
-                Link.createHandler(Pages.ACCOUNT, "create"));
+            MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(), NaviUtil.onSignUp());
             return false;
 
         } else {

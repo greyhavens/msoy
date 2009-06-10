@@ -32,7 +32,7 @@ public class BillingUtil
 
         } else if (CShell.isPermaguest()) {
             MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
-                              Link.createHandler(Pages.ACCOUNT, "create"));
+                              NaviUtil.onSignUp());
 
         } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
             MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),

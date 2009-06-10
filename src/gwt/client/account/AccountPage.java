@@ -18,8 +18,9 @@ import client.account.CreateAccountPanel.Mode;
 import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.InfoCallback;
+import client.util.Link;
+import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -81,7 +82,7 @@ public class AccountPage extends Page
             if (CShell.isMember()) {
                 setContent(_msgs.editTitle(), new EditAccountPanel());
             } else {
-                Link.go(Pages.ACCOUNT, "create"); // guests/permaguests have to register first
+                NaviUtil.onSignUp().onClick(null); // guests/permaguest must register
             }
 
         } else if (action.equals("delete")) {
@@ -94,7 +95,7 @@ public class AccountPage extends Page
                 setContent(_msgs.confirmDeleteTitle(), new ConfirmDeletePanel(args.get(1, "")));
             } else {
                 // redirect guests so logging on will brink them back here
-                Link.go(Pages.ACCOUNT, "create");
+                NaviUtil.onSignUp().onClick(null);
             }
 
         } else if (action.equals("config")) {

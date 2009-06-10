@@ -40,6 +40,39 @@ public class LogonPanel extends SmartTable
 {
     public enum Mode { LANDING, HORIZ, VERT };
 
+    public static void addLogonBehavior (final TextBox email, final TextBox password,
+                                         final ButtonBase action, final Command onLogon)
+    {
+        // make our logon button initiate a logon
+        ClickHandler onAction = new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                doLogon(email, password, onLogon);
+            }
+        };
+        action.addClickHandler(onAction);
+
+        String who = CookieUtil.get(CookieNames.WHO);
+        if (who != null && !MemberMailUtil.isPermaguest(who)) {
+            email.setText(who);
+            // since our email is already filled in, we can focus the password field; note: we
+            // don't focus the email field by default because we rely on the unfocused state
+            // explaining what actually goes into the email field
+            DeferredCommand.addCommand(new Command() {
+                public void execute () {
+                    password.setFocus(true);
+                }
+            });
+        } else {
+            DefaultTextListener.configure(email, _cmsgs.logonEmailDefault());
+        }
+        email.addKeyPressHandler(new EnterClickAdapter(new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                password.setFocus(true);
+            }
+        }));
+        password.addKeyPressHandler(new EnterClickAdapter(onAction));
+    }
+
     public LogonPanel (Mode mode)
     {
         this(mode, MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _cmsgs.logonLogon(), null));
@@ -58,7 +91,11 @@ public class LogonPanel extends SmartTable
         // make our logon button initiate a logon
         ClickHandler onLogon = new ClickHandler() {
             public void onClick (ClickEvent event) {
-                doLogon();
+                doLogon(_email, _password, new Command() {
+                    public void execute () {
+                        didLogon();
+                    }
+                });
             }
         };
         logon.addClickHandler(onLogon);
@@ -119,24 +156,32 @@ public class LogonPanel extends SmartTable
         }
     }
 
-    protected void doLogon ()
+    protected void didLogon ()
     {
-        String account = _email.getText(), password = _password.getText();
+        _password.setText("");
+    }
+
+    protected static void doLogon (
+        final TextBox email, final TextBox passbox, final Command onLogon)
+    {
+        String account = email.getText(), password = passbox.getText();
         if (account.length() <= 0 || password.length() <= 0) {
             return;
         }
         if (account.equals(_cmsgs.logonEmailDefault())) {
-            MsoyUI.errorNear(_cmsgs.logonEmailPlease(), _email);
+            MsoyUI.errorNear(_cmsgs.logonEmailPlease(), email);
             return;
         }
         _usersvc.logon(DeploymentConfig.version, account, CShell.frame.md5hex(password),
                        WebUserService.SESSION_DAYS, new AsyncCallback<SessionData>() {
             public void onSuccess (SessionData data) {
                 CShell.frame.dispatchDidLogon(data);
-                didLogon();
+                if (onLogon != null) {
+                    onLogon.execute();
+                }
             }
             public void onFailure (Throwable caught) {
-                CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
+                CShell.log("Logon failed [account=" + email.getText() + "]", caught);
                 String message = null;
                 if (caught instanceof BannedException) {
                     BannedException be = (BannedException)caught;
@@ -148,14 +193,9 @@ public class LogonPanel extends SmartTable
                 } else {
                     message = CShell.serverError(caught);
                 }
-                MsoyUI.errorNear(message, _password);
+                MsoyUI.errorNear(message, passbox);
             }
         });
-    }
-
-    protected void didLogon ()
-    {
-        _password.setText("");
     }
 
     protected class ForgotPasswordDialog extends SmartTable

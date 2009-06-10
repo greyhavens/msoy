@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.account;
+package client.util;
 
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;

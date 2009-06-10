@@ -11,6 +11,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * A plain page wrapper for the logon interface.
@@ -28,7 +29,7 @@ public class LogonPagePanel extends FlowPanel
         // add a link to accout creation
         add(MsoyUI.createLabel(_msgs.lpCreateHeader(), "Header"));
         add(tagButton(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpCreate(),
-                                          Link.createHandler(Pages.ACCOUNT, "create"))));
+                                          NaviUtil.onSignUp())));
     }
 
     protected Widget tagButton (Widget widget)

@@ -780,8 +780,7 @@ public class MsoyUI
         if (CShell.isRegistered()) {
             return true;
         }
-        infoAction(_cmsgs.requiresRegistered(), _cmsgs.goRegister(),
-                   Link.createHandler(Pages.ACCOUNT, "create"));
+        infoAction(_cmsgs.requiresRegistered(), _cmsgs.goRegister(), NaviUtil.onSignUp());
         return false;
     }
 

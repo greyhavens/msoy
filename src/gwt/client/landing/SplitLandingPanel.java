@@ -22,6 +22,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Landing page split into games on the left and rooms on the right.
@@ -50,7 +51,7 @@ public class SplitLandingPanel extends FlowPanel
         content.add(MsoyUI.createHTML(_msgs.splitCreate(), "CreateBlurb"));
 
         // PushButton joinButton = MsoyUI.createButton(MsoyUI.LONG_THICK, _msgs.splitJoin(),
-        // Link.createListener(Pages.ACCOUNT, "create"));
+        // NaviUtil.onSignUp());
         // joinButton.addStyleName("JoinNowButton");
         // content.add(joinButton);
 
@@ -64,7 +65,7 @@ public class SplitLandingPanel extends FlowPanel
 
         // join now
         header.add(MsoyUI.createActionImage("/images/landing/join_now_button.png",
-            Link.createHandler(Pages.ACCOUNT, "create")), 50, 60);
+            NaviUtil.onSignUp()), 50, 60);
 
         // logon box
         final FlowPanel logon = new FlowPanel();

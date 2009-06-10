@@ -10,6 +10,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Landing page for the Flash Game Developer Challenge. This is a full-width page.
@@ -29,7 +30,7 @@ public class GameContestPanel extends FlowPanel
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_whirled_logo.png",
             Link.createHandler(Pages.LANDING, "")), 20, 10);
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_join_now.png",
-            Link.createHandler(Pages.ACCOUNT, "create")), 750, 0);
+            NaviUtil.onSignUp()), 750, 0);
 
         content.add(new WideContentBox(
             _msgs.gameconOverviewTitle(), _msgs.gameconOverviewText(), false));

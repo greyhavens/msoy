@@ -10,6 +10,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Landing page for the design your whirled room design contest.
@@ -29,7 +30,7 @@ public class DesignContestPanel extends FlowPanel
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_whirled_logo.png",
             Link.createHandler(Pages.LANDING, "")), 20, 10);
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_join_now.png",
-            Link.createHandler(Pages.ACCOUNT, "create")), 750, 0);
+            NaviUtil.onSignUp()), 750, 0);
 
         // instructions etc in white boxes
         content.add(
@@ -40,7 +41,7 @@ public class DesignContestPanel extends FlowPanel
         FlowPanel enterPanel = MsoyUI.createFlowPanel(null);
         enterPanel.add(MsoyUI.createHTML(_msgs.designconEnterText(), null));
         enterPanel.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.designconSignup(), 
-            Link.createHandler(Pages.ACCOUNT, "create")));
+            NaviUtil.onSignUp()));
         content.add(new WideContentBox(_msgs.designconEnterTitle(), enterPanel, true));
 
         content.add(

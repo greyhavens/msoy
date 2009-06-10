@@ -1,17 +1,19 @@
 //
 // $Id$
 
-package client.account;
+package client.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 
 /**
@@ -28,10 +30,18 @@ public class RecaptchaUtil
     }
 
     /**
+     * Creates the special DIV that will contain the captcha UI.
+     */
+    public static HTML createDiv (String elemId)
+    {
+        return new HTML("<div id=\"" + elemId + "\"></div>");
+    }
+
+    /**
      * Initializes the RECAPTCHA system, placing the captcha in the element on the page with the
      * specified id.
      */
-    public static void init (String element)
+    public static void init (String elemId)
     {
         if (!isEnabled()) {
             return;
@@ -50,11 +60,10 @@ public class RecaptchaUtil
         DOM.setElementAttribute(e, "src", "http://api.recaptcha.net/js/recaptcha_ajax.js");
 
         // display a little "loading" indicator
-        RootPanel.get(element).add(
-            MsoyUI.createLabel(_msgs.createCaptchaLoading(), "label"));
+        RootPanel.get(elemId).add(MsoyUI.createLabel(_cmsgs.captchaLoading(), "label"));
 
         // start a timer that will initialize the captcha bits once our async JS is loaded
-        initCaptcha(element);
+        initCaptcha(elemId);
     }
 
     public static native String getChallenge () /*-{
@@ -73,15 +82,15 @@ public class RecaptchaUtil
         $wnd.Recaptcha.focus_response_field();
     }-*/;
 
-    protected static void initCaptcha (final String element)
+    protected static void initCaptcha (final String elemId)
     {
         // our JavaScript is loaded asynchrnously, so there's a possibility that it won't be set up
         // by the time we try to initialize ourselves; in that case we have no recourse but to try
         // again in a short while (there's no way to find out when async JS is loaded)
-        if (!create(element)) {
+        if (!create(elemId)) {
             new Timer() {
                 public void run () {
-                    initCaptcha(element);
+                    initCaptcha(elemId);
                 }
             }.schedule(500);
         }
@@ -91,10 +100,10 @@ public class RecaptchaUtil
         $wnd.recaptchaPublicKey = recaptchaPublic;
     }-*/;
 
-    protected static native boolean create (String element) /*-{
+    protected static native boolean create (String elemId) /*-{
         try {
             if ($wnd.Recaptcha != null) {
-                $wnd.Recaptcha.create($wnd.recaptchaPublicKey, element, { theme: "white" });
+                $wnd.Recaptcha.create($wnd.recaptchaPublicKey, elemId, { theme: "white" });
                 return true;
             }
         } catch (e) {
@@ -103,5 +112,5 @@ public class RecaptchaUtil
         return false;
     }-*/;
 
-    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }
