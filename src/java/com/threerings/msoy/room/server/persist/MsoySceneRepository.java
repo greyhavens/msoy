@@ -33,7 +33,6 @@ import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Div;
-import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.Not;
 
 import com.samskivert.util.IntMap;
@@ -202,9 +201,9 @@ public class MsoySceneRepository extends DepotRepository
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // only load public, published rooms
-        clauses.add(new Where(new And(new Not(SceneRecord.LAST_PUBLISHED.isNull()),
-                                      new Equals(SceneRecord.ACCESS_CONTROL,
-                                                 MsoySceneModel.ACCESS_EVERYONE))));
+        clauses.add(new Where(new And(
+                            new Not(SceneRecord.LAST_PUBLISHED.isNull()),
+                            SceneRecord.ACCESS_CONTROL.eq(MsoySceneModel.ACCESS_EVERYONE))));
 
         exprs.add(NEW_AND_HOT_ORDER);
         orders.add(OrderBy.Order.DESC);
@@ -477,8 +476,7 @@ public class MsoySceneRepository extends DepotRepository
     {
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
-        return new Div(
-            SceneRecord.RATING_SUM,
+        return SceneRecord.RATING_SUM.div(
             new FunctionExp("GREATEST", SceneRecord.RATING_COUNT, new LiteralExp("1.0")));
     }
 
@@ -495,9 +493,9 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
-        getRatingExpression().plus(new Div(new EpochSeconds(SceneRecord.LAST_PUBLISHED),
-                                               // TODO: PostgreSQL flips out when you CREATE INDEX
-                                               // using a prepared statement with parameters. So we
-                                               // trick Depot using a literal expression here. :/
-                                               new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
+        getRatingExpression().plus(new EpochSeconds(SceneRecord.LAST_PUBLISHED).div(
+                                       // TODO: PostgreSQL flips out when you CREATE INDEX
+                                       // using a prepared statement with parameters. So we
+                                       // trick Depot using a literal expression here. :/
+                                       new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
 }

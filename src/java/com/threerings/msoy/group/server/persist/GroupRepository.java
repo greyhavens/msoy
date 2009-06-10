@@ -38,7 +38,6 @@ import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
-import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.Mul;

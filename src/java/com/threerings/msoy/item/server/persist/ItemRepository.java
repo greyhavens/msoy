@@ -57,11 +57,9 @@ import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.Div;
-import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.Mul;
@@ -114,27 +112,27 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public class WordSearch
     {
-        public SQLOperator fullTextMatch ()
+        public FullText.Match fullTextMatch ()
         {
             return _itemFts.match();
         }
 
-        public SQLOperator fullTextRank ()
+        public FullText.Rank fullTextRank ()
         {
             return _itemFts.rank();
         }
 
-        public SQLOperator cloneTextMatch ()
+        public FullText.Match cloneTextMatch ()
         {
             return _cloneFts.match();
         }
 
-        public SQLOperator cloneTextRank ()
+        public FullText.Rank cloneTextRank ()
         {
             return _cloneFts.rank();
         }
 
-        public SQLOperator tagExistsExpression (ColumnExp itemColumn)
+        public Exists tagExistsExpression (ColumnExp itemColumn)
         {
             if (_tagIds.size() == 0) {
                 return null;
@@ -252,12 +250,11 @@ public abstract class ItemRepository<T extends ItemRecord>
                     // and cost < minPrice
                     Join join = new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
                                          getItemColumn(ItemRecord.ITEM_ID));
-                    Where where = new Where(
-                        new And(new Equals(getCatalogColumn(CatalogRecord.CURRENCY),
-                                           Currency.COINS.toByte()),
-                                getRatingExpression().lessEq(rating),
-                                getRatingExpression().greaterThan(rating-1),
-                                getCatalogColumn(CatalogRecord.COST).lessThan(minPrice)));
+                    Where where = new Where(new And(
+                        getCatalogColumn(CatalogRecord.CURRENCY).eq(Currency.COINS.toByte()),
+                        getRatingExpression().lessEq(rating),
+                        getRatingExpression().greaterThan(rating-1),
+                        getCatalogColumn(CatalogRecord.COST).lessThan(minPrice)));
                     for (CatalogRecord crec : findAll(getCatalogClass(), join, where)) {
                         updatePartial(getCatalogKey(crec.catalogId), CatalogRecord.COST, minPrice);
                         adjusted++;
@@ -1271,8 +1268,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         List<QueryClause> clauses = Lists.newArrayList();
         SQLExpression derived = getCatalogColumn(CatalogRecord.BASIS_ID).eq(catalogId);
-        SQLExpression visible = new Not(new Equals(
-            getCatalogColumn(CatalogRecord.PRICING), CatalogListing.PRICING_HIDDEN));
+        SQLExpression visible = new Not(
+            getCatalogColumn(CatalogRecord.PRICING).eq(CatalogListing.PRICING_HIDDEN));
         clauses.add(new Where(new And(derived, visible)));
         if (maximum > 0) {
             clauses.add(new Limit(0, maximum));
@@ -1468,8 +1465,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             significantlyConstrained = true;
         }
 
-        whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
-                                         CatalogListing.PRICING_HIDDEN)));
+        whereBits.add(new Not(getCatalogColumn(CatalogRecord.PRICING).eq(
+                                  CatalogListing.PRICING_HIDDEN)));
 
         clauses.add(new Where(new And(whereBits)));
         return significantlyConstrained;
@@ -1497,10 +1494,9 @@ public abstract class ItemRepository<T extends ItemRecord>
         // - We know that Currency.COINS=0, Currency.BARS=1
         // - if the exchange rate was less than 1, this would value coins and bars equally
         //   instead of making bars worth less... that shouldn't happen though.
-        exprs.add(new Mul(getCatalogColumn(CatalogRecord.COST),
-                          new FunctionExp("GREATEST", new ValueExp(1),
-                                          new Mul(getCatalogColumn(CatalogRecord.CURRENCY),
-                                                  new ValueExp(exchangeRate)))));
+        exprs.add(getCatalogColumn(CatalogRecord.COST).times(new FunctionExp(
+                          "GREATEST", new ValueExp(1),
+                          getCatalogColumn(CatalogRecord.CURRENCY).times(exchangeRate))));
         orders.add(order);
     }
 
@@ -1513,9 +1509,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
-        exprs.add(new Add(getRatingExpression(),
-                          new Div(new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)),
-                                  HotnessConfig.DROPOFF_SECONDS)));
+        exprs.add(getRatingExpression().plus(
+                      new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)).div(
+                          HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1528,20 +1524,17 @@ public abstract class ItemRepository<T extends ItemRecord>
         // sizes.
         SQLOperator[] ops = new SQLOperator[] {
             // The base value is just the Full Text Search rank value, the scale of which is
-            // entirely unknown. We only give it a tiny linear shift so that the creator and
-            // tag factors below have something non-zero to work with when there is no full
-            // text hit at all
-            new ValueExp(0.1).plus(context.fullTextRank()),
+            // entirely unknown. We give it a tiny linear shift so that the creator and tag factors
+            // below have something non-zero to work with when there is no full text hit at all
+            context.fullTextRank().plus(0.1),
 
-            // adjust the FTS rank by (5 + rating), which means a 5-star item is rated
+            // adjust the FTS rank by (rating + 5), which means a 5-star item is rated
             // (approximately) twice as high rated as a 1-star item
-            new ValueExp(1.0).plus(getRatingExpression()),
+            getRatingExpression().plus(1.0),
 
-            // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
+            // then boost by (log10(purchases+1) + 3), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy
-            new Add(new ValueExp(3.0),
-                    new FunctionExp("LOG", new Add(new ValueExp(1.0),
-                                                   getCatalogColumn(CatalogRecord.PURCHASES)))),
+            new FunctionExp("LOG", getCatalogColumn(CatalogRecord.PURCHASES).plus(1.0)).plus(3.0),
         };
 
         SQLOperator tagExistsExp =
@@ -1615,9 +1608,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected Div getRatingExpression ()
     {
-        return new Div(getItemColumn(ItemRecord.RATING_SUM),
-                       new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT),
-                                       new ValueExp(1.0)));
+        return getItemColumn(ItemRecord.RATING_SUM).div(
+            new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT), new ValueExp(1.0)));
     }
 
     protected Key<T> getItemKey (int itemId)
