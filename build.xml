@@ -570,6 +570,11 @@
     </copy>
     <copy file="lib/framework_3.3.0.4852.swz" todir="pages/clients"/>
     <copy file="lib/framework_3.3.0.4852.swf" todir="pages/clients"/>
+    <copy file="etc/msoy-config.xml.in" tofile="etc/msoy-config.xml">
+      <filterset>
+        <filter token="server_url" value="${server_url}"/>
+      </filterset>
+    </copy>
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
