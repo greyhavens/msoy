@@ -20,6 +20,8 @@ import com.samskivert.util.IntMaps;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Exps;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -29,11 +31,7 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.IntervalExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Not;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -198,7 +196,7 @@ public class ABTestRepository extends DepotRepository
 
         // now determine how many of those members registered
         exprs.add(new Join(ABGroupRecord.VISITOR_ID, EntryVectorRecord.VISITOR_ID));
-        where = new And(ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0));
+        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0));
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).registered = rec.count;
@@ -213,18 +211,18 @@ public class ABTestRepository extends DepotRepository
         }
 
         // now determine how many of those members returned
-        SQLExpression since = MemberRecord.LAST_SESSION.minus(IntervalExp.days(2)).
+        SQLExpression since = MemberRecord.LAST_SESSION.minus(Exps.days(2)).
             greaterThan(MemberRecord.CREATED);
-        where = new And(ABGroupRecord.TEST_ID.eq(testId), since);
+        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), since);
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).returned = rec.count;
         }
 
         // now determine how many of those members were retained
-        since = MemberRecord.LAST_SESSION.minus(IntervalExp.days(7)).
+        since = MemberRecord.LAST_SESSION.minus(Exps.days(7)).
             greaterThan(MemberRecord.CREATED);
-        where = new And(ABGroupRecord.TEST_ID.eq(testId), since);
+        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), since);
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).retained = rec.count;
@@ -259,9 +257,9 @@ public class ABTestRepository extends DepotRepository
         Timestamp now = new Timestamp(System.currentTimeMillis());
         int mods = updatePartial(
             ABTestRecord.class, new Where(
-                new And(ABTestRecord.ENDED.isNull(),
-                        new Not(ABTestRecord.TEST_ID.in(activeIds)))),
-            null, ImmutableMap.of(ABTestRecord.ENDED, new ValueExp(now)));
+                Ops.and(ABTestRecord.ENDED.isNull(),
+                        Ops.not(ABTestRecord.TEST_ID.in(activeIds)))),
+            null, ImmutableMap.of(ABTestRecord.ENDED, Exps.value(now)));
         if (mods == 0) {
             // if we modded no rows, either there's nothing to summarize or another server is on it
             return;
