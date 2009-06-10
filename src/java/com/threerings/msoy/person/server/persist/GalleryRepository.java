@@ -17,8 +17,6 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.IsNull;
 
 import com.threerings.msoy.person.gwt.Gallery;
@@ -40,7 +38,7 @@ public class GalleryRepository extends DepotRepository
     public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
         return findAll(GalleryInfoRecord.class,
-            new Where(new Equals(GalleryRecord.OWNER_ID, memberId)),
+            new Where(GalleryRecord.OWNER_ID.eq(memberId)),
                       OrderBy.descending(GalleryRecord.LAST_MODIFIED));
     }
 
@@ -50,7 +48,7 @@ public class GalleryRepository extends DepotRepository
     public GalleryRecord loadMeGallery (int memberId)
     {
         return load(GalleryRecord.class,
-                    new Where(new And(new Equals(GalleryRecord.OWNER_ID, memberId),
+                    new Where(new And(GalleryRecord.OWNER_ID.eq(memberId),
                                       // a null gallery name indicates the "Me" gallery
                                       new IsNull(GalleryRecord.NAME))));
     }
@@ -106,7 +104,7 @@ public class GalleryRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(GalleryRecord.class, new Where(new In(GalleryRecord.OWNER_ID, memberIds)));
+        deleteAll(GalleryRecord.class, new Where(GalleryRecord.OWNER_ID.in(memberIds)));
     }
 
     /**

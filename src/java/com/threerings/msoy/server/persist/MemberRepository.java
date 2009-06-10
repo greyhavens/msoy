@@ -52,11 +52,6 @@ import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.BitAnd;
 import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.In;
-import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.LessThanEquals;
 import com.samskivert.depot.operator.Like;
 import com.samskivert.depot.operator.NotEquals;
 import com.samskivert.depot.operator.Or;
@@ -182,8 +177,8 @@ public class MemberRepository extends DepotRepository
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - ENTRY_VECTOR_EXPIRE);
         int deleted = deleteAll(
             EntryVectorRecord.class,
-            new Where(new And(new Equals(EntryVectorRecord.MEMBER_ID, 0),
-                              new LessThan(EntryVectorRecord.CREATED, cutoff))),
+            new Where(new And(EntryVectorRecord.MEMBER_ID.eq(0),
+                              EntryVectorRecord.CREATED.lessThan(cutoff))),
             null); // no cache invalidator needed
         if (deleted > 0) {
             log.info("Purged " + deleted + " expired entry vector records.");
@@ -197,7 +192,7 @@ public class MemberRepository extends DepotRepository
     public List<EntrySummary> summarizeEntries ()
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - ENTRY_VECTOR_EXPIRE);
-        SQLExpression since = new GreaterThanEquals(EntryVectorRecord.CREATED, cutoff);
+        SQLExpression since = EntryVectorRecord.CREATED.greaterEq(cutoff);
 
         // first load up all entries in the period
         Map<String, EntrySummary> summaries = Maps.newHashMap();
@@ -210,7 +205,7 @@ public class MemberRepository extends DepotRepository
         }
 
         // then determine how many of those eventually registered
-        Where where = new Where(new And(since, new NotEquals(EntryVectorRecord.MEMBER_ID, 0)));
+        Where where = new Where(new And(since, EntryVectorRecord.MEMBER_ID.notEq(0)));
         for (EntrySummaryRecord entry : findAll(EntrySummaryRecord.class, where,
                                                 new GroupBy(EntryVectorRecord.VECTOR))) {
             EntrySummary sum = summaries.get(entry.vector);
@@ -248,7 +243,7 @@ public class MemberRepository extends DepotRepository
     {
         Timestamp cutoff = RepositoryUtil.getCutoff(60); // TODO: unmagick
         return load(CountRecord.class, new FromOverride(MemberRecord.class),
-                    new Where(new GreaterThan(MemberRecord.LAST_SESSION, cutoff))).count;
+                    new Where(MemberRecord.LAST_SESSION.greaterThan(cutoff))).count;
     }
 
     /**
@@ -297,7 +292,7 @@ public class MemberRepository extends DepotRepository
         int valbit = MemberRecord.Flag.VALIDATED.getBit();
         int bits = (MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit() |
                     MemberRecord.Flag.SPANKED.getBit() | valbit);
-        SQLExpression where = new Equals(new BitAnd(MemberRecord.FLAGS, bits), valbit);
+        SQLExpression where = new BitAnd(MemberRecord.FLAGS.eq(bits), valbit);
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, new Where(where))) {
             // !MemberMailUtil.isPlaceholderAddress(record.accountName) (no longer needed)
@@ -327,7 +322,7 @@ public class MemberRepository extends DepotRepository
      */
     public MemberCard loadMemberCard (int memberId, boolean filterDeleted)
     {
-        SQLExpression where = new Equals(MemberRecord.MEMBER_ID, memberId);
+        SQLExpression where = MemberRecord.MEMBER_ID.eq(memberId);
         if (filterDeleted) {
             where = new And(where, new NotEquals(MemberRecord.ACCOUNT_NAME,
                                                  memberId + MemberRecord.DELETED_SUFFIX));
@@ -370,7 +365,7 @@ public class MemberRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MemberRecord.class));
         clauses.add(new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID));
-        clauses.add(new Where(new In(MemberRecord.MEMBER_ID, memberIds)));
+        clauses.add(new Where(MemberRecord.MEMBER_ID.in(memberIds)));
         if (sortByLastOnline) {
             clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
         }
@@ -388,9 +383,9 @@ public class MemberRepository extends DepotRepository
     {
         return Lists.transform(
             findAllKeys(MemberRecord.class, false,
-                new Where(new Equals(new FunctionExp("LOWER", MemberRecord.NAME),
-                          new FunctionExp("LOWER", new ValueExp(search)))),
-                new Limit(0, limit)),
+                        new Where(new FunctionExp("LOWER", MemberRecord.NAME).eq(
+                                      new FunctionExp("LOWER", new ValueExp(search)))),
+                        new Limit(0, limit)),
             RecordFunctions.<MemberRecord>getIntKey());
     }
 
@@ -423,7 +418,7 @@ public class MemberRepository extends DepotRepository
         }
         search = search.toLowerCase();
         Where whereClause = new Where(new And(
-            new In(MemberRecord.MEMBER_ID, memberIds),
+            MemberRecord.MEMBER_ID.in(memberIds),
             new Like(new FunctionExp("LOWER", MemberRecord.NAME), "%" + search + "%")));
         return Lists.transform(findAllKeys(MemberRecord.class, false, whereClause),
                                RecordFunctions.<MemberRecord>getIntKey());
@@ -438,8 +433,8 @@ public class MemberRepository extends DepotRepository
     {
         ColumnExp lastSess = MemberRecord.LAST_SESSION;
         Where where = new Where(new And(
-            new GreaterThan(lastSess, new ValueExp(earliestLastSession)),
-            new LessThanEquals(lastSess, new ValueExp(latestLastSession)),
+            lastSess.greaterThan(new ValueExp(earliestLastSession)),
+            lastSess.lessEq(new ValueExp(latestLastSession)),
             new Equals(new BitAnd(
                 MemberRecord.FLAGS, Flag.NO_ANNOUNCE_EMAIL.getBit() | Flag.SPANKED.getBit()), 0)));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
@@ -669,7 +664,7 @@ public class MemberRepository extends DepotRepository
      */
     public void deleteMembers (Collection<Integer> memberIds)
     {
-        deleteAll(MemberRecord.class, new Where(new In(MemberRecord.MEMBER_ID, memberIds)));
+        deleteAll(MemberRecord.class, new Where(MemberRecord.MEMBER_ID.in(memberIds)));
     }
 
     /**
@@ -694,22 +689,22 @@ public class MemberRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(ExternalMapRecord.class,
-                  new Where(new In(ExternalMapRecord.MEMBER_ID, memberIds)));
+                  new Where(ExternalMapRecord.MEMBER_ID.in(memberIds)));
         deleteAll(SessionRecord.class,
-                  new Where(new In(SessionRecord.MEMBER_ID, memberIds)));
+                  new Where(SessionRecord.MEMBER_ID.in(memberIds)));
         deleteAll(MemberExperienceRecord.class,
-                  new Where(new In(MemberExperienceRecord.MEMBER_ID, memberIds)));
+                  new Where(MemberExperienceRecord.MEMBER_ID.in(memberIds)));
         deleteAll(MemberWarningRecord.class,
-                  new Where(new In(MemberWarningRecord.MEMBER_ID, memberIds)));
+                  new Where(MemberWarningRecord.MEMBER_ID.in(memberIds)));
         deleteAll(AffiliateRecord.class,
-                  new Where(new In(AffiliateRecord.MEMBER_ID, memberIds)));
+                  new Where(AffiliateRecord.MEMBER_ID.in(memberIds)));
         deleteAll(CharityRecord.class,
-                  new Where(new In(CharityRecord.MEMBER_ID, memberIds)));
+                  new Where(CharityRecord.MEMBER_ID.in(memberIds)));
         deleteAll(EntryVectorRecord.class,
-                  new Where(new In(EntryVectorRecord.MEMBER_ID, memberIds)));
+                  new Where(EntryVectorRecord.MEMBER_ID.in(memberIds)));
         deleteAll(FriendshipRecord.class,
-                  new Where(new Or(new In(FriendshipRecord.MEMBER_ID, memberIds),
-                                   new In(FriendshipRecord.FRIEND_ID, memberIds))));
+                  new Where(new Or(FriendshipRecord.MEMBER_ID.in(memberIds),
+                                   FriendshipRecord.FRIEND_ID.in(memberIds))));
         // we don't purge InvitationRecord or GameInvitationRecord; they will probably be few in
         // number and are arguably interesting for historical reasons; this may need to be
         // revisited if we achieve "internet scale"
@@ -816,7 +811,7 @@ public class MemberRepository extends DepotRepository
     public int[] loadMutelist (int memberId)
     {
         List<MuteRecord> list =
-            findAll(MuteRecord.class, new Where(new Equals(MuteRecord.MUTER_ID, memberId)));
+            findAll(MuteRecord.class, new Where(MuteRecord.MUTER_ID.eq(memberId)));
         int[] ids = new int[list.size()];
         for (int ii = 0; ii < ids.length; ii++) {
             ids[ii] = list.get(ii).muteeId;
@@ -925,8 +920,8 @@ public class MemberRepository extends DepotRepository
             return ships;
         }
         for (FriendshipRecord frec : findAll(FriendshipRecord.class, new Where(new And(
-                new Equals(FriendshipRecord.MEMBER_ID, memberId),
-                new In(FriendshipRecord.FRIEND_ID, otherIds))))) {
+                FriendshipRecord.MEMBER_ID.eq(memberId),
+                FriendshipRecord.FRIEND_ID.in(otherIds))))) {
             ships.put(frec.friendId, frec.valid ? Friendship.FRIENDS : Friendship.INVITED);
         }
         return ships;
@@ -957,7 +952,7 @@ public class MemberRepository extends DepotRepository
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(fullFriendWhere(memberId));
-        SQLExpression condition = new Equals(MemberRecord.MEMBER_ID, FriendshipRecord.FRIEND_ID);
+        SQLExpression condition = MemberRecord.MEMBER_ID.eq(FriendshipRecord.FRIEND_ID);
         clauses.add(new Join(MemberRecord.class, condition));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
@@ -1060,8 +1055,8 @@ public class MemberRepository extends DepotRepository
         if (externalIds.isEmpty()) {
             return memberIds;
         }
-        Where where = new Where(new And(new Equals(ExternalMapRecord.PARTNER_ID, auther.toByte()),
-                                        new In(ExternalMapRecord.EXTERNAL_ID, externalIds)));
+        Where where = new Where(new And(ExternalMapRecord.PARTNER_ID.eq(auther.toByte()),
+                                        ExternalMapRecord.EXTERNAL_ID.in(externalIds)));
         for (ExternalMapRecord record : findAll(ExternalMapRecord.class, where)) {
             memberIds.add(record.memberId);
         }
@@ -1341,16 +1336,16 @@ public class MemberRepository extends DepotRepository
     protected Where fullFriendWhere (int memberId)
     {
         return new Where(new And(
-            new Equals(FriendshipRecord.MEMBER_ID, memberId),
-            new Equals(FriendshipRecord.VALID, true)));
+            FriendshipRecord.MEMBER_ID.eq(memberId),
+            FriendshipRecord.VALID.eq(true)));
     }
 
     protected Where weakPermaguestWhere (long now)
     {
         Timestamp cutoff = new Timestamp(now - WEAK_PERMAGUEST_EXPIRE);
         And bits = new And(new Like(MemberRecord.ACCOUNT_NAME, PERMA_PATTERN),
-                           new LessThan(MemberRecord.LEVEL, STRONG_PERMAGUEST_LEVEL),
-                           new LessThan(MemberRecord.LAST_SESSION, cutoff));
+                           MemberRecord.LEVEL.lessThan(STRONG_PERMAGUEST_LEVEL),
+                           MemberRecord.LAST_SESSION.lessThan(cutoff));
         return new Where(bits);
     }
 

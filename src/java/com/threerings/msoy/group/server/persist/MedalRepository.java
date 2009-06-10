@@ -21,7 +21,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -66,8 +65,8 @@ public class MedalRepository extends DepotRepository
      */
     public boolean groupContainsMedalName (int groupId, String name)
     {
-        Equals groupIdEquals = new Equals(MedalRecord.GROUP_ID, groupId);
-        Equals nameEquals = new Equals(MedalRecord.NAME, name);
+        Equals groupIdEquals = MedalRecord.GROUP_ID.eq(groupId);
+        Equals nameEquals = MedalRecord.NAME.eq(name);
         return load(MedalRecord.class, new Where(new And(groupIdEquals, nameEquals))) != null;
     }
 
@@ -110,7 +109,7 @@ public class MedalRepository extends DepotRepository
             return Collections.emptyList();
         }
         return findAll(EarnedMedalRecord.class,
-            new Where(new In(EarnedMedalRecord.MEDAL_ID, medalIds)));
+            new Where(EarnedMedalRecord.MEDAL_ID.in(medalIds)));
     }
 
     /**
@@ -141,7 +140,7 @@ public class MedalRepository extends DepotRepository
     {
         // note: this will full table scan, but that might be OK
         deleteAll(EarnedMedalRecord.class,
-                  new Where(new In(EarnedMedalRecord.MEMBER_ID, memberIds)));
+                  new Where(EarnedMedalRecord.MEMBER_ID.in(memberIds)));
     }
 
     @Override

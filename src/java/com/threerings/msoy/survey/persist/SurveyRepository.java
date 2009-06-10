@@ -22,7 +22,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -243,8 +242,8 @@ public class SurveyRepository extends DepotRepository
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Where(
-                        new And(new Equals(SurveyResponseRecord.SURVEY_ID, surveyId),
-                                new Equals(SurveyResponseRecord.QUESTION_INDEX, questionIndex))));
+                        new And(SurveyResponseRecord.SURVEY_ID.eq(surveyId),
+                                SurveyResponseRecord.QUESTION_INDEX.eq(questionIndex))));
         return clauses;
     }
 

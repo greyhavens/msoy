@@ -30,7 +30,6 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Add;
-import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -229,11 +228,11 @@ public class CommentRepository extends DepotRepository
     {
         // delete all ratings made by these members
         deleteAll(CommentRatingRecord.class,
-                  new Where(new In(CommentRatingRecord.MEMBER_ID, memberIds)));
+                  new Where(CommentRatingRecord.MEMBER_ID.in(memberIds)));
 
         // load up the ids of all comments made by these members
         List<Key<CommentRecord>> keys = findAllKeys(
-            CommentRecord.class, false, new Where(new In(CommentRecord.MEMBER_ID, memberIds)));
+            CommentRecord.class, false, new Where(CommentRecord.MEMBER_ID.in(memberIds)));
 
         // delete those comments
         deleteAll(CommentRecord.class, KeySet.newKeySet(CommentRecord.class, keys));

@@ -33,9 +33,7 @@ import com.samskivert.depot.expression.IntervalExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.Not;
-import com.samskivert.depot.operator.Sub;
 
 import com.threerings.presents.annotation.BlockingThread;
 

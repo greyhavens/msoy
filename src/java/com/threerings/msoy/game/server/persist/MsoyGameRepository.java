@@ -40,13 +40,9 @@ import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Div;
-import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.NotEquals;
 import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Sub;
@@ -122,8 +118,8 @@ public class MsoyGameRepository extends DepotRepository
         }
         return findAll(
             GameInfoRecord.class,
-            new Where(new And(new In(GameInfoRecord.GAME_ID, gameIds),
-                              new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN))));
+            new Where(new And(GameInfoRecord.GAME_ID.in(gameIds),
+                              GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN))));
     }
 
     /**
@@ -134,8 +130,8 @@ public class MsoyGameRepository extends DepotRepository
         Map<GameGenre, Integer> counts = Maps.newHashMap();
         for (GenreCountRecord gcr : findAll(
                  GenreCountRecord.class,
-                 new Where(new And(new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN),
-                                   new Equals(GameInfoRecord.INTEGRATED, Boolean.TRUE))),
+                 new Where(new And(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN),
+                                   GameInfoRecord.INTEGRATED.eq(Boolean.TRUE))),
                  new GroupBy(GameInfoRecord.GENRE))) {
             counts.put(gcr.genre, gcr.count);
         }
@@ -167,9 +163,9 @@ public class MsoyGameRepository extends DepotRepository
         // build the where clause with genre and/or search string
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (genre == GameGenre.ALL || genre == GameGenre.HIDDEN) {
-            whereBits.add(new NotEquals(GameInfoRecord.GENRE, GameGenre.HIDDEN));
+            whereBits.add(GameInfoRecord.GENRE.notEq(GameGenre.HIDDEN));
         } else {
-            whereBits.add(new Equals(GameInfoRecord.GENRE, genre));
+            whereBits.add(GameInfoRecord.GENRE.eq(genre));
         }
 
         if (!StringUtil.isBlank(search)) {
@@ -185,7 +181,7 @@ public class MsoyGameRepository extends DepotRepository
         }
 
         // filter out games that aren't integrated with Whirled
-        whereBits.add(new Equals(GameInfoRecord.INTEGRATED, Boolean.TRUE));
+        whereBits.add(GameInfoRecord.INTEGRATED.eq(Boolean.TRUE));
         clauses.add(new Where(new And(whereBits)));
 
         // add the limit if specified
@@ -234,8 +230,8 @@ public class MsoyGameRepository extends DepotRepository
         boolean featured)
     {
         if (gameIds.size() > 0) {
-            Where where = new Where(new And(new Equals(ArcadeEntryRecord.PORTAL, portal),
-                new In(ArcadeEntryRecord.GAME_ID, gameIds)));
+            Where where = new Where(new And(ArcadeEntryRecord.PORTAL.eq(portal),
+                ArcadeEntryRecord.GAME_ID.in(gameIds)));
             updatePartial(ArcadeEntryRecord.class, where,
                 new CacheInvalidator.TraverseWithFilter<ArcadeEntryRecord>(
                         ArcadeEntryRecord.class) {
@@ -413,8 +409,8 @@ public class MsoyGameRepository extends DepotRepository
     {
         // where recorded >= {start} and recorded < {end}
         Where where = new Where(new And(
-            new GreaterThanEquals(GamePlayRecord.RECORDED, new Timestamp(start)),
-            new LessThan(GamePlayRecord.RECORDED, new Timestamp(end))
+            GamePlayRecord.RECORDED.greaterEq(new Timestamp(start)),
+            GamePlayRecord.RECORDED.lessThan(new Timestamp(end))
         ));
 
         return findAll(GamePlayRecord.class, where);
@@ -471,7 +467,7 @@ public class MsoyGameRepository extends DepotRepository
         // lastly, prune old gameplay records
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - THIRTY_DAYS);
         deleteAll(GamePlayRecord.class,
-                  new Where(new LessThan(GamePlayRecord.RECORDED, cutoff)));
+                  new Where(GamePlayRecord.RECORDED.lessThan(cutoff)));
 
         return new int[] { payoutFactor, avgSingleDuration, avgMultiDuration };
     }
@@ -564,14 +560,14 @@ public class MsoyGameRepository extends DepotRepository
 
         // Create conditionals for distinguishing dev from listed games
         ColumnExp gameId = GameTraceLogRecord.GAME_ID;
-        LessThan isDev = new LessThan(gameId, 0);
-        GreaterThan isListed = new GreaterThan(gameId, 0);
+        LessThan isDev = gameId.lessThan(0);
+        GreaterThan isListed = gameId.greaterThan(0);
 
         // Perform deletion
         ColumnExp recorded = GameTraceLogRecord.RECORDED;
         int rows = deleteAll(GameTraceLogRecord.class, new Where(new Or(
-            new And(isDev, new LessThan(recorded, devCutoffTimestamp)),
-            new And(isListed, new LessThan(recorded, listedCutoffTimestamp)))));
+            new And(isDev, recorded.lessThan(devCutoffTimestamp)),
+            new And(isListed, recorded.lessThan(listedCutoffTimestamp)))));
 
         log.info("Deleted trace logs", "devCutoff", devCutoffTimestamp,
                  "listedCutoff", listedCutoffTimestamp, "rows", rows);

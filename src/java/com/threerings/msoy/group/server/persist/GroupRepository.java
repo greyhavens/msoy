@@ -39,10 +39,8 @@ import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Case;
 import com.samskivert.depot.operator.Div;
-import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.Mul;
 import com.samskivert.depot.operator.Not;
 import com.samskivert.depot.operator.Or;
@@ -115,8 +113,8 @@ public class GroupRepository extends DepotRepository
                 return null;
             }
             Where where = new Where(new And(
-                new Equals(_tagRepo.getTagColumn(GroupTagRecord.TARGET_ID), GroupRecord.GROUP_ID),
-                new In(_tagRepo.getTagColumn(GroupTagRecord.TAG_ID), _tagIds)));
+                _tagRepo.getTagColumn(GroupTagRecord.TARGET_ID).eq(GroupRecord.GROUP_ID),
+                _tagRepo.getTagColumn(GroupTagRecord.TAG_ID).in(_tagIds)));
             return new Exists(new SelectClause(GroupTagRecord.class,
                                                new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
@@ -247,7 +245,7 @@ public class GroupRepository extends DepotRepository
      */
     public GroupRecord loadGroupByName (String name)
     {
-        return load(GroupRecord.class, new Where(new Equals(GroupRecord.NAME, name)));
+        return load(GroupRecord.class, new Where(GroupRecord.NAME.eq(name)));
     }
 
     /**
@@ -487,8 +485,8 @@ public class GroupRepository extends DepotRepository
             return Collections.emptyList();
         }
         return findAll(GroupMembershipRecord.class,
-            new Where(new And(new Equals(GroupMembershipRecord.GROUP_ID, groupId),
-                new In(GroupMembershipRecord.MEMBER_ID, memberIds))));
+            new Where(new And(GroupMembershipRecord.GROUP_ID.eq(groupId),
+                GroupMembershipRecord.MEMBER_ID.in(memberIds))));
     }
 
     /**
@@ -553,7 +551,7 @@ public class GroupRepository extends DepotRepository
         // note: if these members were the last manager of any groups, they are left high and dry;
         // given that we only purge permaguests currently, this is a non-issue
         deleteAll(GroupMembershipRecord.class,
-                  new Where(new In(GroupMembershipRecord.MEMBER_ID, memberIds)));
+                  new Where(GroupMembershipRecord.MEMBER_ID.in(memberIds)));
         _tagRepo.purgeMembers(memberIds);
     }
 
@@ -584,7 +582,7 @@ public class GroupRepository extends DepotRepository
         List<QueryClause> clauses = Lists.newArrayList();
 
         List<SQLExpression> conditions = Lists.<SQLExpression>newArrayList(
-            new Not(new Equals(GroupRecord.POLICY, Group.Policy.EXCLUSIVE)));
+            new Not(GroupRecord.POLICY.eq(Group.Policy.EXCLUSIVE)));
 
         if (search != null) {
             List<SQLOperator> wordBits = Lists.newArrayList(search.fullTextMatch());
@@ -595,7 +593,7 @@ public class GroupRepository extends DepotRepository
             conditions.add(new Or(wordBits));
 
         } else if (tagId > 0) {
-            conditions.add(new Equals(_tagRepo.getTagColumn(TagRecord.TAG_ID), tagId));
+            conditions.add(_tagRepo.getTagColumn(TagRecord.TAG_ID).eq(tagId));
             clauses.add(new Join(GroupRecord.GROUP_ID, _tagRepo.getTagColumn(TagRecord.TARGET_ID)));
 
         }
@@ -653,9 +651,9 @@ public class GroupRepository extends DepotRepository
      */
     protected List<Integer> getMemberIds (int groupId, Rank rank)
     {
-        SQLExpression test = new Equals(GroupMembershipRecord.GROUP_ID, groupId);
+        SQLExpression test = GroupMembershipRecord.GROUP_ID.eq(groupId);
         if (rank != null) {
-            test = new And(test, new Equals(GroupMembershipRecord.RANK, rank));
+            test = new And(test, GroupMembershipRecord.RANK.eq(rank));
         }
 
         return Lists.transform(findAllKeys(GroupMembershipRecord.class, false, new Where(test)),

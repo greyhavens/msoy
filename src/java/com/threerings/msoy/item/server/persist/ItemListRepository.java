@@ -293,8 +293,8 @@ public class ItemListRepository extends DepotRepository
                 return record.listId == listId && record.sequence >= fromIndex;
             }
         };
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
-        GreaterThanEquals after = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, fromIndex);
+        Equals findList = ItemListElementRecord.LIST_ID.eq(listId);
+        GreaterThanEquals after = ItemListElementRecord.SEQUENCE.greaterEq(fromIndex);
         And condition = new And(findList, after);
         updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
                       ItemListElementRecord.SEQUENCE, new Add(ItemListElementRecord.SEQUENCE, 1));
@@ -307,8 +307,8 @@ public class ItemListRepository extends DepotRepository
      */
     protected void shiftItemsLeft (final int listId, final short fromIndex)
     {
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
-        GreaterThan after = new GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
+        Equals findList = ItemListElementRecord.LIST_ID.eq(listId);
+        GreaterThan after = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
         And condition = new And(findList, after);
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -337,8 +337,8 @@ public class ItemListRepository extends DepotRepository
 
         if (fromIndex < toIndex) {
             // shift all affected items to the left
-            GreaterThan min = new GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
-            LessThanEquals max = new LessThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
+            GreaterThan min = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
+            LessThanEquals max = ItemListElementRecord.SEQUENCE.lessEq(toIndex);
             range = new And(min, max);
             shift = new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -351,8 +351,8 @@ public class ItemListRepository extends DepotRepository
 
         } else {
             // shift affected items to the right (increment by one)
-            GreaterThanEquals min = new GreaterThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
-            LessThan max = new LessThan(ItemListElementRecord.SEQUENCE, fromIndex);
+            GreaterThanEquals min = ItemListElementRecord.SEQUENCE.greaterEq(toIndex);
+            LessThan max = ItemListElementRecord.SEQUENCE.lessThan(fromIndex);
             range = new And(min, max);
             shift = new Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -364,7 +364,7 @@ public class ItemListRepository extends DepotRepository
             };
         }
 
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
+        Equals findList = ItemListElementRecord.LIST_ID.eq(listId);
         And condition = new And(findList, range);
 
         // update all of the affected items

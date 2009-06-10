@@ -16,8 +16,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
@@ -112,7 +110,7 @@ public class AVRGameRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(PlayerGameStateRecord.class,
-                  new Where(new In(PlayerGameStateRecord.MEMBER_ID, memberIds)));
+                  new Where(PlayerGameStateRecord.MEMBER_ID.in(memberIds)));
     }
 
     /**
@@ -123,8 +121,8 @@ public class AVRGameRepository extends DepotRepository
         Set<Integer> propIds = Sets.newHashSet();
         if (!memberIds.isEmpty()) {
             List<QueryClause> clauses = Lists.newArrayList(
-                new Where(new And(new Equals(PlayerGameStateRecord.GAME_ID, gameId),
-                                  new In(PlayerGameStateRecord.MEMBER_ID, memberIds))),
+                new Where(new And(PlayerGameStateRecord.GAME_ID.eq(gameId),
+                                  PlayerGameStateRecord.MEMBER_ID.in(memberIds))),
                 new GroupBy(PlayerGameStateRecord.MEMBER_ID),
                 new FromOverride(PlayerGameStateRecord.class));
             for (HasPropertyRecord prop : findAll(HasPropertyRecord.class, clauses)) {

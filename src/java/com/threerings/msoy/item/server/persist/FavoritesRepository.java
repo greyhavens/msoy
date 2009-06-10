@@ -20,8 +20,6 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -55,10 +53,10 @@ public class FavoritesRepository extends DepotRepository
     public List<FavoriteItemRecord> loadRecentFavorites (Collection<Integer> memberIds,
         int count, byte itemType)
     {
-        SQLOperator memberIn = new In(FavoriteItemRecord.MEMBER_ID, memberIds);
+        SQLOperator memberIn = FavoriteItemRecord.MEMBER_ID.in(memberIds);
         Where where = (itemType == Item.NOT_A_TYPE) ?
             new Where(memberIn) :
-            new Where(new And(memberIn, new Equals(FavoriteItemRecord.ITEM_TYPE, itemType)));
+            new Where(new And(memberIn, FavoriteItemRecord.ITEM_TYPE.eq(itemType)));
         return findAll(FavoriteItemRecord.class, where,
             OrderBy.descending(FavoriteItemRecord.NOTED_ON), new Limit(0, count));
     }
@@ -129,7 +127,7 @@ public class FavoritesRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(FavoriteItemRecord.class,
-                  new Where(new In(FavoriteItemRecord.MEMBER_ID, memberIds)));
+                  new Where(FavoriteItemRecord.MEMBER_ID.in(memberIds)));
     }
 
     @Override // from DepotRepository

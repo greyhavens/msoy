@@ -16,8 +16,6 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 
 import com.whirled.game.server.persist.GameCookieRecord;
 import com.whirled.game.server.persist.GameCookieRepository;
@@ -55,8 +53,8 @@ public class MsoyGameCookieRepository extends GameCookieRepository
         }
 
         List<QueryClause> clauses = Lists.newArrayList(
-            new Where(new And(new Equals(GameCookieRecord.GAME_ID, gameId),
-                              new In(GameCookieRecord.USER_ID, playerIds))),
+            new Where(new And(GameCookieRecord.GAME_ID.eq(gameId),
+                              GameCookieRecord.USER_ID.in(playerIds))),
             new FromOverride(GameCookieRecord.class));
 
         playerIds = Sets.newHashSet();

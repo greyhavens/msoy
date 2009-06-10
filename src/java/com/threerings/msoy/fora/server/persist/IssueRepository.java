@@ -26,8 +26,6 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
 
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -61,9 +59,9 @@ public class IssueRepository extends DepotRepository
     public List<IssueRecord> loadIssues (IntSet states, int ownerId, int offset, int count)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
-        whereBits.add(new In(IssueRecord.STATE, states));
+        whereBits.add(IssueRecord.STATE.in(states));
         if (ownerId > 0) {
-            whereBits.add(new Equals(IssueRecord.OWNER_ID, ownerId));
+            whereBits.add(IssueRecord.OWNER_ID.eq(ownerId));
         }
         OrderBy orderBy;
         if (!states.contains(Issue.STATE_OPEN)) {
@@ -92,7 +90,7 @@ public class IssueRepository extends DepotRepository
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (states != null) {
-            whereBits.add(new In(IssueRecord.STATE, states));
+            whereBits.add(IssueRecord.STATE.in(states));
         }
         return load(CountRecord.class, new FromOverride(IssueRecord.class),
                     new Where(new And(whereBits))).count;

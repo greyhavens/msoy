@@ -42,10 +42,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.LessThan;
 import com.samskivert.depot.operator.SQLOperator;
@@ -178,8 +174,8 @@ public class MoneyRepository extends DepotRepository
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
         Where where = new Where(new And(
-            new Equals(MemberAccountRecord.MEMBER_ID, memberId),
-            new GreaterThanEquals(currencyCol, amount)));
+            MemberAccountRecord.MEMBER_ID.eq(memberId),
+            currencyCol.greaterEq(amount)));
 
         int count = updatePartial(MemberAccountRecord.class, where, key,
                                   currencyCol, new Sub(currencyCol, amount));
@@ -308,8 +304,8 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - maxAge);
         Where where = new Where(
-            new And(new Equals(MoneyTransactionRecord.CURRENCY, currency),
-                    new LessThan(MoneyTransactionRecord.TIMESTAMP, cutoff)));
+            new And(MoneyTransactionRecord.CURRENCY.eq(currency),
+                    MoneyTransactionRecord.TIMESTAMP.lessThan(cutoff)));
         return deleteAll(MoneyTransactionRecord.class, where, null /* no cache invalidation */);
     }
 
@@ -469,7 +465,7 @@ public class MoneyRepository extends DepotRepository
     public int commitBlingCashOutRequest (int memberId, int actualAmount)
     {
         Where where = new Where(new And(
-            new Equals(BlingCashOutRecord.MEMBER_ID, memberId),
+            BlingCashOutRecord.MEMBER_ID.eq(memberId),
             new IsNull(BlingCashOutRecord.TIME_FINISHED)));
         return updatePartial(BlingCashOutRecord.class, where,
             new ActiveCashOutInvalidator(memberId),
@@ -489,7 +485,7 @@ public class MoneyRepository extends DepotRepository
     public int cancelBlingCashOutRequest (int memberId, String reason)
     {
         Where where = new Where(new And(
-            new Equals(BlingCashOutRecord.MEMBER_ID, memberId),
+            BlingCashOutRecord.MEMBER_ID.eq(memberId),
             new IsNull(BlingCashOutRecord.TIME_FINISHED)));
         return updatePartial(BlingCashOutRecord.class, where,
             new ActiveCashOutInvalidator(memberId),
@@ -527,7 +523,7 @@ public class MoneyRepository extends DepotRepository
     {
         return load(BlingCashOutRecord.class, new Where(new And(
             new IsNull(BlingCashOutRecord.TIME_FINISHED),
-            new Equals(BlingCashOutRecord.MEMBER_ID, memberId))));
+            BlingCashOutRecord.MEMBER_ID.eq(memberId))));
     }
 
     /**
@@ -548,7 +544,7 @@ public class MoneyRepository extends DepotRepository
     public BlingCashOutRecord getMostRecentBlingCashout (int memberId)
     {
         List<BlingCashOutRecord> cashouts = findAll(BlingCashOutRecord.class,
-            new Where (new Equals(BlingCashOutRecord.MEMBER_ID, memberId)),
+            new Where (BlingCashOutRecord.MEMBER_ID.eq(memberId)),
             OrderBy.descending(BlingCashOutRecord.TIME_REQUESTED), new Limit(0, 1));
         return cashouts.size() > 0 ? cashouts.get(0) : null;
     }
@@ -560,9 +556,9 @@ public class MoneyRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(MemberAccountRecord.class,
-                  new Where(new In(MemberAccountRecord.MEMBER_ID, memberIds)));
+                  new Where(MemberAccountRecord.MEMBER_ID.in(memberIds)));
         deleteAll(MoneyTransactionRecord.class,
-                  new Where(new In(MoneyTransactionRecord.MEMBER_ID, memberIds)));
+                  new Where(MoneyTransactionRecord.MEMBER_ID.in(memberIds)));
     }
 
     /**
@@ -572,7 +568,7 @@ public class MoneyRepository extends DepotRepository
     {
         Timestamp limit = new Timestamp(time);
         return load(CountRecord.class, CacheStrategy.NONE,
-                    new Where(new GreaterThan(BroadcastHistoryRecord.TIME_SENT, limit)),
+                    new Where(BroadcastHistoryRecord.TIME_SENT.greaterThan(limit)),
                     new FromOverride(BroadcastHistoryRecord.class)).count;
     }
 
@@ -635,12 +631,12 @@ public class MoneyRepository extends DepotRepository
     {
         List<SQLOperator> where = Lists.newArrayList();
 
-        where.add(new Equals(MoneyTransactionRecord.MEMBER_ID, memberId));
+        where.add(MoneyTransactionRecord.MEMBER_ID.eq(memberId));
         if (transactionTypes != null) {
-            where.add(new In(MoneyTransactionRecord.TRANSACTION_TYPE, transactionTypes));
+            where.add(MoneyTransactionRecord.TRANSACTION_TYPE.in(transactionTypes));
         }
         if (currency != null) {
-            where.add(new Equals(MoneyTransactionRecord.CURRENCY, currency));
+            where.add(MoneyTransactionRecord.CURRENCY.eq(currency));
         }
 
         clauses.add(new Where(new And(where)));
@@ -650,9 +646,9 @@ public class MoneyRepository extends DepotRepository
     {
         MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
         List<SQLOperator> where = Lists.newArrayList();
-        where.add(new Equals(MoneyTransactionRecord.SUBJECT_TYPE, subj.type));
-        where.add(new Equals(MoneyTransactionRecord.SUBJECT_ID_TYPE, subj.idType));
-        where.add(new Equals(MoneyTransactionRecord.SUBJECT_ID, subj.id));
+        where.add(MoneyTransactionRecord.SUBJECT_TYPE.eq(subj.type));
+        where.add(MoneyTransactionRecord.SUBJECT_ID_TYPE.eq(subj.idType));
+        where.add(MoneyTransactionRecord.SUBJECT_ID.eq(subj.id));
         return new Where(new And(where));
     }
 

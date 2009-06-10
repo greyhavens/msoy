@@ -18,7 +18,6 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -116,9 +115,9 @@ public class BadgeRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(EarnedBadgeRecord.class,
-                  new Where(new In(EarnedBadgeRecord.MEMBER_ID, memberIds)));
+                  new Where(EarnedBadgeRecord.MEMBER_ID.in(memberIds)));
         deleteAll(InProgressBadgeRecord.class,
-                  new Where(new In(InProgressBadgeRecord.MEMBER_ID, memberIds)));
+                  new Where(InProgressBadgeRecord.MEMBER_ID.in(memberIds)));
     }
 
     @Override

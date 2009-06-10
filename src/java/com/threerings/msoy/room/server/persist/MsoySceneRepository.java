@@ -35,7 +35,6 @@ import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.Not;
 
@@ -105,8 +104,8 @@ public class MsoySceneRepository extends DepotRepository
     public int getRoomCount (int memberId)
     {
         Where where = new Where(
-            new And(new Equals(SceneRecord.OWNER_TYPE, MsoySceneModel.OWNER_TYPE_MEMBER),
-                    new Equals(SceneRecord.OWNER_ID, memberId)));
+            new And(SceneRecord.OWNER_TYPE.eq(MsoySceneModel.OWNER_TYPE_MEMBER),
+                    SceneRecord.OWNER_ID.eq(memberId)));
         return load(CountRecord.class, new FromOverride(SceneRecord.class), where).count;
     }
 
@@ -115,8 +114,8 @@ public class MsoySceneRepository extends DepotRepository
      */
     public List<SceneRecord> getOwnedScenes (byte ownerType, int memberId)
     {
-        Where where = new Where(new And(new Equals(SceneRecord.OWNER_TYPE, ownerType),
-                                        new Equals(SceneRecord.OWNER_ID, memberId)));
+        Where where = new Where(new And(SceneRecord.OWNER_TYPE.eq(ownerType),
+                                        SceneRecord.OWNER_ID.eq(memberId)));
         return findAll(SceneRecord.class, where);
     }
 
@@ -406,12 +405,12 @@ public class MsoySceneRepository extends DepotRepository
     {
         // delete all scenes owned by these members
         List<Key<SceneRecord>> skeys = findAllKeys(
-            SceneRecord.class, false, new Where(new In(SceneRecord.OWNER_ID, memberIds)));
+            SceneRecord.class, false, new Where(SceneRecord.OWNER_ID.in(memberIds)));
         if (!skeys.isEmpty()) {
             deleteAll(SceneRecord.class, KeySet.newKeySet(SceneRecord.class, skeys));
             // delete all furni from all of those scenes
             List<Integer> scids = Lists.transform(skeys, RecordFunctions.<SceneRecord>getIntKey());
-            deleteAll(SceneFurniRecord.class, new Where(new In(SceneFurniRecord.SCENE_ID, scids)));
+            deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.SCENE_ID.in(scids)));
         }
         // delete all scene ratings by these members
         _ratingRepo.purgeMembers(memberIds);

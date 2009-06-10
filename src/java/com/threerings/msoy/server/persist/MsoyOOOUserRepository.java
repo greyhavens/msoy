@@ -19,8 +19,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.servlet.user.UserUtil;
@@ -113,7 +111,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         Map<Integer, String> idmap = Maps.newHashMap();
         Set<Integer> guestIds = Sets.newHashSet();
         for (OOOUserRecord record : findAll(OOOUserRecord.class,
-                                            new Where(new In(OOOUserRecord.EMAIL, emails)))) {
+                                            new Where(OOOUserRecord.EMAIL.in(emails)))) {
             idmap.put(record.userId, record.email);
             // track permaguest ids separately
             if (MemberMailUtil.isPermaguest(record.email)) {
@@ -123,7 +121,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
 
         // delete ident mapping records for permaguests but leave them for members
         if (!guestIds.isEmpty()) {
-            deleteAll(UserIdentRecord.class, new Where(new In(UserIdentRecord.USER_ID, guestIds)));
+            deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID.in(guestIds)));
         }
 
         // change the username and email to deleted thunks and null out their password
@@ -155,8 +153,8 @@ public class MsoyOOOUserRepository extends DepotUserRepository
             return null;
         }
         SQLOperator joinCondition = new And(
-                new Equals(MemberRecord.MEMBER_ID, memberId),
-                new Equals(OOOUserRecord.EMAIL, MemberRecord.ACCOUNT_NAME));
+                MemberRecord.MEMBER_ID.eq(memberId),
+                OOOUserRecord.EMAIL.eq(MemberRecord.ACCOUNT_NAME));
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
     }
 
@@ -164,8 +162,8 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     public OOOUser loadUserBySession (String sessionKey)
     {
         SQLOperator joinCondition = new And(
-                new Equals(OOOUserRecord.USER_ID, SessionRecord.MEMBER_ID),
-                new Equals(SessionRecord.TOKEN, sessionKey));
+                OOOUserRecord.USER_ID.eq(SessionRecord.MEMBER_ID),
+                SessionRecord.TOKEN.eq(sessionKey));
         return toUser(load(OOOUserRecord.class, new Join(SessionRecord.class, joinCondition)));
     }
 

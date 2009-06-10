@@ -22,7 +22,6 @@ import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.operator.In;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.presents.annotation.BlockingThread;
@@ -173,7 +172,7 @@ public abstract class RatingRepository extends DepotRepository
     {
         // note: this is a full table scan, add appropriate index if this becomes slow
         deleteAll(getRatingClass(),
-                  new Where(new In(getRatingColumn(RatingRecord.MEMBER_ID), memberIds)));
+                  new Where(getRatingColumn(RatingRecord.MEMBER_ID).in(memberIds)));
     }
 
     /** Exports the specific rating class used by this repository. */

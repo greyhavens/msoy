@@ -16,7 +16,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -161,7 +160,7 @@ public class InviteRepository extends DepotRepository
      */
     public void purgeMembers (Collection<Integer> memberIds)
     {
-        deleteAll(InviterRecord.class, new Where(new In(InviterRecord.MEMBER_ID, memberIds)));
+        deleteAll(InviterRecord.class, new Where(InviterRecord.MEMBER_ID.in(memberIds)));
     }
 
     @Override // from DepotRepository

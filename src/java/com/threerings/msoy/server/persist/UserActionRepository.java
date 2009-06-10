@@ -15,7 +15,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Add;
-import com.samskivert.depot.operator.In;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.data.UserAction;
@@ -116,9 +115,9 @@ public class UserActionRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(MemberActionLogRecord.class,
-                  new Where(new In(MemberActionLogRecord.MEMBER_ID, memberIds)));
+                  new Where(MemberActionLogRecord.MEMBER_ID.in(memberIds)));
         deleteAll(MemberActionSummaryRecord.class,
-                  new Where(new In(MemberActionSummaryRecord.MEMBER_ID, memberIds)));
+                  new Where(MemberActionSummaryRecord.MEMBER_ID.in(memberIds)));
     }
 
     @Override // from DepotRepository

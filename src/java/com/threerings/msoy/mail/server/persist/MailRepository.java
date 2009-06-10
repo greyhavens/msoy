@@ -21,9 +21,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
@@ -66,7 +64,7 @@ public class MailRepository extends DepotRepository
      */
     public int loadUnreadConvoCount (int memberId)
     {
-        SQLExpression isMe = new Equals(ParticipantRecord.PARTICIPANT_ID, memberId);
+        SQLExpression isMe = ParticipantRecord.PARTICIPANT_ID.eq(memberId);
         SQLExpression isNew = new GreaterThan(ConversationRecord.LAST_SENT,
                                               ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
@@ -287,9 +285,9 @@ public class MailRepository extends DepotRepository
         // who had participant records for their convos; since we only purge permaguests (who can't
         // converse) this is a non-issue for now
         deleteAll(ParticipantRecord.class,
-                  new Where(new In(ParticipantRecord.PARTICIPANT_ID, memberIds)));
+                  new Where(ParticipantRecord.PARTICIPANT_ID.in(memberIds)));
         deleteAll(ConversationComplaintRecord.class,
-                  new Where(new In(ConversationComplaintRecord.COMPLAINER_ID, memberIds)));
+                  new Where(ConversationComplaintRecord.COMPLAINER_ID.in(memberIds)));
     }
 
     @Override // from DepotRepository

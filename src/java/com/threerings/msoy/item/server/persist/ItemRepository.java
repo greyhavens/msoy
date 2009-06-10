@@ -64,11 +64,6 @@ import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.Exists;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.In;
-import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.LessThanEquals;
 import com.samskivert.depot.operator.Mul;
 import com.samskivert.depot.operator.Not;
 import com.samskivert.depot.operator.Or;
@@ -145,8 +140,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                 return null;
             }
             Where where = new Where(
-                new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
-                        new In(getTagColumn(TagRecord.TAG_ID), _tagIds)));
+                new And(getTagColumn(TagRecord.TARGET_ID).eq(itemColumn),
+                        getTagColumn(TagRecord.TAG_ID).in(_tagIds)));
             return new Exists(new SelectClause(getTagRepository().getTagClass(),
                                                new ColumnExp[] { TagRecord.TAG_ID }, where));
         }
@@ -156,7 +151,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             if (_memberIds.size() == 0) {
                 return null;
             }
-            return new In(getItemColumn(ItemRecord.CREATOR_ID), _memberIds);
+            return getItemColumn(ItemRecord.CREATOR_ID).in(_memberIds);
         }
 
         protected WordSearch (String search)
@@ -260,9 +255,9 @@ public abstract class ItemRepository<T extends ItemRecord>
                     Where where = new Where(
                         new And(new Equals(getCatalogColumn(CatalogRecord.CURRENCY),
                                            Currency.COINS.toByte()),
-                                new LessThanEquals(getRatingExpression(), rating),
-                                new GreaterThan(getRatingExpression(), rating-1),
-                                new LessThan(getCatalogColumn(CatalogRecord.COST), minPrice)));
+                                getRatingExpression().lessEq(rating),
+                                getRatingExpression().greaterThan(rating-1),
+                                getCatalogColumn(CatalogRecord.COST).lessThan(minPrice)));
                     for (CatalogRecord crec : findAll(getCatalogClass(), join, where)) {
                         updatePartial(getCatalogKey(crec.catalogId), CatalogRecord.COST, minPrice);
                         adjusted++;
@@ -413,7 +408,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // locate all matching original items
         List<T> results = findAll(getItemClass(), new Where(
-            new And(new Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
+            new And(getItemColumn(ItemRecord.OWNER_ID).eq(ownerId),
                     makeSearchClause(matches))));
 
         // now add the tag match as cloned items can match tags
@@ -426,7 +421,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // add all matching cloned items
         results.addAll(loadClonedItems(new Where(
-            new And(new Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+            new And(getCloneColumn(CloneRecord.OWNER_ID).eq(ownerId),
                     makeSearchClause(matches)))));
 
         return results;
@@ -603,7 +598,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                      OwnerIdRecord.class, new FromOverride(getItemClass()),
                      new FieldDefinition(ItemRecord.ITEM_ID, getItemColumn(ItemRecord.ITEM_ID)),
                      new FieldDefinition(ItemRecord.OWNER_ID, getItemColumn(ItemRecord.OWNER_ID)),
-                     new Where(new In(getItemColumn(ItemRecord.ITEM_ID), origIds)))) {
+                     new Where(getItemColumn(ItemRecord.ITEM_ID).in(origIds)))) {
                 ownerIds.put(oidrec.itemId, oidrec.ownerId);
             }
         }
@@ -615,7 +610,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                      new FieldDefinition(CloneRecord.ITEM_ID, getCloneColumn(CloneRecord.ITEM_ID)),
                      new FieldDefinition(CloneRecord.OWNER_ID,
                                          getCloneColumn(CloneRecord.OWNER_ID)),
-                     new Where(new In(getCloneColumn(CloneRecord.ITEM_ID), cloneIds)))) {
+                     new Where(getCloneColumn(CloneRecord.ITEM_ID).in(cloneIds)))) {
                 ownerIds.put(oidrec.itemId, oidrec.ownerId);
             }
         }
@@ -663,7 +658,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             OrderBy.random(),
             new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
                      getTagRepository().getTagColumn(TagRecord.TARGET_ID)),
-            new Where(new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
+            new Where(getTagColumn(TagRecord.TAG_ID).in(tagIds)));
 
         if (records.isEmpty()) {
             return null;
@@ -863,7 +858,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // delete all purchased clones
         List<Key<CloneRecord>> clones = findAllKeys(
             getCloneClass(), false,
-            new Where(new In(getCloneColumn(CloneRecord.OWNER_ID), memberIds)));
+            new Where(getCloneColumn(CloneRecord.OWNER_ID).in(memberIds)));
         deleteAll(getCloneClass(), KeySet.newKeySet(getCloneClass(), clones));
         deletedIds.addAll(Lists.transform(clones, RecordFunctions.<CloneRecord>getIntKey()));
 
@@ -872,8 +867,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         // listings on the part of the support staff more of a PITA, so we'll leave 'em for now
         List<Key<T>> origs = findAllKeys(
             getItemClass(), false,
-            new Where(new And(new In(getItemColumn(ItemRecord.OWNER_ID), memberIds),
-                              new Not(new Equals(getItemColumn(ItemRecord.CATALOG_ID), 0)))));
+            new Where(new And(getItemColumn(ItemRecord.OWNER_ID).in(memberIds),
+                              new Not(getItemColumn(ItemRecord.CATALOG_ID).eq(0)))));
         deleteAll(getItemClass(), KeySet.newKeySet(getItemClass(), origs));
         deletedIds.addAll(Lists.transform(origs, RecordFunctions.<T>getIntKey()));
 
@@ -1275,7 +1270,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public List<Integer> loadDerivativeIds (int catalogId, int maximum)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        SQLExpression derived = new Equals(getCatalogColumn(CatalogRecord.BASIS_ID), catalogId);
+        SQLExpression derived = getCatalogColumn(CatalogRecord.BASIS_ID).eq(catalogId);
         SQLExpression visible = new Not(new Equals(
             getCatalogColumn(CatalogRecord.PRICING), CatalogListing.PRICING_HIDDEN));
         clauses.add(new Where(new And(derived, visible)));
@@ -1450,26 +1445,26 @@ public abstract class ItemRepository<T extends ItemRecord>
             clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
                                  getTagRepository().getTagColumn(TagRecord.TARGET_ID)));
             // and add a condition
-            whereBits.add(new Equals(getTagColumn(TagRecord.TAG_ID), tag));
+            whereBits.add(getTagColumn(TagRecord.TAG_ID).eq(tag));
             significantlyConstrained = true;
         }
 
         if (creator > 0) {
-            whereBits.add(new Equals(getItemColumn(ItemRecord.CREATOR_ID), creator));
+            whereBits.add(getItemColumn(ItemRecord.CREATOR_ID).eq(creator));
             significantlyConstrained = true;
         }
 
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            whereBits.add(new Equals(getItemColumn(ItemRecord.MATURE), false));
+            whereBits.add(getItemColumn(ItemRecord.MATURE).eq(false));
         }
 
         if (minRating != null) {
-            whereBits.add(new GreaterThanEquals(getRatingExpression(), minRating));
+            whereBits.add(getRatingExpression().greaterEq(minRating));
         }
 
         if (gameId != 0 && GameItemRecord.class.isAssignableFrom(getItemClass())) {
-            whereBits.add(new Equals(getItemColumn(GameItemRecord.GAME_ID), gameId));
+            whereBits.add(getItemColumn(GameItemRecord.GAME_ID).eq(gameId));
             significantlyConstrained = true;
         }
 
@@ -1618,7 +1613,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         return new ColumnExp(getTagRepository().getTagClass(), pcol.name);
     }
 
-    protected SQLExpression getRatingExpression ()
+    protected Div getRatingExpression ()
     {
         return new Div(getItemColumn(ItemRecord.RATING_SUM),
                        new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT),

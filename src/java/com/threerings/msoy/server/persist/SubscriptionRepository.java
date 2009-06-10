@@ -26,10 +26,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.LessThan;
-import com.samskivert.depot.operator.NotEquals;
 import com.samskivert.depot.operator.Sub;
 
 import com.samskivert.util.Tuple;
@@ -115,9 +111,9 @@ public class SubscriptionRepository extends DepotRepository
         Timestamp monthAgo = new Timestamp(cal.getTimeInMillis());
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
             new Where(new And(
-                new Equals(SubscriptionRecord.SUBSCRIBER, true),
-                new GreaterThan(SubscriptionRecord.GRANTS_LEFT, 0),
-                new LessThan(SubscriptionRecord.LAST_GRANT, monthAgo))));
+                SubscriptionRecord.SUBSCRIBER.eq(true),
+                SubscriptionRecord.GRANTS_LEFT.greaterThan(0),
+                SubscriptionRecord.LAST_GRANT.lessThan(monthAgo))));
         return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
     }
 
@@ -128,9 +124,9 @@ public class SubscriptionRepository extends DepotRepository
     {
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
             new Where(new And(
-                new Equals(SubscriptionRecord.SUBSCRIBER, true),
-                new NotEquals(SubscriptionRecord.SPECIAL_ITEM_TYPE, specialItem.type),
-                new NotEquals(SubscriptionRecord.SPECIAL_ITEM_ID, specialItem.itemId))));
+                SubscriptionRecord.SUBSCRIBER.eq(true),
+                SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(specialItem.type),
+                SubscriptionRecord.SPECIAL_ITEM_ID.notEq(specialItem.itemId))));
         return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
     }
 

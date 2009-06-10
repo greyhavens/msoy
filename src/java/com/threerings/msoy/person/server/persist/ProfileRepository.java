@@ -25,9 +25,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.In;
 import com.samskivert.depot.operator.IsNull;
-import com.samskivert.depot.operator.LessThanEquals;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -58,7 +56,7 @@ public class ProfileRepository extends DepotRepository
                     new Join(MemberRecord.MEMBER_ID,
                         ProfileRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
                     new Where(new And(
-                        new LessThanEquals(MemberRecord.MEMBER_ID, 400),
+                        MemberRecord.MEMBER_ID.lessEq(400),
                         new IsNull(ProfileRecord.MEMBER_ID))
                     ));
 
@@ -180,8 +178,8 @@ public class ProfileRepository extends DepotRepository
     {
         // we don't delete their ProfileRecord because we need their member card to work for the
         // rest of time because they may have forum posts or other shit
-        // deleteAll(ProfileRecord.class, new Where(new In(ProfileRecord.MEMBER_ID, memberIds)));
-        deleteAll(InterestRecord.class, new Where(new In(InterestRecord.MEMBER_ID, memberIds)));
+        // deleteAll(ProfileRecord.class, new Where(ProfileRecord.MEMBER_ID.in(memberIds)));
+        deleteAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID.in(memberIds)));
     }
 
     @Override // from DepotRepository

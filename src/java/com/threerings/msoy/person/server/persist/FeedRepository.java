@@ -25,11 +25,7 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.In;
-import com.samskivert.depot.operator.LessThan;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -65,16 +61,16 @@ public class FeedRepository extends DepotRepository
     public void loadPersonalFeed (int memberId, List<FeedMessageRecord> messages,
                                   Collection<Integer> friendIds, int cutoffDays)
     {
-        SQLOperator self = new Equals(SelfFeedMessageRecord.TARGET_ID, memberId);
+        SQLOperator self = SelfFeedMessageRecord.TARGET_ID.eq(memberId);
         loadFeedMessages(messages, SelfFeedMessageRecord.class, self, cutoffDays);
         if (!friendIds.isEmpty()) {
             SQLOperator actors = null;
-            actors = new In(FriendFeedMessageRecord.ACTOR_ID, friendIds);
+            actors = FriendFeedMessageRecord.ACTOR_ID.in(friendIds);
             loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, cutoffDays);
         }
 
         // include actions the member has performed
-        SQLOperator actor = new Equals(FriendFeedMessageRecord.ACTOR_ID, memberId);
+        SQLOperator actor = FriendFeedMessageRecord.ACTOR_ID.eq(memberId);
         loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, cutoffDays);
     }
 
@@ -89,7 +85,7 @@ public class FeedRepository extends DepotRepository
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, cutoffDays);
         if (!groupIds.isEmpty()) {
             SQLOperator groups = null;
-            groups = new In(GroupFeedMessageRecord.GROUP_ID, groupIds);
+            groups = GroupFeedMessageRecord.GROUP_ID.in(groupIds);
             loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, cutoffDays);
         }
     }
@@ -149,9 +145,9 @@ public class FeedRepository extends DepotRepository
             Timestamp throttle =
                 new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
             List<SQLOperator> bits = Lists.newArrayList();
-            bits.add(new Equals(FriendFeedMessageRecord.ACTOR_ID, actorId));
-            bits.add(new Equals(FriendFeedMessageRecord.TYPE, type.getCode()));
-            bits.add(new GreaterThan(FriendFeedMessageRecord.POSTED, throttle));
+            bits.add(FriendFeedMessageRecord.ACTOR_ID.eq(actorId));
+            bits.add(FriendFeedMessageRecord.TYPE.eq(type.getCode()));
+            bits.add(FriendFeedMessageRecord.POSTED.greaterThan(throttle));
 
             FeedMessageCount count = load(
                 FeedMessageCount.class, new FromOverride(FriendFeedMessageRecord.class),
@@ -179,9 +175,9 @@ public class FeedRepository extends DepotRepository
             Timestamp throttle =
                 new Timestamp(System.currentTimeMillis() - type.getThrottlePeriod());
             List<SQLOperator> bits = Lists.newArrayList();
-            bits.add(new Equals(GroupFeedMessageRecord.GROUP_ID, groupId));
-            bits.add(new Equals(GroupFeedMessageRecord.TYPE, type.getCode()));
-            bits.add(new GreaterThan(GroupFeedMessageRecord.POSTED, throttle));
+            bits.add(GroupFeedMessageRecord.GROUP_ID.eq(groupId));
+            bits.add(GroupFeedMessageRecord.TYPE.eq(type.getCode()));
+            bits.add(GroupFeedMessageRecord.POSTED.greaterThan(throttle));
 
             FeedMessageCount count = load(
                 FeedMessageCount.class, new FromOverride(GroupFeedMessageRecord.class),
@@ -207,13 +203,13 @@ public class FeedRepository extends DepotRepository
     {
         Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
         int global = deleteAll(GlobalFeedMessageRecord.class,
-            new Where(new LessThan(GlobalFeedMessageRecord.POSTED, cutoff)), null);
+            new Where(GlobalFeedMessageRecord.POSTED.lessThan(cutoff)), null);
         int friend = deleteAll(FriendFeedMessageRecord.class,
-            new Where(new LessThan(FriendFeedMessageRecord.POSTED, cutoff)), null);
+            new Where(FriendFeedMessageRecord.POSTED.lessThan(cutoff)), null);
         int group = deleteAll(GroupFeedMessageRecord.class,
-            new Where(new LessThan(GroupFeedMessageRecord.POSTED, cutoff)), null);
+            new Where(GroupFeedMessageRecord.POSTED.lessThan(cutoff)), null);
         int self = deleteAll(SelfFeedMessageRecord.class,
-            new Where(new LessThan(SelfFeedMessageRecord.POSTED, cutoff)), null);
+            new Where(SelfFeedMessageRecord.POSTED.lessThan(cutoff)), null);
         log.info("Feeds pruned", "global", global, "friend", friend, "group", group, "self", self);
     }
 
@@ -224,9 +220,9 @@ public class FeedRepository extends DepotRepository
     public void purgeMembers (Collection<Integer> memberIds)
     {
         deleteAll(FriendFeedMessageRecord.class,
-                  new Where(new In(FriendFeedMessageRecord.ACTOR_ID, memberIds)));
+                  new Where(FriendFeedMessageRecord.ACTOR_ID.in(memberIds)));
         deleteAll(SelfFeedMessageRecord.class,
-                  new Where(new In(SelfFeedMessageRecord.TARGET_ID, memberIds)));
+                  new Where(SelfFeedMessageRecord.TARGET_ID.in(memberIds)));
     }
 
     protected void loadFeedMessages (List<FeedMessageRecord> messages,

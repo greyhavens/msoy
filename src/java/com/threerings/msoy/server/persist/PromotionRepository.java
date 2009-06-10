@@ -15,8 +15,6 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.GreaterThanEquals;
-import com.samskivert.depot.operator.LessThanEquals;
 
 import com.threerings.msoy.web.gwt.Promotion;
 
@@ -40,8 +38,8 @@ public class PromotionRepository extends DepotRepository
         // to make this query cacheable, round our timestamp to the current hour or so
         Timestamp now = new Timestamp(System.currentTimeMillis() & ~0x1FFFFFL);
         return findAll(PromotionRecord.class,
-                       new Where(new And(new GreaterThanEquals(PromotionRecord.ENDS, now),
-                                         new LessThanEquals(PromotionRecord.STARTS, now))));
+                       new Where(new And(PromotionRecord.ENDS.greaterEq(now),
+                                         PromotionRecord.STARTS.lessEq(now))));
     }
 
     /**

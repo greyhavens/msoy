@@ -26,7 +26,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.impl.Modifier;
-import com.samskivert.depot.operator.In;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 
@@ -163,7 +162,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public List<TagNameRecord> getTags (String[] tags)
     {
-        return findAll(TagNameRecord.class, new Where(new In(TagNameRecord.TAG, tags)));
+        return findAll(TagNameRecord.class, new Where(TagNameRecord.TAG.in(tags)));
     }
 
     /**
@@ -321,7 +320,7 @@ public abstract class TagRepository extends DepotRepository
     {
         // note: this is a full table scan, but currently probably ok
         deleteAll(getTagHistoryClass(),
-                  new Where(new In(getTagHistoryColumn(TagHistoryRecord.MEMBER_ID), memberIds)));
+                  new Where(getTagHistoryColumn(TagHistoryRecord.MEMBER_ID).in(memberIds)));
     }
 
     protected Key<TagRecord> getTagKey (int tagId, int targetId)
