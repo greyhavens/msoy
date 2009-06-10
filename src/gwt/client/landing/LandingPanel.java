@@ -197,7 +197,7 @@ public class LandingPanel extends FlowPanel
         String email = session.creds.accountName;
         register.add(MsoyUI.createHTML(_msgs.landingEmailConfirm(email), "Subtitle"));
         register.add(ConversionTrackingUtil.createAdWordsTracker());
-        register.add(ConversionTrackingUtil.createBeacon(data.entryVector));
+        register.add(ConversionTrackingUtil.createBeacon(session.entryVector));
     }
 
     protected TextBox _newemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
