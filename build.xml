@@ -1084,6 +1084,7 @@
     <delete file="pages/index.html"/>
     <delete file="pages/crossdomain.xml"/>
     <delete file="pages/js/facebook.js"/>
+    <delete file="etc/msoy-config.xml"/>
     <delete><fileset dir="${gsrc.dir}" includes="**/*Messages.java"/></delete>
   </target>
 
