@@ -27,11 +27,7 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
 
-import com.samskivert.util.Tuple;
-
 import com.threerings.presents.annotation.BlockingThread;
-
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -52,51 +48,46 @@ public class SubscriptionRepository extends DepotRepository
      *
      * @return Tuple<grantBarsNow, grantItem>
      */
-    public Tuple<Boolean,Boolean> noteSubscriptionBilled (
-        int memberId, int barGrantsLeft, ItemIdent specialItem)
+    public SubscriptionRecord noteSubscriptionBilled (int memberId, int barGrantsLeft)
     {
         SubscriptionRecord rec = load(SubscriptionRecord.getKey(memberId));
         if (rec == null) {
             rec = new SubscriptionRecord(); // that's ok, they are fresh meat
             rec.memberId = memberId;
-        } else {
-            barGrantsLeft += rec.grantsLeft;
+
+        } else if (rec.grantsLeft > 0) {
+            log.warning("Shazbot! Subscription started with existing bar grants remaining",
+                "memberId", memberId, "grantsLeft", rec.grantsLeft, new Exception());
         }
 
         rec.subscriber = true;
-        boolean grantSpecial = (specialItem != null) &&
-            ((specialItem.type != rec.specialItemType) ||
-             (specialItem.itemId != rec.specialItemId));
-        boolean grantBarsNow = (barGrantsLeft > 0);
-        if (grantBarsNow) {
-            rec.lastGrant = new Timestamp(System.currentTimeMillis());
-        }
-        rec.grantsLeft = Math.max(0, barGrantsLeft - 1);
-        if (grantSpecial) {
-            rec.specialItemType = specialItem.type;
-            rec.specialItemId = specialItem.itemId;
-        }
+        rec.grantsLeft = barGrantsLeft;
+        // do not update their special item information.
+        // That will be looked at by SubscriptionLogic
         store(rec);
-        return Tuple.newTuple(grantBarsNow, grantSpecial);
+        return rec;
     }
 
     /**
      * Note a payment made to a new or existing subscription.
      */
-    public int noteSubscriptionEnded (int memberId)
+    public void noteSubscriptionEnded (int memberId)
     {
         SubscriptionRecord rec = load(SubscriptionRecord.getKey(memberId));
         if (rec == null) {
             log.warning("That's weird: unable to find SubscriptionRecord to note ending.",
                 "memberId", "memberId", new Exception());
-            return 0; // but don't throw... I guess it's more or less OK since they're not marked.
+            return; // but don't throw... I guess it's more or less OK since they're not marked.
             // But: we could also insert a record and just note that they've ended now.
+
+        } else if (rec.grantsLeft > 0) {
+            log.warning("Shazbot! Subscription ended with bar grants remaining",
+                "memberId", memberId, "grantsLeft", rec.grantsLeft, new Exception());
         }
-        int barGrantsLeft = rec.grantsLeft; // should be 0!
+
         rec.subscriber = false;
         rec.grantsLeft = 0;
         update(rec);
-        return barGrantsLeft;
     }
 
     /**
@@ -119,13 +110,13 @@ public class SubscriptionRepository extends DepotRepository
     /**
      * Load the memberIds of any subscribers that should be granted the specified special item.
      */
-    public List<Integer> loadSubscribersNeedingItem (ItemIdent specialItem)
+    public List<Integer> loadSubscribersNeedingItem (byte type, int itemId)
     {
         List<Key<SubscriptionRecord>> keys = findAllKeys(SubscriptionRecord.class, true,
             new Where(new And(
                 SubscriptionRecord.SUBSCRIBER.eq(true),
-                SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(specialItem.type),
-                SubscriptionRecord.SPECIAL_ITEM_ID.notEq(specialItem.itemId))));
+                SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(type),
+                SubscriptionRecord.SPECIAL_ITEM_ID.notEq(itemId))));
         return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
     }
 
@@ -148,11 +139,11 @@ public class SubscriptionRepository extends DepotRepository
     /**
      * Note that the specified subscriber has been granted the specified item.
      */
-    public void noteSpecialItemGranted (int memberId, ItemIdent specialItem)
+    public void noteSpecialItemGranted (int memberId, byte type, int itemId)
     {
         Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
-        updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, new ValueExp(specialItem.type));
-        updates.put(SubscriptionRecord.SPECIAL_ITEM_ID, new ValueExp(specialItem.itemId));
+        updates.put(SubscriptionRecord.SPECIAL_ITEM_TYPE, new ValueExp(type));
+        updates.put(SubscriptionRecord.SPECIAL_ITEM_ID, new ValueExp(itemId));
 
         int count = updatePartial(SubscriptionRecord.getKey(memberId), updates);
         if (count == 0) {

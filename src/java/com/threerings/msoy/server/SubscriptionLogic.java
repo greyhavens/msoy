@@ -10,13 +10,13 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.SubscriptionRecord;
 import com.threerings.msoy.server.persist.SubscriptionRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -111,24 +111,38 @@ public class SubscriptionLogic
             _feedLogic.publishMemberMessage(mrec.memberId, FeedMessageType.FRIEND_SUBSCRIBED);
         }
 
-        int barGrantsLeft = months;
+        // Create or update their subscription record. (months == barGrantsLeft)
+        SubscriptionRecord rec = _subscripRepo.noteSubscriptionBilled(mrec.memberId, months);
+
+        // see if they need the special item right now
         CatalogRecord listing = getSpecialItem();
-        ItemIdent ident = (listing == null)
-            ? null : new ItemIdent(listing.item.getType(), listing.item.itemId);
-
-        // create or update their subscription record
-        Tuple<Boolean,Boolean> doGrants =
-            _subscripRepo.noteSubscriptionBilled(mrec.memberId, barGrantsLeft, ident);
-
-        // Grant them their monthly bar allowance.
-        int bars = _runtime.subscription.monthlyBarGrant;
-        if (doGrants.left && bars > 0) {
-            _moneyLogic.grantSubscriberBars(mrec.memberId, bars);
+        if (listing != null) {
+            byte type = listing.item.getType();
+            int itemId = listing.item.itemId;
+            if ((type != rec.specialItemType) || (itemId != rec.specialItemId)) {
+                // they need the special item
+                try {
+                    _itemLogic.grantItem(mrec, listing);
+                    _subscripRepo.noteSpecialItemGranted(mrec.memberId, type, itemId);
+                } catch (Exception e) {
+                    log.warning("Unable to grant a subscriber their special item",
+                        "memberId", mrec.memberId, e);
+                }
+            }
         }
 
-        // Grant them the special item
-        if (doGrants.right) {
-            _itemLogic.grantItem(mrec, listing);
+        // see if they need their monthly bar allowance
+        if (rec.grantsLeft > 0) {
+            try {
+                int bars = _runtime.subscription.monthlyBarGrant;
+                if (bars > 0) {
+                    _moneyLogic.grantSubscriberBars(mrec.memberId, bars);
+                }
+                _subscripRepo.noteBarsGranted(mrec.memberId);
+            } catch (Exception e) {
+                log.warning("Unable to grant a subscriber their monthly bars",
+                    "memberId", mrec.memberId, e);
+            }
         }
     }
 
@@ -151,15 +165,11 @@ public class SubscriptionLogic
         } else {
             log.warning("Weird! A subscription-end message arrived for a non-subscriber",
                 "accountName", accountName);
-            return;
+            // but continue on... we need to make sure they're really cleared
         }
 
-        // look up their subscription record and make sure the end time is now.
-        int barGrantsLeft = _subscripRepo.noteSubscriptionEnded(mrec.memberId);
-        if (barGrantsLeft != 0) {
-            log.warning("Shazbot! Bars grants left is not 0!",
-                "accountName", accountName, "grantsLeft", barGrantsLeft, new Exception());
-        }
+        // end their subscription
+        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
     }
 
     /**
@@ -197,14 +207,15 @@ public class SubscriptionLogic
             return;
         }
 
-        ItemIdent ident = new ItemIdent(listing.item.getType(), listing.item.itemId);
-        List<Integer> memberIds = _subscripRepo.loadSubscribersNeedingItem(ident);
+        byte type = listing.item.getType();
+        int itemId = listing.item.itemId;
+        List<Integer> memberIds = _subscripRepo.loadSubscribersNeedingItem(type, itemId);
         for (Integer memberId : memberIds) {
             // do each one separately
             try {
                 MemberRecord mrec = _memberRepo.loadMember(memberId);
                 _itemLogic.grantItem(mrec, listing);
-                _subscripRepo.noteSpecialItemGranted(memberId, ident);
+                _subscripRepo.noteSpecialItemGranted(memberId, type, itemId);
             } catch (Exception e) {
                 log.warning("Unable to grant a subscriber their special item",
                     "memberId", memberId, e);
