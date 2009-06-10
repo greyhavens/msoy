@@ -29,7 +29,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Add;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -173,9 +172,9 @@ public class CommentRepository extends DepotRepository
             Key<CommentRecord> comment = CommentRecord.getKey(entityType, entityId, postedStamp);
             Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
             updates.put(CommentRecord.CURRENT_RATING,
-                        new Add(CommentRecord.CURRENT_RATING, adjustment));
+                        CommentRecord.CURRENT_RATING.plus(adjustment));
             if (record != null) {
-                updates.put(CommentRecord.TOTAL_RATINGS, new Add(CommentRecord.TOTAL_RATINGS, 1));
+                updates.put(CommentRecord.TOTAL_RATINGS, CommentRecord.TOTAL_RATINGS.plus(1));
             }
             updatePartial(CommentRecord.class, comment, comment, updates);
             return adjustment;

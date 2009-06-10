@@ -14,7 +14,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.util.IntIntMap;
 
 import com.threerings.msoy.data.UserAction;
@@ -90,7 +89,7 @@ public class UserActionRepository extends DepotRepository
             final int rows = updatePartial(
                 MemberActionSummaryRecord.getKey(memberId, entry.getIntKey()),
                 MemberActionSummaryRecord.COUNT,
-                new Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
+                MemberActionSummaryRecord.COUNT.plus(entry.getIntValue()));
             // if no row was modified, this must be a first time action by this member
             if (rows == 0) {
                 // so create a new row

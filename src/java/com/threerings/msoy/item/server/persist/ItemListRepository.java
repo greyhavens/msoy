@@ -16,14 +16,12 @@ import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Equals;
 import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.operator.GreaterThanEquals;
 import com.samskivert.depot.operator.LessThan;
 import com.samskivert.depot.operator.LessThanEquals;
-import com.samskivert.depot.operator.Sub;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -297,7 +295,7 @@ public class ItemListRepository extends DepotRepository
         GreaterThanEquals after = ItemListElementRecord.SEQUENCE.greaterEq(fromIndex);
         And condition = new And(findList, after);
         updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
-                      ItemListElementRecord.SEQUENCE, new Add(ItemListElementRecord.SEQUENCE, 1));
+                      ItemListElementRecord.SEQUENCE, ItemListElementRecord.SEQUENCE.plus(1));
     }
 
     /**
@@ -319,7 +317,7 @@ public class ItemListRepository extends DepotRepository
         };
         updatePartial(ItemListElementRecord.class, new Where(condition), invalidator,
                       ItemListElementRecord.SEQUENCE,
-                      new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
+                      ItemListElementRecord.SEQUENCE.minus(Integer.valueOf(1)));
     }
 
     /**
@@ -340,7 +338,7 @@ public class ItemListRepository extends DepotRepository
             GreaterThan min = ItemListElementRecord.SEQUENCE.greaterThan(fromIndex);
             LessThanEquals max = ItemListElementRecord.SEQUENCE.lessEq(toIndex);
             range = new And(min, max);
-            shift = new Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1));
+            shift = ItemListElementRecord.SEQUENCE.minus(Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {
@@ -354,7 +352,7 @@ public class ItemListRepository extends DepotRepository
             GreaterThanEquals min = ItemListElementRecord.SEQUENCE.greaterEq(toIndex);
             LessThan max = ItemListElementRecord.SEQUENCE.lessThan(fromIndex);
             range = new And(min, max);
-            shift = new Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1));
+            shift = ItemListElementRecord.SEQUENCE.plus(Integer.valueOf(1));
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {

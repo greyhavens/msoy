@@ -25,7 +25,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
-import com.samskivert.depot.operator.IsNull;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -57,7 +56,7 @@ public class ProfileRepository extends DepotRepository
                         ProfileRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
                     new Where(new And(
                         MemberRecord.MEMBER_ID.lessEq(400),
-                        new IsNull(ProfileRecord.MEMBER_ID))
+                        ProfileRecord.MEMBER_ID.isNull())
                     ));
 
                 // create blank ProfileRecords with all defaults

@@ -30,14 +30,11 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.GreaterThan;
-import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.Not;
 import com.samskivert.depot.operator.Or;
-import com.samskivert.depot.operator.Sub;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -321,7 +318,7 @@ public class ForumRepository extends DepotRepository
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
 
         updatePartial(ForumThreadRecord.getKey(thread.threadId),
-                      ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS, 1));
+                      ForumThreadRecord.POSTS, ForumThreadRecord.POSTS.plus(1));
 
         // update thread object to match its persistent record
         thread.posts++;
@@ -394,7 +391,7 @@ public class ForumRepository extends DepotRepository
 
         // otherwise decrement the post count
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
-        updates.put(ForumThreadRecord.POSTS, new Sub(ForumThreadRecord.POSTS, 1));
+        updates.put(ForumThreadRecord.POSTS, ForumThreadRecord.POSTS.minus(1));
         // and update the last post/poster/etc. if we just deleted the last post
         if (ftr.mostRecentPostId == fmr.messageId) {
             List<ForumMessageRecord> lastMsg = findAll(
@@ -457,7 +454,7 @@ public class ForumRepository extends DepotRepository
             ForumThreadRecord.GROUP_ID.in(groupIds),
             new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_TIME,
                             RepositoryUtil.getCutoff(UNREAD_POSTS_CUTOFF)),
-            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+            new Or(ReadTrackingRecord.THREAD_ID.isNull(),
                    new And(ReadTrackingRecord.MEMBER_ID.eq(memberId),
                            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
                                            ReadTrackingRecord.LAST_READ_POST_ID))));
@@ -479,7 +476,7 @@ public class ForumRepository extends DepotRepository
         // filtering expressions
         List<SQLExpression> conditions = Lists.newArrayListWithCapacity(4);
         conditions.add(ForumMessageRecord.POSTER_ID.in(authorIds));
-        conditions.add(new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+        conditions.add(new Or(ReadTrackingRecord.THREAD_ID.isNull(),
             new And(ReadTrackingRecord.MEMBER_ID.eq(memberId), new GreaterThan(
                 ForumMessageRecord.MESSAGE_ID, ReadTrackingRecord.LAST_READ_POST_ID))));
         if (hiddenGroupIds.size() > 0) { // no empty In's

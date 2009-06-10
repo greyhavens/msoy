@@ -37,15 +37,12 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.operator.LessThan;
 import com.samskivert.depot.operator.Or;
 import com.samskivert.depot.operator.SQLOperator;
-import com.samskivert.depot.operator.Sub;
 
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -177,7 +174,7 @@ public class MsoyGameRepository extends DepotRepository
             // if we have no search ranking, sort by descending average rating
             FunctionExp count = new FunctionExp(
                 "GREATEST", GameInfoRecord.RATING_COUNT, new ValueExp(1.0));
-            clauses.add(OrderBy.descending(new Div(GameInfoRecord.RATING_SUM, count)));
+            clauses.add(OrderBy.descending(GameInfoRecord.RATING_SUM.div(count)));
         }
 
         // filter out games that aren't integrated with Whirled
@@ -388,8 +385,8 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        SQLExpression add = new Add(GameMetricsRecord.GAMES_PLAYED, playerGames);
-        SQLExpression sub = new Sub(GameMetricsRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
+        SQLExpression add = GameMetricsRecord.GAMES_PLAYED.plus(playerGames);
+        SQLExpression sub = GameMetricsRecord.FLOW_TO_NEXT_RECALC.minus(flowAwarded);
         updatePartial(GameMetricsRecord.getKey(Math.abs(gprec.gameId)),
                       ImmutableMap.of(GameMetricsRecord.GAMES_PLAYED, add,
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,

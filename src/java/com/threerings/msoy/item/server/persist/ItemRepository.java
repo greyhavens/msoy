@@ -933,7 +933,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
-                        new Add(getCatalogColumn(CatalogRecord.PURCHASES), 1));
+                        getCatalogColumn(CatalogRecord.PURCHASES).plus(1));
 
             int purchases = record.purchases + 1; // for below calculations
             switch (record.pricing) {
@@ -953,7 +953,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
 
         } else {
-            updates.put(CatalogRecord.RETURNS, new Add(getCatalogColumn(CatalogRecord.RETURNS), 1));
+            updates.put(CatalogRecord.RETURNS, getCatalogColumn(CatalogRecord.RETURNS).plus(1));
         }
 
         // finally update the columns we actually modified
@@ -1115,7 +1115,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             };
         Where where = new Where(getCatalogColumn(CatalogRecord.BASIS_ID), basisId);
         ColumnExp cost = getCatalogColumn(CatalogRecord.COST);
-        return updatePartial(getCatalogClass(), where, invalidator, cost, new Add(cost, change));
+        return updatePartial(getCatalogClass(), where, invalidator, cost, cost.plus(change));
     }
 
     /**
@@ -1255,7 +1255,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void incrementFavoriteCount (int catalogId, int increment)
     {
-        SQLExpression add = new Add(getCatalogColumn(CatalogRecord.FAVORITE_COUNT), increment);
+        SQLExpression add = getCatalogColumn(CatalogRecord.FAVORITE_COUNT).plus(increment);
         if (updatePartial(getCatalogKey(catalogId), CatalogRecord.FAVORITE_COUNT, add) == 0) {
             log.warning("Could not update favorite count on catalog record.",
                         "catalogId", catalogId, "increment", increment);
@@ -1300,7 +1300,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void noteBasisAssigned (int catalogId, boolean add)
     {
         ColumnExp count = getCatalogColumn(CatalogRecord.DERIVATION_COUNT);
-        updatePartial(getCatalogKey(catalogId), count, new Add(count, add ? 1 : -1));
+        updatePartial(getCatalogKey(catalogId), count, count.plus(add ? 1 : -1));
     }
 
     /**
@@ -1531,11 +1531,11 @@ public abstract class ItemRepository<T extends ItemRecord>
             // entirely unknown. We only give it a tiny linear shift so that the creator and
             // tag factors below have something non-zero to work with when there is no full
             // text hit at all
-            new Add(new ValueExp(0.1), context.fullTextRank()),
+            new ValueExp(0.1).plus(context.fullTextRank()),
 
             // adjust the FTS rank by (5 + rating), which means a 5-star item is rated
             // (approximately) twice as high rated as a 1-star item
-            new Add(new ValueExp(1.0), getRatingExpression()),
+            new ValueExp(1.0).plus(getRatingExpression()),
 
             // then boost by (3 + log10(purchases)), thus an item that's sold 1,000 copies
             // is rated twice as high as something that's sold 1 copy

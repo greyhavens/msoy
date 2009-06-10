@@ -97,12 +97,12 @@ public class GroupRepository extends DepotRepository
      */
     public class WordSearch
     {
-        public SQLOperator fullTextMatch ()
+        public FullText.Match fullTextMatch ()
         {
             return _fts.match();
         }
 
-        public SQLOperator fullTextRank ()
+        public FullText.Rank fullTextRank ()
         {
             return _fts.rank();
         }
@@ -585,7 +585,7 @@ public class GroupRepository extends DepotRepository
             new Not(GroupRecord.POLICY.eq(Group.Policy.EXCLUSIVE)));
 
         if (search != null) {
-            List<SQLOperator> wordBits = Lists.newArrayList(search.fullTextMatch());
+            List<SQLOperator> wordBits = Lists.<SQLOperator>newArrayList(search.fullTextMatch());
             SQLOperator tagOp = search.tagExistsExpression();
             if (tagOp != null) {
                 wordBits.add(tagOp);
@@ -625,7 +625,7 @@ public class GroupRepository extends DepotRepository
             if (tagExistsExp != null) {
                 // the rank is (1 + fts rank), boosted by 25% if there's a tag match
                 return OrderBy.descending(new Mul(
-                    new Add(search.fullTextRank(), new ValueExp(1.0)),
+                    search.fullTextRank().plus(new ValueExp(1.0)),
                     new Case(tagExistsExp, new ValueExp(1.25), new ValueExp(1.0)))).
                         thenDescending(GroupRecord.MEMBER_COUNT).
                         thenAscending(GroupRecord.NAME);
@@ -639,7 +639,7 @@ public class GroupRepository extends DepotRepository
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
             return OrderBy.descending(new Add(
-                new Div(new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay),
+                new EpochSeconds(GroupRecord.CREATION_DATE).div(membersPerDay),
                 GroupRecord.MEMBER_COUNT)).
                     thenAscending(GroupRecord.NAME);
         }

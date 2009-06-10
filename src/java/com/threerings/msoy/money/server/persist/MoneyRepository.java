@@ -40,12 +40,9 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.LessThan;
 import com.samskivert.depot.operator.SQLOperator;
-import com.samskivert.depot.operator.Sub;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.util.Logger;
 
@@ -138,10 +135,10 @@ public class MoneyRepository extends DepotRepository
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
         Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
-        updates.put(currencyCol, new Add(currencyCol, amount));
+        updates.put(currencyCol, currencyCol.plus(amount));
         if (updateAcc) {
             ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
-            updates.put(currencyAccCol, new Add(currencyAccCol, amount));
+            updates.put(currencyAccCol, currencyAccCol.plus(amount));
         }
 
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
@@ -178,7 +175,7 @@ public class MoneyRepository extends DepotRepository
             currencyCol.greaterEq(amount)));
 
         int count = updatePartial(MemberAccountRecord.class, where, key,
-                                  currencyCol, new Sub(currencyCol, amount));
+                                  currencyCol, currencyCol.minus(amount));
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         MemberAccountRecord mar = load(MemberAccountRecord.class, key);
         if (mar == null) {
@@ -251,7 +248,7 @@ public class MoneyRepository extends DepotRepository
         ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.currency);
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(deduction.memberId);
         if (updatePartial(MemberAccountRecord.class, key, key,
-                          currencyCol, new Add(currencyCol, -deduction.amount)) == 0) {
+                          currencyCol, currencyCol.plus(-deduction.amount)) == 0) {
             log.warning("Missing member for rollback?!", "mtr", deduction);
         }
     }
@@ -366,8 +363,8 @@ public class MoneyRepository extends DepotRepository
     public void recordExchange (int barDelta, int coinDelta, float rate, int referenceTxId)
     {
         updatePartial(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY,
-                      BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, barDelta),
-                      BarPoolRecord.COIN_BALANCE, new Add(BarPoolRecord.COIN_BALANCE, coinDelta));
+                      BarPoolRecord.BAR_POOL, BarPoolRecord.BAR_POOL.plus(barDelta),
+                      BarPoolRecord.COIN_BALANCE, BarPoolRecord.COIN_BALANCE.plus(coinDelta));
         insert(new ExchangeRecord(barDelta, coinDelta, rate, referenceTxId));
     }
 
@@ -387,7 +384,7 @@ public class MoneyRepository extends DepotRepository
     public void adjustBarPool (int delta)
     {
         updatePartial(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY,
-                      BarPoolRecord.BAR_POOL, new Add(BarPoolRecord.BAR_POOL, delta));
+                      BarPoolRecord.BAR_POOL, BarPoolRecord.BAR_POOL.plus(delta));
     }
 
     public int getExchangeDataCount ()
@@ -466,7 +463,7 @@ public class MoneyRepository extends DepotRepository
     {
         Where where = new Where(new And(
             BlingCashOutRecord.MEMBER_ID.eq(memberId),
-            new IsNull(BlingCashOutRecord.TIME_FINISHED)));
+            BlingCashOutRecord.TIME_FINISHED.isNull()));
         return updatePartial(BlingCashOutRecord.class, where,
             new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
@@ -486,7 +483,7 @@ public class MoneyRepository extends DepotRepository
     {
         Where where = new Where(new And(
             BlingCashOutRecord.MEMBER_ID.eq(memberId),
-            new IsNull(BlingCashOutRecord.TIME_FINISHED)));
+            BlingCashOutRecord.TIME_FINISHED.isNull()));
         return updatePartial(BlingCashOutRecord.class, where,
             new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
@@ -522,7 +519,7 @@ public class MoneyRepository extends DepotRepository
     public BlingCashOutRecord getCurrentCashOutRequest (int memberId)
     {
         return load(BlingCashOutRecord.class, new Where(new And(
-            new IsNull(BlingCashOutRecord.TIME_FINISHED),
+            BlingCashOutRecord.TIME_FINISHED.isNull(),
             BlingCashOutRecord.MEMBER_ID.eq(memberId))));
     }
 
@@ -534,7 +531,7 @@ public class MoneyRepository extends DepotRepository
     {
         // select * from CashOutRecord where timeCompleted is null
         return findAll(BlingCashOutRecord.class, new Where(
-            new IsNull(BlingCashOutRecord.TIME_FINISHED)));
+            BlingCashOutRecord.TIME_FINISHED.isNull()));
     }
 
     /**

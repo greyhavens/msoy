@@ -31,11 +31,9 @@ import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Add;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.Div;
 import com.samskivert.depot.operator.Equals;
-import com.samskivert.depot.operator.IsNull;
 import com.samskivert.depot.operator.Not;
 
 import com.samskivert.util.IntMap;
@@ -204,7 +202,7 @@ public class MsoySceneRepository extends DepotRepository
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // only load public, published rooms
-        clauses.add(new Where(new And(new Not(new IsNull(SceneRecord.LAST_PUBLISHED)),
+        clauses.add(new Where(new And(new Not(SceneRecord.LAST_PUBLISHED.isNull()),
                                       new Equals(SceneRecord.ACCESS_CONTROL,
                                                  MsoySceneModel.ACCESS_EVERYONE))));
 
@@ -475,7 +473,7 @@ public class MsoySceneRepository extends DepotRepository
         }
     }
 
-    protected static SQLExpression getRatingExpression ()
+    protected static Div getRatingExpression ()
     {
         // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
@@ -497,7 +495,7 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
-        new Add(getRatingExpression(), new Div(new EpochSeconds(SceneRecord.LAST_PUBLISHED),
+        getRatingExpression().plus(new Div(new EpochSeconds(SceneRecord.LAST_PUBLISHED),
                                                // TODO: PostgreSQL flips out when you CREATE INDEX
                                                // using a prepared statement with parameters. So we
                                                // trick Depot using a literal expression here. :/

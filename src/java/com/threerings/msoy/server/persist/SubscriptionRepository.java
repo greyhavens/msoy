@@ -26,7 +26,6 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.Sub;
 
 import com.samskivert.util.Tuple;
 
@@ -138,7 +137,7 @@ public class SubscriptionRepository extends DepotRepository
         Map<ColumnExp,SQLExpression> updates = Maps.newHashMap();
         updates.put(SubscriptionRecord.LAST_GRANT,
             new ValueExp(new Timestamp(System.currentTimeMillis())));
-        updates.put(SubscriptionRecord.GRANTS_LEFT, new Sub(SubscriptionRecord.GRANTS_LEFT, 1));
+        updates.put(SubscriptionRecord.GRANTS_LEFT, SubscriptionRecord.GRANTS_LEFT.minus(1));
 
         int count = updatePartial(SubscriptionRecord.getKey(memberId), updates);
         if (count == 0) {

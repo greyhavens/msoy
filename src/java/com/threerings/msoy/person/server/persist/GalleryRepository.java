@@ -17,7 +17,6 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
-import com.samskivert.depot.operator.IsNull;
 
 import com.threerings.msoy.person.gwt.Gallery;
 
@@ -50,7 +49,7 @@ public class GalleryRepository extends DepotRepository
         return load(GalleryRecord.class,
                     new Where(new And(GalleryRecord.OWNER_ID.eq(memberId),
                                       // a null gallery name indicates the "Me" gallery
-                                      new IsNull(GalleryRecord.NAME))));
+                                      GalleryRecord.NAME.isNull())));
     }
 
     /**
