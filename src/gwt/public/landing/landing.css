@@ -106,22 +106,6 @@
    LANDING PAGE
 -------------------------------------*/
 
-.landing {
-  background: #89C6E3;
-  height: 100%;
-}
-
-.landing .Content {
-  background: url(/images/account/create_bg_mid.png) #287099 no-repeat bottom;
-  margin: 0 auto;
-  width: 657px;
-  color: #D0E6F7;
-}
-
-.landing .Content, .landing .Content a {
-  color: #D0E6F7;
-}
-
 .landing .Content, .landing .Content td {
   font-size: 12px;
 }

@@ -26,6 +26,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.shell.LogonPanel;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
+import client.ui.NoNavPanel;
 import client.util.ClickCallback;
 import client.util.ConversionTrackingUtil;
 import client.util.RecaptchaUtil;
@@ -36,11 +37,11 @@ import client.util.StringUtil;
 /**
  * Our main landing page.
  */
-public class LandingPanel extends FlowPanel
+public class LandingPanel extends SmartTable
 {
     public LandingPanel ()
     {
-        setStyleName("landing");
+        super("landing", 0, 20);
 
         // create a UI explaining briefly what Whirled is
         FlowPanel explain = MsoyUI.createFlowPanel("Explain");
@@ -65,17 +66,13 @@ public class LandingPanel extends FlowPanel
         setRegiStepOne(register);
 
         // wrap all that up in two columns with header and background and whatnot
-        add(MsoyUI.createImage("/images/account/register_banner.jpg", null));
-        SmartTable content = new SmartTable("Content", 0, 20);
-        content.setWidget(0, 0, explain);
-        content.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_LEFT);
-        content.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        content.setWidget(0, 1, register);
-        content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-        content.setWidget(1, 0, LandingCopyright.addFinePrint(new FlowPanel()), 2, null);
-        content.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
-        add(content);
-        add(MsoyUI.createImage("/images/account/create_bg_bot.png", null));
+        setWidget(0, 0, explain);
+        getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_LEFT);
+        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        setWidget(0, 1, register);
+        getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        setWidget(1, 0, LandingCopyright.addFinePrint(new FlowPanel()), 2, null);
+        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
     }
 
     protected void setRegiStepOne (final FlowPanel register)

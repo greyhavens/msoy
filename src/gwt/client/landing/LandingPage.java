@@ -9,6 +9,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.Page;
+import client.ui.NoNavPanel;
 
 /**
  * The main entry point for the landing page(s).
@@ -48,7 +49,7 @@ public class LandingPage extends Page
             setContent(_msgs.landingTitle(), new DeveloperIntroPanel());
 
         } else {
-            setContent(_msgs.landingTitle(), new LandingPanel());
+            setContent(_msgs.landingTitle(), NoNavPanel.makeBlue(new LandingPanel()));
         }
     }
 
