@@ -17,7 +17,6 @@ import client.ui.NoNavPanel;
 public class LandingPage extends Page
 {
     public static final String CREATORS = "creators";
-    public static final String DEVIANT_CONTEST = "dacontest";
     public static final String DEVIANT_CONTEST_WINNERS = "dawinners";
     public static final String GAME_CONTEST = "gamecontest";
     public static final String DESIGN_CONTEST = "designcontest";
@@ -31,10 +30,6 @@ public class LandingPage extends Page
         // creators panel won our creators a/b test
         if (action.equals(CREATORS)) {
             setContent(_msgs.titleCreators(), new CreatorsPanel());
-
-        // landing page for deviant art contest winners
-        } else if (action.equals(DEVIANT_CONTEST) || action.equals(DEVIANT_CONTEST_WINNERS)) {
-            setContent(_msgs.titleDAContestWinners(), new DAContestWinnersPanel());
 
         // landing page for flash game developer contest
         } else if (action.equals(GAME_CONTEST)) {

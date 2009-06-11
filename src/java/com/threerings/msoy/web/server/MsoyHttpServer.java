@@ -59,8 +59,6 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.CatalogServlet;
 import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 import com.threerings.msoy.item.server.ItemServlet;
-import com.threerings.msoy.landing.gwt.LandingService;
-import com.threerings.msoy.landing.server.LandingServlet;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.server.MailServlet;
 import com.threerings.msoy.person.gwt.GalleryService;
@@ -215,7 +213,6 @@ public class MsoyHttpServer extends Server
         .put(InviteService.ENTRY_POINT, InviteServlet.class)
         .put(IssueService.ENTRY_POINT, IssueServlet.class)
         .put(ItemService.ENTRY_POINT, ItemServlet.class)
-        .put(LandingService.ENTRY_POINT, LandingServlet.class)
         .put(MailService.ENTRY_POINT, MailServlet.class)
         .put(MeService.ENTRY_POINT, MeServlet.class)
         .put(MoneyService.ENTRY_POINT, MoneyServlet.class)
