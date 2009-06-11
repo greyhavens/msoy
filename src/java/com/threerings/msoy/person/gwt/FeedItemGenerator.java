@@ -391,43 +391,17 @@ public class FeedItemGenerator
         MediaDesc media;
         switch (message.type.getCategory()) {
         case FRIENDINGS:
-            if (message.data.length < 3) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            return _builder.createMedia(media, Pages.PEOPLE, Args.compose(message.data[1]));
+            return buildMedia(message.data, 2, Pages.PEOPLE, message.data[1]);
 
         case ROOMS:
-            if (message.data.length < 3) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            return _builder.createMedia(media, Pages.WORLD, Args.compose("s" + message.data[0]));
+            return buildMedia(message.data, 2, Pages.WORLD, "s" + message.data[0]);
 
         case TROPHIES:
-            media = MediaDesc.stringToMD(message.data[2]);
-            if (media == null) {
-                return null;
-            }
-            return _builder.createMedia(media, Pages.GAMES,
+            return buildMedia(message.data, 2, Pages.GAMES,
                 SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
 
         case LISTED_ITEMS:
-            if (message.data.length < 4) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[3]);
-            if (media == null) {
-                return null;
-            }
-            return _builder.createMedia(
-                media, Pages.SHOP, Args.compose("l", message.data[1], message.data[2]));
+            return buildMedia(message.data, 3, Pages.SHOP, "l", message.data[1], message.data[2]);
 
         case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
@@ -437,57 +411,31 @@ public class FeedItemGenerator
             return _builder.createMedia(media, Pages.ME, Args.compose("passport", memberId));
 
         case MEDALS:
-            media = MediaDesc.stringToMD(message.data[1]);
-            if (media == null) {
-                return null;
-            }
             int friendId = ((FriendFeedMessage)message).friend.getMemberId();
-            return _builder.createMedia(media, Pages.ME, Args.compose("medals", friendId));
+            return buildMedia(message.data, 1, Pages.ME, "medals", friendId);
 
         case GROUPS:
-            if (message.data.length > 2) {
-                media = MediaDesc.stringToMD(message.data[2]);
-            }
-            if (media == null) {
-                return null;
-            }
-            return _builder.createMedia(media, Pages.GROUPS, Args.compose("d", message.data[0]));
+            return buildMedia(message.data, 2, Pages.GROUPS, "d", message.data[0]);
 
         case ANNOUNCEMENTS:
-            if (message.data.length < 4) {
-                return null;
-            }
-            media = MediaDesc.stringToMD(message.data[3]);
-            if (media == null) {
-                return null;
-            }
-            return _builder.createMedia(media, Pages.GROUPS, Args.compose("t", message.data[2]));
+            return buildMedia(message.data, 3, Pages.GROUPS, "t", message.data[2]);
 
         case COMMENTS:
             if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
-                if (message.data.length < 3) {
-                    return null;
-                }
-                media = MediaDesc.stringToMD(message.data[2]);
-                if (media == null) {
-                    return null;
-                }
-                return _builder.createMedia(
-                    media, Pages.WORLD, Args.compose("s", message.data[0]));
+                return buildMedia(message.data, 2, Pages.WORLD, "s", message.data[0]);
 
             } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
-                if (message.data.length < 4) {
-                    return null;
-                }
-                media = MediaDesc.stringToMD(message.data[3]);
-                if (media == null) {
-                    return null;
-                }
-                return _builder.createMedia(
-                    media, Pages.SHOP, Args.compose("l", message.data[0], message.data[1]));
+                return buildMedia(
+                    message.data, 3, Pages.SHOP, "l", message.data[0], message.data[1]);
             }
         }
         return null;
+    }
+
+    protected Media buildMedia (String[] data, int idx, Pages page, Object... args)
+    {
+        return (data.length <= idx) ? null :
+            _builder.createMedia(MediaDesc.stringToMD(data[idx]), page, Args.compose(args));
     }
 
     /**
