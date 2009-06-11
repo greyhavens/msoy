@@ -23,7 +23,6 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.clause.FromOverride;
-import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;

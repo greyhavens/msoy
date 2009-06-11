@@ -43,7 +43,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.images.frame.FrameImages;
 import client.shell.BrowserTest;
 import client.shell.CShell;
-import client.shell.LandingTestCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;

@@ -28,7 +28,6 @@ import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
-import com.samskivert.depot.Exps;
 import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;

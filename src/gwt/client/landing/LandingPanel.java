@@ -28,7 +28,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.shell.LogonPanel;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
-import client.ui.NoNavPanel;
 import client.util.ClickCallback;
 import client.util.ConversionTrackingUtil;
 import client.util.RecaptchaUtil;
@@ -139,7 +138,7 @@ public class LandingPanel extends SmartTable
         regi.setText(0, 0, _msgs.landingRegSecurity(), 2, null);
         if (RecaptchaUtil.isEnabled()) {
             regi.setWidget(1, 0, RecaptchaUtil.createDiv("recaptchaDiv"), 2, null);
-            DeferredCommand.add(new Command() { // delay init until div is added to DOM
+            DeferredCommand.addCommand(new Command() { // delay init until div is added to DOM
                 public void execute () {
                     RecaptchaUtil.init("recaptchaDiv");
                 }
