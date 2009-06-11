@@ -306,7 +306,8 @@ public class MemberRecord extends PersistentRecord
      */
     public WebCreds toCreds (String authtok)
     {
-        return new WebCreds(authtok, accountName, isValidated(), getName(), permaName, toRole());
+        return new WebCreds(
+            authtok, accountName, isValidated(), isNewbie(), getName(), permaName, toRole());
     }
 
     /**
@@ -393,6 +394,16 @@ public class MemberRecord extends PersistentRecord
         // least PITA
         return isSet(Flag.VALIDATED) || (!MemberMailUtil.isPermaguest(accountName) &&
                                          MemberMailUtil.isPlaceholderAddress(accountName));
+    }
+
+    /**
+     * Returns true if this member is "new": registered less than a week ago or has had fewer than
+     * 7 (Flash) sessions.
+     */
+    public boolean isNewbie ()
+    {
+        return (sessions < NEWBIE_SESSIONS) ||
+            (System.currentTimeMillis() - created.getTime() < NEWBIE_PERIOD);
     }
 
     /**
@@ -501,4 +512,6 @@ public class MemberRecord extends PersistentRecord
     // AUTO-GENERATED: METHODS END
 
     protected static final String DELETED_SUFFIX = ":deleted";
+    protected static final int NEWBIE_SESSIONS = 7;
+    protected static final long NEWBIE_PERIOD = 7*24*60*60*1000L;
 }

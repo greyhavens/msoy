@@ -34,6 +34,9 @@ public class WebCreds
     /** Is this user's email address validated? */
     public boolean validated;
 
+    /** Is this member a recent registrant? */
+    public boolean isNewbie;
+
     /** Our member name and id. */
     public MemberName name;
 
@@ -58,21 +61,21 @@ public class WebCreds
             return null;
         }
         return new WebCreds(
-            data.next(), data.next(), Boolean.valueOf(data.next()),
-            new MemberName(data.next(), Integer.valueOf(data.next())),
-            data.next(), Role.valueOf(data.next()));
+            data.next(), data.next(), Boolean.valueOf(data.next()), Boolean.valueOf(data.next()),
+            new MemberName(data.next(), Integer.valueOf(data.next())), data.next(),
+            Role.valueOf(data.next()));
     }
 
     /**
      * Creates a configured web creds instance.
      */
-    public WebCreds (
-        String token, String accountName, boolean validated,
-        MemberName name, String permaName, Role role)
+    public WebCreds (String token, String accountName, boolean validated, boolean isNewbie,
+                     MemberName name, String permaName, Role role)
     {
         this.token = token;
         this.accountName = accountName;
         this.validated = validated;
+        this.isNewbie = isNewbie;
         this.name = name;
         this.permaName = permaName;
         this.role = role;
@@ -83,7 +86,7 @@ public class WebCreds
      */
     public WebCreds ()
     {
-        this(null, null, false, null, null, null);
+        this(null, null, false, false, null, null, null);
     }
 
     /**
@@ -151,6 +154,7 @@ public class WebCreds
         data.add(token);
         data.add(accountName);
         data.add(String.valueOf(validated));
+        data.add(String.valueOf(isNewbie));
         data.add(name.toString());
         data.add(String.valueOf(name.getMemberId()));
         data.add(permaName);
