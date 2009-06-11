@@ -244,7 +244,7 @@ public class FrameEntryPoint
             Link.go(Pages.PEEPACC, "confprof"); // send them to step 2: configure profile
         } else if (data.group == SessionData.Group.C) {
             Link.go(Pages.ME); // send them to Me, which has next steps
-        } else if (_page == Pages.LANDING || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
+        } else if (isHeaderless() || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {
             History.back(); // go back to where we were
@@ -424,7 +424,7 @@ public class FrameEntryPoint
     // from interface Frame
     public boolean isHeaderless ()
     {
-        return _page.getTab() == null;
+        return (_page != null) && (_page.getTab() == null);
     }
 
     protected void setPage (Pages page)
