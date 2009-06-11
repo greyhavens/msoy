@@ -4,13 +4,6 @@
  * CSS styles for the Game interfaces.
  */
 
-.javaLoading {
-  width: 100%;
-  text-align: center;
-  padding-top: 50px;
-  font-size: 24px;
-}
-
 .playPanel .Title {
   text-align: center;
   vertical-align: top;
@@ -36,25 +29,6 @@
   text-align: center;
 }
 
-.playPanel .SinglePlay {
-  background: transparent url(/images/game/play_alone.png);
-}
-.playPanel .FriendPlay {
-  background: transparent url(/images/game/play_friends.png);
-}
-.playPanel .SinglePlay-up-hovering {
-  background: transparent url(/images/game/play_alone_over.png);
-}
-.playPanel .FriendPlay-up-hovering {
-  background: transparent url(/images/game/play_friends_over.png);
-}
-
-.playPanel .NoSingle {
-  width: 126px;
-  font-size: 12px;
-  text-align: center;
-}
-
 .playPanel .Label {
   font-size: 12px;
   text-align: center;
@@ -73,11 +47,6 @@
 
 .gameDetail .Play {
   width: 255px;
-}
-
-.gameDetail .InDevTip {
-  font-size: 12px;
-  padding-bottom: 10px;
 }
 
 .instructionsPanel {
@@ -174,11 +143,6 @@
   font-weight: bold;
 }
 
-.gameMetrics .TinyNumber {
-  font-size: xx-small;
-  text-align: right;
-}
-
 .gameLogs {
   width: 100%;
 }
@@ -194,23 +158,6 @@
 
 .trophyCase {
   width: 100%;
-}
-
-.whyPlay {
-  width: 152px;
-  font-size: 14px;
-  padding: 10px 20px;
-}
-
-.whyPlay .Title {
-  padding-bottom: 10px;
-  font-weight: bold;
-  color: #FFFFFF;
-}
-
-.whyPlay ul {
-  padding-left: 25px;
-  color: #3D5174;
 }
 
 .featuredGame {
@@ -661,16 +608,6 @@
   width: 100px;
 }
 
-.gameList .GameInfoPanel .PlayButtons .PlaySingleButton .html-face {
-  font-size: 12px;
-  padding-top: 3px;
-}
-
-.gameList .GameInfoPanel .PlayButtons .PlayMultiButton .html-face {
-  font-size: 10px;
-  padding-top: 5px;
-}
-
 /* ------------------------------------
    GAMES PAGES HEADER
 -------------------------------------*/
@@ -869,3 +806,16 @@
   font-size: 14px;
 }
 
+/* ------------------------------------
+   GameBitsPanel
+-------------------------------------*/
+
+.gameBits .Title {
+  padding-top: 10px;
+  font-weight: bold;
+  color: #5F96AC;
+}
+
+.gameBits .Label {
+  padding-right: 5px;
+}

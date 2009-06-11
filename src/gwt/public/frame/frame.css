@@ -202,6 +202,12 @@
   vertical-align: bottom;
 }
 
+.pageTitle .SubNavi .BookmarkTip {
+  background: url(/images/facebook/bookmarktip.png) no-repeat top center;
+  width: 402px;
+  height: 145px;
+}
+
 .pageTitle .Close {
   padding-bottom: 12px;
   padding-left: 5px;
@@ -257,10 +263,6 @@
   color: #000000;
 }
 
-.browserTest .Message .Center {
-  padding: 15px;
-}
-
 .browserTest .Title {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
@@ -275,8 +277,11 @@
   margin-right: 10px;
 }
 
-.BookmarkTip {
-  background: url(/images/facebook/bookmarktip.png) no-repeat top center;
-  width: 402px;
-  height: 145px;
+/* Random crap */
+
+.javaLoading {
+  width: 100%;
+  text-align: center;
+  padding-top: 50px;
+  font-size: 24px;
 }

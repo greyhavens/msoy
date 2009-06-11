@@ -24,13 +24,6 @@
 
 /** SelectMethodPanel */
 
-.selectMethod .Select {
-  color: #2E6D8E;
-  font-family: "Trebuchet MS", Arial, sans-serif;
-  font-size: 16px;
-  padding: 10px 0px;
-}
-
 .selectMethod .Balloons {
   padding: 5px 0px 0px 10px;
 }

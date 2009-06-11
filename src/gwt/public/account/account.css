@@ -42,11 +42,6 @@
   margin: 0 0 20px 10px;
 }
 
-.createAccount .PromoCell {
-  text-align: center;
-  vertical-align: middle;
-}
-
 .createAccount .Label, createAccount td .Label {
   padding: 3px 5px 0 3px;
   width: 150px;
@@ -82,13 +77,6 @@
 
 .createAccount .Status {
   text-align: center;
-  font-size: 14px;
-  color: #FFFFFF;
-  font-weight: bold;
-}
-
-.createAccount .ValidationSent {
-  padding: 10px;
   font-size: 14px;
   color: #FFFFFF;
   font-weight: bold;
@@ -145,10 +133,6 @@
 
 .editAccount .PermaName {
   font-weight: bold;
-}
-
-.editAccount .charityList {
-  width: 300px;
 }
 
 .editAccount .charityDescription {
@@ -245,10 +229,6 @@
 .welcome .FreeTitle {
   font-size: 20px;
   color: white;
-}
-
-.welcome .FreeTitle .Free {
-  font-size: 24px;
 }
 
 .welcome .Next .Title { 

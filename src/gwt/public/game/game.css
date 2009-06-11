@@ -27,20 +27,6 @@
 }
 
 /* ------------------------------------
-   GameBitsPanel
--------------------------------------*/
-
-.gameBits .Title {
-  padding-top: 10px;
-  font-weight: bold;
-  color: #5F96AC;
-}
-
-.gameBits .Label {
-  padding-right: 5px;
-}
-
-/* ------------------------------------
    PlayButton
 -------------------------------------*/
 

@@ -11,20 +11,6 @@
   padding-top: 10px;
 }
 
-.helpPanel .reportBug {
-  background-color: #FF9602;
-  width: 130px;
-  padding: 3px 0 3px 0;
-}
-
-.helpPanel .reportBug a {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: white;
-  text-decoration: none;
-}
-
 .helpPanel .helpIntro {
   background-image: url(/images/help/thankyoumsg.png);
   background-repeat: no-repeat;

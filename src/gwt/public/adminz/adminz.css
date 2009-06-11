@@ -23,22 +23,10 @@
   margin-bottom: 5px;
 }
 
-.invitePlayersPopup {
-  padding: 10px;
-}
-
-.invitePlayersPopup .Tip {
-  width: 400px;
-}
-
 /** Review Panel **/
 .reviewPanel {
   padding: 10px;
   font-size: 12px;
-}
-
-.reviewPanel .Item {
-  padding-top: 10px;
 }
 
 .itemTransactions {
@@ -75,80 +63,6 @@
 
 .reviewPanel .Table .Comment .EmptyCommentText {
   font-style: italic;
-}
-
-/*** Player Browser ***/
-.playerBrowser .PlayerList {
-  text-align: center;
-  border-spacing: 0px;
-  empty-cells: hide;
-}
-
-.playerBrowser .PlayerList .Title {
-  border-style: none;
-  font-weight: bold;
-  font-size: 18px;
-  padding: 2px;
-}
-
-.playerBrowser .PlayerList .Buttons td {
-  border-style: none;
-  padding: 3px;
-}
-
-.playerBrowser .PlayerList .Buttons .Shim {
-  background-color: black;
-  border-style: none;
-}
-
-.playerBrowser .PlayerList td {
-  border-style: solid none none solid;
-  border-width: 1px;
-  padding: 0px;
-}
-
-.playerBrowser .PlayerList .Bottom td {
-  border-bottom-style: solid;
-}
-
-.playerBrowser .PlayerList .Last {
-  border-right-style: solid;
-} 
-
-.playerBrowser .PlayerList .Separator td {
-  border-bottom-width: 3px;
-  border-bottom-style: solid;
-}
-
-.playerBrowser .PlayerList .Clickable {
-  cursor: pointer;
-}
-
-.playerBrowser .PlayerList .gwt-Label {
-  /* non-highlighted labels. */
-  border-width: 2px;
-  border-style: solid;
-  border-color: white;
-}
-
-.playerBrowser .PlayerList .Header {
-  padding: 3px;
-}
-
-.playerBrowser .PlayerList .Highlighted {
-  border-color: red;
-}
-
-.playerBrowser .PlayerList .HighlightedHeader {
-  border-color: blue;
-}
-
-.playerBrowser .PlayerList .DataRow td {
-  font-size: 10px;
-}
-
-.spamPlayers { 
-  margin: 10px;
 }
 
 .memberInfo .Name {
@@ -233,18 +147,6 @@
 
 .cashOutWidget .Extras .sideButton {
   width: 120px;
-}
-
-.cashOutWidget .SendMail {
-  background-image: url(/images/profile/sendmail.png);
-  width: 21px;
-  height: 15px;
-}
-
-.cashOutWidget .Remove {
-  background-image: url(/images/profile/remove.png);
-  width: 17px;
-  height: 17px;
 }
 
 .requestedCashOutWidget {
