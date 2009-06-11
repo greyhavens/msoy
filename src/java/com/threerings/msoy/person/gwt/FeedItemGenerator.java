@@ -391,17 +391,17 @@ public class FeedItemGenerator
         MediaDesc media;
         switch (message.type.getCategory()) {
         case FRIENDINGS:
-            return buildMedia(message.data, 2, Pages.PEOPLE, message.data[1]);
+            return buildMedia(message, 2, Pages.PEOPLE, message.data[1]);
 
         case ROOMS:
-            return buildMedia(message.data, 2, Pages.WORLD, "s" + message.data[0]);
+            return buildMedia(message, 2, Pages.WORLD, "s" + message.data[0]);
 
         case TROPHIES:
-            return buildMedia(message.data, 2, Pages.GAMES,
+            return buildMedia(message, 2, Pages.GAMES,
                 SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
 
         case LISTED_ITEMS:
-            return buildMedia(message.data, 3, Pages.SHOP, "l", message.data[1], message.data[2]);
+            return buildMedia(message, 3, Pages.SHOP, "l", message.data[1], message.data[2]);
 
         case BADGES:
             int badgeCode = Integer.parseInt(message.data[0]);
@@ -412,30 +412,29 @@ public class FeedItemGenerator
 
         case MEDALS:
             int friendId = ((FriendFeedMessage)message).friend.getMemberId();
-            return buildMedia(message.data, 1, Pages.ME, "medals", friendId);
+            return buildMedia(message, 1, Pages.ME, "medals", friendId);
 
         case GROUPS:
-            return buildMedia(message.data, 2, Pages.GROUPS, "d", message.data[0]);
+            return buildMedia(message, 2, Pages.GROUPS, "d", message.data[0]);
 
         case ANNOUNCEMENTS:
-            return buildMedia(message.data, 3, Pages.GROUPS, "t", message.data[2]);
+            return buildMedia(message, 3, Pages.GROUPS, "t", message.data[2]);
 
         case COMMENTS:
             if (message.type == FeedMessageType.SELF_ROOM_COMMENT) {
-                return buildMedia(message.data, 2, Pages.WORLD, "s", message.data[0]);
-
-            } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
-                return buildMedia(
-                    message.data, 3, Pages.SHOP, "l", message.data[0], message.data[1]);
+                return buildMedia(message, 2, Pages.WORLD, "s", message.data[0]);
+            }
+            if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
+                return buildMedia(message, 3, Pages.SHOP, "l", message.data[0], message.data[1]);
             }
         }
         return null;
     }
 
-    protected Media buildMedia (String[] data, int idx, Pages page, Object... args)
+    protected Media buildMedia (FeedMessage msg, int idx, Pages page, Object... args)
     {
-        return (data.length <= idx) ? null :
-            _builder.createMedia(MediaDesc.stringToMD(data[idx]), page, Args.compose(args));
+        return (msg.data.length <= idx) ? null :
+            _builder.createMedia(MediaDesc.stringToMD(msg.data[idx]), page, Args.compose(args));
     }
 
     /**
