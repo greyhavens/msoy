@@ -459,9 +459,9 @@ public class WebUserServlet extends MsoyServiceServlet
         // assign them to a post-validation A/B test group
         switch (_testLogic.getABTestGroup("2009 06 post-validation",
                                           new VisitorInfo(mrec.visitorId, true), true)) {
-        case 0: data.group = SessionData.Group.A; break;
-        case 1: data.group = SessionData.Group.B; break;
-        case 2: data.group = SessionData.Group.C; break;
+        case 1: data.group = SessionData.Group.A; break;
+        case 2: data.group = SessionData.Group.B; break;
+        case 3: data.group = SessionData.Group.C; break;
         }
 
         return data;
