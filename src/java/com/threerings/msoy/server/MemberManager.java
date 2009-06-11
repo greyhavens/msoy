@@ -503,10 +503,12 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAway (ClientObject caller, boolean away, String message)
+    public void setAway (
+        ClientObject caller, String message, InvocationService.ConfirmListener listener)
+        throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        user.setAwayMessage(away ? message : null);
+        user.setAwayMessage(message);
         _bodyMan.updateOccupantInfo(user, new MemberInfo.Updater<MemberInfo>() {
             public boolean update (MemberInfo info) {
                 if (info.isAway() == user.isAway()) {
@@ -516,6 +518,7 @@ public class MemberManager
                 return true;
             }
         });
+        listener.requestProcessed();
     }
 
     // from interface MemberProvider

@@ -214,6 +214,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Returns true if this member is away.
+     */
+    public function isAway () :Boolean
+    {
+        return (awayMessage != null);
+    }
+
+    /**
      * Return true if this user is only viewing the scene and should not be rendered within it.
      */
     public function isViewer () :Boolean

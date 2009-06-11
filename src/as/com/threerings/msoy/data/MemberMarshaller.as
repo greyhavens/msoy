@@ -183,10 +183,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_AWAY :int = 13;
 
     // from interface MemberService
-    public function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void
+    public function setAway (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
     {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, SET_AWAY, [
-            langBoolean.valueOf(arg2), arg3
+            arg2, listener3
         ]);
     }
 

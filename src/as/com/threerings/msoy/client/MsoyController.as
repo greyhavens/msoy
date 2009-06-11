@@ -261,14 +261,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Are we currently away, i.e. we've typed /afk? This precludes idleness.
-     */
-    public function isAway () :Boolean
-    {
-        return _away;
-    }
-
-    /**
      * Adds a place exit handler to be invoked whenever the user requests to leave the current
      * place. The function should take no arguments and return a Boolean. A true return value means
      * carry on closing the place view. A false value means ignore the current request. In the
@@ -286,23 +278,6 @@ public class MsoyController extends Controller
     public function removePlaceExitHandler (fn :Function) :void
     {
         ArrayUtil.removeAll(_placeExitHandlers, fn);
-    }
-
-    /**
-     * Update our away status.
-     */
-    public function setAway (nowAway :Boolean, message :String = null) :void
-    {
-        if (nowAway != _away) {
-            _away = nowAway;
-            if (nowAway && StringUtil.isBlank(message)) {
-                // use a default message
-                message = Msgs.GENERAL.get("m.awayDefault");
-            }
-            var msvc :MemberService =
-                _mctx.getClient().requireService(MemberService) as MemberService;
-            msvc.setAway(_mctx.getClient(), nowAway, message);
-        }
     }
 
     /**
@@ -855,9 +830,6 @@ public class MsoyController extends Controller
 
     /** Whether we think we're idle or not. */
     protected var _idle :Boolean = false;
-
-    /** Whether we think we're away from the keyboard or not. */
-    protected var _away :Boolean = false;
 
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;

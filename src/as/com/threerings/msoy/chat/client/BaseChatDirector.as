@@ -26,8 +26,8 @@ public class BaseChatDirector extends ChatDirector
         _mctx = mctx;
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
-        registerCommandHandler(msg, "away", new AwayHandler(true));
-        registerCommandHandler(msg, "back", new AwayHandler(false));
+
+        registerCommandHandler(msg, "away", new AwayHandler());
         registerCommandHandler(msg, "bleepall", new BleepAllHandler());
 
         // override the broadcast command from ChatDirector

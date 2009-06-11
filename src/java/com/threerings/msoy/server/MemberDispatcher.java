@@ -109,7 +109,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.SET_AWAY:
             ((MemberProvider)provider).setAway(
-                source, ((Boolean)args[0]).booleanValue(), (String)args[1]
+                source, (String)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

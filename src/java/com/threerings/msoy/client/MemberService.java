@@ -48,8 +48,10 @@ public interface MemberService extends InvocationService
 
     /**
      * Set this client as being "away".
+     *
+     * @param message the away message, or null to be back.
      */
-    void setAway (Client client, boolean away, String message);
+    void setAway (Client client, String message, ConfirmListener listener);
 
     /**
      * Set the specified member as muted.

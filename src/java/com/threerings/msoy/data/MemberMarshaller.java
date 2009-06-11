@@ -172,10 +172,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int SET_AWAY = 13;
 
     // from interface MemberService
-    public void setAway (Client arg1, boolean arg2, String arg3)
+    public void setAway (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
     {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, SET_AWAY, new Object[] {
-            Boolean.valueOf(arg2), arg3
+            arg2, listener3
         });
     }
 
