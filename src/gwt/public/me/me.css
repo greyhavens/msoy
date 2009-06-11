@@ -90,6 +90,21 @@
   float: right;
 }
 
+.myWhirled .Newbie {
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.myWhirled .Newbie a {
+  color: #777777;
+}
+
+.myWhirled .Newbie img {
+  width: 75px;
+}
+
 /* ------------------------------------
 
 -------------------------------------*/

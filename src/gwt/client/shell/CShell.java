@@ -72,15 +72,6 @@ public class CShell
     }
 
     /**
-     * Returns true if we are a registered user with a validated email address, false
-     * if we're a guest, permaguest or a registered member with an unvalidated email address.
-     */
-    public static boolean isValidated ()
-    {
-        return (creds != null) && creds.validated;
-    }
-
-    /**
      * Returns true if we're logged in and are a subscriber or "greater", false otherwise.
      */
     public static boolean isSubscriber ()
@@ -110,6 +101,22 @@ public class CShell
     public static boolean isMaintainer ()
     {
         return (creds != null) && creds.isMaintainer();
+    }
+
+    /**
+     * Returns true if we are a registered user with a validated email address.
+     */
+    public static boolean isValidated ()
+    {
+        return (creds != null) && creds.validated;
+    }
+
+    /**
+     * Returns true if we are a registered user that is still a "newbie".
+     */
+    public static boolean isNewbie ()
+    {
+        return (creds != null) && creds.isNewbie;
     }
 
     /**

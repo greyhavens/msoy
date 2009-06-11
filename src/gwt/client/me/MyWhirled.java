@@ -4,17 +4,21 @@
 package client.me;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.person.FriendsFeedPanel;
@@ -76,17 +80,26 @@ public class MyWhirled extends FlowPanel
         horiz.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
 
         FlowPanel left = new FlowPanel();
-        if (CShell.isValidated()) {
-            if (data.promos.size() > 0) {
-                left.add(new PromotionBox(data.promos));
-                left.add(WidgetUtil.makeShim(10, 10));
-            }
-        } else {
+        if (!CShell.isValidated()) {
             FlowPanel warn = MsoyUI.createFlowPanel("MustValidate");
             warn.add(MsoyUI.createHTML(_msgs.meMustValidate(), null));
             warn.add(MsoyUI.createHTML("&nbsp;", null));
             warn.add(Link.create(_msgs.meGoValidate(), Pages.ACCOUNT, "edit"));
             left.add(warn);
+
+        } else if (CShell.isNewbie()) {
+            SmartTable newbie = new SmartTable("Newbie", 0, 5);
+            int start = Random.nextInt(NEWBIE_SUGS.length);
+            for (int col = 0; col < 3; col++) {
+                NewbieSuggestion sug = NEWBIE_SUGS[(col+start) % NEWBIE_SUGS.length];
+                newbie.setWidget(0, col, Link.createImage(sug.image, null, sug.page, sug.args));
+                newbie.setWidget(1, col, Link.create(sug.text, sug.page, sug.args));
+            }
+            left.add(newbie);
+
+        } else if (data.promos.size() > 0) {
+            left.add(new PromotionBox(data.promos));
+            left.add(WidgetUtil.makeShim(10, 10));
         }
 
         left.add(feedBox);
@@ -108,8 +121,32 @@ public class MyWhirled extends FlowPanel
         return Link.createBlock(label, null, page, args);
     }
 
+    protected static class NewbieSuggestion
+    {
+        public final String text;
+        public final String image;
+        public final Pages page;
+        public final Object[] args;
+
+        public NewbieSuggestion (String text, String image, Pages page, Object... args) {
+            this.text = text;
+            this.image = "/images/" + image;
+            this.page = page;
+            this.args = args;
+        }
+    }
+
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+
+    protected static final NewbieSuggestion[] NEWBIE_SUGS = {
+        new NewbieSuggestion(_msgs.newbieGames(), "people/links/125play.png", Pages.GAMES),
+        new NewbieSuggestion(_msgs.newbieHome(), "people/links/125home.jpg", Pages.WORLD, "h"),
+        new NewbieSuggestion(_msgs.newbieRooms(), "people/links/125see.png", Pages.WORLD, "tour"),
+        new NewbieSuggestion(_msgs.newbieTrophies(), "people/links/125trophies.png", Pages.GAMES),
+        new NewbieSuggestion(_msgs.newbieGroups(), "people/links/125tofu.png", Pages.GROUPS),
+        new NewbieSuggestion(_msgs.newbieMe(), "people/links/125findme.jpg", Pages.PEOPLE, "me"),
+    };
 }
