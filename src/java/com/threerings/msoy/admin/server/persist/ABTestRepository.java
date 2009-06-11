@@ -206,14 +206,16 @@ public class ABTestRepository extends DepotRepository
 
         // now determine how many of those members registered
         exprs.add(EntryVectorRecord.MEMBER_ID.join(MemberRecord.MEMBER_ID));
-        where = Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN));
+        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId),
+                        Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN)));
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).registered = rec.count;
         }
 
         // now determine how many of those members validated their email
-        where = MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.VALIDATED.getBit()).notEq(0);
+        where = Ops.and(ABGroupRecord.TEST_ID.eq(testId),
+                        MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.VALIDATED.getBit()).notEq(0));
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
             groups.get(rec.group).validated = rec.count;
