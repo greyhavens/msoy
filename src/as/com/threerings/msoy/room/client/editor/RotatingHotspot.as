@@ -35,8 +35,8 @@ public class RotatingHotspot extends Hotspot
     {
         super.updateDisplay(targetWidth, targetHeight);
 
-        this.x = _corner.x * (targetWidth + this.width) - this.width / 2;
-        this.y = _corner.y * (targetHeight + this.height) - this.height / 2;
+        this.x = _corner.x * (targetWidth + 2 * this.width) - (this.width / 2);
+        this.y = _corner.y * (targetHeight + 2 * this.height) - (this.height / 2);
     }
 
     // @Override from Hotspot
@@ -73,9 +73,11 @@ public class RotatingHotspot extends Hotspot
         g.endFill();
         _displayStandard = s;
 
-        var name :String = "images/ui/editor/hotspot_rotate_over_" +
-            (_corner.y == 0 ? "t" : "b") + (_corner.x == 0 ? "l" : "r") + ".png";
-        _displayMouseOver = new MsoyLoadedAsset(name);
+        _displayMouseOver = new MsoyLoadedAsset("images/ui/editor/hotspot_rotate.png");
+
+        var rot :Number = Math.abs((_corner.y * 270) + (_corner.x * -90)); // magic!
+        _displayMouseOver.rotation = rot;
+        s.rotation = rot;
     }
 
     override protected function getToolTip () :String
