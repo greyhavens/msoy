@@ -345,27 +345,16 @@ public class MsoyServer extends MsoyBaseServer
         }
 
         @Override public void expired () {
-            // look up the last-modified time
             final long lastModified = codeModifiedTime();
             if (lastModified <= _codeModified) {
                 return;
             }
-
-            // if someone is online, delay the reboot
-            if (Iterators.any(_clmgr.enumerateClientObjects(),
-                    Predicates.instanceOf(MemberObject.class))) {
-                return;
-            }
-
-            // otherwise reboot immediately
             _omgr.postRunnable(new Runnable() {
                 public void run () {
                     _adminMan.scheduleReboot(0, "codeUpdateAutoRestart");
                 }
             });
-
-            // we've scheduled a reboot, so we can stop this interval
-            cancel();
+            cancel(); // we've scheduled a reboot, so we can stop this interval
         }
 
         @Override public String toString () {
