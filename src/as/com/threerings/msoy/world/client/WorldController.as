@@ -970,15 +970,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Updates our availability state.
-     */
-    public function updateAvailability (availability :int) :void
-    {
-        msvc().updateAvailability(_wctx.getClient(), availability);
-        _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.avail_tip_" + availability);
-    }
-
-    /**
      * Figure out where we should be going, and go there.
      */
     public function goToPlace (params :Object) :void
@@ -1209,15 +1200,7 @@ public class WorldController extends MsoyController
             }
         }
 
-        // if we're not a guest, populate availability menu.
         if (isUs) {
-            var availActions :Array = [];
-            for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
-                availActions.push({
-                    label: Msgs.GENERAL.get("l.avail_" + ii), callback: updateAvailability, arg: ii,
-                    enabled: (ii != us.availability) });
-            }
-            menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
             if (followItem != null) {
                 menuItems.push(followItem);
             }

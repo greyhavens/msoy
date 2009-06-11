@@ -42,11 +42,6 @@ public interface MemberService extends InvocationService
     void getCurrentMemberLocation (Client client, int memberId, ResultListener listener);
 
     /**
-     * Updates this member's availability status.
-     */
-    void updateAvailability (Client client, int availability);
-
-    /**
      * Set this client as being "away".
      *
      * @param message the away message, or null to be back.

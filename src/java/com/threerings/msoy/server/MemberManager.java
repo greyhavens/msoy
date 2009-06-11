@@ -418,13 +418,6 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void updateAvailability (final ClientObject caller, final int availability)
-    {
-        final MemberObject user = (MemberObject) caller;
-        user.setAvailability(availability);
-    }
-
-    // from interface MemberProvider
     public void inviteToFollow (final ClientObject caller, final int memberId,
                                 final InvocationService.InvocationListener listener)
         throws InvocationException
@@ -435,13 +428,13 @@ public class MemberManager
         final MemberObject target = _locator.lookupMember(memberId);
         if (target == null || !ObjectUtil.equals(user.location, target.location)) {
             throw new InvocationException("e.follow_not_in_room");
+
+        } else if (target.isAway()) {
+            throw new InvocationException("e.follow_not_available");
         }
 
         // issue the follow invitation to the target
-        if (!_notifyMan.notifyFollowInvite(target, user.memberName)) {
-            // the target is not accepting invitations from the requester
-            throw new InvocationException("e.follow_not_available");
-        }
+        _notifyMan.notifyFollowInvite(target, user.memberName);
     }
 
     // from interface MemberProvider

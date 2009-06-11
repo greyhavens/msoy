@@ -40,9 +40,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
 
-    /** The field name of the <code>availability</code> field. */
-    public static const AVAILABILITY :String = "availability";
-
     /** The field name of the <code>following</code> field. */
     public static const FOLLOWING :String = "following";
 
@@ -113,15 +110,6 @@ public class MemberObject extends MsoyBodyObject
      * Format: [ Notification ]. */
     public static const NOTIFICATION :String = "notification";
 
-    /** An <code>availability</code> status. */
-    public static const AVAILABLE :int = 0;
-
-    /** An <code>availability</code> status. */
-    public static const FRIENDS_ONLY :int = 1;
-
-    /** An <code>availability</code> status. */
-    public static const UNAVAILABLE :int = 2;
-
     /** The member name and id for this user. */
     public var memberName :VizMemberName;
 
@@ -136,9 +124,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** This user's current level. */
     public var level :int;
-
-    /** This member's availability for receiving invitations, requests, etc. from other members. */
-    public var availability :int = AVAILABLE;
 
     /** The name of the member this member is following or null. */
     public var following :MemberName;
@@ -341,7 +326,6 @@ public class MemberObject extends MsoyBodyObject
         accCoins = ins.readInt();
         bars = ins.readInt();
         level = ins.readInt();
-        availability = ins.readInt();
         following = MemberName(ins.readObject());
         followers = DSet(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());

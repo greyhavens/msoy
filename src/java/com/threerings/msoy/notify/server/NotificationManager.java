@@ -32,22 +32,16 @@ public class NotificationManager
      * @return true if the notification was sent or queued, or false if the notification
      * was discarded because the recipient is unavailable to the sender.
      */
-    public boolean notify (MemberObject target, Notification note)
+    public void notify (MemberObject target, Notification note)
     {
-        // suppress notifications from people we're unavailable to
-        if (!isSendable(target, note)) {
-            return false;
-        }
-
         // if they have not yet reported in with a call to dispatchDeferredNotifications then we
         // need to queue this notification up rather than dispatch it directly
-        final MemberLocal local = target.getLocal(MemberLocal.class);
+        MemberLocal local = target.getLocal(MemberLocal.class);
         if (local.deferredNotifications != null) {
             local.deferredNotifications.add(note);
         } else {
             target.postMessage(MemberObject.NOTIFICATION, note);
         }
-        return true;
     }
 
     /**
@@ -55,31 +49,19 @@ public class NotificationManager
      */
     public void notify (MemberObject target, List<Notification> notes)
     {
-        final MemberLocal local = target.getLocal(MemberLocal.class);
+        MemberLocal local = target.getLocal(MemberLocal.class);
         if (local.deferredNotifications != null) {
             local.deferredNotifications.addAll(notes);
         } else {
             target.startTransaction();
             try {
                 for (Notification note : notes) {
-                    if (isSendable(target, note)) {
-                        target.postMessage(MemberObject.NOTIFICATION, note);
-                    }
+                    target.postMessage(MemberObject.NOTIFICATION, note);
                 }
             } finally {
                 target.commitTransaction();
             }
         }
-    }
-
-    /**
-     * Return true if the specified notification is sendable to the recipient.
-     * A note is unsenable if the target is unavailable to the sender.
-     */
-    public boolean isSendable (MemberObject target, Notification note)
-    {
-        MemberName sender = note.getSender();
-        return (sender == null) || target.isAvailableTo(sender.getMemberId());
     }
 
     /**
@@ -106,18 +88,18 @@ public class NotificationManager
     /**
      * Notifies the target player that they've been invited to play a game.
      */
-    public boolean notifyGameInvite (MemberObject target, MemberName inviter,
+    public void notifyGameInvite (MemberObject target, MemberName inviter,
                                   String game, int gameId)
     {
-        return notify(target, new GameInviteNotification(inviter, game, gameId));
+        notify(target, new GameInviteNotification(inviter, game, gameId));
     }
 
     /**
      * Notifies the target player that they've been invited to follow someone.
      */
-    public boolean notifyFollowInvite (MemberObject target, MemberName inviter)
+    public void notifyFollowInvite (MemberObject target, MemberName inviter)
     {
-        return notify(target, new FollowInviteNotification(inviter));
+        notify(target, new FollowInviteNotification(inviter));
     }
 
     /**

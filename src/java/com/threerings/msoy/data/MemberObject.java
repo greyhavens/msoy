@@ -57,9 +57,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>level</code> field. */
     public static final String LEVEL = "level";
 
-    /** The field name of the <code>availability</code> field. */
-    public static final String AVAILABILITY = "availability";
-
     /** The field name of the <code>following</code> field. */
     public static final String FOLLOWING = "following";
 
@@ -125,15 +122,6 @@ public class MemberObject extends MsoyBodyObject
     /** The ideal size of the avatar cache. */
     public static final int AVATAR_CACHE_SIZE = 5;
 
-    /** An {@link #availability} status. */
-    public static final int AVAILABLE = 0;
-
-    /** An {@link #availability} status. */
-    public static final int FRIENDS_ONLY = 1;
-
-    /** An {@link #availability} status. */
-    public static final int UNAVAILABLE = 2;
-
     /** The name and id information for this user. */
     public VizMemberName memberName;
 
@@ -148,9 +136,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** This user's current level. */
     public int level;
-
-    /** This member's availability for receiving invitations, requests, etc. from other members. */
-    public int availability = AVAILABLE;
 
     /** The name of the member this member is following or null. */
     public MemberName following;
@@ -310,23 +295,6 @@ public class MemberObject extends MsoyBodyObject
             return "";
         } else {
             return visitorInfo.id;
-        }
-    }
-
-    /**
-     * Returns true if this member is accepting communications from the specified member, false
-     * otherwise.
-     */
-    public boolean isAvailableTo (int communicatorId)
-    {
-        switch (availability) {
-        default:
-        case AVAILABLE:
-            return true;
-        case UNAVAILABLE:
-            return false;
-        case FRIENDS_ONLY:
-            return isOnlineFriend(communicatorId);
         }
     }
 
@@ -525,22 +493,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             LEVEL, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.level = value;
-    }
-
-    /**
-     * Requests that the <code>availability</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setAvailability (int value)
-    {
-        int ovalue = this.availability;
-        requestAttributeChange(
-            AVAILABILITY, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.availability = value;
     }
 
     /**

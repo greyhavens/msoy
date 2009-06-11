@@ -131,12 +131,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
-        case MemberMarshaller.UPDATE_AVAILABILITY:
-            ((MemberProvider)provider).updateAvailability(
-                source, ((Integer)args[0]).intValue()
-            );
-            return;
-
         case MemberMarshaller.UPDATE_STATUS:
             ((MemberProvider)provider).updateStatus(
                 source, (String)args[0], (InvocationService.InvocationListener)args[1]
