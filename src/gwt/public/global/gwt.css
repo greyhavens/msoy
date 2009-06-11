@@ -1399,3 +1399,28 @@ img, embed, applet, object {
 .checklist-selected {
     background-color: #d9f0f9;
 }
+
+/** NoNavPanel */
+
+.nonav {
+  background: #89C6E3;
+  height: 100%;
+}
+
+.nonav .Content {
+  margin: 0 auto;
+  width: 657px;
+}
+
+.nonavBlue .Content {
+  background: url(/images/ui/nonav/content_blue.png) #287099 no-repeat bottom;
+  color: #D0E6F7;
+}
+
+.nonavBlue .Content, .nonavBlue .Content a {
+  color: #D0E6F7;
+}
+
+.nonavWhite .Content {
+  background: #FFFFFF;
+}
