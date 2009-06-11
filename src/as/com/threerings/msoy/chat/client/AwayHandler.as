@@ -32,22 +32,16 @@ public class AwayHandler extends CommandHandler
         // filter the args first so that we turn naughty things into blank
         args = ctx.getChatDirector().filter(args, null, true);
         const hasMsg :Boolean = !StringUtil.isBlank(args);
-        var msg :String;
+        var msg :String = null;
 
         if (cmd == "back") {
             if (hasMsg) {
                 return "m.usage_back"; // back can only be used to disable awayness
             }
-            msg = null;
 
-        } else {
-            if ((cmd == "dnd") && !hasMsg &&
-                    MemberObject(mctx.getClient().getClientObject()).isAway()) {
-                msg = null;
-
-            } else {
-                msg = hasMsg ? args : Msgs.GENERAL.get("m.awayDefault");
-            }
+        } else if (hasMsg || (cmd != "dnd") ||
+                !MemberObject(mctx.getClient().getClientObject()).isAway()) {
+            msg = hasMsg ? args : Msgs.GENERAL.get("m.awayDefault");
         }
         // do the change, give feedback
         var feedback :String = (msg == null) ? "m.back" : MessageBundle.tcompose("m.away", msg);
