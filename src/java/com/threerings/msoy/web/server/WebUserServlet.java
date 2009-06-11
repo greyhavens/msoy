@@ -27,6 +27,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.msoy.admin.server.ABTestLogic;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -444,15 +445,26 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = _memberRepo.loadMember(memberId);
-        if (mrec == null) {
-            return null;
+        if (mrec == null || !_accountLogic.generateValidationCode(mrec).equals(code)) {
+            return null; // invalido!
         }
-        if (!_accountLogic.generateValidationCode(mrec).equals(code)) {
-            return null;
-        }
+
+        // update their validated flag in the repository
         mrec.setFlag(MemberRecord.Flag.VALIDATED, true);
         _memberRepo.storeFlags(mrec);
-        return startSession(mrec, 1); // TODO: expire days?
+
+        // automatically start a session for them
+        SessionData data = startSession(mrec, 1); // TODO: expire days?
+
+        // assign them to a post-validation A/B test group
+        switch (_testLogic.getABTestGroup("2009 06 post-validation",
+                                          new VisitorInfo(mrec.visitorId, true), true)) {
+        case 0: data.group = SessionData.Group.A; break;
+        case 1: data.group = SessionData.Group.B; break;
+        case 2: data.group = SessionData.Group.C; break;
+        }
+
+        return data;
     }
 
     // from interface WebUserService
@@ -603,6 +615,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected ABTestLogic _testLogic;
     @Inject protected AccountLogic _accountLogic;
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected FriendManager _friendMan;
