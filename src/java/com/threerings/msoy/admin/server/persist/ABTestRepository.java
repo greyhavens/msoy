@@ -36,6 +36,7 @@ import com.samskivert.depot.expression.SQLExpression;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.admin.gwt.ABTestSummary;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.server.persist.EntryVectorRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -160,6 +161,7 @@ public class ABTestRepository extends DepotRepository
             ABTestSummary.Group group = new ABTestSummary.Group();
             group.group = gsum.group;
             group.assigned = gsum.assigned;
+            group.played = gsum.played;
             group.registered = gsum.registered;
             group.validated = gsum.validated;
             group.returned = gsum.returned;
@@ -194,16 +196,23 @@ public class ABTestRepository extends DepotRepository
             groups.put(sumrec.group, sumrec);
         }
 
-        // now determine how many of those members registered
+        // now determine how many of those members played
         exprs.add(ABGroupRecord.VISITOR_ID.join(EntryVectorRecord.VISITOR_ID));
         where = Ops.and(ABGroupRecord.TEST_ID.eq(testId), EntryVectorRecord.MEMBER_ID.notEq(0));
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
-            groups.get(rec.group).registered = rec.count;
+            groups.get(rec.group).played = rec.count;
+        }
+
+        // now determine how many of those members registered
+        exprs.add(EntryVectorRecord.MEMBER_ID.join(MemberRecord.MEMBER_ID));
+        where = Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN));
+        for (GroupCountRecord rec : findAll(
+                 GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
+            groups.get(rec.group).played = rec.count;
         }
 
         // now determine how many of those members validated their email
-        exprs.add(EntryVectorRecord.MEMBER_ID.join(MemberRecord.MEMBER_ID));
         where = MemberRecord.FLAGS.bitAnd(MemberRecord.Flag.VALIDATED.getBit()).notEq(0);
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
@@ -287,4 +296,7 @@ public class ABTestRepository extends DepotRepository
         classes.add(ABActionRecord.class);
         classes.add(ABActionSummaryRecord.class);
     }
+
+    /** A "like" pattern that matches permaguest accounts. */
+    protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestEmail("%");
 }

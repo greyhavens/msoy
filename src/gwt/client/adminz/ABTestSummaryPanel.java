@@ -69,6 +69,7 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
             for (String action : actions) {
                 results.setText(0, col++, action, 1, "Header");
             }
+            results.setText(0, col++, _msgs.tspPlayed(), 1, "Header");
             results.setText(0, col++, _msgs.tspRegistered(), 1, "Header");
             results.setText(0, col++, _msgs.tspValidated(), 1, "Header");
             results.setText(0, col++, _msgs.tspReturned(), 1, "Header");
@@ -86,6 +87,7 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
                 results.setText(row, col++, format(takers == null ? 0 : takers, group.assigned),
                                 1, "rightLabel");
             }
+            results.setText(row, col++, format(group.played, group.assigned), 1, "rightLabel");
             results.setText(row, col++, format(group.registered, group.assigned), 1, "rightLabel");
             results.setText(row, col++, format(group.validated, group.assigned), 1, "rightLabel");
             results.setText(row, col++, format(group.returned, group.assigned), 1, "rightLabel");

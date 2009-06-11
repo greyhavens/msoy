@@ -24,7 +24,7 @@ public class ABGroupSummaryRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The test to which this record pertains. */
     @Id public int testId;
@@ -34,6 +34,9 @@ public class ABGroupSummaryRecord extends PersistentRecord
 
     /** The number of visitors assigned to this group. */
     public int assigned;
+
+    /** The number of those visitors that played. */
+    public int played;
 
     /** The number of those visitors that registered. */
     public int registered;

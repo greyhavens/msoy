@@ -22,6 +22,9 @@ public class ABTestSummary extends ABTest
         /** The number of visitors assigned to this group. */
         public int assigned;
 
+        /** The number of visitors that eventually played. */
+        public int played;
+
         /** The number of visitors that eventually registered. */
         public int registered;
 
