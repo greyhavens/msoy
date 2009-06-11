@@ -46,6 +46,9 @@ public class MsoyDefaultServlet extends DefaultServlet
             return;
         }
 
+        // add the privacy header so we can set some cookies in an iframe
+        MsoyHttpServer.addPrivacyHeader(rsp);
+
         if ("/".equals(uri)) {
             doPreMainPageGet(req, rsp);
         }

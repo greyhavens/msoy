@@ -144,6 +144,9 @@ public class FacebookServlet extends HttpServlet
             String authtok = _memberRepo.startOrJoinSession(mrec.memberId, FBAUTH_DAYS);
             SwizzleServlet.setCookie(req, rsp, authtok);
 
+            // add the privacy header so we can set some cookies in an iframe
+            MsoyHttpServer.addPrivacyHeader(rsp);
+
             // let our app know it is embedded in facebook
             Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
             cookie.setPath("/");

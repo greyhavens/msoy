@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -93,6 +94,18 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class MsoyHttpServer extends Server
 {
+    /**
+     * Attaches the required privacy header for setting cookies inside an iframe contained in
+     * another web site. This is required for browsers that implement privacy guards (ie7,
+     * others?). The attached header describes how this web site uses and disseminates user
+     * information, including cookies. This is presumed to protect users somehow.
+     * @see http://www.w3.org/P3P/
+     */
+    public static void addPrivacyHeader (HttpServletResponse rsp)
+    {
+        rsp.addHeader(PRIVACY_HEADER_NAME, PRIVACY_HEADER);
+    }
+
     @Inject public MsoyHttpServer (Injector injector, Lifecycle cycle)
     {
         // turn our servlet classes into instances with fully resolved dependencies
@@ -262,4 +275,10 @@ public class MsoyHttpServer extends Server
         "a refresh)\n" +
         "</center>\n"+
         "</div>\n";
+
+    protected static final String PRIVACY_HEADER_NAME = "P3P";
+
+    // Copied from puzzle pirates web site 
+    protected static final String PRIVACY_HEADER = "CP=\"CAO DSP COR CURa ADMa DEVa TAIa PSAa " +
+        "PSDa CONo OUR IND PHY ONL UNI PUR COM NAV INT DEM\"";
 }
