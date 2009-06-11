@@ -21,11 +21,10 @@ import client.person.FriendsFeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.ui.NowLoadingWidget;
 import client.ui.PromotionBox;
 import client.ui.RoundBox;
 import client.util.Link;
-import client.util.InfoCallback;
+import client.util.PageCallback;
 import client.util.ServiceUtil;
 
 public class MyWhirled extends FlowPanel
@@ -33,9 +32,8 @@ public class MyWhirled extends FlowPanel
     public MyWhirled ()
     {
         setStyleName("myWhirled");
-        _nowLoading = new NowLoadingWidget();
-        _nowLoading.center();
-        _mesvc.getMyWhirled(new InfoCallback<MyWhirledData>() {
+        add(MsoyUI.createNowLoading());
+        _mesvc.getMyWhirled(new PageCallback<MyWhirledData>(this) {
             public void onSuccess (MyWhirledData data) {
                 init(data);
             }
@@ -44,68 +42,64 @@ public class MyWhirled extends FlowPanel
 
     protected void init (final MyWhirledData data)
     {
-        _nowLoading.finishing(new Timer() {
-            public void run() {
-                RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
-                rbits.addStyleName("QuickNav");
-                rbits.add(MsoyUI.createLabel(
-                              _msgs.populationDisplay(""+data.whirledPopulation), null));
-                rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
-                rbits.add(makeQuickLink("My Transactions", Pages.ME, "transactions"));
-                rbits.add(makeQuickLink("My Blocklist", Pages.PEOPLE, "blocklist"));
-                rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
-                rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
-                rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE, "invites", "links"));
-                rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
+        RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
+        rbits.addStyleName("QuickNav");
+        rbits.add(MsoyUI.createLabel(
+                      _msgs.populationDisplay(""+data.whirledPopulation), null));
+        rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
+        rbits.add(makeQuickLink("My Transactions", Pages.ME, "transactions"));
+        rbits.add(makeQuickLink("My Blocklist", Pages.PEOPLE, "blocklist"));
+        rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
+        rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
+        rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE, "invites", "links"));
+        rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
-                String empty = data.friendCount > 0 ?
-                    _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
-                FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
-                FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
-                feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
-                feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
-                if (data.updatedThreads > 0) {
-                    feedBox.add(MsoyUI.createHTML(_msgs.myDiscussionsQuickSummary(
-                        String.valueOf(data.updatedThreads)), "NewsLink"));
-                }
-                if (data.unreadFriendPosts > 0) {
-                    feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
-                        String.valueOf(data.unreadFriendPosts)), "NewsLink"));
-                }
-                feedBox.add(feed);
-                feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
+        String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
+        FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
+        FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
+        feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
+        feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));
+        if (data.updatedThreads > 0) {
+            feedBox.add(MsoyUI.createHTML(_msgs.myDiscussionsQuickSummary(
+                                              String.valueOf(data.updatedThreads)), "NewsLink"));
+        }
+        if (data.unreadFriendPosts > 0) {
+            feedBox.add(MsoyUI.createHTML(_msgs.myFriendsDiscussionsQuickSummary(
+                                              String.valueOf(data.unreadFriendPosts)), "NewsLink"));
+        }
+        feedBox.add(feed);
+        feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 
-                // promo and news feed on the left, bits and friends on the right
-                HorizontalPanel horiz = new HorizontalPanel();
-                horiz.setStyleName("NewsAndFriends");
-                horiz.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+        // promo and news feed on the left, bits and friends on the right
+        HorizontalPanel horiz = new HorizontalPanel();
+        horiz.setStyleName("NewsAndFriends");
+        horiz.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
 
-                FlowPanel left = new FlowPanel();
-                if (CShell.isValidated()) {
-                    if (data.promos.size() > 0) {
-                        left.add(new PromotionBox(data.promos));
-                        left.add(WidgetUtil.makeShim(10, 10));
-                    }
-                } else {
-                    FlowPanel warn = MsoyUI.createFlowPanel("MustValidate");
-                    warn.add(MsoyUI.createHTML(_msgs.meMustValidate(), null));
-                    warn.add(MsoyUI.createHTML("&nbsp;", null));
-                    warn.add(Link.create(_msgs.meGoValidate(), Pages.ACCOUNT, "edit"));
-                    left.add(warn);
-                }
-
-                left.add(feedBox);
-                horiz.add(left);
-
-                FlowPanel right = MsoyUI.createFlowPanel("RightBits");
-                right.add(rbits);
-                right.add(WidgetUtil.makeShim(10, 10));
-                right.add(new MeFriendsPanel(data));
-                horiz.add(right);
-                _nowLoading.hide();
-                add(horiz);
+        FlowPanel left = new FlowPanel();
+        if (CShell.isValidated()) {
+            if (data.promos.size() > 0) {
+                left.add(new PromotionBox(data.promos));
+                left.add(WidgetUtil.makeShim(10, 10));
             }
-        });
+        } else {
+            FlowPanel warn = MsoyUI.createFlowPanel("MustValidate");
+            warn.add(MsoyUI.createHTML(_msgs.meMustValidate(), null));
+            warn.add(MsoyUI.createHTML("&nbsp;", null));
+            warn.add(Link.create(_msgs.meGoValidate(), Pages.ACCOUNT, "edit"));
+            left.add(warn);
+        }
+
+        left.add(feedBox);
+        horiz.add(left);
+
+        FlowPanel right = MsoyUI.createFlowPanel("RightBits");
+        right.add(rbits);
+        right.add(WidgetUtil.makeShim(10, 10));
+        right.add(new MeFriendsPanel(data));
+        horiz.add(right);
+
+        clear();
+        add(horiz);
     }
 
     protected Widget makeQuickLink (String label, Pages page, Object... args)
@@ -113,8 +107,6 @@ public class MyWhirled extends FlowPanel
         // TODO: add a little bullet to the left
         return Link.createBlock(label, null, page, args);
     }
-
-    protected final NowLoadingWidget _nowLoading;
 
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
