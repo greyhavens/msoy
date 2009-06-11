@@ -72,7 +72,8 @@ public class ABTestLogic
      * @param test the name of the test for which a group is desired.
      * @param logEvent if true, track that this visitor was added to this group.
      *
-     * @return the A/B group the visitor has been assigned to, or < 0 for no group.
+     * @return the A/B group the visitor has been assigned to (where 1 <= group <= numGroups), or <
+     * 0 for no group.
      */
     public int getABTestGroup (String test, VisitorInfo info, boolean logEvent)
     {
