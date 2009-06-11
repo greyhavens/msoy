@@ -23,34 +23,36 @@ import com.threerings.msoy.data.MsoyCodes;
  */
 public class AwayHandler extends CommandHandler
 {
-    // Note that we are registered to handle "away", "afk", and "back".
+    // Note that we are registered to handle "dnd", "away", "afk", and "back".
     override public function handleCommand (
         ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String,
         history :Array) :String
     {
         const mctx :MsoyContext = MsoyContext(ctx);
-        //const isAway :Boolean = MemberObject(mctx.getClient().getClientObject()).isAway();
+        // filter the args first so that we turn naughty things into blank
         args = ctx.getChatDirector().filter(args, null, true);
         const hasMsg :Boolean = !StringUtil.isBlank(args);
-        var message :String;
-        var feedback :String;
+        var msg :String;
 
         if (cmd == "back") {
-            // back can only be used to disable awayness
             if (hasMsg) {
-                return "m.usage_back";
+                return "m.usage_back"; // back can only be used to disable awayness
             }
-            message = null;
-            feedback = "m.back";
+            msg = null;
 
         } else {
-            message = hasMsg ? args : Msgs.GENERAL.get("m.awayDefault");
-            feedback = MessageBundle.tcompose("m.away", message);
-        }
+            if ((cmd == "dnd") && !hasMsg &&
+                    MemberObject(mctx.getClient().getClientObject()).isAway()) {
+                msg = null;
 
+            } else {
+                msg = hasMsg ? args : Msgs.GENERAL.get("m.awayDefault");
+            }
+        }
         // do the change, give feedback
+        var feedback :String = (msg == null) ? "m.back" : MessageBundle.tcompose("m.away", msg);
         MemberService(mctx.getClient().requireService(MemberService)).setAway(
-            mctx.getClient(), message, mctx.confirmListener(feedback));
+            mctx.getClient(), msg, mctx.confirmListener(feedback));
         return ChatCodes.SUCCESS;
     }
 }
