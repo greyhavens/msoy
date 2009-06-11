@@ -106,7 +106,7 @@
    LANDING PAGE
 -------------------------------------*/
 
-.landing .Content, .landing .Content td {
+.landing, .landing td {
   font-size: 12px;
 }
 
