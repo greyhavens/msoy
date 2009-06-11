@@ -209,7 +209,7 @@ public class ABTestRepository extends DepotRepository
         where = Ops.not(MemberRecord.ACCOUNT_NAME.like(PERMA_PATTERN));
         for (GroupCountRecord rec : findAll(
                  GroupCountRecord.class, CacheStrategy.NONE, where(exprs, where))) {
-            groups.get(rec.group).played = rec.count;
+            groups.get(rec.group).registered = rec.count;
         }
 
         // now determine how many of those members validated their email
