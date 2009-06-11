@@ -421,6 +421,12 @@ public class FrameEntryPoint
         return _layout.getEmbedding();
     }
 
+    // from interface Frame
+    public boolean isHeaderless ()
+    {
+        return _page.getTab() == null;
+    }
+
     protected void setPage (Pages page)
     {
         // clear out any old content
@@ -446,7 +452,7 @@ public class FrameEntryPoint
         _iframe.setStyleName("pageIFrame");
 
         // if we're on a headerless page, we need to close the client
-        if (page.getTab() == null) {
+        if (isHeaderless()) {
             closeClient();
         } else {
             _bar = TitleBar.create(page.getTab(), new ClickHandler() {
@@ -486,7 +492,7 @@ public class FrameEntryPoint
 
             // if we're on a "world" page, go to a landing page
             } else if (_currentToken != null &&
-                       (_currentToken.startsWith(Pages.WORLD.getPath()) ||
+                       (_currentToken.startsWith(Pages.WORLD.makeToken()) ||
                         _currentToken.equals(""))) {
                 if (_currentToken.indexOf("game") != -1) {
                     // if we were in a game, go to the games page
@@ -515,7 +521,7 @@ public class FrameEntryPoint
                 // if we have sNN-extra-args we want the close button to use just "sNN"
                 displayWorldClient("sceneId=" + sceneId + "&page=" + args.get(1, "") +
                                    "&args=" + args.recompose(2),
-                                   Pages.WORLD.getPath() + "-s" + sceneId);
+                                   Pages.WORLD.makeToken("s" + sceneId));
             }
 
         } else if (action.equals("game")) {
@@ -714,7 +720,9 @@ public class FrameEntryPoint
             reportTestAction(args[0], args[1]);
             return null;
         case GET_EMBEDDING:
-            return new String[] {getEmbedding().toString()};
+            return new String[] { getEmbedding().toString() };
+        case IS_HEADERLESS:
+            return new String[] { String.valueOf(isHeaderless()) };
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached
