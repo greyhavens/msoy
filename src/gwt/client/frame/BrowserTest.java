@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.frame;
 
 import client.ui.MsoyUI;
 
@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.util.CookieUtil;
 
 /**
@@ -38,11 +39,11 @@ public class BrowserTest
         String agent = getUserAgent().toLowerCase();
         // old MSIE
         if (agent.contains("msie 6.0")) {
-            message = _cmsgs.browserOldMsie();
+            message = _msgs.browserOldMsie();
 
         // MSIE 8, needs "compatability view" for now.
         } else if (agent.contains("msie 8")) {
-            message = _cmsgs.browserMsie8();
+            message = _msgs.browserMsie8();
 
         // newer MSIE, but not too new!
         } else if (agent.contains("msie")) {
@@ -50,11 +51,11 @@ public class BrowserTest
 
         // safari
         } else if (agent.contains("webkit")) {
-            message = _cmsgs.browserUnsupported();
+            message = _msgs.browserUnsupported();
 
         // opera
         } else if (agent.contains("opera")) {
-            message = _cmsgs.browserUnsupported();
+            message = _msgs.browserUnsupported();
 
         // lump all gecko browsers into firefox
         } else if (agent.contains("gecko")) {
@@ -62,7 +63,7 @@ public class BrowserTest
 //            if (!agent.contains(" rv:") || agent.contains(" rv:0") ||
 //                    (agent.contains(" rv:1") && !agent.contains(" rv:1.9"))) {
 //                // TODO implement once the number of ff2 users is under 10%
-//                //message = _cmsgs.browserOldFirefox();
+//                //message = _msgs.browserOldFirefox();
 //                message = null;
 //            } else {
                 message = null;
@@ -70,7 +71,7 @@ public class BrowserTest
 
         // all else
         } else {
-            message = _cmsgs.browserUnsupported();
+            message = _msgs.browserUnsupported();
         }
 
         FlowPanel browserTestWidget = null;
@@ -78,7 +79,7 @@ public class BrowserTest
             browserTestWidget = MsoyUI.createFlowPanel("browserTest");
             FlowPanel messageBox = MsoyUI.createFlowPanel("Message");
             browserTestWidget.add(messageBox);
-            messageBox.add(MsoyUI.createLabel(_cmsgs.browserTitle(), "Title"));
+            messageBox.add(MsoyUI.createLabel(_msgs.browserTitle(), "Title"));
             messageBox.add(MsoyUI.createHTML(message, null));
 
             ClickHandler getFF = new ClickHandler() {
@@ -87,9 +88,9 @@ public class BrowserTest
                 }
             };
             messageBox.add(MsoyUI.createActionImage("/images/landing/get_firefox_button.png",
-                                                    _cmsgs.browserGetFirefox(), getFF));
+                                                    _msgs.browserGetFirefox(), getFF));
             messageBox.add(MsoyUI.createActionImage("/images/landing/continue_button.png",
-                                                    _cmsgs.browserClose(), continueClicked));
+                                                    _msgs.browserClose(), continueClicked));
         }
 
         // set a cookie so they don't see this warning again
@@ -105,7 +106,7 @@ public class BrowserTest
         return navigator.userAgent;
     }-*/;
 
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final FrameMessages _msgs = GWT.create(FrameMessages.class);
 
     protected static final String TEST_SEEN_COOKIE = "BrowserTest_seen2";
 }
