@@ -134,77 +134,71 @@ BasePanel {
 }
 
 .roomEditScaleDown {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/scale_down.png");
+  image: url("images/ui/editor/scale_down.png");
 }
 
 .roomEditScaleUp {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/scale_up.png");
+  image: url("images/ui/editor/scale_up.png");
 }
 
 .roomEditMoveDown {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/down-to-floor.png");
+  image: url("images/ui/editor/down-to-floor.png");
 }
 
 .roomEditMoveUp {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/up-off-floor.png");
+  image: url("images/ui/editor/up-off-floor.png");
 }
 
 .roomEditRotateLeft {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/rot_left.png");
+  image: url("images/ui/editor/rot_left.png");
 }
 
 .roomEditRotateRight {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/rot_right.png");
+  image: url("images/ui/editor/rot_right.png");
 }
 
 .roomEditFlipH {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/flip_horiz.png");
+  image: url("images/ui/editor/flip_horiz.png");
 }
 
 .roomEditFlipV {
-  image: Embed(source="../media/skins/button/roomeditor/left_icons/flip_vert.png");
+  image: url("images/ui/editor/flip_vert.png");
 }
 
 .roomEditTrash {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/put-away.png");
+  image: url("images/ui/editor/put-away.png");
 }
 
 .roomEditAdd {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/add-stuff.png");
+  image: url("images/ui/editor/add-stuff.png");
 }
 
 .roomEditDoor {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/door.png");
+  image: url("images/ui/editor/door.png");
 }
 
 .roomRemoveDoor {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/remove_door.png");
+  image: url("images/ui/editor/remove_door.png");
 }
 
 .roomEditLink {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/make-url.png");
+  image: url("images/ui/editor/make-url.png");
 }
 
 .roomRemoveLink {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/remove-url.png");
+  image: url("images/ui/editor/remove-url.png");
 }
 
 .roomEditUndo {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/undo-shape.png");
+  image: url("images/ui/editor/undo-shape.png");
 }
 
-roomEditCustom { 
-  image: "images/item/config.png";
+.roomEditCustom { 
+  image: url("images/item/config.png");
 }
-
-/*
-.roomEditUndoAll {
-  image: Embed(source="../media/skins/button/roomeditor/right_icons/X-Undo-All.png");
-}
-*/
 
 .roomEditButtonMakeMyHome {
-  image: Embed(source="../media/skins/button/roomeditor/button_makehome.png");
+  image: url("images/ui/editor/makehome.png");
 }
 
 .roomEditButtonLabel {
@@ -263,13 +257,13 @@ roomEditCustom {
 }
 
 .roomEditResetLocation {
-  image: Embed(source="../media/skins/button/roomeditor/reset_location.png");
+  image: url("/images/ui/editor/reset_location.png");
 }
 
 .roomEditResetScale {
-  image: Embed(source="../media/skins/button/roomeditor/reset_scale.png");
+  image: url("/images/ui/editor/reset_scale.png");
 }
 
 .roomEditResetRotation {
-  image: Embed(source="../media/skins/button/roomeditor/reset_rotation.png");
+  image: url("/images/ui/editor/reset_rotation.png");
 }
