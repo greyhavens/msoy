@@ -17,7 +17,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.Friendship;
 
 import com.threerings.msoy.web.gwt.EmailContact;
-import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
@@ -57,7 +56,8 @@ public class FindFriendsPanel extends InvitePanel
 
         _webmail.add(_results = new SmartTable(0, 5));
         _results.setWidth("100%");
-        _results.setWidget(0, 0, Link.create(_msgs.ffSkip(), Pages.PEOPLE, "invites", "newuser"));
+        _results.setWidget(0, 0, Link.create(_msgs.ffSkip(), PeoplePage.getSelf(),
+                                             "invites", "newuser"));
         _results.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
 
         add(new TongueBox(_msgs.ffWebmail(), _webmail));
@@ -103,8 +103,8 @@ public class FindFriendsPanel extends InvitePanel
             _results.setText(row, 0, _msgs.ffAllDone(), 3, null);
         }
 
-        _results.setWidget(row, 1, Link.create(_msgs.ffNext(), Pages.PEOPLE, "invites", "newuser"),
-                           1, null);
+        _results.setWidget(row, 1, Link.create(_msgs.ffNext(), PeoplePage.getSelf(),
+                                               "invites", "newuser"), 1, null);
     }
 
     protected FlowPanel _webmail;

@@ -4,6 +4,8 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -12,6 +14,7 @@ import client.person.GalleryActions;
 import client.person.GalleryEditPanel;
 import client.person.GalleryPanel;
 import client.person.GalleryViewPanel;
+import client.ui.NoNavPanel;
 import client.shell.CShell;
 import client.shell.Page;
 
@@ -21,6 +24,12 @@ import client.shell.Page;
  */
 public class PeoplePage extends Page
 {
+    /** Used to properly preserve headerlessness in our post-validation UI flow. */
+    public static Pages getSelf ()
+    {
+        return CShell.frame.isHeaderless() ? Pages.PEEPACC : Pages.PEOPLE;
+    }
+
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
@@ -112,6 +121,14 @@ public class PeoplePage extends Page
     public Pages getPageId ()
     {
         return Pages.PEOPLE;
+    }
+
+    @Override
+    public void setContent (String title, Widget content)
+    {
+        // if we're in headerless mode, wrap our content
+        super.setContent(title, CShell.frame.isHeaderless() ?
+                         NoNavPanel.makeWhite(content) : content);
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
