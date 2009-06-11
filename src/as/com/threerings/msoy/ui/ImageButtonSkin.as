@@ -12,8 +12,6 @@ import mx.states.State;
 
 import mx.styles.StyleManager;
 
-import com.threerings.msoy.client.DeploymentConfig;
-
 import com.threerings.flex.LoadedAsset;
 
 /** The image used to be the buttons skin. Is automatically lightened/darkened/offset. */
@@ -112,7 +110,7 @@ public class ImageButtonSkin extends UIComponent
 
         } else if (rsrc is String) {
             // If it's a string, treat it like an URL
-            rsrc = new LoadedAsset(DeploymentConfig.serverURL + rsrc);
+            rsrc = new MsoyLoadedAsset(rsrc);
         }
 
         setImage(rsrc as DisplayObject);

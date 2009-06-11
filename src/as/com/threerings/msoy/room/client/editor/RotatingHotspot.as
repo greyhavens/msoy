@@ -12,9 +12,12 @@ import flash.geom.Point;
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
 
+import com.threerings.msoy.ui.MsoyLoadedAsset;
+
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.room.client.MsoySprite;
+
 
 /**
  * Hotspot that rotates the object.
@@ -70,11 +73,9 @@ public class RotatingHotspot extends Hotspot
         g.endFill();
         _displayStandard = s;
 
-        var name :String = "HOTSPOT_OVER_" +
-            (_corner.y == 0 ? "TOP" : "BOTTOM") + (_corner.x == 0 ? "LEFT" : "RIGHT");
-
-        var c :Class = RotatingHotspot[name] as Class;
-        _displayMouseOver = new c() as DisplayObject;
+        var name :String = "images/ui/editor/hotspot_rotate_over_" +
+            (_corner.y == 0 ? "t" : "b") + (_corner.x == 0 ? "l" : "r") + ".png";
+        _displayMouseOver = new MsoyLoadedAsset(name);
     }
 
     override protected function getToolTip () :String
@@ -105,15 +106,5 @@ public class RotatingHotspot extends Hotspot
 
     /** Angle to the original mouse anchor (in trig radians). */
     protected var _anchorAngle :Number;
-
-    // Bitmaps galore!
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate_over_tl.png")]
-    public static const HOTSPOT_OVER_TOPLEFT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate_over_tr.png")]
-    public static const HOTSPOT_OVER_TOPRIGHT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate_over_bl.png")]
-    public static const HOTSPOT_OVER_BOTTOMLEFT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate_over_br.png")]
-    public static const HOTSPOT_OVER_BOTTOMRIGHT :Class;
 }
 }
