@@ -1424,3 +1424,17 @@ img, embed, applet, object {
 .nonavWhite .Content {
   background: #FFFFFF;
 }
+
+/** RegisterPanel */
+
+.register .Right {
+  text-align: right;
+  width: 100px;
+}
+
+.register .NoCaptcha {
+  width: 318px;
+  height: 129px;
+  text-align: center;
+  border: 1px solid;
+}
