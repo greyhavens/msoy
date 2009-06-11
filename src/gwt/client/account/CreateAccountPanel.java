@@ -339,7 +339,6 @@ public class CreateAccountPanel extends FlowPanel
     protected DateFields _dateOfBirth;
     protected CheckBox _tosBox;
     protected SimplePanel _status;
-    protected SimplePanel _promoPanel;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
