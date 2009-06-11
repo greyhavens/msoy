@@ -150,7 +150,7 @@ public class Session
             return (_visitor = VisitorCookie.get());
         } else {
             VisitorCookie.save(_visitor = new VisitorInfo(), false);
-            String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.getPath());
+            String vector = StringUtil.getOr(History.getToken(), Pages.LANDING.makeToken());
             _membersvc.noteNewVisitor(_visitor, vector, new NoopAsyncCallback());
             return _visitor;
         }

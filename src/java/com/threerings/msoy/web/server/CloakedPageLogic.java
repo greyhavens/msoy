@@ -344,18 +344,18 @@ public class CloakedPageLogic
     /** Number of google bot pages served. */
     protected int _googlePages;
 
-    protected static final String ALL_GAMES = Pages.GAMES.getPath();
-    protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.getPath() + "-d_";
+    protected static final String ALL_GAMES = Pages.GAMES.makeToken();
+    protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.makeToken("d", "");
 
-    protected static final String PEOPLE = Pages.PEOPLE.getPath();
-    protected static final String PROFILE_PREFIX = Pages.PEOPLE.getPath() + "-";
+    protected static final String PEOPLE = Pages.PEOPLE.makeToken();
+    protected static final String PROFILE_PREFIX = Pages.PEOPLE.makeToken("");
 
-    protected static final String GROUPS = Pages.GROUPS.getPath();
-    protected static final String GROUP_DETAIL_PREFIX = Pages.GROUPS.getPath() + "-d_";
+    protected static final String GROUPS = Pages.GROUPS.makeToken();
+    protected static final String GROUP_DETAIL_PREFIX = Pages.GROUPS.makeToken("d", "");
 
-    protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.getPath() + "-s";
-    protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_p_";
-    protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
+    protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.makeToken("s");
+    protected static final String SHARE_GAME_PREFIX = Pages.WORLD.makeToken("game", "p", "");
+    protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.makeToken("l", "");
 
     /** Maximum number of google bot pages to log. */
     protected static final int MAX_GOOGLE_PAGES_TO_LOG = 50;

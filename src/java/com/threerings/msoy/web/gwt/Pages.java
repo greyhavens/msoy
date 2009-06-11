@@ -70,7 +70,7 @@ public enum Pages
      */
     public String makeToken (Object... args)
     {
-        String token = getPath();
+        String token = toString().toLowerCase();
         String atok = Args.compose(args).toToken();
         return (atok.length() == 0) ? token : (token + "-" + atok);
     }
@@ -98,7 +98,8 @@ public enum Pages
     }
 
     /**
-     * Returns the path for this page that is used in URLs.
+     * Don't call this, it's used internally by FrameEntryPoint and should be used nowhere else.
+     * You probably want {@link #makeToken} with no arguments.
      */
     public String getPath ()
     {
