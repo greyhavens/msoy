@@ -107,7 +107,7 @@ public class CloakedPageLogic
                 args.add(game.getShotMedia());
                 MemberRecord mrec = _memberRepo.loadMember(game.creatorId);
                 if (mrec != null) {
-                    args.add(PROFILE_PREFIX + mrec.memberId);
+                    args.add(Pages.PEOPLE.makeToken(mrec.memberId));
                     args.add("Created by " + mrec.name);
                 }
             }
@@ -125,7 +125,7 @@ public class CloakedPageLogic
             List<Integer> greeters = _memberRepo.loadGreeterIds();
             CollectionUtil.limit(greeters, 100);
             for (Integer id : greeters) {
-                args.add(PROFILE_PREFIX + id);
+                args.add(Pages.PEOPLE.makeToken(id));
                 args.add("A friendly person");
             }
             outputGoogle(rsp, "Friendly people", "People who are friendly", "", args);
@@ -144,10 +144,10 @@ public class CloakedPageLogic
                 desc = "No such player";
             }
             if (memberId > 1) {
-                args.add(PROFILE_PREFIX + (memberId - 1));
+                args.add(Pages.PEOPLE.makeToken(memberId - 1));
                 args.add("previous player");
             }
-            args.add(PROFILE_PREFIX + (memberId + 1));
+            args.add(Pages.PEOPLE.makeToken(memberId + 1));
             args.add("next player");
             outputGoogle(rsp, name, desc, PEOPLE, args);
             return true;
@@ -348,7 +348,7 @@ public class CloakedPageLogic
     protected static final String GAME_DETAIL_PREFIX = Pages.GAMES.makeToken("d", "");
 
     protected static final String PEOPLE = Pages.PEOPLE.makeToken();
-    protected static final String PROFILE_PREFIX = Pages.PEOPLE.makeToken("");
+    protected static final String PROFILE_PREFIX = Pages.PEOPLE.makeToken() + "-"; // hack!
 
     protected static final String GROUPS = Pages.GROUPS.makeToken();
     protected static final String GROUP_DETAIL_PREFIX = Pages.GROUPS.makeToken("d", "");
