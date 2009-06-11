@@ -3,15 +3,12 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -22,7 +19,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -40,10 +36,7 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCode;
-import com.threerings.msoy.game.gwt.GameGenre;
-import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -158,51 +151,6 @@ public class GameLogic
         config.gamePort = rhost.right;
 
         return config;
-    }
-
-    /**
-     * Loads and returns data on the top games. Used on the landing and arcade pages.
-     *
-     * @param filter if true, games that are not integrated, and those with a ranking less than 4
-     * stars not included.
-     * TODO: remove when manually edited arcade is released
-     */
-    public GameInfo[] loadFeaturedGames (PopularPlacesSnapshot pps, boolean filter)
-    {
-        // determine the games people are playing right now
-        List<GameInfo> featured = Lists.newArrayList();
-        ArrayIntSet have = new ArrayIntSet();
-        for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
-            GameInfoRecord info = _mgameRepo.loadGame(card.placeId);
-            if (info != null && info.genre != GameGenre.HIDDEN && (!filter || canFeature(info))) {
-                featured.add(info.toGameInfo(card.population));
-                have.add(info.gameId);
-            }
-            if (have.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                break;
-            }
-        }
-
-        // pad the featured games with ones no one is playing
-        if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-            for (GameInfoRecord info : _mgameRepo.loadGenre(
-                     GameGenre.ALL, ArcadeData.FEATURED_GAME_COUNT)) {
-                if (!have.contains(info.gameId) && info.genre != GameGenre.HIDDEN && 
-                    (!filter || canFeature(info))) {
-                    featured.add(info.toGameInfo(0));
-                }
-                if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                    break;
-                }
-            }
-        }
-
-        // resolve our creator names
-        for (GameInfo info : featured) {
-            info.creator = _memberRepo.loadMemberName(info.creator.getMemberId());
-        }
-
-        return featured.toArray(new GameInfo[featured.size()]);
     }
 
     /**

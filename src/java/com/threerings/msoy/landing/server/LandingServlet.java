@@ -75,9 +75,6 @@ public class LandingServlet extends MsoyServiceServlet
         _groupLogic.resolveSnapshots(popWhirleds);
         data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
 
-        // determine the "featured" games
-        data.topGames = _gameLogic.loadFeaturedGames(pps, true);
-
         // select the top rated avatars
         List<ListingCard> cards = _catalogLogic.loadCatalog(
             null, Item.AVATAR, CatalogQuery.SORT_BY_RATING, ShopData.TOP_ITEM_COUNT);

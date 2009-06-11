@@ -71,7 +71,6 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
@@ -98,18 +97,18 @@ public class GameServlet extends MsoyServiceServlet
     public ArcadeData loadArcadeData (ArcadeData.Portal portal)
         throws ServiceException
     {
+        // TODO: move all this to PopularPlacesShapshot, why recalculate per request?
         ArcadeData data = new ArcadeData();
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
         // load the hand-picked "top games"
-        boolean dev = DeploymentConfig.devDeployment;
-        List<ArcadeEntryRecord> agames = dev ? _mgameRepo.loadArcadeEntries(portal, true) : null;
-        Set<Integer> agameIds = dev ? Sets.newHashSet(Lists.transform(agames,
+        List<ArcadeEntryRecord> agames = _mgameRepo.loadArcadeEntries(portal, true);
+        Set<Integer> agameIds = Sets.newHashSet(Lists.transform(agames,
             new Function<ArcadeEntryRecord, Integer>() {
                 public Integer apply (ArcadeEntryRecord rec) {
                     return rec.gameId;
                 }
-            })) : null;
+            }));
 
         // load the top N (where N is large) games and build everything from that list
         Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
@@ -122,39 +121,33 @@ public class GameServlet extends MsoyServiceServlet
             games.put(grec.gameId, grec);
         }
 
-        if (dev) {
-            // TODO: move to GameLogic
-            ArrayIntSet creatorIds = new ArrayIntSet();
-            List<GameInfo> featured = Lists.newArrayList();
-            for (ArcadeEntryRecord topGame : agames) {
-                if (!topGame.featured) {
-                    continue;
-                }
-                int gameId = topGame.gameId;
-                GameInfoRecord info = games.get(gameId);
-                if (info == null) {
-                    continue;
-                }
-                featured.add(info.toGameInfo(getGamePop(pps, gameId)));
-                creatorIds.add(info.creatorId);
-                if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                    break;
-                }
+        // TODO: move to GameLogic
+        ArrayIntSet creatorIds = new ArrayIntSet();
+        List<GameInfo> featured = Lists.newArrayList();
+        for (ArcadeEntryRecord topGame : agames) {
+            if (!topGame.featured) {
+                continue;
             }
-
-            // resolve creator names
-            IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
-            for (GameInfo info : featured) {
-                info.creator = memberNames.get(info.creator.getMemberId());
+            int gameId = topGame.gameId;
+            GameInfoRecord info = games.get(gameId);
+            if (info == null) {
+                continue;
             }
-
-            // finally convert to an array
-            data.featuredGames = featured.toArray(new GameInfo[featured.size()]);
-
-        } else {
-            // determine the "featured" games based on population
-            data.featuredGames = _gameLogic.loadFeaturedGames(pps, false);
+            featured.add(info.toGameInfo(getGamePop(pps, gameId)));
+            creatorIds.add(info.creatorId);
+            if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
+                break;
+            }
         }
+
+        // resolve creator names
+        IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
+        for (GameInfo info : featured) {
+            info.creator = memberNames.get(info.creator.getMemberId());
+        }
+
+        // finally convert to an array
+        data.featuredGames = featured.toArray(new GameInfo[featured.size()]);
 
         // list of top N games by ranking
         data.topGames = Lists.newArrayList();
