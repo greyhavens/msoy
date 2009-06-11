@@ -445,7 +445,9 @@ public class FeedItemGenerator
             return _builder.createMedia(media, Pages.ME, Args.compose("medals", friendId));
 
         case GROUPS:
-            media = MediaDesc.stringToMD(message.data[2]);
+            if (message.data.length > 2) {
+                media = MediaDesc.stringToMD(message.data[2]);
+            }
             if (media == null) {
                 return null;
             }
@@ -472,7 +474,7 @@ public class FeedItemGenerator
                 }
                 return _builder.createMedia(
                     media, Pages.WORLD, Args.compose("s", message.data[0]));
-    
+
             } else if (message.type == FeedMessageType.SELF_ITEM_COMMENT) {
                 if (message.data.length < 4) {
                     return null;
