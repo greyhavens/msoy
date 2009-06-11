@@ -114,6 +114,9 @@ public abstract class Page
                 public Embedding getEmbedding () {
                     return Enum.valueOf(Embedding.class, frameCall(Frame.Calls.GET_EMBEDDING)[0]);
                 }
+                public boolean isHeaderless () {
+                    return Boolean.valueOf(frameCall(Frame.Calls.IS_HEADERLESS)[0]);
+                }
             });
 
             // obtain our current credentials from the frame
@@ -178,6 +181,9 @@ public abstract class Page
                 }
                 public Embedding getEmbedding () {
                     return Embedding.NONE; // test only in non-embedded mode
+                }
+                public boolean isHeaderless () {
+                    return false; // we have no header but pretend like we do
                 }
             });
 
