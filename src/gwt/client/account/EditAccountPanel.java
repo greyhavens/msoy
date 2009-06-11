@@ -26,6 +26,7 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
@@ -80,7 +81,10 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(null, makePermanameSection()));
         add(new TongueBox(_msgs.editEmailHeader(), makeChangeEmailSection()));
         add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
-        add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
+        // TODO SUBSCRIPTION
+        if (DeploymentConfig.devDeployment) {
+            add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
+        }
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
