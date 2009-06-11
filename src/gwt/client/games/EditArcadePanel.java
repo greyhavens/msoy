@@ -206,6 +206,12 @@ public class EditArcadePanel extends FlowPanel
                     public void onValueChange (ValueChangeEvent<Boolean> event) {
                         if (event.getValue()) {
                             _featured.add(gameId);
+                            // TODO: make a whole separate UI for editing the facebook featured
+                            // games... for now HACK reorder them to the top of the list
+                            _entries.add(0, _entries.remove(getIndex(gameId)));
+                            _orderChanged = true;
+                            refreshGrid();
+
                         } else {
                             _featured.remove(gameId);
                         }
