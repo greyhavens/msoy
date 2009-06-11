@@ -6,6 +6,8 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -137,7 +139,11 @@ public class LandingPanel extends SmartTable
         regi.setText(0, 0, _msgs.landingRegSecurity(), 2, null);
         if (RecaptchaUtil.isEnabled()) {
             regi.setWidget(1, 0, RecaptchaUtil.createDiv("recaptchaDiv"), 2, null);
-            RecaptchaUtil.init("recaptchaDiv");
+            DeferredCommand.add(new Command() { // delay init until div is added to DOM
+                public void execute () {
+                    RecaptchaUtil.init("recaptchaDiv");
+                }
+            });
         } else {
             regi.setText(1, 0, "CAPTCHA not enabled.", 2, "NoCaptcha");
         }
