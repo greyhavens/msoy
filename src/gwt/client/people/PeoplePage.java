@@ -27,7 +27,7 @@ public class PeoplePage extends Page
     /** Used to properly preserve headerlessness in our post-validation UI flow. */
     public static Pages getSelf ()
     {
-        return CShell.frame.isHeaderless() ? Pages.PEEPACC : Pages.PEOPLE;
+        return CShell.frame.isHeaderless() ? Pages.PEEPLESS : Pages.PEOPLE;
     }
 
     @Override // from Page

@@ -241,7 +241,7 @@ public class FrameEntryPoint
         if (data.group == SessionData.Group.A) {
             Link.go(Pages.PEOPLE, "confprof"); // send them to step 2: configure profile
         } else if (data.group == SessionData.Group.B) {
-            Link.go(Pages.PEEPACC, "confprof"); // send them to step 2: configure profile
+            Link.go(Pages.PEEPLESS, "confprof"); // send them to step 2, frameless
         } else if (data.group == SessionData.Group.C) {
             Link.go(Pages.ME); // send them to Me, which has next steps
         } else if (isHeaderless() || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
