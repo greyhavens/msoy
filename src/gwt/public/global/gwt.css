@@ -1443,3 +1443,8 @@ img, embed, applet, object {
   width: 100%;
   border: 0px inset;
 }
+
+.register .Beacon {
+  width: 1px;
+  height: 1px;
+}
