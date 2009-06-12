@@ -154,9 +154,14 @@ public class FacebookServlet extends HttpServlet
 
             // and send them to the appropriate page
             if (info.gameId != 0) {
-                // TODO: remove the chromeless member of AppInfo if we don't revert to using it
-                // again here
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
+                if (info.chromeless) {
+                    // chromeless games must go directly into the game, bugs be damned
+                    rsp.sendRedirect("/#" + Pages.WORLD.makeToken("game", "pc", info.gameId));
+                } else {
+                    // all other games go to the game detail page (to work around some strange
+                    // Facebook iframe bug on Mac Firefox, yay)
+                    rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
+                }
             } else {
                 rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
             }
