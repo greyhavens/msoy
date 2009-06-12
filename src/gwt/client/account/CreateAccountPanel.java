@@ -4,84 +4,20 @@
 package client.account;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.HasAllFocusHandlers;
-import com.google.gwt.event.dom.client.HasBlurHandlers;
-import com.google.gwt.event.dom.client.HasFocusHandlers;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusWidget;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.CaptchaException;
-import com.threerings.msoy.web.gwt.RegisterInfo;
-import com.threerings.msoy.web.gwt.SessionData;
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
-import com.threerings.msoy.web.gwt.WebUserService;
-import com.threerings.msoy.web.gwt.WebUserServiceAsync;
-
 import client.shell.CShell;
-import client.shell.ShellMessages;
-import client.ui.DateFields;
 import client.ui.MsoyUI;
-import client.util.ClickCallback;
-import client.util.ConversionTrackingUtil;
-import client.util.RecaptchaUtil;
-import client.util.RegisterUtil;
-import client.util.ServiceUtil;
+import client.ui.RegisterPanel;
 
 /**
  * Displays an interface for creating a new account.
  */
 public class CreateAccountPanel extends FlowPanel
 {
-    /** Modes for tweaking layout, text and behavior. */
-    enum Mode {
-        /** Standard text and layout. */
-        NORMAL {
-            public String getIntro () {
-                return _msgs.createCoins();
-            }
-            public boolean logonOnBottom () {
-                return false;
-            }
-        },
-
-        /** Shows "save your progress" text and has logon fields last. */
-        PERMAGUEST {
-            public String getIntro () {
-                return _msgs.createSaveModeIntro();
-            }
-            public boolean logonOnBottom () {
-                return true;
-            }
-        };
-
-        public abstract String getIntro ();
-
-        public abstract boolean logonOnBottom ();
-    }
-
     /**
      * Creates a new account creation panel in the given mode.
      */
@@ -89,261 +25,26 @@ public class CreateAccountPanel extends FlowPanel
     {
         setStyleName("createAccount");
 
-        final Mode mode = CShell.isPermaguest() ?
-            CreateAccountPanel.Mode.PERMAGUEST : CreateAccountPanel.Mode.NORMAL;
+        final FlowPanel content = MsoyUI.createFlowPanel("Content");
+        if (CShell.isPermaguest()) {
+            content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
+            content.add(MsoyUI.createLabel(_msgs.createSaveModeIntro(), "Coins"));
+            content.add(new RegisterPanel());
+            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+            content.add(new FullLogonPanel());
+        } else {
+            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+            content.add(new FullLogonPanel());
+            content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
+            content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
+            content.add(new RegisterPanel());
+        }
 
         add(WidgetUtil.makeShim(15, 15));
         add(new Image("/images/account/create_bg_top.png"));
-        final FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
-
-        if (mode.logonOnBottom()) {
-            content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
-            content.add(MsoyUI.createLabel(mode.getIntro(), "Coins"));
-
-        } else {
-            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
-            content.add(new FullLogonPanel());
-
-            content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
-            content.add(MsoyUI.createLabel(mode.getIntro(), "Coins"));
-        }
-
-        content.add(new LabeledBox(_msgs.createEmail(),
-                           _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
-                           _msgs.createEmailTip()));
-        _email.addKeyDownHandler(_onKeyDown);
-
-        content.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
-                           _msgs.createPasswordTip()));
-        _password.addKeyDownHandler(_onKeyDown);
-
-        content.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
-                           _msgs.createConfirmTip()));
-        _confirm.addKeyDownHandler(_onKeyDown);
-
-//         content.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
-//                            _msgs.createRealNameTip()));
-//         _rname.addKeyboardListener(_onType);
-
-        content.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
-                           _msgs.createDateOfBirthTip()));
-
-//         _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
-//         _name.addKeyboardListener(_onType);
-//         content.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
-
-        // optionally add the recaptcha component
-        if (RecaptchaUtil.isEnabled()) {
-            content.add(new LabeledBox(_msgs.createCaptcha(),
-                                       RecaptchaUtil.createDiv("recaptchaDiv"), null));
-        }
-
-        content.add(new LabeledBox("", _tosBox = new CheckBox(_msgs.createTOSAgree(), true), null));
-
-        HorizontalPanel controls = new HorizontalPanel();
-        controls.setWidth("475px");
-
-        controls.add(_status = MsoyUI.createSimplePanel(null, "Status"));
-        controls.add(WidgetUtil.makeShim(10, 10));
-        controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-
-        PushButton create = MsoyUI.createButton(MsoyUI.LONG_THICK, _msgs.createGo(), null);
-        controls.add(create);
-        content.add(controls);
-
-        // initialize our UI components
-        RegisterUtil.initRegiUI(_email);
-
-        // create our click callback that handles the actual registation process
-        new ClickCallback<WebUserService.RegisterData>(create) {
-            @Override protected boolean callService () {
-                if (!validateData()) {
-                    return false;
-                }
-                if (!RegisterUtil.checkIsThirteen(_dateOfBirth)) {
-                    setStatus(_msgs.createNotThirteen());
-                    return false;
-                }
-                RegisterInfo info = RegisterUtil.createRegInfo(_email, _password, _dateOfBirth);
-                setStatus(_msgs.creatingAccount());
-                _usersvc.register(DeploymentConfig.version, info, false, this);
-                return true;
-            }
-
-            @Override protected boolean gotResult (final WebUserService.RegisterData session) {
-                // display a nice confirmation message, as an excuse to embed a tracking iframe;
-                // we'll show it for two seconds, and then rock on!
-                Widget[] trackers = { ConversionTrackingUtil.createAdWordsTracker(),
-                                      ConversionTrackingUtil.createBeacon(session.entryVector) };
-                setStatus(_msgs.creatingDone(), trackers);
-                session.group = SessionData.Group.A;
-                new Timer() {
-                    public void run () {
-                        CShell.frame.dispatchDidLogon(session);
-                    }
-                }.schedule(2000);
-                return false; // don't reenable the create button
-            }
-
-            @Override protected void reportFailure (Throwable cause) {
-                if (RecaptchaUtil.isEnabled()) {
-                    RecaptchaUtil.reload();
-                    if (cause instanceof CaptchaException) {
-                        RecaptchaUtil.focus();
-                    }
-                }
-                setStatus(CShell.serverError(cause));
-            }
-        };
-
-        if (mode.logonOnBottom()) {
-            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
-            content.add(new FullLogonPanel());
-        }
     }
 
-    @Override // from Widget
-    protected void onLoad ()
-    {
-        super.onLoad();
-        RecaptchaUtil.init("recaptchaDiv");
-    }
-
-    protected boolean validateData ()
-    {
-        String email = _email.getText().trim() /*, name = _name.getText().trim() */;
-        String password = _password.getText().trim(), confirm = _confirm.getText().trim();
-        String status;
-        FocusWidget toFocus = null;
-        if (email.length() == 0) {
-            status = _msgs.createMissingEmail();
-            toFocus = _email;
-        } else if (password.length() == 0) {
-            status = _msgs.createMissingPassword();
-            toFocus = _password;
-        } else if (confirm.length() == 0) {
-            status = _msgs.createMissingConfirm();
-            toFocus = _confirm;
-        } else if (!password.equals(confirm)) {
-            status = _msgs.createPasswordMismatch();
-            toFocus = _confirm;
-        } else if (_dateOfBirth.getDate() == null) {
-            status = _msgs.createMissingDoB();
-            // this is not a FocusWidget so we have to handle it specially
-            _dateOfBirth.setFocus(true);
-//         } else if (!MemberName.isValidDisplayName(name)) {
-//             status = _cmsgs.displayNameInvalid("" + MemberName.MIN_DISPLAY_NAME_LENGTH,
-//                 "" + MemberName.MAX_DISPLAY_NAME_LENGTH);
-//             toFocus = _name;
-//         } else if (!MemberName.isValidNonSupportName(name)) {
-//             status = _cmsgs.nonSupportNameInvalid();
-//             toFocus = _name;
-        } else if (!_tosBox.getValue()) {
-            status = _msgs.createMustAgreeTOS();
-        } else if (RecaptchaUtil.isEnabled() && (RecaptchaUtil.getResponse() == null ||
-                                                 RecaptchaUtil.getResponse().length() == 0)) {
-            status = _msgs.createMustCaptcha();
-            RecaptchaUtil.focus();
-        } else {
-            return true;
-        }
-
-        if (toFocus != null) {
-            toFocus.setFocus(true);
-        }
-        setStatus(status);
-        return false;
-    }
-
-    protected void setStatus (String text, Widget ... trackers)
-    {
-        FlowPanel p = new FlowPanel();
-        p.add(MsoyUI.createLabel(text, ""));
-        for (Widget tracker : trackers) {
-            if (tracker != null) {
-                p.add(tracker);
-            }
-        }
-        _status.setWidget(p);
-    }
-
-    protected void setStatus (String text)
-    {
-        _status.setWidget(MsoyUI.createLabel(text, ""));
-    }
-
-    protected static Widget makeStep (int step, Widget contents)
-    {
-        SmartTable table = new SmartTable("Step", 0, 0);
-        table.setText(0, 0, step + ".", 1, "Number");
-        table.setWidget(0, 1, contents, 1, null);
-        return table;
-    }
-
-    protected static class LabeledBox extends FlowPanel
-    {
-        public LabeledBox (String title, Widget contents, String tip)
-        {
-            setStyleName("Box");
-            _tip = new SmartTable("Tip", 0, 0);
-            add(title, contents, tip);
-        }
-
-        public void add (String title, final Widget contents, final String tip)
-        {
-            add(MsoyUI.createHTML(title, "Label"));
-            add(contents);
-            if (contents instanceof HasAllFocusHandlers) {
-                ((HasFocusHandlers)contents).addFocusHandler(new FocusHandler() {
-                    public void onFocus (FocusEvent event) {
-                        // we want contents here not sender because of DateFields
-                        showTip(contents, tip);
-                    }
-                });
-                ((HasBlurHandlers)contents).addBlurHandler(new BlurHandler() {
-                    public void onBlur (BlurEvent event) {
-                        if (_tip.isAttached()) {
-                            remove(_tip);
-                        }
-                    }
-                });
-            }
-        }
-
-        protected void showTip (Widget trigger, String tip)
-        {
-            if (!_tip.isAttached() && tip != null) {
-                DOM.setStyleAttribute(
-                    _tip.getElement(), "left", (trigger.getOffsetWidth()+160) + "px");
-                DOM.setStyleAttribute(
-                    _tip.getElement(), "top", (trigger.getAbsoluteTop() - getAbsoluteTop() +
-                    trigger.getOffsetHeight()/2 - 27) + "px");
-                _tip.setText(0, 0, tip);
-                add(_tip);
-            }
-        }
-
-        protected SmartTable _tip;
-    }
-
-    protected KeyDownHandler _onKeyDown = new KeyDownHandler() {
-        public void onKeyDown (KeyDownEvent event) {
-            setStatus("");
-        }
-    };
-
-    protected TextBox _email /*, _name, _rname */;
-    protected PasswordTextBox _password, _confirm;
-    protected DateFields _dateOfBirth;
-    protected CheckBox _tosBox;
-    protected SimplePanel _status;
-
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
-    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
-        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

@@ -15,8 +15,8 @@
   min-width: 100%;
   min-height: 100%;
 }
-.createAccount,
-.createAccount a {
+
+.createAccount, .createAccount a {
   color: #d0e6f7;
 }
 
@@ -39,55 +39,15 @@
 }
 
 .createAccount .Coins {
-  margin: 0 0 20px 10px;
+  margin: 0 0 10px 10px;
 }
 
-.createAccount .Label, createAccount td .Label {
-  padding: 3px 5px 0 3px;
-  width: 150px;
-  float: left;
-  text-align: right;
-  font-size: 13px;
-}
-
-.createAccount .Box {
-  position: relative;
-  margin-bottom: 10px;
+.createAccount .register {
+  margin-left: 40px;
 }
 
 .createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox {
   width: 175px;
-}
-
-.createAccount .Tip {
-  background: url(/images/ui/tip_balloon_opaque.png) no-repeat;
-  position: absolute;
-  width: 250px;
-  height: 55px;
-  vertical-align: middle;
-  font-size: 12px;
-  color: #23678E;
-}
-
-.createAccount .Tip td {
-  font-family: Arial, Helvetica, sans-serif;
-  padding-left: 25px;
-  padding-right: 10px;
-}
-
-.createAccount .Status {
-  text-align: center;
-  font-size: 14px;
-  color: #FFFFFF;
-  font-weight: bold;
-}
-
-.createAccount .dateFields div {
-  color: #FFFFFF;
-}
-
-.createAccount .roundBox .tipLabel {
-  width: 100px;
 }
 
 .createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox, .createAccount .gwt-ListBox {
@@ -95,11 +55,6 @@
   font-size: 14px;
   color: #1D5884;
   border: solid #5c5d61 1px;
-}
-
-.createAccount .AdWordsFrame {
-  width: 100%;
-  border: 0px inset;
 }
 
 /* ------------------------------------

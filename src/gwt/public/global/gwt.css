@@ -1438,3 +1438,8 @@ img, embed, applet, object {
   text-align: center;
   border: 1px solid;
 }
+
+.register .AdWordsFrame {
+  width: 100%;
+  border: 0px inset;
+}
