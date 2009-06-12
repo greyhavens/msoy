@@ -6,13 +6,19 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.MemberName;
+
+import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
 
@@ -40,11 +46,43 @@ public class LandingPanel extends SmartTable
         }));
         explain.add(video);
 
+        // create our registration UI and a logon UI
+        FlowPanel rightbits = MsoyUI.createFlowPanel("Rightbits");
+        RegisterPanel register = new RegisterPanel() {
+            protected void addHeader (boolean complete) {
+                if (complete) {
+                    add(MsoyUI.createLabel(_msgs.landingRegistered(), "Title"));
+                } else {
+                    add(MsoyUI.createLabel(_msgs.landingRegister(), "Title"));
+                    add(MsoyUI.createLabel(_msgs.landingRegisterSub(), "Subtitle"));
+                }
+            }
+        };
+        rightbits.add(register);
+
+        rightbits.add(WidgetUtil.makeShim(15, 15));
+        rightbits.add(MsoyUI.createLabel(_msgs.landingLogon(), "Subtitle"));
+        TextBox logemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
+        PasswordTextBox logpass = new PasswordTextBox();
+        ButtonBase doLogon = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.landingLogGo(), null);
+        LogonPanel.addLogonBehavior(logemail, logpass, doLogon, null);
+        SmartTable logon = new SmartTable("register", 0, 5); // hack!
+        logon.setText(0, 0, _msgs.landingLogEmail(), 1, "Right");
+        logon.setWidget(0, 1, logemail);
+        logon.setText(1, 0, _msgs.landingLogPass(), 1, "Right");
+        logon.setWidget(1, 1, logpass);
+        logon.setWidget(2, 1, doLogon);
+        logon.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
+        for (int row = 0; row < logon.getRowCount(); row++) {
+            logon.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);
+        }
+        rightbits.add(logon);
+
         // wrap all that up in two columns with header and background and whatnot
         setWidget(0, 0, explain);
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_LEFT);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        setWidget(0, 1, new RegisterPanel(true));
+        setWidget(0, 1, rightbits);
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         setWidget(1, 0, LandingCopyright.addFinePrint(new FlowPanel()), 2, null);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);

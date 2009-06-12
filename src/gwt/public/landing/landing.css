@@ -114,17 +114,17 @@
   white-space: nowrap;
 }
 
-.landing .register {
+.landing .Rightbits {
   width: 305px;
   margin-left: 20px;
 }
 
-.landing .Title, .landing .register .Title {
+.landing .Title {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
 }
 
-.landing .Subtitle, .landing .register .Subtitle {
+.landing .Subtitle {
   font-size: 16px;
 }
 

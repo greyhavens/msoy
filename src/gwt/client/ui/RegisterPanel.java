@@ -25,7 +25,6 @@ import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
-import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -44,30 +43,25 @@ import client.util.StringUtil;
  */
 public class RegisterPanel extends FlowPanel
 {
-    public RegisterPanel (boolean includeLogon)
+    public RegisterPanel ()
     {
         setStyleName("register");
-        _includeLogon = includeLogon;
-        if (_includeLogon) { // bind action to our logon UI
-            LogonPanel.addLogonBehavior(_logemail, _logpass, _doLogon, null);
-        }
         setStepOne();
     }
 
     protected void setStepOne ()
     {
         clear();
-        add(MsoyUI.createLabel(_msgs.regiRegister(), "Title"));
-        add(MsoyUI.createLabel(_msgs.regiRegisterSub(), "Subtitle"));
+        addHeader(false);
 
         SmartTable regi = new SmartTable(0, 5);
-        regi.setText(0, 0, _msgs.regiRegEmail(), 1, "Right");
+        regi.setText(0, 0, _cmsgs.regiRegEmail(), 1, "Right");
         regi.setWidget(0, 1, _newemail);
-        regi.setText(1, 0, _msgs.regiRegPass(), 1, "Right");
+        regi.setText(1, 0, _cmsgs.regiRegPass(), 1, "Right");
         regi.setWidget(1, 1, _newpass);
-        regi.setText(2, 0, _msgs.regiRegBirth(), 1, "Right");
+        regi.setText(2, 0, _cmsgs.regiRegBirth(), 1, "Right");
         regi.setWidget(2, 1, _birthday);
-        ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.regiRegGo(), null);
+        ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _cmsgs.regiRegGo(), null);
         regi.setWidget(3, 1, doCreate);
         regi.getFlexCellFormatter().setHorizontalAlignment(3, 1, HasAlignment.ALIGN_RIGHT);
         add(regi);
@@ -75,32 +69,14 @@ public class RegisterPanel extends FlowPanel
             regi.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);
         }
 
-        if (_includeLogon) {
-            add(WidgetUtil.makeShim(15, 15));
-            add(MsoyUI.createLabel(_msgs.regiLogon(), "Subtitle"));
-
-            SmartTable logon = new SmartTable(0, 5);
-            logon.setText(0, 0, _msgs.regiLogEmail(), 1, "Right");
-            logon.setWidget(0, 1, _logemail);
-            logon.setText(1, 0, _msgs.regiLogPass(), 1, "Right");
-            logon.setWidget(1, 1, _logpass);
-            logon.setWidget(2, 1, _doLogon);
-            logon.getFlexCellFormatter().setHorizontalAlignment(2, 1, HasAlignment.ALIGN_RIGHT);
-            add(logon);
-            for (int row = 0; row < regi.getRowCount(); row++) {
-                logon.getFlexCellFormatter().setVerticalAlignment(
-                    row, 0, HasAlignment.ALIGN_MIDDLE);
-            }
-        }
-
         doCreate.addClickHandler(new ClickHandler() {
             public void onClick (ClickEvent event) {
                 if (StringUtil.isBlank(_newemail.getText().trim())) {
-                    MsoyUI.errorNear(_msgs.regiFillAll(), _newemail);
+                    MsoyUI.errorNear(_cmsgs.regiFillAll(), _newemail);
                 } else if (StringUtil.isBlank(_newpass.getText().trim())) {
-                    MsoyUI.errorNear(_msgs.regiFillAll(), _newpass);
+                    MsoyUI.errorNear(_cmsgs.regiFillAll(), _newpass);
                 } else if (!RegisterUtil.checkIsThirteen(_birthday)) {
-                    MsoyUI.errorNear(_msgs.regiNotThirteen(), _birthday);
+                    MsoyUI.errorNear(_cmsgs.regiNotThirteen(), _birthday);
                 } else {
                     setStepTwo();
                 }
@@ -111,12 +87,11 @@ public class RegisterPanel extends FlowPanel
     protected void setStepTwo ()
     {
         clear();
-        add(MsoyUI.createLabel(_msgs.regiRegister(), "Title"));
-        add(MsoyUI.createLabel(_msgs.regiRegisterSub(), "Subtitle"));
+        addHeader(false);
 
         SmartTable regi = new SmartTable(0, 5);
 
-        regi.setText(0, 0, _msgs.regiRegSecurity(), 2, null);
+        regi.setText(0, 0, _cmsgs.regiRegSecurity(), 2, null);
         if (RecaptchaUtil.isEnabled()) {
             regi.setWidget(1, 0, RecaptchaUtil.createDiv("recaptchaDiv"), 2, null);
             DeferredCommand.addCommand(new Command() { // delay init until div is added to DOM
@@ -127,16 +102,16 @@ public class RegisterPanel extends FlowPanel
         } else {
             regi.setText(1, 0, "CAPTCHA not enabled.", 2, "NoCaptcha");
         }
-        final CheckBox tosBox = new CheckBox(_msgs.regiRegTOS(), true);
+        final CheckBox tosBox = new CheckBox(_cmsgs.regiRegTOS(), true);
         regi.setWidget(2, 0, tosBox, 2, null);
 
-        regi.setWidget(3, 0, MsoyUI.createActionLabel(_msgs.regiRegBack(), new ClickHandler() {
+        regi.setWidget(3, 0, MsoyUI.createActionLabel(_cmsgs.regiRegBack(), new ClickHandler() {
             public void onClick (ClickEvent event) {
                 setStepOne();
             }
         }));
 
-        ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.regiRegGo(), null);
+        ButtonBase doCreate = MsoyUI.createButton(MsoyUI.SHORT_THIN, _cmsgs.regiRegGo(), null);
         regi.setWidget(3, 1, doCreate);
         regi.getFlexCellFormatter().setHorizontalAlignment(3, 1, HasAlignment.ALIGN_RIGHT);
         add(regi);
@@ -145,7 +120,7 @@ public class RegisterPanel extends FlowPanel
         new ClickCallback<WebUserService.RegisterData>(doCreate) {
             @Override protected boolean callService () {
                 if (!tosBox.getValue()) {
-                    MsoyUI.errorNear(_msgs.regiMustTOS(), tosBox);
+                    MsoyUI.errorNear(_cmsgs.regiMustTOS(), tosBox);
                     return false;
                 }
                 RegisterInfo info = RegisterUtil.createRegInfo(_newemail, _newpass, _birthday);
@@ -174,24 +149,22 @@ public class RegisterPanel extends FlowPanel
     protected void setComplete (WebUserService.RegisterData session)
     {
         clear();
-        add(MsoyUI.createLabel(_msgs.regiRegistered(), "Title"));
-        String email = session.creds.accountName;
-        add(MsoyUI.createHTML(_msgs.regiEmailConfirm(email), "Subtitle"));
+        addHeader(true);
+        add(MsoyUI.createHTML(_cmsgs.regiEmailConfirm(session.creds.accountName), null));
         add(ConversionTrackingUtil.createAdWordsTracker());
         add(ConversionTrackingUtil.createBeacon(session.entryVector));
     }
 
-    protected boolean _includeLogon;
+    protected void addHeader (boolean complete)
+    {
+        // nada
+    }
 
     protected TextBox _newemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
     protected PasswordTextBox _newpass = new PasswordTextBox();
     protected DateFields _birthday = new DateFields();
 
-    protected TextBox _logemail = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
-    protected PasswordTextBox _logpass = new PasswordTextBox();
-    protected ButtonBase _doLogon = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.regiLogGo(), null);
-
-    protected static final ShellMessages _msgs = GWT.create(ShellMessages.class);
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }
