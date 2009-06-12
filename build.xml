@@ -327,7 +327,7 @@
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
   </target>
 
-  <!-- creates page.gwt.xml.in from page.gwt.xml, doing user agent fiddling -->
+  <!-- creates page.gwt.xml from page.gwt.xml.in, doing user agent fiddling -->
   <target name="preppage">
     <if><isset property="gwt_user_agent"/><then>
       <echo>Building GWT clients for: ${gwt_user_agent}...</echo>
@@ -476,7 +476,7 @@
 
     <!-- invoke the GWT compiler and grindy grindy grindy -->
     <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
-          classname="com.google.gwt.dev.Compiler">
+    	classname="com.google.gwt.dev.Compiler">
       <classpath>
         <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
         <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
@@ -486,6 +486,7 @@
       <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
       <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
       <!-- end temp -->
+      <jvmarg value="-Xss1024k"/>
       <jvmarg value="-Djava.awt.headless=true"/>
       <arg value="-style"/><arg value="${gwt_style}"/>
       <arg value="-war"/>
@@ -1046,7 +1047,7 @@
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
-  <target name="distprojects-extra" depends="distprojects">
+  <target name="copythanebinaries" depends="distprojects">
     <!-- this is not copied automatically :( -->
     <copy file="projects/thane/dist/avmthane" todir="dist/lib"/>
 
@@ -1055,8 +1056,10 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
-  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
+  <target name="distbits" depends="distprojects,dist,flashapps,thane-client,jclients"/>
+  <target name="distall-package" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
+          description="Rebuilds all architecture independent targets."/>
+  <target name="distall" depends="distall-package,copythanebinaries"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->
@@ -1117,7 +1120,7 @@
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="assignversion,distall,prepare-package">
+  <target name="package" depends="assignversion,distall-package,prepare-package">
 
     <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
@@ -1407,7 +1410,7 @@
   -->
 
   <!-- builds our javadocs and packages them up -->
-  <target name="package-docs" depends="distall,javadoc,asdoc,prepare-package">
+  <target name="package-docs" depends="distall-package,javadoc,asdoc,prepare-package">
     <property name="pkgroot.docs" value="${pkgroot.root}/msoy-docs"/>
     <property name="approot.docs" value="${pkgroot.docs}/${ooo.docs.prefix}"/>
 
