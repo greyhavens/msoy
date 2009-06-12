@@ -486,7 +486,6 @@
       <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedTypeBinding,&lt;init&gt;"/>
       <jvmarg value="-XX:CompileCommand=exclude,org/eclipse/jdt/internal/compiler/lookup/ParameterizedMethodBinding,&lt;init&gt;"/>
       <!-- end temp -->
-      <jvmarg value="-Xss1024k"/>
       <jvmarg value="-Djava.awt.headless=true"/>
       <arg value="-style"/><arg value="${gwt_style}"/>
       <arg value="-war"/>
@@ -1048,6 +1047,10 @@
   </target>
 
   <target name="copythanebinaries" depends="distprojects">
+    <!-- Run a special target in thane that will copy the right executable file into the -->
+    <!-- thane/dist directory. --> 
+    <ant dir="projects/thane" target="distbinary"/>
+
     <!-- this is not copied automatically :( -->
     <copy file="projects/thane/dist/avmthane" todir="dist/lib"/>
 
