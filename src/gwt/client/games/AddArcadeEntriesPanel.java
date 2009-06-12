@@ -31,7 +31,8 @@ public class AddArcadeEntriesPanel extends GameGenrePanel
 {
     public AddArcadeEntriesPanel (ArcadeData.Portal page, final Sort sort, String query)
     {
-        super(GameGenre.ALL, sort, query);
+        // we need to use the main, unfiltered portal here so new games can be added
+        super(ArcadeData.Portal.MAIN, GameGenre.ALL, sort, query);
         _gamesvc.loadArcadeEntryIds(_portal = page, new InfoCallback<int[]> () {
             public void onSuccess (int[] result) {
                 _entryIds = new HashSet<Integer>();

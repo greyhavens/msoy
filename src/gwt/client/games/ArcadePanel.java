@@ -35,6 +35,7 @@ public class ArcadePanel extends FlowPanel
     {
         setStyleName("arcade");
         add(MsoyUI.createNowLoading());
+        _portal = portal;
         _gamesvc.loadArcadeData(portal, new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
                 init(data);
@@ -45,7 +46,8 @@ public class ArcadePanel extends FlowPanel
     protected void init (final ArcadeData data)
     {
         clear();
-        add(_header = new GameHeaderPanel("Featured Games", GameGenre.ALL, GameInfo.Sort.BY_NAME));
+        add(_header = new GameHeaderPanel(_portal, "Featured Games", GameGenre.ALL,
+            GameInfo.Sort.BY_NAME));
         _header.initWithCards(data.allGames);
 
         // show the top N games
@@ -130,6 +132,7 @@ public class ArcadePanel extends FlowPanel
 
     /** Header area with title, games dropdown and search */
     protected GameHeaderPanel _header;
+    protected ArcadeData.Portal _portal;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

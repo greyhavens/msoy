@@ -44,9 +44,9 @@ public class GamesPage extends Page
                 new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
 
         } else if (action.equals("g")) {
-            setContent(new GameGenrePanel(GameGenre.fromByte(args.get(1, GameGenre.ALL.toByte())),
-                                          GameInfo.Sort.fromToken(args.get(2, "")),
-                                          args.get(3, null)));
+            setContent(new GameGenrePanel(getDefaultPortal(), GameGenre.fromByte(
+                args.get(1, GameGenre.ALL.toByte())), GameInfo.Sort.fromToken(args.get(2, "")),
+                args.get(3, null)));
 
         } else if (action.equals("m")) {
             setContent(new MyGamesPanel(GameInfo.Sort.fromToken(args.get(1, ""))));
@@ -75,8 +75,7 @@ public class GamesPage extends Page
             setContent(new ArcadePanel(ArcadeData.Portal.valueOf(args.get(1, ""))));
 
         } else {
-            setContent(new ArcadePanel(
-                CShell.isFacebook() ? ArcadeData.Portal.FACEBOOK : ArcadeData.Portal.MAIN));
+            setContent(new ArcadePanel(getDefaultPortal()));
         }
     }
 
@@ -84,6 +83,11 @@ public class GamesPage extends Page
     public Pages getPageId ()
     {
         return Pages.GAMES;
+    }
+
+    protected ArcadeData.Portal getDefaultPortal ()
+    {
+        return CShell.isFacebook() ? ArcadeData.Portal.FACEBOOK : ArcadeData.Portal.MAIN;
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);

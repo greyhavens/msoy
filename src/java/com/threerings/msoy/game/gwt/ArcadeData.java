@@ -37,7 +37,17 @@ public class ArcadeData
         implements ByteEnum, IsSerializable
     {
         MAIN(0),
-        FACEBOOK(1);
+        FACEBOOK(1) {
+            @Override public boolean showGenre (GameGenre genre)
+            {
+                return genre != GameGenre.MMO_WHIRLED;
+            }
+
+            @Override public boolean isFiltered ()
+            {
+                return true;
+            }
+        };
 
         // for ByteEnum
         public static Portal fromByte (byte val)
@@ -48,6 +58,22 @@ public class ArcadeData
                 }
             }
             throw new IllegalArgumentException();
+        }
+
+        /**
+         * Tests whether the given genre should be displayed when viewing a list of genres.
+         */
+        public boolean showGenre (GameGenre genre)
+        {
+            return true;
+        }
+
+        /**
+         * Tests whether the arcade's content is filtered.
+         */
+        public boolean isFiltered ()
+        {
+            return false;
         }
 
         @Override // from ByteEnum

@@ -85,7 +85,7 @@ public class EditArcadePanel extends FlowPanel
             return;
         }
 
-        add(new TongueBox(portal == ArcadeData.Portal.FACEBOOK ? _msgs.editArcadeApprovedGames() :
+        add(new TongueBox(portal.isFiltered() ? _msgs.editArcadeApprovedGames() :
             _msgs.editArcadeFeaturedGames(), new ArcadeEntriesPanel(portal)));
     }
 
@@ -192,7 +192,7 @@ public class EditArcadePanel extends FlowPanel
             }));
             FlowPanel buttons = new FlowPanel();
             buttons.add(moveButtons);
-            if (_portal == ArcadeData.Portal.FACEBOOK) {
+            if (_portal.isFiltered()) {
                 CheckBox feat = new CheckBox(_msgs.eaeFeatured());
                 feat.setValue(_featured.contains(gameId));
                 feat.addValueChangeHandler(new ValueChangeHandler<Boolean>() {

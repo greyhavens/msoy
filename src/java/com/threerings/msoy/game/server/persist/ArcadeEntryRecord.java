@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import com.google.common.base.Function;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
@@ -26,6 +27,13 @@ public class ArcadeEntryRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
+
+    public static Function<ArcadeEntryRecord, Integer> TO_GAME_ID =
+        new Function<ArcadeEntryRecord, Integer>() {
+            public Integer apply (ArcadeEntryRecord entry) {
+                return entry.gameId;
+            }
+        };
 
     /** The portal this record is for (we support multiple games front pages). */
     @Id public ArcadeData.Portal portal;

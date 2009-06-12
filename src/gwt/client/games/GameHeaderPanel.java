@@ -20,6 +20,7 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.web.gwt.Pages;
 
+import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -33,7 +34,8 @@ import client.util.Link;
  */
 public class GameHeaderPanel extends FlowPanel
 {
-    public GameHeaderPanel (String titleText, final GameGenre genre, final GameInfo.Sort sort)
+    public GameHeaderPanel (ArcadeData.Portal portal, String titleText, GameGenre genre,
+        final GameInfo.Sort sort)
     {
         setStyleName("gameHeaderPanel");
         _genre = genre;
@@ -66,7 +68,7 @@ public class GameHeaderPanel extends FlowPanel
         _searchBox = MsoyUI.createTextBox("", 30, 20);
         ClickHandler searchListener = new ClickHandler() {
             public void onClick (ClickEvent event) {
-                Link.go(Pages.GAMES, "g", genre.toByte(), sort.toToken(), getQuery());
+                Link.go(Pages.GAMES, "g", _genre.toByte(), sort.toToken(), getQuery());
             }
         };
         _searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
@@ -77,6 +79,9 @@ public class GameHeaderPanel extends FlowPanel
         FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
         add(genreLinks);
         for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
+            if (!portal.showGenre(gcode)) {
+                continue;
+            }
             if (genreLinks.getWidgetCount() > 0) {
                 genreLinks.add(new InlineLabel("|"));
             }

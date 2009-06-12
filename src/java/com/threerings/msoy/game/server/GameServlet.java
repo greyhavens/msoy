@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -103,19 +102,14 @@ public class GameServlet extends MsoyServiceServlet
 
         // load the hand-picked "top games"
         List<ArcadeEntryRecord> agames = _mgameRepo.loadArcadeEntries(portal, true);
-        Set<Integer> agameIds = Sets.newHashSet(Lists.transform(agames,
-            new Function<ArcadeEntryRecord, Integer>() {
-                public Integer apply (ArcadeEntryRecord rec) {
-                    return rec.gameId;
-                }
-            }));
+        Set<Integer> approvedGames = portal.isFiltered() ?
+            Sets.newHashSet(Lists.transform(agames, ArcadeEntryRecord.TO_GAME_ID)) : null;
 
         // load the top N (where N is large) games and build everything from that list
         Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
         for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
-            // for facebook, filter the whole map by the top games
-            if (agameIds != null && portal == ArcadeData.Portal.FACEBOOK &&
-                !agameIds.contains(grec.gameId)) {
+            // for filtered arcade portals, filter the whole map
+            if (approvedGames != null && !approvedGames.contains(grec.gameId)) {
                 continue;
             }
             games.put(grec.gameId, grec);
@@ -213,12 +207,18 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<GameInfo> loadGameGenre (GameGenre genre, String query)
+    public List<GameInfo> loadGameGenre (ArcadeData.Portal portal, GameGenre genre, String query)
         throws ServiceException
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        Set<Integer> filter = portal.isFiltered() ?
+            Sets.newHashSet(Lists.transform(_mgameRepo.loadArcadeEntries(portal, true),
+                ArcadeEntryRecord.TO_GAME_ID)) : null;
         List<GameInfo> infos = Lists.newArrayList();
         for (GameInfoRecord grec : _mgameRepo.loadGenre(genre, -1, query)) {
+            if (filter != null && filter.contains(grec.gameId)) {
+                continue;
+            }
             infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
         }
         return infos;
@@ -700,9 +700,8 @@ public class GameServlet extends MsoyServiceServlet
         requireSupportUser();
         ArrayIntSet entryIds = new ArrayIntSet();
         // this is only used for editing, so bypass the cache
-        for (ArcadeEntryRecord rec : _mgameRepo.loadArcadeEntries(page, false)) {
-            entryIds.add(rec.gameId);
-        }
+        entryIds.addAll(Lists.transform(_mgameRepo.loadArcadeEntries(page, false),
+            ArcadeEntryRecord.TO_GAME_ID));
         return entryIds.toIntArray();
     }
 

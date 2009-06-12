@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -24,7 +25,8 @@ import client.util.ServiceUtil;
  */
 public class GameGenrePanel extends SortedGameListPanel
 {
-    public GameGenrePanel (GameGenre genre, final GameInfo.Sort sort, String query)
+    public GameGenrePanel (ArcadeData.Portal portal, GameGenre genre, final GameInfo.Sort sort,
+        String query)
     {
         super(sort);
         _genre = genre;
@@ -36,10 +38,10 @@ public class GameGenrePanel extends SortedGameListPanel
         } else {
             titleText = _msgs.genreAllGames();
         }
-        add(_header = new GameHeaderPanel(titleText, genre, sort));
+        add(_header = new GameHeaderPanel(portal, titleText, genre, sort));
         _header.setQuery(query);
 
-        _gamesvc.loadGameGenre(genre, query, new InfoCallback<List<GameInfo>>() {
+        _gamesvc.loadGameGenre(portal, genre, query, new InfoCallback<List<GameInfo>>() {
             public void onSuccess (List<GameInfo> games) {
                 Collections.sort(games, GameInfo.Sort.BY_NAME.comparator);
                 _header.initWithInfos(games); // set the dropdown list of all games

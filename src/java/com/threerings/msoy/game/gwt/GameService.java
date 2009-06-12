@@ -76,7 +76,7 @@ public interface GameService extends RemoteService
     /**
      * Loads up information on the specified game genre.
      */
-    List<GameInfo> loadGameGenre (GameGenre genre, String query)
+    List<GameInfo> loadGameGenre (ArcadeData.Portal portal, GameGenre genre, String query)
         throws ServiceException;
 
     /**
