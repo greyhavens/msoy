@@ -31,11 +31,11 @@ import client.util.ServiceUtil;
  */
 public class ArcadePanel extends FlowPanel
 {
-    public ArcadePanel ()
+    public ArcadePanel (ArcadeData.Portal portal)
     {
         setStyleName("arcade");
         add(MsoyUI.createNowLoading());
-        _gamesvc.loadArcadeData(ArcadeData.Portal.MAIN, new PageCallback<ArcadeData>(this) {
+        _gamesvc.loadArcadeData(portal, new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }

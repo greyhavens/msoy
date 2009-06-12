@@ -154,10 +154,11 @@ public class FacebookServlet extends HttpServlet
 
             // and send them to the appropriate page
             if (info.gameId != 0) {
-                String action = info.chromeless ? "pc" : "p";
-                rsp.sendRedirect("/#" + Pages.WORLD.makeToken("game", action, info.gameId));
+                // TODO: remove the chromeless member of AppInfo if we don't revert to using it
+                // again here
+                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
             } else {
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("fb"));
+                rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
             }
 
         } catch (ServiceException se) {

@@ -12,6 +12,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
+import client.shell.CShell;
 import client.shell.Page;
 
 /**
@@ -62,9 +63,6 @@ public class GamesPage extends Page
             }
             panel.setGame(args.get(1, 0), args.get(2, 0));
 
-        } else if (action.equals("fb")) {
-            setContent(new FBArcadePanel());
-
         } else if (action.equals("ea")) {
             setContent(new EditArcadePanel());
 
@@ -73,8 +71,12 @@ public class GamesPage extends Page
             setContent(new AddArcadeEntriesPanel(ArcadeData.Portal.fromByte(portal),
                 GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
+        } else if (action.equals("p")) { // portal
+            setContent(new ArcadePanel(ArcadeData.Portal.valueOf(args.get(1, ""))));
+
         } else {
-            setContent(new ArcadePanel());
+            setContent(new ArcadePanel(
+                CShell.isFacebook() ? ArcadeData.Portal.FACEBOOK : ArcadeData.Portal.MAIN));
         }
     }
 
