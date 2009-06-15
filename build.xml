@@ -1207,7 +1207,6 @@
         <file name="msoy"/>
         <file name="msoyrespawn"/>
         <file name="runmsoy"/>
-        <file name="rungame"/>
         <file name="runpolicy"/>
       </filelist>
     </copyfilelist>
