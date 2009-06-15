@@ -202,7 +202,7 @@
   vertical-align: bottom;
 }
 
-.pageTitle .SubNavi .BookmarkTip {
+.BookmarkTip {
   background: url(/images/facebook/bookmarktip.png) no-repeat top center;
   width: 402px;
   height: 145px;
