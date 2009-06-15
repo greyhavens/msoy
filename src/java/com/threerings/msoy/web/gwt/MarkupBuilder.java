@@ -30,7 +30,7 @@ public class MarkupBuilder
     /**
      * Open up a tag with the given name and attributes.
      */
-    public MarkupBuilder open (String name, Object ... kvPairs)
+    public MarkupBuilder open (String name, String ... kvPairs)
     {
         startContent();
         _tagcontents.add(0);
@@ -55,7 +55,7 @@ public class MarkupBuilder
 
     /**
      * Append an empty string to the currently open tag. This is useful to force a script tag to
-     * use the explicit close form instead of <script/>.
+     * use the explicit close form instead of &lt;script/&gt;.
      */
     public MarkupBuilder append ()
     {
