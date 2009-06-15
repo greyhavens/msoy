@@ -16,6 +16,7 @@ import com.samskivert.util.Lifecycle;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
+import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.server.ReportManager;
 
 import com.threerings.whirled.server.WhirledServer;
@@ -85,9 +86,6 @@ public abstract class MsoyBaseServer extends WhirledServer
         // start the batch invoker thread
         _batchInvoker.start();
 
-        // set up our default object access controller
-        _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
-
         // set up the right client factories
         configSessionFactory();
 
@@ -100,6 +98,12 @@ public abstract class MsoyBaseServer extends WhirledServer
      * Derived classes need to override this and configure their main client factory.
      */
     protected abstract void configSessionFactory ();
+
+    @Override // from PresentsServer
+    protected AccessController createDefaultObjectAccessController ()
+    {
+        return MsoyObjectAccess.DEFAULT;
+    }
 
     @Override // from PresentsServer
     protected void invokerDidShutdown ()
