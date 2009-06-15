@@ -258,7 +258,9 @@ public abstract class Page
      */
     public void setContent (String title, Widget content)
     {
-        CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
+        if (isTitlePage()) {
+            CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
+        }
 
         RootPanel contentDiv = RootPanel.get();
         if (_content != null) {
@@ -336,6 +338,15 @@ public abstract class Page
         if (event != null) {
             FlashEvents.internalDispatchEvent(event);
         }
+    }
+
+    /**
+     * Return true if this page is featured centrally and therefore controls the title shown in the
+     * navigation bar (and the browser tab but that's not relevant).
+     */
+    protected boolean isTitlePage ()
+    {
+        return true;
     }
 
     /**
