@@ -12,7 +12,6 @@ ehcache_config = etc/ehcache.xml
 # Indicates which log4j configuration file to use.
 
 log4j_config = etc/log4j.properties
-log4j_game_config = etc/log4j-game.properties
 log4j_bureau_config = etc/log4j-bureaulauncher.properties
 
 #

@@ -291,7 +291,6 @@
 
     <!-- copy a few configuration files into place -->
     <copy todir="${deploy.dir}" file="${basedir}/etc/logging.properties"/>
-    <copy tofile="${deploy.dir}/log4j-game.properties" file="${basedir}/${log4j_game_config}"/>
     <copy tofile="${deploy.dir}/log4j.properties" file="${basedir}/${log4j_config}"/>
     <copy tofile="${deploy.dir}/log4j-bureaulauncher.properties"
           file="${basedir}/${log4j_bureau_config}"/>
