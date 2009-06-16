@@ -30,7 +30,7 @@ public class FramedLayout extends Layout
         closeContent(false);
         content.setWidth("100%");
 
-        int avail = Window.getClientHeight();
+        int avail = Window.getClientHeight() - getReservedHeight();
         if (bar != null) {
             avail -= FRAMED_NAVI_HEIGHT;
             bar.makeFramed();
@@ -100,6 +100,15 @@ public class FramedLayout extends Layout
         RootPanel.get(PAGE).add(_client = new SimplePanel());
         RootPanel.get(PAGE).add(_bar = new SimplePanel());
         RootPanel.get(PAGE).add(_content = new SimplePanel());
+    }
+
+    /**
+     * Gives the number of vertical pixels to save for facebook, oh I mean subclass, page
+     * additions.
+     */
+    protected int getReservedHeight ()
+    {
+        return 0;
     }
 
     protected SimplePanel _client, _bar, _content;
