@@ -1,0 +1,16 @@
+/**
+ * $Id$
+ */
+
+.helloWhirled {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  margin: 10px;
+  padding: 10px;
+  text-align: left;
+  background: #3b5998;
+  font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+  width :100%;
+}
+

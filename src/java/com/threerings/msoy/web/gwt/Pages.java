@@ -30,7 +30,8 @@ public enum Pages
     SWIFTLY(null), // TODO: Tabs.CREATE
     GROUPS(Tabs.GROUPS),
     ISSUES(Tabs.GROUPS),
-    WORLD(null);
+    WORLD(null),
+    FACEBOOK(null);
 
     /**
      * Extracts and returns the page from the supplied history token. Does not return null.

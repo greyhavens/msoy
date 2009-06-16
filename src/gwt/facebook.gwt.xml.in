@@ -1,0 +1,7 @@
+<module>
+  <inherits name="global"/>
+  <source path="client/facebook"/>
+  <public path="public/facebook"/>
+  <stylesheet src="facebook.css"/>
+  <entry-point class="client.facebook.FacebookPage"/>
+</module>
