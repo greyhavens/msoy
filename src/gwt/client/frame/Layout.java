@@ -8,6 +8,8 @@ import client.shell.Frame;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 /**
  * Handles the layout of our various frame elements (header, content, client).
  */
@@ -28,12 +30,17 @@ public abstract class Layout
      */
     public static Layout getLayout (FrameHeader header, String embedCookie, ClickHandler onGoHome)
     {
-        Layout layout;
+        Layout layout = null;
         Frame.Embedding embedding = Frame.Embedding.NONE;
         if (isFramed()) {
-            layout = new FramedLayout();
             if ("fb".equals(embedCookie)) {
                 embedding = Frame.Embedding.FACEBOOK;
+                if (DeploymentConfig.devDeployment) {
+                    layout = new FacebookLayout();
+                }
+            }
+            if (layout == null) {
+                layout = new FramedLayout();
             }
         } else {
             layout = new StandardLayout();
