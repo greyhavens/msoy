@@ -14,6 +14,17 @@
 }
 
 /* ------------------------------------
+   Global popups
+   TODO: move elsewhere to reduce clutter
+-------------------------------------*/
+
+.fbBookmarkTip {
+  background: url(/images/facebook/bookmarktip.png) no-repeat top center;
+  width: 402px;
+  height: 145px;
+}
+
+/* ------------------------------------
    HEADER
 -------------------------------------*/
 
@@ -205,12 +216,6 @@
 .pageTitle .SubNavi img, .pageTitle .SubNavi div {
   display: inline;
   vertical-align: bottom;
-}
-
-.BookmarkTip {
-  background: url(/images/facebook/bookmarktip.png) no-repeat top center;
-  width: 402px;
-  height: 145px;
 }
 
 .pageTitle .Close {

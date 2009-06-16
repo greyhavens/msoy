@@ -68,7 +68,7 @@ public class SubNaviPanel extends FlowPanel
             boolean facebook = CShell.isFacebook();
             addLink(null, "Games", Pages.GAMES);
             if (facebook) {
-                addTipper("Bookmark", _msgs.subNavBookmarkTip(), "BookmarkTip");
+                addTipper("Bookmark", _msgs.subNavBookmarkTip(), "fbBookmarkTip");
             }
             if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
