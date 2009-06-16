@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.facebook;
 
 import client.shell.CShell;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.facebook;
 
 import com.google.gwt.dom.client.Document;
