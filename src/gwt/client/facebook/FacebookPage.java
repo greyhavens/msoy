@@ -3,14 +3,11 @@
 
 package client.facebook;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
-import client.shell.CShell;
 import client.shell.Page;
 
 /**
@@ -18,34 +15,24 @@ import client.shell.Page;
  */
 public class FacebookPage extends Page
 {
-    /**
-     * Reparses the whole DOM tree looking for fbml elements.
-     * TODO: take an element id, parsing the whole tree is expensive
-     */
-    public static void reparseXFBML ()
-    {
-        CShell.log("Reparsing XFBML");
-        nreparseXFBML();
-    }
-
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
         if (action.equals("")) {
-            // hello whirled
-            FlowPanel panel = new FlowPanel();
-            panel.add(MsoyUI.createLabel("Hello Whirled", "helloWhirled"));
+            ServerFBMLPanel fbml = new ServerFBMLPanel();
+            fbml.add(MsoyUI.createLabel("Table with nested fb:name:", null));
+            SmartTable test = new SmartTable(10, 10);
+            test.setWidget(0, 0, new FBMLPanel("name", "uid", "507435487")); // Shanti
+            test.setWidget(0, 1, new FBMLPanel("name", "uid", "540615819")); // Michael
+            test.setWidget(1, 0, new FBMLPanel("name", "uid", "553328385")); // Jamie
+            test.setWidget(1, 1, new FBMLPanel("name", "uid", "532587813")); // Daniel
+            fbml.add(test);
+            setContent("FBML Test", fbml);
+            fbml.reparse();
 
-            // Shanti's user name
-            MarkupBuilder bldr = new MarkupBuilder();
-            bldr.open("fb:serverfbml").open("script", "type", "text/fbml").open("fb:fbml");
-            //bldr.open("fb:add-section-button", "section", "profile").append();
-            bldr.open("fb:name", "uid", String.valueOf(507435487)).append();
-            panel.add(MsoyUI.createHTML(bldr.finish(), null));
-    
-            setContent("Hello Whirled", panel);
-            reparseXFBML();
+        } else if (action.equals("invite")) {
+            
         }
     }
 
@@ -60,14 +47,4 @@ public class FacebookPage extends Page
     {
         return false;
     }
-
-    protected static native void nreparseXFBML () /*-{
-        try {
-            $wnd.FB_ParseXFBML();
-        } catch (e) {
-            if ($wnd.console) {
-                $wnd.console.log("Failed to reparse XFBML [error=" + e + "]");
-            }
-        }
-    }-*/;
 }
