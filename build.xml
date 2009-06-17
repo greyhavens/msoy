@@ -232,7 +232,7 @@
       <include name="advanced-components-1.4.1.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
       <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
-      <include name="threerings-0.0-SNAPSHOT.jar"/>
+      <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
       <include name="gwt-dnd.jar"/>
     </fileset>
     <pathelement location="${src.dir}"/>
