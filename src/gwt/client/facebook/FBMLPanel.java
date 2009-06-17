@@ -3,9 +3,12 @@
 
 package client.facebook;
 
+import client.shell.CShell;
+
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Panel for emulating FBML tags. Functions like a regular flow panel, but uses a <code>fb</code>
@@ -20,6 +23,17 @@ public class FBMLPanel extends FlowPanel
 {
     /** The namespace of all facebook markup. */
     public static final String NAMESPACE = "fb:";
+
+    /**
+     * Tells Facebook to reparse our DOM tree and instantiate FBML elements beneath the given
+     * ancestor.
+     */
+    public static void reparse (Widget ancestor)
+    {
+        // TODO: use widget.getElement().getId(), set it if null
+        CShell.log("Reparsing XFBML", "id", ancestor.getElement().getId());
+        nreparse();
+    }
 
     /**
      * Creates a new fb panel using the given tag and optional attributes. The tag will
@@ -53,4 +67,14 @@ public class FBMLPanel extends FlowPanel
     {
         getElement().setId(id);
     }
+
+    public  static native void nreparse () /*-{
+        try {
+            $wnd.FB_ParseXFBML();
+        } catch (e) {
+            if ($wnd.console) {
+                $wnd.console.log("Failed to reparse XFBML [error=" + e + "]");
+            }
+        }
+    }-*/;
 }

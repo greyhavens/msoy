@@ -3,16 +3,16 @@
 
 package client.facebook;
 
-import client.shell.CShell;
-
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Wraps web content containing FBML code in a <code>fb:serverfbml</code> panel, for use within a
- * Facebook iframed application. Once all FBML code is nested or after something changes, call
- * {@link #reparse} to tell Facebook to reparse the DOM tree and load up the new fbml code.
+ * Facebook iframed application. Normally, this is only necessary for non-XFBML tags, i.e. tags
+ * that take input from the user like <code>fb:request-form</code>. Once all FBML code is nested
+ * call {@link #render}. This will do the jiggery-pokery necessary to wrap the interior in a script
+ * tag and tell Facebook to reparse the DOM tree and load up the new fbml code.
  */
 public class ServerFBMLPanel extends Composite
 {
@@ -24,6 +24,19 @@ public class ServerFBMLPanel extends Composite
         _panel = new FBMLPanel("serverfbml");
         _panel.setId(HTMLPanel.createUniqueId());
         initWidget(_panel);
+    }
+
+    /**
+     * Once all descendants are in place, does the inner html hackery to get everything into an
+     * fbml script tag.
+     */
+    public void render ()
+    {
+        String fbmlCode = getElement().getInnerHTML();
+        _panel.clear();
+        getElement().setInnerHTML("<script type=\"text/fbml\"><fb:fbml>" +
+            fbmlCode + "</fb:fbml></script>");
+        FBMLPanel.reparse(_panel);
     }
 
     /**
@@ -41,26 +54,6 @@ public class ServerFBMLPanel extends Composite
     {
         _panel.remove(w);
     }
-
-    /**
-     * Tells Facebook to reparse our DOM tree and instantiate FML elements.
-     */
-    public void reparse ()
-    {
-        CShell.log("Reparsing XFBML");
-        // TODO: pass getElement().getId()
-        nreparse();
-    }
-
-    protected static native void nreparse () /*-{
-        try {
-            $wnd.FB_ParseXFBML();
-        } catch (e) {
-            if ($wnd.console) {
-                $wnd.console.log("Failed to reparse XFBML [error=" + e + "]");
-            }
-        }
-    }-*/;
 
     protected FBMLPanel _panel;
 }

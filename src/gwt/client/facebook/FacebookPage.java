@@ -3,6 +3,7 @@
 
 package client.facebook;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -20,7 +21,7 @@ public class FacebookPage extends Page
     {
         String action = args.get(0, "");
         if (action.equals("")) {
-            ServerFBMLPanel fbml = new ServerFBMLPanel();
+            FlowPanel fbml = new FlowPanel();
             fbml.add(MsoyUI.createLabel("Table with nested fb:name:", null));
             SmartTable test = new SmartTable(10, 10);
             test.setWidget(0, 0, new FBMLPanel("name", "uid", "507435487")); // Shanti
@@ -29,10 +30,10 @@ public class FacebookPage extends Page
             test.setWidget(1, 1, new FBMLPanel("name", "uid", "532587813")); // Daniel
             fbml.add(test);
             setContent("FBML Test", fbml);
-            fbml.reparse();
+            FBMLPanel.reparse(fbml);
 
         } else if (action.equals("invite")) {
-            
+            // TODO
         }
     }
 
