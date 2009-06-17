@@ -6,6 +6,8 @@ package client.util;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
