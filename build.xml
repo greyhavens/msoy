@@ -200,7 +200,7 @@
                   type="swc"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="threerings-gwt" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
                   type="swc"/>
