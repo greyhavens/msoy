@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
@@ -79,6 +80,9 @@ public class SubNaviPanel extends FlowPanel
             if (!facebook) {
                 addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
             }
+            if (facebook) {
+                addTopLink("Become A Fan", DeploymentConfig.facebookApplicationUrl);
+            }
             if (CShell.isSupport()) {
                 addLink(null, "Edit Arcades", Pages.GAMES, "ea");
             }
@@ -148,6 +152,12 @@ public class SubNaviPanel extends FlowPanel
     {
         addSeparator(true);
         add(MsoyUI.createTipper(link, tip, style));
+    }
+
+    public void addTopLink (String link, String url)
+    {
+        addSeparator(true);
+        add(Link.createTop(link, url));
     }
 
     public void addContextLink (String label, Pages page, Args args, int position)
