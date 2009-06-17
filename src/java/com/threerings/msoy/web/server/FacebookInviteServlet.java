@@ -26,6 +26,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MarkupBuilder;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -122,7 +123,7 @@ public class FacebookInviteServlet extends HttpServlet
         // javascript variables - squirted below and referenced by the static script INVITE_JS
         Map<String, String> vars = new ImmutableMap.Builder<String, String>()
             .put("gameId", String.valueOf(gameId))
-            .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, acceptPath))
+            .put("acceptPath", Pages.WORLD.makeFriendURL(memberId, Args.fromToken(acceptPath)))
             .put("acceptLabel", "Play " + gameName)
             .put("action", DeploymentConfig.serverURL + "fbinvite/done?gameId=" + gameId)
             .put("message", "I'm playing " + gameName + " on Whirled, join me!")
