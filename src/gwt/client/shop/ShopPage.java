@@ -7,6 +7,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -25,7 +27,6 @@ import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Handles the MetaSOY inventory application.

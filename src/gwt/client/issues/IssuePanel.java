@@ -9,11 +9,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
-
-import client.util.ServiceUtil;
 
 /**
  * Displays issues.

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -37,7 +38,6 @@ import client.ui.PromptPopup;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays the messages in a particular thread.

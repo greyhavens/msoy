@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -21,7 +23,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays the instructions for a game.

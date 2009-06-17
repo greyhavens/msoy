@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
@@ -41,7 +42,6 @@ import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Panel for inviting friends to come and play a game, usually issued by a game API call that

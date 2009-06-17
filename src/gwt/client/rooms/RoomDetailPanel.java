@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.GroupName;
@@ -33,7 +34,6 @@ import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays information about a room, allows commenting.

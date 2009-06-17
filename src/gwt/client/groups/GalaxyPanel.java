@@ -14,6 +14,7 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -27,7 +28,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that

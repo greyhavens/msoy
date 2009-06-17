@@ -8,12 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import client.shell.CShell;
-import client.shell.ShellMessages;
-import client.ui.BorderedDialog;
-import client.ui.MsoyUI;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,12 +17,18 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
 
 import com.threerings.msoy.web.gwt.EmailContact;
+
+import client.shell.CShell;
+import client.shell.ShellMessages;
+import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
 
 /**
  * Performs various and sundry tasks related to invitations. I.e. code pulled out of InvitePanel

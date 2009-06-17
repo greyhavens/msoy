@@ -5,11 +5,12 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.person.PlayerFeedPanel;
-import client.util.ServiceUtil;
 
 /**
  * Displays a member feed on the member's profile

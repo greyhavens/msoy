@@ -12,6 +12,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageAggregator;
 import com.threerings.msoy.person.gwt.MeService;
@@ -23,7 +25,6 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Display a News Feed of the activities your friends have been up to, for the Me page.

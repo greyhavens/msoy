@@ -3,19 +3,13 @@
 
 package client.person;
 
-import client.shell.CShell;
-import client.ui.ClickBox;
-import client.ui.MsoyUI;
-import client.util.Link;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.Gallery;
@@ -23,6 +17,12 @@ import com.threerings.msoy.person.gwt.GalleryListData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.shell.CShell;
+import client.ui.ClickBox;
+import client.ui.MsoyUI;
+import client.util.Link;
+import client.util.InfoCallback;
 
 /**
  * Displays all of a member's galleries.

@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Friendship;
 
@@ -20,7 +21,6 @@ import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * An email list panel customized for sending Whirled invitations.

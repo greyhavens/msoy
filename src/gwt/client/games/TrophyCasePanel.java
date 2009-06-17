@@ -6,6 +6,8 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.TrophyCase;
@@ -16,7 +18,6 @@ import client.trophy.TrophyGrid;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays all trophies owned by the specified player.

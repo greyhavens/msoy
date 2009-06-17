@@ -12,12 +12,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.ServiceUtil;
 
 /**
  * Fetches and displays the tag cloud for a given item type.

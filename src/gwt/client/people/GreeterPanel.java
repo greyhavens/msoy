@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -18,7 +19,6 @@ import com.threerings.msoy.web.gwt.WebMemberService.FriendsResult;
 
 import client.ui.HeaderBox;
 import client.util.ServiceBackedDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Displays all of the greeters online.

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameService;
@@ -19,7 +20,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays top-rankings for a particular game.

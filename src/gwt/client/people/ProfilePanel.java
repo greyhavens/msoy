@@ -7,12 +7,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.ServiceUtil;
 
 /**
  * Displays a member's profile.

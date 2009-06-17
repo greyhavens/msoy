@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -33,7 +34,6 @@ import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.ClickCallback;
-import client.util.ServiceUtil;
 import client.util.Link;
 
 /**

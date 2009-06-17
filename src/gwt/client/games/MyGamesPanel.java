@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -20,7 +22,6 @@ import client.game.PlayButton;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays the games created by the caller.

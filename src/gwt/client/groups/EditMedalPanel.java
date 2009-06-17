@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -29,7 +31,6 @@ import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
 public class EditMedalPanel extends FlexTable

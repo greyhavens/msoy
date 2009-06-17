@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.mail.gwt.Conversation;
@@ -34,7 +35,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays the main interface for mail.

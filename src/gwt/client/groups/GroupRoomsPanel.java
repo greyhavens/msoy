@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -27,7 +28,6 @@ import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import client.room.RoomWidget;
 import client.ui.TongueBox;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays the rooms of a particular Group.

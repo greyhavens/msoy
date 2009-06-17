@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -25,7 +26,6 @@ import client.shell.CShell;
 import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
-import client.util.ServiceUtil;
 
 /**
  * Displays the trophies.

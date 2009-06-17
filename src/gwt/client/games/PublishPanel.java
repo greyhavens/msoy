@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameCode;
@@ -17,7 +18,6 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays an interface for publishing development code to production code.

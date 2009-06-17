@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -40,7 +41,6 @@ import client.ui.Rating;
 import client.ui.ThumbBox;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays detail information on a particular game.

@@ -6,6 +6,7 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.Friendship;
@@ -18,7 +19,6 @@ import client.shell.CShell;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays all of a member's friends. Allows a member to edit their friends list.

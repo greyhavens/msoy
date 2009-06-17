@@ -7,13 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import client.ui.DateFields;
-import client.ui.MsoyUI;
-import client.util.ArrayUtil;
-import client.util.ClickCallback;
-import client.util.Link;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -32,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.web.gwt.Args;
@@ -42,6 +36,12 @@ import com.threerings.msoy.survey.gwt.SurveyMetaData;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
+
+import client.ui.DateFields;
+import client.ui.MsoyUI;
+import client.util.ArrayUtil;
+import client.util.ClickCallback;
+import client.util.Link;
 
 /**
  * Manages the editing of surveys and their questions.

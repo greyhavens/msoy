@@ -25,6 +25,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -38,7 +40,6 @@ import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * User interface for editing arcade portal pages.

@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.GameItem;
@@ -39,7 +40,6 @@ import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.NaviUtil;
-import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;

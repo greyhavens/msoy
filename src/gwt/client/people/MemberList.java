@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Friendship;
 
@@ -23,7 +24,6 @@ import client.shell.CShell;
 
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays a list of members.

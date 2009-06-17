@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.ArcadeData;
@@ -24,7 +25,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.PageCallback;
-import client.util.ServiceUtil;
 
 /**
  * Main game display.

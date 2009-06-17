@@ -1,11 +1,7 @@
-package client.account;
+//
+// $Id4
 
-import client.shell.CShell;
-import client.ui.MsoyUI;
-import client.util.ClickCallback;
-import client.util.Link;
-import client.util.ServiceUtil;
-import client.util.TextBoxUtil;
+package client.account;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -13,10 +9,19 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
+
+import client.shell.CShell;
+import client.ui.MsoyUI;
+import client.util.ClickCallback;
+import client.util.Link;
+import client.util.TextBoxUtil;
 
 /**
  * Page shown to the user after they request to delete their account and follow a confirmation

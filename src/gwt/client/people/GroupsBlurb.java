@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -22,7 +23,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays a list of the groups of which a person is a member.

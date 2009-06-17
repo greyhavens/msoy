@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -16,7 +17,6 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 public class MuteList extends MemberList
 {

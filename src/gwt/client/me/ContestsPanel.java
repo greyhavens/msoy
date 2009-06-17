@@ -10,7 +10,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -20,7 +22,6 @@ import client.ui.ContestBox;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Page displaying a list of official Whirled contests past and present.

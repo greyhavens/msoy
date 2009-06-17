@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
@@ -33,7 +34,6 @@ import client.ui.MsoyUI;
 import client.ui.SafeHTML;
 import client.util.InfoCallback;
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Displays comments on a particular entity and allows posting.

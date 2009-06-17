@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.IdentGameItem;
@@ -30,7 +31,6 @@ import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.NaviUtil;
-import client.util.ServiceUtil;
 
 /**
  * An interface for buying a CatalogListing. Doesn't display anything but functional buy buttons.

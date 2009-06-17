@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.CoinAwards;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -33,7 +34,6 @@ import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 import client.util.events.NameChangeEvent;
 

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -21,7 +22,6 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
 import com.threerings.msoy.web.gwt.Args;
 
-import client.util.ServiceUtil;
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;

@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.gwt.ItemService;
@@ -15,7 +16,6 @@ import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.util.ServiceBackedDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Provides a data model for a PagedGrid backed by a persistent item list. The item list is accessed

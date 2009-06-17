@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -28,7 +29,6 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays a member's interests and other random bits.

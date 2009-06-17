@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.Group;
@@ -32,7 +33,6 @@ import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.InfoCallback;
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Displays the members of a particular Group. Allows managers to manage ranks and membership.

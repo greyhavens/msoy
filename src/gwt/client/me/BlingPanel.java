@@ -20,6 +20,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
@@ -34,7 +36,6 @@ import client.ui.NumberTextBox;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.util.StringUtil;
 import client.util.TextBoxUtil;
 import client.util.events.StatusChangeEvent;

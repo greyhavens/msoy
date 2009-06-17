@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -16,7 +17,6 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import client.shell.CShell;
 import client.ui.HeaderBox;
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Displays a member's mutelist.

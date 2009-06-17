@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
@@ -19,7 +20,6 @@ import client.room.RoomWidget;
 import client.shell.CShell;
 import client.ui.TongueBox;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays this member's rooms.

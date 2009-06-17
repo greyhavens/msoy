@@ -6,21 +6,18 @@ package client.me;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.gwt.ui.PagedGrid;
-
 import com.threerings.msoy.badge.data.all.Badge;
-
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * A test page for making sure that the names and images for all badges defined on the server

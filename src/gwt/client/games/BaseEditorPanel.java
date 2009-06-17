@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
@@ -28,7 +30,6 @@ import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
 import client.util.MediaUtil;
-import client.util.ServiceUtil;
 
 /**
  * A base class for game editor panels.

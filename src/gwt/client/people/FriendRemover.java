@@ -3,16 +3,18 @@
 
 package client.people;
 
-import client.ui.MsoyUI;
-import client.ui.PromptPopup;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+
+import client.ui.MsoyUI;
+import client.ui.PromptPopup;
+import client.util.InfoCallback;
 
 /**
  * Click listener that removes a friend.

@@ -10,12 +10,13 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Various data models used by the issue services.

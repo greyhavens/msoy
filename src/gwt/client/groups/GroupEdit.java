@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.all.Group;
@@ -46,7 +47,6 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -29,7 +30,6 @@ import client.ui.PromotionBox;
 import client.ui.RoundBox;
 import client.util.Link;
 import client.util.PageCallback;
-import client.util.ServiceUtil;
 
 public class MyWhirled extends FlowPanel
 {

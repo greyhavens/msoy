@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -23,7 +24,6 @@ import client.room.SceneUtil;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Winning rooms of the Design Your Whirled contest, excluding the first DeviantArt contest.

@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -33,7 +34,6 @@ import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 public class AwardMedalsPanel extends FlowPanel
 {

@@ -3,14 +3,6 @@
 
 package client.person;
 
-import client.shell.CShell;
-import client.ui.MsoyUI;
-import client.util.ClickCallback;
-import client.util.Link;
-import client.util.MediaUtil;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,6 +13,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.ui.InlinePanel;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -28,6 +22,13 @@ import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.shell.CShell;
+import client.ui.MsoyUI;
+import client.util.ClickCallback;
+import client.util.Link;
+import client.util.MediaUtil;
+import client.util.InfoCallback;
 
 /**
  * A read-only view of the photos in a gallery. Also handles profile galleries which are special

@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -32,7 +33,6 @@ import client.util.ClickCallback;
 import client.util.Link;
 import client.util.InfoCallback;
 import client.util.NaviUtil;
-import client.util.ServiceUtil;
 import client.util.StringUtil;
 
 /**

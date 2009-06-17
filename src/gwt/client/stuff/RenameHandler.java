@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -19,7 +21,6 @@ import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays a dialog that handles renaming of a cloned item.

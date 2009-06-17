@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
@@ -17,7 +19,6 @@ import com.threerings.msoy.item.gwt.MemberItemInfo;
 
 import client.images.misc.MiscImages;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 public class FavoriteIndicator extends FlowPanel
 {

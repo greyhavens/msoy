@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Friendship;
 
@@ -19,7 +20,6 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays a friend invitation.

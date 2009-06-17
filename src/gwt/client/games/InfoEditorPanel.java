@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -24,7 +26,6 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Allows for creation and editing of basic game info.

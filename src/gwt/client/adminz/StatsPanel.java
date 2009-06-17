@@ -24,13 +24,14 @@ import com.google.gwt.gen2.table.client.ScrollTable;
 import com.google.gwt.gen2.table.client.SortableGrid;
 import com.google.gwt.gen2.table.client.TableModelHelper.ColumnSortList;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.StatsModel;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays server statistics.

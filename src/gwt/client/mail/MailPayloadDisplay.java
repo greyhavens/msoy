@@ -7,12 +7,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
-
-import client.util.ServiceUtil;
 
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured with a

@@ -9,6 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ListenerList;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
@@ -17,7 +19,6 @@ import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
 import client.util.ServiceBackedDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Data model for the service backed balance sheet widget on the Transactions page.  This will load

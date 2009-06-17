@@ -6,10 +6,6 @@ package client.adminz;
 import java.util.HashSet;
 import java.util.Set;
 
-import client.ui.MsoyUI;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
@@ -21,9 +17,15 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ListBox;
+
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
+
+import client.ui.MsoyUI;
+import client.util.InfoCallback;
 
 /**
  * This panel displays the status of a Panopticon client.

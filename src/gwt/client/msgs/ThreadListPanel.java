@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.gwt.ForumService;
@@ -30,7 +31,6 @@ import client.ui.SearchBox;
 import client.util.ArrayUtil;
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 import client.util.StringUtil;
 
 /**

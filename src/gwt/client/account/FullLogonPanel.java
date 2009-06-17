@@ -8,6 +8,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -18,7 +20,6 @@ import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Extends the simple logon panel with external authentication stuffs. This version can only be

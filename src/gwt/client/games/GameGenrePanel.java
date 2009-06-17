@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -17,7 +19,6 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.InfoCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Displays games in a particular genre, or of all genres for the "All Games" page.

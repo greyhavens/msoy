@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
@@ -38,7 +39,6 @@ import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.RecaptchaUtil;
-import client.util.ServiceUtil;
 import client.util.StringUtil;
 
 /**

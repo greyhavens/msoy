@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
@@ -20,7 +21,6 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
-import client.util.ServiceUtil;
 
 /**
  * Displays an interface for creating a new thread.

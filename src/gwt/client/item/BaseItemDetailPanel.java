@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -41,7 +42,6 @@ import client.util.FlashClients;
 import client.util.Link;
 import client.util.InfoCallback;
 import client.util.NoopAsyncCallback;
-import client.util.ServiceUtil;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.

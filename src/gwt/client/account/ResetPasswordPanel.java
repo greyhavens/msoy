@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -23,7 +24,6 @@ import client.shell.CShell;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
 /**

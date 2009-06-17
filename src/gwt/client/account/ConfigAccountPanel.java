@@ -13,13 +13,14 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
-
-import com.threerings.gwt.ui.SmartTable;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
@@ -27,7 +28,6 @@ import client.ui.TongueBox;
 import client.util.Link;
 import client.util.InfoCallback;
 import client.util.NaviUtil;
-import client.util.ServiceUtil;
 import client.util.TextBoxUtil;
 
 /**

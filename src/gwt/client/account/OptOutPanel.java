@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
@@ -22,7 +23,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 public class OptOutPanel extends SmartTable
 {

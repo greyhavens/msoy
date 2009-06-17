@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -28,7 +29,6 @@ import client.ui.MsoyUI;
 import client.util.InfoCallback;
 import client.util.Link;
 import client.util.MediaUtil;
-import client.util.ServiceUtil;
 import client.shell.DynamicLookup;
 
 /**

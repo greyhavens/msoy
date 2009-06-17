@@ -8,17 +8,18 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import client.shell.CShell;
-import client.util.ServiceBackedDataModel;
-import client.util.ServiceUtil;
-import client.util.events.FlashEvents;
-import client.util.events.StatusChangeEvent;
-import client.util.events.StatusChangeListener;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
+
+import client.shell.CShell;
+import client.util.ServiceBackedDataModel;
+import client.util.events.FlashEvents;
+import client.util.events.StatusChangeEvent;
+import client.util.events.StatusChangeListener;
 
 /**
  * A data model that provides a member's conversations.

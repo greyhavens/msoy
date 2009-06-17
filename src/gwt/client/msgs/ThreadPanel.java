@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -35,7 +36,6 @@ import client.ui.SearchBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays a thread header and either its messages or a post creation or editing panel.

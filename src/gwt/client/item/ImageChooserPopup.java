@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -33,7 +34,6 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
 import client.util.MediaUtil;
-import client.util.ServiceUtil;
 
 /**
  * Allows a member to select an image from their inventory. In the future, will support fancy

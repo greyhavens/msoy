@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.LaunchConfig;
@@ -51,7 +52,6 @@ import client.util.FlashVersion;
 import client.util.Link;
 import client.util.InfoCallback;
 import client.util.NoopAsyncCallback;
-import client.util.ServiceUtil;
 import client.util.StringUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;

@@ -10,6 +10,9 @@ import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
+
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.item.data.all.GameItem;
 import com.threerings.msoy.item.data.all.IdentGameItem;
 import com.threerings.msoy.item.data.all.Item;
@@ -30,7 +33,6 @@ import client.shell.Page;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Handles the MetaSOY inventory application.

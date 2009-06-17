@@ -5,11 +5,12 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 
 import client.ui.DataPanel;
-import client.util.ServiceUtil;
 
 /**
  * A panel that displays some data after loading.

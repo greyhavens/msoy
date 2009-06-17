@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -35,7 +36,6 @@ import client.ui.ThumbBox;
 
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.ServiceUtil;
 import client.util.InfoCallback;
 
 /**

@@ -3,18 +3,20 @@
 
 package client.people;
 
-import client.shell.CShell;
-import client.ui.MsoyUI;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+
+import client.shell.CShell;
+import client.ui.MsoyUI;
 
 /**
  * Click listener that invites or adds a friend when clicked. First asks the server if the target

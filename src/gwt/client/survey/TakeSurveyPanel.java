@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.survey.gwt.Survey;
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
@@ -26,7 +27,6 @@ import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
-import client.util.ServiceUtil;
 
 public class TakeSurveyPanel extends VerticalPanel
 {

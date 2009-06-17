@@ -6,22 +6,6 @@ package client.person;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.dnd.DropListener;
-import client.dnd.DropModel;
-import client.dnd.DropPanel;
-import client.dnd.PayloadWidget;
-import client.dnd.SimpleDropModel;
-import client.shell.CShell;
-import client.ui.MsoyUI;
-import client.util.Link;
-import client.util.MediaUtil;
-import client.util.InfoCallback;
-import client.util.ServiceUtil;
-
-import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
-import com.allen_sauer.gwt.dnd.client.VetoDragException;
-import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -33,9 +17,16 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.allen_sauer.gwt.dnd.client.DragContext;
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.VetoDragException;
+import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
+
 import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
@@ -46,6 +37,17 @@ import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.dnd.DropListener;
+import client.dnd.DropModel;
+import client.dnd.DropPanel;
+import client.dnd.PayloadWidget;
+import client.dnd.SimpleDropModel;
+import client.shell.CShell;
+import client.ui.MsoyUI;
+import client.util.Link;
+import client.util.MediaUtil;
+import client.util.InfoCallback;
 
 /**
  * Allows a user to edit one of their galleries.

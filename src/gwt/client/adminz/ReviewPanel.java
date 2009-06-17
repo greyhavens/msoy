@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
@@ -31,7 +33,6 @@ import client.ui.RowPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 /**
  * An interface for dealing with flagged items: mark them mature if they were flagged thus,

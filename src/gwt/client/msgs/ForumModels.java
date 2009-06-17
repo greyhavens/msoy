@@ -11,6 +11,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ListenerList;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -22,7 +23,6 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import client.shell.CShell;
 import client.util.PagedServiceDataModel;
 import client.util.ServiceBackedDataModel;
-import client.util.ServiceUtil;
 
 /**
  * Various data models used by the forum services.

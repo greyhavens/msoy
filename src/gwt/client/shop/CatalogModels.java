@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.ChainedCallback;
 import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
@@ -23,7 +24,6 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.util.LazyDataModel;
-import client.util.ServiceUtil;
 import client.util.InfoCallback;
 
 /**

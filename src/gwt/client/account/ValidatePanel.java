@@ -6,6 +6,8 @@ package client.account;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
@@ -13,7 +15,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.PageCallback;
-import client.util.ServiceUtil;
 
 /**
  * Handles the account validation process.

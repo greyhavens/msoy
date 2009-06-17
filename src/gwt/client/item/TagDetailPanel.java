@@ -26,6 +26,7 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.TagCodes;
 
@@ -42,7 +43,6 @@ import client.ui.PopupMenu;
 import client.ui.PromptPopup;
 import client.ui.RowPanel;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 import client.shell.ShellMessages;
 
 /**

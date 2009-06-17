@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -17,7 +18,6 @@ import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.ui.HeaderBox;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 public class SearchPanel extends FlowPanel
 {

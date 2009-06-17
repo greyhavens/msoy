@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
@@ -40,7 +41,6 @@ import client.ui.ThumbBox;
 
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 import client.item.ItemMessages;
 import client.item.SideBar;

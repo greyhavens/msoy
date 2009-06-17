@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
@@ -23,7 +24,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays a side-by-side comparison of the caller's trophies in a particular game with another

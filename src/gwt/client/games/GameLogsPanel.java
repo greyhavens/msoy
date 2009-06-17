@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameService;
@@ -21,7 +22,6 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.ServiceUtil;
 
 /**
  * Displays the server-side logs for a particular game, if any.

@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -39,7 +40,6 @@ import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 public class MedalListPanel extends FlowPanel
 {

@@ -5,9 +5,7 @@ package client.support;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.underwire.gwt.SupportService;
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.AdminPanel;
@@ -20,11 +18,14 @@ import com.threerings.underwire.web.client.UnderwireServiceAsync;
 import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.data.AccountName;
 
+import com.threerings.msoy.underwire.gwt.SupportService;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+
 import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
-import client.util.ServiceUtil;
 
 public class SupportPage extends Page
 {

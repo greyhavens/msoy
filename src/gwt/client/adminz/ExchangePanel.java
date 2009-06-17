@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.ExchangeData;
 import com.threerings.msoy.money.data.all.ExchangeStatusData;
@@ -23,7 +24,6 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 import client.ui.MsoyUI;
 
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 public class ExchangePanel extends SmartTable
 {

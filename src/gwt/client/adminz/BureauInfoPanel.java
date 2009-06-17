@@ -11,23 +11,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import client.ui.MsoyUI;
-import client.util.ClickCallback;
-import client.util.Link;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.ui.MsoyUI;
+import client.util.ClickCallback;
+import client.util.Link;
 
 /**
  * Widget to display information about bureaus.

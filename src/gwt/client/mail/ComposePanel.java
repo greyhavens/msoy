@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -49,7 +50,6 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Provides an interface for starting a new conversation with another member.

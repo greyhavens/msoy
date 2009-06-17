@@ -17,6 +17,7 @@ import com.kisgergely.gwt.canvas.client.Canvas;
 import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
 
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameDistribs;
@@ -27,7 +28,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.ClickCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays the score distributions for a particular game.

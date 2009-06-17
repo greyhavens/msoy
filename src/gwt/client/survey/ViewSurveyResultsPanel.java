@@ -6,10 +6,6 @@ package client.survey;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.ui.MsoyUI;
-import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,11 +17,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.PagedResult;
+import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 import com.threerings.msoy.survey.gwt.SurveyService;
 import com.threerings.msoy.survey.gwt.SurveyServiceAsync;
 import com.threerings.msoy.survey.gwt.SurveyService.ResponseSummary;
 import com.threerings.msoy.survey.gwt.SurveyService.SubmissionSummary;
+
+import client.ui.MsoyUI;
+import client.util.PagedServiceDataModel;
 
 public class ViewSurveyResultsPanel extends VerticalPanel
 {

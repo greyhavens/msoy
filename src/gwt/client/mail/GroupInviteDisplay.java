@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
 import com.threerings.msoy.group.gwt.GroupService;
@@ -19,7 +20,6 @@ import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.InfoCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays a group invitation payload.
