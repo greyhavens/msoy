@@ -82,6 +82,7 @@ public class SubNaviPanel extends FlowPanel
             }
             if (facebook) {
                 addTopLink("Become A Fan", DeploymentConfig.facebookApplicationUrl);
+                addLink(null, "Invite Friends", Pages.FACEBOOK, "invite");
             }
             if (CShell.isSupport()) {
                 addLink(null, "Edit Arcades", Pages.GAMES, "ea");
