@@ -8,6 +8,7 @@ import client.shell.CShell;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -25,14 +26,16 @@ public class FBMLPanel extends FlowPanel
     public static final String NAMESPACE = "fb:";
 
     /**
-     * Tells Facebook to reparse our DOM tree and instantiate FBML elements beneath the given
-     * ancestor.
+     * Tells Facebook to reparse the DOM tree and instantiate FBML elements beneath an ancestor.
      */
     public static void reparse (Widget ancestor)
     {
-        // TODO: use widget.getElement().getId(), set it if null
-        CShell.log("Reparsing XFBML", "id", ancestor.getElement().getId());
-        nreparse();
+        String id = ancestor.getElement().getId();
+        if (id == null) {
+            ancestor.getElement().setId(id = HTMLPanel.createUniqueId());
+        }
+        CShell.log("Reparsing XFBML", "id", id);
+        nativeReparse(id);
     }
 
     /**
@@ -68,9 +71,17 @@ public class FBMLPanel extends FlowPanel
         getElement().setId(id);
     }
 
-    public  static native void nreparse () /*-{
+    /**
+     * Reparses this panel. See {@link #reparse(Widget)}.
+     */
+    public void reparse ()
+    {
+        reparse(this);
+    }
+
+    public static native void nativeReparse (String id) /*-{
         try {
-            $wnd.FB_ParseXFBML();
+            $wnd.FB_ParseXFBML(id);
         } catch (e) {
             if ($wnd.console) {
                 $wnd.console.log("Failed to reparse XFBML [error=" + e + "]");

@@ -30,8 +30,11 @@ window.FB_Logout = function() {
     FB.Connect.logout(null);
   });
 };
-window.FB_ParseXFBML = function () {
+window.FB_ParseXFBML = function (id) {
   FB_WithInit(function() {
-    FB.XFBML.Host.parseDomTree();
+    var elem = document.getElementById(id);
+    if (elem != null) {
+        FB.XFBML.Host.parseDomElement(elem);
+    }
   });
 }

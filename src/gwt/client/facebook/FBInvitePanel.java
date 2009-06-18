@@ -35,7 +35,6 @@ public class FBInvitePanel extends ServerFBMLPanel
             "actiontext", _msgs.inviteGenericTip(),
             "bypass", "cancel"));
         add(form);
-        render();
     }
 
     protected static String makeContent ()
