@@ -35,7 +35,9 @@ public abstract class Layout
         if (isFramed()) {
             if ("fb".equals(embedCookie)) {
                 embedding = Frame.Embedding.FACEBOOK;
-                if (DeploymentConfig.devDeployment) {
+                // TODO: the facebook layout doesn't work because it creates more than one Page
+                // instance; both of them using the same global history token causes problems
+                if (false && DeploymentConfig.devDeployment) {
                     layout = new FacebookLayout();
                 }
             }
