@@ -49,7 +49,7 @@ public class FacebookInviteServlet extends HttpServlet
                 return;
             }
 
-            if (req.getRequestURI().equals("/fbinvite/do")) {
+            if (req.getPathInfo().equals("/do")) {
                 String acceptPath = req.getParameter("path");
                 if (acceptPath == null) {
                     rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -78,8 +78,8 @@ public class FacebookInviteServlet extends HttpServlet
                 }
                 outputInvitePage(rsp, gameId, gameName, memberId, acceptPath);
 
-            } else if (req.getRequestURI().equals("/fbinvite/done")) {
-                logSentInvites(req, memberId);
+            } else if (req.getPathInfo().equals("/done")) {
+                logSentInvites(req, memberId, true);
                 outputCloseWindowPage(rsp);
 
             } else {
@@ -102,9 +102,13 @@ public class FacebookInviteServlet extends HttpServlet
             return;
         }
 
-        if (req.getRequestURI().equals("/fbinvite/done")) {
-            logSentInvites(req, memberId);
+        if (req.getPathInfo().equals("/done")) {
+            logSentInvites(req, memberId, true);
             outputCloseWindowPage(rsp);
+
+        } else if (req.getPathInfo().equals("/ndone")) {
+            logSentInvites(req, memberId, false);
+            rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
 
         } else {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -194,7 +198,7 @@ public class FacebookInviteServlet extends HttpServlet
         return member.memberId;
     }
 
-    protected void logSentInvites (HttpServletRequest req, int memberId)
+    protected void logSentInvites (HttpServletRequest req, int memberId, boolean isGame)
     {
         String ids = req.getParameter("ids[]");
         log.info("Facebook invite complete", "ids", ids, "method", req.getMethod());
@@ -205,10 +209,12 @@ public class FacebookInviteServlet extends HttpServlet
         }
 
         int gameId = 0;
-        try {
-            gameId = Integer.parseInt(req.getParameter("gameId"));
-        } catch (Exception e) {
-            log.warning("Failed to get game id of sent invites", e);
+        if (isGame) {
+            try {
+                gameId = Integer.parseInt(req.getParameter("gameId"));
+            } catch (Exception e) {
+                log.warning("Failed to get game id of sent invites", e);
+            }
         }
 
         // report an invite sent for each id

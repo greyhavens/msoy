@@ -22,7 +22,8 @@ public class FBInvitePanel extends ServerFBMLPanel
     public FBInvitePanel ()
     {
         FBMLPanel form = new FBMLPanel("request-form",
-            "action", DeploymentConfig.facebookCanvasUrl + "invite/done",
+            // TODO: give the fbinvite servlet enough information to go back to where we were
+            "action", DeploymentConfig.serverURL + "fbinvite/ndone",
             "method", "POST",
             "invite", "true",
             // Facebook ignores escapes in here, sanitize instead 
