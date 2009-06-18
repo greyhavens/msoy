@@ -75,7 +75,7 @@ public abstract class Layout
         _onGoHome = onGoHome;
     }
 
-    public native static boolean isFramed () /*-{
+    protected native static boolean isFramed () /*-{
         return $wnd.top != $wnd;
     }-*/;
 
