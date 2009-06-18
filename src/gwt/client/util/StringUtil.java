@@ -85,6 +85,39 @@ public class StringUtil
         return isBlank(value) ? defval : value;
     }
 
+    /**
+     * Escapes user or deployment values that we need to put into an html attribute.
+     */
+    public static String escapeAttribute (String value)
+    {
+        for (int ii = 0; ii < ATTR_ESCAPES.length; ++ii) {
+            value = value.replace(ATTR_ESCAPES[ii][0], ATTR_ESCAPES[ii][1]);
+        }
+        return value;
+    }
+
+    /**
+     * Nukes special attribute characters. Ideally this would not be needed, but some integrations
+     * do not accept special characters in attributes.
+     */
+    public static String sanitizeAttribute (String value)
+    {
+        for (int ii = 0; ii < ATTR_ESCAPES.length; ++ii) {
+            value = value.replace(ATTR_ESCAPES[ii][0], "");
+        }
+        return value;
+    }
+
+    /** Map of strings that must be replaced inside html attributes and their replacements. (They
+     * need to be applied in order so amps are not double escaped.) */
+    protected static final String[][] ATTR_ESCAPES = {
+        {"&", "&amp;"},
+        {"'", "&apos;"},
+        {"\"", "&quot;"},
+        {"<", "&lt;"},
+        {">", "&gt;"},
+    };
+
     /** Used by {@link #hexlate} and {@link #unhexlate}. */
     protected static final String XLATE = "0123456789abcdef";
 }
