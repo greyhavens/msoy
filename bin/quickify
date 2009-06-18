@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-my $usage = "Usage: $0 src/gwt/module.gwt.xml user_agent[,user_agent]\n";
+my $usage = "Usage: $0 src/gwt/module.gwt.xml user_agent\n";
 my $modfile = shift or die $usage;
 my $agent = shift or die $usage;
 
