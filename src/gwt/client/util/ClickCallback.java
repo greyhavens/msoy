@@ -3,13 +3,8 @@
 
 package client.util;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FocusWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
@@ -21,8 +16,7 @@ import client.ui.PromptPopup;
  * code. Be sure to call <code>super.onSuccess()</code> and <code>super.onFailure()</code> if you
  * override those methods so that they can automatically reenable the trigger button.
  */
-public abstract class ClickCallback<T>
-    implements AsyncCallback<T>
+public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCallback<T>
 {
     /**
      * Creates a callback for the supplied trigger (the constructor will automatically add this
@@ -42,48 +36,11 @@ public abstract class ClickCallback<T>
      */
     public ClickCallback (HasClickHandlers trigger, String confirmMessage)
     {
-        _trigger = trigger;
-        _clickreg = _trigger.addClickHandler(_onClick);
-        if (_trigger instanceof Label) {
-            // make sure to add our style, but don't doubly add it if it's already added
-            ((Label)_trigger).removeStyleName("actionLabel");
-            ((Label)_trigger).addStyleName("actionLabel");
-        }
+        super(trigger);
         _confirmMessage = confirmMessage;
     }
 
-    // from interface AsyncCallback
-    public void onSuccess (T result)
-    {
-        setEnabled(gotResult(result));
-    }
-
-    // from interface AsyncCallback
-    public void onFailure (Throwable cause)
-    {
-        CShell.log("Callback failure [for=" + _trigger + "]", cause);
-        setEnabled(true);
-        reportFailure(cause);
-    }
-
-    /**
-     * This method is called when the trigger button is clicked. Pass <code>this</code> as the
-     * {@link AsyncCallback} to a service method. Return true from this method if a service request
-     * was initiated and the button that triggered it should be disabled.
-     */
-    protected abstract boolean callService ();
-
-    /**
-     * This method will be called when the service returns successfully. Return true if the trigger
-     * should now be reenabled, false to leave it disabled.
-     */
-    protected abstract boolean gotResult (T result);
-
-    /**
-     * Reports a failure to the user. Derived classes can override this and customize the way
-     * failure is reported if they so desire (it is safe not to call super.reportFailure() in that
-     * case).
-     */
+    @Override // from ClickCallback
     protected void reportFailure (Throwable cause)
     {
         Widget errorNear = getErrorNear();
@@ -114,6 +71,12 @@ public abstract class ClickCallback<T>
         return CShell.serverError(cause);
     }
 
+    @Override // from ClickCallback
+    protected void takeAction ()
+    {
+        takeAction(false); // route action through our confirmation process
+    }
+
     protected void takeAction (boolean confirmed)
     {
         // if we have not yet confirmed and desire to do so, show the confirm popup
@@ -124,9 +87,7 @@ public abstract class ClickCallback<T>
         }
 
         // we're confirmed or don't want to, so go ahead and call the service
-        if (callService()) {
-            setEnabled(false);
-        }
+        super.takeAction();
     }
 
     protected void displayPopup ()
@@ -147,41 +108,10 @@ public abstract class ClickCallback<T>
         return _confirmMessage;
     }
 
-    protected void setEnabled (boolean enabled)
-    {
-        if (_trigger instanceof FocusWidget) {
-            ((FocusWidget)_trigger).setEnabled(enabled);
-
-        } else if (_trigger instanceof Label) {
-            Label tlabel = (Label)_trigger;
-            tlabel.removeStyleName("actionLabel");
-            if (enabled) {
-                tlabel.addStyleName("actionLabel");
-            }
-        }
-
-        // always remove first so that if we do end up adding, we don't doubly add
-        if (_clickreg != null) {
-            _clickreg.removeHandler();
-            _clickreg = null;
-        }
-        if (enabled) {
-            _clickreg = _trigger.addClickHandler(_onClick);
-        }
-    }
-
     protected Widget getErrorNear ()
     {
         return null;
     }
 
-    protected ClickHandler _onClick = new ClickHandler() {
-        public void onClick (ClickEvent event) {
-            takeAction(false);
-        }
-    };
-
-    protected HasClickHandlers _trigger;
-    protected HandlerRegistration _clickreg;
     protected String _confirmMessage;
 }
