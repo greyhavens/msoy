@@ -8,6 +8,8 @@ import java.util.MissingResourceException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
+import com.threerings.gwt.util.Console;
+
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -158,30 +160,12 @@ public class CShell
         }
     }
 
-    /** Reports a log message to the console. */
+    /**
+     * Reports a log message to the console.
+     */
     public static void log (String message, Object... args)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append(message);
-        if (args.length > 1) {
-            sb.append(" [");
-            for (int ii = 0, ll = args.length/2; ii < ll; ii++) {
-                if (ii > 0) {
-                    sb.append(", ");
-                }
-                sb.append(args[2*ii]).append("=").append(args[2*ii+1]);
-            }
-            sb.append("]");
-        }
-        Object error = (args.length % 2 == 1) ? args[args.length-1] : null;
-        if (GWT.isScript()) {
-            if (error != null) {
-                sb.append(": ").append(error);
-            }
-            consoleLog(sb.toString(), error);
-        } else {
-            GWT.log(sb.toString(), (Throwable)error);
-        }
+        Console.log(message, args); // pass the buck
     }
 
     /**
@@ -191,19 +175,6 @@ public class CShell
     {
         return frame.getEmbedding() == Frame.Embedding.FACEBOOK;
     }
-
-    /**
-     * Records a log message to the JavaScript console.
-     */
-    protected static native void consoleLog (String message, Object error) /*-{
-        if ($wnd.console) {
-            if (error != null) {
-                $wnd.console.info(message, error);
-            } else {
-                $wnd.console.info(message);
-            }
-        }
-    }-*/;
 
     protected static final ServerLookup _smsgs = GWT.create(ServerLookup.class);
 }
