@@ -44,6 +44,8 @@ public class SurveyRepository extends DepotRepository
             new SchemaMigration.Drop(3, "suveryId"));
         context.registerMigration(SurveyResponseRecord.class,
             new SchemaMigration.Retype(4, SurveyResponseRecord.RESPONSE));
+        context.registerMigration(SurveyQuestionRecord.class,
+            new SchemaMigration.Retype(3, SurveyQuestionRecord.DESCRIPTOR));
     }
 
     /**

@@ -28,6 +28,10 @@ public class SurveyQuestionRecord extends PersistentRecord
     public static final ColumnExp OPTIONAL = colexp(_R, "optional");
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 3;
+
     /** The id of the survey we belong to. */
     @Id public int surveyId;
 
@@ -41,14 +45,10 @@ public class SurveyQuestionRecord extends PersistentRecord
     public String text;
 
     /** The format of the expected reply, if applicable. */
-    @Column(nullable=true) public String descriptor;
+    @Column(nullable=true, length=4096) public String descriptor;
 
     /** Whether this question is required for a submission. */
     @Column(defaultValue="false") public boolean optional;
-
-    /** Increment this value if you modify the definition of this persistent object in a way that
-     * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
 
     /**
      * Converts to a runtime record.
