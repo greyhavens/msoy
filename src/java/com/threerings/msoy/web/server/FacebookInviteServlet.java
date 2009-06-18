@@ -82,6 +82,10 @@ public class FacebookInviteServlet extends HttpServlet
                 logSentInvites(req, memberId, true);
                 outputCloseWindowPage(rsp);
 
+            } else if (req.getPathInfo().equals("/ndone")) {
+                logSentInvites(req, memberId, false);
+                rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
+
             } else {
                 rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
