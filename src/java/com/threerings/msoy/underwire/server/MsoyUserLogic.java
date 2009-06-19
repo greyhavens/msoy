@@ -90,6 +90,12 @@ public class MsoyUserLogic extends SupportUserLogic
         }
     }
 
+    @Override // from SupportUserLogic
+    public boolean refreshSession (String sessionKey, int expireDays)
+    {
+        return _memberRepo.refreshSession(sessionKey, expireDays) != null;
+    }
+
     // from interface UserLogic
     public void updateEmail (Caller caller, String email)
         throws UnderwireException

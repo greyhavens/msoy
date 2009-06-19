@@ -124,22 +124,4 @@ public class MsoyOOOUserRepository extends DepotUserRepository
                 OOOUserRecord.EMAIL.eq(MemberRecord.ACCOUNT_NAME));
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
     }
-
-    // from SupportRepository
-    public OOOUser loadUserBySession (String sessionKey)
-    {
-        SQLOperator joinCondition = new And(
-                OOOUserRecord.USER_ID.eq(SessionRecord.MEMBER_ID),
-                SessionRecord.TOKEN.eq(sessionKey));
-        return toUser(load(OOOUserRecord.class, new Join(SessionRecord.class, joinCondition)));
-    }
-
-    // from SupportRepository
-    public boolean refreshSession (String sessionKey, int expireDays)
-    {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, expireDays);
-        Date expires = new Date(cal.getTime().getTime());
-        return updatePartial(SessionRecord.getKey(sessionKey), SessionRecord.EXPIRES, expires) == 1;
-    }
 }
