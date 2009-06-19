@@ -28,7 +28,7 @@ import client.util.FlashClients;
 public class StandardLayout extends Layout
 {
     @Override // from Layout
-    public boolean haveContent ()
+    public boolean hasContent ()
     {
         return _content != null;
     }
@@ -85,10 +85,11 @@ public class StandardLayout extends Layout
     }
 
     @Override // from Layout
-    public boolean closeContent (boolean restoreClient)
+    public void closeContent (boolean restoreClient)
     {
+        // not showing, nothing to do
         if (_content == null) {
-            return false;
+            return;
         }
 
         _content = removeFromPage(_content);
@@ -98,7 +99,6 @@ public class StandardLayout extends Layout
             _client.setWidth("100%");
             _header.setVisible(true);
         }
-        return true;
     }
 
     @Override // from Layout

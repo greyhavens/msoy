@@ -52,18 +52,40 @@ public abstract class Layout
         return layout;
     }
 
-    public abstract boolean haveContent ();
+    /**
+     * Checks if we are currently showing content.
+     */
+    public abstract boolean hasContent ();
 
+    /**
+     * Sets the current content page.
+     */
     public abstract void setContent (TitleBar bar, Widget content);
 
-    public abstract boolean closeContent (boolean restoreClient);
+    /**
+     * Closes the content page, optionally restoring the client.
+     */
+    public abstract void closeContent (boolean restoreClient);
 
+    /**
+     * Gets the provider that will service the opening of the world client.
+     */
     public abstract WorldClient.PanelProvider getClientProvider ();
 
+    /**
+     * Closes the client.
+     */
     public abstract boolean closeClient ();
 
+    /**
+     * Adds the home button that is shown when the client is hidden. The click handler should be
+     * the one used to initialize the layout. 
+     */
     public abstract void addNoClientIcon ();
 
+    /**
+     * Determines the kind of embedding this layout is in.
+     */
     public Frame.Embedding getEmbedding ()
     {
         return _embedding;

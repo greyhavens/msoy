@@ -465,7 +465,9 @@ public class FrameEntryPoint
 
     protected void clearContent (boolean restoreClient)
     {
-        if (_layout.closeContent(restoreClient)) {
+        if (_layout.hasContent()) {
+            _layout.closeContent(restoreClient);
+
             // restore the title to the last thing flash asked for
             setTitle(_closeTitle);
         }
@@ -780,7 +782,7 @@ public class FrameEntryPoint
     protected void setTitleFromFlash (String title)
     {
         // if we're displaying content currently, don't let flash mess with the title
-        if (!_layout.haveContent()) {
+        if (!_layout.hasContent()) {
             setTitle(title);
         }
         _closeTitle = title;

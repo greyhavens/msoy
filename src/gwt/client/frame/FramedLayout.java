@@ -19,7 +19,7 @@ import client.util.FlashClients;
 public class FramedLayout extends Layout
 {
     @Override // from Layout
-    public boolean haveContent ()
+    public boolean hasContent ()
     {
         return _content.getWidget() != null;
     }
@@ -48,17 +48,18 @@ public class FramedLayout extends Layout
     }
 
     @Override // from Layout
-    public boolean closeContent (boolean restoreClient)
+    public void closeContent (boolean restoreClient)
     {
-        if (!haveContent()) {
-            return false;
+        // no content? nothing to do
+        if (_content.getWidget() == null) {
+            return;
         }
+
         _bar.setWidget(null);
         _content.setWidget(null);
         if (_client.getWidget() != null) {
             _client.setHeight(FlashClients.getClientHeight() + "px");
         }
-        return true;
     }
 
     @Override // from Layout
