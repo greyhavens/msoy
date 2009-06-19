@@ -21,7 +21,6 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.And;
 import com.samskivert.depot.operator.SQLOperator;
 
-import com.samskivert.servlet.user.UserUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.user.OOOUser;
@@ -67,38 +66,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     {
         delete(OOOUserRecord.getKey(userId));
         deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID, userId));
-    }
-
-    /**
-     * Creates a new session for the specified user and returns the randomly generated session
-     * identifier for that session.  If a session entry already exists for the specified user it
-     * will be reused.
-     *
-     * @param expireDays the number of days in which the session token should expire.
-     */
-    public String registerSession (OOOUser user, int expireDays)
-    {
-        // see if we have a pre-existing session for this user
-        SessionRecord session = load(SessionRecord.class,
-                new Where(SessionRecord.MEMBER_ID, user.userId));
-
-        // figure out when to expire the session
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, expireDays);
-        Date expires = new Date(cal.getTime().getTime());
-
-        // if we found one, update its expires time and reuse it
-        if (session != null) {
-            updatePartial(SessionRecord.getKey(session.token), SessionRecord.EXPIRES, expires);
-
-        // otherwire create a new one and insert it into the table
-        } else {
-            session = new SessionRecord(UserUtil.genAuthCode(user));
-            session.memberId = user.userId;
-            session.expires = expires;
-            store(session);
-        }
-        return session.token;
     }
 
     /**
