@@ -127,13 +127,12 @@ public class MoneyLogic
     /**
      * Retrieves the current account balance (coins, bars, and bling) for the given member.
      *
-     * @param memberId ID of the member to retrieve money for.
      * @return The money in their account.
      */
     public MemberMoney getMoneyFor (int memberId)
     {
         Preconditions.checkArgument(memberId != 0, "Requested money for invalid member.");
-        return _repo.load(memberId).getMemberMoney();
+        return getAccount(memberId).getMemberMoney();
     }
 
     /**
@@ -873,7 +872,7 @@ public class MoneyLogic
     public BlingInfo requestCashOutBling (int memberId, int amount, CashOutBillingInfo info)
         throws ServiceException
     {
-        MemberAccountRecord account = _repo.load(memberId);
+        MemberAccountRecord account = getAccount(memberId);
 
         // If the user does not have the minimum amount required to cash out bling, don't allow
         // them to proceed
@@ -951,8 +950,8 @@ public class MoneyLogic
      */
     public BlingInfo getBlingInfo (int memberId)
     {
-        return toBlingInfo(_repo.load(memberId), _repo.getCurrentCashOutRequest(memberId),
-            getTimeToNextBlingCashOutRequest(memberId));
+        return toBlingInfo(getAccount(memberId), _repo.getCurrentCashOutRequest(memberId),
+                           getTimeToNextBlingCashOutRequest(memberId));
     }
 
     /**
@@ -1309,6 +1308,15 @@ public class MoneyLogic
         return new BlingInfo(account.bling, _runtime.money.blingWorth,
             _runtime.money.minimumBlingCashOut * 100, waitTime,
             pendingCashOut == null ? null : pendingCashOut.toInfo());
+    }
+
+    protected MemberAccountRecord getAccount (int memberId)
+    {
+        MemberAccountRecord account = _repo.load(memberId);
+        // we no longer purge MemberAccountRecord for deleted accounts, but for those accounts that
+        // did get purged, let's return a blank record rather than null so that callers can all
+        // rely on getting something back from this method
+        return (account == null) ? new MemberAccountRecord(memberId) : account;
     }
 
     /**

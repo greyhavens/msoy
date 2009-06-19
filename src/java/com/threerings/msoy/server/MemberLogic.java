@@ -553,7 +553,7 @@ public class MemberLogic
             _medalRepo.purgeMembers(purgeIds);
             _memberRepo.purgeMembers(purgeIds);
             _mgameRepo.purgeMembers(purgeIds);
-            _moneyRepo.purgeMembers(purgeIds);
+            _moneyRepo.purgeMembers(killIds, disableIds);
             _profileRepo.purgeMembers(purgeIds);
             _ratingRepo.purgePlayers(purgeIds);
             _sceneRepo.purgeMembers(purgeIds);

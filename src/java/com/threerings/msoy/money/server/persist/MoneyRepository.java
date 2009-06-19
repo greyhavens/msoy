@@ -20,6 +20,7 @@ import net.jcip.annotations.NotThreadSafe;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -550,12 +551,17 @@ public class MoneyRepository extends DepotRepository
      * Deletes all data associated with the supplied members. This is done as a part of purging
      * member accounts.
      */
-    public void purgeMembers (Collection<Integer> memberIds)
+    public void purgeMembers (Collection<Integer> guestIds, Collection<Integer> memberIds)
     {
+        // we only delete money records for permaguests
         deleteAll(MemberAccountRecord.class,
-                  new Where(MemberAccountRecord.MEMBER_ID.in(memberIds)));
+                  new Where(MemberAccountRecord.MEMBER_ID.in(guestIds)));
+        // we delete transaction records for both (TODO: maybe we should preserve tx records for
+        // deleted members for a while... oh the complexities)
         deleteAll(MoneyTransactionRecord.class,
-                  new Where(MoneyTransactionRecord.MEMBER_ID.in(memberIds)));
+                  new Where(MoneyTransactionRecord.MEMBER_ID.in(
+                                Sets.union(Sets.newHashSet(guestIds),
+                                           Sets.newHashSet(memberIds)))));
     }
 
     /**
