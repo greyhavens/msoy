@@ -159,8 +159,8 @@
     <file name="${extlibs.dir}/ozcommons.jar"/>
 
     <!-- The following are used by our Flash clients -->
-    <file name="lib/corelib.swc"/>
-    <file name="lib/flexlib.swc"/>
+    <file name="extlibs/flash/corelib.swc"/>
+    <file name="extlibs/flash/flexlib.swc"/>
     <file name="lib/tweener.swc"/>
     <file name="lib/KongregateAPI.swc"/>
 
