@@ -3,13 +3,17 @@
 
 package com.threerings.msoy.survey.persist;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.survey.gwt.SurveyQuestion;
 
 /**
@@ -62,7 +66,7 @@ public class SurveyQuestionRecord extends PersistentRecord
         switch (questionType) {
         case EXCLUSIVE_CHOICE:
         case SUBSET_CHOICE:
-            sq.choices = descriptor.split(",");
+            sq.choices = decodeList(descriptor);
             break;
         case RATING:
             sq.maxValue = Integer.parseInt(descriptor);
@@ -83,7 +87,7 @@ public class SurveyQuestionRecord extends PersistentRecord
         switch (questionType) {
         case EXCLUSIVE_CHOICE:
         case SUBSET_CHOICE:
-            descriptor = StringUtil.join(question.choices, ",");
+            descriptor = encodeList(question.choices);
             break;
         case RATING:
             descriptor = String.valueOf(question.maxValue);
@@ -107,4 +111,50 @@ public class SurveyQuestionRecord extends PersistentRecord
                 new Comparable[] { surveyId, questionIndex });
     }
     // AUTO-GENERATED: METHODS END
+
+    protected static String encodeList (String[] list)
+    {
+        StringBuilder desc = new StringBuilder();
+        for (String str : list) {
+            if (desc.length() > 0) {
+                desc.append(",");
+            }
+            str = str.replace("\\", "\\\\");
+            str = str.replace(",", "\\,");
+            desc.append(str);
+        }
+        return desc.toString();
+    }
+
+    protected static String[] decodeList (String desc)
+    {
+        if (desc.length() == 0) {
+            return new String[0];
+        }
+
+        // Mini state machine to decode a comma separated list where list items can have commas.
+        // Item commas are escaped as "\," - backslashes as "\\".
+        List<String> strings = Lists.newArrayList();
+        StringBuilder current = new StringBuilder();
+        int state = 0;
+        for (int ii = 0, ll = desc.length(); ii < ll; ++ii) {
+            char c = desc.charAt(ii);
+            if (state == 1) {
+                current.append(c);
+                state = 0;
+
+            } else if (c == '\\') {
+                state = 1;
+
+            } else if (c == ',') {
+                strings.add(current.toString());
+                current.setLength(0);
+
+            } else {
+                current.append(c);
+            }
+        }
+        strings.add(current.toString());
+        return strings.toArray(new String[strings.size()]);
+    }
 }
