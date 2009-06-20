@@ -66,26 +66,22 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case GAMES:
-            boolean facebook = CShell.isFacebook();
             addLink(null, "Games", Pages.GAMES);
-            if (facebook) {
+            if (CShell.isFacebook()) {
                 addTipper("Bookmark", _msgs.subNavBookmarkTip(), "fbBookmarkTip");
-            }
-            if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
-                if (!facebook) {
-                    addLink(null, "My Games", Pages.GAMES, "m");
-                }
-            }
-            if (!facebook) {
-                addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
-            }
-            if (facebook) {
                 addTopLink("Become A Fan", DeploymentConfig.facebookApplicationUrl);
                 addLink(null, "Invite Friends", Pages.FACEBOOK, "invite");
-            }
-            if (CShell.isSupport()) {
-                addLink(null, "Edit Arcades", Pages.GAMES, "ea");
+
+            } else {
+                if (CShell.isMember()) {
+                    addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
+                    addLink(null, "My Games", Pages.GAMES, "m");
+                }
+                addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
+                if (CShell.isSupport()) {
+                    addLink(null, "Edit Arcades", Pages.GAMES, "ea");
+                }
             }
             break;
 
