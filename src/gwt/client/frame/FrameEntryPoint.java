@@ -425,6 +425,15 @@ public class FrameEntryPoint
         return (_page != null) && (_page.getTab() == null);
     }
 
+    /**
+     * Detects if we should only show one thing at a time. That is, either content or client,
+     * not both.
+     */
+    protected boolean isMonoScreen ()
+    {
+        return getEmbedding() == Embedding.FACEBOOK;
+    }
+
     protected void setPage (Pages page)
     {
         // clear out any old content
@@ -449,10 +458,12 @@ public class FrameEntryPoint
         _iframe = new Frame("/gwt/" + DeploymentConfig.version + "/" + _page.getPath() + "/");
         _iframe.setStyleName("pageIFrame");
 
-        // if we're on a headerless page, we need to close the client
-        if (isHeaderless()) {
+        // if we're on a headerless page or we only support one screen, we need to close the client
+        if (isHeaderless() || isMonoScreen()) {
             closeClient();
-        } else {
+        }
+
+        if (!isHeaderless()) {
             _bar = TitleBar.create(page.getTab(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     closeContent();
@@ -460,6 +471,7 @@ public class FrameEntryPoint
             });
             _bar.setCloseVisible(FlashClients.clientExists());
         }
+
         _layout.setContent(_bar, _iframe);
     }
 
@@ -472,7 +484,9 @@ public class FrameEntryPoint
             setTitle(_closeTitle);
         }
         _iframe = null;
-        _bar = null;
+        if (!_layout.alwaysShowsTitleBar()) {
+            _bar = null;
+        }
     }
 
     protected void closeClient (boolean didLogoff)

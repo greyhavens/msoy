@@ -35,9 +35,7 @@ public abstract class Layout
         if (isFramed()) {
             if ("fb".equals(embedCookie)) {
                 embedding = Frame.Embedding.FACEBOOK;
-                // TODO: the facebook layout doesn't work because it creates more than one Page
-                // instance; both of them using the same global history token causes problems
-                if (false && DeploymentConfig.devDeployment) {
+                if (DeploymentConfig.devDeployment) {
                     layout = new FacebookLayout();
                 }
             }
@@ -82,6 +80,15 @@ public abstract class Layout
      * the one used to initialize the layout. 
      */
     public abstract void addNoClientIcon ();
+
+    /**
+     * Detects if this layout always shows the title bar. That is, the title bar is displayed even
+     * when the client is active.
+     */
+    public boolean alwaysShowsTitleBar ()
+    {
+        return false;
+    }
 
     /**
      * Determines the kind of embedding this layout is in.

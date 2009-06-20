@@ -55,7 +55,9 @@ public class FramedLayout extends Layout
             return;
         }
 
-        _bar.setWidget(null);
+        if (!alwaysShowsTitleBar()) {
+            _bar.setWidget(null);
+        }
         _content.setWidget(null);
         if (_client.getWidget() != null) {
             _client.setHeight(FlashClients.getClientHeight() + "px");
@@ -98,9 +100,21 @@ public class FramedLayout extends Layout
     {
         super.init(header, onGoHome);
         RootPanel.get().addStyleName("framedPage");
-        RootPanel.get(PAGE).add(_client = new SimplePanel());
-        RootPanel.get(PAGE).add(_bar = new SimplePanel());
-        RootPanel.get(PAGE).add(_content = new SimplePanel());
+        _client = new SimplePanel();
+        _bar = new SimplePanel();
+        _content = new SimplePanel();
+        addPanels(RootPanel.get(PAGE));
+    }
+
+    /**
+     * Adds our previously created panel members to the root panel. Subclasses can change the order
+     * or whatever.
+     */
+    protected void addPanels (RootPanel root)
+    {
+        root.add(_client);
+        root.add(_bar);
+        root.add(_content);
     }
 
     /**

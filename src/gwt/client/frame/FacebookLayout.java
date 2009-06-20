@@ -22,21 +22,40 @@ public class FacebookLayout extends FramedLayout
     {
         super.init(header, onGoHome);
 
-        // add our container and iframe
-        SimplePanel bar = new SimplePanel();
-        RootPanel.get(PAGE).add(bar);
-
-        // create our iframe
-        String src = "/gwt/" + DeploymentConfig.version + "/" + Pages.FACEBOOK.getPath() + "/";
-        _fbframe = new Frame(src);
-        _fbframe.setStyleName("fbIFrame");
-        _fbframe.setWidth("100%");
-        _fbframe.setHeight(FB_FRAME_HEIGHT + "px");
-        _fbframe.getElement().setAttribute("scrolling", "no");
-        bar.setWidget(_fbframe);
+        // this is not yet ready for Daytime TV
+        // TODO: it doesn't work because the inter-frame communication system cannot yet cope with
+        // more than one subframe
+        if (false) {
+            // add our container and iframe
+            SimplePanel bar = new SimplePanel();
+            RootPanel.get(PAGE).add(bar);
+    
+            // create our iframe
+            String src = "/gwt/" + DeploymentConfig.version + "/" + Pages.FACEBOOK.getPath() + "/";
+            _fbframe = new Frame(src);
+            _fbframe.setStyleName("fbIFrame");
+            _fbframe.setWidth("100%");
+            _fbframe.setHeight(FB_FRAME_HEIGHT + "px");
+            _fbframe.getElement().setAttribute("scrolling", "no");
+            bar.setWidget(_fbframe);
+        }
     }
 
-    @Override
+    @Override // from FramedLayout
+    public boolean alwaysShowsTitleBar ()
+    {
+        return true;
+    }
+
+    @Override // from FramedLayout
+    protected void addPanels (RootPanel root)
+    {
+        root.add(_bar);
+        root.add(_client);
+        root.add(_content);
+    }
+
+    @Override // from FramedLayout
     protected int getReservedHeight ()
     {
         return FB_FRAME_HEIGHT;
