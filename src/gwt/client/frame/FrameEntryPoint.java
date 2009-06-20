@@ -845,6 +845,9 @@ public class FrameEntryPoint
         $wnd.helloWhirled = function () {
              return true;
         };
+        $wnd.getEmbedding = function () {
+            return entry.@client.frame.FrameEntryPoint::getEmbedding()().toString();
+        }
         $wnd.setWindowTitle = function (title) {
             entry.@client.frame.FrameEntryPoint::setTitleFromFlash(Ljava/lang/String;)(title);
         };

@@ -16,6 +16,7 @@ import com.threerings.util.Util;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.msoy.data.Embedding;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlaceInfo;
 import com.threerings.msoy.notify.data.Notification;
@@ -72,6 +73,12 @@ public class UpsellDirector extends BasicDirector
      */
     protected function handleTimer (event :TimerEvent) :void
     {
+        // disable for facebook
+        // TODO: consider some upsells that might make sense for facebook mode
+        if (_mctx.getMsoyClient().getEmbedding() == Embedding.FACEBOOK) {
+            return;
+        }
+
         var placeInfo :PlaceInfo = _mctx.getMsoyController().getPlaceInfo();
         var embed :String = _mctx.getMsoyClient().isEmbedded() ? "embed" : "site";
         var guest :String = MemberObject(_mctx.getClient().getClientObject()).isPermaguest() ?

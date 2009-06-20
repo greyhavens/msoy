@@ -1272,7 +1272,7 @@ public class WorldController extends MsoyController
         }
 
         // login/logout
-        if (isUs && _wctx.getMsoyClient().isEmbedded()) {
+        if (isUs && !_wctx.getMsoyClient().getEmbedding().hasGWT()) {
             if (_wctx.getMemberObject().isPermaguest()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
                     callback: function () :void {

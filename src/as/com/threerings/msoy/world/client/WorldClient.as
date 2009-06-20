@@ -75,7 +75,7 @@ public class WorldClient extends MsoyClient
         var params :Object = MsoyParameters.get();
 
         // if we're an embedded client, turn on the embed header
-        if (getHostname() == null && !_featuredPlaceView) {
+        if (isEmbedded() && !_featuredPlaceView) {
             _wctx.getUIState().setEmbedded(true);
         }
 
@@ -141,7 +141,7 @@ public class WorldClient extends MsoyClient
     {
         super.gotClientObject(clobj);
 
-        if (clobj is MemberObject && !_embedded && !_featuredPlaceView) {
+        if (clobj is MemberObject && !_embedding.hasGWT() && !_featuredPlaceView) {
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier(_wctx));
         }

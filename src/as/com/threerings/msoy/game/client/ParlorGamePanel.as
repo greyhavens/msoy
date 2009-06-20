@@ -133,7 +133,6 @@ public class ParlorGamePanel extends WhirledGamePanel
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
         const multiplayer :Boolean =
             config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
-        const embedded :Boolean = mctx.getMsoyClient().isEmbedded();
 
         mctx.getUIState().setInGame(true, multiplayer);
         bar.setGameButtonIcon(getPlaceLogo());

@@ -37,8 +37,8 @@ public class BlankPlaceView extends Canvas
         spinner.x = (swidth - LoadingSpinner.WIDTH) / 2;
         spinner.y = (sheight - LoadingSpinner.HEIGHT) / 2 - hheight;
 
-        // if we're embedded, we want to preserve continuity with the preloader splash
-        if (ctx.getMsoyClient().isEmbedded()) {
+        // if we're upselling, we want to preserve continuity with the preloader splash
+        if (ctx.getMsoyClient().getEmbedding().shouldUpsellWhirled()) {
             spinner.setStatus(""); // use a blank status, we have our splash text already
             // TODO: could use createSharableLink here except we're not logged on
             var msg :String = Msgs.GENERAL.get("m.embed_splash", DeploymentConfig.serverURL);

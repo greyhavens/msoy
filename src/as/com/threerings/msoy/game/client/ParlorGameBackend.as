@@ -93,6 +93,7 @@ public class ParlorGameBackend extends WhirledGameBackend
     // from WhirledGameBackend
     override protected function isEmbedded_v1 () :Boolean
     {
+        // NOTE: facebook counts as embedded for the purposes of the API
         return (_ctx as GameContext).getWorldContext().getMsoyClient().isEmbedded();
     }
 

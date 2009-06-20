@@ -35,6 +35,7 @@ import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.crowd.client.CrowdClient;
 
+import com.threerings.msoy.data.Embedding;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -96,11 +97,13 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             log.info("Unable to configure external functions.");
         }
 
+        log.info("Detected embedding", "value", _embedding);
+
         // configure our starting global sound transform
         if (_featuredPlaceView) {
             SoundMixer.soundTransform = new SoundTransform(0); // muted
         } else {
-            Prefs.setEmbedded(_embedded);
+            Prefs.setEmbedded(isEmbedded());
         }
 
         // now create our credentials and context (NOTE: we do this after we've wired up our
@@ -163,11 +166,22 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
-     * Find out whether this client is embedded in a non-whirled page.
+     * Find out whether this client is embedded in a non-whirled page. Note that if we are running
+     * in the Whirled facebook application, this will return true, even though it is in theory
+     * capabale of displaying the whole of whirled.com. To get the specific nature of the embedding,
+     * use <code>getEmbedding</code>.
      */
     public function isEmbedded () :Boolean
     {
-        return _embedded;
+        return _embedding != Embedding.NONE;
+    }
+
+    /**
+     * Gets our embedding.
+     */
+    public function getEmbedding () :Embedding
+    {
+        return _embedding;
     }
 
     /**
@@ -176,7 +190,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function setWindowTitle (title :String) :void
     {
         try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+            if (ExternalInterface.available && _embedding.hasGWT() && !_featuredPlaceView) {
                 ExternalInterface.call("setWindowTitle", title);
             }
         } catch (err :Error) {
@@ -208,7 +222,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function closeClient () :void
     {
         try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
+            if (ExternalInterface.available && _embedding.hasGWT() && !_featuredPlaceView) {
                 ExternalInterface.call("clearClient");
             }
         } catch (err :Error) {
@@ -232,7 +246,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function dispatchEventToGWT (eventName :String, eventArgs :Array) :void
     {
         try {
-            if (ExternalInterface.available && !_embedded) {
+            if (ExternalInterface.available && _embedding.hasGWT()) {
                 ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
             }
         } catch (err :Error) {
@@ -359,14 +373,19 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     protected function configureExternalFunctions () :void
     {
+        _embedding = Embedding.OTHER;
+
         ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
         ExternalInterface.addCallback("isConnected", externalIsConnected);
 
         try {
-            _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
+            if (ExternalInterface.call("helloWhirled") as Boolean) {
+                // this will throw an error if our embed values are out of sync with gwt's
+                _embedding = Embedding.valueOf(ExternalInterface.call("getEmbedding"));
+            }
         } catch (err :Error) {
-            // we default _embedded to true now.
+            // we are embedded but not anywhere specific, default to OTHER
         }
     }
 
@@ -475,7 +494,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _stage :Stage;
 
     protected var _minimized :Boolean;
-    protected var _embedded :Boolean = true; // default to true until proven false
+    protected var _embedding :Embedding;
     protected var _featuredPlaceView :Boolean;
     protected var _loadedPolicies :Object = new Object();
 

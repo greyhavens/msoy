@@ -234,8 +234,8 @@ class GameLocationDirector extends LocationDirector
         // started, delay this move so that we continue to display our Whirled splash ad for the
         // minimum desired amount of time
         var elapsed :int = getTimer() - Preloader.preloaderStart;
-        if ((_ctx as GameContext).getWorldContext().getMsoyClient().isEmbedded() &&
-            (elapsed < MIN_EMBED_SPLASH_TIME)) {
+        if ((_ctx as GameContext).getWorldContext().getMsoyClient().getEmbedding()
+            .shouldUpsellWhirled() && (elapsed < MIN_EMBED_SPLASH_TIME)) {
             // TODO: there must be an easier way to do this
             var timer :Timer = new Timer(MIN_EMBED_SPLASH_TIME - elapsed, 1);
             timer.addEventListener(TimerEvent.TIMER, function () :void {
