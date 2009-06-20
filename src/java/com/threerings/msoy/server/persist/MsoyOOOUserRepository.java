@@ -3,12 +3,9 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import java.sql.Date;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

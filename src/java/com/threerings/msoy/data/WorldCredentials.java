@@ -4,7 +4,6 @@
 package com.threerings.msoy.data;
 
 import com.threerings.util.ActionScript;
-import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCredentials;
 

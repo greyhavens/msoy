@@ -10,8 +10,6 @@ import java.io.IOException;
 
 import org.apache.mina.common.IoAcceptor;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterators;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -62,7 +60,6 @@ import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
 import com.whirled.game.server.persist.GameCookieRepository;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
