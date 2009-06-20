@@ -9,7 +9,7 @@ import com.threerings.presents.client.Communicator;
 import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
+import com.threerings.msoy.bureau.data.BureauLauncherCreds;
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 
 /**
@@ -23,15 +23,12 @@ public class BureauLauncherClient extends Client
      * Creates a new bureau launcher client, setting up bureau launcher authentation.
      *
      * @param launcher used to run client jobs and receiver for launcher requests
-     *
-     * @see BureauLauncherCredentials
-     * @see BureauLauncherConfig#bureauSharedSecret
      */
     public BureauLauncherClient (BureauLauncher launcher)
     {
-        super(new BureauLauncherCredentials(
-            BureauLauncherConfig.serverHost,
-            BureauLauncherConfig.bureauSharedSecret), launcher.getRunner());
+        super(new BureauLauncherCreds(BureauLauncherConfig.serverHost,
+                                      BureauLauncherConfig.bureauSharedSecret),
+              launcher.getRunner());
 
         _launcher = launcher;
         addServiceGroup(BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);

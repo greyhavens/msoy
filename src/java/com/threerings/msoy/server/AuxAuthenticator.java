@@ -37,7 +37,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
     }
 
     @Override // from abstract ChainedAuthenticator
-    protected boolean shouldHandleConnection (AuthingConnection conn)
+    public boolean shouldHandleConnection (AuthingConnection conn)
     {
         return _credsClass.isInstance(conn.getAuthRequest().getCredentials());
     }
@@ -112,8 +112,8 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 token = creds.sessionToken;
             }
 
-            // fill in the appropriate AuthName instance into their creds
-            creds.setUsername(createName(accountName, memberId));
+            // fill in the appropriate AuthName instance into their connection
+            conn.setAuthName(createName(accountName, memberId));
 
             // always return the session token (even if they gave it to us in the first place)
             ((MsoyAuthResponseData)rdata).sessionToken = token;

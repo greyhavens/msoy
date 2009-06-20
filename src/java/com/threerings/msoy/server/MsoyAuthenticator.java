@@ -68,6 +68,26 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
+     * Checks whether this authentication failure is due to a purged permaguest account. If true,
+     * magicks up a new visitorId for the authenticator because they're going to need it when we
+     * subsequently create them a new permaguest account.
+     */
+    public static boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
+    {
+        final String aname = creds.getUsername().toString().toLowerCase();
+        if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
+            MemberMailUtil.isPermaguest(aname)) {
+            log.info("Coping with expired permaguest", "oldacct", aname);
+            // we need to fake up a new visitor id since the old one is now long gone
+            if (creds.visitorId == null) {
+                creds.visitorId = new VisitorInfo().id;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Authenticates a web sesssion, verifying the supplied email and password and loading,
      * creating (or reusing) a member record.
      *
@@ -242,14 +262,15 @@ public class MsoyAuthenticator extends Authenticator
             if (member == null || member.isDeleted()) {
                 throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
             }
-            return authenticateMember(creds, rdata, member, false, member.accountName,
+            return authenticateMember(conn, creds, rdata, member, false, member.accountName,
                                       AuthenticationDomain.PASSWORD_BYPASS);
         }
 
         if (creds.getUsername() != null) {
             String aname = creds.getUsername().toString().toLowerCase();
             try {
-                return authenticateMember(creds, rdata, null, true, aname, creds.getPassword());
+                return authenticateMember(
+                    conn, creds, rdata, null, true, aname, creds.getPassword());
             } catch (ServiceException se) {
                 // it's possible that the permaguest account requested has been purged, so instead
                 // of failing the logon, just fall through and create a new permaguest account
@@ -266,8 +287,7 @@ public class MsoyAuthenticator extends Authenticator
                 AffiliateCookie.fromCreds(creds.affiliateId));
 
             // now authenticate just to make sure everything is in order and get the token
-            creds.setUsername(new MsoyAuthName(mrec.accountName, mrec.memberId));
-            return authenticateMember(creds, rdata, mrec, true, mrec.accountName,
+            return authenticateMember(conn, creds, rdata, mrec, true, mrec.accountName,
                                       AccountLogic.PERMAGUEST_PASSWORD);
         }
 
@@ -286,13 +306,14 @@ public class MsoyAuthenticator extends Authenticator
 
         // they're a "featured whirled" client, create a unique name for them
         String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
-        creds.setUsername(new LurkerName(name));
+        conn.setAuthName(new LurkerName(name));
         rdata.code = MsoyAuthResponseData.SUCCESS;
         _eventLog.userLoggedIn(memberId, creds.visitorId, false, true, System.currentTimeMillis());
     }
 
-    protected Account authenticateMember (WorldCredentials creds, MsoyAuthResponseData rdata,
-                                          MemberRecord member, boolean needSessionToken,
+    protected Account authenticateMember (AuthingConnection conn, WorldCredentials creds,
+                                          MsoyAuthResponseData rdata, MemberRecord member,
+                                          boolean needSessionToken,
                                           String accountName, String password)
         throws ServiceException
     {
@@ -354,10 +375,8 @@ public class MsoyAuthenticator extends Authenticator
             throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
         }
 
-        // rewrite this member's username to their canonical account name
-        creds.setUsername(new MsoyAuthName(member.accountName, member.memberId));
-
         // log.info("User logged on [user=" + user.username + "].");
+        conn.setAuthName(new MsoyAuthName(member.accountName, member.memberId));
         rdata.code = MsoyAuthResponseData.SUCCESS;
         _eventLog.userLoggedIn(member.memberId, member.visitorId, account.firstLogon,
                                member.isPermaguest(), member.created.getTime());
@@ -445,26 +464,6 @@ public class MsoyAuthenticator extends Authenticator
     {
         return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
-    }
-
-    /**
-     * Checks whether this authentication failure is due to a purged permaguest account. If true,
-     * magicks up a new visitorId for the authenticator because they're going to need it when we
-     * subsequently create them a new permaguest account.
-     */
-    protected static boolean fixPurgedPermaguest (ServiceException cause, MsoyCredentials creds)
-    {
-        final String aname = creds.getUsername().toString().toLowerCase();
-        if (cause.getMessage().equals(MsoyAuthCodes.NO_SUCH_USER) &&
-            MemberMailUtil.isPermaguest(aname)) {
-            log.info("Coping with expired permaguest", "oldacct", aname);
-            // we need to fake up a new visitor id since the old one is now long gone
-            if (creds.visitorId == null) {
-                creds.visitorId = new VisitorInfo().id;
-            }
-            return true;
-        }
-        return false;
     }
 
     // our dependencies

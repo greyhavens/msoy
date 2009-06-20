@@ -36,23 +36,29 @@ public class LiaisonGameContext
     {
         _wctx = wctx;
 
-        var gcreds :GameCredentials = new GameCredentials(null);
-        gcreds.vector = _wctx.getMsoyClient().getEntryVector();
-
-        // inherit our visitor and affiliate ids from our world creds
         var wcreds :WorldCredentials = (wctx.getClient().getCredentials() as WorldCredentials);
-        gcreds.visitorId = wcreds.visitorId;
-        gcreds.affiliateId = wcreds.affiliateId;
+        var gcreds :GameCredentials;
 
         // if we have a session token in our world credentials use that
         if (wcreds.sessionToken != null) {
+            gcreds = new GameCredentials();
             gcreds.sessionToken = wcreds.sessionToken;
 
         // otherwise if we're a permaguest, use that username
         } else if (Prefs.getPermaguestUsername() != null) {
-            gcreds.setUsername(new Name(Prefs.getPermaguestUsername()));
+            gcreds = new GameCredentials(new Name(Prefs.getPermaguestUsername()));
+
+        // otherwise we're a brand new guest so we leave everything blank
+        } else {
+            gcreds = new GameCredentials();
         }
-        // otherwise we're a brand new guest so we leave everything else blank
+
+        // configure our entry vector
+        gcreds.vector = _wctx.getMsoyClient().getEntryVector();
+
+        // inherit our visitor and affiliate ids from our world creds
+        gcreds.visitorId = wcreds.visitorId;
+        gcreds.affiliateId = wcreds.affiliateId;
 
         _client = new Client(gcreds);
         _client.addServiceGroup(MsoyCodes.GAME_GROUP);

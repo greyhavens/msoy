@@ -44,6 +44,8 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.bureau.server.BureauRegistry;
+
 import com.threerings.admin.server.AdminManager;
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
@@ -64,8 +66,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
-import com.threerings.msoy.bureau.server.WindowAuthenticator;
-import com.threerings.msoy.bureau.server.WindowSessionFactory;
+import com.threerings.msoy.bureau.server.MsoyBureauRegistry;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
 import com.threerings.msoy.game.data.MsoyUserIdentifier;
@@ -105,6 +106,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(ReportManager.class).to(QuietReportManager.class);
             bind(ConfigRegistry.class).to(PeeredDatabaseConfigRegistry.class);
             bind(AdminManager.class).to(MsoyAdminManager.class);
+            bind(BureauRegistry.class).to(MsoyBureauRegistry.class);
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
             bind(PlaceRegistry.class).to(RoomRegistry.class);
@@ -173,6 +175,16 @@ public class MsoyServer extends MsoyBaseServer
                 } catch (IOException ioe) {
                     log.warning("Failed to close the connection to the messaging server.", ioe);
                 }
+            }
+        });
+
+        // configure our default client factory
+        _clmgr.setDefaultSessionFactory(new SessionFactory() {
+            public Class<? extends PresentsSession> getSessionClass (final AuthRequest areq) {
+                return MsoySession.class;
+            }
+            public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
+                return MsoyClientResolver.class;
             }
         });
 
@@ -291,29 +303,6 @@ public class MsoyServer extends MsoyBaseServer
     protected String getIdent ()
     {
         return ServerConfig.nodeName;
-    }
-
-    @Override // from MsoyBaseServer
-    protected void configSessionFactory ()
-    {
-        // configure our primary client factory
-        _clmgr.setSessionFactory(new SessionFactory() {
-            public Class<? extends PresentsSession> getSessionClass (final AuthRequest areq) {
-                return MsoySession.class;
-            }
-            public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
-                return MsoyClientResolver.class;
-            }
-        });
-
-        // Add in the authenticator and client factory which will allow bureau windows (for avrgs)
-        // to be distinguished and connected
-        _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
-        _clmgr.setSessionFactory(new WindowSessionFactory(_clmgr.getSessionFactory()));
-
-        // wire up the party and game authenticator and session factories
-        _partyReg.configSessionFactory(_conmgr, _clmgr);
-        _wgameReg.configSessionFactory(_conmgr, _clmgr);
     }
 
     @Override // from PresentsServer

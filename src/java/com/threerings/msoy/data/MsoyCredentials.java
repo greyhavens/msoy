@@ -4,6 +4,7 @@
 package com.threerings.msoy.data;
 
 import com.threerings.util.ActionScript;
+import com.threerings.util.Name;
 
 import com.threerings.presents.net.Credentials;
 
@@ -24,13 +25,31 @@ public class MsoyCredentials extends Credentials
     /** The vector by which this client entered, or null. */
     public String vector;
 
-    @Override @ActionScript(name="toStringBuf")
+    /**
+     * Returns our username or null if none was provided.
+     */
+    public Name getUsername ()
+    {
+        return _username;
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        StringBuilder buf = new StringBuilder("[");
+        toString(buf);
+        return buf.append("]").toString();
+    }
+
+    @ActionScript(name="toStringBuf")
     protected void toString (StringBuilder buf)
     {
-        super.toString(buf);
         buf.append(", token=").append(sessionToken);
         buf.append(", visitorId=").append(visitorId);
         buf.append(", affiliateId=").append(affiliateId);
         buf.append(", vector=").append(vector);
+        buf.append(", username=").append(_username);
     }
+
+    protected Name _username;
 }

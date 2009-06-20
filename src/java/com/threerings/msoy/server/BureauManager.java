@@ -19,23 +19,20 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.net.ConnectionManager;
 
-import com.threerings.bureau.server.BureauAuthenticator;
 import com.threerings.bureau.server.BureauRegistry;
 
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
-import com.threerings.msoy.bureau.server.BureauLauncherSessionFactory;
 import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
-import com.threerings.msoy.bureau.server.MsoyBureauSessionFactory;
 
 import com.whirled.bureau.data.BureauTypes;
 
@@ -62,9 +59,9 @@ public class BureauManager
 
     @Inject public BureauManager (Lifecycle cycle, ClientManager clmgr)
     {
-        cycle.addComponent(this);
         // make sure we are shut down before the client manager so our shutdown message can be sent
         // prior to our client getting shutdown
+        cycle.addComponent(this);
         cycle.addShutdownConstraint(this, Lifecycle.Constraint.RUNS_BEFORE, clmgr);
     }
 
@@ -74,9 +71,6 @@ public class BureauManager
     public void init (int listenPort)
     {
         _listenPort = listenPort;
-
-        // initialize the bureau registry
-        _bureauReg.init();
 
         // configure some bureau related business
         if (ServerConfig.localBureaus) {
@@ -90,7 +84,6 @@ public class BureauManager
             log.info("Running thane bureaus remotely");
             _bureauReg.setLauncher(
                 BureauTypes.THANE_BUREAU_TYPE, new RemoteBureauLauncher(), BUREAU_TIMEOUT);
-            _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
             _invmgr.registerDispatcher(new BureauLauncherDispatcher(new BureauLauncherProvider() {
                 public void launcherInitialized (ClientObject caller) {
                     BureauManager.this.launcherInitialized(caller);
@@ -101,20 +94,6 @@ public class BureauManager
                 }
             }), BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
         }
-
-        _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
-    }
-
-    /**
-     * Configures the client factories for accepting bureau connections. Must be called after the
-     * primary factory is set up.
-     */
-    public void configClientFactories ()
-    {
-        // now that our primary client factories are configured, we can register our chained bureau
-        // factories which sit on top of whatever factory the server uses for normal clients
-        _clmgr.setSessionFactory(new MsoyBureauSessionFactory(_clmgr.getSessionFactory()));
-        _clmgr.setSessionFactory(new BureauLauncherSessionFactory(_clmgr.getSessionFactory()));
     }
 
     /**
@@ -254,6 +233,13 @@ public class BureauManager
             log.info("Launching bureau", "bureauId", bureauId, "who", launcher.who(),
                      "hostname", launcher.hostname);
             BureauLauncherSender.launchThane(launcher, bureauId, token);
+        }
+    }
+
+    protected static class Resolver extends ClientResolver
+    {
+        public ClientObject createClientObject () {
+            return new BureauLauncherClientObject();
         }
     }
 

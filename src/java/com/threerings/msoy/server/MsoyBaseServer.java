@@ -86,18 +86,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         // start the batch invoker thread
         _batchInvoker.start();
 
-        // set up the right client factories
-        configSessionFactory();
-
         // initialize our bureau manager, then set its additional factories
         _bureauMgr.init(getListenPorts()[0]);
-        _bureauMgr.configClientFactories();
     }
-
-    /**
-     * Derived classes need to override this and configure their main client factory.
-     */
-    protected abstract void configSessionFactory ();
 
     @Override // from PresentsServer
     protected AccessController createDefaultObjectAccessController ()

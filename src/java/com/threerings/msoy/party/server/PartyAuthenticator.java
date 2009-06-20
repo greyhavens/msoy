@@ -32,6 +32,12 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class PartyAuthenticator extends AuxAuthenticator<PartyCredentials>
 {
+    // fiddling to work around a circular dependency
+    public void init (PartyRegistry partyReg)
+    {
+        _partyReg = partyReg;
+    }
+
     protected PartyAuthenticator ()
     {
         super(PartyCredentials.class);
@@ -100,7 +106,8 @@ public class PartyAuthenticator extends AuxAuthenticator<PartyCredentials>
         }
     }
 
+    protected PartyRegistry _partyReg;
+
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected PartyRegistry _partyReg;
     @Inject protected PresentsDObjectMgr _omgr;
 }

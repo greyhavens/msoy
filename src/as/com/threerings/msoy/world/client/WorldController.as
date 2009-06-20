@@ -1389,7 +1389,7 @@ public class WorldController extends MsoyController
         var memberObj :MemberObject = _wctx.getMemberObject();
         // if not a permaguest, save the username that we logged in with
         if (!memberObj.isPermaguest()) {
-            var name :Name = _wctx.getClient().getCredentials().getUsername();
+            var name :Name = (_wctx.getClient().getCredentials() as MsoyCredentials).getUsername();
             if (name != null) {
                 Prefs.setUsername(name.toString());
             }

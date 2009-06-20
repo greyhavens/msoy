@@ -33,7 +33,12 @@ public class MsoyCredentials extends Credentials
      */
     public function MsoyCredentials (username :Name)
     {
-        super(username);
+        _username = username;
+    }
+
+    public function getUsername () :Name
+    {
+        return _username;
     }
 
     // from interface Streamable
@@ -44,6 +49,7 @@ public class MsoyCredentials extends Credentials
         visitorId = (ins.readField(String) as String);
         affiliateId = ins.readInt();
         vector = (ins.readField(String) as String);
+        _username = (ins.readObject() as Name);
     }
 
     // from interface Streamable
@@ -54,16 +60,25 @@ public class MsoyCredentials extends Credentials
         out.writeField(visitorId);
         out.writeInt(affiliateId);
         out.writeField(vector);
+        out.writeObject(_username);
     }
 
-    // documentation inherited
-    override protected function toStringBuf (buf :StringBuilder) :void
+    public function toString () :String
     {
-        super.toStringBuf(buf);
+        var buf :StringBuilder = new StringBuilder("[");
+        toStringBuf(buf);
+        return buf.append("]").toString();
+    }
+
+    protected function toStringBuf (buf :StringBuilder) :void
+    {
+        buf.append("username=").append(_username);
         buf.append(", token=").append(sessionToken);
         buf.append(", visitorId=").append(visitorId);
         buf.append(", affiliateId=").append(affiliateId);
         buf.append(", vector=").append(vector);
     }
+
+    protected var _username :Name;
 }
 }

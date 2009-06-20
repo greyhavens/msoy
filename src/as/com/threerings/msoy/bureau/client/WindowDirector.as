@@ -1,11 +1,14 @@
 package com.threerings.msoy.bureau.client {
 
-import com.threerings.bureau.client.BureauDirector;
-import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.ResultListener;
+
+import com.threerings.bureau.client.BureauDirector;
+
+import com.threerings.msoy.bureau.data.WindowAuthName;
+import com.threerings.msoy.bureau.data.WindowClientObject;
 
 /**
  * Manages a set of {@link Window} objects, keyed by host name and port.
@@ -87,7 +90,9 @@ public class WindowDirector
     protected var _bureauId :String;
     protected var _token :String;
 
-    WindowClientObject; // make sure this gets linked in for serialization
+    // classes that need to get linekd in for serialization
+    WindowAuthName;
+    WindowClientObject;
 }
 }
 
@@ -120,8 +125,7 @@ class WindowImpl implements Window
     {
         _director = director;
 
-        var creds :WindowCredentials = new WindowCredentials(bureauId, token);
-        _client = new Client(creds);
+        _client = new Client(new WindowCredentials(bureauId, token));
         _client.setServer(host, [port]);
         _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, clientDidLogon);
         _client.addEventListener(ClientEvent.CLIENT_FAILED_TO_LOGON, clientFailedToLogon);

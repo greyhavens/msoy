@@ -30,6 +30,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.InvocationManager;
 
@@ -45,7 +46,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.ServiceUnit;
@@ -94,9 +94,15 @@ import static com.threerings.msoy.Log.log;
 public class PartyRegistry
     implements PartyBoardProvider, PeerPartyProvider
 {
-    @Inject public PartyRegistry (InvocationManager invmgr)
+    @Inject public PartyRegistry (InvocationManager invmgr, ConnectionManager conmgr,
+                                  ClientManager clmgr, PartyAuthenticator partyAuthor)
     {
         invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.WORLD_GROUP);
+        partyAuthor.init(this); // fiddling to work around a circular dependency
+        conmgr.addChainedAuthenticator(partyAuthor);
+        clmgr.addSessionFactory(SessionFactory.newSessionFactory(
+                                    PartyCredentials.class, PartySession.class,
+                                    PartyAuthName.class, PartyClientResolver.class));
     }
 
     /**
@@ -106,18 +112,6 @@ public class PartyRegistry
     {
         ((MsoyNodeObject) _peerMgr.getNodeObject()).setPeerPartyService(
             _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
-    }
-
-    /**
-     * Called during server initialization to give us a chance to wire up our authenticator and
-     * session factory.
-     */
-    public void configSessionFactory (ConnectionManager conmgr, ClientManager clmgr)
-    {
-        conmgr.addChainedAuthenticator(_injector.getInstance(PartyAuthenticator.class));
-        clmgr.setSessionFactory(new AuxSessionFactory(
-            clmgr.getSessionFactory(), PartyCredentials.class, PartyAuthName.class,
-            PartySession.class, PartyClientResolver.class));
     }
 
     /**

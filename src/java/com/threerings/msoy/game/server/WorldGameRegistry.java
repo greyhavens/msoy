@@ -26,11 +26,12 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.net.ConnectionManager;
-import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -41,7 +42,6 @@ import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.notify.server.NotificationManager;
@@ -72,9 +72,14 @@ import static com.threerings.msoy.Log.log;
 public class WorldGameRegistry
     implements WorldGameProvider, MsoyPeerManager.PeerObserver
 {
-    @Inject public WorldGameRegistry (InvocationManager invmgr)
+    @Inject public WorldGameRegistry (InvocationManager invmgr, ConnectionManager conmgr,
+                                      ClientManager clmgr, GameAuthenticator gameAuthor)
     {
         invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.GAME_GROUP);
+        conmgr.addChainedAuthenticator(gameAuthor);
+        clmgr.addSessionFactory(SessionFactory.newSessionFactory(
+                                    GameCredentials.class, GameSession.class,
+                                    GameAuthName.class, GameClientResolver.class));
     }
 
     /**
@@ -95,18 +100,6 @@ public class WorldGameRegistry
     public boolean isHosting (int gameId)
     {
         return _peerMan.getHostedGame(gameId) != null || _penders.containsKey(gameId);
-    }
-
-    /**
-     * Called during server initialization to give us a chance to wire up our authenticator and
-     * session factory.
-     */
-    public void configSessionFactory (ConnectionManager conmgr, ClientManager clmgr)
-    {
-        conmgr.addChainedAuthenticator(_injector.getInstance(GameAuthenticator.class));
-        clmgr.setSessionFactory(new AuxSessionFactory(
-            clmgr.getSessionFactory(), GameCredentials.class, GameAuthName.class,
-            GameSession.class, GameClientResolver.class));
     }
 
     /**

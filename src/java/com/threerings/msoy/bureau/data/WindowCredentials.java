@@ -3,44 +3,13 @@
 
 package com.threerings.msoy.bureau.data;
 
-import com.threerings.presents.net.Credentials;
-import com.threerings.util.Name;
+import com.threerings.presents.net.ServiceCreds;
 
 /**
  * Extends the basic credentials to provide window-specific fields.
- * TODO: use something more than the user name to authenticate
  */
-public class WindowCredentials extends Credentials
+public class WindowCredentials extends ServiceCreds
 {
-    /** Prepended to the bureau id to form a username */
-    public static final String PREFIX = "@@bureauwindow:";
-
-    /** Appended to the bureau id to form a username */
-    public static final String SUFFIX = "@@";
-
-    /**
-     * Test if a given name object matches the name that we generate.
-     */
-    public static boolean isWindow (Name name)
-    {
-        String normal = name.getNormal();
-        return normal.startsWith(PREFIX) && normal.endsWith(SUFFIX);
-    }
-
-    /**
-     * Get the bureau id from the given name.
-     * @return the bureau id, or null if the name is not from a window
-     */
-    public static String extractBureauId (Name name)
-    {
-        if (!isWindow(name)) {
-            return null;
-        }
-
-        String nameStr = name.toString();
-        return nameStr.substring(PREFIX.length(), nameStr.length() - SUFFIX.length());
-    }
-
     /**
      * Creates an empty credentials for streaming. Should not be used directly.
      */
@@ -51,23 +20,8 @@ public class WindowCredentials extends Credentials
     /**
      * Creates new credentials for a specific bureau.
      */
-    public WindowCredentials (String bureauId, String token)
+    public WindowCredentials (String bureauId, String sharedSecret)
     {
-        super(new Name(PREFIX + bureauId + SUFFIX));
-        _token = token;
+        super(bureauId, sharedSecret);
     }
-
-    public String getToken ()
-    {
-        return _token;
-    }
-
-    @Override // inherit documentation
-    protected void toString (StringBuilder buf)
-    {
-        super.toString(buf);
-        buf.append("token=").append(_token);
-    }
-
-    protected String _token;
 }
