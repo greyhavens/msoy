@@ -464,11 +464,7 @@ public class FrameEntryPoint
         }
 
         if (!isHeaderless()) {
-            _bar = TitleBar.create(page.getTab(), new ClickHandler() {
-                public void onClick (ClickEvent event) {
-                    closeContent();
-                }
-            });
+            _bar = TitleBar.create(page.getTab(), _closeContent, !CShell.isFacebook());
             _bar.setCloseVisible(FlashClients.clientExists());
         }
 
@@ -530,12 +526,12 @@ public class FrameEntryPoint
         if (action.startsWith("s")) {
             String sceneId = action.substring(1);
             if (args.getArgCount() <= 1) {
-                displayWorldClient("sceneId=" + sceneId, null);
+                displayWorldClient("sceneId=" + sceneId, null, false);
             } else {
                 // if we have sNN-extra-args we want the close button to use just "sNN"
                 displayWorldClient("sceneId=" + sceneId + "&page=" + args.get(1, "") +
                                    "&args=" + args.recompose(2),
-                                   Pages.WORLD.makeToken("s" + sceneId));
+                                   Pages.WORLD.makeToken("s" + sceneId), false);
             }
 
         } else if (action.equals("game")) {
@@ -544,41 +540,49 @@ public class FrameEntryPoint
                         args.get(5, 0));
 
         } else if (action.equals("tour")) {
-            displayWorldClient("tour=true", null);
+            displayWorldClient("tour=true", null, false);
 
         } else if (action.startsWith("g")) {
             // go to a specific group's scene group
-            displayWorldClient("groupHome=" + action.substring(1), null);
+            displayWorldClient("groupHome=" + action.substring(1), null, false);
 
         } else if (action.startsWith("m")) {
             // go to a specific member's home
-            displayWorldClient("memberHome=" + action.substring(1), null);
+            displayWorldClient("memberHome=" + action.substring(1), null, false);
 
         } else if (action.startsWith("c")) {
             // join a group chat
-            displayWorldClient("groupChat=" + action.substring(1), null);
+            displayWorldClient("groupChat=" + action.substring(1), null, false);
 
         } else if (action.equals("h")) {
             // go to our home
-            displayWorldClient("memberHome=" + CShell.getMemberId(), null);
+            displayWorldClient("memberHome=" + CShell.getMemberId(), null, false);
 
         } else if (action.equals("hplaces")) {
             // just logon and show the myplaces dialog, don't go anywhere
-            displayWorldClient("myplaces=true", null);
+            displayWorldClient("myplaces=true", null, false);
 
         } else { // (action == "places" or anything else)
             // just logon and go home for now
-            displayWorldClient("memberHome=" + CShell.getMemberId(), null);
+            displayWorldClient("memberHome=" + CShell.getMemberId(), null, false);
         }
     }
 
-    protected void displayWorldClient (String args, String closeToken)
+    protected void displayWorldClient (String args, String closeToken, boolean game)
     {
         // note the current history token so that we can restore it if needed
         _closeToken = (closeToken == null) ? _currentToken : closeToken;
 
         // finally actually display the client
         WorldClient.displayFlash(args, _layout.getClientProvider());
+
+        if (_layout.alwaysShowsTitleBar()) {
+            _bar = game ?
+                TitleBar.createGame(_closeContent, !CShell.isFacebook()) :
+                TitleBar.createWorld(_closeContent, !CShell.isFacebook());
+            _bar.setCloseVisible(!isMonoScreen());
+            _layout.setTitleBar(_bar);
+        }
     }
 
     protected void displayGame (final String action, int gameId, final int otherId1,
@@ -614,7 +618,7 @@ public class FrameEntryPoint
             } else {
                 args += "&gameRoomId=" + config.sceneId;
             }
-            displayWorldClient(args, null);
+            displayWorldClient(args, null, true);
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
@@ -633,13 +637,13 @@ public class FrameEntryPoint
             } else if (otherId1 != 0) {
                 args += "&playerId=" + otherId1;
             }
-            displayWorldClient(args + hostPort, null);
+            displayWorldClient(args + hostPort, null, true);
             break;
 
         case LaunchConfig.JAVA_FLASH_LOBBIED:
         case LaunchConfig.JAVA_SELF_LOBBIED:
             if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && otherId1 <= 0) {
-                displayWorldClient("gameId=" + config.gameId, null);
+                displayWorldClient("gameId=" + config.gameId, null, true);
 
             } else {
                 // clear out the client as we're going into Java land
@@ -941,6 +945,12 @@ public class FrameEntryPoint
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;
+
+    protected ClickHandler _closeContent = new ClickHandler() {
+        @Override public void onClick (ClickEvent event) {
+            closeContent();
+        }
+    };
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);

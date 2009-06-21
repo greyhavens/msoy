@@ -4,6 +4,7 @@
 package client.frame;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -19,6 +20,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
 
+import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
@@ -30,33 +32,57 @@ public class TitleBar extends SmartTable
     /**
      * Creates a title bar for the specified page.
      */
-    public static TitleBar create (Tabs tab, ClickHandler onClose)
+    public static TitleBar create (Tabs tab, ClickHandler onClose, boolean showBackButton)
     {
-        return new TitleBar(tab, Page.getDefaultTitle(tab), new SubNaviPanel(tab), onClose);
+        return new TitleBar(tab, false, showBackButton, Page.getDefaultTitle(tab),
+            new SubNaviPanel(tab), onClose);
     }
 
-    public TitleBar (Tabs tab, String title, SubNaviPanel subnavi, ClickHandler onClose)
+    /**
+     * Creates a title bar for a game page. This should only be used by layouts that show the
+     * title bar while a game is being played: {@link Layout#alwaysShowsTitleBar()}.
+     */
+    public static TitleBar createGame (ClickHandler onClose, boolean showBackButton)
+    {
+        String title = _dmsgs.xlate("gameTitle");
+        return new TitleBar(null, true, showBackButton, title, new SubNaviPanel(true), onClose);
+    }
+
+    /**
+     * Creates a title bar for a world page. This should only be used by layouts that show the
+     * title bar while the player is in the world: {@link Layout#alwaysShowsTitleBar()}.
+     */
+    public static TitleBar createWorld (ClickHandler onClose, boolean showBackButton)
+    {
+        String title = _dmsgs.xlate("sceneTitle");
+        return new TitleBar(null, false, showBackButton, title, new SubNaviPanel(true), onClose);
+    }
+
+    public TitleBar (Tabs tab, boolean game, boolean showBackButton, String title,
+        SubNaviPanel subnavi, ClickHandler onClose)
     {
         super("pageTitle", 0, 0);
 
         setWidget(0, 0, createImage(tab), 3, null);
 
         _tab = tab;
+        _game = game;
         _titleLabel = new Label(title);
         _titleLabel.setStyleName("Title");
 
-        Widget back = MsoyUI.createImageButton("backButton", new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                History.back();
-            }
-        });
-
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(WidgetUtil.makeShim(10, 1));
-        panel.add(back);
-        panel.add(WidgetUtil.makeShim(12, 1));
+        if (showBackButton) {
+            Widget back = MsoyUI.createImageButton("backButton", new ClickHandler() {
+                public void onClick (ClickEvent event) {
+                    History.back();
+                }
+            });
+            panel.add(back);
+            panel.add(WidgetUtil.makeShim(12, 1));
+            panel.setCellVerticalAlignment(back, HorizontalPanel.ALIGN_MIDDLE);
+        }
         panel.add(_titleLabel);
-        panel.setCellVerticalAlignment(back, HorizontalPanel.ALIGN_MIDDLE);
 
         setWidget(1, 0, panel);
         setWidget(1, 2, _subnavi = subnavi, 1, "SubNavi");
@@ -90,7 +116,7 @@ public class TitleBar extends SmartTable
     public void resetNav ()
     {
         boolean closeWasVisible = _closeBox.isAttached();
-        _subnavi.reset(_tab);
+        _subnavi.reset(_tab, _game);
         setCloseVisible(closeWasVisible);
     }
 
@@ -117,7 +143,10 @@ public class TitleBar extends SmartTable
     }
 
     protected Tabs _tab;
+    protected boolean _game;
     protected Label _titleLabel;
     protected SubNaviPanel _subnavi;
     protected Widget _closeBox, _closeShim;
+
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

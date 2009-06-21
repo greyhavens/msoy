@@ -23,19 +23,40 @@ import client.util.Link;
  */
 public class SubNaviPanel extends FlowPanel
 {
+    /**
+     * Creates subnav for the given tab.
+     */
     public SubNaviPanel (Tabs tab)
     {
-        reset(tab);
+        reset(tab, false);
     }
 
     /**
-     * Resets the subnavigation to the default for the specified tab.
+     * Creates subnav for being in a game or in the world.
      */
-    public void reset (Tabs tab)
+    public SubNaviPanel (boolean game)
+    {
+        reset(null, game);
+    }
+
+    /**
+     * Resets the subnavigation to the default for the specified tab. If tab is null, create sub
+     * navigation for either being in a scene or being in a game according to the specified value.
+     */
+    public void reset (Tabs tab, boolean inGame)
     {
         clear();
 
         int memberId = CShell.getMemberId();
+        if (tab == null) {
+            if (inGame) {
+                addLink(null, "Back To Games", Pages.GAMES);
+                // TODO: more game-specific stuff, e.g. challenge friends
+            } else {
+                // TODO
+            }
+            return;
+        }
         switch (tab) {
         case ME:
             if (CShell.isGuest()) {

@@ -91,6 +91,15 @@ public abstract class Layout
     }
 
     /**
+     * Sets the current title bar. Should only be called if the title bar is being shown when there
+     * is no web page content. This in turn can only happen if {@link #alwaysShowsTitleBar()}
+     * returns true. 
+     */
+    public void setTitleBar (TitleBar bar)
+    {
+    }
+
+    /**
      * Determines the kind of embedding this layout is in.
      */
     public Frame.Embedding getEmbedding ()

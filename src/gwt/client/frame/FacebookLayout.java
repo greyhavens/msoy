@@ -47,6 +47,13 @@ public class FacebookLayout extends FramedLayout
         return true;
     }
 
+    @Override
+    public void setTitleBar (TitleBar bar)
+    {
+        bar.makeFramed();
+        _bar.setWidget(bar);
+    }
+
     @Override // from FramedLayout
     protected void addPanels (RootPanel root)
     {
