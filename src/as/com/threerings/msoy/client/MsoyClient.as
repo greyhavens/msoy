@@ -351,7 +351,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             return;
         }
 
-        if (!member.isPermaguest()) {
+        // don't link to groups for facebook because they have no way to return the portal
+        if (!member.isPermaguest() && _embedding != Embedding.FACEBOOK) {
             // for members on the web site, see if we want to tell them about release notes
             if (Prefs.setBuildTime(DeploymentConfig.buildTime)) {
                 _ctx.getNotificationDirector().addGenericNotification(
