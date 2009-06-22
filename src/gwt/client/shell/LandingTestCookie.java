@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.shell;
 
 import com.threerings.gwt.util.CookieUtil;

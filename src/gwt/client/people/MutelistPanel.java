@@ -1,5 +1,5 @@
 //
-// $Id: ProfilePanel.java 15555 2009-03-19 23:45:27Z mdb $
+// $Id$
 
 package client.people;
 
