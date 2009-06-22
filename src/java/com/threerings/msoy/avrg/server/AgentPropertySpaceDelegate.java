@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.avrg.server;
 
 import java.util.Map;

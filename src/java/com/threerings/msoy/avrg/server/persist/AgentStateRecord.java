@@ -1,5 +1,5 @@
 //
-// $Id: GameStateRecord.java 14274 2009-01-08 02:20:15Z mdb $
+// $Id$
 
 package com.threerings.msoy.avrg.server.persist;
 

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.game.server.persist;
 
 import java.util.List;

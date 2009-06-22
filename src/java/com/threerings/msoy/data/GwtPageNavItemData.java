@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.data;
 
 import com.threerings.msoy.data.all.NavItemData;
