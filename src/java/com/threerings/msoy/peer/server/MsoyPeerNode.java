@@ -45,14 +45,6 @@ public class MsoyPeerNode extends PeerNode
         return _httpPort;
     }
 
-    /**
-     * Return the internal name of this peer. Do not export this data to the outside world.
-     */
-    public String getInternalHostName ()
-    {
-        return _record.hostName;
-    }
-
     @Override // from PeerNode
     protected Communicator createCommunicator (Client client)
     {
