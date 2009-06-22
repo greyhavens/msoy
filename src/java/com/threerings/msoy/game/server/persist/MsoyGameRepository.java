@@ -221,7 +221,7 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Sets or clears the featured flag for some entries on the given arcade portal. 
+     * Sets or clears the featured flag for some entries on the given arcade portal.
      */
     public void updateFeatured (ArcadeData.Portal portal, final Set<Integer> gameIds,
         boolean featured)
@@ -392,7 +392,9 @@ public class MsoyGameRepository extends DepotRepository
                                       GameMetricsRecord.FLOW_TO_NEXT_RECALC, sub,
                                       GameMetricsRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
 
-        // TODO: update GameInfoRecord.INTEGRATED
+        // note that this game has API integration
+        updatePartial(GameInfoRecord.getKey(gameId),
+                      ImmutableMap.of(GameInfoRecord.INTEGRATED, true));
     }
 
     /**
