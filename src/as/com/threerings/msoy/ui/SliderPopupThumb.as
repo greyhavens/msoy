@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.ui {
 
 import mx.controls.sliderClasses.SliderThumb;

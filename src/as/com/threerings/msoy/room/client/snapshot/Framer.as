@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.room.client.snapshot {
 
 import flash.geom.Matrix;

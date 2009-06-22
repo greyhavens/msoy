@@ -1,5 +1,5 @@
 //
-// $Id: AwayHandler.as 10968 2008-08-19 01:58:34Z nathan $
+// $Id$
 
 package com.threerings.msoy.chat.client {
 

@@ -1,5 +1,5 @@
 //
-// $Id: AVRGameObject.as 8847 2008-04-15 17:18:01Z nathan $
+// $Id$
 
 package com.threerings.msoy.avrg.data {
 

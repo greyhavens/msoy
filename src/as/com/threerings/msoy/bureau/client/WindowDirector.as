@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.bureau.client {
 
 import com.threerings.util.Assert;

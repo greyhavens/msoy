@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.bureau.util {
 
 import com.threerings.msoy.bureau.client.WindowDirector;

@@ -1,3 +1,5 @@
+//
+// $Id$
 
 package com.threerings.msoy.item.data.all {
 

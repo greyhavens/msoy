@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.applets.image {
 
 public class ImageUtil
