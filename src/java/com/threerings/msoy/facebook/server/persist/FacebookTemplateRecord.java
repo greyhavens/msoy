@@ -20,17 +20,20 @@ public class FacebookTemplateRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS START
     public static final Class<FacebookTemplateRecord> _R = FacebookTemplateRecord.class;
     public static final ColumnExp CODE = colexp(_R, "code");
+    public static final ColumnExp VARIANT = colexp(_R, "variant");
     public static final ColumnExp BUNDLE_ID = colexp(_R, "bundleId");
-    public static final ColumnExp WILDCARDS = colexp(_R, "wildcards");
     // AUTO-GENERATED: FIELDS END
 
     /** Determines compatible schema versions. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
-    /** Unique name. */
+    /** Used by msoy to reference the functionality of this template. */
     @Id public String code;
 
-    /** Story id, passed to facebook when creating a new story. */
+    /** Distinguish between functionally equivalent templates. */
+    @Id public String variant;
+
+    /** Passed to Facebook when creating a new story. */
     public long bundleId;
 
     /**
@@ -47,6 +50,7 @@ public class FacebookTemplateRecord extends PersistentRecord
     {
         code = template.code;
         bundleId = template.bundleId;
+        variant = template.variant;
     }
 
     /**
@@ -57,6 +61,7 @@ public class FacebookTemplateRecord extends PersistentRecord
         FacebookTemplate template = new FacebookTemplate();
         template.code = code;
         template.bundleId = bundleId;
+        template.variant = variant;
         return template;
     }
 
@@ -65,12 +70,12 @@ public class FacebookTemplateRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link FacebookTemplateRecord}
      * with the supplied key values.
      */
-    public static Key<FacebookTemplateRecord> getKey (String code)
+    public static Key<FacebookTemplateRecord> getKey (String code, String variant)
     {
         return new Key<FacebookTemplateRecord>(
                 FacebookTemplateRecord.class,
-                new ColumnExp[] { CODE },
-                new Comparable[] { code });
+                new ColumnExp[] { CODE, VARIANT },
+                new Comparable[] { code, variant });
     }
     // AUTO-GENERATED: METHODS END
 }

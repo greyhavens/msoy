@@ -167,6 +167,6 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#updateFacebookTemplates}.
      */
-    void updateFacebookTemplates (List<FacebookTemplate> templates, Set<String> deleted,
+    void updateFacebookTemplates (Set<FacebookTemplate> changed, Set<FacebookTemplate> removed,
         AsyncCallback<Void> callback);
 }

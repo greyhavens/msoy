@@ -38,9 +38,9 @@ public class FacebookRepository extends DepotRepository
     /**
      * Deletes the template record with the given code.
      */
-    public void deleteTemplate (String code)
+    public void deleteTemplate (String code, String variant)
     {
-        delete(FacebookTemplateRecord.getKey(code));
+        delete(FacebookTemplateRecord.getKey(code, variant));
     }
 
     /**

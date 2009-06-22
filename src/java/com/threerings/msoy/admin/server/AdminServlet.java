@@ -5,6 +5,7 @@ package com.threerings.msoy.admin.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -697,21 +698,25 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdminUser();
-        return Lists.newArrayList(Iterables.transform(_facebookRepo.loadTemplates(),
-            new Function<FacebookTemplateRecord, FacebookTemplate>() {
-                public FacebookTemplate apply (FacebookTemplateRecord in) {
-                    return in.toTemplate();
-                }
-            }));
+        List<FacebookTemplate> result = Lists.newArrayList(
+            Iterables.transform(_facebookRepo.loadTemplates(),
+                new Function<FacebookTemplateRecord, FacebookTemplate>() {
+                    public FacebookTemplate apply (FacebookTemplateRecord in) {
+                        return in.toTemplate();
+                    }
+                }));
+        Collections.sort(result);
+        return result;
     }
 
     @Override // from AdminService
-    public void updateFacebookTemplates (List<FacebookTemplate> templates, Set<String> removed)
+    public void updateFacebookTemplates (
+        Set<FacebookTemplate> templates, Set<FacebookTemplate> removed)
         throws ServiceException
     {
         requireAdminUser();
-        for (String code : removed) {
-            _facebookRepo.deleteTemplate(code);
+        for (FacebookTemplate templ : removed) {
+            _facebookRepo.deleteTemplate(templ.code, templ.variant);
         }
         for (FacebookTemplate templ : templates) {
             _facebookRepo.storeTemplate(new FacebookTemplateRecord(templ));

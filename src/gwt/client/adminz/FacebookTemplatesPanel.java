@@ -38,7 +38,8 @@ public class FacebookTemplatesPanel extends AdminDataPanel<List<FacebookTemplate
     {
         add(_display = new SmartTable());
         _display.setText(0, 0, _msgs.fbTemplCodeHdr());
-        _display.setText(0, 1, _msgs.fbTemplBundleIdHdr());
+        _display.setText(0, 1, _msgs.fbTemplVariantHdr());
+        _display.setText(0, 2, _msgs.fbTemplBundleIdHdr());
         for (FacebookTemplate template : data) {
             addRow(template);
         }
@@ -58,6 +59,9 @@ public class FacebookTemplatesPanel extends AdminDataPanel<List<FacebookTemplate
 
             @Override protected boolean gotResult (Void result) {
                 _removed.clear();
+                for (TemplateWidgets widgets : _templates) {
+                    widgets.setTemplate(widgets.createTemplate());
+                }
                 MsoyUI.info(_msgs.fbTemplSaved());
                 return true;
             }
@@ -69,14 +73,15 @@ public class FacebookTemplatesPanel extends AdminDataPanel<List<FacebookTemplate
     {
         final TemplateWidgets widgets = new TemplateWidgets(template);
         final int row = _display.getRowCount();
-        _display.setWidget(row, 0, widgets._code);
-        _display.setWidget(row, 1, widgets._bundleId);
-        _display.setWidget(row, 2, MsoyUI.createCloseButton(new ClickHandler() {
+        _display.setWidget(row, 0, widgets.code);
+        _display.setWidget(row, 1, widgets.variant);
+        _display.setWidget(row, 2, widgets.bundleId);
+        _display.setWidget(row, 3, MsoyUI.createCloseButton(new ClickHandler() {
             @Override public void onClick (ClickEvent event) {
                 _display.removeRow(row);
                 _templates.remove(widgets);
                 if (widgets.isSaved()) {
-                    _removed.add(widgets.getTemplate().code);
+                    _removed.add(widgets.template);
                 }
             }
         }));
@@ -85,21 +90,21 @@ public class FacebookTemplatesPanel extends AdminDataPanel<List<FacebookTemplate
 
     protected boolean doSave (AsyncCallback<Void> callback)
     {
-        Set<String> codes = new HashSet<String>();
-        List<TemplateWidgets> changed = new ArrayList<TemplateWidgets>();
+        Set<FacebookTemplate> unique = new HashSet<FacebookTemplate>();
+        Set<FacebookTemplate> changed = new HashSet<FacebookTemplate>();
         for (TemplateWidgets widgets : _templates) {
-            String code = widgets.getCode().getText();
-            if (code.length() == 0) {
+            FacebookTemplate template = widgets.createTemplate();
+            if (template.code.length() == 0) {
                 MsoyUI.error(_msgs.fbTemplErrCodeRequired());
-                widgets._code.setFocus(true);
-                return false;
-            }
-            if (!codes.add(code)) {
-                MsoyUI.error(_msgs.fbTemplErrDuplicateCode(code));
+                widgets.code.setFocus(true);
                 return false;
             }
             if (widgets.hasChanged()) {
-                changed.add(widgets);
+                changed.add(template);
+            }
+            if (!unique.add(template)) {
+                MsoyUI.error(_msgs.fbTemplErrDuplicate(template.code, template.variant));
+                return false;
             }
         }
 
@@ -108,65 +113,58 @@ public class FacebookTemplatesPanel extends AdminDataPanel<List<FacebookTemplate
             return false;
         }
 
-        List<FacebookTemplate> toSave = new ArrayList<FacebookTemplate>();
-        for (TemplateWidgets widgets : changed) {
-            widgets.saveChanges();
-            toSave.add(widgets.getTemplate());
-        }
-
-        _adminsvc.updateFacebookTemplates(toSave, _removed, callback);
+        _adminsvc.updateFacebookTemplates(changed, _removed, callback);
         return true;
     }
 
     protected static class TemplateWidgets
     {
+        protected FacebookTemplate template;
+        protected TextBox code = MsoyUI.createTextBox("", 15, 8);;
+        protected TextBox variant = MsoyUI.createTextBox("", 6, 4);
+        protected TextBox bundleId = MsoyUI.createTextBox("", 20, 12);
+
         public TemplateWidgets (FacebookTemplate template)
         {
-            _template = template;
-            _code = MsoyUI.createTextBox(template.code, 15, 8);
-            _code.setReadOnly(isSaved());
-            _bundleId = MsoyUI.createTextBox(String.valueOf(template.bundleId), 20, 12);
+            setTemplate(template);
+        }
+
+        public void setTemplate (FacebookTemplate template)
+        {
+            this.template = template;
+            code.setText(template.code);
+            variant.setText(template.variant);
+            bundleId.setText(String.valueOf(template.bundleId));
+            code.setReadOnly(isSaved());
+            variant.setReadOnly(isSaved());
         }
 
         public boolean isSaved ()
         {
-            return _template.code.length() > 0;
+            return template.code.length() > 0;
         }
 
         public void setFocus ()
         {
-            _code.setFocus(true);
-        }
-
-        public TextBox getCode ()
-        {
-            return _code;
-        }
-
-        public FacebookTemplate getTemplate ()
-        {
-            return _template;
+            code.setFocus(true);
         }
 
         public boolean hasChanged ()
         {
-            return !_template.code.equals(_code.getText()) ||
-                _template.bundleId != Long.parseLong(_bundleId.getText());
+            return !createTemplate().equals(template);
         }
 
-        public void saveChanges ()
+        public FacebookTemplate createTemplate ()
         {
-            _template.code = _code.getText();
-            _template.bundleId = Long.parseLong(_bundleId.getText());
-            _code.setReadOnly(true);
+            FacebookTemplate template = new FacebookTemplate();
+            template.code = code.getText();
+            template.variant = variant.getText();
+            template.bundleId = Long.parseLong(bundleId.getText());
+            return template;
         }
-
-        protected FacebookTemplate _template;
-        protected TextBox _code;
-        protected TextBox _bundleId;
     }
 
     protected SmartTable _display;
     protected List<TemplateWidgets> _templates = new ArrayList<TemplateWidgets>();
-    protected Set<String> _removed = new HashSet<String>();
+    protected Set<FacebookTemplate> _removed = new HashSet<FacebookTemplate>();
 }

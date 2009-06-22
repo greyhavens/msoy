@@ -260,6 +260,6 @@ public interface AdminService extends RemoteService
      * Saves changes to the given facebook templates and deletes the set of templates specified
      * by the given codes.
      */
-    void updateFacebookTemplates (List<FacebookTemplate> templates, Set<String> removedCodes)
+    void updateFacebookTemplates (Set<FacebookTemplate> changed, Set<FacebookTemplate> removed)
         throws ServiceException;
 }
