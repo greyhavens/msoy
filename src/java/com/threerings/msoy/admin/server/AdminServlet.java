@@ -58,6 +58,9 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.ItemCodes;
@@ -689,6 +692,32 @@ public class AdminServlet extends MsoyServiceServlet
         return sums;
     }
 
+    @Override // from AdminService
+    public List<FacebookTemplate> loadFacebookTemplates ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        return Lists.newArrayList(Iterables.transform(_facebookRepo.loadTemplates(),
+            new Function<FacebookTemplateRecord, FacebookTemplate>() {
+                public FacebookTemplate apply (FacebookTemplateRecord in) {
+                    return in.toTemplate();
+                }
+            }));
+    }
+
+    @Override // from AdminService
+    public void updateFacebookTemplates (List<FacebookTemplate> templates, Set<String> removed)
+        throws ServiceException
+    {
+        requireAdminUser();
+        for (String code : removed) {
+            _facebookRepo.deleteTemplate(code);
+        }
+        for (FacebookTemplate templ : templates) {
+            _facebookRepo.storeTemplate(new FacebookTemplateRecord(templ));
+        }
+    }
+
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
@@ -883,4 +912,5 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected RootDObjectManager _omgr;
     @Inject protected RuntimeConfig _runtimeConfig;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected FacebookRepository _facebookRepo;
 }

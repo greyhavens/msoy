@@ -14,6 +14,7 @@ import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -157,4 +158,15 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#summarizeEntries}.
      */
     void summarizeEntries (AsyncCallback<List<EntrySummary>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#loadFacebookTemplates}.
+     */
+    void loadFacebookTemplates (AsyncCallback<List<FacebookTemplate>> callback);
+    
+    /**
+     * The asynchronous version of {@link AdminService#updateFacebookTemplates}.
+     */
+    void updateFacebookTemplates (List<FacebookTemplate> templates, Set<String> deleted,
+        AsyncCallback<Void> callback);
 }

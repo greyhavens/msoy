@@ -19,6 +19,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -247,5 +248,18 @@ public interface AdminService extends RemoteService
      * Returns a summary of recent Whirled "entries".
      */
     List<EntrySummary> summarizeEntries ()
+        throws ServiceException;
+
+    /**
+     * Loads all facebook templates.
+     */
+    List<FacebookTemplate> loadFacebookTemplates ()
+        throws ServiceException;
+
+    /**
+     * Saves changes to the given facebook templates and deletes the set of templates specified
+     * by the given codes.
+     */
+    void updateFacebookTemplates (List<FacebookTemplate> templates, Set<String> removedCodes)
         throws ServiceException;
 }

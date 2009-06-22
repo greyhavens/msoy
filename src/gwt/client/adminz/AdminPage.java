@@ -97,6 +97,9 @@ public class AdminPage extends Page
         } else if (action.equals("entries")) {
             setContent("Entries", new EntrySummaryPanel());
 
+        } else if (action.equals("facebook")) {
+            setContent("Facebook Templates", new FacebookTemplatesPanel());
+
         } else {
             setContent(_msgs.title(), new DashboardPanel());
         }
