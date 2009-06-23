@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.threerings.msoy.person.gwt.AggregateFeedMessage.Style;
 import com.threerings.msoy.web.gwt.DateUtil;
 
 /**
@@ -29,70 +30,63 @@ public class FeedMessageAggregator
      */
     public static List<FeedMessage> aggregate (List<FeedMessage> messages, boolean byDate)
     {
-        List<FeedMessage> newMessages = new ArrayList<FeedMessage>();
-        if (messages.isEmpty()) {
-            return newMessages;
-        }
-
         // copy messages because we're going to modify it
         messages = new ArrayList<FeedMessage>(messages);
 
-        HashMap<MessageKey, MessageAggregate> actions = new HashMap<MessageKey, MessageAggregate>();
-        HashMap<MessageKey, MessageAggregate> actors = new HashMap<MessageKey, MessageAggregate>();
+        // resulting list with a mix of aggregated and non-aggregated messages
+        List<FeedMessage> newMessages = new ArrayList<FeedMessage>();
 
         // if grouping by date, start with today then work backwards
         long header = byDate ? startOfDay(System.currentTimeMillis()) : 0;
-        MessageAggregate dummy = new MessageAggregate();
 
         while (!messages.isEmpty()) {
-            buildMessageMap(messages, header, actions, AggregateFeedMessage.Style.ACTIONS);
-            buildMessageMap(messages, header, actors, AggregateFeedMessage.Style.ACTORS);
-            FeedMessage message = null;
+            // partition the messages in two ways
+            Partition actions = new Partition(Style.ACTIONS, messages, header);
+            Partition actors = new Partition(Style.ACTORS, messages, header);
 
             for (Iterator<FeedMessage> msgIter = messages.iterator(); msgIter.hasNext();) {
-                message = msgIter.next();
+                FeedMessage message = msgIter.next();
                 if (header > message.posted) {
                     header = FeedMessageAggregator.startOfDay(message.posted);
                     break;
                 }
                 msgIter.remove();
 
-                // Find the larger of the left or right aggregate message and display it
-                MessageAggregate actionsValue = getDefault(actions, getActionsKey(message), dummy);
-                MessageAggregate actorsValue = getDefault(actors, getActorsKey(message), dummy);
-                int actionsSize = actionsValue.size();
-                int actorsSize = actorsValue.size();
+                // get the groups the message belongs to
+                GroupCollection groups = new GroupCollection(message, actions, actors);
 
-                // if one of the aggregate messages has been displayed, that means this message
-                // is displayed and should be removed from any further aggregates
-                // TODO: is this always true? what about the MAX_AGGREGATED_ITEMS limit?
-                if (actionsValue.getDisplayed() || actorsValue.getDisplayed()) {
-                    if (actionsValue.getDisplayed() && actorsSize > 1) {
-                        actorsValue.remove(message);
-                    } else if (actorsValue.getDisplayed() && actionsSize > 1) {
-                        actionsValue.remove(message);
+                Partition.Group destination = null;
+
+                // if one of the groups has already been marked for display, put it in that one
+                for (Partition.Group g : groups) {
+                    if (g.isDisplayed()) {
+                        destination = g;
+                        break;
                     }
-                    continue;
                 }
 
-                if (actionsSize >= actorsSize && actionsSize > 1) {
-                    newMessages.add(new AggregateFeedMessage(AggregateFeedMessage.Style.ACTIONS,
-                        message.type, message.posted, actionsValue.getList()));
-                    if (actorsSize > 1) {
-                        actorsValue.remove(message);
+                // otherwise find the larger of the two groups with at least 2 messages
+                if (destination == null) {
+                    for (Partition.Group g : groups) {
+                        if (g.size() > 1 && g.size() > groups.other(g).size()) {
+                            destination = g;
+                            break;
+                        }
                     }
-                    actionsValue.setDisplayed(true);
-                    continue;
-                } else if (actorsSize > 1) {
-                    newMessages.add(new AggregateFeedMessage(AggregateFeedMessage.Style.ACTORS,
-                        message.type, message.posted, actorsValue.getList()));
-                    if (actionsSize > 1) {
-                        actionsValue.remove(message);
-                    }
-                    actorsValue.setDisplayed(true);
-                    continue;
-                } else {
+                }
+
+                if (destination == null) {
+                    // neither aggregate had more than one message, just display it singly
                     newMessages.add(message);
+
+                } else {
+                    // remove the message from the other group to prevent double display
+                    groups.other(destination).remove(message);
+
+                    // add to new messages if it is not yet displayed
+                    if (!destination.isDisplayed()) {
+                        newMessages.add(destination.display());
+                    }
                 }
             }
         }
@@ -108,16 +102,6 @@ public class FeedMessageAggregator
         Date date = new Date(timestamp);
         DateUtil.zeroTime(date);
         return date.getTime();
-    }
-
-    /**
-     * Gets the map entry if the key and value are not null, otherwise returns the dummy.
-     */
-    protected static MessageAggregate getDefault(
-        HashMap<MessageKey, MessageAggregate> map, MessageKey key, MessageAggregate dummy)
-    {
-        MessageAggregate agg = key == null ? null : map.get(key);
-        return agg == null ? dummy : agg;
     }
 
     /**
@@ -183,37 +167,6 @@ public class FeedMessageAggregator
     }
 
     /**
-     * Builds a left side or right side aggregated HashMap for the supplied messages.
-     */
-    protected static void buildMessageMap (List<FeedMessage> messages, long header,
-        HashMap<MessageKey, MessageAggregate> map, AggregateFeedMessage.Style style)
-    {
-        map.clear();
-        for (FeedMessage message : messages) {
-            if (header > message.posted) {
-                break;
-            }
-            MessageKey key = null;
-            switch (style) {
-            case ACTIONS: key = getActionsKey(message); break;
-            case ACTORS: key = getActorsKey(message); break;
-            }
-            if (key == null) {
-                continue;
-            }
-            MessageAggregate value = map.get(key);
-            if (value == null) {
-                value = new MessageAggregate();
-                map.put(key, value);
-            }
-
-            if (value.size() < MAX_AGGREGATED_ITEMS) {
-                value.add(message);
-            }
-        }
-    }
-
-    /**
      * A hashable key used for storing FeedMessages that will be aggregated.
      */
     protected static class MessageKey
@@ -250,54 +203,180 @@ public class FeedMessageAggregator
     }
 
     /**
-     * A class to encapsulate the various purposes of the value in a message map.
+     * Partitions a collection of messages into groups with a shared key.
      */
-    protected static class MessageAggregate
+    protected static class Partition
     {
-        public boolean displayed = false;
-
-        public void add (FeedMessage message)
+        /**
+         * A group of messages that have the same key. The group may also be marked as displayed.
+         */
+        public class Group
         {
-            if (displayed) {
-                // TODO: better way of logging in server/client shared code
-                //CShell.log(
-                //    "Ignoring addition of messages to a MessageAggregate that has been displayed");
-                return;
+            /**
+             * Removes a message from the group. Called when the message is already in another
+             * larger group.
+             */
+            public void remove (FeedMessage message)
+            {
+                _list.remove(message);
             }
-            list.add(message);
-        }
 
-        public void remove (FeedMessage message)
-        {
-            list.remove(message);
-        }
+            /**
+             * Gets the current number of messages in this group.
+             */
+            public int size ()
+            {
+                return _list.size();
+            }
 
-        public int size ()
-        {
-            return list.size();
+            /**
+             * Marks this group as being displayed and returns the aggregation of all messages. To
+             * save memory, also clears the group since it is not needed any more.
+             */
+            public AggregateFeedMessage display ()
+            {
+                _displayed = true;
+                if (_list.size() == 0) {
+                    return null;
+                }
+                FeedMessage first = _list.get(0);
+                AggregateFeedMessage aggMessage = new AggregateFeedMessage(
+                    _style, first.type, first.posted, _list);
+                _list.clear();
+                return aggMessage;
+            }
+
+            /**
+             * Checks if this group has been marked for display.
+             */
+            public boolean isDisplayed ()
+            {
+                return _displayed;
+            }
+
+            /**
+             * Adds a new message to this group. Only needed during Grouper construction.
+             */
+            protected void add (FeedMessage message)
+            {
+                if (_displayed) {
+                    // TODO: better way of logging in server/client shared code
+                    //CShell.log(
+                    //    "Ignoring addition of messages to a MessageAggregate that has been displayed");
+                    return;
+                }
+                _list.add(message);
+            }
+
+            protected boolean _displayed;
+            protected List<FeedMessage> _list = new ArrayList<FeedMessage>();
         }
 
         /**
-         * Setting displayed to true clears out the map.
+         * Creates a new partition and divides up the given messages into groups where all the
+         * messages in a group share a common key.
          */
-        public void setDisplayed (boolean displayed)
+        public Partition (Style style, List<FeedMessage> messages, long header)
         {
-            this.displayed = displayed;
-            if (displayed) {
-                list.clear();
+            _style = style;
+            build(messages, header);
+        }
+
+        /**
+         * Gets the group that the given message belongs in. If no group exists, an empty group is
+         * returned so that the caller need not check for null.
+         */
+        public Group get (FeedMessage message)
+        {
+            MessageKey key = getKey(message);
+            Group agg = key == null ? null : _map.get(key);
+            return agg == null ? _dummy : agg;
+        }
+
+        protected MessageKey getKey (FeedMessage message)
+        {
+            switch (_style) {
+            case ACTIONS: return getActionsKey(message);
+            case ACTORS: return getActorsKey(message);
+            }
+            return null; // not aggregated
+        }
+
+        protected void build (List<FeedMessage> messages, long header)
+        {
+            _map.clear();
+            for (FeedMessage message : messages) {
+                if (header > message.posted) {
+                    break;
+                }
+                MessageKey key = getKey(message);
+                if (key == null) {
+                    continue;
+                }
+                Group value = _map.get(key);
+                if (value == null) {
+                    value = new Group();
+                    _map.put(key, value);
+                }
+                // TODO: something better than just culling the message
+                if (value.size() < MAX_AGGREGATED_ITEMS) {
+                    value.add(message);
+                }
             }
         }
 
-        public boolean getDisplayed ()
+        /** The style of this grouper. */
+        protected Style _style;
+
+        /** Partition of messages with the same subject or object. */
+        protected HashMap<MessageKey, Group> _map = new HashMap<MessageKey, Group>();
+
+        /** Empty group. */
+        protected Group _dummy = new Group();
+    }
+
+    /**
+     * Provides a way to iterate over 2 groups and easily access the "other" one.
+     */
+    protected static class GroupCollection
+        implements Iterable<Partition.Group>
+    {
+        /**
+         * Initializes the collection to be the groups of the given message in each of 2 partitions.
+         */
+        public GroupCollection (FeedMessage message, Partition actions, Partition actors)
         {
-            return displayed;
+            _groups = new Partition.Group[] {
+                actions.get(message), actors.get(message)};
         }
 
-        public List<FeedMessage> getList ()
+        /**
+         * Gets the other group, that is the group that is not the given one.
+         */
+        public Partition.Group other (Partition.Group group)
         {
-            return list;
+            return group == _groups[0] ? _groups[1] : _groups[0];
         }
 
-        protected List<FeedMessage> list = new ArrayList<FeedMessage>();
+        @Override // from Iterable
+        public Iterator<Partition.Group> iterator ()
+        {
+            return new Iterator<Partition.Group>() {
+                @Override public boolean hasNext () {
+                    return _next < _groups.length;
+                }
+
+                @Override public Partition.Group next () {
+                    return _groups[_next++];
+                }
+
+                @Override public void remove () {
+                }
+
+                protected int _next = 0;
+            };
+        }
+
+        protected Partition.Group[] _groups;
     }
 }
