@@ -751,7 +751,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected boolean ignoreClient (PresentsSession client)
     {
         // we only publish information about certain types of sessions
-        return super.ignoreClient(client) || !isPublishedName(client.getUsername());
+        return super.ignoreClient(client) || !isPublishedName(client.getAuthName());
     }
 
     @Override // from PeerManager
