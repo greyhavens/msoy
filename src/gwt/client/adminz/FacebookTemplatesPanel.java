@@ -72,14 +72,16 @@ public class FacebookTemplatesPanel extends AdminDataPanel<List<FacebookTemplate
     protected void addRow (FacebookTemplate template)
     {
         final TemplateWidgets widgets = new TemplateWidgets(template);
-        final int row = _display.getRowCount();
+        int row = _display.getRowCount();
+        final int rowDelta = row - _templates.size();
         _display.setWidget(row, 0, widgets.code);
         _display.setWidget(row, 1, widgets.variant);
         _display.setWidget(row, 2, widgets.bundleId);
         _display.setWidget(row, 3, MsoyUI.createCloseButton(new ClickHandler() {
             @Override public void onClick (ClickEvent event) {
-                _display.removeRow(row);
-                _templates.remove(widgets);
+                int idx = _templates.indexOf(widgets);
+                _display.removeRow(idx + rowDelta);
+                _templates.remove(idx);
                 if (widgets.isSaved()) {
                     _removed.add(widgets.template);
                 }
