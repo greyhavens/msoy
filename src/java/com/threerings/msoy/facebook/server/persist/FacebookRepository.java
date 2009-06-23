@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Where;
 
 /**
  * Manages persistent structures for integrating with Facebook.
@@ -49,6 +50,15 @@ public class FacebookRepository extends DepotRepository
     public List<FacebookTemplateRecord> loadTemplates ()
     {
         return findAll(FacebookTemplateRecord.class);
+    }
+
+    /**
+     * Loads a list of all templates for the given code.
+     */
+    public List<FacebookTemplateRecord> loadVariants (String code)
+    {
+        return findAll(FacebookTemplateRecord.class,
+            new Where(FacebookTemplateRecord.CODE.eq(code)));
     }
 
     @Override // from DepotRepository

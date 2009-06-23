@@ -9,6 +9,7 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 
 /**
  * Describes a story template entered into the Facebook template editor for use at runtime by the
@@ -63,6 +64,17 @@ public class FacebookTemplateRecord extends PersistentRecord
         template.bundleId = bundleId;
         template.variant = variant;
         return template;
+    }
+
+    /**
+     * Creates and returns a card for use on the non-admin client.
+     */
+    public FacebookTemplateCard toTemplateCard ()
+    {
+        FacebookTemplateCard card = new FacebookTemplateCard();
+        card.bundleId = bundleId;
+        card.variant = variant;
+        return card;
     }
 
     // AUTO-GENERATED: METHODS START

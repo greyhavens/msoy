@@ -156,4 +156,11 @@ public interface WebMemberService extends RemoteService
      */
     void trackTestAction (String test, String action, VisitorInfo info)
         throws ServiceException;
+
+    /**
+     * Gets a random facebook template from those with a matching code. If none match, null is
+     * returned.
+     */
+    FacebookTemplateCard getFacebookTemplate (String code)
+        throws ServiceException;
 }

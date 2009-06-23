@@ -3,14 +3,16 @@
 
 package client.frame;
 
-import java.util.Date;
-
+import com.google.gwt.core.client.GWT;
+import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.gwt.ABTestCard;
+import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
-
+import client.util.InfoCallback;
 import client.util.events.FlashEvents;
 import client.util.events.TrophyEvent;
 
@@ -28,16 +30,23 @@ public class ExternalFeeder
         });
     }
 
-    protected void publishTrophyToFacebook (TrophyEvent event)
+    protected void publishTrophyToFacebook (final TrophyEvent event)
     {
-        // select trophy text based on a pseudo test (not a real A/B test on the server); append
-        // the test group to the entry vector so the results can be viewed in the entry vector
-        // table
-        String[] templateConfig = DeploymentConfig.facebookTrophyTemplateConfig.split(",");
-        int testGroup = new ABTestCard("trophy pseudo test", new Date(),
-            templateConfig.length / 2, false).getGroup(CShell.frame.getVisitorInfo());
-        String vector = "v.fbtrophy" + templateConfig[(testGroup - 1) / 2];
-        String templateId = templateConfig[(testGroup - 1) / 2 + 1];
+        _membersvc.getFacebookTemplate("trophy", new InfoCallback<FacebookTemplateCard>() {
+            @Override public void onSuccess (FacebookTemplateCard result) {
+                if (result != null) {
+                    CShell.log("Got template, publishing", "bundle", result.bundleId,
+                        "variant", result.variant);
+                    publishTrophyToFacebook(event, result);
+                } // else oops
+            }
+        });
+    }
+
+    protected void publishTrophyToFacebook (TrophyEvent event, FacebookTemplateCard template)
+    {
+        String vector = "v.fbtrophy" + template.variant;
+        String templateId = String.valueOf(template.bundleId);
 
         // Swap in some arbitrary public URLs here to satisfy Facebook's overly aggressive URL
         // validation... however, the other links in the template appear to fail as well. But since
@@ -91,4 +100,7 @@ public class ExternalFeeder
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
     */
+
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

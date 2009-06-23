@@ -25,7 +25,8 @@ public class FacebookTemplate
      */
     public boolean equals (FacebookTemplate other)
     {
-        return code.equals(other.code) && variant.equals(other.variant);
+        return code.equals(other.code) && variant.equals(other.variant) &&
+            bundleId == other.bundleId;
     }
 
     @Override // from Object

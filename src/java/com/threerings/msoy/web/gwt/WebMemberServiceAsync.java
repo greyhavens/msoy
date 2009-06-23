@@ -112,4 +112,9 @@ public interface WebMemberServiceAsync
      */
     void trackTestAction (String test, String action, VisitorInfo info,
                           AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link WebMemberService#getFacebookTemplate}.
+     */
+    void getFacebookTemplate (String code, AsyncCallback<FacebookTemplateCard> callback);
 }

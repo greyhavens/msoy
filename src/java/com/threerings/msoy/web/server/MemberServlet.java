@@ -16,6 +16,7 @@ import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.gwt.util.PagedResult;
@@ -30,19 +31,26 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.admin.server.ABTestLogic;
-import com.threerings.msoy.person.server.persist.GameInvitationRecord;
-import com.threerings.msoy.person.server.persist.InvitationRecord;
-import com.threerings.msoy.person.server.persist.InviteRepository;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.spam.server.SpamUtil;
-import com.threerings.msoy.spam.server.persist.SpamRepository;
-
+import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebMemberService;
+
+import com.threerings.msoy.admin.server.ABTestLogic;
+
+import com.threerings.msoy.person.server.persist.GameInvitationRecord;
+import com.threerings.msoy.person.server.persist.InvitationRecord;
+import com.threerings.msoy.person.server.persist.InviteRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+
+import com.threerings.msoy.spam.server.SpamUtil;
+import com.threerings.msoy.spam.server.persist.SpamRepository;
+
+
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -316,8 +324,21 @@ public class MemberServlet extends MsoyServiceServlet
         _testLogic.trackTestAction(test, action, info);
     }
 
+    // from WebMemberService
+    public FacebookTemplateCard getFacebookTemplate (String code)
+        throws ServiceException
+    {
+        List<FacebookTemplateRecord> templates = _facebookRepo.loadVariants(code);
+        if (templates.size() == 0) {
+            log.warning("No Facebook templates found for request", "code", code);
+            return null;
+        }
+        return RandomUtil.pickRandom(templates).toTemplateCard();
+    }
+
     // our dependencies
     @Inject protected ABTestLogic _testLogic;
+    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MemberLogic _memberLogic;
