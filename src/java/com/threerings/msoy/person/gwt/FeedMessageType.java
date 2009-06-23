@@ -20,7 +20,7 @@ public enum FeedMessageType
     // friend messages
     FRIEND_ADDED_FRIEND(100, Category.FRIENDINGS),
     FRIEND_UPDATED_ROOM(101, Category.ROOMS, 1, oneDay()),
-    FRIEND_WON_TROPHY(102, Category.TROPHIES, 3, oneDay()),
+    FRIEND_WON_TROPHY(102, Category.GAMES, 3, oneDay()),
     FRIEND_LISTED_ITEM(103, Category.LISTED_ITEMS, 3, oneDay()),
     FRIEND_GAINED_LEVEL(104, Category.LEVELS, 1, oneDay()),
     FRIEND_WON_BADGE(105, Category.BADGES, 3, oneDay()),
@@ -28,6 +28,7 @@ public enum FeedMessageType
     FRIEND_SUBSCRIBED(107, Category.LEVELS, 1, oneDay()),
     FRIEND_CREATED_GROUP(108, Category.GROUPS, 3, oneDay()),
     FRIEND_JOINED_GROUP(109, Category.GROUPS, 3, oneDay()),
+    FRIEND_PLAYED_GAME(110, Category.GAMES, 3, oneDay()),
 
     // group messages
     GROUP_ANNOUNCEMENT(200, Category.ANNOUNCEMENTS, 2, oneDay()),
@@ -43,7 +44,7 @@ public enum FeedMessageType
     /** Types are grouped together into categories. NOTE: Don't change the ordinals; they are used
      * for translation on the client. */
     public static enum Category {
-        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, FORUMS, TROPHIES, ROOMS, BADGES,
+        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, FORUMS, GAMES, ROOMS, BADGES,
         MEDALS, LEVELS, GROUPS;
     }
 

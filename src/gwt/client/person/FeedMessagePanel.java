@@ -42,7 +42,7 @@ import client.util.MediaUtil;
 public class FeedMessagePanel extends FocusPanel
 {
     /**
-     * @param usePronouns If true, say "You updated the trophy" if current member is the actor.
+     * @param usePronouns If true, say e.g. "You earned the trophy" if current member is the actor.
      */
     public FeedMessagePanel (FeedMessage message, boolean usePronouns)
     {
@@ -189,6 +189,14 @@ public class FeedMessagePanel extends FocusPanel
 
                 case SELF_FORUM_REPLY:
                     return _pmsgs.selfForumReply(subject, object);
+
+                case FRIEND_PLAYED_GAME:
+                    switch (plural) {
+                    default:
+                    case NONE: return _pmsgs.friendPlayedGame(subject, object);
+                    case SUBJECT: return _pmsgs.friendsPlayedGame(subject, object);
+                    case OBJECT: return _pmsgs.friendPlayedGames(subject, object);
+                    }
 
                 default:
                     return "Unknown message type: " + subject + " did something to " + object + ".";

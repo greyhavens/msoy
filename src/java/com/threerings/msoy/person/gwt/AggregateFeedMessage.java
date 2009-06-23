@@ -82,6 +82,14 @@ public class AggregateFeedMessage extends FeedMessage
                 }
             }
             break;
+
+        case FRIEND_PLAYED_GAME:
+            for (FeedMessage msg : this.messages) {
+                if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend) &&
+                    msg.data[1].equals(message.data[1])) {
+                    return true;
+                }
+            }
         }
         return false;
     }

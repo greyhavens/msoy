@@ -130,6 +130,7 @@ public class FeedMessageAggregator
         case FRIEND_ADDED_FRIEND:
         case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
+        case FRIEND_PLAYED_GAME:
         case FRIEND_LISTED_ITEM:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
@@ -157,6 +158,10 @@ public class FeedMessageAggregator
         case FRIEND_WON_TROPHY:
             // one or more friends earned the same trophy; trophy name and id is the key
             return new MessageKey(message.type, message.data[1].concat(message.data[0]).hashCode());
+
+        case FRIEND_PLAYED_GAME:
+            // one or more friends played the same game; game id is the key
+            return new MessageKey(message.type, message.data[1]);
 
         case FRIEND_WON_BADGE:
             // one or more friends earned the same badge; badge id and level is the key

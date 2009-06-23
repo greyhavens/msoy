@@ -36,6 +36,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -246,9 +247,21 @@ public class FeedLogic
      * game. Handles the further publication of that message to Facebook or other external sources
      * as appropriate.
      */
-    public void publishGamePlayed (int[] playerIds, int[] scores, int gameMode)
+    public void publishGamePlayed (
+        GameInfoRecord game, int[] playerIds, int[] scores, int gameMode)
     {
-        // TODO: implement
+        // TODO: do something with game mode? this would require some game editor ui for naming
+        // them or something
+        // TODO: use the scores too, but always replace previous feed items with the higher score
+        if (playerIds.length == 1) {
+            /*boolean published = */ publishMemberMessage(playerIds[0],
+                FeedMessageType.FRIEND_PLAYED_GAME, game.name, game.gameId,
+                MediaDesc.mdToString(game.getThumbMedia()));
+
+            // TODO: facebook publish
+        } else {
+            // TODO: multiplayer message
+        }
     }
 
     /**

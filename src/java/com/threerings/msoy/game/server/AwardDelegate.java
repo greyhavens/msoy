@@ -43,6 +43,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameGameRegistry.MetricType;
 import com.threerings.msoy.game.server.PlayerLocator;
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -163,9 +164,10 @@ public class AwardDelegate extends RatingDelegate
             }
 
             // post to feed (rated games only) - we don't need to wait on the result
+            final GameInfoRecord game = _content.game;
             _invoker.postRunnable(new Runnable() {
                 public void run () {
-                    _feedLogic.publishGamePlayed(playerIds, scores, gameMode);
+                    _feedLogic.publishGamePlayed(game, playerIds, scores, gameMode);
                 }
                 public String toString () {
                     return "FeedLogic.publishGamePlayed";

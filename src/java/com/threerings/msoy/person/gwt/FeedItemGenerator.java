@@ -52,7 +52,7 @@ public class FeedItemGenerator
 
         /**
          * Adds a previously created media object to the feed with the given message. The passed
-         * media will neve be null.
+         * media will never be null.
          */
         void addMedia (Media media, String message);
 
@@ -171,6 +171,7 @@ public class FeedItemGenerator
         case FRIEND_ADDED_FRIEND:
         case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
+        case FRIEND_PLAYED_GAME:
         case FRIEND_LISTED_ITEM:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
@@ -250,6 +251,7 @@ public class FeedItemGenerator
         case FRIEND_ADDED_FRIEND:
         case FRIEND_UPDATED_ROOM:
         case FRIEND_WON_TROPHY:
+        case FRIEND_PLAYED_GAME:
         case FRIEND_LISTED_ITEM:
             String text = _messages.action(
                 message.type, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
@@ -282,6 +284,7 @@ public class FeedItemGenerator
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
         case FRIEND_WON_TROPHY:
+        case FRIEND_PLAYED_GAME:
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
         case SELF_ROOM_COMMENT:
@@ -322,9 +325,14 @@ public class FeedItemGenerator
             return _builder.createLink(
                 message.data[1], Pages.WORLD, Args.compose("s" + message.data[0]));
 
-        case TROPHIES:
-            return _builder.createLink(message.data[0], Pages.GAMES,
-                SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
+        case GAMES:
+            if (message.type == FeedMessageType.FRIEND_WON_TROPHY) {
+                return _builder.createLink(message.data[0], Pages.GAMES,
+                    SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
+            } else if (message.type == FeedMessageType.FRIEND_PLAYED_GAME) {
+                return _builder.createLink(message.data[0], Pages.GAMES,
+                    Args.compose("d", message.data[1]));
+            }
 
         case LISTED_ITEMS:
             return _messages.describeItem(
@@ -396,9 +404,13 @@ public class FeedItemGenerator
         case ROOMS:
             return buildMedia(message, 2, Pages.WORLD, "s" + message.data[0]);
 
-        case TROPHIES:
-            return buildMedia(message, 2, Pages.GAMES,
-                SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
+        case GAMES:
+            if (message.type == FeedMessageType.FRIEND_WON_TROPHY) {
+                return buildMedia(message, 2, Pages.GAMES,
+                    SharedNaviUtil.GameDetails.TROPHIES.args(Integer.valueOf(message.data[1])));
+            } else if (message.type == FeedMessageType.FRIEND_PLAYED_GAME) {
+                return buildMedia(message, 2, Pages.GAMES, Args.compose("d", message.data[1]));
+            }
 
         case LISTED_ITEMS:
             return buildMedia(message, 3, Pages.SHOP, "l", message.data[1], message.data[2]);

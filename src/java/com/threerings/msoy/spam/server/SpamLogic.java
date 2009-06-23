@@ -1045,6 +1045,17 @@ public class SpamLogic
 
             case SELF_FORUM_REPLY:
                 return _pmsgs.get("selfForumReply", subject, object);
+
+            case FRIEND_PLAYED_GAME:
+                switch (plural) {
+                default:
+                case NONE:
+                    return _pmsgs.get("friendPlayedGame", subject, object);
+                case SUBJECT:
+                    return _pmsgs.get("friendsPlayedGame", subject, object);
+                case OBJECT:
+                    return _pmsgs.get("friendPlayedGames", subject, object);
+                }
             }
             return "Unknown message type: " + subject + " did something to " + object + ".";
         }
@@ -1101,7 +1112,7 @@ public class SpamLogic
 
     /** We want these categories first. */
     protected static final Category[] CATEGORIES = {Category.ANNOUNCEMENTS, Category.LISTED_ITEMS, 
-        Category.ROOMS, Category.TROPHIES, Category.FRIENDINGS};
+        Category.ROOMS, Category.GAMES, Category.FRIENDINGS};
 
     static
     {
