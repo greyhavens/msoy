@@ -899,11 +899,11 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ABTestRepository _testRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected ContestRepository _contestRepo;
+    @Inject protected FacebookRepository _facebookRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
-    @Inject protected SupportLogic _supportLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;
@@ -917,5 +917,5 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected RootDObjectManager _omgr;
     @Inject protected RuntimeConfig _runtimeConfig;
     @Inject protected ServerMessages _serverMsgs;
-    @Inject protected FacebookRepository _facebookRepo;
+    @Inject protected SupportLogic _supportLogic;
 }
