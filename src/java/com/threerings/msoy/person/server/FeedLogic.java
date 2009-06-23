@@ -242,8 +242,8 @@ public class FeedLogic
     }
 
     /**
-     * Publishes a feed message to the specified member's friends indicating that they playeed a
-     * trophy. Handles the further publication of that trophy to Facebook or other external sources
+     * Publishes a feed message to the specified member's friends indicating that they played a
+     * game. Handles the further publication of that message to Facebook or other external sources
      * as appropriate.
      */
     public void publishGamePlayed (int[] playerIds, int[] scores, int gameMode)
