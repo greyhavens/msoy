@@ -35,6 +35,7 @@ import com.whirled.game.server.WhirledGameManager;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -78,8 +79,8 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Handles {@link WhirledGameService#endGameWithScores}.
      */
-    public void endGameWithScores (ClientObject caller, int[] playerIds, int[] scores,
-                                   int payoutType, int gameMode,
+    public void endGameWithScores (ClientObject caller, final int[] playerIds, final int[] scores,
+                                   int payoutType, final int gameMode,
                                    InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -160,6 +161,16 @@ public class AwardDelegate extends RatingDelegate
                     rating.modified = true;
                 }
             }
+
+            // post to feed (rated games only) - we don't need to wait on the result
+            _invoker.postRunnable(new Runnable() {
+                public void run () {
+                    _feedLogic.publishGamePlayed(playerIds, scores, gameMode);
+                }
+                public String toString () {
+                    return "FeedLogic.publishGamePlayed";
+                }
+            });
         }
 
         // now actually end the game
@@ -921,6 +932,7 @@ public class AwardDelegate extends RatingDelegate
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected FeedLogic _feedLogic;
 
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {
