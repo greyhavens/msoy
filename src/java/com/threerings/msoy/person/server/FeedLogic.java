@@ -19,6 +19,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
 import com.google.code.facebookapi.IFeedImage;
@@ -31,12 +32,15 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.FacebookLogic;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
+
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
+
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -233,12 +237,16 @@ public class FeedLogic
         if (published && gameDesc != null) {
             // TODO: if the game has its own Facebook app and has configured a trophy story, we want to
             // emit that story to that app rather than to Whirled
-            long storyId = ServerConfig.config.getValue("facebook.trophy_story_id", 0L);
-            Map<String, String> data = Maps.newHashMap();
-            data.put("trophy", name);
-            data.put("game", gameName);
-            data.put("game_desc", gameDesc);
-            publishGameStory(memberId, gameId, storyId, "v.fbtrophy", data, trophyMedia);
+            List<FacebookTemplateRecord> templates = _faceRepo.loadVariants("trophy");
+            if (templates.size() > 0) {
+                FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
+                Map<String, String> data = Maps.newHashMap();
+                data.put("trophy", name);
+                data.put("game", gameName);
+                data.put("game_desc", gameDesc);
+                publishGameStory(memberId, gameId, template.bundleId,
+                    "v.fbtrophy" + template.variant, data, trophyMedia);
+            }
         }
     }
 
@@ -354,6 +362,7 @@ public class FeedLogic
     }
 
     @Inject protected FacebookLogic _faceLogic;
+    @Inject protected FacebookRepository _faceRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
