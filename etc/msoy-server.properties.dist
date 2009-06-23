@@ -174,7 +174,6 @@ oooauth.access_denied_url = /register/access_denied.wm
 
 # facebook.api_key =
 # facebook.secret =
-# facebook.trophy_template_config =
 # facebook.canvas_url = 
 # facebook.application_url = 
 # facebook.application_name = 
