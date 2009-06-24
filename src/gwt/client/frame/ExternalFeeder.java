@@ -45,7 +45,7 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event, FacebookTemplateCard template)
     {
-        String vector = "v.fbtrophy" + template.variant;
+        String vector = template.toEntryVector("trophy");
         String templateId = String.valueOf(template.bundleId);
 
         // Swap in some arbitrary public URLs here to satisfy Facebook's overly aggressive URL

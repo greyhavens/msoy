@@ -233,20 +233,12 @@ public class FeedLogic
 
         // only publish to facebook if we also published to Whirled feed
         // TODO: consider other throttling strategies for facebook feed (for example, if you get 5
-        // trophies in a day, you probably want to see the last one, not the 3rd one) 
+        // trophies in a day, you probably want to see the last one, not the 3rd one)
         if (published && gameDesc != null) {
             // TODO: if the game has its own Facebook app and has configured a trophy story, we want to
             // emit that story to that app rather than to Whirled
-            List<FacebookTemplateRecord> templates = _faceRepo.loadVariants("trophy");
-            if (templates.size() > 0) {
-                FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
-                Map<String, String> data = Maps.newHashMap();
-                data.put("trophy", name);
-                data.put("game", gameName);
-                data.put("game_desc", gameDesc);
-                publishGameStory(memberId, gameId, template.bundleId,
-                    "v.fbtrophy" + template.variant, data, trophyMedia);
-            }
+            publishGameStory(
+                memberId, gameId, gameName, gameDesc, "trophy", trophyMedia, "trophy", name);
         }
     }
 
@@ -262,11 +254,15 @@ public class FeedLogic
         // them or something
         // TODO: use the scores too, but always replace previous feed items with the higher score
         if (playerIds.length == 1) {
-            /*boolean published = */ publishMemberMessage(playerIds[0],
+            boolean published = publishMemberMessage(playerIds[0],
                 FeedMessageType.FRIEND_PLAYED_GAME, game.name, game.gameId,
                 MediaDesc.mdToString(game.getThumbMedia()));
 
-            // TODO: facebook publish
+            if (published) {
+                publishGameStory(playerIds[0], game.gameId, game.name, game.description, "played",
+                    game.getThumbMedia());
+            }
+
         } else {
             // TODO: multiplayer message
         }
@@ -322,18 +318,36 @@ public class FeedLogic
     /**
      * Does most of the legwork for publishing a game story to facebook.
      */
-    protected void publishGameStory (int memberId, int gameId, long storyId, String vec,
-        Map<String, String> data, MediaDesc media)
+    protected void publishGameStory (int memberId, int gameId, String gameName,
+        String gameDescription, String templateCode, MediaDesc media, String ...moreData)
     {
-        // if the member has a Facebook session key, try publishing to Facebook as well
+        // get the facebook session key - we can't do anything wihout that
         String sessionKey = _memberRepo.lookupExternalSessionKey(ExternalAuther.FACEBOOK, memberId);
-        if (sessionKey == null || storyId == 0L) {
+        if (sessionKey == null) {
             return;
         }
 
-        String actionURL = DeploymentConfig.facebookCanvasUrl + "?game=" + gameId + "&vec=" + vec;
-        data.put("action_url", actionURL);
+        // lookup a random template variant
+        List<FacebookTemplateRecord> templates = _faceRepo.loadVariants(templateCode);
+        if (templates.size() == 0) {
+            log.warning("No facebook templates", "code", templateCode);
+            return;
+        }
 
+        FacebookTemplateRecord template = RandomUtil.pickRandom(templates);
+
+        // set up the data for the story
+        String actionURL = DeploymentConfig.facebookCanvasUrl;
+        actionURL += "?game=" + gameId + "&vec=" + template.toEntryVector();
+        Map<String, String> data = Maps.newHashMap();
+        data.put("action_url", actionURL);
+        data.put("game", gameName);
+        data.put("game_desc", gameDescription);
+        for (int ii = 0; ii < moreData.length; ii += 2) {
+            data.put(moreData[ii], moreData[ii + 1]);
+        }
+
+        // set up the images
         List<IFeedImage> images = Lists.newArrayList();
         try {
             String imageUrl = media.getMediaPath();
@@ -346,18 +360,19 @@ public class FeedLogic
         } catch (MalformedURLException mue) {
             log.warning("Failed to add image to trophy story", "trophy", media.getMediaPath(),
                         "action", actionURL, "error", mue);
-            // post the image anyway without images
+            // post the story anyway without images
         }
 
         try {
             int storySize = 2; // short story (facebook will auto-reduce if we lack permissions)
-            if (!_faceLogic.getFacebookClient(sessionKey).feed_publishUserAction(
-                    storyId, data, images, Collections.<Long>emptyList(), null, storySize)) {
-                log.info("Failed to publish trophy story", "storyId", storyId, "for", memberId);
+            if (!_faceLogic.getFacebookClient(sessionKey).feed_publishUserAction(template.bundleId,
+                data, images, Collections.<Long>emptyList(), null, storySize)) {
+                log.info("Failed to publish trophy story", "storyId", template.bundleId,
+                    "for", memberId);
             }
         } catch (Exception e) {
             log.warning("Failed to post story to Facebook", "memId", memberId, "gameId", gameId,
-                "storyId", storyId, "error", e);
+                "storyId", template.bundleId, "error", e);
         }
     }
 

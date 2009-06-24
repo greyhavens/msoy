@@ -17,4 +17,20 @@ public class FacebookTemplateCard
 
     /** The bundle id to pass along to Facebook. */
     public long bundleId;
+
+    /**
+     * Converts this template card to an entry vector based on the given template code.
+     */
+    public String toEntryVector (String code)
+    {
+        return toEntryVector(code, variant);
+    }
+
+    /**
+     * Converts this given fields to an entry vector.
+     */
+    public static String toEntryVector (String code, String variant)
+    {
+        return "v.fb" + code + variant;
+    }
 }

@@ -77,6 +77,15 @@ public class FacebookTemplateRecord extends PersistentRecord
         return card;
     }
 
+    /**
+     * Get the entry vector associated with this template. This is so we can track the popularity
+     * of variants.
+     */
+    public String toEntryVector ()
+    {
+        return FacebookTemplateCard.toEntryVector(code, variant);
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link FacebookTemplateRecord}
