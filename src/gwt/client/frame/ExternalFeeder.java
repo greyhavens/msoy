@@ -96,6 +96,7 @@ public class ExternalFeeder
           "trophy" : "Freshman",
           "descrip" : "Complete Chapter 3 of \"The Incident.\"",
           "vector" : "v.none",
+          "action_url": "http://www.whirled.com/go/games-d_827",
           "images" : [ {"src" :
               "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
               "href" : "http://www.whirled.com/go/games-d_827_t"}]}
