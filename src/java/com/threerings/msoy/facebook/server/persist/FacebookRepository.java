@@ -49,7 +49,7 @@ public class FacebookRepository extends DepotRepository
      */
     public List<FacebookTemplateRecord> loadTemplates ()
     {
-        return findAll(FacebookTemplateRecord.class);
+        return findAll(FacebookTemplateRecord.class, CacheStrategy.NONE);
     }
 
     /**
