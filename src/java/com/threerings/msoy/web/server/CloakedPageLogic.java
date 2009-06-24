@@ -168,7 +168,7 @@ public class CloakedPageLogic
         } else if (path.startsWith(GROUP_DETAIL_PREFIX)) {
             int groupId = Integer.parseInt(path.substring(GROUP_DETAIL_PREFIX.length()));
             GroupRecord group = _groupRepo.loadGroup(groupId);
-            if (group.policy == Group.Policy.EXCLUSIVE) {
+            if (group != null && group.policy == Group.Policy.EXCLUSIVE) {
                 group = null; // pretend it doesn't exist
             }
             String name = (group != null) ? group.name : "No such group";
