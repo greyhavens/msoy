@@ -125,7 +125,7 @@ public abstract class Page
 
             // limit the outgoing links created by this page
             if (CShell.isFacebook()) {
-                Link.setValidPages(new Pages[] { Pages.GAMES, Pages.FACEBOOK });
+                Link.setValidPages(new Pages[] { Pages.GAMES, Pages.FACEBOOK, Pages.WORLD });
             }
 
             // and get our current page token from our containing frame
