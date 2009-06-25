@@ -33,24 +33,9 @@ public class CreatorLabel extends FlowPanel
 
     public void setMember (MemberName name)
     {
-        setMember(name, null);
-    }
-
-    public void setMember (MemberName name, PopupMenu menu)
-    {
-        while (getWidgetCount() > 0) {
-            remove(0);
-        }
-
+        clear();
         add(new InlineLabel(_cmsgs.creatorBy() + " "));
-        if (menu == null) {
-            add(Link.memberView(name.toString(), name.getMemberId()));
-        } else {
-            InlineLabel text = new InlineLabel(name.toString());
-            text.addStyleName("LabelLink");
-            menu.setTrigger(text);
-            add(text);
-        }
+        add(Link.memberView(name.toString(), name.getMemberId()));
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
