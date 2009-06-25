@@ -17,10 +17,12 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RegisterPanel;
+import client.util.Link;
 
 /**
  * Our main landing page.
@@ -77,6 +79,12 @@ public class LandingPanel extends SmartTable
             logon.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_MIDDLE);
         }
         rightbits.add(logon);
+
+        FlowPanel connect = MsoyUI.createFlowPanel("Connect");
+        connect.add(MsoyUI.createLabel(_msgs.landingConnect(), "Subtitle"));
+        connect.add(Link.createImage("/images/account/fbconnect.png", null,
+                                     Pages.ACCOUNT, "logon"));
+        rightbits.add(connect);
 
         // wrap all that up in two columns with header and background and whatnot
         setWidget(0, 0, explain);

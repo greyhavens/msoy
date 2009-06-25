@@ -119,6 +119,11 @@
   margin-left: 20px;
 }
 
+.landing .Connect img { /*fbconnect*/
+  padding-left: 115px;
+  padding-top: 5px;
+}
+
 .landing .Title {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;

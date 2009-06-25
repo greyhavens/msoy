@@ -41,10 +41,10 @@ public class LandingPage extends Page
 
         // landing page with an introduction to Whirled for developers
         } else if (action.equals(DEVELOPER_INTRO)) {
-            setContent(_msgs.landingTitle(), new DeveloperIntroPanel());
+            setContent(_msgs.titleLanding(), new DeveloperIntroPanel());
 
         } else {
-            setContent(_msgs.landingTitle(), NoNavPanel.makeBlue(new LandingPanel()));
+            setContent(_msgs.titleLanding(), NoNavPanel.makeBlue(new LandingPanel()));
         }
     }
 
