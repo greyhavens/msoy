@@ -123,6 +123,11 @@ public abstract class Page
             CShell.creds = WebCreds.unflatten(
                 ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS)));
 
+            // limit the outgoing links created by this page
+            if (CShell.isFacebook()) {
+                Link.setValidPages(new Pages[] { Pages.GAMES, Pages.FACEBOOK });
+            }
+
             // and get our current page token from our containing frame
             setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN)[0]);
 

@@ -3,6 +3,8 @@
 
 package client.util;
 
+import java.util.HashSet;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,11 +24,26 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 
+import client.ui.MsoyUI;
+
 /**
  * A utility class with link-related methods.
  */
 public class Link
 {
+    /**
+     * Sets the pages that we can legitimately link to. By default, any page can be linked. After
+     * this method is called, only pages in the set will be linked. Requests to link to other pages
+     * will return a label or plain text widget.
+     */
+    public static void setValidPages (Pages[] pages)
+    {
+        _validPages = new HashSet<Pages>();
+        for (Pages page : pages) {
+            _validPages.add(page);
+        }
+    }
+
     /**
      * Returns link that displays the details of a given group.
      */
@@ -82,7 +99,12 @@ public class Link
      */
     public static Widget create (String label, String styleName, Pages page, Object... args)
     {
-        Widget link = new ReroutedHyperlink(label, false, createToken(page, args));
+        Widget link;
+        if (isValid(page)) {
+            link = new ReroutedHyperlink(label, false, createToken(page, args));
+        } else {
+            link = MsoyUI.createLabel(label, styleName);
+        }
         if (styleName != null) {
             link.addStyleName(styleName);
         }
@@ -104,7 +126,12 @@ public class Link
      */
     public static Widget createBlock (String label, String styleName, Pages page, Object... args)
     {
-        Widget link = new ReroutedHyperlink(label, false, createToken(page, args));
+        Widget link;
+        if (isValid(page)) {
+            link = new ReroutedHyperlink(label, false, createToken(page, args));
+        } else {
+            link = MsoyUI.createLabel(label, styleName);
+        }
         if (styleName != null) {
             link.addStyleName(styleName);
         }
@@ -139,7 +166,11 @@ public class Link
     {
         HTML escaper = new HTML();
         escaper.setText(label);
-        return "<a href=\"/#" + createToken(page, args) + "\">" + escaper.getHTML() + "</a>";
+        String html = escaper.getHTML();
+        if (isValid(page)) {
+            html = "<a href=\"/#" + createToken(page, args) + "\">" + html + "</a>";
+        }
+        return html;
     }
 
     /**
@@ -171,6 +202,10 @@ public class Link
      */
     public static void go (Pages page, Object... args)
     {
+        if (!isValid(page)) {
+            return;
+        }
+
         CShell.frame.navigateTo(createToken(page, args));
     }
 
@@ -179,6 +214,10 @@ public class Link
      */
     public static void replace (Pages page, Object... args)
     {
+        if (!isValid(page)) {
+            return;
+        }
+
         CShell.frame.navigateReplace(createToken(page, args));
     }
 
@@ -199,12 +238,24 @@ public class Link
      */
     protected static Widget createHyperlink (String html, String tip, Pages page, Object... args)
     {
+        if (!isValid(page)) {
+            return MsoyUI.createHTML(html, null);
+        }
+
         Widget link = new ReroutedHyperlink(html, true, createToken(page, args));
         if (tip != null) {
             link.setTitle(tip);
         }
         link.addStyleName("inline");
         return link;
+    }
+
+    /**
+     * Check if the page can be linked to. See {@link #setValidPages}.
+     */
+    protected static boolean isValid (Pages page)
+    {
+        return _validPages == null || _validPages.contains(page);
     }
 
     /**
@@ -276,4 +327,11 @@ public class Link
             anchorElem.setAttribute("target", target);
         }
     }
+
+    /**
+     * The set of pages that we can link to. Requests for links to any other pages return plain
+     * text widgets. This is a hack to keep whirled on Facebook from linking out to other parts of
+     * the site that will just confuse or look buggy to Facebook users.
+     */
+    protected static HashSet<Pages> _validPages;
 }
