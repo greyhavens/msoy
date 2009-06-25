@@ -216,7 +216,7 @@ public class GameServlet extends MsoyServiceServlet
                 ArcadeEntryRecord.TO_GAME_ID)) : null;
         List<GameInfo> infos = Lists.newArrayList();
         for (GameInfoRecord grec : _mgameRepo.loadGenre(genre, -1, query)) {
-            if (filter != null && filter.contains(grec.gameId)) {
+            if (filter != null && !filter.contains(grec.gameId)) {
                 continue;
             }
             infos.add(grec.toGameInfo(getGamePop(pps, grec.gameId)));
