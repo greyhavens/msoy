@@ -9,7 +9,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.game.GameMessages;
 import client.shell.CShell;
 import client.util.Link;
 
@@ -53,5 +52,5 @@ public class GameBitsPanel extends SmartTable
         return (avgMins > 1) ? _msgs.bitsMinutes(""+avgMins) : _msgs.bitsMinute();
     }
 
-    protected static final GameMessages _msgs = GWT.create(GameMessages.class);
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }

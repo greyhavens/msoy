@@ -32,13 +32,7 @@ public class GameGenrePanel extends SortedGameListPanel
         super(sort);
         _genre = genre;
 
-        String titleText;
-        if (genre != GameGenre.ALL) {
-            String genreTitle = _dmsgs.xlate("genre_" + genre);
-            titleText = (genreTitle.indexOf("/") != -1) ? genreTitle : _msgs.genreWrap(genreTitle);
-        } else {
-            titleText = _msgs.genreAllGames();
-        }
+        String titleText = _dmsgs.xlate("genreTitle_" + genre);;
         add(_header = new GameHeaderPanel(portal, titleText, genre, sort));
         _header.setQuery(query);
 
