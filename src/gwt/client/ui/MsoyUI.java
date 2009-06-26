@@ -538,8 +538,19 @@ public class MsoyUI
      */
     public static Widget createRoleLabel (WebCreds.Role role)
     {
+        // subscriber is special
+        if (role == WebCreds.Role.SUBSCRIBER) {
+            ClickHandler upsellHandler = Link.createHandler(Pages.BILLING, "subscribe");
+            Image star = MsoyUI.createInlineImage("/images/ui/clubwhirled.png");
+            star.addClickHandler(upsellHandler);
+            star.addStyleName("actionLabel");
+            InlineLabel label = new InlineLabel(_cmsgs.roleSubscriber());
+            label.addClickHandler(upsellHandler);
+            label.addStyleName("actionLabel");
+            return createFlowPanel("roleLabel", star, label);
+        }
+
         String roleName;
-        String iconPath = null;
         switch (role) {
         case ADMIN:
         case MAINTAINER:
@@ -548,10 +559,6 @@ public class MsoyUI
         case SUPPORT:
             roleName = _cmsgs.roleSupport();
             break;
-        case SUBSCRIBER:
-            roleName = _cmsgs.roleSubscriber();
-            iconPath = "/images/ui/clubwhirled.png";
-            break;
         case PERMAGUEST:
             roleName = _cmsgs.roleGuest();
             break;
@@ -559,9 +566,7 @@ public class MsoyUI
             roleName = _cmsgs.roleUser();
             break;
         }
-        return (iconPath == null) ? createLabel(roleName, "roleLabel") :
-            createFlowPanel("roleLabel", MsoyUI.createInlineImage(iconPath),
-                            new InlineLabel(roleName));
+        return createLabel(roleName, "roleLabel");
     }
 
     /**
