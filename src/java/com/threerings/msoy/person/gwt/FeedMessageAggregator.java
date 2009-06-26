@@ -68,7 +68,7 @@ public class FeedMessageAggregator
                 // otherwise find the larger of the two groups with at least 2 messages
                 if (destination == null) {
                     for (Partition.Group g : groups) {
-                        if (g.size() > 1 && g.size() > groups.other(g).size()) {
+                        if (g.size() > 1 && g.size() >= groups.other(g).size()) {
                             destination = g;
                             break;
                         }
