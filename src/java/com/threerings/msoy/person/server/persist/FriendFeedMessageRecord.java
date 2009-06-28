@@ -7,7 +7,11 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 
@@ -35,9 +39,15 @@ public class FriendFeedMessageRecord extends FeedMessageRecord
     public int actorId;
 
     @Override // from FeedMessageRecord
-    protected FeedMessage createMessage ()
+    public void addReferences (IntSet memberIds, IntSet groupIds)
     {
-        return new FriendFeedMessage();
+        memberIds.add(actorId);
+    }
+
+    @Override // from FeedMessageRecord
+    public FeedMessage toMessage (IntMap<MemberName> memberNames, IntMap<GroupName> groupNames)
+    {
+        return new FriendFeedMessage(getType(), memberNames.get(actorId), getData(), getPosted());
     }
 
     // AUTO-GENERATED: METHODS START

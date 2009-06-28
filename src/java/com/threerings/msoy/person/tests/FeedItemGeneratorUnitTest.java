@@ -68,48 +68,39 @@ public class FeedItemGeneratorUnitTest
 
     @Test public void testNullFriendMedia ()
     {
-        FriendFeedMessage ffm = new FriendFeedMessage();
-        ffm.type = FeedMessageType.FRIEND_ADDED_FRIEND;
-        ffm.friend = new MemberName("Member", 1);
-        ffm.data = new String[]{"Friend", "2"};
-        genMessage(ffm);
+        genMessage(new FriendFeedMessage(FeedMessageType.FRIEND_ADDED_FRIEND,
+            new MemberName("Member", 1), new String[]{"Friend", "2"}, 0));
     }
 
     @Test public void testNullGroupMedia ()
     {
-        GroupFeedMessage gfm = new GroupFeedMessage();
-        gfm.type = FeedMessageType.GROUP_ANNOUNCEMENT;
-        gfm.data = new String[]{null, "Subject", "1234"};
-        genMessage(gfm);
+        genMessage(new GroupFeedMessage(FeedMessageType.GROUP_ANNOUNCEMENT, null,
+            new String[]{null, "Subject", "1234"}, 0));
     }
 
     @Test public void testNullRoomMedia ()
     {
-        SelfFeedMessage sfm = new SelfFeedMessage();
-        sfm.type = FeedMessageType.SELF_ROOM_COMMENT;
-        sfm.actor = new MemberName("Commentor", 1);
-        sfm.data = new String[]{"1234", "Room Name"};
-        genMessage(sfm);
+        genMessage(new SelfFeedMessage(FeedMessageType.SELF_ROOM_COMMENT,
+            new MemberName("Commentor", 1), new String[]{"1234", "Room Name"}, 0));
     }
 
     @Test public void testNullActionsMedia ()
     {
-        FriendFeedMessage msgs[] = {new FriendFeedMessage(), new FriendFeedMessage()};
-        msgs[0].type = msgs[1].type = FeedMessageType.FRIEND_LISTED_ITEM;
-        msgs[0].friend = msgs[1].friend = new MemberName("Member", 1);
-        msgs[0].data = new String[]{"1st Item Name", "1", "1234"};
-        msgs[1].data = new String[]{"2nd Item Name", "2", "5678"};
+        FriendFeedMessage msgs[] = {
+            new FriendFeedMessage(FeedMessageType.FRIEND_LISTED_ITEM,
+                new MemberName("Member", 1), new String[]{"1st Item Name", "1", "1234"}, 0), 
+            new FriendFeedMessage(FeedMessageType.FRIEND_LISTED_ITEM,
+                new MemberName("Member", 1), new String[]{"2nd Item Name", "2", "5678"}, 0)};
         genAggMessage(Style.ACTIONS, msgs);
     }
 
     @Test public void testNullActorsMedia ()
     {
-        SelfFeedMessage msgs[] = {new SelfFeedMessage(), new SelfFeedMessage()};
-        msgs[0].type = msgs[1].type = FeedMessageType.SELF_ROOM_COMMENT;
-        msgs[0].actor = new MemberName("Commentor 1", 1);
-        msgs[1].actor = new MemberName("Commentor 2", 2);
-        msgs[0].data = new String[]{"1234", "Room Name"};
-        msgs[1].data = new String[]{"1234", "Room Name"};
+        SelfFeedMessage msgs[] = {
+            new SelfFeedMessage(FeedMessageType.SELF_ROOM_COMMENT,
+                new MemberName("Commentor 1", 1), new String[]{"1234", "Room Name"}, 0),
+            new SelfFeedMessage(FeedMessageType.SELF_ROOM_COMMENT,
+                new MemberName("Commentor 2", 2), new String[]{"1234", "Room Name"}, 0)};
         genAggMessage(Style.ACTORS, msgs);
     }
 
@@ -310,12 +301,8 @@ public class FeedItemGeneratorUnitTest
 
     protected static FriendFeedMessage newLevelGain (long posted, int memberId)
     {
-        FriendFeedMessage ffm = new FriendFeedMessage();
-        ffm.friend = new MemberName("Test Friend " + memberId, memberId);
-        ffm.posted = posted;
-        ffm.type = FeedMessageType.FRIEND_GAINED_LEVEL;
-        ffm.data = new String[] {"10"};
-        return ffm;
+        return new FriendFeedMessage(FeedMessageType.FRIEND_GAINED_LEVEL,
+            new MemberName("Test Friend " + memberId, memberId), new String[] {"10"}, posted);
     }
 
 }

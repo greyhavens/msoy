@@ -48,15 +48,11 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType.Category;
 import com.threerings.msoy.person.gwt.FeedMessageType;
-import com.threerings.msoy.person.gwt.FriendFeedMessage;
-import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
-import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -277,13 +273,7 @@ public class FeedLogic
         // find out which member and group names we'll need
         IntSet memberIds = new ArrayIntSet(), groupIds = new ArrayIntSet();
         for (FeedMessageRecord record : records) {
-            if (record instanceof FriendFeedMessageRecord) {
-                memberIds.add(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof GroupFeedMessageRecord) {
-                groupIds.add(((GroupFeedMessageRecord)record).groupId);
-            } else if (record instanceof SelfFeedMessageRecord) {
-                memberIds.add(((SelfFeedMessageRecord)record).actorId);
-            }
+            record.addReferences(memberIds, groupIds);
         }
 
         // generate a lookup for the member names
@@ -298,18 +288,7 @@ public class FeedLogic
         // create our list of feed messages
         List<FeedMessage> messages = Lists.newArrayList();
         for (FeedMessageRecord record : records) {
-            FeedMessage message = record.toMessage();
-            if (record instanceof FriendFeedMessageRecord) {
-                ((FriendFeedMessage)message).friend =
-                    memberNames.get(((FriendFeedMessageRecord)record).actorId);
-            } else if (record instanceof GroupFeedMessageRecord) {
-                ((GroupFeedMessage)message).group =
-                    groupNames.get(((GroupFeedMessageRecord)record).groupId);
-            } else if (record instanceof SelfFeedMessageRecord) {
-                ((SelfFeedMessage)message).actor =
-                    memberNames.get(((SelfFeedMessageRecord)record).actorId);
-            }
-            messages.add(message);
+            messages.add(record.toMessage(memberNames, groupNames));
         }
 
         return messages;

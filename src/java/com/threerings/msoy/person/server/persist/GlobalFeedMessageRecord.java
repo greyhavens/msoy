@@ -6,7 +6,10 @@ package com.threerings.msoy.person.server.persist;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.util.IntMap;
 
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
 
 /**
@@ -28,9 +31,9 @@ public class GlobalFeedMessageRecord extends FeedMessageRecord
     public static final int SCHEMA_VERSION = 2;
 
     @Override // from FeedMessageRecord
-    protected FeedMessage createMessage ()
+    public FeedMessage toMessage (IntMap<MemberName> memberNames, IntMap<GroupName> groupNames)
     {
-        return new FeedMessage();
+        return new FeedMessage(getType(), getData(), getPosted());
     }
 
     // AUTO-GENERATED: METHODS START

@@ -13,7 +13,11 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 
@@ -54,16 +58,31 @@ public abstract class FeedMessageRecord extends PersistentRecord
     public Timestamp posted;
 
     /**
-     * Converts this persistent record to a runtime record.
+     * Generate an add call for each member id and group id that will be required by
+     * {@link #toMessage()}.
      */
-    public FeedMessage toMessage ()
+    public void addReferences (IntSet memberIds, IntSet groupIds)
     {
-        FeedMessage message = createMessage();
-        message.type = FeedMessageType.fromCode(type);
-        message.data = data.split("\t");
-        message.posted = posted.getTime();
-        return message;
     }
 
-    protected abstract FeedMessage createMessage ();
+    /**
+     * Converts this persistent record to a runtime record.
+     */
+    public abstract FeedMessage toMessage (
+        IntMap<MemberName> memberNames, IntMap<GroupName> groupNames);
+
+    protected FeedMessageType getType ()
+    {
+        return FeedMessageType.fromCode(type);
+    }
+
+    protected String[] getData ()
+    {
+        return data.split("\t");
+    }
+
+    protected long getPosted ()
+    {
+        return posted.getTime();
+    }
 }

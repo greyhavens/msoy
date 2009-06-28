@@ -19,4 +19,21 @@ public class FeedMessage
 
     /** The time at which this message was posted. */
     public long posted;
+
+    /**
+     * Constructs a new feed message for serialization.
+     */
+    public FeedMessage ()
+    {
+    }
+
+    /**
+     * Constructs a new feed message with the given field values.
+     */
+    public FeedMessage (FeedMessageType type, String[] data, long posted)
+    {
+        this.type = type;
+        this.data = data;
+        this.posted = posted;
+    }
 }

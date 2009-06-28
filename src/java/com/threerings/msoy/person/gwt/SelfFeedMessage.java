@@ -13,4 +13,20 @@ public class SelfFeedMessage extends FeedMessage
 {
     /** The person that triggered this feed message, or null. */
     public MemberName actor;
+
+    /**
+     * Constructs a new self feed message for serialization.
+     */
+    public SelfFeedMessage ()
+    {
+    }
+
+    /**
+     * Constructs a new self feed message with the given field values.
+     */
+    public SelfFeedMessage (FeedMessageType type, MemberName actor, String[] data, long posted)
+    {
+        super(type, data, posted);
+        this.actor = actor;
+    }
 }

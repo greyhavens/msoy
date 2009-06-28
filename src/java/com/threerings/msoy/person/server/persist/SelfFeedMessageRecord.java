@@ -7,7 +7,11 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
@@ -39,9 +43,16 @@ public class SelfFeedMessageRecord extends FeedMessageRecord
     public int actorId;
 
     @Override // from FeedMessageRecord
-    protected FeedMessage createMessage ()
+    public void addReferences (IntSet memberIds, IntSet groupIds)
     {
-        return new SelfFeedMessage();
+        // NOTE: the target id is not used when creating the runtime message so is not needed here
+        memberIds.add(actorId);
+    }
+
+    @Override // from FeedMessageRecord
+    public FeedMessage toMessage (IntMap<MemberName> memberNames, IntMap<GroupName> groupNames)
+    {
+        return new SelfFeedMessage(getType(), memberNames.get(actorId), getData(), getPosted());
     }
 
     // AUTO-GENERATED: METHODS START

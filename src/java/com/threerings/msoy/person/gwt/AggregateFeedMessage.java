@@ -34,9 +34,8 @@ public class AggregateFeedMessage extends FeedMessage
     public AggregateFeedMessage (
         Style style, FeedMessageType type, long posted, List<FeedMessage> messages)
     {
+        super(type, null, posted);
         this.style = style;
-        this.type = type;
-        this.posted = posted;
         this.messages = new ArrayList<FeedMessage>();
         for (FeedMessage message : messages) {
             if (!isDuplicate(message)) {
