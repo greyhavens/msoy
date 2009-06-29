@@ -203,7 +203,9 @@ public class AccountLogic
         data.exAuthUserId = exAuthUserId;
         // TODO: import more information as long as it is not a privacy violiation
         if (profile != null) {
-            data.birthdayYMD = ProfileRecord.toDateVec(profile.birthday);
+            if (profile.birthday != null) {
+                data.birthdayYMD = ProfileRecord.toDateVec(profile.birthday);
+            }
             data.realName = profile.realName;
             data.location = profile.location;
         }
