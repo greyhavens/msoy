@@ -188,7 +188,12 @@ public class FeedMessagePanel extends FocusPanel
                     return _pmsgs.selfItemComment(subject, object);
 
                 case SELF_FORUM_REPLY:
-                    return _pmsgs.selfForumReply(subject, object);
+                    switch (plural) {
+                    default:
+                    case NONE: return _pmsgs.selfPersonRepliedToForumPost(subject, object);
+                    case SUBJECT: return _pmsgs.selfPeopleRepliedToForumPost(subject, object);
+                    case OBJECT: return _pmsgs.selfPersonRepliedToForumPosts(subject, object);
+                    }
 
                 case FRIEND_PLAYED_GAME:
                     switch (plural) {

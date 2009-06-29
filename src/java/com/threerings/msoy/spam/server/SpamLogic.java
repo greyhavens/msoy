@@ -1044,7 +1044,15 @@ public class SpamLogic
                 return _pmsgs.get("selfItemComment", subject, object);
 
             case SELF_FORUM_REPLY:
-                return _pmsgs.get("selfForumReply", subject, object);
+                switch (plural) {
+                default:
+                case NONE:
+                    return _pmsgs.get("selfPersonRepliedToForumPost", subject, object);
+                case SUBJECT:
+                    return _pmsgs.get("selfPeopleRepliedToForumPost", subject, object);
+                case OBJECT:
+                    return _pmsgs.get("selfPersonRepliedToForumPosts", subject, object);
+                }
 
             case FRIEND_PLAYED_GAME:
                 switch (plural) {
