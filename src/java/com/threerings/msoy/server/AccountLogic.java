@@ -193,14 +193,20 @@ public class AccountLogic
      * @return the newly created member record.
      */
     public MemberRecord createExternalAccount (
-        String email, String displayName, VisitorInfo vinfo, AffiliateCookie affiliate,
-        ExternalAuther exAuther, String exAuthUserId)
+        String email, String displayName, ProfileRecord profile, VisitorInfo vinfo,
+        AffiliateCookie affiliate, ExternalAuther exAuther, String exAuthUserId)
         throws ServiceException
     {
         // TODO: handle affiliate.autoFriend
         AccountData data = new AccountData(true, email, "", displayName, vinfo, affiliate);
         data.exAuther = exAuther;
         data.exAuthUserId = exAuthUserId;
+        // TODO: import more information as long as it is not a privacy violiation
+        if (profile != null) {
+            data.birthdayYMD = ProfileRecord.toDateVec(profile.birthday);
+            data.realName = profile.realName;
+            data.location = profile.location;
+        }
         return createAccount(data);
     }
 
@@ -363,10 +369,11 @@ public class AccountLogic
         prec.birthday = (data.birthdayYMD != null) ?
             ProfileRecord.fromDateVec(data.birthdayYMD) : null;
         prec.realName = (data.realName != null) ? data.realName : "";
+        prec.location = (data.location != null) ? data.location : "";
         try {
             _profileRepo.storeProfile(prec);
         } catch (Exception e) {
-            log.warning("Failed to create initial profile [prec=" + prec + "]", e);
+            log.warning("Failed to create initial profile", "prec", prec, e);
             // keep on keepin' on
         }
 
@@ -533,6 +540,7 @@ public class AccountLogic
         public int[] birthdayYMD;
         public ExternalAuther exAuther;
         public String exAuthUserId;
+        public String location;
 
         public AccountData (boolean isRegistering, String email, String password,
                             String displayName, VisitorInfo vinfo, AffiliateCookie affiliate)

@@ -178,7 +178,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // create their account
             MemberRecord mrec = _accountLogic.createExternalAccount(
-                creds.getPlaceholderAddress(), info.displayName, vinfo, affiliate,
+                creds.getPlaceholderAddress(), info.displayName, info.profile, vinfo, affiliate,
                 creds.getAuthSource(), creds.getUserId());
 
             // if they have an external session key, update that here
