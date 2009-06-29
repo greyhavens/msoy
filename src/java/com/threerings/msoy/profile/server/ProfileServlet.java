@@ -199,13 +199,16 @@ public class ProfileServlet extends MsoyServiceServlet
             }
         }
 
-        // figure out this player's 13th birthday (based on their claim)
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(ProfileRecord.fromDateVec(profile.birthday));
-        cal.add(Calendar.YEAR, 13);
-        // if that's in the future, protest
-        if (cal.after(Calendar.getInstance())) {
-            throw new ServiceException(ProfileCodes.E_TOO_YOUNG);
+        // TODO: treatment of birthdays/TOS for Facebook imports
+        if (profile.birthday != null) {
+            // figure out this player's 13th birthday (based on their claim)
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(ProfileRecord.fromDateVec(profile.birthday));
+            cal.add(Calendar.YEAR, 13);
+            // if that's in the future, protest
+            if (cal.after(Calendar.getInstance())) {
+                throw new ServiceException(ProfileCodes.E_TOO_YOUNG);
+            }
         }
 
         // load their old profile record for "first time configuration" purposes
