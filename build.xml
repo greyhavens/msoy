@@ -1062,7 +1062,7 @@
   <target name="distbits" depends="distprojects,dist,flashapps,thane-client,jclients"/>
   <target name="distall-package" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
           description="Rebuilds all architecture independent targets."/>
-  <target name="distall" depends="distall-package,copythanebinaries"
+  <target name="distall" depends="copythanebinaries,distall-package"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->
