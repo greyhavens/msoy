@@ -25,16 +25,18 @@ public class AffiliateCookie
     public boolean autoFriend;
 
     /**
-     * Return the cookie from an http request.
+     * Return the cookie from an http request. If there is no affiliate cookie, the cgi parameter
+     * of the same name is also checked. 
      */
     public static AffiliateCookie fromWeb (HttpServletRequest req)
     {
-        String aff = CookieUtil.getCookieValue(req, CookieNames.AFFILIATE);
+        String affCookie = CookieUtil.getCookieValue(req, CookieNames.AFFILIATE);
+        String aff = (affCookie == null) ? req.getParameter(CookieNames.AFFILIATE) : affCookie;
         int id = 0;
         try {
             id = (aff == null) ? 0 : Integer.parseInt(aff);
         } catch (Exception e) {
-            log.info("Rejecting bogus affiliate cookie", "aff", aff);
+            log.info("Rejecting bogus affiliate", "cookie", affCookie, "aff", aff);
         }
         return fromCreds(id);
     }

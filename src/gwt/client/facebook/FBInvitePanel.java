@@ -3,12 +3,14 @@
 
 package client.facebook;
 
+import client.shell.CShell;
 import client.util.StringUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
  * Server FBML panel for inviting friends. Currently only deals with site invitations.
@@ -26,7 +28,7 @@ public class FBInvitePanel extends ServerFBMLPanel
             "action", DeploymentConfig.serverURL + "fbinvite/ndone",
             "method", "POST",
             "invite", "true",
-            // Facebook ignores escapes in here, sanitize instead 
+            // Facebook ignores escapes in here, sanitize instead
             "type", StringUtil.sanitizeAttribute(DeploymentConfig.facebookApplicationName),
             "content", makeContent());
         form.add(new FBMLPanel("multi-friend-selector",
@@ -39,9 +41,10 @@ public class FBInvitePanel extends ServerFBMLPanel
 
     protected static String makeContent ()
     {
+        String url = DeploymentConfig.facebookCanvasUrl + "?" + CookieNames.AFFILIATE + "=" +
+            CShell.getMemberId();
         // weird... the req-choice tag goes inside the content attribute
-        FBMLPanel reqChoice = new FBMLPanel("req-choice",
-            "url", DeploymentConfig.facebookCanvasUrl,
+        FBMLPanel reqChoice = new FBMLPanel("req-choice", "url", url,
             "label", _msgs.inviteGenericAccept(DeploymentConfig.facebookApplicationName));
         FlowPanel div = new FlowPanel();
         div.add(reqChoice);
