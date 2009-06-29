@@ -43,7 +43,8 @@ public class OOOAuthenticationDomain
         // create a new account record
         int userId;
         try {
-            userId = _authrep.createUser(new MsoyUsername(accountName), password, accountName);
+            userId = _authrep.createUser(new MsoyUsername(accountName), password, accountName,
+                                         OOOUser.METASOY_SITE_ID);
         } catch (InvalidUsernameException iue) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         } catch (UserExistsException uee) {
