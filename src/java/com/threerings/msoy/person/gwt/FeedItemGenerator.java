@@ -335,6 +335,7 @@ public class FeedItemGenerator
                 return _builder.createLink(message.data[0], Pages.GAMES,
                     Args.compose("d", message.data[1]));
             }
+            break;
 
         case LISTED_ITEMS:
             return _messages.describeItem(
@@ -413,6 +414,7 @@ public class FeedItemGenerator
             } else if (message.type == FeedMessageType.FRIEND_PLAYED_GAME) {
                 return buildMedia(message, 2, Pages.GAMES, Args.compose("d", message.data[1]));
             }
+            break;
 
         case LISTED_ITEMS:
             return buildMedia(message, 3, Pages.SHOP, "l", message.data[1], message.data[2]);
