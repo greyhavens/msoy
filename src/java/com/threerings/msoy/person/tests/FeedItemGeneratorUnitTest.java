@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.tests;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.*;
@@ -102,6 +103,73 @@ public class FeedItemGeneratorUnitTest
             new SelfFeedMessage(FeedMessageType.SELF_ROOM_COMMENT,
                 new MemberName("Commentor 2", 2), new String[]{"1234", "Room Name"}, 0)};
         genAggMessage(Style.ACTORS, msgs);
+    }
+
+    @Test public void testPlayedGameDuplicateRemoval ()
+    {
+        List<FeedMessage> msgs, aggregated;
+
+        msgs = new ArrayList<FeedMessage>();
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M1", 1),new String[]{"", "2000", ""}, 0));
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M1", 1),new String[]{"", "2000", ""}, 0));
+
+        aggregated = FeedMessageAggregator.aggregate(msgs, false);
+        assertEquals(1, aggregated.size());
+        assertTrue(aggregated.get(0) == msgs.get(0));
+
+        msgs = new ArrayList<FeedMessage>();
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M1", 1),new String[]{"", "2000", ""}, 0));
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M1", 1),new String[]{"", "2000", ""}, 0));
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M2", 2),new String[]{"", "2000", ""}, 0));
+
+        aggregated = FeedMessageAggregator.aggregate(msgs, false);
+        assertEquals(1, aggregated.size());
+        assertTrue(aggregated.get(0) instanceof AggregateFeedMessage);
+        AggregateFeedMessage aggMsg = (AggregateFeedMessage)aggregated.get(0);
+        assertTrue(aggMsg.style == AggregateFeedMessage.Style.ACTORS);
+        assertTrue(aggMsg.messages.size() == 2);
+        assertTrue(aggMsg.messages.get(0) == msgs.get(0));
+        assertTrue(aggMsg.messages.get(1) == msgs.get(2));
+    }
+
+    @Test public void testPlayedGameAggregation ()
+    {
+        List<FeedMessage> msgs = new ArrayList<FeedMessage>();
+
+        // 2 members play same game
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M1", 1), new String[]{"", "2000", ""}, 0));
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M2", 2), new String[]{"", "2000", ""}, 0));
+
+        // same member plays 2 games
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M3", 3), new String[]{"", "2001", ""}, 0));
+        msgs.add(new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+            new MemberName("M3", 3), new String[]{"", "2002", ""}, 0));
+
+        List<FeedMessage> aggregated = FeedMessageAggregator.aggregate(msgs, false);
+        assertEquals(2, aggregated.size());
+        AggregateFeedMessage aggMsg;
+
+        assertTrue(aggregated.get(0) instanceof AggregateFeedMessage);
+        aggMsg = (AggregateFeedMessage)aggregated.get(0);
+        assertTrue(aggMsg.style == AggregateFeedMessage.Style.ACTORS);
+        assertTrue(aggMsg.messages.size() == 2);
+        assertTrue(aggMsg.messages.get(0) == msgs.get(0));
+        assertTrue(aggMsg.messages.get(1) == msgs.get(1));
+
+        assertTrue(aggregated.get(1) instanceof AggregateFeedMessage);
+        aggMsg = (AggregateFeedMessage)aggregated.get(1);
+        assertTrue(aggMsg.style == AggregateFeedMessage.Style.ACTIONS);
+        assertTrue(aggMsg.messages.size() == 2);
+        assertTrue(aggMsg.messages.get(0) == msgs.get(2));
+        assertTrue(aggMsg.messages.get(1) == msgs.get(3));
     }
 
     public void genMessage (FeedMessage msg)

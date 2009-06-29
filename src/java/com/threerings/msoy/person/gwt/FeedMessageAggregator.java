@@ -30,8 +30,11 @@ public class FeedMessageAggregator
      */
     public static List<FeedMessage> aggregate (List<FeedMessage> messages, boolean byDate)
     {
-        // copy messages because we're going to modify it
-        messages = new ArrayList<FeedMessage>(messages);
+        // first key all messages so we don't have to keep doing it
+        List<KeyedMessage> keyedMessages = new ArrayList<KeyedMessage>(messages.size());
+        for (FeedMessage message : messages) {
+            keyedMessages.add(new KeyedMessage(message));
+        }
 
         // resulting list with a mix of aggregated and non-aggregated messages
         List<FeedMessage> newMessages = new ArrayList<FeedMessage>();
@@ -39,15 +42,15 @@ public class FeedMessageAggregator
         // if grouping by date, start with today then work backwards
         long header = byDate ? startOfDay(System.currentTimeMillis()) : 0;
 
-        while (!messages.isEmpty()) {
+        while (!keyedMessages.isEmpty()) {
             // partition the messages in two ways
-            Partition actions = new Partition(Style.ACTIONS, messages, header);
-            Partition actors = new Partition(Style.ACTORS, messages, header);
+            Partition actions = new Partition(Style.ACTIONS, keyedMessages, header);
+            Partition actors = new Partition(Style.ACTORS, keyedMessages, header);
 
-            for (Iterator<FeedMessage> msgIter = messages.iterator(); msgIter.hasNext();) {
-                FeedMessage message = msgIter.next();
-                if (header > message.posted) {
-                    header = FeedMessageAggregator.startOfDay(message.posted);
+            for (Iterator<KeyedMessage> msgIter = keyedMessages.iterator(); msgIter.hasNext();) {
+                KeyedMessage message = msgIter.next();
+                if (header > message.message.posted) {
+                    header = FeedMessageAggregator.startOfDay(message.message.posted);
                     break;
                 }
                 msgIter.remove();
@@ -77,7 +80,7 @@ public class FeedMessageAggregator
 
                 if (destination == null) {
                     // neither aggregate had more than one message, just display it singly
-                    newMessages.add(message);
+                    newMessages.add(message.message);
 
                 } else {
                     // remove the message from the other group to prevent double display
@@ -203,6 +206,50 @@ public class FeedMessageAggregator
     }
 
     /**
+     * Tuple for holding a feed message with both its actors and actions keys pre-computed.
+     */
+    protected static class KeyedMessage
+    {
+        public FeedMessage message;
+        public MessageKey actorsKey;
+        public MessageKey actionsKey;
+
+        public KeyedMessage (FeedMessage message)
+        {
+            this.message = message;
+            this.actorsKey = getActorsKey(message);
+            this.actionsKey = getActionsKey(message);
+        }
+
+        public MessageKey getKey (Style style)
+        {
+            switch (style) {
+            case ACTIONS: return actionsKey;
+            case ACTORS: return actorsKey;
+            }
+            return null; // not aggregated
+        }
+
+        public boolean equals (Object other)
+        {
+            return message.equals(((KeyedMessage)other).message);
+        }
+
+        /**
+         * Checks whether this message is a duplicate of another.
+         */
+        public boolean isDuplicateKey (KeyedMessage other, Style style)
+        {
+            MessageKey key1 = getKey(style);
+            MessageKey key2 = other.getKey(style);
+            if (key1 == null || key2 == null) {
+                return false;
+            }
+            return key1.equals(key2);
+        }
+    }
+
+    /**
      * Partitions a collection of messages into groups with a shared key.
      */
     protected static class Partition
@@ -216,7 +263,7 @@ public class FeedMessageAggregator
              * Removes a message from the group. Called when the message is already in another
              * larger group.
              */
-            public void remove (FeedMessage message)
+            public void remove (KeyedMessage message)
             {
                 _list.remove(message);
             }
@@ -226,24 +273,28 @@ public class FeedMessageAggregator
              */
             public int size ()
             {
-                return _list.size();
+                return _size;
             }
 
             /**
              * Marks this group as being displayed and returns the aggregation of all messages. To
              * save memory, also clears the group since it is not needed any more.
              */
-            public AggregateFeedMessage display ()
+            public FeedMessage display ()
             {
                 _displayed = true;
-                if (_list.size() == 0) {
-                    return null;
+                List<FeedMessage> messages = new ArrayList<FeedMessage>(_list.size());
+                for (KeyedMessage entry : _list) {
+                    messages.add(entry.message);
                 }
-                FeedMessage first = _list.get(0);
-                AggregateFeedMessage aggMessage = new AggregateFeedMessage(
-                    _style, first.type, first.posted, _list);
+                FeedMessage first = messages.get(0);
+                FeedMessage result = first;
+                if (_list.size() > 1) {
+                    result = new AggregateFeedMessage(
+                        _style, first.type, first.posted, messages);
+                }
                 _list.clear();
-                return aggMessage;
+                return result;
             }
 
             /**
@@ -257,7 +308,7 @@ public class FeedMessageAggregator
             /**
              * Adds a new message to this group. Only needed during Grouper construction.
              */
-            protected void add (FeedMessage message)
+            protected void add (KeyedMessage message)
             {
                 if (_displayed) {
                     // TODO: better way of logging in server/client shared code
@@ -265,18 +316,30 @@ public class FeedMessageAggregator
                     //    "Ignoring addition of messages to a MessageAggregate that has been displayed");
                     return;
                 }
+
+                _size++;
+
+                // don't add messages that are duplicates with respect to their keys
+                // (we know one key is equal, just check the other)
+                Style style = _style.getOpposite();
+                for (KeyedMessage existing : _list) {
+                    if (existing.isDuplicateKey(message, style)) {
+                        return;
+                    }
+                }
                 _list.add(message);
             }
 
             protected boolean _displayed;
-            protected List<FeedMessage> _list = new ArrayList<FeedMessage>();
+            protected int _size; // number of calls to add, not == _list.size()
+            protected List<KeyedMessage> _list = new ArrayList<KeyedMessage>();
         }
 
         /**
          * Creates a new partition and divides up the given messages into groups where all the
          * messages in a group share a common key.
          */
-        public Partition (Style style, List<FeedMessage> messages, long header)
+        public Partition (Style style, List<KeyedMessage> messages, long header)
         {
             _style = style;
             build(messages, header);
@@ -286,41 +349,31 @@ public class FeedMessageAggregator
          * Gets the group that the given message belongs in. If no group exists, an empty group is
          * returned so that the caller need not check for null.
          */
-        public Group get (FeedMessage message)
+        public Group get (KeyedMessage message)
         {
-            MessageKey key = getKey(message);
+            MessageKey key = message.getKey(_style);
             Group agg = key == null ? null : _map.get(key);
             return agg == null ? _dummy : agg;
         }
 
-        protected MessageKey getKey (FeedMessage message)
-        {
-            switch (_style) {
-            case ACTIONS: return getActionsKey(message);
-            case ACTORS: return getActorsKey(message);
-            }
-            return null; // not aggregated
-        }
-
-        protected void build (List<FeedMessage> messages, long header)
+        protected void build (List<KeyedMessage> messages, long header)
         {
             _map.clear();
-            for (FeedMessage message : messages) {
-                if (header > message.posted) {
+            for (KeyedMessage message : messages) {
+                if (header > message.message.posted) {
                     break;
                 }
-                MessageKey key = getKey(message);
+                MessageKey key = message.getKey(_style);
                 if (key == null) {
                     continue;
                 }
-                Group value = _map.get(key);
-                if (value == null) {
-                    value = new Group();
-                    _map.put(key, value);
+                Group group = _map.get(key);
+                if (group == null) {
+                    _map.put(key, group = new Group());
                 }
                 // TODO: something better than just culling the message
-                if (value.size() < MAX_AGGREGATED_ITEMS) {
-                    value.add(message);
+                if (group.size() < MAX_AGGREGATED_ITEMS) {
+                    group.add(message);
                 }
             }
         }
@@ -344,7 +397,7 @@ public class FeedMessageAggregator
         /**
          * Initializes the collection to be the groups of the given message in each of 2 partitions.
          */
-        public GroupCollection (FeedMessage message, Partition actions, Partition actors)
+        public GroupCollection (KeyedMessage message, Partition actions, Partition actors)
         {
             _groups = new Partition.Group[] {
                 actions.get(message), actors.get(message)};
