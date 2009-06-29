@@ -43,15 +43,15 @@ public class FBMLPanel extends FlowPanel
      * automatically be prefixed by the namespace. An even number of attribute arguments must be
      * provided: name1, value1, name2, value2, ... No escaping is done on values.
      */
-    public FBMLPanel (String tag, String... moreAttrValuePairs)
+    public FBMLPanel (String tag, String... attrValuePairs)
     {
         setElement(DOM.createElement(NAMESPACE + tag));
 
         // a little hacky: we need to have <fb:x></fb:x>, not <fb:x/>, so add an empty text node
         getElement().appendChild(Document.get().createTextNode(""));
 
-        for (int ii = 0; ii < moreAttrValuePairs.length; ii += 2) {
-            setAttribute(moreAttrValuePairs[ii], moreAttrValuePairs[ii+1]);
+        for (int ii = 0; ii < attrValuePairs.length; ii += 2) {
+            setAttribute(attrValuePairs[ii], attrValuePairs[ii+1]);
         }
     }
 
