@@ -253,6 +253,7 @@ public class FeedItemGenerator
         case FRIEND_WON_TROPHY:
         case FRIEND_PLAYED_GAME:
         case FRIEND_LISTED_ITEM:
+        case SELF_FORUM_REPLY:
             String text = _messages.action(
                 message.type, subject, makeStringList(list, ListMode.OBJECT), Plural.OBJECT);
             addMedia(media, text);
@@ -289,6 +290,7 @@ public class FeedItemGenerator
         case FRIEND_WON_MEDAL:
         case SELF_ROOM_COMMENT:
         case SELF_ITEM_COMMENT:
+        case SELF_FORUM_REPLY:
             addMedia(media, text);
             break;
 

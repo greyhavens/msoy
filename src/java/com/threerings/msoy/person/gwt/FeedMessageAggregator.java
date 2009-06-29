@@ -108,8 +108,7 @@ public class FeedMessageAggregator
     }
 
     /**
-     * Get the key for left side aggregation. Multiple actions by the same person (eg listing new
-     * things in the shop).
+     * Get the key for actions aggregation, i.e. multiple actions by the same person.
      */
     protected static MessageKey getActionsKey (FeedMessage message)
     {
@@ -122,49 +121,56 @@ public class FeedMessageAggregator
         case FRIEND_WON_BADGE:
         case FRIEND_WON_MEDAL:
             // group all these by the friend doing the actions
-            return new MessageKey(message.type, ((FriendFeedMessage)message).friend.getMemberId());
+            return MessageKey.explicit(message, ((FriendFeedMessage)message).friend.getMemberId());
 
         case FRIEND_GAINED_LEVEL:
             // all level gains by all friends are displayed together
-            return new MessageKey(message.type, 0);
+            return MessageKey.explicit(message, 0);
+
+        case SELF_FORUM_REPLY:
+            // group forum replies by the actor
+            return MessageKey.explicit(message, ((SelfFeedMessage)message).actor.getMemberId());
         }
         return null;
     }
 
     /**
-     * Get the key for right side aggregation. Multiple people performing the same action (eg
-     * winning the same trophy).
+     * Get the key for actor aggregation, i.e. multiple people performing the same action.
      */
     protected static MessageKey getActorsKey (FeedMessage message)
     {
         switch (message.type) {
         case FRIEND_ADDED_FRIEND:
             // one or more friends added a person to their friends, that person is the key
-            return new MessageKey(message.type, message.data[1]);
+            return MessageKey.id(message, 1);
 
         case FRIEND_WON_TROPHY:
             // one or more friends earned the same trophy; trophy name and id is the key
-            return new MessageKey(message.type, message.data[1].concat(message.data[0]).hashCode());
+            return MessageKey.dataHash(message, 1, 0);
 
         case FRIEND_PLAYED_GAME:
             // one or more friends played the same game; game id is the key
-            return new MessageKey(message.type, message.data[1]);
+            return MessageKey.id(message, 1);
 
         case FRIEND_WON_BADGE:
             // one or more friends earned the same badge; badge id and level is the key
-            return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
+            return MessageKey.dataHash(message, 0, 1);
 
         case FRIEND_WON_MEDAL:
             // one or more friends earned the same medal; medal name and group id is the key
-            return new MessageKey(message.type, message.data[0].concat(message.data[3]).hashCode());
+            return MessageKey.dataHash(message, 0, 3);
 
         case SELF_ROOM_COMMENT:
             // one or more people commented on your room; scene id is the key
-            return new MessageKey(message.type, message.data[0]);
+            return MessageKey.id(message, 0);
 
         case SELF_ITEM_COMMENT:
             // one or more people commented on your shop item; catalog id is the key
-            return new MessageKey(message.type, message.data[1]);
+            return MessageKey.id(message, 1);
+
+        case SELF_FORUM_REPLY:
+            // one or more replies to a forum post; thread id is the key
+            return MessageKey.id(message, 0);
         }
         return null;
     }
@@ -174,35 +180,45 @@ public class FeedMessageAggregator
      */
     protected static class MessageKey
     {
-        public FeedMessageType type;
-        public int key;
-
-        public MessageKey (FeedMessageType type, String key)
+        public static MessageKey id (FeedMessage msg, int dataIdx)
         {
-            this.type = type;
             try {
-                this.key = Integer.valueOf(key);
+                return new MessageKey(msg.type, Integer.valueOf(msg.data[dataIdx]));
             } catch (Exception e) {
-                this.key = 0;
+                return new MessageKey(msg.type, 0);
             }
         }
 
-        public MessageKey (FeedMessageType type, int key)
+        public static MessageKey dataHash (FeedMessage msg, int dataIdx1, int dataIdx2)
         {
-            this.type = type;
-            this.key = key;
+            int key = msg.data[dataIdx1].concat(msg.data[dataIdx2]).hashCode();
+            return new MessageKey(msg.type, key);
+        }
+
+        public static MessageKey explicit (FeedMessage msg, int key)
+        {
+            return new MessageKey(msg.type, key);
         }
 
         public int hashCode ()
         {
-            return type.getCode() ^ key;
+            return _type.getCode() ^ _key;
         }
 
         public boolean equals (Object o)
         {
             MessageKey other = (MessageKey)o;
-            return type == other.type && key == other.key;
+            return _type == other._type && _key == other._key;
         }
+
+        private MessageKey (FeedMessageType type, int key)
+        {
+            this._type = type;
+            this._key = key;
+        }
+
+        protected FeedMessageType _type;
+        protected int _key;
     }
 
     /**
