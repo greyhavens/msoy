@@ -1,23 +1,23 @@
 /* Facebook Connect helper crap (mostly because GWT + Facebook Connect == Fail). */
 window.FB_WithInit = function(callback) {
-  FB_RequireFeatures(["Api", "Connect", "XFBML"], function() {
-    FB.init("@FB_API_KEY@", "/fbconnect.html");
-  });
-  window.FB_WithInit = FB.Bootstrap.ensureInit;
-  FB_WithInit(function() {
-    callback();
-  });
+    FB_RequireFeatures(["Api", "Connect", "XFBML"], function() {
+        FB.init("@FB_API_KEY@", "/fbconnect.html");
+    });
+    window.FB_WithInit = FB.Bootstrap.ensureInit;
+    FB_WithInit(function() {
+        callback();
+    });
 };
 
 window.FB_RequireSession = function() {
-  FB_WithInit(function() {
-    FB.Connect.requireSession(function() {
-      if (FB_RequireSessionCallback) {
-        FB_RequireSessionCallback(FB.Facebook.apiClient.get_session().uid);
-        FB_RequireSessionCallback = null;
-      }
+    FB_WithInit(function() {
+        FB.Connect.requireSession(function() {
+            if (FB_RequireSessionCallback) {
+                FB_RequireSessionCallback(FB.Facebook.apiClient.get_session().uid);
+                FB_RequireSessionCallback = null;
+            }
+        });
     });
-  });
 };
 
 window.FB_PostStory = function(bundleId, data, targetIds, body) {
@@ -34,18 +34,21 @@ window.FB_PostStory = function(bundleId, data, targetIds, body) {
 };
 
 window.FB_PostTrophy = function(templateId, data) {
-  FB_PostStory(templateId, data, [], "");
+    FB_PostStory(templateId, data, [], "");
 };
+
 window.FB_Logout = function() {
-  FB_WithInit(function() {
-    FB.Connect.logout(null);
-  });
+    FB_WithInit(function() {
+        FB.Connect.logout(null);
+    });
 };
+
 window.FB_ParseXFBML = function (id) {
-  FB_WithInit(function() {
-    var elem = document.getElementById(id);
-    if (elem != null) {
-        FB.XFBML.Host.parseDomElement(elem);
-    }
-  });
+    FB_WithInit(function() {
+        var elem = document.getElementById(id);
+        if (elem != null) {
+            FB.XFBML.Host.parseDomElement(elem);
+        }
+    });
 }
+
