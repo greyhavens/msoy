@@ -1046,7 +1046,7 @@
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 
-  <target name="copythanebinaries" depends="distprojects">
+  <target name="copythanebinaries" depends="prepare,distprojects">
     <!-- Run a special target in thane that will copy the right executable file into the -->
     <!-- thane/dist directory. --> 
     <ant dir="projects/thane" target="distbinary"/>
