@@ -1172,7 +1172,7 @@
         <!-- skip build_settings.properties since it's only needed at build time -->
         <exclude name="build_settings.properties"/>
         <!-- skip conflicting libraries -->
-        <exclude name="**/progruard.jar"/>
+        <exclude name="**/proguard.jar"/>
       </fileset>
     </copy>
 
