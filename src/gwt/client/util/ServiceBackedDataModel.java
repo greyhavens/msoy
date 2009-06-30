@@ -92,7 +92,7 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
                     ServiceBackedDataModel.this.onSuccess(result, callback);
                 }
                 public void onFailure (Throwable cause) {
-                    ServiceBackedDataModel.this.onFailure(cause, callback);
+                    ServiceBackedDataModel.this.onFailure(cause);
                 }
             });
         }
@@ -108,7 +108,7 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
         callback.onSuccess(_pageItems);
     }
 
-    protected void onFailure (Throwable caught, AsyncCallback<List<T>> callback)
+    protected void onFailure (Throwable caught)
     {
         if (GwtAuthCodes.SESSION_EXPIRED.equals(caught.getMessage())) {
             MsoyUI.showSessionExpired(CShell.serverError(caught));
