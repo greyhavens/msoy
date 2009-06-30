@@ -672,7 +672,8 @@ public class MoneyLogic
 
             // resurrect vanished money too. this will not be docked from any account but will
             // contribute to the pool
-            if (txRec.transactionType == TransactionType.CREATOR_PAYOUT) {
+            if (txRec.transactionType == TransactionType.CREATOR_PAYOUT ||
+                txRec.transactionType == TransactionType.BASIS_CREATOR_PAYOUT) {
                 systemPurse[currencyIdx] -= Math.ceil(txRec.amount * systemPct);
 
                 getOrCreate(vanishedPayouts, txRec.referenceTxId, initRefund)[currencyIdx] +=
