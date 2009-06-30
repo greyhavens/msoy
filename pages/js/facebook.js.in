@@ -8,6 +8,7 @@ window.FB_WithInit = function(callback) {
     callback();
   });
 };
+
 window.FB_RequireSession = function() {
   FB_WithInit(function() {
     FB.Connect.requireSession(function() {
@@ -18,12 +19,20 @@ window.FB_RequireSession = function() {
     });
   });
 };
+
 window.FB_PostStory = function(bundleId, data, targetIds, body) {
-  FB_WithInit(function() {
-    FB.Connect.showFeedDialog(bundleId, data, targetIds, body, null,
-                              FB.RequireConnect.promptConnect, function () { /*noop*/ });
-  });
+    var showingFeed = false;
+    FB_WithInit(function() {
+        FB.Connect.requireSession(function() {
+            if (!showingFeed) {
+                showingFeed = true;
+                FB.Connect.showFeedDialog(bundleId, data, targetIds, body, null,
+                    FB.RequireConnect.promptConnect, function () { /*noop*/ });
+            }
+        });
+    });
 };
+
 window.FB_PostTrophy = function(templateId, data) {
   FB_PostStory(templateId, data, [], "");
 };
