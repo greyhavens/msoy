@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.GwtAuthCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.web.gwt.Args;
@@ -693,6 +694,19 @@ public class MsoyUI
         }
         // TODO: style this differently than info feedback
         new InfoPopup(message).showNear(source);
+    }
+
+    /**
+     * Reports a failure that occurred during a service call by showing a popup with a translated
+     * version of the exception text. Also shows a special popup for expired session errors.
+     */
+    public static void reportServiceFailure (Throwable caught)
+    {
+        if (GwtAuthCodes.SESSION_EXPIRED.equals(caught.getMessage())) {
+            showSessionExpired(CShell.serverError(caught));
+        } else {
+            error(CShell.serverError(caught));
+        }
     }
 
     /**

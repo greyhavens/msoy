@@ -32,7 +32,7 @@ import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * An interface for dealing with flagged items: mark them mature if they were flagged thus,
@@ -141,7 +141,7 @@ public class ReviewPanel extends FlowPanel
     }
 
     protected class ItemFlagsModel
-        extends PagedServiceDataModel<ItemFlag, ItemFlagsResult>
+        extends MsoyPagedServiceDataModel<ItemFlag, ItemFlagsResult>
     {
         @Override protected void callFetchService (
             int start, int count, boolean needCount, AsyncCallback<ItemFlagsResult> callback)

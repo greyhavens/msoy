@@ -34,7 +34,7 @@ import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 import client.util.StringUtil;
 
 /**
@@ -144,12 +144,14 @@ public class GroupListPanel extends FlowPanel
         // If the query has changed, instantiate a new data model for the group grid.
         if (_query == null || !_query.equals(query)) {
             _query = query;
-            _groupGrid.setModel(new PagedServiceDataModel<GroupCard, PagedResult<GroupCard>>() {
-                protected void callFetchService (int start, int count, boolean needCount,
-                                                 AsyncCallback<PagedResult<GroupCard>> callback) {
-                    _groupsvc.getGroups(start, count, _query, needCount, callback);
-                }
-            }, page);
+            _groupGrid.setModel(
+                new MsoyPagedServiceDataModel<GroupCard, PagedResult<GroupCard>>() {
+                    protected void callFetchService (
+                        int start, int count, boolean needCount,
+                        AsyncCallback<PagedResult<GroupCard>> callback) {
+                        _groupsvc.getGroups(start, count, _query, needCount, callback);
+                    }
+                }, page);
         } else {
             _groupGrid.displayPage(page, false);
         }

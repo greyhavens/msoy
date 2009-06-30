@@ -18,7 +18,7 @@ import com.threerings.msoy.money.data.all.TransactionPageResult;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
-import client.util.ServiceBackedDataModel;
+import client.util.MsoyServiceBackedDataModel;
 
 /**
  * Data model for the service backed balance sheet widget on the Transactions page.  This will load
@@ -27,7 +27,7 @@ import client.util.ServiceBackedDataModel;
  * balance sheet itself.
  */
 public class MoneyTransactionDataModel
-    extends ServiceBackedDataModel<MoneyTransaction, TransactionPageResult>
+    extends MsoyServiceBackedDataModel<MoneyTransaction, TransactionPageResult>
 {
     public /* final */ int memberId;
     public /* final */ ReportType report;

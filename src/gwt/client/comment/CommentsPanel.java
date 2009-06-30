@@ -33,7 +33,7 @@ import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.SafeHTML;
 import client.util.InfoCallback;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Displays comments on a particular entity and allows posting.
@@ -206,7 +206,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         return comment.length() >= 8;
     }
 
-    protected class CommentModel extends PagedServiceDataModel<Comment, PagedResult<Comment>>
+    protected class CommentModel extends MsoyPagedServiceDataModel<Comment, PagedResult<Comment>>
     {
         @Override
         protected void callFetchService (int start, int count, boolean needCount,

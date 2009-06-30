@@ -16,7 +16,7 @@ import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.shell.CShell;
-import client.util.ServiceBackedDataModel;
+import client.util.MsoyServiceBackedDataModel;
 import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 import client.util.events.StatusChangeListener;
@@ -24,7 +24,7 @@ import client.util.events.StatusChangeListener;
 /**
  * A data model that provides a member's conversations.
  */
-public class ConvosModel extends ServiceBackedDataModel<Conversation, MailService.ConvosResult>
+public class ConvosModel extends MsoyServiceBackedDataModel<Conversation, MailService.ConvosResult>
 {
     public ConvosModel ()
     {

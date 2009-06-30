@@ -15,7 +15,7 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
-import client.util.ServiceBackedDataModel;
+import client.util.MsoyServiceBackedDataModel;
 
 /**
  * Provides a data model for a PagedGrid backed by a persistent item list. The item list is accessed
@@ -23,7 +23,7 @@ import client.util.ServiceBackedDataModel;
  *
  * @author mjensen
  */
-public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResult>
+public class ItemListDataModel extends MsoyServiceBackedDataModel<Item, ItemListResult>
 {
     public ItemListDataModel ()
     {
@@ -91,7 +91,7 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
      * Returns the total number of possible items returned (asynchronously) by the last service
      * fetch.
      *
-     * @see client.util.ServiceBackedDataModel#getCount(java.lang.Object)
+     * @see client.util.MsoyServiceBackedDataModel#getCount(java.lang.Object)
      */
     @Override
     protected int getCount (ItemListResult result)
@@ -102,7 +102,7 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
     /**
      * Returns the list of item results from the last service fetch.
      *
-     * @see client.util.ServiceBackedDataModel#getRows(java.lang.Object)
+     * @see client.util.MsoyServiceBackedDataModel#getRows(java.lang.Object)
      */
     @Override
     protected List<Item> getRows (ItemListResult result)

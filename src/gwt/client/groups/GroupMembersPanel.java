@@ -32,7 +32,7 @@ import client.ui.PromptPopup;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.InfoCallback;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Displays the members of a particular Group. Allows managers to manage ranks and membership.
@@ -48,7 +48,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         _invite.addClickHandler(Link.createHandler(Pages.MAIL, "w", "g", _detail.group.groupId));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
-        setModel(new PagedServiceDataModel<GroupMemberCard, PagedResult<GroupMemberCard>>(){
+        setModel(new MsoyPagedServiceDataModel<GroupMemberCard, PagedResult<GroupMemberCard>>(){
             @Override protected void callFetchService (
                 int start, int count, boolean needCount,
                 AsyncCallback<PagedResult<GroupMemberCard>> callback) {

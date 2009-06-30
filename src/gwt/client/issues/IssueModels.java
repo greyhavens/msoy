@@ -16,7 +16,7 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Various data models used by the issue services.
@@ -24,7 +24,7 @@ import client.util.PagedServiceDataModel;
 public class IssueModels
 {
     /** A data model that provides issues. */
-    public static class Issues extends PagedServiceDataModel<Issue, IssueService.IssueResult>
+    public static class Issues extends MsoyPagedServiceDataModel<Issue, IssueService.IssueResult>
     {
         public Issues (boolean open)
         {

@@ -18,7 +18,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import com.threerings.msoy.web.gwt.WebMemberService.FriendsResult;
 
 import client.ui.HeaderBox;
-import client.util.ServiceBackedDataModel;
+import client.util.MsoyServiceBackedDataModel;
 
 /**
  * Displays all of the greeters online.
@@ -40,7 +40,7 @@ public class GreeterPanel extends FlowPanel
      * Data model to fetch the greeters one page at a time.
      */
     protected static class GreeterDataModel
-        extends ServiceBackedDataModel<MemberCard, FriendsResult>
+        extends MsoyServiceBackedDataModel<MemberCard, FriendsResult>
     {
         @Override
         protected void callFetchService (

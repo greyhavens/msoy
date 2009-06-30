@@ -26,7 +26,7 @@ import com.threerings.msoy.survey.gwt.SurveyService.ResponseSummary;
 import com.threerings.msoy.survey.gwt.SurveyService.SubmissionSummary;
 
 import client.ui.MsoyUI;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 public class ViewSurveyResultsPanel extends VerticalPanel
 {
@@ -125,7 +125,7 @@ public class ViewSurveyResultsPanel extends VerticalPanel
             super(20);
             _questionIndex = questionIndex; 
             addStyleName("freeFormResponsesTable");
-            setModel(new PagedServiceDataModel<String, PagedResult<String>>() {
+            setModel(new MsoyPagedServiceDataModel<String, PagedResult<String>>() {
                 protected void callFetchService (int start, int count, boolean needCount,
                     AsyncCallback<PagedResult<String>> callback) {
                     _surveySvc.getFreeFormResponses(

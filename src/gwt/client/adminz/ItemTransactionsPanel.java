@@ -27,7 +27,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Panel to list the transactions involving the sale of a given item.
@@ -104,7 +104,7 @@ public class ItemTransactionsPanel extends VerticalPanel
     }
 
     protected class Model
-        extends PagedServiceDataModel<MoneyTransaction, AdminService.ItemTransactionResult>
+        extends MsoyPagedServiceDataModel<MoneyTransaction, AdminService.ItemTransactionResult>
     {
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount,

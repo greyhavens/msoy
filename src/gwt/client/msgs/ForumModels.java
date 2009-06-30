@@ -21,8 +21,8 @@ import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.CShell;
-import client.util.PagedServiceDataModel;
-import client.util.ServiceBackedDataModel;
+import client.util.MsoyPagedServiceDataModel;
+import client.util.MsoyServiceBackedDataModel;
 
 /**
  * Various data models used by the forum services.
@@ -30,7 +30,8 @@ import client.util.ServiceBackedDataModel;
 public class ForumModels
 {
     /** A data model that provides a particular group's threads. */
-    public class GroupThreads extends PagedServiceDataModel<ForumThread, ForumService.ThreadResult>
+    public class GroupThreads
+        extends MsoyPagedServiceDataModel<ForumThread, ForumService.ThreadResult>
         implements ThreadContainer
     {
         public GroupThreads (int groupId) {
@@ -234,7 +235,7 @@ public class ForumModels
 
     /** A data model that provides a particular thread's messages. */
     public class ThreadMessages
-        extends ServiceBackedDataModel<ForumMessage, ForumService.MessageResult>
+        extends MsoyServiceBackedDataModel<ForumMessage, ForumService.MessageResult>
         implements ThreadContainer
     {
         public ThreadMessages (int threadId) {

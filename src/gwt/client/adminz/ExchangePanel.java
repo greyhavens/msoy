@@ -23,7 +23,7 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
 import client.ui.MsoyUI;
 
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 public class ExchangePanel extends SmartTable
 {
@@ -42,7 +42,7 @@ public class ExchangePanel extends SmartTable
     }
 
     protected class ExchangeDataDataModel
-        extends PagedServiceDataModel<ExchangeData, ExchangeStatusData>
+        extends MsoyPagedServiceDataModel<ExchangeData, ExchangeStatusData>
     {
         @Override
         protected void callFetchService (

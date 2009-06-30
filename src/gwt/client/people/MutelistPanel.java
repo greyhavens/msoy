@@ -16,7 +16,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.ui.HeaderBox;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Displays a member's mutelist.
@@ -36,7 +36,7 @@ public class MutelistPanel extends FlowPanel
     }
 
     protected static class MutelistDataModel
-        extends PagedServiceDataModel<MemberCard, PagedResult<MemberCard>>
+        extends MsoyPagedServiceDataModel<MemberCard, PagedResult<MemberCard>>
     {
         public MutelistDataModel (int memberId)
         {

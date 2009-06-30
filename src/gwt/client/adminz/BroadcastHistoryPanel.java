@@ -24,7 +24,7 @@ import com.threerings.msoy.money.gwt.BroadcastHistory;
 
 import client.ui.MsoyUI;
 import client.util.Link;
-import client.util.PagedServiceDataModel;
+import client.util.MsoyPagedServiceDataModel;
 
 /**
  * Admin/support panel for viewing broadcast history.
@@ -68,7 +68,7 @@ public class BroadcastHistoryPanel extends VerticalPanel
         table.addStyleName("table");
         add(table);
 
-        table.setModel(new PagedServiceDataModel<BroadcastHistory, BroadcastHistoryResult>() {
+        table.setModel(new MsoyPagedServiceDataModel<BroadcastHistory, BroadcastHistoryResult>() {
             @Override protected void callFetchService (int start, int count, boolean needCount,
                 AsyncCallback<BroadcastHistoryResult> callback) {
                 _adminsvc.getBroadcastHistory(start, count, needCount, callback);
