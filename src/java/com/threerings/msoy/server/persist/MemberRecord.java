@@ -80,8 +80,11 @@ public class MemberRecord extends PersistentRecord
         /** Is this user a subscriber? */
         SUBSCRIBER(1 << 11),
 
+        /** Is this user a permanent subscriber? */
+        SUBSCRIBER_PERMANENT(1 << 12),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 12);
+        UNUSED(1 << 13);
 
         public int getBit () {
             return _bit;
@@ -237,7 +240,7 @@ public class MemberRecord extends PersistentRecord
             return WebCreds.Role.ADMIN;
         } else if (isSet(flags, Flag.SUPPORT)) {
             return WebCreds.Role.SUPPORT;
-        } else if (isSet(flags, Flag.SUBSCRIBER)) {
+        } else if (isSet(flags, Flag.SUBSCRIBER) || isSet(flags, Flag.SUBSCRIBER_PERMANENT)) {
             return WebCreds.Role.SUBSCRIBER;
         } else if (!MemberMailUtil.isPermaguest(accountName)) {
             return WebCreds.Role.REGISTERED;
@@ -321,7 +324,7 @@ public class MemberRecord extends PersistentRecord
             tokens |= MsoyTokenRing.ADMIN;
         } else if (isSet(Flag.SUPPORT)) {
             tokens |= MsoyTokenRing.SUPPORT;
-        } else if (isSet(Flag.SUBSCRIBER)) {
+        } else if (isSet(Flag.SUBSCRIBER) || isSet(Flag.SUBSCRIBER_PERMANENT)) {
             tokens |= MsoyTokenRing.SUBSCRIBER;
         }
 
@@ -338,7 +341,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isSubscriber ()
     {
-        return isSet(Flag.SUBSCRIBER) || isSupport();
+        return isSet(Flag.SUBSCRIBER) || isSet(Flag.SUBSCRIBER_PERMANENT) || isSupport();
     }
 
     /**

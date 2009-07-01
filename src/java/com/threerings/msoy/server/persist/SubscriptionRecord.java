@@ -69,7 +69,7 @@ public class SubscriptionRecord extends PersistentRecord
     }
     // AUTO-GENERATED: METHODS END
 
-    /** A functiont that turns a key back into a memberId. */
+    /** Turns a Key back into a memberId. */
     public static Function<Key<SubscriptionRecord>,Integer> KEY_TO_MEMBER_ID =
         new Function<Key<SubscriptionRecord>,Integer>() {
             public Integer apply (Key<SubscriptionRecord> key) {

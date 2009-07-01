@@ -131,7 +131,8 @@ public class AdminServlet extends MsoyServiceServlet
             info.role = WebCreds.Role.ADMIN;
         } else if (tgtrec.isSet(MemberRecord.Flag.SUPPORT)) {
             info.role = WebCreds.Role.SUPPORT;
-        } else if (tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER)) {
+        } else if (tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER) ||
+                tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER_PERMANENT)) {
             info.role = WebCreds.Role.SUBSCRIBER;
         } else {
             info.role = WebCreds.Role.REGISTERED;
@@ -177,11 +178,21 @@ public class AdminServlet extends MsoyServiceServlet
         // log this as a warning so that it shows up in the nightly filtered logs
         log.warning("Configuring role", "setter", memrec.who(), "target", tgtrec.who(),
                     "role", role);
+        boolean isSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER);
+        boolean isPermSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER_PERMANENT);
         if (role == WebCreds.Role.SUBSCRIBER) {
-            // maybe we want a FREEBIE_SUBSCRIBER Role
-            log.warning("Making user a subscriber! This is will never be reset.", new Exception());
+            if (!isSub && !isPermSub) {
+                log.warning("Making user a permanent subscriber", new Exception());
+                tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, true);
+            }
+        } else if (isPermSub) {
+            log.warning("Stripping user of permanent subscription", new Exception());
+            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, false);
+
+        } else if (isSub) {
+            log.warning("Stripping user of subscriber status!", new Exception());
+            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER, false);
         }
-        tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER, role == WebCreds.Role.SUBSCRIBER);
         tgtrec.setFlag(MemberRecord.Flag.SUPPORT, role == WebCreds.Role.SUPPORT);
         if (memrec.isMaintainer()) {
             tgtrec.setFlag(MemberRecord.Flag.ADMIN, role == WebCreds.Role.ADMIN);
