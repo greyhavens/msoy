@@ -15,9 +15,9 @@ dev_deployment = true
 # server_url = http://www.whirled.com/
 
 #
-# The hostname used by the client to connect to the game server
+# The hostname used by the Presents client to connect to the server
 
-server_host = game.whirled.com
+server_host = test.whirled.com
 
 #
 # The port on which the world server listens to Flash's socket policy requests.
@@ -29,12 +29,6 @@ socket_policy_port = 47623
 
 server_ports = 47624
 http_port = 8080
-
-#
-# The lowest port on which to host game server instances; ports above this port
-# may also be used if multiple game servers are running at the same time
-
-game_server_port = 47630
 
 #
 # A regular expression used to extract the node id from our hostname. In
@@ -54,9 +48,9 @@ game_server_port = 47630
 # server_host_pattern = whirled%d.whirled.com
 
 #
-# If uncommented, this value will be used to adjust the server_ports, http_port
-# and game_server_port settings for each node by adding this offset and the
-# node's id to the default values for those configurations like so:
+# If uncommented, this value will be used to adjust the server_ports and
+# http_port settings for each node by adding this offset and the node's id to
+# the default values for those configurations like so:
 #
 # node_value = default_value + node_port_offset + node_id
 #
@@ -66,9 +60,8 @@ game_server_port = 47630
 # msoy1.http_port = 8080 (default) + -1 (offset) + 2 (node id) = 8081
 # etc.
 #
-# The same goes for the server_ports values and the game_server_port value.
-# This is only useful for local developer's deployments where they run multiple
-# servers on the same machine.
+# The same goes for the server_ports values.  This is only useful for local
+# developer's deployments where they run multiple servers on the same machine.
 
 # node_port_offset = -1
 
