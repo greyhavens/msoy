@@ -18,7 +18,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,6 +42,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.images.frame.FrameImages;
 import client.shell.CShell;
+import client.shell.Frame;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
@@ -62,7 +62,7 @@ import client.util.events.NameChangeEvent;
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, ValueChangeHandler<String>, Session.Observer, client.shell.Frame
+    implements EntryPoint, ValueChangeHandler<String>, Session.Observer, Frame
 {
     // from interface EntryPoint
     public void onModuleLoad ()
@@ -209,7 +209,7 @@ public class FrameEntryPoint
             if (_bar != null) {
                 _bar.resetNav();
             }
-            setPageToken(_pageToken, _iframe.getElement());
+            _pageFrame.setToken(_pageToken);
         }
 
         // let the frame header update promo text
@@ -355,11 +355,9 @@ public class FrameEntryPoint
         // dispatch the event locally
         FlashEvents.internalDispatchEvent(event);
 
-        // forward the event to our subpage
-        if (_iframe != null) {
-            JavaScriptObject args = JavaScriptObject.createArray();
-            event.toJSObject(args);
-            forwardEvent(_iframe.getElement(), event.getEventName(), args);
+        // forward the event to our page frame
+        if (_pageFrame != null) {
+            _pageFrame.forwardEvent(event);
         }
     }
 
@@ -454,9 +452,8 @@ public class FrameEntryPoint
             return;
         }
 
-        // create our iframe
-        _iframe = new Frame("/gwt/" + DeploymentConfig.version + "/" + _page.getPath() + "/");
-        _iframe.setStyleName("pageIFrame");
+        // create our page frame
+        _pageFrame = new PageFrame(_page, "main");
 
         // if we're on a headerless page or we only support one screen, we need to close the client
         if (isHeaderless() || isMonoScreen()) {
@@ -468,7 +465,7 @@ public class FrameEntryPoint
             _bar.setCloseVisible(FlashClients.clientExists());
         }
 
-        _layout.setContent(_bar, _iframe);
+        _layout.setContent(_bar, _pageFrame);
     }
 
     protected void clearContent (boolean restoreClient)
@@ -479,7 +476,7 @@ public class FrameEntryPoint
             // restore the title to the last thing flash asked for
             setTitle(_closeTitle);
         }
-        _iframe = null;
+        _pageFrame = null;
         if (!_layout.alwaysShowsTitleBar()) {
             _bar = null;
         }
@@ -833,7 +830,8 @@ public class FrameEntryPoint
     }
 
     /**
-     * Configures top-level functions that can be called by Flash.
+     * Configures top-level functions that can be called by Flash or an iframed
+     * {@link client.shell.Page}.
      */
     protected static native void configureCallbacks (FrameEntryPoint entry) /*-{
         $wnd.onunload = function (event) {
@@ -884,37 +882,6 @@ public class FrameEntryPoint
         }
     }-*/;
 
-    /**
-     * Passes a page's current token down into our page frame.
-     */
-    protected static native void setPageToken (String token, Element frame) /*-{
-        try {
-            if (frame.contentWindow.setPageToken) {
-                frame.contentWindow.setPageToken(token);
-            }
-        } catch (e) {
-            if ($wnd.console) {
-                $wnd.console.log("Failed to set page token [token=" + token + ", error=" + e + "].");
-            }
-        }
-    }-*/;
-
-    /**
-     * Forwards a Flash event to the page frame.
-     */
-    protected static native void forwardEvent (
-        Element frame, String name, JavaScriptObject args) /*-{
-        try {
-            if (frame.contentWindow && frame.contentWindow.triggerEvent) {
-                frame.contentWindow.triggerEvent(name, args);
-            }
-        } catch (e) {
-            if ($wnd.console) {
-                $wnd.console.log("Failed to forward event [name=" + name + ", error=" + e + "].");
-            }
-        }
-    }-*/;
-
     /** MD5 hashes the supplied text and returns the hex encoded hash value. */
     public native static String nmd5hex (String text) /*-{
         return $wnd.hex_md5(text);
@@ -930,7 +897,7 @@ public class FrameEntryPoint
     protected FrameHeader _header;
     protected Layout _layout;
     protected TitleBar _bar;
-    protected Frame _iframe;
+    protected PageFrame _pageFrame;
     protected BorderedDialog _dialog;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */

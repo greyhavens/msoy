@@ -4,7 +4,6 @@
 package client.frame;
 
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -31,9 +30,7 @@ public class FacebookLayout extends FramedLayout
             RootPanel.get(PAGE).add(bar);
     
             // create our iframe
-            String src = "/gwt/" + DeploymentConfig.version + "/" + Pages.FACEBOOK.getPath() + "/";
-            _fbframe = new Frame(src);
-            _fbframe.setStyleName("fbIFrame");
+            _fbframe = new PageFrame(Pages.FACEBOOK, "bottom");
             _fbframe.setWidth("100%");
             _fbframe.setHeight(FB_FRAME_HEIGHT + "px");
             _fbframe.getElement().setAttribute("scrolling", "no");
@@ -68,6 +65,6 @@ public class FacebookLayout extends FramedLayout
         return FB_FRAME_HEIGHT;
     }
 
-    protected Frame _fbframe;
+    protected PageFrame _fbframe;
     protected static final int FB_FRAME_HEIGHT = DeploymentConfig.devDeployment ? 150 : 0;
 }
