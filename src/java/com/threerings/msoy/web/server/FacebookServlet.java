@@ -111,11 +111,12 @@ public class FacebookServlet extends HttpServlet
 
             // we should either have 'canvas_user' or 'user'
             FacebookAppCreds creds = new FacebookAppCreds();
-            creds.uid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "canvas_user", "");
+            creds.uid = ParameterUtil.getParameter(req, fbParam("canvas_user"), "");
             if (StringUtil.isBlank(creds.uid)) {
-                creds.uid = ParameterUtil.getParameter(req, FBKEY_PREFIX + "user", "");
+                creds.uid = ParameterUtil.getParameter(req, fbParam("user"), "");
             }
-            if (StringUtil.isBlank(creds.uid)) {
+            boolean added = "1".equals(ParameterUtil.getParameter(req, fbParam("added"), ""));
+            if (StringUtil.isBlank(creds.uid) || !added) {
                 // this the "way" iframed Facebook apps redirect to the logon page, awseome!
                 throw new FriendlyException(
                     "<script type=\"text/javascript\">\n" +
@@ -266,6 +267,11 @@ public class FacebookServlet extends HttpServlet
     protected static String getLoginURL (String key)
     {
         return "http://www.facebook.com/login.php?api_key=" + key + "&canvas=1&v=1.0";
+    }
+
+    protected String fbParam (String name)
+    {
+        return FBKEY_PREFIX + name;
     }
 
     protected static class AppInfo
