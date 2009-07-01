@@ -6,11 +6,12 @@ package client.billing;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -49,8 +50,11 @@ public class SelectMethodPanel extends BillingPanel
         add(methods);
 
         if (!CShell.isSubscriber()) {
-            add(new Label(_msgs.orSubscribeUpsell()));
-            add(Link.create(_msgs.orSubscribeLearnMore(), Pages.BILLING, "subscribe"));
+            add(WidgetUtil.makeShim(10, 10));
+            add(MsoyUI.createFlowPanel(null,
+                MsoyUI.createInlineImage("/images/ui/clubwhirled.png"),
+                new InlineLabel(_msgs.orSubscribeUpsell()),
+                Link.create(_msgs.orSubscribeLearnMore(), Pages.BILLING, "subscribe")));
         }
     }
 
