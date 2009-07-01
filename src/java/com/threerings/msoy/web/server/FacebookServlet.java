@@ -124,7 +124,7 @@ public class FacebookServlet extends HttpServlet
             }
             creds.apiKey = info.apiKey;
             creds.appSecret = info.appSecret;
-            creds.sessionKey = ParameterUtil.getParameter(req, FBKEY_PREFIX + "session_key", true);
+            creds.sessionKey = ParameterUtil.getParameter(req, fbParam("session_key"), true);
 
             // create a new visitor info which will either be ignored or used shortly
             VisitorInfo vinfo = new VisitorInfo();
@@ -269,6 +269,9 @@ public class FacebookServlet extends HttpServlet
         return "http://www.facebook.com/login.php?api_key=" + key + "&canvas=1&v=1.0";
     }
 
+    /**
+     * Shortcut for prepending {@link #FBKEY_PREFIX}.
+     */
     protected String fbParam (String name)
     {
         return FBKEY_PREFIX + name;
