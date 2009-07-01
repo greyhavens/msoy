@@ -131,9 +131,9 @@ public class WorldClient extends MsoyClient
         // store the session token
         _ctx.saveSessionToken(getAuthResponseData());
 
-        log.info("Client logged on [built=" + DeploymentConfig.buildTime +
-                 ", mediaURL=" + DeploymentConfig.mediaURL +
-                 ", staticMediaURL=" + DeploymentConfig.staticMediaURL + "].");
+        log.info("Client logged on",
+            "build", DeploymentConfig.buildTime, "mediaURL", DeploymentConfig.mediaURL,
+            "staticMediaURL", DeploymentConfig.staticMediaURL);
     }
 
     // from Client
@@ -178,7 +178,7 @@ public class WorldClient extends MsoyClient
             return;
         }
 
-        log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
+        log.info("Logging on via external request", "id", memberId, "token", token);
         _wctx.getMsoyController().handleLogon(createStartupCreds(token));
     }
 
@@ -188,11 +188,11 @@ public class WorldClient extends MsoyClient
     protected function externalClientGo (where :String) :Boolean
     {
         if (_wctx.getClient().isLoggedOn()) {
-            log.info("Changing scenes per external request [where=" + where + "].");
+            log.info("Changing scenes per external request", "where", where);
             _wctx.getWorldController().goToPlace(new URLVariables(where));
             return true;
         } else {
-            log.info("Not ready to change scenes (we're not logged on) [where=" + where + "].");
+            log.info("Not ready to change scenes (we're not logged on)", "where", where);
             return false;
         }
     }
