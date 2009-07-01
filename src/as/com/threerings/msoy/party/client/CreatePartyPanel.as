@@ -117,6 +117,7 @@ public class CreatePartyPanel extends FloatingPanel
 
         } else {
             var upsell :Text = FlexUtil.createWideText("");
+            upsell.selectable = true; // so fucking links work
             upsell.htmlText = Msgs.PARTY.get("m.create_nonsub");
             addChild(upsell);
         }
