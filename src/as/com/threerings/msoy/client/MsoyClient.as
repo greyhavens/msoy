@@ -78,6 +78,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
     public function MsoyClient (stage :Stage)
     {
+        // set this here, it is ignored in the usual decl-assign syntax (?)
+        _embedding = Embedding.NONE;
         _featuredPlaceView = UberClient.isFeaturedPlaceView();
         super(null);
         _stage = stage;
