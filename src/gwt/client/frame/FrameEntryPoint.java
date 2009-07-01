@@ -685,7 +685,7 @@ public class FrameEntryPoint
     /**
      * Handles a variety of methods called by our iframed page.
      */
-    protected String[] frameCall (String callStr, String[] args)
+    protected String[] frameCall (String callStr, String pageFrameId, String[] args)
     {
         Calls call = Enum.valueOf(Calls.class, callStr);
         switch (call) {
@@ -841,8 +841,8 @@ public class FrameEntryPoint
             }
             return true;
         };
-        $wnd.frameCall = function (action, args) {
-            return entry.@client.frame.FrameEntryPoint::frameCall(Ljava/lang/String;[Ljava/lang/String;)(action, args);
+        $wnd.frameCall = function (action, pageFrameId, args) {
+            return entry.@client.frame.FrameEntryPoint::frameCall(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)(action, pageFrameId, args);
         };
         $wnd.helloWhirled = function () {
              return true;

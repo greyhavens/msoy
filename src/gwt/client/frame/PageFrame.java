@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.frame;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -8,6 +11,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
+import client.shell.Page;
 import client.util.events.FlashEvent;
 
 /**
@@ -16,13 +20,15 @@ import client.util.events.FlashEvent;
 public class PageFrame extends Frame
 {
     /**
-     * Creates a new frame embeddeing the given page and having the given id.
+     * Creates a new frame embedding the given page and having the given id.
      */
     public PageFrame (Pages page, String id)
     {
         super("/gwt/" + DeploymentConfig.version + "/" + page.getPath() + "/");
         setStyleName("pageIFrame");
-        getElement().setAttribute("name", id);
+        getElement().setAttribute("name", Page.FRAME_ID_PREFIX + id);
+        // IE ignores the above, so set the id too
+        getElement().setId(Page.FRAME_ID_PREFIX + id);
     }
 
     /**

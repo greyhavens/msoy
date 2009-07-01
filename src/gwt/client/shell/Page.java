@@ -36,6 +36,9 @@ import client.util.events.FlashEvents;
 public abstract class Page
     implements EntryPoint
 {
+    /** Prefix for our iframe id to avoid conflicts with other getElementById calls. */
+    public static final String FRAME_ID_PREFIX = "PageFrame_";
+
     /**
      * Returns the default title for the specified page.
      */
@@ -118,6 +121,14 @@ public abstract class Page
                     return Boolean.valueOf(frameCall(Frame.Calls.IS_HEADERLESS)[0]);
                 }
             });
+
+            // extract our frame id to use in frameCall
+            String frameId = getFrameId();
+            if (frameId != null && frameId.startsWith(FRAME_ID_PREFIX)) {
+                _frameId = frameId.substring(FRAME_ID_PREFIX.length());
+            } else {
+                _frameId = "";
+            }
 
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(
@@ -331,7 +342,7 @@ public abstract class Page
      */
     protected String[] frameCall (Frame.Calls call, String... args)
     {
-        return nativeFrameCall(call.toString(), args);
+        return nativeFrameCall(call.toString(), _frameId, args);
     }
 
     /**
@@ -375,11 +386,12 @@ public abstract class Page
         return typeof($wnd.parent.frameCall) != "undefined";
     }-*/;
 
-    protected static native String[] nativeFrameCall (String action, String[] args) /*-{
+    protected static native String[] nativeFrameCall (
+        String action, String frameId, String[] args) /*-{
         if ($wnd.frameCall) {
-            return $wnd.frameCall(action, args);
+            return $wnd.frameCall(action, frameId, args);
         } else if ($wnd.parent.frameCall) {
-            return $wnd.parent.frameCall(action, args);
+            return $wnd.parent.frameCall(action, frameId, args);
         } else {
             return null;
         }
@@ -391,6 +403,36 @@ public abstract class Page
         } else if ($wnd.parent.triggerFlashEvent) {
             return $wnd.parent.triggerFlashEvent(name, args);
         }
+    }-*/;
+
+    /**
+     * Gets the id of our containing iframe (assigned by {@link client.frame.PageFrame}). Browser
+     * support is patchy, so returns the best result of several techniques. Returns an empty string
+     * if the id could not be extracted. 
+     */
+    protected static native String getFrameId () /*-{
+        try {
+            // primarily for IE
+            if ($wnd.frameElement && $wnd.frameElement.id) {
+                return $wnd.frameElement.id;
+
+            // non-mozilla?
+            } else if (parent.id) {
+                return parent.id;
+
+            // mozilla
+            } else if (parent.name) {
+                return parent.name;
+            }
+        } catch (e) {
+            var msg = "Failed to get frame id [error=" + e + "].";
+            if ($wnd.console) {
+                $wnd.console.log(msg);
+            } else {
+                //alert(msg);
+            }
+        }
+        return "";
     }-*/;
 
     protected abstract class PageFrame implements Frame
@@ -415,6 +457,7 @@ public abstract class Page
 
     protected Widget _content;
     protected BorderedDialog _dialog;
+    protected String _frameId = "";
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
