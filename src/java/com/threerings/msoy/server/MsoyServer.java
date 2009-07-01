@@ -190,7 +190,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        _peerMan.init(injector, ServerConfig.nodeName, ServerConfig.sharedSecret,
+        _peerMan.init(ServerConfig.nodeName, ServerConfig.sharedSecret,
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // give the EHCache coordinator access to our peering guts
