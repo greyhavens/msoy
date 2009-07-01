@@ -22,10 +22,10 @@ public class FacebookLayout extends FramedLayout
     {
         super.init(header, onGoHome);
 
-        // this is not yet ready for Daytime TV
+        // this is not yet ready for production
         // TODO: it doesn't work because the inter-frame communication system cannot yet cope with
         // more than one subframe
-        if (false) {
+        if (DeploymentConfig.devDeployment) {
             // add our container and iframe
             SimplePanel bar = new SimplePanel();
             RootPanel.get(PAGE).add(bar);
@@ -69,5 +69,5 @@ public class FacebookLayout extends FramedLayout
     }
 
     protected Frame _fbframe;
-    protected static final int FB_FRAME_HEIGHT = 150;
+    protected static final int FB_FRAME_HEIGHT = DeploymentConfig.devDeployment ? 150 : 0;
 }
