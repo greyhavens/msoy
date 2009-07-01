@@ -73,6 +73,7 @@ public class BuyPanel extends VBox
         } else {
             FlexUtil.setVisible(_coinPanel, !_altCurrency);
             FlexUtil.setVisible(_barPanel, _altCurrency);
+            FlexUtil.setVisible(_switchToBars, quote.getCoins() != 0);
             var change :int = quote.getCoinChange();
             if (change > 0) {
                 barTip = Msgs.GENERAL.get("m.coinChange", Currency.COINS.format(change));
