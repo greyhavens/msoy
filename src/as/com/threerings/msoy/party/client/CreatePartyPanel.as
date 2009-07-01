@@ -6,6 +6,7 @@ package com.threerings.msoy.party.client {
 import mx.containers.Grid;
 
 import mx.controls.CheckBox;
+import mx.controls.Text;
 import mx.controls.TextInput;
 
 import mx.core.ClassFactory;
@@ -19,7 +20,6 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
@@ -45,17 +45,14 @@ public class CreatePartyPanel extends FloatingPanel
         super(ctx, Msgs.PARTY.get("t.create"));
         setButtonWidth(0);
 
-        // TODO SUBSCRIPTION
-        if (!DeploymentConfig.devDeployment) {
-            _buyPanel = new BuyPanel(_ctx, createParty);
-            
-            // if we have no price quote, fire off a request for one
-            if (quote != null) {
-                _buyPanel.setPriceQuote(quote);
+        _buyPanel = new BuyPanel(_ctx, createParty);
 
-            } else {
-                WorldContext(_ctx).getPartyDirector().getCreateCost(_buyPanel.setPriceQuote);
-            }
+        // if we have no price quote, fire off a request for one
+        if (quote != null) {
+            _buyPanel.setPriceQuote(quote);
+
+        } else {
+            WorldContext(_ctx).getPartyDirector().getCreateCost(_buyPanel.setPriceQuote);
         }
     }
 
@@ -115,23 +112,19 @@ public class CreatePartyPanel extends FloatingPanel
         GridUtil.addRow(grid, Msgs.PARTY.get("l.invite_friends"), _inviteAll);
         addChild(grid);
 
-        // TODO SUBSCRIPTION
-        if (DeploymentConfig.devDeployment) {
-            addButtons(CANCEL_BUTTON, OK_BUTTON);
+        if (WorldContext(_ctx).getMemberObject().tokens.isSubscriberPlus()) {
+            addChild(FlexUtil.createLabel(Msgs.PARTY.get("m.create_sub")));
+
         } else {
-            addChild(_buyPanel);
-            addButtons(CANCEL_BUTTON);
+            var upsell :Text = FlexUtil.createWideText("");
+            upsell.htmlText = Msgs.PARTY.get("m.create_nonsub");
+            addChild(upsell);
         }
+
+        addChild(_buyPanel);
+        addButtons(CANCEL_BUTTON);
     }
 
-    override protected function okButtonClicked () :void
-    {
-        // TODO SUBSCRIPTION
-        WorldContext(_ctx).getPartyDirector().createParty(
-            Currency.COINS, 0, _name.text, int(_group.selectedData), _inviteAll.selected);
-    }
-
-    // TODO SUBSCRIPTION
     protected function createParty (currency :Currency, authedCost :int) :void
     {
         WorldContext(_ctx).getPartyDirector().createParty(

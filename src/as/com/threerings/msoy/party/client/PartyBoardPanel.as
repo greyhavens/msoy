@@ -17,7 +17,6 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -86,18 +85,9 @@ public class PartyBoardPanel extends FloatingPanel
         addChild(_content);
 
         var btn :CommandButton = new CommandButton(Msgs.PARTY.get("b.create"));
-        // TODO SUBSCRIPTION
-        if (DeploymentConfig.devDeployment && !_wctx.getTokens().isSubscriberPlus()) {
-            btn.setCallback(function () :void {
-                btn.enabled = false;
-                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "e.subscription_required");
-            });
-
-        } else {
-            btn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-                return new CreatePartyPanel(_wctx);
-            }));
-        }
+        btn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+            return new CreatePartyPanel(_wctx);
+        }));
 
         addButtons(btn);
         _buttonBar.styleName = "buttonPadding"; // pad out the buttons since we have no border

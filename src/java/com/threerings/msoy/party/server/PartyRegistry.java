@@ -44,7 +44,6 @@ import com.threerings.whirled.data.ScenePlace;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
@@ -68,6 +67,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.MoneyLogic;
 
@@ -295,18 +295,23 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider
-    // TODO SUBSCRIPTION remove all this
     public void getCreateCost (ClientObject caller, InvocationService.ResultListener rl)
         throws InvocationException
     {
         MemberObject member = (MemberObject)caller;
-        rl.requestProcessed(
-            _moneyLogic.securePrice(member.getMemberId(), PARTY_PURCHASE_KEY, Currency.COINS,
-            getPartyCoinCost()));
+
+        PriceQuote quote;
+        if (member.tokens.isSubscriberPlus()) {
+            quote = new PriceQuote(Currency.COINS, 0, 0, 0, 0, 0); // free!
+
+        } else {
+            quote = _moneyLogic.securePrice(
+                member.getMemberId(), PARTY_PURCHASE_KEY, Currency.COINS, getPartyCoinCost());
+        }
+        rl.requestProcessed(quote);
     }
 
     // from PartyBoardProvider
-    // TODO SUBSCRIPTION remove the costs
     public void createParty (
         ClientObject caller, final Currency currency, final int authedAmount,
         final String name, final int groupId, final boolean inviteAllFriends,
@@ -314,11 +319,6 @@ public class PartyRegistry
         throws InvocationException
     {
         final MemberObject member = (MemberObject)caller;
-
-        // TODO SUBSCRIPTION
-        if (DeploymentConfig.devDeployment && !member.tokens.isSubscriberPlus()) {
-            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
-        }
 
         if (member.partyId != 0) {
             // TODO: possibly a better error? Surely this will be blocked on the client
@@ -330,8 +330,7 @@ public class PartyRegistry
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR); // shouldn't happen
         }
 
-        // TODO: SUBSCRIPTION: remove the cost/money crap
-        final int cost = getPartyCoinCost();
+        final int cost = member.tokens.isSubscriberPlus() ? 0 : getPartyCoinCost();
         _invoker.postUnit(new ServiceUnit("createParty", jl) {
             public void invokePersistent () throws Exception {
                 _group = _groupRepo.loadGroup(groupId);
@@ -340,12 +339,10 @@ public class PartyRegistry
                         (groupInfo.rank.compareTo(Rank.MANAGER) < 0))) {
                     throw new InvocationException(PartyCodes.E_GROUP_MGR_REQUIRED);
                 }
-                // TODO SUBSCRIPTION
-                if (DeploymentConfig.devDeployment) {
-                    return; // skip the money part
+                if (cost != 0) {
+                    _moneyLogic.buyParty(member.getMemberId(), PARTY_PURCHASE_KEY,
+                        currency, authedAmount, Currency.COINS, cost);
                 }
-                _moneyLogic.buyParty(member.getMemberId(), PARTY_PURCHASE_KEY,
-                    currency, authedAmount, Currency.COINS, cost);
             }
             @Override public void handleFailure (Exception error) {
                 if (error instanceof CostUpdatedException) {
