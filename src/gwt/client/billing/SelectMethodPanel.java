@@ -7,13 +7,18 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.web.gwt.Pages;
+
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.BillingUtil;
+import client.util.Link;
 
 /**
  * Displays the UI for selecting a payment method.
@@ -42,6 +47,11 @@ public class SelectMethodPanel extends BillingPanel
         methods.setWidget(1, 0, box);
         methods.setWidget(1, 1, balloons);
         add(methods);
+
+        if (!CShell.isSubscriber()) {
+            add(new Label(_msgs.orSubscribeUpsell()));
+            add(Link.create(_msgs.orSubscribeLearnMore(), Pages.BILLING, "subscribe"));
+        }
     }
 
     protected static class Method
