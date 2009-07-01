@@ -30,7 +30,6 @@ import com.threerings.msoy.chat.data.MsoyChatCodes;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -186,8 +185,7 @@ public class MsoyManager
     {
         MemberObject member = (MemberObject) caller;
 
-        // TODO SUBSCRIPTION
-        if (DeploymentConfig.devDeployment && !member.tokens.isSubscriberPlus()) {
+        if (!member.tokens.isSubscriberPlus()) {
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
 

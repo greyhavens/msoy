@@ -15,7 +15,6 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -39,9 +38,7 @@ public class MsoyBroadcastHandler extends BroadcastHandler
         ctx :CrowdContext, speakSvc :SpeakService,
         cmd :String, args :String, history :Array) :String
     {
-        // TODO SUBSCRIPTION
-        if (DeploymentConfig.devDeployment &&
-                !MsoyTokenRing(getBody(ctx).getTokens()).isSubscriberPlus()) {
+        if (!MsoyTokenRing(getBody(ctx).getTokens()).isSubscriberPlus()) {
             getMsoyContext(ctx).displayFeedback(MsoyCodes.GENERAL_MSGS, "e.subscription_required");
             return ChatCodes.SUCCESS; // because we want to clear the chat entry field
         }
