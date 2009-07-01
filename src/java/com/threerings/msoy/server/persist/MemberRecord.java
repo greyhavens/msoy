@@ -61,8 +61,7 @@ public class MemberRecord extends PersistentRecord
         /** Indicates that the user has validated their email address. */
         VALIDATED(1 << 8),
 
-        /**
-         * Indicates that the user is currently banned, temp banned or has an unacknowledged
+        /** Indicates that the user is currently banned, temp banned or has an unacknowledged
          * warning. This should be true if and only if this user's tokens contain the msoy ban code
          * or there is a warning for this user. The flag is recorded here so that batch processes
          * like announcement and retention mailings do not have to check 3 records per user.
