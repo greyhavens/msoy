@@ -88,6 +88,14 @@ public class SubscriptionLogic
 //        // END: TEMP TEMP TEMP
     }
 
+    @BlockingThread
+    public void barscribe (MemberRecord mrec)
+    {
+        // insert a record saying they're paid up for a month
+        _subscripRepo.noteBarscribed(mrec.memberId);
+        noteSubscriptionBilled(mrec, 0 /* no bar granting! */);
+    }
+
     /**
      * Note that the specified user has been billed for a subscription, either interactively or
      * through a recurring billing.
@@ -107,13 +115,39 @@ public class SubscriptionLogic
     }
 
     /**
+     * Note that the specified user's subscription has ended.
+     *
+     * @throws Exception We freak the fuck out if anything goes wrong.
+     */
+    @BlockingThread
+    public void noteSubscriptionEnded (String accountName)
+        throws Exception
+    {
+        MemberRecord mrec = _memberRepo.loadMember(accountName);
+        if (mrec == null) {
+            throw new Exception("Could not locate MemberRecord");
+        }
+        if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, false)) {
+            _memberRepo.storeFlags(mrec);
+            MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
+        } else {
+            log.warning("Weird! A subscription-end message arrived for a non-subscriber",
+                "accountName", accountName);
+            // but continue on... we need to make sure they're really cleared
+        }
+
+        // end their subscription
+        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
+    }
+
+    /**
      * Note that the specified user has been billed for a subscription, either interactively or
      * through a recurring billing.
      *
      * @throws Exception We freak the fuck out if anything goes wrong.
      */
     @BlockingThread
-    public void noteSubscriptionBilled (MemberRecord mrec, int months)
+    protected void noteSubscriptionBilled (MemberRecord mrec, int months)
     {
         // make them a subscriber if not already
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {
@@ -155,32 +189,6 @@ public class SubscriptionLogic
                     "memberId", mrec.memberId, e);
             }
         }
-    }
-
-    /**
-     * Note that the specified user's subscription has ended.
-     *
-     * @throws Exception We freak the fuck out if anything goes wrong.
-     */
-    @BlockingThread
-    public void noteSubscriptionEnded (String accountName)
-        throws Exception
-    {
-        MemberRecord mrec = _memberRepo.loadMember(accountName);
-        if (mrec == null) {
-            throw new Exception("Could not locate MemberRecord");
-        }
-        if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, false)) {
-            _memberRepo.storeFlags(mrec);
-            MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
-        } else {
-            log.warning("Weird! A subscription-end message arrived for a non-subscriber",
-                "accountName", accountName);
-            // but continue on... we need to make sure they're really cleared
-        }
-
-        // end their subscription
-        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
     }
 
     /**

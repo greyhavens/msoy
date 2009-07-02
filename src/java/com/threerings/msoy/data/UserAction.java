@@ -48,6 +48,7 @@ public class UserAction extends SimpleStreamableObject
 
         // buying shit from OOO
         BOUGHT_ROOM(100), BOUGHT_GROUP(101), BOUGHT_BROADCAST(102), BOUGHT_PARTY(103),
+        BOUGHT_BARSCRIPTION(104),
 
         UNUSED(255);
 

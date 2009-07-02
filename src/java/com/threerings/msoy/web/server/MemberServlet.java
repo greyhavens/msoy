@@ -46,6 +46,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
+import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.person.server.persist.GameInvitationRecord;
 import com.threerings.msoy.person.server.persist.InvitationRecord;
@@ -357,16 +358,20 @@ public class MemberServlet extends MsoyServiceServlet
     public PurchaseResult<WebCreds.Role> barscribe (int authedBarCost)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        final MemberRecord memrec = requireAuthedUser();
         if (memrec.isSubscriber()) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        int listedAmount = _runtime.subscription.barscriptionCost;
-        // TODO
-        //_moneyLogic.buyFromOOO(memrec, 
+        MoneyLogic.BuyOperation<WebCreds.Role> op = new MoneyLogic.BuyOperation<WebCreds.Role>() {
+            public WebCreds.Role create (boolean magicFree, Currency currency, int amountPaid) {
+                _subscripLogic.barscribe(memrec);
+                return memrec.toRole();
+            }
+        };
 
-        return null; // TODO
+        int cost = _runtime.subscription.barscriptionCost;
+        return _moneyLogic.barscribe(memrec, authedBarCost, cost, op).toPurchaseResult();
     }
 
     // our dependencies
@@ -376,6 +381,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected InviteRepository _inviteRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected SpamRepository _spamRepo;

@@ -153,9 +153,26 @@ public class SubscriptionRepository extends DepotRepository
         }
     }
 
+    /**
+     * Note that the specified member has "barscribed" for one month.
+     */
+    public void noteBarscribed (int memberId)
+    {
+        // calculate the expiration time
+        Calendar exp = Calendar.getInstance();
+        exp.add(Calendar.MONTH, 1);
+
+        // save it
+        BarscriptionRecord rec = new BarscriptionRecord();
+        rec.memberId = memberId;
+        rec.expires = new Timestamp(exp.getTimeInMillis());
+        store(rec);
+    }
+
     @Override
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(SubscriptionRecord.class);
+        classes.add(BarscriptionRecord.class);
     }
 }

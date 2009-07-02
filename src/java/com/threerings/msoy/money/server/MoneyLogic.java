@@ -459,6 +459,19 @@ public class MoneyLogic
     }
 
     /**
+     * Purchase a barscription.
+     */
+    public <T> BuyResult<T> barscribe (
+        MemberRecord buyerRec, int authedAmount, int cost, BuyOperation<T> buyOp)
+        throws ServiceException
+    {
+        return buyFromOOO(
+            buyerRec, BARSCRIBE_KEY, Currency.BARS, authedAmount, Currency.BARS, cost, buyOp,
+            UserAction.Type.BOUGHT_BARSCRIPTION, "m.barscribed",
+            TransactionType.SUBSCRIPTION_PURCHASE, null /* no change */);
+    }
+
+    /**
      * Process a purchase of a ware from Three Rings.
      */
     public <T> BuyResult<T> buyFromOOO (
@@ -1423,6 +1436,9 @@ public class MoneyLogic
 
     /** An arbitrary key for tracking quotes in {@link #listItem}. */
     protected static final Object LIST_ITEM_KEY = new Object();
+
+    /** An arbitrary key for tracking quotes in {@link #barscribe}. */
+    protected static final Object BARSCRIBE_KEY = new Object();
 
     /** We don't service bling cashouts at any lower frequency than this. */
     protected static final long CASHOUT_FREQUENCY = BlingInfo.CASHOUT_DAYS * 24 * 60 * 60 * 1000L;
