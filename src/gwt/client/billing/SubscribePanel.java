@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -67,6 +68,20 @@ public class SubscribePanel extends BillingPanel
         gotable.setWidget(0, 1, gobuy);
         box.add(gotable);
 
+        add(WidgetUtil.makeShim(20,20));
+        final Label barscribe = new Label(_msgs.orBarscribe());
+        barscribe.addStyleName("actionLabel");
+        barscribe.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                remove(barscribe);
+                addBarscribing();
+            }
+        });
+        add(barscribe);
+    }
+
+    protected void addBarscribing ()
+    {
         final BuyPanel<WebCreds.Role> buyPanel = new BuyPanel<WebCreds.Role>() {
             @Override protected boolean makePurchase (
                 Currency currency, int amount, AsyncCallback<PurchaseResult<WebCreds.Role>> cback)
@@ -85,7 +100,6 @@ public class SubscribePanel extends BillingPanel
                 });
             }
         });
-        add(WidgetUtil.makeShim(20,20));
         add(MsoyUI.createLabel(_msgs.barscribeUpsell(), null));
         add(buyPanel.createPromptHost(_msgs.barscribe()));
     }
