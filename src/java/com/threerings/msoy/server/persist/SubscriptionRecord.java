@@ -40,12 +40,8 @@ public class SubscriptionRecord extends PersistentRecord
     /** How many bar grants do they have left? */
     public int grantsLeft;
 
-    /** The last time bars and/or special items have been granted to this subscriber,
-     *  which happens on a monthly basis. */
-    // TODO: this will probably get more complicated for special items.
-    // The special items are granted to all subscribers when they are released, and to any
-    // new subscriber who has not yet received the item. So probably we just want a ItemIdent
-    // indicating the last special item granted to each subscriber.
+    /** The last time bars (only) have been granted to this subscriber,
+     *  which happens on a monthly basis. Item grants are tracked separately. */
     @Column(nullable=true)
     public Timestamp lastGrant;
 
