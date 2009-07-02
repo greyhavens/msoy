@@ -18,7 +18,10 @@ public class ABGroupSummaryRecord extends PersistentRecord
     public static final ColumnExp TEST_ID = colexp(_R, "testId");
     public static final ColumnExp GROUP = colexp(_R, "group");
     public static final ColumnExp ASSIGNED = colexp(_R, "assigned");
+    public static final ColumnExp PLAYED = colexp(_R, "played");
     public static final ColumnExp REGISTERED = colexp(_R, "registered");
+    public static final ColumnExp VALIDATED = colexp(_R, "validated");
+    public static final ColumnExp RETURNED = colexp(_R, "returned");
     public static final ColumnExp RETAINED = colexp(_R, "retained");
     // AUTO-GENERATED: FIELDS END
 
