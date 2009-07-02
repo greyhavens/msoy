@@ -169,6 +169,22 @@ public class SubscriptionRepository extends DepotRepository
         store(rec);
     }
 
+    /**
+     * Load all the barscribers that are expired.
+     */
+    public List<Integer> loadExpiredBarscribers ()
+    {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        List<Key<BarscriptionRecord>> keys = findAllKeys(BarscriptionRecord.class, true,
+            new Where(BarscriptionRecord.EXPIRES.lessThan(now)));
+        return Lists.transform(keys, BarscriptionRecord.KEY_TO_MEMBER_ID);
+    }
+
+    public void noteBarscriptionEnded (int memberId)
+    {
+        delete(BarscriptionRecord.getKey(memberId));
+    }
+
     @Override
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

@@ -51,6 +51,7 @@ public class SubscriptionLogic
             public void run () {
                 _batchInvoker.postUnit(new Invoker.Unit(toString()) {
                     public boolean invoke () {
+                        endBarscribers();
                         grantBars();
                         grantSpecialItem();
                         return false;
@@ -127,17 +128,7 @@ public class SubscriptionLogic
         if (mrec == null) {
             throw new Exception("Could not locate MemberRecord");
         }
-        if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, false)) {
-            _memberRepo.storeFlags(mrec);
-            MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
-        } else {
-            log.warning("Weird! A subscription-end message arrived for a non-subscriber",
-                "accountName", accountName);
-            // but continue on... we need to make sure they're really cleared
-        }
-
-        // end their subscription
-        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
+        noteSubscriptionEnded(mrec);
     }
 
     /**
@@ -187,6 +178,40 @@ public class SubscriptionLogic
             } catch (Exception e) {
                 log.warning("Unable to grant a subscriber their monthly bars",
                     "memberId", mrec.memberId, e);
+            }
+        }
+    }
+
+    @BlockingThread
+    protected void noteSubscriptionEnded (MemberRecord mrec)
+    {
+        if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, false)) {
+            _memberRepo.storeFlags(mrec);
+            MemberNodeActions.tokensChanged(mrec.memberId, mrec.toTokenRing());
+        } else {
+            log.warning("Weird! A subscription-end message arrived for a non-subscriber",
+                "accountName", mrec.accountName);
+            // but continue on... we need to make sure they're really cleared
+        }
+
+        // end their subscription
+        _subscripRepo.noteSubscriptionEnded(mrec.memberId);
+    }
+
+    /**
+     * Turn off subscriptions for any expired barscribers.
+     */
+    @BlockingThread
+    protected void endBarscribers ()
+    {
+        List<Integer> memberIds = _subscripRepo.loadExpiredBarscribers();
+        for (Integer memberId : memberIds) {
+            try {
+                MemberRecord mrec = _memberRepo.loadMember(memberId);
+                noteSubscriptionEnded(mrec);
+                _subscripRepo.noteBarscriptionEnded(memberId);
+            } catch (Exception e) {
+                log.warning("Unable to end barscriber", "memberId", memberId, e);
             }
         }
     }
