@@ -2,18 +2,25 @@
 #
 # $Id$
 #
-# Startup script for the MetaSOY game server.
+# Startup script for a Java server.
 
+# Define project specific bits here
+SERVER=msoy
+RESPAWN=msoyrespawn
+RUNSERVER=msoyserver
+CONF=msoy-server.conf
+
+# Everything from here down should not need configuration
 WHOAMI=`whoami`
 if [ "$WHOAMI" != "root" ]; then
     echo "This script must be run as root."
     exit 255
 fi
 
-MSOY_HOME=`dirname $0`/..
-MSOY_HOME=`cd $MSOY_HOME ; pwd`
-if [ ! -f $MSOY_HOME/dist/msoy-server.conf ]; then
-    echo "Unable to infer MSOY_HOME. No msoy-server.conf file?"
+ROOT=`dirname $0`/..
+ROOT=`cd $ROOT ; pwd`
+if [ ! -f $ROOT/dist/$CONF ]; then
+    echo "Unable to infer ROOT. No $CONF file?"
     exit 1
 fi
 
@@ -27,7 +34,7 @@ check_pid() {
             sort -n | head -1`
         if [ ! -z "$RPIDS" ]; then
             echo "WARNING: A $NAME process is currently running with pid $RPIDS."
-            echo "WARNING: Run 'msoy stop' to stop it."
+            echo "WARNING: Run '$0 stop' to stop it."
             exit 255
         fi
     fi
@@ -36,23 +43,23 @@ check_pid() {
 kill_server() {
     MESSAGE=$1
     SIGNAL=$2
-    SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
+    SERVER_PIDFILE=$ROOT/run/server-$PROCID.pid
     if [ ! -f $SERVER_PIDFILE ]; then
         echo "No $SERVER_PIDFILE exists. Is the server running?"
     else
-        echo -n "$MESSAGE msoy $PROCID."
+        echo -n "$MESSAGE $SERVER $PROCID."
         # if we're SIGKILLing the server, try to generate a thread dump first
         if [ "$SIGNAL" = 9 ]; then
             kill -3 `cat $SERVER_PIDFILE`
         fi
         kill -$SIGNAL `cat $SERVER_PIDFILE`
-        echo "Check $MSOY_HOME/log/respawn-$PROCID.log to ensure that it restarts."
+        echo "Check $ROOT/log/respawn-$PROCID.log to ensure that it restarts."
         rm -f $SERVER_PIDFILE
     fi
 }
 
 # Read in our configuration
-. $MSOY_HOME/dist/msoy-server.conf
+. $ROOT/dist/$CONF
 
 # Use our hostname to compute an identifier for log files and such
 PROCID=`hostname | sed 's:\..*::'`
@@ -66,17 +73,17 @@ ulimit -d 1572864
 # See how we were called
 case "$1" in
   start)
-        # Make sure msoyrespawn is not currently running
-        check_pid "respawn" $MSOY_HOME/run/respawn-$PROCID.pid msoyrespawn
+        # Make sure respawn script is not currently running
+        check_pid "respawn" $ROOT/run/respawn-$PROCID.pid $RESPAWN
 
-        # Make sure there are no hung MetaSOY server processes
-        check_pid "msoyserver" $MSOY_HOME/run/server-$PROCID.pid java
+        # Make sure there are no hung server processes
+        check_pid "$RUNSERVER" $ROOT/run/server-$PROCID.pid java
 
         # Go ahead and start things up
-        DAEMON=$MSOY_HOME/bin/msoyrespawn
-        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$PROCID.pid
-        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
-        LOGFILE=$MSOY_HOME/log/respawn-$PROCID.log
+        DAEMON=$ROOT/bin/$RESPAWN
+        RESPAWN_PIDFILE=$ROOT/run/respawn-$PROCID.pid
+        SERVER_PIDFILE=$ROOT/run/server-$PROCID.pid
+        LOGFILE=$ROOT/log/respawn-$PROCID.log
         echo -n "Starting $DAEMON: "
         touch $RESPAWN_PIDFILE $LOGFILE
         $DAEMON $PROCID $RESPAWN_PIDFILE $SERVER_PIDFILE >>$LOGFILE 2>&1 </dev/null &
@@ -84,30 +91,30 @@ case "$1" in
         ;;
 
   stop)
-        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$PROCID.pid
-        SERVER_PIDFILE=$MSOY_HOME/run/server-$PROCID.pid
+        RESPAWN_PIDFILE=$ROOT/run/respawn-$PROCID.pid
+        SERVER_PIDFILE=$ROOT/run/server-$PROCID.pid
         if [ ! -f $RESPAWN_PIDFILE ]; then
-            echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
+            echo "No $RESPAWN_PIDFILE exists. Is $RESPAWN running?"
         else
-            echo "Shutting down msoyrespawn."
+            echo "Shutting down $RESPAWN."
             kill `cat $RESPAWN_PIDFILE`
             rm -f $RESPAWN_PIDFILE
         fi
         if [ ! -f $SERVER_PIDFILE ]; then
-            echo "No $SERVER_PIDFILE exists. Is MsoyServer running?"
+            echo "No $SERVER_PIDFILE exists. Is $RUNSERVER running?"
         else
-            echo "Shutting down msoy."
+            echo "Shutting down $SERVER."
             kill `cat $SERVER_PIDFILE`
             rm -f $SERVER_PIDFILE
         fi
         ;;
 
   unspawn)
-        RESPAWN_PIDFILE=$MSOY_HOME/run/respawn-$PROCID.pid
+        RESPAWN_PIDFILE=$ROOT/run/respawn-$PROCID.pid
         if [ ! -f $RESPAWN_PIDFILE ]; then
-            echo "No $RESPAWN_PIDFILE exists. Is msoyrespawn running?"
+            echo "No $RESPAWN_PIDFILE exists. Is $RESPAWN running?"
         else
-            echo -n "Shutting down msoyrespawn."
+            echo -n "Shutting down $RESPAWN."
             kill `cat $RESPAWN_PIDFILE`
             rm -f $RESPAWN_PIDFILE
         fi
