@@ -25,7 +25,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Award;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
