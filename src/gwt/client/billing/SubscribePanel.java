@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -84,7 +85,9 @@ public class SubscribePanel extends BillingPanel
                 });
             }
         });
-        add(buyPanel);
+        add(WidgetUtil.makeShim(20,20));
+        add(MsoyUI.createLabel(_msgs.barscribeUpsell(), null));
+        add(buyPanel.createPromptHost(_msgs.barscribe()));
     }
 
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
