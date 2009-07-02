@@ -20,7 +20,7 @@ public class FacebookPage extends Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
-        if (action.equals("")) {
+        if (action.equals("friends")) {
             FlowPanel fbml = new FlowPanel();
             fbml.add(MsoyUI.createLabel("Table with nested fb:name:", null));
             SmartTable test = new SmartTable(10, 10);
@@ -43,11 +43,5 @@ public class FacebookPage extends Page
     public Pages getPageId ()
     {
         return Pages.FACEBOOK;
-    }
-
-    @Override // from Page
-    protected boolean isTitlePage ()
-    {
-        return false;
     }
 }

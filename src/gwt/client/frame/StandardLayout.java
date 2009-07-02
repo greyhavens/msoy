@@ -85,6 +85,12 @@ public class StandardLayout extends Layout
     }
 
     @Override // from Layout
+    public void setBottomContent (Widget iframe)
+    {
+        // not supported
+    }
+
+    @Override // from Layout
     public void closeContent (boolean restoreClient)
     {
         // not showing, nothing to do

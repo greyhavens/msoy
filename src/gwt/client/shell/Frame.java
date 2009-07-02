@@ -23,7 +23,7 @@ public interface Frame
         SET_TITLE, ADD_NAV_LINK, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT,
         DID_LOGON, LOGOFF, EMAIL_UPDATED, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5,
         CHECK_FLASH_VERSION, GET_ACTIVE_INVITE, GET_VISITOR_INFO, TEST_ACTION, GET_EMBEDDING,
-        IS_HEADERLESS
+        IS_HEADERLESS, OPEN_BOTTOM_FRAME
     };
 
     /** Choice of embeddings the frame is in. */
@@ -133,4 +133,9 @@ public interface Frame
      * Returns true if we're headerless, false if we have (or should have) a header.
      */
     boolean isHeaderless ();
+
+    /**
+     * Opens a content frame below the main frame and displays the given page.
+     */
+    void openBottomFrame (String token);
 }

@@ -76,6 +76,11 @@ public class GamesPage extends Page
 
         } else {
             setContent(new ArcadePanel(getDefaultPortal()));
+
+            // request to show the facebook friends panel
+            if (CShell.isFacebook()) {
+                CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
+            }
         }
     }
 

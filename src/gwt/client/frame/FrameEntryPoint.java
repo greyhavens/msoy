@@ -423,6 +423,17 @@ public class FrameEntryPoint
         return (_page != null) && (_page.getTab() == null);
     }
 
+    // from interface Frame
+    public void openBottomFrame (String token)
+    {
+        CShell.log("Opening bottom frame", "token", token);
+        Pages page = Pages.fromHistory(token);
+        Args args = Args.fromHistory(token);
+        _bottomFrame = new PageFrame(page, BOTTOM_FRAME_ID);
+        _bottomFrameToken = args.recompose(0).toToken();
+        _layout.setBottomContent(_bottomFrame);
+    }
+
     /**
      * Detects if we should only show one thing at a time. That is, either content or client,
      * not both.
@@ -453,7 +464,7 @@ public class FrameEntryPoint
         }
 
         // create our page frame
-        _pageFrame = new PageFrame(_page, "main");
+        _pageFrame = new PageFrame(_page, MAIN_FRAME_ID);
 
         // if we're on a headerless page or we only support one screen, we need to close the client
         if (isHeaderless() || isMonoScreen()) {
@@ -466,6 +477,7 @@ public class FrameEntryPoint
         }
 
         _layout.setContent(_bar, _pageFrame);
+        _bottomFrame = null;
     }
 
     protected void clearContent (boolean restoreClient)
@@ -477,6 +489,7 @@ public class FrameEntryPoint
             setTitle(_closeTitle);
         }
         _pageFrame = null;
+        _bottomFrame = null;
         if (!_layout.alwaysShowsTitleBar()) {
             _bar = null;
         }
@@ -685,22 +698,31 @@ public class FrameEntryPoint
     /**
      * Handles a variety of methods called by our iframed page.
      */
-    protected String[] frameCall (String callStr, String pageFrameId, String[] args)
+    protected String[] frameCall (String callStr, String frameId, String[] args)
     {
         Calls call = Enum.valueOf(Calls.class, callStr);
         switch (call) {
         case SET_TITLE:
-            setTitle(args[0]);
+            // only the main frame can set the title
+            if (MAIN_FRAME_ID.equals(frameId)) {
+                setTitle(args[0]);
+            }
             return null;
         case ADD_NAV_LINK:
             addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), Args.fromToken(args[2]),
                        Integer.parseInt(args[3]));
             return null;
         case NAVIGATE_TO:
-            navigateTo(args[0]);
+            // TODO: bottom frame navigation
+            if (MAIN_FRAME_ID.equals(frameId)) {
+                navigateTo(args[0]);
+            }
             return null;
         case NAVIGATE_REPLACE:
-            navigateReplace(args[0]);
+            // TODO: bottom frame navigation
+            if (MAIN_FRAME_ID.equals(frameId)) {
+                navigateReplace(args[0]);
+            }
             return null;
         case CLOSE_CLIENT:
             closeClient();
@@ -720,7 +742,13 @@ public class FrameEntryPoint
         case GET_WEB_CREDS:
             return (CShell.creds == null) ? null : CShell.creds.flatten().toArray(new String[0]);
         case GET_PAGE_TOKEN:
-            return new String[] { _pageToken };
+            if (MAIN_FRAME_ID.equals(frameId)) {
+                return new String[] { _pageToken };
+            } else if (BOTTOM_FRAME_ID.equals(frameId)) {
+                return new String[] { _bottomFrameToken };
+            } else {
+                return null;
+            }
         case GET_MD5:
             return new String[] { nmd5hex(args[0]) };
         case CHECK_FLASH_VERSION:
@@ -738,6 +766,9 @@ public class FrameEntryPoint
             return new String[] { getEmbedding().toString() };
         case IS_HEADERLESS:
             return new String[] { String.valueOf(isHeaderless()) };
+        case OPEN_BOTTOM_FRAME:
+            openBottomFrame(args[0]);
+            return null;
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached
@@ -891,6 +922,7 @@ public class FrameEntryPoint
     protected String _currentToken = "";
     protected String _pageToken = "";
     protected String _prevToken = "";
+    protected String _bottomFrameToken = "";
     protected String _closeToken;
     protected String _closeTitle;
 
@@ -898,6 +930,7 @@ public class FrameEntryPoint
     protected Layout _layout;
     protected TitleBar _bar;
     protected PageFrame _pageFrame;
+    protected PageFrame _bottomFrame;
     protected BorderedDialog _dialog;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
@@ -929,6 +962,8 @@ public class FrameEntryPoint
     // constants for our top-level elements
     protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
+    protected static final String MAIN_FRAME_ID = "main";
+    protected static final String BOTTOM_FRAME_ID = "bottom";
 
     /** This vector string represents an email invite */
     protected static final String EMAIL_VECTOR = "emailInvite";

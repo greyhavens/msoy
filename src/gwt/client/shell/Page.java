@@ -120,6 +120,9 @@ public abstract class Page
                 public boolean isHeaderless () {
                     return Boolean.valueOf(frameCall(Frame.Calls.IS_HEADERLESS)[0]);
                 }
+                public void openBottomFrame (String token) {
+                    frameCall(Frame.Calls.OPEN_BOTTOM_FRAME, token); 
+                }
             });
 
             // extract our frame id to use in frameCall
@@ -201,6 +204,9 @@ public abstract class Page
                 public boolean isHeaderless () {
                     return false; // we have no header but pretend like we do
                 }
+                public void openBottomFrame (String token) {
+                    // no bottom frame in test mode
+                }
             });
 
             History.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -274,9 +280,7 @@ public abstract class Page
      */
     public void setContent (String title, Widget content)
     {
-        if (isTitlePage()) {
-            CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
-        }
+        CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
 
         RootPanel contentDiv = RootPanel.get();
         if (_content != null) {
@@ -354,15 +358,6 @@ public abstract class Page
         if (event != null) {
             FlashEvents.internalDispatchEvent(event);
         }
-    }
-
-    /**
-     * Return true if this page is featured centrally and therefore controls the title shown in the
-     * navigation bar (and the browser tab but that's not relevant).
-     */
-    protected boolean isTitlePage ()
-    {
-        return true;
     }
 
     /**

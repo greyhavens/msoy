@@ -52,9 +52,15 @@ public abstract class Layout
     public abstract boolean hasContent ();
 
     /**
-     * Sets the current content page.
+     * Sets the current content page. Note that this also clears the bottom content if the layout
+     * supports it.
      */
     public abstract void setContent (TitleBar bar, Widget content);
+
+    /**
+     * If supported, sets the widget as the content along the bottom, below the main content area.
+     */
+    public abstract void setBottomContent (Widget content);
 
     /**
      * Closes the content page, optionally restoring the client.

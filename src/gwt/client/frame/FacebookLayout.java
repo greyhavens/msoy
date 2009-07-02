@@ -6,9 +6,9 @@ package client.frame;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * A frame layout that adds an extra iframe below the main gwt page showing facebook information
@@ -19,23 +19,8 @@ public class FacebookLayout extends FramedLayout
     @Override
     protected void init (FrameHeader header, ClickHandler onGoHome)
     {
+        _bottomContent = new SimplePanel();
         super.init(header, onGoHome);
-
-        // this is not yet ready for production
-        // TODO: it doesn't work because the inter-frame communication system cannot yet cope with
-        // more than one subframe
-        if (DeploymentConfig.devDeployment) {
-            // add our container and iframe
-            SimplePanel bar = new SimplePanel();
-            RootPanel.get(PAGE).add(bar);
-    
-            // create our iframe
-            _fbframe = new PageFrame(Pages.FACEBOOK, "bottom");
-            _fbframe.setWidth("100%");
-            _fbframe.setHeight(FB_FRAME_HEIGHT + "px");
-            _fbframe.getElement().setAttribute("scrolling", "no");
-            bar.setWidget(_fbframe);
-        }
     }
 
     @Override // from FramedLayout
@@ -51,12 +36,38 @@ public class FacebookLayout extends FramedLayout
         _bar.setWidget(bar);
     }
 
+    @Override // from Layout
+    public void setContent (TitleBar bar, Widget content)
+    {
+        super.setContent(bar, content);
+        _bottomContent.setWidget(null);
+    }
+
+    @Override // from Layout
+    public void closeContent (boolean restoreClient)
+    {
+        super.closeContent(restoreClient);
+        _bottomContent.setWidget(null);
+    }
+
+    @Override // from Layout
+    public void setBottomContent (Widget content)
+    {
+        content.setWidth("100%");
+        content.setHeight(FB_FRAME_HEIGHT + "px");
+        content.getElement().setAttribute("scrolling", "no");
+        if (bottomContentEnabled()) {
+            _bottomContent.setWidget(content);
+        }
+    }
+
     @Override // from FramedLayout
     protected void addPanels (RootPanel root)
     {
         root.add(_bar);
         root.add(_client);
         root.add(_content);
+        root.add(_bottomContent);
     }
 
     @Override // from FramedLayout
@@ -65,6 +76,12 @@ public class FacebookLayout extends FramedLayout
         return FB_FRAME_HEIGHT;
     }
 
-    protected PageFrame _fbframe;
-    protected static final int FB_FRAME_HEIGHT = DeploymentConfig.devDeployment ? 150 : 0;
+    protected static boolean bottomContentEnabled ()
+    {
+        // TODO: the bottom content is not yet ready for production
+        return false && DeploymentConfig.devDeployment;
+    }
+
+    protected SimplePanel _bottomContent;
+    protected static final int FB_FRAME_HEIGHT = bottomContentEnabled() ? 150 : 0;
 }

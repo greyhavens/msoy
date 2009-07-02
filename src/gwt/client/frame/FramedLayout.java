@@ -48,6 +48,12 @@ public class FramedLayout extends Layout
     }
 
     @Override // from Layout
+    public void setBottomContent (Widget content)
+    {
+        // not supported
+    }
+
+    @Override // from Layout
     public void closeContent (boolean restoreClient)
     {
         // no content? nothing to do
