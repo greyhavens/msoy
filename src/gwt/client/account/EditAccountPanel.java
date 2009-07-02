@@ -81,10 +81,7 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(null, makePermanameSection()));
         add(new TongueBox(_msgs.editEmailHeader(), makeChangeEmailSection()));
         add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
-        // TODO SUBSCRIPTION
-        if (DeploymentConfig.devDeployment) {
-            add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
-        }
+        add(new TongueBox(_msgs.editSubscribeHeader(), makeSubscribeSection()));
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
