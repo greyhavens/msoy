@@ -16,6 +16,9 @@ public class SubscriptionConfigObject extends ConfigObject
 
     /** The field name of the <code>specialItem</code> field. */
     public static final String SPECIAL_ITEM = "specialItem";
+
+    /** The field name of the <code>barscriptionCost</code> field. */
+    public static final String BARSCRIPTION_COST = "barscriptionCost";
     // AUTO-GENERATED: FIELDS END
 
     /** The amount we grant each month. */
@@ -26,6 +29,9 @@ public class SubscriptionConfigObject extends ConfigObject
      * (unless they've already received it). Do not spuriously change!
      */
     public String specialItem = "0:0";
+
+    /** The cost of barscribing. */
+    public int barscriptionCost = 20;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -58,6 +64,22 @@ public class SubscriptionConfigObject extends ConfigObject
         requestAttributeChange(
             SPECIAL_ITEM, value, ovalue);
         this.specialItem = value;
+    }
+
+    /**
+     * Requests that the <code>barscriptionCost</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBarscriptionCost (int value)
+    {
+        int ovalue = this.barscriptionCost;
+        requestAttributeChange(
+            BARSCRIPTION_COST, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.barscriptionCost = value;
     }
     // AUTO-GENERATED: METHODS END
 }

@@ -1,5 +1,6 @@
 <module>
   <inherits name="page"/>
+  <inherits name="money"/>
 
   <source path="client/billing"/>
 

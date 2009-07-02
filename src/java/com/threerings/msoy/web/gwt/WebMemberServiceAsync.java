@@ -12,6 +12,9 @@ import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.VisitorInfo;
 
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
 /**
  * The asynchronous (client-side) version of {@link WebMemberService}.
  */
@@ -117,4 +120,14 @@ public interface WebMemberServiceAsync
      * The asynchronous version of {@link WebMemberService#getFacebookTemplate}.
      */
     void getFacebookTemplate (String code, AsyncCallback<FacebookTemplateCard> callback);
+
+    /**
+     * The asynchronous version of {@link WebMemberService#getBarscriptionCost}.
+     */
+    void getBarscriptionCost (AsyncCallback<PriceQuote> callback);
+
+    /**
+     * The asynchronous version of {@link WebMemberService#barscribe}.
+     */
+    void barscribe (int authedBarCost, AsyncCallback<PurchaseResult<WebCreds.Role>> callback);
 }

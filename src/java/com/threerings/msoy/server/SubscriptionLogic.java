@@ -103,7 +103,18 @@ public class SubscriptionLogic
         if (mrec == null) {
             throw new Exception("Could not locate MemberRecord");
         }
+        noteSubscriptionBilled(mrec, months);
+    }
 
+    /**
+     * Note that the specified user has been billed for a subscription, either interactively or
+     * through a recurring billing.
+     *
+     * @throws Exception We freak the fuck out if anything goes wrong.
+     */
+    @BlockingThread
+    public void noteSubscriptionBilled (MemberRecord mrec, int months)
+    {
         // make them a subscriber if not already
         if (mrec.updateFlag(MemberRecord.Flag.SUBSCRIBER, true)) {
             _memberRepo.storeFlags(mrec);

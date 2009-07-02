@@ -28,6 +28,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.SubscriptionLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -36,9 +37,15 @@ import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
 
 import com.threerings.msoy.admin.server.ABTestLogic;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 import com.threerings.msoy.person.server.persist.GameInvitationRecord;
 import com.threerings.msoy.person.server.persist.InvitationRecord;
@@ -47,7 +54,6 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.spam.server.SpamUtil;
 import com.threerings.msoy.spam.server.persist.SpamRepository;
-
 
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
@@ -336,6 +342,33 @@ public class MemberServlet extends MsoyServiceServlet
         return RandomUtil.pickRandom(templates).toTemplateCard();
     }
 
+    // from WebMemberService
+    public PriceQuote getBarscriptionCost ()
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if (memrec.isSubscriber()) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        return new PriceQuote(Currency.BARS, -1, _runtime.subscription.barscriptionCost, 0, 0f, 0);
+    }
+
+    // from WebMemberService
+    public PurchaseResult<WebCreds.Role> barscribe (int authedBarCost)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        if (memrec.isSubscriber()) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        int listedAmount = _runtime.subscription.barscriptionCost;
+        // TODO
+        //_moneyLogic.buyFromOOO(memrec, 
+
+        return null; // TODO
+    }
+
     // our dependencies
     @Inject protected ABTestLogic _testLogic;
     @Inject protected FacebookRepository _facebookRepo;
@@ -344,11 +377,15 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MemberManager _memberMan;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected SpamRepository _spamRepo;
+    @Inject protected SubscriptionLogic _subscripLogic;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
 
     /** Cutoff for adding in online greeters. */
     protected static final int NEED_FRIENDS_FRIEND_COUNT = 10;
+
+    protected static final Object BARSCRIBE_WARE_KEY = new Object();
 }

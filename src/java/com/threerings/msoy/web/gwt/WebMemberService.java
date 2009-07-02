@@ -14,6 +14,9 @@ import com.threerings.msoy.data.all.Friendship;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
  */
@@ -162,5 +165,17 @@ public interface WebMemberService extends RemoteService
      * returned.
      */
     FacebookTemplateCard getFacebookTemplate (String code)
+        throws ServiceException;
+
+    /**
+     * Get the price of a barscription.
+     */
+    PriceQuote getBarscriptionCost ()
+        throws ServiceException;
+
+    /**
+     * Purchase a barscription.
+     */
+    PurchaseResult<WebCreds.Role> barscribe (int authedBarCost)
         throws ServiceException;
 }

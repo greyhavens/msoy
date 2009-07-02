@@ -3,16 +3,32 @@
 
 package client.billing;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.ServiceUtil;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+
+import client.money.BuyPanel;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.BillingUtil;
+import client.util.InfoCallback;
+import client.util.Link;
 
 /**
  * Displays an interface explaining subscription and linking to the billing system.
@@ -49,5 +65,28 @@ public class SubscribePanel extends BillingPanel
         gotable.setHTML(0, 0, _msgs.subscribeDoItNow(), 1, "GoBuy");
         gotable.setWidget(0, 1, gobuy);
         box.add(gotable);
+
+        final BuyPanel<WebCreds.Role> buyPanel = new BuyPanel<WebCreds.Role>() {
+            @Override protected boolean makePurchase (
+                Currency currency, int amount, AsyncCallback<PurchaseResult<WebCreds.Role>> cback)
+            {
+                _membersvc.barscribe(amount, cback);
+                return true;
+            }
+        };
+        _membersvc.getBarscriptionCost(new InfoCallback<PriceQuote>() {
+            public void onSuccess (PriceQuote result) {
+                buyPanel.init(result, new InfoCallback<WebCreds.Role>() {
+                    public void onSuccess (WebCreds.Role role) {
+                        CShell.creds.role = role;
+                        Link.go(Pages.PEOPLE, CShell.getMemberId());
+                    }
+                });
+            }
+        });
+        add(buyPanel);
     }
+
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }
