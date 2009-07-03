@@ -1039,18 +1039,28 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads all external account records for the given auther that match one of the provided
+     * external ids.
+     */
+    public List<ExternalMapRecord> loadExternalAccounts (
+        ExternalAuther auther, Collection<String> externalIds)
+    {
+        if (externalIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Where where = new Where(Ops.and(ExternalMapRecord.PARTNER_ID.eq(auther.toByte()),
+                                        ExternalMapRecord.EXTERNAL_ID.in(externalIds)));
+        return findAll(ExternalMapRecord.class, where);
+    }
+
+    /**
      * Returns the Whirled member ids of any of the supplied external ids that have been mapped to
      * Whirled accounts.
      */
     public List<Integer> lookupExternalAccounts (ExternalAuther auther, List<String> externalIds)
     {
         List<Integer> memberIds = Lists.newArrayList();
-        if (externalIds.isEmpty()) {
-            return memberIds;
-        }
-        Where where = new Where(Ops.and(ExternalMapRecord.PARTNER_ID.eq(auther.toByte()),
-                                        ExternalMapRecord.EXTERNAL_ID.in(externalIds)));
-        for (ExternalMapRecord record : findAll(ExternalMapRecord.class, where)) {
+        for (ExternalMapRecord record : loadExternalAccounts(auther, externalIds)) {
             memberIds.add(record.memberId);
         }
         return memberIds;
