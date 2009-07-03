@@ -21,6 +21,9 @@ public class FacebookPage extends Page
     {
         String action = args.get(0, "");
         if (action.equals("friends")) {
+            setContent("Friends", new FBFriendBar());
+
+        } else if (action.equals("test")) {
             FlowPanel fbml = new FlowPanel();
             fbml.add(MsoyUI.createLabel("Table with nested fb:name:", null));
             SmartTable test = new SmartTable(10, 10);
