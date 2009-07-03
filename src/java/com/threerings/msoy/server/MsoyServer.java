@@ -19,7 +19,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
-import com.samskivert.util.RunQueue;
 
 import com.threerings.util.Name;
 
@@ -34,7 +33,6 @@ import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.PresentsSession;
-import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.SessionFactory;
 
 import com.threerings.crowd.chat.server.ChatChannelManager;
@@ -100,7 +98,6 @@ public class MsoyServer extends MsoyBaseServer
             bind(Authenticator.class).to(MsoyAuthenticator.class);
             bind(PresentsServer.class).to(MsoyServer.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
-            bind(ReportManager.class).to(QuietReportManager.class);
             bind(ConfigRegistry.class).to(PeeredDatabaseConfigRegistry.class);
             bind(AdminManager.class).to(MsoyAdminManager.class);
             bind(BureauRegistry.class).to(MsoyBureauRegistry.class);
@@ -352,14 +349,6 @@ public class MsoyServer extends MsoyBaseServer
         }
 
         protected long _codeModified;
-    }
-
-    @Singleton
-    protected static class QuietReportManager extends ReportManager
-    {
-        @Override public void init (RunQueue rqueue) {
-            // disable state of the server report logging by not calling super
-        }
     }
 
     /** A policy server used on dev deployments. */
