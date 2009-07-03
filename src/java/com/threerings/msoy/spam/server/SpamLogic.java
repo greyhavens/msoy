@@ -429,7 +429,7 @@ public class SpamLogic
             result = trySendRetentionEmail(memberId, secondEmailCutoff, filler);
 
         } catch (Exception e) {
-            log.warning("Failed to send retention mail", "memberId", e);
+            log.warning("Failed to send retention mail - call 911", "memberId", memberId, e);
         }
         return result;
     }
