@@ -79,7 +79,7 @@ public class FacebookLayout extends FramedLayout
     protected static boolean bottomContentEnabled ()
     {
         // TODO: the bottom content is not yet ready for production
-        return false && DeploymentConfig.devDeployment;
+        return DeploymentConfig.devDeployment;
     }
 
     protected SimplePanel _bottomContent;
