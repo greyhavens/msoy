@@ -43,6 +43,6 @@ public class RepositoryUtil
             return new StaticConnectionProvider(config.getSubProperties("db"));
         }
         // otherwise do things using a postgres pooled data source
-        return PostgresUtil.createPoolingProvider(config);
+        return PostgresUtil.createPoolingProvider(config, "msoy");
     }
 }
