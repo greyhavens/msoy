@@ -13,7 +13,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.util.PostgresUtil;
 
 /**
- * Repository related utiltiy methods.
+ * Repository related utility methods.
  */
 public class RepositoryUtil
 {
