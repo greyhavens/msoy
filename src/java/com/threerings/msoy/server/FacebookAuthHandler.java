@@ -76,16 +76,16 @@ public class FacebookAuthHandler extends ExternalAuthHandler
                 User user = uinfo.getUser().get(0);
                 info.displayName = user.getFirstName();
                 info.profile.realName = user.getFirstName() + " " + user.getLastName();
-                if (user.getCurrentLocation().getValue() != null) {
-                    String city = user.getCurrentLocation().getValue().getCity();
+                if (user.getCurrentLocation() != null) {
+                    String city = user.getCurrentLocation().getCity();
                     info.profile.location = (city == null) ? "" : city;
                 }
-                if ("male".equalsIgnoreCase(user.getSex().getValue())) {
+                if ("male".equalsIgnoreCase(user.getSex())) {
                     info.profile.sex = Profile.SEX_MALE;
-                } else if ("female".equalsIgnoreCase(user.getSex().getValue())) {
+                } else if ("female".equalsIgnoreCase(user.getSex())) {
                     info.profile.sex = Profile.SEX_FEMALE;
                 }
-                String bdstr = user.getBirthday().getValue();
+                String bdstr = user.getBirthday();
                 try {
                     if (bdstr != null) {
                         info.profile.birthday = new Date(_bfmt.parse(bdstr).getTime());
