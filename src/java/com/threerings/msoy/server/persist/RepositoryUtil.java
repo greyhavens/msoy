@@ -5,16 +5,12 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Properties;
-import javax.sql.DataSource;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.DataSourceConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
-
-import org.postgresql.jdbc2.optional.PoolingDataSource;
+import com.threerings.util.PostgresUtil;
 
 /**
  * Repository related utiltiy methods.
@@ -46,29 +42,7 @@ public class RepositoryUtil
         if (!StringUtil.isBlank(url)) {
             return new StaticConnectionProvider(config.getSubProperties("db"));
         }
-
         // otherwise do things using a postgres pooled data source
-        final DataSource[] sources = new DataSource[2];
-        String[] prefixes = new String[] { "readonly", "readwrite" };
-        for (int ii = 0; ii < sources.length; ii++) {
-            Properties props = config.getSubProperties("db.default"); // start with the defaults
-            config.getSubProperties("db." + prefixes[ii], props); // apply overrides
-            PoolingDataSource source = new PoolingDataSource();
-            source.setDataSourceName(prefixes[ii]);
-            source.setServerName(props.getProperty("server"));
-            source.setDatabaseName(props.getProperty("database"));
-            source.setPortNumber(Integer.parseInt(props.getProperty("port")));
-            source.setUser(props.getProperty("username"));
-            source.setPassword(props.getProperty("password"));
-            source.setMaxConnections(Integer.parseInt(props.getProperty("maxconns", "1")));
-            sources[ii] = source;
-        }
-        return new DataSourceConnectionProvider("jdbc:postgresql", sources[0], sources[1]) {
-            @Override public void shutdown () {
-                for (DataSource source : sources) {
-                    ((PoolingDataSource)source).close();
-                }
-            }
-        };
+        return PostgresUtil.createPoolingProvider(config);
     }
 }
