@@ -356,15 +356,29 @@ public class ProfileServlet extends MsoyServiceServlet
         if (profile.award != null && profile.award.type == AwardType.BADGE) {
             EarnedBadgeRecord earnedBadgeRec =
                 _badgeRepo.loadEarnedBadge(tgtrec.memberId, profile.award.awardId);
-            profile.award.name = Badge.getLevelName(earnedBadgeRec.level);
-            profile.award.whenEarned = earnedBadgeRec.whenEarned.getTime();
-            profile.award.icon = EarnedBadge.getImageMedia(
-                earnedBadgeRec.badgeCode, earnedBadgeRec.level);
+            if (earnedBadgeRec == null) {
+                log.warning("Eek, profile award badge id not known", "memberId", tgtrec.memberId,
+                    "awardId", profile.award.awardId);
+            } else {
+                profile.award.name = Badge.getLevelName(earnedBadgeRec.level);
+                profile.award.whenEarned = earnedBadgeRec.whenEarned.getTime();
+                profile.award.icon = EarnedBadge.getImageMedia(
+                    earnedBadgeRec.badgeCode, earnedBadgeRec.level);
+            }
 
         } else if (profile.award != null && profile.award.type == AwardType.MEDAL) {
             EarnedMedalRecord earnedMedalRec =
                 _medalRepo.loadEarnedMedal(tgtrec.memberId, profile.award.awardId);
-            MedalRecord medalRec = _medalRepo.loadMedal(profile.award.awardId);
+
+            MedalRecord medalRec;
+            if (earnedMedalRec == null) {
+                log.warning("Eek, profile award medal id not known", "memberId", tgtrec.memberId,
+                    "awardId", profile.award.awardId);
+                medalRec = null;
+            } else {
+                medalRec = _medalRepo.loadMedal(profile.award.awardId);
+            }
+
             if (medalRec != null) {
                 profile.award.whenEarned = earnedMedalRec.whenEarned.getTime();
                 profile.award.name = medalRec.name;
