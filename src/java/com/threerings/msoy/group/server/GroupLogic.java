@@ -169,10 +169,6 @@ public class GroupLogic
                 throw new ServiceException("m.invalid_permissions");
             }
 
-            if (group.official && !mrec.isAdmin()) {
-                log.warning("Non-admin updating group to be official", "member", mrec.who());
-                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-            }
             // make sure they're not making a tagged group exclusive
             if ((group.policy == Group.Policy.EXCLUSIVE) &&
                     !_groupRepo.getTagRepository().getTags(group.groupId).isEmpty()) {
@@ -183,6 +179,10 @@ public class GroupLogic
             if (grec == null) {
                 log.warning("Cannot update non-existent group", "id", group.groupId);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+            if (grec.official != group.official && !mrec.isAdmin()) {
+                log.warning("Non-admin updating group.official", "member", mrec.who());
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
             // TEMP: block editing group name (except for support+)
             if (!mrec.isSupport() && !group.name.equals(grec.name)) {

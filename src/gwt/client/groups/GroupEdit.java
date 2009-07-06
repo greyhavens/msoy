@@ -246,7 +246,9 @@ public class GroupEdit extends FlexTable
             Group.Perm.MEMBER.ordinal() + _party.getSelectedIndex()];
         _group.threadPerm = Group.Perm.values()[_thread.getSelectedIndex()];
         _group.postPerm = Group.Perm.values()[_post.getSelectedIndex()];
-        _group.official = _official != null && _official.getValue();
+        if (_official != null) {
+            _group.official = _official.getValue();
+        }
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];
