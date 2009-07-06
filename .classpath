@@ -54,7 +54,6 @@
 	<classpathentry kind="lib" path="extlibs/java/google-collect.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/guice.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/gwt-user.jar"/>
-	<classpathentry kind="lib" path="extlibs/java/gwt-widgets.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/hessian.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/javassist.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/jcip-annotations.jar"/>
