@@ -74,7 +74,6 @@
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-dnd.jar"/>
     <file name="${extlibs.dir}/gwt-incubator.jar"/>
-    <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
@@ -231,7 +230,6 @@
   <path id="gwt.classpath">
     <fileset dir="${deploy.dir}/lib">
       <include name="gwt-incubator.jar"/>
-      <include name="gwt-widgets.jar"/>
       <include name="advanced-components-1.4.1.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
       <!-- this is needed to run our custom i18n bindings in the GWT compiler -->

@@ -5,8 +5,6 @@ package client.ui;
 
 import java.util.Date;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -811,10 +809,6 @@ public class MsoyUI
         protected boolean _focus;
         protected boolean _click;
     }
-
-    protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mmaa");
-    protected static final SimpleDateFormat _mfmt = new SimpleDateFormat("MMM dd");
-    protected static final SimpleDateFormat _yfmt = new SimpleDateFormat("MMM dd, yyyy");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MiscImages _mimgs = GWT.create(MiscImages.class);
