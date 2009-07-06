@@ -28,7 +28,6 @@ import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
 

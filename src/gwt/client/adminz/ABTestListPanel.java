@@ -12,7 +12,6 @@ import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
-import client.ui.MsoyUI;
 
 /**
  * Display a dialog for admins to issue invitations to the player base.

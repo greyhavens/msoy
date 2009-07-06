@@ -15,8 +15,6 @@ import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.admin.gwt.ABTestSummary;
 
-import client.ui.MsoyUI;
-
 /**
  * Displays a summary for a particular A/B test.
  */

@@ -7,7 +7,6 @@ import com.threerings.gwt.util.DateUtil;
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
 import client.ui.MessagePanel;
-import client.ui.MsoyUI;
 
 /**
  * A message panel that displays a forum message with a last edited date.

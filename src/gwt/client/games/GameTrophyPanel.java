@@ -25,7 +25,6 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MiniNowLoadingWidget;
-import client.ui.MsoyUI;
 import client.util.MediaUtil;
 
 /**
