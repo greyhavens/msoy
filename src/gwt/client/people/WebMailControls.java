@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.ServiceUtil;
 
@@ -24,7 +25,6 @@ import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.EmailContact;
 
 import client.ui.BorderedPopup;
-import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 

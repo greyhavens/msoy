@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 
+import com.threerings.gwt.ui.DefaultTextListener;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.CookieUtil;
@@ -29,7 +30,6 @@ import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
-import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 
