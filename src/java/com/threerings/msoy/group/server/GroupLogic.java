@@ -188,7 +188,10 @@ public class GroupLogic
             if (!mrec.isSupport() && !group.name.equals(grec.name)) {
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-
+            if (!mrec.isAdmin()) {
+                // don't let a non-admin un-official-ize a group
+                group.official = grec.official;
+            }
             Map<ColumnExp, Object> updates = grec.findUpdates(group, extras);
             if (updates.size() > 0) {
                 _groupRepo.updateGroup(group.groupId, updates);
