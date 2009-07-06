@@ -18,7 +18,6 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
 
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.SubscriptionLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -84,7 +83,12 @@ public class MoneyMessageListener
             public void received (final byte[] message, final Replier replier) {
                 BarsBoughtMessage bbm = new BarsBoughtMessage(message);
                 MemberRecord member = _memberRepo.loadMember(bbm.accountName);
-                _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
+                if (member != null) {
+                    _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
+                } else {
+                    log.warning("Got barsBought message for unknown account",
+                        "accountName", bbm.accountName);
+                }
             }
         });
 
@@ -94,8 +98,16 @@ public class MoneyMessageListener
                 GetBarCountMessage gbcm = new GetBarCountMessage(message);
                 MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
                 try {
-                    MemberMoney money = _logic.getMoneyFor(member.memberId);
-                    replier.reply(new IntMessage(money.bars));
+                    int bars;
+                    if (member != null) {
+                        bars = _logic.getMoneyFor(member.memberId).bars;
+                    } else {
+                        log.warning("Got getBarCount query for unknown account",
+                            "accountName", gbcm.accountName);
+                        // TODO: is there another way to let billing know there's trouble?
+                        bars = -1;
+                    }
+                    replier.reply(new IntMessage(bars));
                 } catch (IOException ioe) {
                     throw new RuntimeException("Could not send a reply for getBarCount.", ioe);
                 }
