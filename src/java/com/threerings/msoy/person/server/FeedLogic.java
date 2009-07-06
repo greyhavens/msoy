@@ -224,18 +224,8 @@ public class FeedLogic
                                      int gameId, String gameName, String gameDesc)
     {
         // publish to our local Whirled feed
-        boolean published = publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
+        publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_TROPHY,
                              name, gameId, MediaDesc.mdToString(trophyMedia));
-
-        // only publish to facebook if we also published to Whirled feed
-        // TODO: consider other throttling strategies for facebook feed (for example, if you get 5
-        // trophies in a day, you probably want to see the last one, not the 3rd one)
-        if (published && gameDesc != null) {
-            // TODO: if the game has its own Facebook app and has configured a trophy story, we want to
-            // emit that story to that app rather than to Whirled
-            publishGameStory(
-                memberId, gameId, gameName, gameDesc, "trophy", trophyMedia, "trophy", name);
-        }
     }
 
     /**
