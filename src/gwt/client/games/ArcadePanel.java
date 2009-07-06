@@ -84,10 +84,11 @@ public class ArcadePanel extends FlowPanel
         public GenreBox (ArcadeData.Genre genre) {
             setStyleName("GenreBox");
 
+            byte gbyte = genre.genre.toByte();
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
-            header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
-            ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", genre.genre.toByte());
+            header.add(MsoyUI.createImage("/images/game/genre/" + gbyte + ".png", "Icon"));
+            ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", gbyte);
             header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre_" + genre.genre), onClick));
 
             for (GameCard game : genre.games) {
@@ -103,7 +104,7 @@ public class ArcadePanel extends FlowPanel
             }
 
             add(Link.createBlock(_msgs.genreMore(""+genre.gameCount), "ViewAll",
-                                 Pages.GAMES, "g", genre.genre.toByte()));
+                Pages.GAMES, "g", gbyte));
         }
     }
 
