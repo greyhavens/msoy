@@ -34,8 +34,7 @@ public abstract class Layout
             if ("fb".equals(embedCookie)) {
                 embedding = Frame.Embedding.FACEBOOK;
                 layout = new FacebookLayout();
-            }
-            if (layout == null) {
+            } else {
                 layout = new FramedLayout();
             }
         } else {
