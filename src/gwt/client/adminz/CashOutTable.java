@@ -20,6 +20,7 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -91,7 +92,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             setText(2, 0, _msgs.coEntryAmount(Currency.BLING.format(item.cashOutInfo.blingAmount)));
             setText(3, 0, _msgs.coEntryWorth(MoneyUtil.formatUSD(item.cashOutInfo.blingWorth)));
             setText(4, 0, _msgs.coEntryRequested(
-                        MsoyUI.formatDateTime(item.cashOutInfo.timeRequested)));
+                        DateUtil.formatDateTime(item.cashOutInfo.timeRequested)));
             setText(0, 1, item.cashOutInfo.billingInfo.firstName + ' ' +
                 item.cashOutInfo.billingInfo.lastName +
                 (item.charity ? ' ' + _msgs.coIsCharity() : ""));

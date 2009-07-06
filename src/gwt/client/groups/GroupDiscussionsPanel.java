@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -78,7 +79,7 @@ public class GroupDiscussionsPanel extends FlowPanel
         public ThreadWidget (final ForumThread thread) {
             setStyleName("Thread");
 
-            Label date = new Label(MsoyUI.formatDate(thread.mostRecentPostTime));
+            Label date = new Label(DateUtil.formatDate(thread.mostRecentPostTime));
             date.setStyleName("Date");
             add(date);
 
@@ -104,7 +105,7 @@ public class GroupDiscussionsPanel extends FlowPanel
             author.addStyleName("actionLabel");
             postedBy.add(author);
             postedBy.add (new InlineLabel(
-                " " + _msgs.discussionAt(MsoyUI.formatTime(thread.firstPost.created))));
+                " " + _msgs.discussionAt(DateUtil.formatTime(thread.firstPost.created))));
             add(postedBy);
 
             final String repliesText;

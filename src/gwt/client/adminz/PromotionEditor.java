@@ -18,9 +18,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import org.gwt.advanced.client.ui.widget.DatePicker;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Promotion;
 
 import client.item.ImageChooserPopup;
@@ -127,8 +127,8 @@ public class PromotionEditor extends AdminDataPanel<List<Promotion>>
                                  promo.icon, MediaDesc.HALF_THUMBNAIL_SIZE));
         }
         ptable.setWidget(row, col++, MsoyUI.createHTML(promo.blurb, null));
-        ptable.setText(row, col++, MsoyUI.formatDateTime(promo.starts));
-        ptable.setText(row, col++, MsoyUI.formatDateTime(promo.ends));
+        ptable.setText(row, col++, DateUtil.formatDateTime(promo.starts));
+        ptable.setText(row, col++, DateUtil.formatDateTime(promo.ends));
 
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);

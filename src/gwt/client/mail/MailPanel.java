@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -221,7 +222,7 @@ public class MailPanel extends FlowPanel
             getFlexCellFormatter().setRowSpan(0, 1, 2);
 
             setWidget(0, 2, name, 1, "Name");
-            setText(1, 0, MsoyUI.formatDateTime(convo.lastSent), 1, "Sent");
+            setText(1, 0, DateUtil.formatDateTime(convo.lastSent), 1, "Sent");
 
             Widget link = Link.create(
                 (convo.subject.length() == 0) ? _msgs.mailNoSubject() : convo.subject,

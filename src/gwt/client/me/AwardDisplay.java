@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.msoy.data.all.Award;
 
 import client.ui.MsoyUI;
@@ -61,7 +62,7 @@ public class AwardDisplay extends FlowPanel
 
     protected void addEarnedDate (Date earnedDate)
     {
-        String whenEarned = _msgs.passportFinishedSeries(MsoyUI.formatDate(earnedDate));
+        String whenEarned = _msgs.passportFinishedSeries(DateUtil.formatDate(earnedDate));
         add(MsoyUI.createLabel(whenEarned, "WhenEarned"));
     }
 

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -240,7 +241,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             // this my have already been done in SimpleMessagePanel; if so overwrite it
             if (!_message.lastEdited.equals(_message.created)) {
                 messageFooter.add(new Label(
-                    _mmsgs.msgPostEditedOn(MsoyUI.formatDateTime(_message.lastEdited))));
+                    _mmsgs.msgPostEditedOn(DateUtil.formatDateTime(_message.lastEdited))));
             }
             getFlexCellFormatter().setRowSpan(0, 0, 3); // extend the photo cell
             setWidget(2, 0, messageFooter);

@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.web.gwt.Pages;
@@ -142,11 +143,11 @@ public class IssueListPanel extends PagedGrid<Issue>
             FlowPanel created = new FlowPanel();
             Widget actor;
             if (issue.state == Issue.STATE_OPEN) {
-                created.add(new Label(MsoyUI.formatDate(issue.createdTime)));
+                created.add(new Label(DateUtil.formatDate(issue.createdTime)));
                 actor = Link.memberView(issue.creator);
             } else {
                 if (issue.closedTime != null) {
-                    created.add(new Label(MsoyUI.formatDate(issue.closedTime)));
+                    created.add(new Label(DateUtil.formatDate(issue.closedTime)));
                 }
                 actor = Link.memberView(issue.owner);
             }

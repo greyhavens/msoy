@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.CoinAwards;
@@ -80,7 +81,7 @@ public class ConfigProfilePanel extends FlowPanel
         _card.getFlexCellFormatter().setRowSpan(0, 0, 2);
         _card.setText(0, 1, fiddleName(name.toString()), 2, "Name");
         _card.setText(1, 0, _msgs.memberSince());
-        _card.setText(1, 1, MsoyUI.formatDate(new Date(profile.memberSince), false));
+        _card.setText(1, 1, DateUtil.formatDate(new Date(profile.memberSince), false));
 
         _bits.add(MsoyUI.createLabel(_msgs.cpWhoTip(), "Tip"));
 

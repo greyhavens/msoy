@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -127,7 +128,7 @@ public class GroupDetailPanel extends FlowPanel
 
         // est. [date] by [name-link] all inline but limited width
         FlowPanel established = MsoyUI.createFlowPanel("Established");
-        established.add(new InlineLabel(_msgs.groupEst(MsoyUI.formatDate(_group.creationDate)),
+        established.add(new InlineLabel(_msgs.groupEst(DateUtil.formatDate(_group.creationDate)),
             false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
         Widget creator = Link.memberView(_detail.creator.toString(),

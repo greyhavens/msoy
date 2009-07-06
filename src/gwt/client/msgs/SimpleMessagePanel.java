@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
 import client.ui.MessagePanel;
@@ -28,7 +29,7 @@ public class SimpleMessagePanel extends MessagePanel
 
         if (!message.lastEdited.equals(message.created)) {
             getFlexCellFormatter().setRowSpan(0, 0, 3); // extend the photo cell
-            setText(2, 0, "Edited on " + MsoyUI.formatDateTime(message.lastEdited));
+            setText(2, 0, "Edited on " + DateUtil.formatDateTime(message.lastEdited));
             getFlexCellFormatter().setStyleName(2, 0, "Posted");
             getFlexCellFormatter().addStyleName(2, 0, "LeftPad");
             getFlexCellFormatter().addStyleName(2, 0, "BottomPad");

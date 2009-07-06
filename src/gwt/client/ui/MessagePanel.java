@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -68,7 +69,7 @@ public class MessagePanel extends FlexTable
                              Pages.PEOPLE, ""+poster.name.getMemberId()));
 
         // TODO: switch to "XX days/minutes ago"
-        String when = _cmsgs.postedOn(MsoyUI.formatDateTime(whenPosted));
+        String when = _cmsgs.postedOn(DateUtil.formatDateTime(whenPosted));
         InlineLabel posted = new InlineLabel(when, false, true, false);
         posted.addStyleName("Posted");
         info.add(posted);

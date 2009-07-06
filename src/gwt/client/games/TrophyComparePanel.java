@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.game.data.all.Trophy;
@@ -90,7 +91,7 @@ public class TrophyComparePanel extends SmartTable
                 if (earned != null) {
                     setWidget(row, pp+1, new ThumbBox(trophy.trophyMedia, TrophySource.TROPHY_WIDTH,
                                                       TrophySource.TROPHY_HEIGHT, null));
-                    info = MsoyUI.formatDate(new Date(earned.longValue()));
+                    info = DateUtil.formatDate(new Date(earned.longValue()));
                 } else {
                     info = _msgs.compareUnearned();
                     getFlexCellFormatter().addStyleName(row+1, pp, "Italic");

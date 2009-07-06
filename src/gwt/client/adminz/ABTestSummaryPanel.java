@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import com.google.gwt.i18n.client.NumberFormat;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.admin.gwt.ABTestSummary;
 
@@ -38,10 +39,10 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
         SmartTable info = new SmartTable("Info", 5, 0);
         info.setText(0, 0, _msgs.tspName(test.name, ""+test.testId), 2, "Title");
         if (test.ended == null) {
-            addRow(info, _msgs.tspStarted(), MsoyUI.formatDateTime(test.started));
+            addRow(info, _msgs.tspStarted(), DateUtil.formatDateTime(test.started));
         } else {
-            addRow(info, _msgs.tspRan(), _msgs.tspDates(MsoyUI.formatDateTime(test.started),
-                                                        MsoyUI.formatDateTime(test.ended)));
+            addRow(info, _msgs.tspRan(), _msgs.tspDates(DateUtil.formatDateTime(test.started),
+                                                        DateUtil.formatDateTime(test.ended)));
         }
 
         List<String> attrs = new ArrayList<String>();

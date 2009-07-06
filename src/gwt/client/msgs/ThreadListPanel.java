@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -209,7 +210,7 @@ public abstract class ThreadListPanel extends PagedGrid<ForumThread>
             setText(0, col++, String.valueOf(thread.posts), 1, "Posts");
 
             FlowPanel post = MsoyUI.createFlowPanel("LastPost");
-            post.add(new Label(MsoyUI.formatDateTime(thread.mostRecentPostTime)));
+            post.add(new Label(DateUtil.formatDateTime(thread.mostRecentPostTime)));
             Widget by = Link.create(
                 _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Pages.GROUPS, thread.getMostRecentPostArgs());

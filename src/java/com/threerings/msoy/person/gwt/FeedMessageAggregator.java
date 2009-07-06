@@ -9,8 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.threerings.gwt.util.DateUtil;
+
 import com.threerings.msoy.person.gwt.AggregateFeedMessage.Style;
-import com.threerings.msoy.web.gwt.DateUtil;
 
 /**
  * Functions to aggregate a list of news feed messages by the actor (left aggregate) or the action

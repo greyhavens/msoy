@@ -6,6 +6,7 @@ package client.adminz;
 import java.util.List;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.web.gwt.Pages;
@@ -46,8 +47,8 @@ public class ABTestListPanel extends AdminDataPanel<List<ABTest>>
             int row = contents.addWidget(
                 Link.create(test.name, Pages.ADMINZ, "test", test.testId), 1, null);
             col = 1;
-            contents.setText(row, col++, MsoyUI.formatDate(test.started));
-            contents.setText(row, col++, MsoyUI.formatDate(test.ended));
+            contents.setText(row, col++, DateUtil.formatDate(test.started));
+            contents.setText(row, col++, DateUtil.formatDate(test.ended));
         }
     }
 }

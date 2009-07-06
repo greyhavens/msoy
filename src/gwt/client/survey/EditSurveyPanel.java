@@ -25,11 +25,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.survey.gwt.SurveyMetaData;

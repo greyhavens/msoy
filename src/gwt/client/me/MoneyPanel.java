@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
@@ -48,7 +49,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     {
         List<Widget> row = new ArrayList<Widget>();
 
-        Label time = MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time");
+        Label time = MsoyUI.createLabel(DateUtil.formatDateTime(entry.timestamp), "Time");
         time.setWordWrap(false);
         row.add(time);
 

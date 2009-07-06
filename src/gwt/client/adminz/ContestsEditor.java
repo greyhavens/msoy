@@ -18,10 +18,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import org.gwt.advanced.client.ui.widget.DatePicker;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;
-import com.threerings.msoy.web.gwt.DateUtil;
 
 import client.item.ImageChooserPopup;
 import client.ui.ContestBox;
@@ -178,8 +178,8 @@ public class ContestsEditor extends AdminDataPanel<List<Contest>>
             ptable.setText(row, col++, "");
         }
         ptable.setWidget(row, col++, MsoyUI.createHTML(contest.name, null));
-        ptable.setText(row, col++, MsoyUI.formatDateTime(contest.starts));
-        ptable.setText(row, col++, MsoyUI.formatDateTime(contest.ends));
+        ptable.setText(row, col++, DateUtil.formatDateTime(contest.starts));
+        ptable.setText(row, col++, DateUtil.formatDateTime(contest.ends));
 
         Button edit = MsoyUI.createTinyButton("E", new ClickHandler() {
             public void onClick (ClickEvent event) {

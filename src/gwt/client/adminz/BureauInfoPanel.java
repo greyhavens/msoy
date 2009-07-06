@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -168,12 +169,12 @@ public class BureauInfoPanel extends VerticalPanel
             table.setText(row, col++, getShortHostName(launchers.get(binfo).hostname));
             String launchTime = "";
             if (binfo.launchTime != 0) {
-                launchTime = MsoyUI.formatDateTime(new Date(binfo.launchTime));
+                launchTime = DateUtil.formatDateTime(new Date(binfo.launchTime));
             }
             table.setText(row, col++, launchTime);
             String shutdownTime = _msgs.bureauFirstRun();
             if (binfo.shutdownTime != 0) {
-                shutdownTime = MsoyUI.formatDateTime(new Date(binfo.shutdownTime));
+                shutdownTime = DateUtil.formatDateTime(new Date(binfo.shutdownTime));
             }
             table.setText(row, col++, shutdownTime);
             table.setText(row, col++, String.valueOf(binfo.logSpaceUsed / 1024) + "kB");

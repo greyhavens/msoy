@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -58,9 +59,9 @@ public class PublishPanel extends SmartTable
         int row = _dataRow;
 
         setText(row, 0, _msgs.publishLastUp(), 1, "rightLabel");
-        setText(row, 1, MsoyUI.formatDateTime(new Date(data.devCode.lastUpdated)));
+        setText(row, 1, DateUtil.formatDateTime(new Date(data.devCode.lastUpdated)));
         if (pubCode.lastUpdated > 0) {
-            setText(row, 2, MsoyUI.formatDateTime(new Date(pubCode.lastUpdated)));
+            setText(row, 2, DateUtil.formatDateTime(new Date(pubCode.lastUpdated)));
         }
 
         setText(++row, 0, _msgs.publishClientCode(), 1, "rightLabel");

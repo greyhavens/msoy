@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
-import com.threerings.msoy.web.gwt.DateUtil;
+import com.threerings.gwt.util.DateUtil;
 
 public class DateFields extends HorizontalPanel
     implements HasAllFocusHandlers

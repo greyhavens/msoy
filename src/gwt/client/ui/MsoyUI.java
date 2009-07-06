@@ -41,7 +41,6 @@ import com.threerings.msoy.data.all.GwtAuthCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -91,68 +90,6 @@ public class MsoyUI
             label.setStyleName(styleName);
         }
         return label;
-    }
-
-    /**
-     * Creates a label of the form "9:15am". TODO: support 24 hour time for people who go for that
-     * sort of thing. If date is null the empty string is returned.
-     */
-    public static String formatTime (Date date)
-    {
-        return (date == null) ? "" : _tfmt.format(date).toLowerCase();
-    }
-
-    /**
-     * Formats the supplied date relative to the current time: Today, Yesterday, MMM dd, and
-     * finally MMM dd, YYYY. If date is null the empty string is returned.
-     */
-    public static String formatDate (Date date)
-    {
-        return formatDate(date, true);
-    }
-
-    /**
-     * Formats the supplied date relative to the current time: Today, Yesterday, MMM dd, and
-     * finally MMM dd, YYYY. If date is null the empty string is returned.
-     *
-     * @param useShorthand if false, "Today" and "Yesterday" will not be used, only the month/day
-     * and month/day/year formats.
-     */
-    public static String formatDate (Date date, boolean useShorthand)
-    {
-        if (date == null) {
-            return "";
-        }
-
-        Date now = new Date();
-        if (DateUtil.getYear(date) != DateUtil.getYear(now)) {
-            return _yfmt.format(date);
-
-        } else if (DateUtil.getMonth(date) != DateUtil.getMonth(now)) {
-            return _mfmt.format(date);
-
-        } else if (useShorthand && DateUtil.getDayOfMonth(date) == DateUtil.getDayOfMonth(now)) {
-            return _cmsgs.today();
-
-        // this will break for one hour on daylight savings time and we'll instead report the date
-        // in MMM dd format or we'll call two days ago yesterday for that witching hour; we don't
-        // have excellent date services in the browser, so we're just going to be OK with that
-        } else if (useShorthand && DateUtil.getDayOfMonth(date) ==
-                   DateUtil.getDayOfMonth(new Date(now.getTime()-24*60*60*1000))) {
-            return _cmsgs.yesterday();
-
-        } else {
-            return _mfmt.format(date);
-        }
-    }
-
-    /**
-     * Creates a label of the form "{@link #formatDate} at {@link #formatTime}". If date is null
-     * the empty string is returned.
-     */
-    public static String formatDateTime (Date date)
-    {
-        return (date == null) ? "" : _cmsgs.dateTime(formatDate(date), formatTime(date));
     }
 
     /**

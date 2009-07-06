@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -101,7 +102,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 0);
         info.setText(0, 0, _msgs.listingListed(), 1, "What");
-        info.setText(0, 1, MsoyUI.formatDate(_listing.listedDate, false));
+        info.setText(0, 1, DateUtil.formatDate(_listing.listedDate, false));
         info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
         info.setText(1, 1, CatalogListing.PRICING_LIMITED_EDITION == _listing.pricing ?
                 _msgs.limitedPurchases(""+_listing.purchases, ""+_listing.salesTarget) :

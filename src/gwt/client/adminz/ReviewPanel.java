@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -126,7 +127,7 @@ public class ReviewPanel extends FlowPanel
             nameTime.add(Link.memberView(memberName.toString(), item.memberId));
             nameTime.add(MsoyUI.createLabel(" - ", null));
             nameTime.setStyleName("CommentHeader");
-            Label time = MsoyUI.createLabel(MsoyUI.formatDateTime(item.timestamp), "Time");
+            Label time = MsoyUI.createLabel(DateUtil.formatDateTime(item.timestamp), "Time");
             time.setWordWrap(false);
             nameTime.add(time);
             add(nameTime);

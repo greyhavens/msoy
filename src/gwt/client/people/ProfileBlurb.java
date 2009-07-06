@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.Award;
@@ -36,7 +37,6 @@ import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
-import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -158,7 +158,7 @@ public class ProfileBlurb extends Blurb
 
             awardBox.add(MsoyUI.makeActionImage(
                 MsoyUI.createImage(award.icon.getMediaPath(), "Icon"), null, clicker));
-            awardBox.add(MsoyUI.createLabel(_msgs.awardEarned(MsoyUI.formatDate(
+            awardBox.add(MsoyUI.createLabel(_msgs.awardEarned(DateUtil.formatDate(
                 new Date(award.whenEarned))), "WhenEarned"));
         }
 
@@ -175,7 +175,7 @@ public class ProfileBlurb extends Blurb
             addDetail(dbits, _msgs.permaName(), _profile.permaName);
         }
         if (_profile.memberSince > 0L) {
-            String since = MsoyUI.formatDate(new Date(_profile.memberSince));
+            String since = DateUtil.formatDate(new Date(_profile.memberSince));
             if (CShell.isSupport()) {
                 addDetail(dbits, _msgs.memberSince(),
                           Link.create(since, Pages.ADMINZ, "info", _name.getMemberId()));
@@ -185,7 +185,7 @@ public class ProfileBlurb extends Blurb
         }
         if (_profile.lastLogon > 0L) {
             addDetail(dbits, _msgs.lastOnline(),
-                      MsoyUI.formatDateTime(new Date(_profile.lastLogon)));
+                      DateUtil.formatDateTime(new Date(_profile.lastLogon)));
         }
         if (!StringUtil.isBlank(_profile.homePageURL)) {
             Anchor homepage = new Anchor(

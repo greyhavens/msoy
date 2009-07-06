@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.util.DateUtil;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -28,7 +29,8 @@ public class MemberStatusLabel extends FlowPanel
 
         if (card.status instanceof MemberCard.NotOnline) {
             long lastLogon = ((MemberCard.NotOnline)card.status).lastLogon;
-            add(new InlineLabel(_cmsgs.mslLastOnline(MsoyUI.formatDateTime(new Date(lastLogon)))));
+            add(new InlineLabel(
+                    _cmsgs.mslLastOnline(DateUtil.formatDateTime(new Date(lastLogon)))));
 
         } else if (card.status instanceof MemberCard.InGame) {
             MemberCard.InGame gs = (MemberCard.InGame)card.status;

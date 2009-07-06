@@ -20,13 +20,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
-import com.threerings.msoy.web.gwt.DateUtil;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.WebUserService;

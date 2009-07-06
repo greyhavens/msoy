@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -94,7 +95,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
                 }
                 if (trophy.whenEarned != null) {
                     Date date = new Date(trophy.whenEarned.longValue());
-                    setText(2, 0, _msgs.gameTrophyEarnedOn(MsoyUI.formatDate(date, false)));
+                    setText(2, 0, _msgs.gameTrophyEarnedOn(DateUtil.formatDate(date, false)));
                     getFlexCellFormatter().setStyleName(2, 0, "Earned");
                 }
             }

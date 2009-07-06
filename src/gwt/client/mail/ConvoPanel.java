@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -181,7 +182,7 @@ public class ConvoPanel extends FlowPanel
 
             FlowPanel info = new FlowPanel();
             info.add(Link.memberView(msg.author.name));
-            info.add(MsoyUI.createLabel(MsoyUI.formatDateTime(msg.sent), "Sent"));
+            info.add(MsoyUI.createLabel(DateUtil.formatDateTime(msg.sent), "Sent"));
             setWidget(0, 1, info);
             getFlexCellFormatter().setWidth(0, 1, "150px");
             getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);

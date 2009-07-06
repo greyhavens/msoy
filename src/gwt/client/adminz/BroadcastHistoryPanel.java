@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
+import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -54,7 +55,7 @@ public class BroadcastHistoryPanel extends VerticalPanel
                     memberName = new MemberName(_msgs.broadcastMemberDeleted(), item.memberId);
                 }
                 List<Widget> fields = new ArrayList<Widget>();
-                fields.add(MsoyUI.createLabel(MsoyUI.formatDateTime(item.timeSent), "time"));
+                fields.add(MsoyUI.createLabel(DateUtil.formatDateTime(item.timeSent), "time"));
                 fields.add(Link.memberView(memberName));
                 fields.add(MsoyUI.createLabel(String.valueOf(item.barsPaid), "bars"));
                 fields.add(MsoyUI.createLabel(item.message, "message"));
