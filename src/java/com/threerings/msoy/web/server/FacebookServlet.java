@@ -148,10 +148,12 @@ public class FacebookServlet extends HttpServlet
             // add the privacy header so we can set some cookies in an iframe
             MsoyHttpServer.addPrivacyHeader(rsp);
 
-            // let our app know it is embedded in facebook
-            Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
-            cookie.setPath("/");
-            rsp.addCookie(cookie);
+            // if we're not a chromeless game, configure Whirled to run in Facebook mode
+            if (!info.chromeless) {
+                Cookie cookie = new Cookie(CookieNames.EMBED, "fb");
+                cookie.setPath("/");
+                rsp.addCookie(cookie);
+            }
 
             // and send them to the appropriate page
             if (info.gameId != 0) {
