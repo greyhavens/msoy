@@ -3,17 +3,17 @@
 
 package client.util;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 
+import com.threerings.gwt.util.AbstractPanelCallback;
+
 import client.shell.CShell;
-import client.ui.MsoyUI;
 
 /**
  * Reports a callback error by adding a label to a target panel. The panel will be cleared prior to
  * adding the error.
  */
-public abstract class PageCallback<T> implements AsyncCallback<T>
+public abstract class PageCallback<T> extends AbstractPanelCallback<T>
 {
     /**
      * Creates a callback that will clear and add an error label to the supplied panel on failure.
@@ -21,16 +21,12 @@ public abstract class PageCallback<T> implements AsyncCallback<T>
      */
     public PageCallback (Panel panel)
     {
-        _panel = panel;
+        super(panel);
     }
 
-    // from AsyncCallback
-    public void onFailure (Throwable cause)
+    @Override // from AbstractPanelCallback<T>
+    protected String formatError (Throwable cause)
     {
-        _panel.clear();
-        _panel.add(MsoyUI.createLabel(CShell.serverError(cause), "infoLabel"));
-        CShell.log("Service request failed", cause);
+        return CShell.serverError(cause);
     }
-
-    protected Panel _panel;
 }
