@@ -47,7 +47,7 @@ public class SubscriptionLogic
     public void init ()
     {
         // check for bar and special item grants every hour
-        _cronLogic.scheduleAt(1, new Runnable() {
+        _cronLogic.scheduleEvery(1, new Runnable() {
             public void run () {
                 _batchInvoker.postUnit(new Invoker.Unit(toString()) {
                     public boolean invoke () {
@@ -60,7 +60,7 @@ public class SubscriptionLogic
             }
 
             public String toString () {
-                return "SubscriptionLogic.grants";
+                return "SubscriptionLogic.hourly";
             }
         });
 
