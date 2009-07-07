@@ -263,7 +263,7 @@
   height: 1400px;
 }
 
-.arcade .featuredGame {
+.arcade .featuredGame, .arcade .fbfeaturedGame {
   left: 225px;
   top: 20px;
 }
@@ -819,3 +819,183 @@
 .gameBits .Label {
   padding-right: 5px;
 }
+
+/* ------------------------------------
+   FBFeaturedGamePanel
+-------------------------------------*/
+
+.fbfeaturedGame {
+  height: 197px;
+  width: 545px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  font-size: 13px;
+}
+
+.fbfeaturedGame .background td.toprow {
+  height: 30px;
+}
+
+.fbfeaturedGame .background td.centerrow {
+  height: 156px;
+}
+
+.fbfeaturedGame .background td.bottomrow {
+  height: 11px;
+}
+
+.fbfeaturedGame .background td.leftcol,
+.fbfeaturedGame .background td.rightcol {
+  width: 11px;
+}
+
+.fbfeaturedGame .background td.centercol {
+  width: 523px;
+}
+
+.fbfeaturedGame .background td.nw {
+  background: url(/images/facebook/title_bar_left.png) no-repeat;
+  border: 0px;
+}
+
+.fbfeaturedGame .background td.n {
+  background: url(/images/facebook/title_bar_middle.png) repeat-x;
+  border: 0px;
+}
+
+.fbfeaturedGame .background td.ne {
+  background: url(/images/facebook/title_bar_right.png) no-repeat;
+  border: 0px;
+}
+
+.fbfeaturedGame .background td.w {
+  background: #d8dfea;
+  width: 10px;
+  border-left: #94a3c4 solid 1px;
+}
+
+.fbfeaturedGame .background td.c {
+  background: #d8dfea;
+}
+
+.fbfeaturedGame .background td.e {
+  background: #d8dfea;
+  width: 10px;
+  border-right: #94a3c4 solid 1px;
+}
+
+.fbfeaturedGame .background td.sw {
+  background: url(/images/facebook/featured_bottom_left.png) no-repeat;
+  border: 0px;
+}
+
+.fbfeaturedGame .background td.s {
+  background: #d8dfea;
+  border-bottom: #94a3c4 solid 1px;
+}
+
+.fbfeaturedGame .background td.se {
+  background: url(/images/facebook/featured_bottom_right.png) no-repeat;
+  border: 0px;
+}
+
+.fbfeaturedGame .background td.title {
+  vertical-align: middle;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.fbfeaturedGame .thumbBox {
+  border: #94a3c4 solid 1px;
+}
+
+.fbfeaturedGame .scroller {
+  margin-top: 5px;
+}
+
+.fbfeaturedGame .scroller td {
+  vertical-align: center;
+}
+
+.fbfeaturedGame .scroller td.dot {
+  width: 19px;
+}
+
+.fbfeaturedGame .scroller td.left {
+  width: 40px;
+  text-align: right;
+}
+
+.fbfeaturedGame .scroller td.right {
+  width: 40px;
+  text-align: left;
+}
+
+.fbfeaturedGame .bits {
+  color: #3b5998;
+  border: #94a3c4 solid 1px;
+  height: 151px;
+  background: #eceff5;
+}
+
+.fbfeaturedGame .bits td.name {
+  width: 195px;
+  font-size: 20px;
+  font-weight: bold;
+  height: 25px;
+  vertical-align: bottom;
+  padding-left: 11px;
+}
+
+.fbfeaturedGame .bits td.genre {
+  font-size: 14px;
+  font-weight: bold;
+  height: 18px;
+  vertical-align: bottom;
+  padding-left: 11px;
+}
+
+.fbfeaturedGame .bits td.starsCell {
+  width: 121px;
+  vertical-align: bottom;
+  text-align: right;
+  padding-right: 7px;
+}
+
+.fbfeaturedGame .bits td.creator {
+  font-size: 11px;
+  vertical-align: bottom;
+  padding-left: 11px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.fbfeaturedGame .bits td.online {
+  font-size: 14px;
+  text-align: right;
+  padding-right: 7px;
+}
+
+.fbfeaturedGame td.description {
+  height: 84px;
+  color: black;
+  padding-left: 11px;
+  padding-right: 5px;
+  overflow: hidden;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.fbfeaturedGame td.playCell {
+  padding-right: 7px;
+  vertical-align: top;
+}
+
+.fbfeaturedGame td.playCell .play {
+  background: url(/images/facebook/blue_play.png) no-repeat;
+  width: 122px;
+  height: 47px;
+  cursor: pointer;
+}
+
