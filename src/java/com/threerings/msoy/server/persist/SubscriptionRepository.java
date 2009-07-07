@@ -96,7 +96,6 @@ public class SubscriptionRepository extends DepotRepository
      */
     public List<Integer> loadSubscribersNeedingBarGrants ()
     {
-        // TODO: this needs double-checking and testing, and some more checking
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -1);
         Timestamp monthAgo = new Timestamp(cal.getTimeInMillis());
@@ -104,7 +103,9 @@ public class SubscriptionRepository extends DepotRepository
             new Where(new And(
                 SubscriptionRecord.SUBSCRIBER.eq(true),
                 SubscriptionRecord.GRANTS_LEFT.greaterThan(0),
-                SubscriptionRecord.LAST_GRANT.lessThan(monthAgo))));
+                new Or(
+                    SubscriptionRecord.LAST_GRANT.lessThan(monthAgo),
+                    SubscriptionRecord.LAST_GRANT.isNull()))));
         return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
     }
 
