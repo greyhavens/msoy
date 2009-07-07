@@ -5,6 +5,7 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -75,13 +76,13 @@ public class GamesPage extends Page
             setContent(new ArcadePanel(ArcadeData.Portal.valueOf(args.get(1, ""))));
 
         } else {
-            if (CShell.isFacebook()) {
+            if (CShell.isFacebook() && DeploymentConfig.devDeployment) {
                 // show the facebook portal and request to show the friends panel
                 setContent(new FBArcadePanel(ArcadeData.Portal.FACEBOOK));
                 CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
 
             } else {
-                setContent(new ArcadePanel(ArcadeData.Portal.MAIN));
+                setContent(new ArcadePanel(getDefaultPortal()));
             }
         }
     }
