@@ -58,11 +58,11 @@ public class CronLogic
     {
         int minOfHour = job.getClass().toString().hashCode() % 60;
         int minOfDay = 0;
-        while (minOfDay < 24*60) {
-            synchronized (_jobs) {
+        synchronized (_jobs) {
+            while (minOfDay < 24*60) {
                 _jobs.put(minOfDay + minOfHour, job);
+                minOfDay += hourlyPeriod * 60;
             }
-            minOfDay += hourlyPeriod * 60;
         }
     }
 
