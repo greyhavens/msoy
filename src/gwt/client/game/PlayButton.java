@@ -31,6 +31,11 @@ public class PlayButton
         return create(gameId, "playButtonLarge");
     }
 
+    public static PushButton createCustom (int gameId, String style)
+    {
+        return create(gameId, style);
+    }
+
     protected static PushButton create (int gameId, String style)
     {
         PushButton play;
