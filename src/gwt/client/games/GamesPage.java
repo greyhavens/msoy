@@ -75,11 +75,13 @@ public class GamesPage extends Page
             setContent(new ArcadePanel(ArcadeData.Portal.valueOf(args.get(1, ""))));
 
         } else {
-            setContent(new ArcadePanel(getDefaultPortal()));
-
-            // request to show the facebook friends panel
             if (CShell.isFacebook()) {
+                // show the facebook portal and request to show the friends panel
+                setContent(new FBArcadePanel(ArcadeData.Portal.FACEBOOK));
                 CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
+
+            } else {
+                setContent(new ArcadePanel(ArcadeData.Portal.MAIN));
             }
         }
     }
