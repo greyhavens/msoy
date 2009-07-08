@@ -45,7 +45,7 @@ public class IssueServlet extends MsoyServiceServlet
     public IssueResult loadIssues (boolean open, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
+        MemberRecord mrec = requireSupportUser();
         return loadIssues(mrec, open, 0, offset, count, needTotalCount);
     }
 
@@ -53,7 +53,7 @@ public class IssueServlet extends MsoyServiceServlet
     public IssueResult loadOwnedIssues (boolean open, int offset, int count, boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
+        MemberRecord mrec = requireSupportUser();
         return loadIssues(mrec, open, mrec.memberId, offset, count, needTotalCount);
     }
 
@@ -61,6 +61,8 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue loadIssue (int issueId)
         throws ServiceException
     {
+        requireSupportUser();
+
         IssueRecord irec = _issueRepo.loadIssue(issueId);
         Issue issue = irec.toIssue();
         MemberRecord member = _memberRepo.loadMember(irec.creatorId);
