@@ -33,7 +33,7 @@ public class FBArcadePanel extends FlowPanel
 {
     public FBArcadePanel (ArcadeData.Portal portal)
     {
-        setStyleName("arcade");
+        setStyleName("fbarcade");
         add(MsoyUI.createNowLoading());
         _portal = portal;
         _gamesvc.loadArcadeData(portal, new PageCallback<ArcadeData>(this) {
@@ -52,60 +52,13 @@ public class FBArcadePanel extends FlowPanel
 
         // show the top N games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
-        topGames.add(MsoyUI.createImage("/images/game/top_games_title.png", "TopGamesTitle"));
+        topGames.add(FBFeaturedGamePanel.createTitleBar("title", "Top 10 Games"));
         add(topGames);
         for (int i = 0; i < data.topGames.size(); i++) {
             topGames.add(new TopGameWidget(i + 1, data.topGames.get(i)));
         }
 
         add(new FBFeaturedGamePanel(data.featuredGames));
-
-        add(MsoyUI.createLabel("Browse by Category", "BrowseGenresTitle"));
-
-        // display genre links and browse games in each genre
-        FlowPanel browseGenres = MsoyUI.createFlowPanel("BrowseGenres");
-        add(browseGenres);
-        for (int ii = 0; ii < data.genres.size(); ii++) {
-            ArcadeData.Genre genre = data.genres.get(ii);
-            if (genre.games.length == 0) {
-                continue;
-            }
-            browseGenres.add(new GenreBox(genre));
-        }
-        browseGenres.add(MsoyUI.createActionLabel("View all games", "ViewAllGames",
-                                                  Link.createHandler(Pages.GAMES, "g")));
-    }
-
-    /**
-     * Display a summary of games in a genre.
-     */
-    protected static class GenreBox extends FlowPanel
-    {
-        public GenreBox (ArcadeData.Genre genre) {
-            setStyleName("GenreBox");
-
-            byte gbyte = genre.genre.toByte();
-            FlowPanel header = MsoyUI.createFlowPanel("Header");
-            add(header);
-            header.add(MsoyUI.createImage("/images/game/genre/" + gbyte + ".png", "Icon"));
-            ClickHandler onClick = Link.createHandler(Pages.GAMES, "g", gbyte);
-            header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre_" + genre.genre), onClick));
-
-            for (GameCard game : genre.games) {
-                FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
-                add(genreGame);
-                genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
-                                           Pages.GAMES, "d", game.gameId));
-                genreGame.add(Link.create(game.name, "Name", Pages.GAMES, "d", game.gameId));
-                if (game.playersOnline > 0) {
-                    genreGame.add(MsoyUI.createLabel(
-                                      _msgs.featuredOnline(""+game.playersOnline), "Online"));
-                }
-            }
-
-            add(Link.createBlock(_msgs.genreMore(""+genre.gameCount), "ViewAll",
-                Pages.GAMES, "g", gbyte));
-        }
     }
 
     /**

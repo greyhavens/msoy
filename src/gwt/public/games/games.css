@@ -821,6 +821,110 @@
 }
 
 /* ------------------------------------
+   FBArcadePanel
+-------------------------------------*/
+
+.fbarcade {
+  background: #FFFFFF;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: black;
+  width: 100%;
+  height: 543px;
+}
+
+.fbarcade .fbfeaturedGame {
+  left: 215px;
+  top: 20px;
+}
+
+.fbarcade .TopGames {
+  top: 93px;
+}
+
+/* ------------------------------------
+   FBArcadePanel - top 10 games
+-------------------------------------*/
+
+.fbarcade .TopGames {
+  width: 200px;
+  position: absolute;
+  left: 0px;
+}
+
+.fbarcade .TopGames .title td.toprow {
+  height: 30px;
+}
+
+.fbarcade .TopGames .title td.nw {
+  background: url(/images/facebook/title_bar_left.png) no-repeat;
+  width: 11px;
+}
+
+.fbarcade .TopGames .title td.ne {
+  background: url(/images/facebook/title_bar_right.png) no-repeat;
+  width: 11px;
+}
+
+.fbarcade .TopGames .title td.n {
+  background: url(/images/facebook/title_bar_middle.png) repeat-x;
+  width: 11px;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  width: 178px;
+  color: #FFFFFF;
+}
+
+.fbarcade .TopGames .TopGameWidget {
+  border-right: solid #94a3c4 1px;
+  border-bottom: solid #94a3c4 1px;
+  background-color: white;
+  width: 200px;
+  height: 45px;
+}
+
+.fbarcade .TopGames .Number {
+  background: url(/images/facebook/top_games_num_bg.png) repeat-x top center;
+  color: #3b5998;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  width: 25px;
+  height: 30px;
+  float: left;
+  border-left: solid #94a3c4 1px;
+  border-right: solid #94a3c4 1px;
+  padding-top: 15px;
+}
+
+.fbarcade .TopGames .thumbBox {
+  float: left;
+  width: 40px;
+  height: 31px;
+  text-align: center;
+  padding: 7px;
+}
+
+.fbarcade .TopGames .Name {
+  width: 110px;
+  color: #1c5988;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fbarcade .TopGames .Name .actionLabel {
+  text-decoration: none;
+}
+
+.fbarcade .TopGames .TopGameWidget:hover .Name .actionLabel {
+  text-decoration: underline;
+}
+
+/* ------------------------------------
    FBFeaturedGamePanel
 -------------------------------------*/
 
