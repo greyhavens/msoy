@@ -191,8 +191,8 @@ public class MsoyManager
 
         final int baseCost = _runtime.getBarCost(CostsConfigObject.BROADCAST_BASE);
         final int increment = _runtime.getBarCost(CostsConfigObject.BROADCAST_INCREMENT);
-        final int memberId = ((MemberObject)caller).getMemberId();
-        final Name from = ((MemberObject)caller).getVisibleName();
+        final int memberId = member.getMemberId();
+        final Name from = member.getVisibleName();
         _invoker.postUnit(new ServiceUnit("purchaseBroadcast", listener) {
             public void invokePersistent ()
                 throws ServiceException, InvocationException {
