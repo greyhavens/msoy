@@ -98,7 +98,18 @@ public class InfoEditorPanel extends BaseEditorPanel
         });
 
         final MediaBox sbox = new MediaBox(
-            MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia);
+            MediaDesc.GAME_SHOT_SIZE, Item.AUX_MEDIA, info.shotMedia) {
+            @Override public void mediaUploaded (String name, MediaDesc desc, int w, int h) {
+                int targetW = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
+                int targetH = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
+                if ((w != targetW) || (h != targetH)) {
+                    MsoyUI.error(_msgs.errInvalidShot(
+                        String.valueOf(targetW), String.valueOf(targetH)));
+                } else {
+                    super.mediaUploaded(name, desc, w, h);
+                }
+            }
+        };
         addRow(_msgs.egShot(), _msgs.egShotTip(), sbox, new Command() {
             public void execute () {
                 info.shotMedia = checkImageMedia(_msgs.egShot(), sbox.getMedia());
