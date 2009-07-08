@@ -178,21 +178,23 @@ public class AdminServlet extends MsoyServiceServlet
         // log this as a warning so that it shows up in the nightly filtered logs
         log.warning("Configuring role", "setter", memrec.who(), "target", tgtrec.who(),
                     "role", role);
-        boolean isSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER);
-        boolean isPermSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER_PERMANENT);
-        if (role == WebCreds.Role.SUBSCRIBER) {
-            if (!isSub && !isPermSub) {
-                log.warning("Making user a permanent subscriber", new Exception());
-                tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, true);
-            }
-        } else if (isPermSub) {
-            log.warning("Stripping user of permanent subscription", new Exception());
-            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, false);
-
-        } else if (isSub) {
-            log.warning("Stripping user of subscriber status!", new Exception());
-            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER, false);
-        }
+// Commented out July 8, 2009: Do not allow modification to the subscriber role, as
+// we would need to make modifications to the SubscriberRecord table as well.
+//        boolean isSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER);
+//        boolean isPermSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER_PERMANENT);
+//        if (role == WebCreds.Role.SUBSCRIBER) {
+//            if (!isSub && !isPermSub) {
+//                log.warning("Making user a permanent subscriber", new Exception());
+//                tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, true);
+//            }
+//        } else if (isPermSub) {
+//            log.warning("Stripping user of permanent subscription", new Exception());
+//            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, false);
+//
+//        } else if (isSub) {
+//            log.warning("Stripping user of subscriber status!", new Exception());
+//            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER, false);
+//        }
         tgtrec.setFlag(MemberRecord.Flag.SUPPORT, role == WebCreds.Role.SUPPORT);
         if (memrec.isMaintainer()) {
             tgtrec.setFlag(MemberRecord.Flag.ADMIN, role == WebCreds.Role.ADMIN);
