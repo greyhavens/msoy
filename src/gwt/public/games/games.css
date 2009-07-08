@@ -871,7 +871,7 @@
 .fbfeaturedGame .background td.w {
   background: #d8dfea;
   width: 10px;
-  border-left: #94a3c4 solid 1px;
+  border-left: 1px solid #94a3c4;
 }
 
 .fbfeaturedGame .background td.c {
@@ -881,7 +881,7 @@
 .fbfeaturedGame .background td.e {
   background: #d8dfea;
   width: 10px;
-  border-right: #94a3c4 solid 1px;
+  border-right: 1px solid #94a3c4;
 }
 
 .fbfeaturedGame .background td.sw {
@@ -891,7 +891,7 @@
 
 .fbfeaturedGame .background td.s {
   background: #d8dfea;
-  border-bottom: #94a3c4 solid 1px;
+  border-bottom: 1px solid #94a3c4;
 }
 
 .fbfeaturedGame .background td.se {
@@ -907,7 +907,7 @@
 }
 
 .fbfeaturedGame .thumbBox {
-  border: #94a3c4 solid 1px;
+  border: 1px solid #94a3c4;
 }
 
 .fbfeaturedGame .scroller {
@@ -934,7 +934,7 @@
 
 .fbfeaturedGame .bits {
   color: #3b5998;
-  border: #94a3c4 solid 1px;
+  border: 1px solid #94a3c4;
   height: 151px;
   background: #eceff5;
 }
@@ -978,6 +978,7 @@
 }
 
 .fbfeaturedGame td.description {
+  width: 195px;
   height: 84px;
   color: black;
   padding-left: 11px;
