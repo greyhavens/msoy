@@ -76,7 +76,7 @@ public class FBFeaturedGamePanel extends AbsolutePanel
     {
         clear();
         GameInfo game = _games[index];
-        createBackground(this, "Daily Games");
+        add(MsoyUI.createLabel("Daily Games", "title"));
         add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId),
             10, 37);
         add(createScroller(index), 10, 165);

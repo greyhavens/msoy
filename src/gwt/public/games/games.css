@@ -932,91 +932,18 @@
   font-family: Arial, Helvetica, sans-serif;
   color: #FFFFFF;
   font-size: 13px;
+  background: url(/images/facebook/featured_background.png) no-repeat;
 }
 
-.fbfeaturedGame .bg_top_row {
-  height: 30px;
-  top: 0px;
-}
-
-.fbfeaturedGame .bg_mid_row {
-  height: 156px;
-  top: 30px;
-}
-
-.fbfeaturedGame .bg_bot_row {
-  height: 11px;
-  bottom: 0px;
-}
-
-.fbfeaturedGame .bg_left_col {
-  width: 11px;
+.fbfeaturedGame .title {
+  position: absolute;
+  top: 5px;
   left: 0px;
-}
-
-.fbfeaturedGame .bg_right_col {
-  width: 11px;
-  right: 0px;
-}
-
-.fbfeaturedGame .bg_mid_col {
-  width: 523px;
-  left: 11px;
-}
-
-.fbfeaturedGame .bg_top_left {
-  background: url(/images/facebook/title_bar_left.png) no-repeat;
-  border: 0px;
-}
-
-.fbfeaturedGame .bg_top_mid {
-  background: url(/images/facebook/title_bar_middle.png) repeat-x;
-  border: 0px;
-}
-
-.fbfeaturedGame .bg_top_right {
-  background: url(/images/facebook/title_bar_right.png) no-repeat;
-  border: 0px;
-}
-
-.fbfeaturedGame .bg_mid_left {
-  background: #d8dfea;
-  border-left: 1px solid #94a3c4;
-}
-
-.fbfeaturedGame .bg_mid_mid {
-  background: #d8dfea;
-}
-
-.fbfeaturedGame .bg_mid_right {
-  background: #d8dfea;
-  border-right: 1px solid #94a3c4;
-}
-
-.fbfeaturedGame .bg_bot_left {
-  background: url(/images/facebook/featured_bottom_left.png) no-repeat;
-  border: 0px;
-}
-
-.fbfeaturedGame .bg_bot_mid {
-  background: #d8dfea;
-  border-bottom: 1px solid #94a3c4;
-}
-
-.fbfeaturedGame .bg_bot_right {
-  background: url(/images/facebook/featured_bottom_right.png) no-repeat;
-  border: 0px;
-}
-
-.fbfeaturedGame .bg_title {
-  padding-top: 5px;
   text-align: center;
   font-size: 18px;
   font-weight: bold;
   width: 545px;
   height: 30px;
-  left: 0px;
-  top: 0px;
 }
 
 .fbfeaturedGame .thumbBox {
