@@ -849,29 +849,18 @@
 .fbarcade .TopGames {
   width: 200px;
   position: absolute;
-  left: 0px;
+  background: url(/images/facebook/top_games_background.png) #3e5d9e no-repeat;
 }
 
-.fbarcade .TopGames .title .left {
-  background: url(/images/facebook/title_bar_left.png) no-repeat;
-  width: 11px;
-  height: 30px;
-}
-
-.fbarcade .TopGames .title .right {
-  background: url(/images/facebook/title_bar_right.png) no-repeat;
-  width: 11px;
-  height: 30px;
-}
-
-.fbarcade .TopGames .title .center {
-  background: url(/images/facebook/title_bar_middle.png) repeat-x;
+.fbarcade .TopGames .title {
+  position: relative;
+  top: 5px;
+  width: 178px;
   height: 30px;
   vertical-align: middle;
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-  width: 178px;
   color: #FFFFFF;
 }
 
@@ -932,7 +921,7 @@
   font-family: Arial, Helvetica, sans-serif;
   color: #FFFFFF;
   font-size: 13px;
-  background: url(/images/facebook/featured_background.png) no-repeat;
+  background: #d8dfea url(/images/facebook/featured_background.png) no-repeat;
 }
 
 .fbfeaturedGame .title {

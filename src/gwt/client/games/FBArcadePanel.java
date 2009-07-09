@@ -51,7 +51,7 @@ public class FBArcadePanel extends FlowPanel
 
         // show the top N games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
-        topGames.add(FBFeaturedGamePanel.createTitleBar("title", "Top 10 Games"));
+        topGames.add(MsoyUI.createLabel("Top 10 Games", "title"));
         add(topGames);
         for (int i = 0; i < data.topGames.size(); i++) {
             topGames.add(new TopGameWidget(i + 1, data.topGames.get(i)));

@@ -29,40 +29,6 @@ import client.ui.ThumbBox;
  */
 public class FBFeaturedGamePanel extends AbsolutePanel
 {
-    public static void createBackground (AbsolutePanel parent, String title)
-    {
-        String base = "bg";
-        for (String row : new String[]{"top", "mid", "bot"}) {
-            for (String col : new String[]{"left", "mid", "right"}) {
-                FlowPanel cell = new FlowPanel();
-                cell.addStyleName(base + "_" + row + "_" + col);
-                cell.addStyleName(base + "_" + row + "_" + "row");
-                cell.addStyleName(base + "_" + col + "_" + "col");
-                DOM.setStyleAttribute(cell.getElement(), "position", "absolute");
-                parent.add(cell);
-            }
-        }
-        Widget label = MsoyUI.createLabel(title, base + "_title");
-        DOM.setStyleAttribute(label.getElement(), "position", "absolute");
-        parent.add(label);
-    }
-
-    public static SmartTable createTitleBar (String style, String title)
-    {
-        SmartTable box = new SmartTable(0, 0);
-        box.setStyleName(style);
-        box.setText(0, 0, "", 1, "nw");
-        box.setText(0, 1, title, 1, "n");
-        box.setText(0, 2, "", 1, "ne");
-
-        FlexCellFormatter fmt = box.getFlexCellFormatter();
-        fmt.addStyleName(0, 0, "left");
-        fmt.addStyleName(0, 1, "center");
-        fmt.addStyleName(0, 1, "title");
-        fmt.addStyleName(0, 2, "right");
-        return box;
-    }
-
     public FBFeaturedGamePanel (GameInfo[] games)
     {
         setStyleName("fbfeaturedGame");
