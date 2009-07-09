@@ -4,7 +4,10 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,7 +29,25 @@ import client.ui.ThumbBox;
  */
 public class FBFeaturedGamePanel extends AbsolutePanel
 {
-    public static SmartTable createBox (String style, String title, boolean withContents)
+    public static void createBackground (AbsolutePanel parent, String title)
+    {
+        String base = "bg";
+        for (String row : new String[]{"top", "mid", "bot"}) {
+            for (String col : new String[]{"left", "mid", "right"}) {
+                FlowPanel cell = new FlowPanel();
+                cell.addStyleName(base + "_" + row + "_" + col);
+                cell.addStyleName(base + "_" + row + "_" + "row");
+                cell.addStyleName(base + "_" + col + "_" + "col");
+                DOM.setStyleAttribute(cell.getElement(), "position", "absolute");
+                parent.add(cell);
+            }
+        }
+        Widget label = MsoyUI.createLabel(title, base + "_title");
+        DOM.setStyleAttribute(label.getElement(), "position", "absolute");
+        parent.add(label);
+    }
+
+    public static SmartTable createTitleBar (String style, String title)
     {
         SmartTable box = new SmartTable(0, 0);
         box.setStyleName(style);
@@ -34,63 +55,12 @@ public class FBFeaturedGamePanel extends AbsolutePanel
         box.setText(0, 1, title, 1, "n");
         box.setText(0, 2, "", 1, "ne");
 
-        if (withContents) {
-            box.setText(1, 0, "", 1, "w");
-            box.setText(1, 1, "", 1, "c");
-            box.setText(1, 2, "", 1, "e");
-            box.setText(2, 0, "", 1, "sw");
-            box.setText(2, 1, "", 1, "s");
-            box.setText(2, 2, "", 1, "se");
-        }
-
         FlexCellFormatter fmt = box.getFlexCellFormatter();
-        fmt.addStyleName(0, 0, "toprow");
-        fmt.addStyleName(0, 1, "toprow");
-        fmt.addStyleName(0, 2, "toprow");
-
-        if (withContents) {
-            fmt.addStyleName(1, 0, "centerrow");
-            fmt.addStyleName(1, 1, "centerrow");
-            fmt.addStyleName(1, 2, "centerrow");
-        }
-
-        if (withContents) {
-            fmt.addStyleName(2, 0, "bottomrow");
-            fmt.addStyleName(2, 1, "bottomrow");
-            fmt.addStyleName(2, 2, "bottomrow");
-        }
-
-        fmt.addStyleName(0, 0, "leftcol");
-        if (withContents) {
-            fmt.addStyleName(1, 0, "leftcol");
-            fmt.addStyleName(2, 0, "leftcol");
-        }
-
-        fmt.addStyleName(0, 1, "centercol");
-        if (withContents) {
-            fmt.addStyleName(1, 1, "centercol");
-            fmt.addStyleName(2, 1, "centercol");
-        }
-
-        fmt.addStyleName(0, 2, "rightcol");
-        if (withContents) {
-            fmt.addStyleName(1, 2, "rightcol");
-            fmt.addStyleName(2, 2, "rightcol");
-        }
-
+        fmt.addStyleName(0, 0, "left");
+        fmt.addStyleName(0, 1, "center");
         fmt.addStyleName(0, 1, "title");
-
+        fmt.addStyleName(0, 2, "right");
         return box;
-    }
-
-    public static SmartTable createBox (String style, String title)
-    {
-        return createBox(style, title, true);
-    }
-
-    public static SmartTable createTitleBar (String style, String title)
-    {
-        return createBox(style, title, false);
     }
 
     public FBFeaturedGamePanel (GameInfo[] games)
@@ -106,7 +76,7 @@ public class FBFeaturedGamePanel extends AbsolutePanel
     {
         clear();
         GameInfo game = _games[index];
-        add(createBox("background", "Daily Games"), 0, 0);
+        createBackground(this, "Daily Games");
         add(new ThumbBox(game.shotMedia, MediaDesc.GAME_SHOT_SIZE, Pages.GAMES, "d", game.gameId),
             10, 37);
         add(createScroller(index), 10, 165);
