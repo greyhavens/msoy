@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,6 +73,7 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
@@ -97,111 +101,28 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // TODO: move all this to PopularPlacesShapshot, why recalculate per request?
+        boolean newFacebookStuff =
+            (portal == ArcadeData.Portal.FACEBOOK) && DeploymentConfig.devDeployment;
+
+        ArcadeDataBuilder bldr = new ArcadeDataBuilder(portal);
         ArcadeData data = new ArcadeData();
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
-        // load the hand-picked "top games"
-        List<ArcadeEntryRecord> agames = _mgameRepo.loadArcadeEntries(portal, true);
-        Set<Integer> approvedGames = portal.isFiltered() ?
-            Sets.newHashSet(Lists.transform(agames, ArcadeEntryRecord.TO_GAME_ID)) : null;
+        // top 5 hand-picked featured games
+        data.featuredGames = bldr.buildFeatured();
 
-        // load the top N (where N is large) games and build everything from that list
-        Map<Integer, GameInfoRecord> games = Maps.newLinkedHashMap();
-        for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
-            // for filtered arcade portals, filter the whole map
-            if (approvedGames != null && !approvedGames.contains(grec.gameId)) {
-                continue;
-            }
-            games.put(grec.gameId, grec);
-        }
-
-        // TODO: move to GameLogic
-        ArrayIntSet creatorIds = new ArrayIntSet();
-        List<GameInfo> featured = Lists.newArrayList();
-        for (ArcadeEntryRecord topGame : agames) {
-            if (!topGame.featured) {
-                continue;
-            }
-            int gameId = topGame.gameId;
-            GameInfoRecord info = games.get(gameId);
-            if (info == null) {
-                continue;
-            }
-            featured.add(info.toGameInfo(getGamePop(pps, gameId)));
-            creatorIds.add(info.creatorId);
-            if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                break;
-            }
-        }
-
-        // resolve creator names
-        IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
-        for (GameInfo info : featured) {
-            info.creator = memberNames.get(info.creator.getMemberId());
-        }
-
-        // finally convert to an array
-        data.featuredGames = featured.toArray(new GameInfo[featured.size()]);
-
-        // list of top N games by ranking
-        data.topGames = Lists.newArrayList();
-        for (GameInfoRecord game : games.values()) {
-            data.topGames.add(game.toGameCard(getGamePop(pps, game.gameId)));
-            if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
-                break;
-            }
-        }
+        // list of top 10 or 20 games by ranking
+        data.topGames = bldr.buildTopGames(newFacebookStuff ? 10 : 20);
 
         // list of the top-200 games alphabetically (only include name and id)
-        data.allGames = Lists.newArrayList();
-        for (GameInfoRecord game : games.values()) {
-            data.allGames.add(game.toGameCard(0)); // playersOnline not needed here
+        data.allGames = bldr.buildAllGames();
+
+        if (newFacebookStuff) {
+            // for the facebook redesigned ui, we replace the genres with a "game wall"
+            data.gameWall = bldr.buildGameWall(data.topGames.size());
+
+        } else {
+            data.genres = bldr.buildGenres();
         }
-        Collections.sort(data.allGames, GameCard.BY_NAME);
-
-        // load up our genre counts
-        Map<GameGenre, Integer> genreCounts = _mgameRepo.loadGenreCounts();
-
-        // load information about the genres
-        List<ArcadeData.Genre> genres = Lists.newArrayList();
-        for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
-            ArcadeData.Genre genre = new ArcadeData.Genre();
-            genre.genre = gcode;
-            if (genreCounts.containsKey(gcode)) {
-                genre.gameCount = genreCounts.get(gcode);
-            }
-            if (genre.gameCount == 0) {
-                continue;
-            }
-
-            // filter out all the games in this genre
-            int max = 3 * ArcadeData.Genre.HIGHLIGHTED_GAMES;
-            List<GameCard> ggames = Lists.newArrayListWithCapacity(max);
-            for (GameInfoRecord grec : games.values()) {
-                // games rated less than 3 don't get on the main page
-                if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
-                    ggames.add(grec.toGameCard(getGamePop(pps, grec.gameId)));
-                    // stop when we've got 3*HIGHLIGHTED_GAMES
-                    if (ggames.size() == max) {
-                        break;
-                    }
-                }
-            }
-
-            // shuffle those and then sort them by players online
-            Collections.shuffle(ggames);
-            Collections.sort(ggames, new Comparator<GameCard>() {
-                public int compare (GameCard one, GameCard two) {
-                    return Comparators.compare(two.playersOnline, one.playersOnline);
-                }
-            });
-            // finally take N from that shuffled list as the games to show
-            CollectionUtil.limit(ggames, ArcadeData.Genre.HIGHLIGHTED_GAMES);
-            genre.games = ggames.toArray(new GameCard[ggames.size()]);
-
-            genres.add(genre);
-        }
-        data.genres = genres;
 
         return data;
     }
@@ -855,11 +776,196 @@ public class GameServlet extends MsoyServiceServlet
         return results;
     }
 
+    protected class ArcadeDataBuilder
+    {
+        public ArcadeDataBuilder (ArcadeData.Portal portal)
+        {
+            _portal = portal;
+
+            // load the hand-picked "top games"
+            _agames = _mgameRepo.loadArcadeEntries(portal, true);
+
+            // set up "approved" set for some portals
+            Set<Integer> approvedGames = null;
+            if (portal.isFiltered()) {
+                approvedGames = Sets.newHashSet(
+                    Lists.transform(_agames, ArcadeEntryRecord.TO_GAME_ID));
+            }
+
+            // load the top N (where N is large) games and build everything from that list
+            _games = Maps.newLinkedHashMap();
+            for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
+                // for filtered arcade portals, filter the whole map
+                if (approvedGames != null && !approvedGames.contains(grec.gameId)) {
+                    continue;
+                }
+                _games.put(grec.gameId, grec);
+            }
+        }
+
+        public GameInfo[] buildFeatured ()
+        {
+            ArrayIntSet creatorIds = new ArrayIntSet();
+            List<GameInfo> featured = Lists.newArrayList();
+            for (ArcadeEntryRecord topGame : _agames) {
+                if (!topGame.featured) {
+                    continue;
+                }
+                int gameId = topGame.gameId;
+                GameInfoRecord info = _games.get(gameId);
+                if (info == null) {
+                    continue;
+                }
+                featured.add(info.toGameInfo(getGamePop(_pps, gameId)));
+                creatorIds.add(info.creatorId);
+                if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
+                    break;
+                }
+            }
+
+            // resolve creator names
+            IntMap<MemberName> memberNames = _memberRepo.loadMemberNames(creatorIds);
+            for (GameInfo info : featured) {
+                info.creator = memberNames.get(info.creator.getMemberId());
+            }
+            return featured.toArray(new GameInfo[featured.size()]);
+        }
+
+        public List<GameCard> buildTopGames (int topGameCount)
+        {
+            List<GameCard> topGames = Lists.newArrayList();
+            for (GameInfoRecord game : _games.values()) {
+                topGames.add(game.toGameCard(getGamePop(_pps, game.gameId)));
+                if (topGames.size() == topGameCount) {
+                    break;
+                }
+            }
+            return topGames;
+        }
+
+        public List<GameCard> buildAllGames ()
+        {
+            List<GameCard> allGames = Lists.newArrayList();
+            for (GameInfoRecord game : _games.values()) {
+                allGames.add(game.toGameCard(0)); // playersOnline not needed here
+            }
+            Collections.sort(allGames, GameCard.BY_NAME);
+            return allGames;
+        }
+
+        public List<ArcadeData.Genre> buildGenres ()
+        {
+            // load up our genre counts
+            Map<GameGenre, Integer> genreCounts = _mgameRepo.loadGenreCounts();
+
+            // load information about the genres
+            List<ArcadeData.Genre> genres = Lists.newArrayList();
+            for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
+                ArcadeData.Genre genre = new ArcadeData.Genre();
+                genre.genre = gcode;
+                if (genreCounts.containsKey(gcode)) {
+                    genre.gameCount = genreCounts.get(gcode);
+                }
+                if (genre.gameCount == 0) {
+                    continue;
+                }
+
+                // filter out all the games in this genre
+                int max = 3 * ArcadeData.Genre.HIGHLIGHTED_GAMES;
+                List<GameCard> ggames = Lists.newArrayListWithCapacity(max);
+                for (GameInfoRecord grec : _games.values()) {
+                    // games rated less than 3 don't get on the main page
+                    if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
+                        ggames.add(grec.toGameCard(getGamePop(_pps, grec.gameId)));
+                        // stop when we've got 3*HIGHLIGHTED_GAMES
+                        if (ggames.size() == max) {
+                            break;
+                        }
+                    }
+                }
+
+                // shuffle those and then sort them by players online
+                Collections.shuffle(ggames);
+                Collections.sort(ggames, new Comparator<GameCard>() {
+                    public int compare (GameCard one, GameCard two) {
+                        return Comparators.compare(two.playersOnline, one.playersOnline);
+                    }
+                });
+                // finally take N from that shuffled list as the games to show
+                CollectionUtil.limit(ggames, ArcadeData.Genre.HIGHLIGHTED_GAMES);
+                genre.games = ggames.toArray(new GameCard[ggames.size()]);
+
+                genres.add(genre);
+            }
+            return genres;
+        }
+
+        public List<GameCard> buildGameWall (int topGameCount)
+        {
+            // load up games not in the top N
+            List<GameInfoRecord> remainder =
+                Lists.newArrayListWithExpectedSize(_games.size() - topGameCount);
+            int ii = 0;
+            for (GameInfoRecord game : _games.values()) {
+                if (ii++ >= topGameCount) {
+                    remainder.add(game);
+                }
+            }
+
+            // first 5 of 20 are randomly selected from the top 10 of the remainder
+            List<GameInfoRecord> top10 = remainder.subList(0, Math.min(remainder.size(), 10));
+            List<GameInfoRecord> wall = removeAndShuffleRandomSubset(top10, 5);
+
+            // the last 15 are random
+            wall.addAll(removeAndShuffleRandomSubset(remainder, 15));
+
+            // convert to cards
+            List<GameCard> result = Lists.newArrayListWithExpectedSize(wall.size());
+            for (GameInfoRecord grec : wall) {
+                result.add(grec.toGameCard(getGamePop(_pps, grec.gameId)));
+            }
+            return result;
+        }
+
+        protected List<ArcadeEntryRecord> _agames;
+        protected Map<Integer, GameInfoRecord> _games;
+        protected PopularPlacesSnapshot _pps = _memberMan.getPPSnapshot();
+        protected ArcadeData _data = new ArcadeData();
+        protected ArcadeData.Portal _portal;
+    }
+
     /** Helpy helper function. */
     protected static int getGamePop (PopularPlacesSnapshot pps, int gameId)
     {
         PopularPlacesSnapshot.Place ppg = pps.getGame(gameId);
         return (ppg == null) ? 0 : ppg.population;
+    }
+
+    /**
+     * Builds a list of elements of a given collection by removing random ones, up to a given size.
+     * Shuffles the result. Copied from {@link CollectionUtil#selectRandomSubset()} and modified.
+     */
+    protected static <T> List<T> removeAndShuffleRandomSubset (Collection<T> col, int count)
+    {
+        int csize = col.size();
+        ArrayList<T> subset = new ArrayList<T>(count);
+        Iterator<T> iter = col.iterator();
+        int s = 0;
+
+        for (int k = 0; iter.hasNext(); k++) {
+            T elem = iter.next();
+            float limit = ((float)(count - s)) / ((float)(csize - k));
+            if (Math.random() < limit) {
+                subset.add(elem);
+                iter.remove();
+                if (++s == count) {
+                    break;
+                }
+            }
+        }
+
+        Collections.shuffle(subset);
+        return subset;
     }
 
     // our dependencies

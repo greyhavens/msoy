@@ -93,14 +93,11 @@ public class ArcadeData
     /** The number of featured games we show on the Arcade page. */
     public static int FEATURED_GAME_COUNT = 5;
 
-    /** The number of top games to show on the arcade page */
-    public static int TOP_GAME_COUNT = 20;
-
     /** Info on the featured games. */
     public GameInfo[] featuredGames;
 
     /**
-     * Information about each game genre.
+     * Information about each game genre. Not used in Facebook portal mode.
      */
     public List<Genre> genres;
 
@@ -113,4 +110,11 @@ public class ArcadeData
      * List of top X games ordered by rank.
      */
     public List<GameCard> topGames;
+
+    /**
+     * More games that are not in the top games. First few will be a random selection of highly
+     * ranked games. Following is a random selection of all games. Only used in Facebook portal
+     * mode.
+     */
+    public List<GameCard> gameWall;
 }
