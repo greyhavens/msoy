@@ -93,7 +93,7 @@ public class FBFeaturedGamePanel extends AbsolutePanel
         // TODO: make the description float around the play button (I played trial-and-error with
         // this for 45 minutes and nothing worked... time to move on!)
         bits.setText(3, 0, MsoyUI.truncateParagraph(game.description, 100), 1, "description");
-        bits.setWidget(3, 1, PlayButton.createCustom(game.gameId, "play"), 1, "playCell");
+        bits.setWidget(3, 1, PlayButton.createCustom(game.gameId, "fbplayButton"), 1, "playCell");
         return bits;
     }
 

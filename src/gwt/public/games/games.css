@@ -1060,10 +1060,18 @@
   vertical-align: top;
 }
 
-.fbfeaturedGame td.playCell .play {
+/* ------------------------------------
+   Blue Play Button
+-------------------------------------*/
+
+.fbplayButton {
   background: url(/images/facebook/blue_play.png) no-repeat;
   width: 122px;
   height: 47px;
+}
+
+.fbplayButton-up-hovering, .fbplayButton-down-hovering {
+  background: url(/images/facebook/blue_play_over.png) no-repeat;
   cursor: pointer;
 }
 
