@@ -14,8 +14,6 @@ import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
-import com.threerings.msoy.game.gwt.GameGenre;
-import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
@@ -46,8 +44,7 @@ public class FBArcadePanel extends FlowPanel
     protected void init (final ArcadeData data)
     {
         clear();
-        add(_header = new FBGameHeaderPanel(_portal, "Featured Games", GameGenre.ALL,
-            GameInfo.Sort.BY_NAME));
+        add(_header = new FBGameHeaderPanel());
         _header.initWithCards(data.allGames);
 
         // top games

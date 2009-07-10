@@ -9,13 +9,9 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.web.gwt.Pages;
@@ -34,22 +30,28 @@ import client.util.Link;
  */
 public class FBGameHeaderPanel extends FlowPanel
 {
-    public FBGameHeaderPanel (ArcadeData.Portal portal, String titleText, GameGenre genre,
-        final GameInfo.Sort sort)
+    public FBGameHeaderPanel ()
     {
-        setStyleName("gameHeaderPanel");
-        _genre = genre;
+        setStyleName("fbgameHeaderPanel");
 
-        FlowPanel absbits = MsoyUI.createFlowPanel("Absolute");
-        add(absbits);
-        absbits.add(MsoyUI.createLabel(titleText, "GenreTitle"));
+        // genre links
+        FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
+        add(genreLinks);
+        genreLinks.add(Link.create(_dmsgs.xlate("genreBrief_" + GameGenre.ALL), Pages.GAMES, "g"));
+        for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
+            if (!ArcadeData.Portal.FACEBOOK.showGenre(gcode)) {
+                continue;
+            }
+            genreLinks.add(new InlineLabel("|"));
+            genreLinks.add(Link.create(_dmsgs.xlate("genreBrief_" + gcode),
+                                       Pages.GAMES, "g", gcode.toByte()));
+        }
 
         // find a game fast dropdown box
         FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
-        findGame.add(MsoyUI.createLabel(_msgs.genreFindGame(), "Title"));
-        absbits.add(findGame);
+        add(findGame);
         _findGameBox = new ListBox();
-        _findGameBox.addItem("", "");
+        _findGameBox.addItem("Jump To A Game Here", "");
         _findGameBox.addChangeHandler(new ChangeHandler() {
             public void onChange (ChangeEvent event) {
                 ListBox listBox = (ListBox) event.getSource();
@@ -60,44 +62,6 @@ public class FBGameHeaderPanel extends FlowPanel
             }
         });
         findGame.add(_findGameBox);
-
-        // search for games
-        FlowPanel search = MsoyUI.createFlowPanel("Search");
-        search.add(MsoyUI.createLabel(_msgs.genreSearch(), "Title"));
-        absbits.add(search);
-        _searchBox = MsoyUI.createTextBox("", 30, 20);
-        ClickHandler searchListener = new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                Link.go(Pages.GAMES, "g", _genre.toByte(), sort.toToken(), getQuery());
-            }
-        };
-        _searchBox.addKeyPressHandler(new EnterClickAdapter(searchListener));
-        search.add(_searchBox);
-        search.add(MsoyUI.createImageButton("GoButton", searchListener));
-
-        // add a link to the genre links
-        FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
-        add(genreLinks);
-        for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
-            if (!portal.showGenre(gcode)) {
-                continue;
-            }
-            if (genreLinks.getWidgetCount() > 0) {
-                genreLinks.add(new InlineLabel("|"));
-            }
-            genreLinks.add(Link.create(_dmsgs.xlate("genre_" + gcode),
-                                       Pages.GAMES, "g", gcode.toByte()));
-        }
-    }
-
-    public void setQuery (String query)
-    {
-        _searchBox.setText(query);
-    }
-
-    public String getQuery ()
-    {
-        return _searchBox.getText().trim();
     }
 
     protected void initWithCards (List<GameCard> games)
@@ -114,9 +78,7 @@ public class FBGameHeaderPanel extends FlowPanel
         }
     }
 
-    protected GameGenre _genre;
     protected ListBox _findGameBox;
-    protected TextBox _searchBox;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

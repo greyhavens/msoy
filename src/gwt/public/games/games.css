@@ -839,7 +839,7 @@
 }
 
 .fbarcade .TopGames {
-  top: 93px;
+  top: 44px;
 }
 
 .fbarcade .GameWall {
@@ -1085,5 +1085,32 @@
   width: 122px;
   height: 47px;
   cursor: pointer;
+}
+
+/* ------------------------------------
+   FBGameHeaderPanel
+-------------------------------------*/
+
+.fbgameHeaderPanel .FindGame {
+  position: absolute;
+  right: 0px;
+  top: 5px;
+}
+
+.fbgameHeaderPanel .FindGame select {
+  width: 200px;
+}
+
+.fbgameHeaderPanel .GenreLinks {
+  color: #3b5998;
+  font-size: 12px;
+  vertical-align: middle;
+  text-align: left;
+  padding-top: 10px;
+}
+
+.fbgameHeaderPanel .GenreLinks a {
+  margin: 0 5px 0 5px;
+  color: #3b5998;
 }
 
