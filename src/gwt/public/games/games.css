@@ -873,7 +873,7 @@
   border-bottom: solid #94a3c4 1px;
   background-color: white;
   width: 200px;
-  height: 46px;
+  height: 47px;
 }
 
 .fbarcade .TopGames .Number {
@@ -883,11 +883,11 @@
   font-weight: bold;
   text-align: center;
   width: 25px;
-  height: 30px;
+  height: 46px;
   float: left;
   border-left: solid #94a3c4 1px;
   border-right: solid #94a3c4 1px;
-  padding-top: 15px;
+  vertical-align: middle;
 }
 
 .fbarcade .TopGames .thumbBox {
