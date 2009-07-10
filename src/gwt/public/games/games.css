@@ -999,24 +999,6 @@
   margin-top: 5px;
 }
 
-.fbfeaturedGame .scroller td {
-  vertical-align: center;
-}
-
-.fbfeaturedGame .scroller td.dot {
-  width: 19px;
-}
-
-.fbfeaturedGame .scroller td.left {
-  width: 40px;
-  text-align: right;
-}
-
-.fbfeaturedGame .scroller td.right {
-  width: 40px;
-  text-align: left;
-}
-
 .fbfeaturedGame .bits {
   color: #3b5998;
   border: 1px solid #94a3c4;

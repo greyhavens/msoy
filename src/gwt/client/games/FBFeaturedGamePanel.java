@@ -5,9 +5,11 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -45,39 +47,32 @@ public class FBFeaturedGamePanel extends AbsolutePanel
         add(createGameBits(game), 198, 37);
     }
 
-    protected SmartTable createScroller (final int currentSelection)
+    protected Widget createScroller (final int currentSelection)
     {
-        String imgBase = "/images/facebook/scroller_";
-        SmartTable scroller = new SmartTable(0, 0);
-        scroller.setStyleName("scroller");
-        scroller.setWidget(0, 0, MsoyUI.createActionImage(imgBase + "left.png",
-            new ClickHandler() {
+        FloatPanel scroller = new FloatPanel("scroller");
+        scroller.add(MsoyUI.createImageButton("fbscrollLeft", new ClickHandler() {
             public void onClick (ClickEvent event) {
                 selectGame((currentSelection + _games.length-1) % _games.length);
             }
-        }), 1, "left");
+        }));
         final int SCROLL_COUNT = 5;
         for (int ii = 0; ii < SCROLL_COUNT; ++ii) {
             if (ii == currentSelection) {
-                scroller.setWidget(0, ii + 1,
-                    MsoyUI.createImage(imgBase + "selected.png", null), 1, "dot");
+                scroller.add(MsoyUI.createImageButton("fbscrollSelected", null));
             } else if (ii < _games.length) {
                 final int fii = ii;
-                scroller.setWidget(0, ii + 1,
-                    MsoyUI.createActionImage(imgBase + "deselected.png",
-                        new ClickHandler() {
-                        public void onClick (ClickEvent event) {
-                            selectGame(fii);
-                        }
-                    }), 1, "dot");
+                scroller.add(MsoyUI.createImageButton("fbscrollDeselected", new ClickHandler() {
+                    public void onClick (ClickEvent event) {
+                        selectGame(fii);
+                    }
+                }));
             }
         }
-        scroller.setWidget(0, SCROLL_COUNT + 1, MsoyUI.createActionImage(imgBase + "right.png",
-            new ClickHandler() {
+        scroller.add(MsoyUI.createImageButton("fbscrollRight", new ClickHandler() {
             public void onClick (ClickEvent event) {
                 selectGame((currentSelection + 1) % _games.length);
             }
-        }), 1, "right");
+        }));
         return scroller;
     }
 

@@ -1235,6 +1235,47 @@ img, embed, applet, object {
   background-position: right;
 }
 
+/** FACBOOK APP SCROLL BUTTONS */
+
+.fbscrollLeft {
+  background: url(/images/facebook/scroller_left.png) no-repeat center;
+  width: 39px;
+  height: 22px;
+}
+
+.fbscrollLeft-up-hovering, .fbscrollLeft-down-hovering {
+  background: url(/images/facebook/scroller_left_over.png) no-repeat center;
+  cursor: pointer;
+}
+
+.fbscrollRight {
+  background: url(/images/facebook/scroller_right.png) no-repeat center;
+  width: 39px;
+  height: 22px;
+}
+
+.fbscrollRight-up-hovering, .fbscrollRight-down-hovering {
+  background: url(/images/facebook/scroller_right_over.png) no-repeat center;
+  cursor: pointer;
+}
+
+.fbscrollSelected {
+  background: url(/images/facebook/scroller_selected.png) no-repeat center;
+  width: 19px;
+  height: 22px;
+}
+
+.fbscrollDeselected {
+  background: url(/images/facebook/scroller_deselected.png) no-repeat center;
+  width: 19px;
+  height: 22px;
+}
+
+.fbscrollDeselected-up-hovering, .fbscrollDeselected-down-hovering {
+  background: url(/images/facebook/scroller_deselected_over.png) no-repeat center;
+  cursor: pointer;
+}
+
 /* ------------------------------------
    CONTEST BOX
 -------------------------------------*/
