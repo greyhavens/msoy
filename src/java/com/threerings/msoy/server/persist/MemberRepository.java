@@ -25,6 +25,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.CacheKey;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.util.ByteEnumUtil;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
@@ -1086,7 +1087,13 @@ public class MemberRepository extends DepotRepository
         Map<ExternalAuther, String> authers = Maps.newHashMap();
         for (ExternalMapRecord emr : findAll(ExternalMapRecord.class,
                                              new Where(ExternalMapRecord.MEMBER_ID, memberId))) {
-            authers.put(ExternalAuther.fromByte((byte)emr.partnerId), emr.externalId);
+            ExternalAuther auther;
+            try {
+                auther = ByteEnumUtil.fromByte(ExternalAuther.class, (byte)emr.partnerId);
+            } catch (Exception e) {
+                auther = null;
+            }
+            authers.put(auther, emr.externalId);
         }
         return authers;
     }

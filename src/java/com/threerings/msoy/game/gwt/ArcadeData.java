@@ -49,17 +49,6 @@ public class ArcadeData
             }
         };
 
-        // for ByteEnum
-        public static Portal fromByte (byte val)
-        {
-            for (Portal ap : values()) {
-                if (ap.toByte() == val) {
-                    return ap;
-                }
-            }
-            throw new IllegalArgumentException();
-        }
-
         /**
          * Tests whether the given genre should be displayed when viewing a list of genres.
          */

@@ -8,6 +8,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.samskivert.depot.ByteEnum;
+import com.samskivert.depot.util.ByteEnumUtil;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.GroupName;
@@ -56,18 +57,6 @@ public class Group
         // from ByteEnum
         public byte toByte () {
             return _value;
-        }
-
-        /**
-         * Translates a persisted value back to an instance.
-         */
-        public static Perm fromByte (byte b) {
-            for (Perm e : values()) {
-                if (e._value == b) {
-                    return e;
-                }
-            }
-            throw new IllegalArgumentException("Perm not found for value " + b);
         }
 
         Perm (byte value) {
@@ -193,8 +182,8 @@ public class Group
         // we need to take the max because a bug during 2008 (april to december) that allowed
         // forum perms to be insterted as zero, which is out of range
         // TODO: migrate old permission values to max(1, old)
-        threadPerm = Perm.fromByte((byte)(Math.max(1, (forumPerms >> 4) & 0xf)));
-        postPerm = Perm.fromByte((byte)(Math.max(1, forumPerms & 0xf)));
+        threadPerm = ByteEnumUtil.fromByte(Perm.class, (byte)Math.max(1, (forumPerms >> 4) & 0xf));
+        postPerm = ByteEnumUtil.fromByte(Perm.class, (byte)Math.max(1, forumPerms & 0xf));
     }
 
     /**

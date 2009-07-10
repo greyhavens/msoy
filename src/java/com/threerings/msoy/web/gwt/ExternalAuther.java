@@ -18,19 +18,6 @@ public enum ExternalAuther
     // these must fit in a bitmask in MemberRecord so we have to stop here
     UNUSED(32);
 
-    /**
-     * Returns the {@link ExternalAuther} associated with the supplied code or null.
-     */
-    public static ExternalAuther fromByte (byte code)
-    {
-        for (ExternalAuther ea : ExternalAuther.values()) {
-            if (ea.toByte() == code) {
-                return ea;
-            }
-        }
-        return null;
-    }
-
     // from ByteEnum
     public byte toByte () {
         return _code;
@@ -43,5 +30,5 @@ public enum ExternalAuther
         _code = (byte)code;
     }
 
-    protected byte _code;
+    protected transient byte _code;
 }

@@ -10,6 +10,8 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.samskivert.depot.util.ByteEnumUtil;
+
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.ServiceUtil;
@@ -163,7 +165,7 @@ public class InventoryModels
     {
         Item item = findItem(event.getItemType(), event.getItemId());
         if (item != null) {
-            item.used = Item.UsedAs.fromByte(event.getUsage());
+            item.used = ByteEnumUtil.fromByte(Item.UsedAs.class, event.getUsage());
             item.location = event.getLocation();
             // TODO: update lastTouched time locally?
 

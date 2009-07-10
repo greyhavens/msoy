@@ -5,6 +5,8 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 
+import com.samskivert.depot.util.ByteEnumUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
@@ -45,9 +47,9 @@ public class GamesPage extends Page
                 new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
 
         } else if (action.equals("g")) {
-            setContent(new GameGenrePanel(getDefaultPortal(), GameGenre.fromByte(
-                args.get(1, GameGenre.ALL.toByte())), GameInfo.Sort.fromToken(args.get(2, "")),
-                args.get(3, null)));
+            setContent(new GameGenrePanel(getDefaultPortal(),
+                ByteEnumUtil.fromByte(GameGenre.class, args.get(1, GameGenre.ALL.toByte())),
+                GameInfo.Sort.fromToken(args.get(2, "")), args.get(3, null)));
 
         } else if (action.equals("m")) {
             setContent(new MyGamesPanel(GameInfo.Sort.fromToken(args.get(1, ""))));
@@ -69,7 +71,8 @@ public class GamesPage extends Page
 
         } else if (action.equals("aa")) {
             byte portal = args.get(1, ArcadeData.Portal.MAIN.toByte());
-            setContent(new AddArcadeEntriesPanel(ArcadeData.Portal.fromByte(portal),
+            setContent(new AddArcadeEntriesPanel(
+                ByteEnumUtil.fromByte(ArcadeData.Portal.class, portal),
                 GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
         } else if (action.equals("p")) { // portal

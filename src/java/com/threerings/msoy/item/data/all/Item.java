@@ -120,11 +120,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
          * appropriate). The 'location' field will contain the sceneId. */
         BACKGROUND(4);
 
-        public static UsedAs fromByte (byte value)
-        {
-            return _usedLookup.get(value);
-        }
-
         public byte toByte ()
         {
             return _value;
@@ -138,10 +133,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
         UsedAs (int value)
         {
             _value = (byte)value;
-            if (_usedLookup == null) {
-                _usedLookup = new HashMap<Byte, UsedAs>();
-            }
-            _usedLookup.put(_value, this);
         }
 
         protected byte _value;
@@ -628,5 +619,4 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
     private static HashMap<Byte, Class<? extends Item>> _mapping;
     private static HashMap<Class<? extends Item>, Byte> _reverseMapping;
-    protected static Map<Byte, UsedAs> _usedLookup;
 }

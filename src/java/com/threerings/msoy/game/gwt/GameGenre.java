@@ -20,19 +20,6 @@ public enum GameGenre
         WORD, CARD_BOARD, SPORTS_RACING, OTHER
     };
 
-    /**
-     * Returns the genre for the supplied byte code.
-     */
-    public static GameGenre fromByte (byte b)
-    {
-        for (GameGenre genre : values()) {
-            if (genre.toByte() == b) {
-                return genre;
-            }
-        }
-        throw new IllegalArgumentException("No genre with byte code: " + b);
-    }
-
     // from interface ByteEnum
     public byte toByte ()
     {
