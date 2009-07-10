@@ -27,8 +27,13 @@ public class PageFrame extends Frame
         super("/gwt/" + DeploymentConfig.version + "/" + page.getPath() + "/");
         setStyleName("pageIFrame");
         getElement().setAttribute("name", Page.FRAME_ID_PREFIX + id);
+
         // IE ignores the above, so set the id too
         getElement().setId(Page.FRAME_ID_PREFIX + id);
+
+        // IE defaults to using a sunken border on iframes, clear it
+        // NOTE: this attribute is case sensitive!!1! omg!! JFC on a bike, we all work for MS
+        getElement().setAttribute("frameBorder", "0");
     }
 
     /**
