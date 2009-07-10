@@ -71,9 +71,9 @@ public class FacebookLayout extends FramedLayout
     }
 
     @Override // from FramedLayout
-    protected int getReservedHeight ()
+    protected int calcMainContentHeight (TitleBar bar)
     {
-        return FB_FRAME_HEIGHT;
+        return bottomContentEnabled() ? 550 : super.calcMainContentHeight(bar);
     }
 
     protected static boolean bottomContentEnabled ()
