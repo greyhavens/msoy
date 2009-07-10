@@ -4,6 +4,7 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,37 +50,84 @@ public class FBArcadePanel extends FlowPanel
             GameInfo.Sort.BY_NAME));
         _header.initWithCards(data.allGames);
 
-        // show the top N games
+        // top games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
         topGames.add(MsoyUI.createLabel("Top 10 Games", "title"));
         add(topGames);
-        for (int i = 0; i < data.topGames.size(); i++) {
-            topGames.add(new TopGameWidget(i + 1, data.topGames.get(i)));
+        int ii;
+        for (ii = 0; ii < data.topGames.size(); ii++) {
+            topGames.add(createTopGameWidget(ii + 1, data.topGames.get(ii)));
         }
 
+        // pad out for testing
+        if (data.topGames.size() > 0) {
+            for (; ii < 10; ++ii) {
+                int rnd = (int)(Math.random() * data.topGames.size());
+                topGames.add(createTopGameWidget(ii + 1, data.topGames.get(rnd)));
+            }
+        }
+
+        // featured games
         add(new FBFeaturedGamePanel(data.featuredGames));
+
+        // game wall
+        AbsolutePanel gameWall = new AbsolutePanel();
+        gameWall.setStyleName("GameWall");
+        gameWall.add(MsoyUI.createLabel("Featured Games", "title"));
+        SmartTable grid = new SmartTable("Grid", 0, 0);
+        gameWall.add(grid);
+        int cell = 1;
+        for (GameCard wallGame : data.gameWall) {
+            grid.setWidget(cell / 3, cell % 3, createWallGameWidget(wallGame), 1, "WallCell");
+            cell++;
+        }
+
+        // pad out for testing
+        if (data.topGames.size() > 0) {
+            for (;cell <= 20; cell++) {
+                int rnd = (int)(Math.random() * data.topGames.size());
+                grid.setWidget(cell / 3, cell % 3,
+                    createWallGameWidget(data.topGames.get(rnd)), 1, "WallCell");
+            }
+        }
+
+        add(gameWall);
     }
 
     /**
-     * Display a game in the Top X Games list
+     * Creates a widget displaying a top game.
      */
-    protected static class TopGameWidget extends SmartTable
+    protected SmartTable createTopGameWidget (int index, GameCard game)
     {
-        public TopGameWidget (int index, GameCard game) {
-            super("TopGameWidget", 0, 0);
-            setText(0, 0, index+"", 1, "Number");
-            setWidget(0, 1, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
-                                         Pages.GAMES, "d", game.gameId));
-            Widget link = Link.createBlock(game.name, "Name", Pages.GAMES, "d", game.gameId);
-            if (game.playersOnline == 0) {
-                setWidget(0, 2, link, 1, "Info");
-            } else {
-                FlowPanel bits = new FlowPanel();
-                bits.add(link);
-                bits.add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline),
-                                            "tipLabel"));
-                setWidget(0, 2, bits);
-            }
+        SmartTable table = new SmartTable("TopGameWidget", 0, 0);
+        table.setText(0, 0, index+"", 1, "Number");
+        addGame(table, 0, 1, game);
+        return table;
+    }
+
+    /**
+     * Creates a widget displaying a wall game.
+     */
+    protected SmartTable createWallGameWidget (GameCard game)
+    {
+        SmartTable table = new SmartTable("WallGameWidget", 0, 0);
+        addGame(table, 0, 0, game);
+        return table;
+    }
+
+    protected void addGame (SmartTable table, int row, int startCol, GameCard game)
+    {
+        table.setWidget(row, startCol, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+                                                    Pages.GAMES, "d", game.gameId));
+        Widget link = Link.createBlock(game.name, "Name", Pages.GAMES, "d", game.gameId);
+        if (game.playersOnline == 0) {
+            table.setWidget(row, startCol+1, link, 1, "Info");
+        } else {
+            FlowPanel bits = new FlowPanel();
+            bits.add(link);
+            bits.add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline),
+                                        "tipLabel"));
+            table.setWidget(row, startCol+1, bits);
         }
     }
 

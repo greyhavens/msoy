@@ -842,6 +842,11 @@
   top: 93px;
 }
 
+.fbarcade .GameWall {
+  left: 215px;
+  top: 30px;
+}
+
 /* ------------------------------------
    FBArcadePanel - top 10 games
 -------------------------------------*/
@@ -903,11 +908,64 @@
   overflow: hidden;
 }
 
-.fbarcade .TopGames .Name .actionLabel {
+.fbarcade .TopGames .Name a {
   text-decoration: none;
 }
 
-.fbarcade .TopGames .TopGameWidget:hover .Name .actionLabel {
+.fbarcade .TopGames .TopGameWidget:hover .Name a {
+  text-decoration: underline;
+}
+
+/* ------------------------------------
+   FBArcadePanel - game wall
+-------------------------------------*/
+.fbarcade .GameWall {
+  background: url(/images/facebook/wall_background.png) #FFFFFF no-repeat;
+  width: 545px;
+  height: 293px;
+}
+
+.fbarcade .GameWall .title {
+  position: absolute;
+  width: 159px;
+  height: 36px;
+  top: 7px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.fbarcade .GameWall .WallCell {
+  width: 100px;
+}
+
+.fbarcade .GameWall .WallGameWidget {
+  width: 180px;
+  height: 42px;
+}
+
+.fbarcade .GameWall .thumbBox {
+  float: left;
+  width: 40px;
+  height: 31px;
+  text-align: center;
+  padding-left: 15px;
+}
+
+.fbarcade .GameWall .Name {
+  width: 100px;
+  color: #1c5988;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.fbarcade .GameWall .Name a {
+  text-decoration: none;
+}
+
+.fbarcade .GameWall .WallGameWidget:hover .Name a {
   text-decoration: underline;
 }
 
