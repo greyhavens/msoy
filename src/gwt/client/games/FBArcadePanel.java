@@ -4,6 +4,7 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,7 +28,7 @@ import client.util.PageCallback;
 /**
  * Main game display.
  */
-public class FBArcadePanel extends FlowPanel
+public class FBArcadePanel extends AbsolutePanel
 {
     public FBArcadePanel (ArcadeData.Portal portal)
     {
@@ -50,7 +51,8 @@ public class FBArcadePanel extends FlowPanel
         // top games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
         topGames.add(MsoyUI.createLabel("Top 10 Games", "title"));
-        add(topGames);
+        add(makeAbsolute(topGames));
+        DOM.setStyleAttribute(topGames.getElement(), "position", "absolute");
         int ii;
         for (ii = 0; ii < data.topGames.size(); ii++) {
             topGames.add(createTopGameWidget(ii + 1, data.topGames.get(ii)));
@@ -65,7 +67,7 @@ public class FBArcadePanel extends FlowPanel
         }
 
         // featured games
-        add(new FBFeaturedGamePanel(data.featuredGames));
+        add(makeAbsolute(new FBFeaturedGamePanel(data.featuredGames)));
 
         // game wall
         AbsolutePanel gameWall = new AbsolutePanel();
@@ -88,7 +90,13 @@ public class FBArcadePanel extends FlowPanel
             }
         }
 
-        add(gameWall);
+        add(makeAbsolute(gameWall));
+    }
+
+    protected Widget makeAbsolute (Widget w)
+    {
+        DOM.setStyleAttribute(w.getElement(), "position", "absolute");
+        return w;
     }
 
     /**

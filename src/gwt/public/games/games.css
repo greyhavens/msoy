@@ -835,16 +835,16 @@
 
 .fbarcade .fbfeaturedGame {
   left: 215px;
-  top: 20px;
+  top: 43px;
 }
 
 .fbarcade .TopGames {
-  top: 44px;
+  top: 43px;
 }
 
 .fbarcade .GameWall {
   left: 215px;
-  top: 30px;
+  top: 249px;
 }
 
 /* ------------------------------------
@@ -853,7 +853,6 @@
 
 .fbarcade .TopGames {
   width: 200px;
-  position: absolute;
   background: url(/images/facebook/top_games_background.png) #3e5d9e no-repeat;
 }
 
@@ -874,7 +873,7 @@
   border-bottom: solid #94a3c4 1px;
   background-color: white;
   width: 200px;
-  height: 45px;
+  height: 46px;
 }
 
 .fbarcade .TopGames .Number {
