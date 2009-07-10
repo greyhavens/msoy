@@ -83,5 +83,5 @@ public class FacebookLayout extends FramedLayout
     }
 
     protected SimplePanel _bottomContent;
-    protected static final int FB_FRAME_HEIGHT = bottomContentEnabled() ? 150 : 0;
+    protected static final int FB_FRAME_HEIGHT = bottomContentEnabled() ? 189 : 0;
 }

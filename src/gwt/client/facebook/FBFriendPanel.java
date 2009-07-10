@@ -25,12 +25,18 @@ public class FBFriendPanel extends FlowPanel
      */
     public FBFriendPanel (FacebookFriendInfo info, int rank)
     {
-        setStyleName("FriendInfo");
+        setStyleName("friendInfo");
+        if (info == null) {
+            add(MsoyUI.createLabel("TODO:", null));
+            add(MsoyUI.createLabel("Invite", null));
+            return;
+        }
+
         int halfSize = MediaDesc.HALF_THUMBNAIL_SIZE;
         String uid = String.valueOf(info.facebookUid);
-        add(new FBMLPanel("name", "uid", uid, "linked", "false"));
+        add(new FBMLPanel("name", "uid", uid, "linked", "false", "firstnameonly", "true"));
         add(MsoyUI.createLabel("Rank " + (rank + 1), null));
-        add(new FBMLPanel("profile-pic", "uid", uid, "linked", "false"));
+        add(new FBMLPanel("profile-pic", "uid", uid, "linked", "false", "size", "square"));
         add(MsoyUI.createLabel("Level " + info.level, null));
         add(MsoyUI.createLabel("Coins " + info.coins, null));
         Thumbnail lastGame = info.lastGame;
