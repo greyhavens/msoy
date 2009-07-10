@@ -40,17 +40,6 @@ public enum TransactionType
     SUBSCRIPTION_PURCHASE(25),
     ;
 
-    // Required by ByteEnum
-    public static TransactionType fromByte (byte value)
-    {
-        for (TransactionType type : values()) {
-            if (type.toByte() == value) {
-                return type;
-            }
-        }
-        throw new IllegalArgumentException("Invalid byte for TransactionType creation: " + value);
-    }
-
     // from ByteEnum
     public byte toByte ()
     {

@@ -36,18 +36,6 @@ public class GroupMembership
             return _value;
         }
 
-        /**
-         * Translates a persisted value back to an instance, for depot.
-         */
-        public static Rank fromByte (byte b) {
-            for (Rank r : values()) {
-                if (r._value == b) {
-                    return r;
-                }
-            }
-            throw new IllegalArgumentException("Rank not found for value " + b);
-        }
-
         Rank (byte value)
         {
             _value = value;

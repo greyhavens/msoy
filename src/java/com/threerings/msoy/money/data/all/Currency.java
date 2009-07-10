@@ -46,19 +46,6 @@ public enum Currency
     /** Returns whether or not some cost is a valid amount to be listed with this currency. */
     public abstract boolean isValidCost (int cost);
 
-    /**
-     * Translate a byte back into the Currency instance- required by ByteEnum.
-     */
-    public static Currency fromByte (byte value)
-    {
-        for (Currency cur : values()) {
-            if (cur.toByte() == value) {
-                return cur;
-            }
-        }
-        throw new IllegalArgumentException("Invalid byte for Currency creation: " + value);
-    }
-
     // from ByteEnum
     public byte toByte ()
     {

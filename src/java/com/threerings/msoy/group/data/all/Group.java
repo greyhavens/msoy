@@ -39,18 +39,6 @@ public class Group
             return _value;
         }
 
-        /**
-         * Translates a persisted value back to an instance, for depot.
-         */
-        public static Policy fromByte (byte b) {
-            for (Policy p : values()) {
-                if (p._value == b) {
-                    return p;
-                }
-            }
-            throw new IllegalArgumentException("Policy not found for value " + b);
-        }
-
         Policy (byte value) {
             _value = value;
         }
@@ -71,7 +59,7 @@ public class Group
         }
 
         /**
-         * Translates a persisted value back to an instance, for depot.
+         * Translates a persisted value back to an instance.
          */
         public static Perm fromByte (byte b) {
             for (Perm e : values()) {

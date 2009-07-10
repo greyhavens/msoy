@@ -31,14 +31,6 @@ public class SurveyQuestion
         /** Answer is text. */
         FREE_FORM;
 
-        /**
-         * Translate a byte back into the Type instance- required by ByteEnum.
-         */
-        public static Type fromByte (byte value)
-        {
-            return values()[value];
-        }
-
         // from ByteEnum
         public byte toByte ()
         {
