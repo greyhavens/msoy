@@ -10,9 +10,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -34,9 +36,12 @@ public class FBGameHeaderPanel extends FlowPanel
     {
         setStyleName("fbgameHeaderPanel");
 
+        SmartTable contents = new SmartTable(0, 0);
+        add(contents);
+
         // genre links
         FlowPanel genreLinks = MsoyUI.createFlowPanel("GenreLinks");
-        add(genreLinks);
+        contents.setWidget(0, 0, genreLinks, 1, "GenreLinksCell");
         genreLinks.add(Link.create(_dmsgs.xlate("genreBrief_" + GameGenre.ALL), Pages.GAMES, "g"));
         for (GameGenre gcode : GameGenre.DISPLAY_GENRES) {
             if (!ArcadeData.Portal.FACEBOOK.showGenre(gcode)) {
@@ -49,7 +54,7 @@ public class FBGameHeaderPanel extends FlowPanel
 
         // find a game fast dropdown box
         FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
-        add(findGame);
+        contents.setWidget(0, 1, findGame, 1, "FindGameCell");
         _findGameBox = new ListBox();
         _findGameBox.addItem("Jump To A Game Here", "");
         _findGameBox.addChangeHandler(new ChangeHandler() {

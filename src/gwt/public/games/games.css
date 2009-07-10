@@ -860,7 +860,7 @@
 .fbarcade .TopGames .title {
   position: relative;
   top: 5px;
-  width: 178px;
+  width: 200px;
   height: 30px;
   vertical-align: middle;
   text-align: center;
@@ -1091,22 +1091,34 @@
    FBGameHeaderPanel
 -------------------------------------*/
 
-.fbgameHeaderPanel .FindGame {
-  position: absolute;
-  right: 0px;
-  top: 5px;
+.fbgameHeaderPanel {
+  padding-top: 8px;
+  padding-bottom: 14px;
+}
+
+.fbgameHeaderPanel table {
+  width: 100%;
+}
+
+.fbgameHeaderPanel td {
+  vertical-align: middle;
+}
+
+.fbgameHeaderPanel .FindGameCell {
+  text-align: right;
 }
 
 .fbgameHeaderPanel .FindGame select {
   width: 200px;
 }
 
+.fbgameHeaderPanel .GenreLinksCell {
+  text-align: left;
+}
+
 .fbgameHeaderPanel .GenreLinks {
   color: #3b5998;
   font-size: 12px;
-  vertical-align: middle;
-  text-align: left;
-  padding-top: 10px;
 }
 
 .fbgameHeaderPanel .GenreLinks a {
