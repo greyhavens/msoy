@@ -467,7 +467,8 @@ public class GameServlet extends MsoyServiceServlet
         GameCodeRecord crec = new GameCodeRecord();
         crec.gameId = grec.gameId;
         crec.isDevelopment = true;
-        crec.config = "";
+        crec.config = "<game>" +
+            "<match type=\"0\"><min_seats>1</min_seats><max_seats>1</max_seats></match></game>";
         crec.clientMediaHash = MediaDesc.unmakeHash(clientCode);
         crec.clientMimeType = MediaDesc.unmakeMimeType(clientCode);
         _mgameRepo.updateGameCode(crec);
