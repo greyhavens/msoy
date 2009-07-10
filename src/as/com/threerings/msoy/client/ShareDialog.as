@@ -122,7 +122,7 @@ public class ShareDialog extends FloatingPanel
         var box :VBox = createContainer("t.social_share");
         box.setStyle("horizontalAlign", "center");
 
-        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("m.social_share")));
+        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.social_share"), 400));
 
         var row :HBox = new HBox();
         row.percentWidth = 100;
@@ -296,7 +296,7 @@ public class ShareDialog extends FloatingPanel
     protected function createLinkBox () :VBox
     {
         var box :VBox = createContainer("t.grab_link");
-        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.link_instruction")));
+        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("l.link_instruction"), 400));
         var text :CopyableText;
         function updateLink () :void {
             if (text != null) {
@@ -345,7 +345,7 @@ public class ShareDialog extends FloatingPanel
     protected function createEmbedBox () :VBox
     {
         var box :VBox = createContainer("t.embed");
-        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_choose_size")));
+        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("l.embed_choose_size"), 400));
 
         var code :TextInput = new TextInput();
         var checks :HBox = new HBox();
