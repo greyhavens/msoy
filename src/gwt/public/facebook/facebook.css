@@ -143,3 +143,24 @@
   text-align: center;
 }
 
+.friendInfo .RankIcon {
+  position: absolute;
+  background-repeat: no-repeat;
+  width: 21px;
+  height: 28px;
+  right: 3px;
+  top: 1px;
+}
+
+.friendInfo .RankIcon[gamerank="1"] {
+  background-image: url(/images/facebook/medal_1.png)
+}
+
+.friendInfo .RankIcon[gamerank="2"] {
+  background-image: url(/images/facebook/medal_2.png)
+}
+
+.friendInfo .RankIcon[gamerank="3"] {
+  background-image: url(/images/facebook/medal_3.png)
+}
+

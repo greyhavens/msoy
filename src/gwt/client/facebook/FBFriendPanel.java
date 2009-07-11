@@ -9,6 +9,7 @@ import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
@@ -39,8 +40,14 @@ public class FBFriendPanel extends AbsolutePanel
         String uid = String.valueOf(info.facebookUid);
         add(MsoyUI.createFlowPanel("Name",
             new FBMLPanel("name", "uid", uid, "linked", "false", "firstnameonly", "true")));
-        // TODO: medal graphics for 1,2 & 3
-        add(MsoyUI.createLabel("" + rank, "Rank"));
+
+        if (rank <= 3) {
+            FlowPanel rankIcon = MsoyUI.createFlowPanel("RankIcon");
+            rankIcon.getElement().setAttribute("gamerank", String.valueOf(rank));
+            add(rankIcon);
+        } else {
+            add(MsoyUI.createLabel("" + rank, "Rank"));
+        }
         add(MsoyUI.createFlowPanel("Photo",
             new FBMLPanel("profile-pic", "uid", uid, "linked", "false", "size", "square")));
         add(MsoyUI.createLabel(convertToText(info.coins), "Coins"));
