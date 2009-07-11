@@ -3,11 +3,9 @@
 
 package client.facebook;
 
-import client.ui.MsoyUI;
-import client.ui.ThumbBox;
-import client.util.Link;
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -17,6 +15,10 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo.Thumbnail;
+
+import client.ui.MsoyUI;
+import client.ui.ThumbBox;
+import client.util.Link;
 
 /**
  * Displays a single {@link FacebookFriendInfo}.
@@ -29,12 +31,15 @@ public class FBFriendPanel extends AbsolutePanel
     public FBFriendPanel (FacebookFriendInfo info, int rank)
     {
         setStyleName("friendInfo");
-        addStyleName(rank % 2 == 0 ? "friendInfoEven" : "friendInfoOdd");
         if (info == null) {
-            add(MsoyUI.createLabel("TODO:", null));
-            add(MsoyUI.createLabel("Invite", null));
+            addStyleName("friendInfoEmpty");
+            add(MsoyUI.createImageButton("InviteButton",
+                Link.createHandler(Pages.FACEBOOK, "invite")));
+            add(MsoyUI.createLabel(_msgs.inviteTip(), "InviteTip"));
             return;
         }
+
+        addStyleName(rank % 2 == 0 ? "friendInfoEven" : "friendInfoOdd");
 
         int halfSize = MediaDesc.HALF_THUMBNAIL_SIZE;
         String uid = String.valueOf(info.facebookUid);

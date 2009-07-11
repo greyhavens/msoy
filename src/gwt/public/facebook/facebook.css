@@ -59,6 +59,10 @@
   background: url(/images/facebook/friend_background_even.png) no-repeat;
 }
 
+.friendInfoEmpty {
+  background: url(/images/facebook/friend_background_empty.png) no-repeat;
+}
+
 .friendInfo .Name {
   position: absolute;
   width: 104px;
@@ -162,5 +166,30 @@
 
 .friendInfo .RankIcon[gamerank="3"] {
   background-image: url(/images/facebook/medal_3.png)
+}
+
+.friendInfo .InviteButton {
+  background: url(/images/facebook/friend_bar_invite.png) no-repeat;
+  position: absolute;
+  bottom: 42px;
+  left: 13px;
+  width: 79px;
+  height: 30px;
+}
+
+.friendInfo .InviteButton-up-hovering, .friendInfo .InviteButton-down-hovering {
+  background: url(/images/facebook/friend_bar_invite_over.png) no-repeat;
+  cursor: pointer;
+}
+
+.friendInfo .InviteTip {
+  position: absolute;
+  width: 98px;
+  height: 34px;
+  bottom: 4px;
+  text-align: center;
+  font-size: 12px;
+  color: #FFFFFF;
+  white-space: normal;
 }
 
