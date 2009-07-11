@@ -263,7 +263,7 @@
   height: 1400px;
 }
 
-.arcade .featuredGame, .arcade .fbfeaturedGame {
+.arcade .featuredGame {
   left: 225px;
   top: 20px;
 }
