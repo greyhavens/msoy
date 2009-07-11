@@ -44,5 +44,102 @@
 .friendInfo {
   font-size: 9px;
   text-align: center;
+  width: 104px;
+  height: 146px;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 1px;
+}
+
+.friendInfoOdd {
+  background: url(/images/facebook/friend_background_odd.png) no-repeat;
+}
+
+.friendInfoEven {
+  background: url(/images/facebook/friend_background_even.png) no-repeat;
+}
+
+.friendInfo .Name {
+  position: absolute;
+  width: 104px;
+  height: 20px;
+  font-size: 12px;
+  color: #FFFFFF;
+  padding-top: 2px;
+}
+
+.friendInfo .Rank {
+  position: absolute;
+  width: 25px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #FFFFFF;
+  right: 0px;
+  padding-top: 2px;
+}
+
+.friendInfo .Photo {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 24px;
+  left: 16px;
+}
+
+.friendInfo .Coins {
+  position: absolute;
+  width: 32px;
+  height: 11px;
+  font-size: 9px;
+  color: #3b5998;
+  right: 1px;
+  bottom: 74px;
+}
+
+.friendInfo .CoinIcon {
+  background: url(/images/facebook/coin_stack.png) no-repeat;
+  position: absolute;
+  width: 16px;
+  height: 11px;
+  right: 32px;
+  bottom: 75px;
+}
+
+.friendInfo .thumbBox {
+  position: absolute;
+  left: 16px;
+  bottom: 25px;
+}
+
+.friendInfo .Trophies {
+  position: absolute;
+  width: 22px;
+  height: 11px;
+  font-size: 9px;
+  color: #3b5998;
+  right: 1px;
+  bottom: 23px;
+}
+
+
+.friendInfo .TrophyIcon {
+  background: url(/images/facebook/trophy.png) no-repeat;
+  position: absolute;
+  width: 17px;
+  height: 11px;
+  right: 22px;
+  bottom: 24px;
+}
+
+.friendInfo .Game {
+  position: absolute;
+  width: 104px;
+  height: 20px;
+  font-size: 12px;
+  color: black;
+  bottom: 1px;
+  left: 0px;
+  text-align: center;
 }
 

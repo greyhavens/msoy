@@ -69,10 +69,10 @@ public class FBFriendBar extends FlowPanel
     {
         _friendPanels = new ArrayList<FBFriendPanel>(friends.size());
         for (int ii = 0, ll = friends.size(); ii < ll; ++ii) {
-            _friendPanels.add(new FBFriendPanel(friends.get(ii), ii));
+            _friendPanels.add(new FBFriendPanel(friends.get(ii), ii + 1));
         }
         while (_friendPanels.size() < FRIEND_COUNT) {
-            _friendPanels.add(new FBFriendPanel(null, 0));
+            _friendPanels.add(new FBFriendPanel(null, _friendPanels.size() + 1));
         }
         _offset = 0;
         update();
