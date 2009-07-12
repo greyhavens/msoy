@@ -326,8 +326,10 @@
 
     <!-- copy our HTML sanitizer configuration -->
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
+  </target>
 
-    <!-- defines our various presents ant tasks -->
+  <!-- defines our various presents ant tasks -->
+  <target name="toolprep" depends="prepare">
     <taskdef resource="com/threerings/presents/tools.properties"
              classpath="${deploy.dir}/lib/narya-tools-0.0-SNAPSHOT.jar"/>
   </target>
@@ -833,7 +835,7 @@
   </target>
 
   <!-- generates additional methods for distributed object classes -->
-  <target name="gendobj" depends="prepare">
+  <target name="gendobj" depends="toolprep">
     <!-- make sure the dobject class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
@@ -847,7 +849,7 @@
   </target>
 
   <!-- generates marshaller and dispatcher classes for all invocation service declarations -->
-  <target name="genservice" depends="prepare">
+  <target name="genservice" depends="toolprep">
     <!-- make sure the service class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
@@ -877,7 +879,7 @@
   </target>
 
   <!-- generates sender and decoder classes for all invocation receiver declarations -->
-  <target name="genreceiver" depends="prepare">
+  <target name="genreceiver" depends="toolprep">
     <!-- make sure the receiver class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
@@ -893,7 +895,7 @@
   </target>
 
   <!-- adds readField and writeField methods to Stremable classes -->
-  <target name="procstream" depends="prepare">
+  <target name="procstream" depends="toolprep">
     <!-- now instrument the associated files -->
     <instream outdir="${classes.dir}">
       <path refid="classpath"/>
