@@ -713,10 +713,8 @@ public class FrameEntryPoint
                        Integer.parseInt(args[3]));
             return null;
         case NAVIGATE_TO:
-            // TODO: bottom frame navigation
-            if (MAIN_FRAME_ID.equals(frameId)) {
-                navigateTo(args[0]);
-            }
+            // TODO: can the bottom frame navigate itself?
+            navigateTo(args[0]);
             return null;
         case NAVIGATE_REPLACE:
             // TODO: bottom frame navigation
