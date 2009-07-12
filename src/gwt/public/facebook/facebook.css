@@ -10,7 +10,6 @@
 }
 
 .friendBar .title {
-  position: absolute;
   width: 760px;
   height: 30px;
   text-align: center;
@@ -21,24 +20,42 @@
   padding-top: 3px;
 }
 
-.friendBar .FriendBarTable {
-  position: absolute;
-  top: 30px;
-  width: 100%;
+.friendBar .fbscrollLeft {
+  left: 12px;
+  top: 98px;
 }
 
-.friendBar .FriendBarTable .FriendCell {
-  width: 105px;
-  height: 146px;
-  overflow: hidden;
-  white-space: nowrap;
+.friendBar .fbscrollRight {
+  right: 12px;
+  top: 98px;
 }
 
-.friendBar .FriendBarTable .NavCell {
-  width: 8%;
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
+.friendBar .friendInfo {
+  top: 34px;
+}
+
+.friendBar .friendInfo[column="1"] {
+  left: 60px;
+}
+
+.friendBar .friendInfo[column="2"] {
+  left: 167px;
+}
+
+.friendBar .friendInfo[column="3"] {
+  left: 274px;
+}
+
+.friendBar .friendInfo[column="4"] {
+  left: 381px;
+}
+
+.friendBar .friendInfo[column="5"] {
+  left: 488px;
+}
+
+.friendBar .friendInfo[column="6"] {
+  left: 595px;
 }
 
 .friendInfo {
@@ -64,7 +81,6 @@
 }
 
 .friendInfo .Name {
-  position: absolute;
   width: 104px;
   height: 20px;
   font-size: 12px;
@@ -73,7 +89,6 @@
 }
 
 .friendInfo .Rank {
-  position: absolute;
   width: 25px;
   height: 20px;
   font-size: 12px;
@@ -84,7 +99,6 @@
 }
 
 .friendInfo .Photo {
-  position: absolute;
   width: 50px;
   height: 50px;
   top: 24px;
@@ -92,7 +106,6 @@
 }
 
 .friendInfo .Coins {
-  position: absolute;
   width: 32px;
   height: 11px;
   font-size: 9px;
@@ -103,7 +116,6 @@
 
 .friendInfo .CoinIcon {
   background: url(/images/facebook/coin_stack.png) no-repeat;
-  position: absolute;
   width: 16px;
   height: 11px;
   right: 32px;
@@ -117,7 +129,6 @@
 }
 
 .friendInfo .Trophies {
-  position: absolute;
   width: 22px;
   height: 11px;
   font-size: 9px;
@@ -129,7 +140,6 @@
 
 .friendInfo .TrophyIcon {
   background: url(/images/facebook/trophy.png) no-repeat;
-  position: absolute;
   width: 17px;
   height: 11px;
   right: 22px;
@@ -137,7 +147,6 @@
 }
 
 .friendInfo .Game {
-  position: absolute;
   width: 104px;
   height: 20px;
   font-size: 12px;
@@ -148,7 +157,6 @@
 }
 
 .friendInfo .RankIcon {
-  position: absolute;
   background-repeat: no-repeat;
   width: 21px;
   height: 28px;
@@ -170,7 +178,6 @@
 
 .friendInfo .InviteButton {
   background: url(/images/facebook/friend_bar_invite.png) no-repeat;
-  position: absolute;
   bottom: 42px;
   left: 13px;
   width: 79px;
@@ -183,7 +190,6 @@
 }
 
 .friendInfo .InviteTip {
-  position: absolute;
   width: 98px;
   height: 34px;
   bottom: 4px;

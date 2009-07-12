@@ -4,11 +4,9 @@
 package client.facebook;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.web.gwt.Pages;
@@ -23,14 +21,15 @@ import client.util.Link;
 /**
  * Displays a single {@link FacebookFriendInfo}.
  */
-public class FBFriendPanel extends AbsolutePanel
+public class FBFriendPanel extends AbsoluteCSSPanel
 {
     /**
      * Creates a new friend panel.
      */
     public FBFriendPanel (FacebookFriendInfo info, int rank)
     {
-        setStyleName("friendInfo");
+        // provide a context in case parent doesn't set it to "absolute" later
+        super("friendInfo", "fixed");
         if (info == null) {
             addStyleName("friendInfoEmpty");
             add(MsoyUI.createImageButton("InviteButton",
