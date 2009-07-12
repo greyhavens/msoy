@@ -33,7 +33,7 @@ public class FBInvitePanel extends ServerFBMLPanel
             "content", makeContent());
         form.add(new FBMLPanel("multi-friend-selector",
             "showborder", String.valueOf(false),
-            "rows", String.valueOf(5),
+            "rows", String.valueOf(6),
             "actiontext", _msgs.inviteGenericTip(),
             "bypass", "cancel"));
         add(form);
