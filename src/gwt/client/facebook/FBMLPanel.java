@@ -31,7 +31,7 @@ public class FBMLPanel extends FlowPanel
     public static void reparse (Widget ancestor)
     {
         String id = ancestor.getElement().getId();
-        if (id == null) {
+        if (id == null || id.isEmpty()) {
             ancestor.getElement().setId(id = HTMLPanel.createUniqueId());
         }
         CShell.log("Reparsing XFBML", "id", id);
