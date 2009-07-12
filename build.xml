@@ -74,7 +74,6 @@
     <file name="${extlibs.dir}/gwt-user.jar"/>
     <file name="${extlibs.dir}/gwt-dnd.jar"/>
     <file name="${extlibs.dir}/gwt-incubator.jar"/>
-    <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
@@ -327,6 +326,10 @@
 
     <!-- copy our HTML sanitizer configuration -->
     <copy file="${basedir}/etc/antisamy-config.xml" todir="${deploy.dir}"/>
+
+    <!-- defines our various presents ant tasks -->
+    <taskdef resource="com/threerings/presents/tools.properties"
+             classpath="${deploy.dir}/lib/narya-tools-0.0-SNAPSHOT.jar"/>
   </target>
 
   <!-- creates page.gwt.xml from page.gwt.xml.in, doing user agent fiddling -->
@@ -831,9 +834,6 @@
 
   <!-- generates additional methods for distributed object classes -->
   <target name="gendobj" depends="prepare">
-    <taskdef name="dobj"
-             classname="com.threerings.presents.tools.GenDObjectTask"
-             classpathref="classpath"/>
     <!-- make sure the dobject class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
@@ -841,15 +841,13 @@
       <include name="**/*Object.java"/>
     </javac>
     <!-- now generate the associated files -->
-    <dobj classpathref="classpath">
+    <gendobj classpathref="classpath">
       <fileset dir="${src.dir}" includes="**/*Object.java"/>
-    </dobj>
+    </gendobj>
   </target>
 
   <!-- generates marshaller and dispatcher classes for all invocation service declarations -->
   <target name="genservice" depends="prepare">
-    <taskdef name="service" classpathref="classpath"
-             classname="com.threerings.presents.tools.GenServiceTask"/>
     <!-- make sure the service class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
@@ -858,7 +856,7 @@
       <exclude name="**/web/**"/>
     </javac>
     <!-- now generate the associated files -->
-    <service header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="classpath">
+    <genservice header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/client/*Service.java"/>
         <exclude name="**/admin/**"/>
@@ -867,21 +865,19 @@
         <exclude name="**/client/BureauLauncherService.java"/>
       </fileset>
       <adapter service="WorldGameService"/>
-    </service>
-    <service header="lib/SOURCE_HEADER" classpathref="classpath">
+    </genservice>
+    <genservice header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/admin/client/*Service.java"/>
         <include name="**/peer/client/*Service.java"/>
         <include name="**/client/GameServerService.java"/>
         <include name="**/client/BureauLauncherService.java"/>
       </fileset>
-    </service>
+    </genservice>
   </target>
 
   <!-- generates sender and decoder classes for all invocation receiver declarations -->
   <target name="genreceiver" depends="prepare">
-    <taskdef name="receiver" classpathref="classpath"
-             classname="com.threerings.presents.tools.GenReceiverTask"/>
     <!-- make sure the receiver class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
@@ -889,17 +885,15 @@
       <include name="**/*Receiver.java"/>
     </javac>
     <!-- now generate the associated files -->
-    <receiver header="lib/SOURCE_HEADER" classpathref="classpath">
+    <genreceiver header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/*Receiver.java"/>
       </fileset>
-    </receiver>
+    </genreceiver>
   </target>
 
   <!-- adds readField and writeField methods to Stremable classes -->
-  <target name="procstream">
-    <taskdef name="instream" classpathref="classpath"
-             classname="com.threerings.presents.tools.InstrumentStreamableTask"/>
+  <target name="procstream" depends="prepare">
     <!-- now instrument the associated files -->
     <instream outdir="${classes.dir}">
       <path refid="classpath"/>
@@ -910,10 +904,8 @@
 
   <!-- generates ActionScript versions of our Streamable classes -->
   <target name="genascript" depends="dist">
-    <taskdef name="genscript" classpathref="classpath"
-             classname="com.threerings.presents.tools.GenActionScriptTask"/>
     <!-- now generate the associated files -->
-    <genscript header="lib/SOURCE_HEADER" asroot="${asrc.dir}">
+    <genascript header="lib/SOURCE_HEADER" asroot="${asrc.dir}">
       <fileset dir="${src.dir}">
         <include name="**/msoy/data/*.java"/>
         <include name="**/msoy/data/all/*.java"/>
@@ -927,7 +919,7 @@
         <exclude name="**/GameMemberInfo.java"/> <!-- can't handle WhirledOccupantInfo -->
         <include name="**/msoy/chat/data/*.java"/>
       </fileset>
-    </genscript>
+    </genascript>
   </target>
 
   <!-- run the unit tests -->
@@ -1150,6 +1142,7 @@
     <copy todir="${approot.server.code}/${deploy.dir}/lib">
       <fileset dir="${deploy.dir}/lib">
         <include name="*.jar"/>
+        <exclude name="narya-tools*.jar"/>
       </fileset>
     </copy>
 
