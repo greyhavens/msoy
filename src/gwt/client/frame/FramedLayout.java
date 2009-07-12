@@ -29,7 +29,6 @@ public class FramedLayout extends Layout
     {
         closeContent(false);
         content.setWidth("100%");
-        content.setHeight(calcMainContentHeight(bar) + "px");
 
         if (bar != null) {
             bar.makeFramed();
@@ -43,7 +42,7 @@ public class FramedLayout extends Layout
         }
 
         _content.setWidget(content);
-
+        updateMainContentHeight();
     }
 
     @Override // from Layout
@@ -122,10 +121,17 @@ public class FramedLayout extends Layout
         root.add(_content);
     }
 
-    protected int calcMainContentHeight (TitleBar bar)
+    protected void updateMainContentHeight ()
+    {
+        if (_content.getWidget() != null) {
+            _content.getWidget().setHeight(calcMainContentHeight() + "px");
+        }
+    }
+
+    protected int calcMainContentHeight ()
     {
         int avail = Window.getClientHeight();
-        if (bar != null) {
+        if (_bar.getWidget() != null) {
             avail -= FRAMED_NAVI_HEIGHT;
         }
         if (_client.getWidget() != null) {

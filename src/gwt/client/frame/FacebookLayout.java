@@ -58,6 +58,7 @@ public class FacebookLayout extends FramedLayout
         content.getElement().setAttribute("scrolling", "no");
         if (bottomContentEnabled()) {
             _bottomContent.setWidget(content);
+            updateMainContentHeight();
         }
     }
 
@@ -71,9 +72,13 @@ public class FacebookLayout extends FramedLayout
     }
 
     @Override // from FramedLayout
-    protected int calcMainContentHeight (TitleBar bar)
+    protected int calcMainContentHeight ()
     {
-        return bottomContentEnabled() ? 550 : super.calcMainContentHeight(bar);
+        int height = super.calcMainContentHeight();
+        if (_bottomContent.getWidget() != null) {
+            height -= FB_FRAME_HEIGHT;
+        }
+        return height;
     }
 
     protected static boolean bottomContentEnabled ()
@@ -83,5 +88,5 @@ public class FacebookLayout extends FramedLayout
     }
 
     protected SimplePanel _bottomContent;
-    protected static final int FB_FRAME_HEIGHT = bottomContentEnabled() ? 189 : 0;
+    protected static final int FB_FRAME_HEIGHT = 222;
 }
