@@ -126,11 +126,11 @@ public class FacebookPageServlet extends MsoyServiceServlet
             info.trophyCount = _trophyRepo.countTrophies(info.lastGame.id, info.memberId);
         }
 
-        // sort by level
+        // sort by coins
         Collections.sort(result, new Comparator<FacebookFriendInfo>() {
             @Override public int compare (FacebookFriendInfo o1, FacebookFriendInfo o2) {
-                // highest levels first
-                int cmp = o2.level - o1.level;
+                // highest coins first
+                int cmp = o2.coins - o1.coins;
                 if (cmp == 0) {
                     // disambiguate on member id
                     cmp = o1.memberId - o2.memberId;
