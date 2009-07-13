@@ -32,7 +32,6 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MemberGame;
 import com.threerings.msoy.peer.data.MemberScene;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
