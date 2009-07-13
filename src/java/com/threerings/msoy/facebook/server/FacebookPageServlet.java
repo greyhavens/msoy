@@ -57,40 +57,9 @@ public class FacebookPageServlet extends MsoyServiceServlet
     public List<FacebookFriendInfo> getFriends ()
         throws ServiceException
     {
-        // TODO: remove heavy log.info
-        MemberRecord mrec = requireAuthedUser();
-        log.info("Loading facebook page friends", "memberId", mrec.memberId);
-
-        // get the session key
-        String sessionKey = _memberRepo.lookupExternalSessionKey(
-            ExternalAuther.FACEBOOK, mrec.memberId);
-        if (sessionKey == null) {
-            throw new ServiceException(FacebookCodes.NO_SESSION);
-        }
-
-        log.info("Got session key", "sessionKey", sessionKey);
-
-        // get facebook friends to seed (more accurate)
-        Set<String> facebookFriendIds = Sets.newHashSet();
-        try {
-            FacebookJaxbRestClient client = _fbLogic.getFacebookClient(sessionKey);
-            for (Long uid : client.friends_get().getUid()) {
-                facebookFriendIds.add(String.valueOf(uid));
-            }
-
-        } catch (FacebookException fe) {
-            log.warning("Unable to get facebook friends for friend bar",
-                "memberId", mrec.memberId, fe);
-            // pass along the translated text for now
-            throw new ServiceException(fe.getMessage());
-        }
-
-        log.info("Got fb friends", "size", facebookFriendIds.size());
-
-        // filter by those hooked up to Whirled and set up return map
+        // set up return map
         IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exRec : _memberRepo.loadExternalAccounts(
-            ExternalAuther.FACEBOOK, facebookFriendIds)) {
+        for (ExternalMapRecord exRec : loadMappedFriends()) {
             FacebookFriendInfo info = new FacebookFriendInfo();
             info.facebookUid = Long.valueOf(exRec.externalId);
             info.memberId = exRec.memberId;
@@ -166,6 +135,50 @@ public class FacebookPageServlet extends MsoyServiceServlet
             }
         });
         return result;
+    }
+
+    @Override // from FacebookService
+    public List<Long> getFriendsUsingApp ()
+        throws ServiceException
+    {
+        // return mapped fb friends
+        List<Long> friends = Lists.newArrayList();
+        for (ExternalMapRecord exRec : loadMappedFriends()) {
+            friends.add(Long.valueOf(exRec.externalId));
+        }
+
+        return friends;
+    }
+
+    protected List<ExternalMapRecord> loadMappedFriends ()
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        // get the session key
+        String sessionKey = _memberRepo.lookupExternalSessionKey(
+            ExternalAuther.FACEBOOK, mrec.memberId);
+        if (sessionKey == null) {
+            throw new ServiceException(FacebookCodes.NO_SESSION);
+        }
+
+        // get facebook friends to seed (more accurate)
+        Set<String> facebookFriendIds = Sets.newHashSet();
+        try {
+            FacebookJaxbRestClient client = _fbLogic.getFacebookClient(sessionKey);
+            for (Long uid : client.friends_get().getUid()) {
+                facebookFriendIds.add(String.valueOf(uid));
+            }
+
+        } catch (FacebookException fe) {
+            log.warning("Unable to get facebook friends",
+                "memberId", mrec.memberId, fe);
+            // pass along the translated text for now
+            throw new ServiceException(fe.getMessage());
+        }
+
+        // filter by those hooked up to Whirled and
+        return _memberRepo.loadExternalAccounts(ExternalAuther.FACEBOOK, facebookFriendIds);
     }
 
     @Inject protected FacebookLogic _fbLogic;

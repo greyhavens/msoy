@@ -16,4 +16,9 @@ public interface FacebookServiceAsync
      * The asynchronous version of {@link FacebookService#getFriends}.
      */
     void getFriends (AsyncCallback<List<FacebookFriendInfo>> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#getFriendsUsingApp}.
+     */
+    void getFriendsUsingApp (AsyncCallback<List<Long>> callback);
 }
