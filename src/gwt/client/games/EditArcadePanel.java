@@ -73,9 +73,6 @@ public class EditArcadePanel extends FlowPanel
             }
         }
 
-        topBits.add(WidgetUtil.makeShim(10, 10));
-        topBits.add(Link.create(_msgs.editArcadeView(), "View", Pages.GAMES, "p", portal));
-
         _pages.addChangeHandler(new ChangeHandler() {
             @Override public void onChange (ChangeEvent event) {
                 setPage(ArcadeData.Portal.values()[_pages.getSelectedIndex()]);

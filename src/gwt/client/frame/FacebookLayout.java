@@ -8,8 +8,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 /**
  * A frame layout that adds an extra iframe below the main gwt page showing facebook information
  * such as friend scores etc.
@@ -55,10 +53,8 @@ public class FacebookLayout extends FramedLayout
         content.setWidth("100%");
         content.setHeight(FB_FRAME_HEIGHT + "px");
         content.getElement().setAttribute("scrolling", "no");
-        if (bottomContentEnabled()) {
-            _bottomContent.setWidget(content);
-            updateMainContentHeight();
-        }
+        _bottomContent.setWidget(content);
+        updateMainContentHeight();
     }
 
     @Override // from FramedLayout
@@ -78,12 +74,6 @@ public class FacebookLayout extends FramedLayout
             height -= FB_FRAME_HEIGHT;
         }
         return height;
-    }
-
-    protected static boolean bottomContentEnabled ()
-    {
-        // TODO: the bottom content is not yet ready for production
-        return DeploymentConfig.devDeployment;
     }
 
     protected SimplePanel _bottomContent;

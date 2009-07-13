@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.samskivert.depot.util.ByteEnumUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
@@ -75,13 +74,10 @@ public class GamesPage extends Page
                 ByteEnumUtil.fromByte(ArcadeData.Portal.class, portal),
                 GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
-        } else if (action.equals("p")) { // portal
-            setContent(new ArcadePanel(ArcadeData.Portal.valueOf(args.get(1, ""))));
-
         } else {
-            if (CShell.isFacebook() && DeploymentConfig.devDeployment) {
+            if (CShell.isFacebook()) {
                 // show the facebook portal and request to show the friends panel
-                setContent(new FBArcadePanel(ArcadeData.Portal.FACEBOOK));
+                setContent(new FBArcadePanel());
                 CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
 
             } else {

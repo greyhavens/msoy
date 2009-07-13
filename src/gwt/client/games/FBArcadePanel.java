@@ -30,12 +30,11 @@ import client.util.PageCallback;
  */
 public class FBArcadePanel extends AbsolutePanel
 {
-    public FBArcadePanel (ArcadeData.Portal portal)
+    public FBArcadePanel ()
     {
         setStyleName("fbarcade");
         add(MsoyUI.createNowLoading());
-        _portal = portal;
-        _gamesvc.loadArcadeData(portal, new PageCallback<ArcadeData>(this) {
+        _gamesvc.loadArcadeData(ArcadeData.Portal.FACEBOOK, new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }
@@ -138,7 +137,6 @@ public class FBArcadePanel extends AbsolutePanel
 
     /** Header area with title, games dropdown and search */
     protected FBGameHeaderPanel _header;
-    protected ArcadeData.Portal _portal;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
