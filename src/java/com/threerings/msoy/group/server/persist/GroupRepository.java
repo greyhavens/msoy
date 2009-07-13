@@ -437,6 +437,40 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Load & return the brand shareholder details of a certain group.
+     */
+    public List<BrandShareRecord> getBrandShares (int groupId)
+    {
+        return findAll(BrandShareRecord.class, new Where(BrandShareRecord.GROUP_ID, groupId));
+    }
+
+    /**
+     * Load & return the various brand shares held by a certain member.
+     */
+    public List<BrandShareRecord> getBrands (int memberId)
+    {
+        return findAll(BrandShareRecord.class, new Where(BrandShareRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Find the number of shares held by a given member in a given group.
+     */
+    public int getBrandShare (int groupId, int memberId)
+    {
+        BrandShareRecord record = load(BrandShareRecord.getKey(memberId, groupId));
+        return record != null ? record.shares : 0;
+    }
+
+    /**
+     * Update the number of shares the given player has in the brand. The player must be a member
+     * of the group or undefined badness may occur.
+     */
+    public boolean setBrandShare (int groupId, int memberId, int shares)
+    {
+        return store(new BrandShareRecord(memberId, groupId, shares));
+    }
+
+    /**
      * Remove a given person as member of a given group. This method returns false if there was no
      * membership to cancel.
      */
@@ -444,6 +478,7 @@ public class GroupRepository extends DepotRepository
     {
         int rows = delete(GroupMembershipRecord.getKey(memberId, groupId));
         updateMemberCount(groupId);
+        delete(BrandShareRecord.getKey(memberId, groupId));
         _eventLog.groupLeft(memberId, groupId);
         return rows > 0;
     }
@@ -667,6 +702,7 @@ public class GroupRepository extends DepotRepository
     {
         classes.add(GroupRecord.class);
         classes.add(GroupMembershipRecord.class);
+        classes.add(BrandShareRecord.class);
     }
 
     /** Used to manage our group tags. */
