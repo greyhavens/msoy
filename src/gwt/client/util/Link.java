@@ -115,9 +115,9 @@ public class Link
     /**
      * Creates a link with a text label that will open a url in the top-most frame.
      */
-    public static Widget createTop (String label, String url)
+    public static Widget createTop (String style, String url)
     {
-        return new TargetedLink(label, url, "_top");
+        return new TargetedLink("", style, url, "_top");
     }
 
     /**
@@ -316,10 +316,13 @@ public class Link
         /**
          * Creates a new link with the given text and the given href and target attributes.
          */
-        public TargetedLink (String text, String href, String target)
+        public TargetedLink (String text, String style, String href, String target)
         {
             setElement(DOM.createDiv());
             setStyleName("gwt-Hyperlink");
+            if (style != null) {
+                addStyleName(style);
+            }
             Element anchorElem = DOM.createAnchor();
             getElement().appendChild(anchorElem);
             anchorElem.setInnerText(text);

@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
@@ -28,33 +27,27 @@ public class SubNaviPanel extends FlowPanel
      */
     public SubNaviPanel (Tabs tab)
     {
-        reset(tab, false);
+        reset(tab);
     }
 
     /**
      * Creates subnav for being in a game or in the world.
      */
-    public SubNaviPanel (boolean game)
+    public SubNaviPanel ()
     {
-        reset(null, game);
+        reset(null);
     }
 
     /**
      * Resets the subnavigation to the default for the specified tab. If tab is null, create sub
      * navigation for either being in a scene or being in a game according to the specified value.
      */
-    public void reset (Tabs tab, boolean inGame)
+    public void reset (Tabs tab)
     {
         clear();
 
         int memberId = CShell.getMemberId();
         if (tab == null) {
-            if (inGame) {
-                addLink(null, "Back To Games", Pages.GAMES);
-                // TODO: more game-specific stuff, e.g. challenge friends
-            } else {
-                // TODO
-            }
             return;
         }
         switch (tab) {
@@ -88,21 +81,13 @@ public class SubNaviPanel extends FlowPanel
 
         case GAMES:
             addLink(null, "Games", Pages.GAMES);
-            if (CShell.isFacebook()) {
-                addTipper("Bookmark", _msgs.subNavBookmarkTip(), "fbBookmarkTip");
+            if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
-                addTopLink("Become A Fan", DeploymentConfig.facebookApplicationUrl);
-                addLink(null, "Invite Friends", Pages.FACEBOOK, "invite");
-
-            } else {
-                if (CShell.isMember()) {
-                    addLink(null, "My Trophies", Pages.GAMES, "t", memberId);
-                    addLink(null, "My Games", Pages.GAMES, "m");
-                }
-                addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
-                if (CShell.isSupport()) {
-                    addLink(null, "Edit Arcades", Pages.GAMES, "ea");
-                }
+                addLink(null, "My Games", Pages.GAMES, "m");
+            }
+            addLink(null, "New Games", Pages.GAMES, "g", -2, "newest"); // -2 is all, ugh
+            if (CShell.isSupport()) {
+                addLink(null, "Edit Arcades", Pages.GAMES, "ea");
             }
             break;
 
@@ -164,18 +149,6 @@ public class SubNaviPanel extends FlowPanel
             add(new HTML("&nbsp;"));
         }
         add(Link.create(label, page, args));
-    }
-
-    public void addTipper (String link, String tip, String style)
-    {
-        addSeparator(true);
-        add(MsoyUI.createTipper(link, tip, style));
-    }
-
-    public void addTopLink (String link, String url)
-    {
-        addSeparator(true);
-        add(Link.createTop(link, url));
     }
 
     public void addContextLink (String label, Pages page, Args args, int position)

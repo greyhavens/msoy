@@ -87,7 +87,7 @@ public class StandardTitleBar extends TitleBar
     public void resetNav ()
     {
         boolean closeWasVisible = _closeBox.isAttached();
-        _subnavi.reset(_tab, false);
+        _subnavi.reset(_tab);
         setCloseVisible(closeWasVisible);
     }
 

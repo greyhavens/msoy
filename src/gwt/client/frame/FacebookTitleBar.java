@@ -4,17 +4,19 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.Tabs;
 
+import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.Page;
+import client.ui.MsoyUI;
+import client.util.Link;
 
 /**
  * Displays a page title and subnavigation at the top of the page content area for the facebook
@@ -24,12 +26,12 @@ public class FacebookTitleBar extends TitleBar
 {
     public FacebookTitleBar (boolean inGame)
     {
-        _contents = new SmartTable("fbpageTitle", 0, 0);
-        _subnavi = inGame ? new SubNaviPanel(true) : new SubNaviPanel(Tabs.GAMES);
-        _titleLabel = new Label(Page.getDefaultTitle(Tabs.GAMES));
-        _titleLabel.setStyleName("Title");
-        _contents.setWidget(0, 0, _titleLabel);
-        _contents.setWidget(0, 1, _subnavi, 1, "SubNavi");
+        _contents = new AbsoluteCSSPanel("fbpageTitle");
+        _contents.add(MsoyUI.createFlowPanel("Logo"));
+        _contents.add(button("Games", Pages.GAMES));
+        _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
+        _contents.add(Link.createTop("Fan", DeploymentConfig.facebookApplicationUrl));
+        _contents.add(button("Trophies", Pages.GAMES, CShell.getMemberId()));
     }
 
     @Override // from TitleBar
@@ -41,9 +43,7 @@ public class FacebookTitleBar extends TitleBar
     @Override // from TitleBar
     public void setTitle (String title)
     {
-        if (title != null) {
-            _titleLabel.setText(title);
-        }
+        // not supported? weird
     }
 
     @Override // from TitleBar
@@ -64,9 +64,12 @@ public class FacebookTitleBar extends TitleBar
         // not supported
     }
 
-    protected SmartTable _contents;
-    protected Label _titleLabel;
-    protected SubNaviPanel _subnavi; 
+    protected Widget button (String style, Pages page, Object...args)
+    {
+        return MsoyUI.createImageButton(style, Link.createHandler(page, args));
+    }
+
+    protected AbsoluteCSSPanel _contents;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }
