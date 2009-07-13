@@ -36,9 +36,7 @@ public class FacebookPage extends Page
             FBMLPanel.reparse(fbml);
 
         } else if (action.equals("invite")) {
-            FlowPanel fbml = new FlowPanel();
-            fbml.add(new FBInvitePanel());
-            setContent("Invite", fbml);
+            setContent("Invite", FBInvitePanel.create());
         }
     }
 

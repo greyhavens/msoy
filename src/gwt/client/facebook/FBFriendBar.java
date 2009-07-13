@@ -14,7 +14,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
-import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
@@ -103,6 +102,5 @@ public class FBFriendBar extends AbsoluteCSSPanel
     protected static final int FRIEND_COUNT = 6;
 
     protected static final FacebookMessages _msgs = GWT.create(FacebookMessages.class);
-    protected static final FacebookServiceAsync _fbsvc = (FacebookServiceAsync)
-        ServiceUtil.bind(GWT.create(FacebookService.class), FacebookService.ENTRY_POINT);
+    protected static final FacebookServiceAsync _fbsvc = GWT.create(FacebookService.class);
 }
