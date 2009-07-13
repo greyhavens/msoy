@@ -1019,11 +1019,13 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Create a row in our catalog table with the given master item record. {@link
      * ItemRecord#catalogId} will be filled into the supplied master.
+     * @param fbrandId
      *
      * @return the catalog id of the newly inserted listing.
      */
     public int insertListing (ItemRecord master, int originalItemId, int pricing, int salesTarget,
-                              Currency currency, int cost, long listingTime, int basisCatalogId)
+                              Currency currency, int cost, long listingTime, int basisCatalogId,
+                              int brandId)
     {
         if (master.ownerId != 0) {
             throw new IllegalArgumentException(
@@ -1046,6 +1048,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.currency = currency;
         record.cost = cost;
         record.basisId = basisCatalogId;
+        record.brandId = brandId;
         insert(record);
 
         // wire this listed item and its original up to the catalog record
@@ -1066,14 +1069,15 @@ public abstract class ItemRepository<T extends ItemRecord>
      * pertaining to basis items: the caller must deal with derivative listings.
      */
     public void updatePricing (int catalogId, int pricing, int salesTarget,
-                               Currency currency, int cost, long updateTime)
+                               Currency currency, int cost, int brandId, long updateTime)
     {
         updatePartial(getCatalogKey(catalogId),
                       // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
                       CatalogRecord.PRICING, pricing,
                       CatalogRecord.SALES_TARGET, salesTarget,
                       CatalogRecord.CURRENCY, currency,
-                      CatalogRecord.COST, cost);
+                      CatalogRecord.COST, cost,
+                      CatalogRecord.BRAND_ID, brandId);
     }
 
     /**

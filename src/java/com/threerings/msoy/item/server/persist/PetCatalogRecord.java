@@ -24,6 +24,7 @@ public class PetCatalogRecord extends CatalogRecord
     public static final ColumnExp PURCHASES = colexp(_R, "purchases");
     public static final ColumnExp RETURNS = colexp(_R, "returns");
     public static final ColumnExp FAVORITE_COUNT = colexp(_R, "favoriteCount");
+    public static final ColumnExp BRAND_ID = colexp(_R, "brandId");
     public static final ColumnExp BASIS_ID = colexp(_R, "basisId");
     public static final ColumnExp DERIVATION_COUNT = colexp(_R, "derivationCount");
     // AUTO-GENERATED: FIELDS END

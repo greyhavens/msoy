@@ -58,11 +58,12 @@ public abstract class CatalogRecord extends PersistentRecord
     public static final ColumnExp PURCHASES = colexp(_R, "purchases");
     public static final ColumnExp RETURNS = colexp(_R, "returns");
     public static final ColumnExp FAVORITE_COUNT = colexp(_R, "favoriteCount");
+    public static final ColumnExp BRAND_ID = colexp(_R, "brandId");
     public static final ColumnExp BASIS_ID = colexp(_R, "basisId");
     public static final ColumnExp DERIVATION_COUNT = colexp(_R, "derivationCount");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 14;
+    public static final int SCHEMA_VERSION = 15;
 
     /** Converts this record to a runtime record. See {@link #toListingCard} for caveats.  */
     public static final Function<CatalogRecord,ListingCard> TO_CARD =
@@ -114,6 +115,9 @@ public abstract class CatalogRecord extends PersistentRecord
     /** A reference to the listed item. This value is not persisted. */
     @Transient
     public ItemRecord item;
+
+    /** The groupId of the brand that's selling this item. */
+    public int brandId;
 
     /** The id of the listing that is the basis of this item. */
     public int basisId;
