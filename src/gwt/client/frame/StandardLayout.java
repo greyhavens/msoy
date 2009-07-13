@@ -63,7 +63,7 @@ public class StandardLayout extends Layout
 
             // add a titlebar to the top of the content
             FlowPanel content = new FlowPanel();
-            content.add(bar);
+            content.add(bar.exposeWidget());
             iframe.setWidth(contentWidth);
             iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
             content.add(iframe);

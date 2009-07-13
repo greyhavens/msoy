@@ -31,8 +31,7 @@ public class FramedLayout extends Layout
         content.setWidth("100%");
 
         if (bar != null) {
-            bar.makeFramed();
-            _bar.setWidget(bar);
+            _bar.setWidget(bar.exposeWidget());
         }
 
         // if we have a client, adjust its height...
@@ -108,6 +107,12 @@ public class FramedLayout extends Layout
         _bar = new SimplePanel();
         _content = new SimplePanel();
         addPanels(RootPanel.get(PAGE));
+    }
+
+    @Override // from Layout
+    public boolean showsTabs ()
+    {
+        return false;
     }
 
     /**

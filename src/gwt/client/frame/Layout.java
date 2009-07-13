@@ -101,6 +101,15 @@ public abstract class Layout
     }
 
     /**
+     * Detects if this layout should display the tabs above web content.
+     * TODO: remove
+     */
+    public boolean showsTabs ()
+    {
+        return true;
+    }
+
+    /**
      * Determines the kind of embedding this layout is in.
      */
     public Frame.Embedding getEmbedding ()

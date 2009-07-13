@@ -472,7 +472,7 @@ public class FrameEntryPoint
         }
 
         if (!isHeaderless()) {
-            _bar = TitleBar.create(page.getTab(), _closeContent, !CShell.isFacebook());
+            _bar = TitleBar.create(_layout, page.getTab(), _closeContent);
             _bar.setCloseVisible(FlashClients.clientExists());
         }
 
@@ -587,9 +587,7 @@ public class FrameEntryPoint
         WorldClient.displayFlash(args, _layout.getClientProvider());
 
         if (_layout.alwaysShowsTitleBar()) {
-            _bar = game ?
-                TitleBar.createGame(_closeContent, !CShell.isFacebook()) :
-                TitleBar.createWorld(_closeContent, !CShell.isFacebook());
+            _bar = TitleBar.createClient(_layout, game, _closeContent);
             _bar.setCloseVisible(!isMonoScreen());
             _layout.setTitleBar(_bar);
         }

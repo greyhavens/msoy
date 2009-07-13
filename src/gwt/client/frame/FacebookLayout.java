@@ -32,8 +32,7 @@ public class FacebookLayout extends FramedLayout
     @Override
     public void setTitleBar (TitleBar bar)
     {
-        bar.makeFramed();
-        _bar.setWidget(bar);
+        _bar.setWidget(bar.exposeWidget());
     }
 
     @Override // from Layout
