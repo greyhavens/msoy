@@ -40,20 +40,6 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
         _confirmMessage = confirmMessage;
     }
 
-    @Override // from ClickCallback
-    protected void reportFailure (Throwable cause)
-    {
-        Widget errorNear = getErrorNear();
-        if (errorNear != null) {
-            if (errorNear instanceof FocusWidget) {
-                ((FocusWidget)errorNear).setFocus(true);
-            }
-            MsoyUI.errorNear(convertError(cause), errorNear);
-        } else {
-            MsoyUI.error(convertError(cause));
-        }
-    }
-
     /**
      * Returns additional information to be added to the confirmation prompt, if we have one. By
      * default we don't.
@@ -61,20 +47,6 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
     protected String getPromptContext ()
     {
         return null;
-    }
-
-    /**
-     * Converts an exception returned by the server into a readable message.
-     */
-    protected String convertError (Throwable cause)
-    {
-        return CShell.serverError(cause);
-    }
-
-    @Override // from ClickCallback
-    protected void takeAction ()
-    {
-        takeAction(false); // route action through our confirmation process
     }
 
     protected void takeAction (boolean confirmed)
@@ -90,19 +62,6 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
         super.takeAction();
     }
 
-    protected void displayPopup ()
-    {
-        new PromptPopup(getConfirmMessage(), null) {
-            public void onAffirmative () {
-                setEnabled(true);
-                takeAction(true);
-            }
-            public void onNegative () {
-                setEnabled(true);
-            }
-        }.setContext(getPromptContext()).prompt();
-    }
-
     protected String getConfirmMessage ()
     {
         return _confirmMessage;
@@ -111,6 +70,39 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
     protected Widget getErrorNear ()
     {
         return null;
+    }
+
+    @Override // from ClickCallback
+    protected String formatError (Throwable cause)
+    {
+        return CShell.serverError(cause);
+    }
+
+    @Override // from ClickCallback
+    protected void reportFailure (Throwable cause)
+    {
+        Widget errorNear = getErrorNear();
+        if (errorNear != null) {
+            if (errorNear instanceof FocusWidget) {
+                ((FocusWidget)errorNear).setFocus(true);
+            }
+            MsoyUI.errorNear(formatError(cause), errorNear);
+        } else {
+            MsoyUI.error(formatError(cause));
+        }
+    }
+
+    @Override // from ClickCallback
+    protected void displayConfirmPopup ()
+    {
+        new PromptPopup(getConfirmMessage(), null) {
+            public void onAffirmative () {
+                onConfirmed();
+            }
+            public void onNegative () {
+                onAborted();
+            }
+        }.setContext(getPromptContext()).prompt();
     }
 
     protected String _confirmMessage;

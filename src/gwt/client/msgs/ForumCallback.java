@@ -22,15 +22,15 @@ public abstract class ForumCallback<T> extends ClickCallback<T>
     }
 
     @Override // from ClickCallback
-    protected String convertError (Throwable cause) {
+    protected String formatError (Throwable cause) {
         if (cause instanceof MessageTooLongException) {
             int extra = ((MessageTooLongException)cause).getMessageLength() -
                 ForumMessage.MAX_MESSAGE_LENGTH;
             return _mmsgs.errMessageTooLong(""+extra);
         } else {
-            return super.convertError(cause);
+            return super.formatError(cause);
         }
     }
 
-    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
+    protected static final MsgsMessages _mmsgs = GWT.create(MsgsMessages.class);
 }
