@@ -48,7 +48,6 @@ import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
-import com.threerings.msoy.server.persist.RecordFunctions;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
@@ -406,7 +405,7 @@ public class MsoySceneRepository extends DepotRepository
         if (!skeys.isEmpty()) {
             deleteAll(SceneRecord.class, KeySet.newKeySet(SceneRecord.class, skeys));
             // delete all furni from all of those scenes
-            List<Integer> scids = Lists.transform(skeys, RecordFunctions.<SceneRecord>getIntKey());
+            List<Integer> scids = Lists.transform(skeys, Key.<SceneRecord>toInt());
             deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.SCENE_ID.in(scids)));
         }
         // delete all scene ratings by these members

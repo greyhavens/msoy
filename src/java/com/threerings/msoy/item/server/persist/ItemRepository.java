@@ -72,7 +72,6 @@ import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
-import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -855,7 +854,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             getCloneClass(), false,
             new Where(getCloneColumn(CloneRecord.OWNER_ID).in(memberIds)));
         deleteAll(getCloneClass(), KeySet.newKeySet(getCloneClass(), clones));
-        deletedIds.addAll(Lists.transform(clones, RecordFunctions.<CloneRecord>getIntKey()));
+        deletedIds.addAll(Lists.transform(clones, Key.<CloneRecord>toInt()));
 
         // delete all original items that are not listed in the catalog; we could delete the
         // catalog originals but that would make repricing or otherwise fiddling with the catalog
@@ -865,7 +864,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             new Where(Ops.and(getItemColumn(ItemRecord.OWNER_ID).in(memberIds),
                               Ops.not(getItemColumn(ItemRecord.CATALOG_ID).eq(0)))));
         deleteAll(getItemClass(), KeySet.newKeySet(getItemClass(), origs));
-        deletedIds.addAll(Lists.transform(origs, RecordFunctions.<T>getIntKey()));
+        deletedIds.addAll(Lists.transform(origs, Key.<T>toInt()));
 
         // now delete memories for all of the deleted items
         if (!deletedIds.isEmpty()) {

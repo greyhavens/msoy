@@ -25,6 +25,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.CacheKey;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.util.ByteEnumUtil;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
@@ -381,8 +382,7 @@ public class MemberRepository extends DepotRepository
             findAllKeys(MemberRecord.class, false,
                         new Where(new FunctionExp("LOWER", MemberRecord.NAME).eq(
                                       new FunctionExp("LOWER", new ValueExp(search)))),
-                        new Limit(0, limit)),
-            RecordFunctions.<MemberRecord>getIntKey());
+                        new Limit(0, limit)), Key.<MemberRecord>toInt());
     }
 
     /**
@@ -417,7 +417,7 @@ public class MemberRepository extends DepotRepository
             Ops.and(MemberRecord.MEMBER_ID.in(memberIds),
                     new Like(new FunctionExp("LOWER", MemberRecord.NAME), "%" + search + "%")));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
-                               RecordFunctions.<MemberRecord>getIntKey());
+                               Key.<MemberRecord>toInt());
     }
 
     /**
@@ -433,7 +433,7 @@ public class MemberRepository extends DepotRepository
                                         lastSess.lessEq(latestLastSession),
                                         MemberRecord.FLAGS.bitAnd(bits).eq(0)));
         return Lists.transform(findAllKeys(MemberRecord.class, false, where),
-                               RecordFunctions.<MemberRecord>getIntKey());
+                               Key.<MemberRecord>toInt());
     }
 
     /**
@@ -1025,7 +1025,7 @@ public class MemberRepository extends DepotRepository
         clauses.add(new Where(GREETER_FLAG_IS_SET));
         clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
         return Lists.transform(findAllKeys(MemberRecord.class, false, clauses),
-                               RecordFunctions.<MemberRecord>getIntKey());
+                               Key.<MemberRecord>toInt());
     }
 
     /**
@@ -1284,7 +1284,7 @@ public class MemberRepository extends DepotRepository
     {
         return Lists.transform(findAllKeys(MemberRecord.class, false, weakPermaguestWhere(now),
                                            new Limit(0, MAX_WEAK_ACCOUNTS)),
-                               RecordFunctions.<MemberRecord>getIntKey());
+                               Key.<MemberRecord>toInt());
     }
 
     /**
