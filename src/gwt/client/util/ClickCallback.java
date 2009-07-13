@@ -49,19 +49,6 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
         return null;
     }
 
-    protected void takeAction (boolean confirmed)
-    {
-        // if we have not yet confirmed and desire to do so, show the confirm popup
-        if (getConfirmMessage() != null && !confirmed) {
-            setEnabled(false);
-            displayPopup();
-            return;
-        }
-
-        // we're confirmed or don't want to, so go ahead and call the service
-        super.takeAction();
-    }
-
     protected String getConfirmMessage ()
     {
         return _confirmMessage;
@@ -104,6 +91,4 @@ public abstract class ClickCallback<T> extends com.threerings.gwt.util.ClickCall
             }
         }.setContext(getPromptContext()).prompt();
     }
-
-    protected String _confirmMessage;
 }
