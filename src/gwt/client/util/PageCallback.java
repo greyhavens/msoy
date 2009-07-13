@@ -5,7 +5,7 @@ package client.util;
 
 import com.google.gwt.user.client.ui.Panel;
 
-import com.threerings.gwt.util.AbstractPanelCallback;
+import com.threerings.gwt.util.PanelCallback;
 
 import client.shell.CShell;
 
@@ -13,7 +13,7 @@ import client.shell.CShell;
  * Reports a callback error by adding a label to a target panel. The panel will be cleared prior to
  * adding the error.
  */
-public abstract class PageCallback<T> extends AbstractPanelCallback<T>
+public abstract class PageCallback<T> extends PanelCallback<T>
 {
     /**
      * Creates a callback that will clear and add an error label to the supplied panel on failure.
