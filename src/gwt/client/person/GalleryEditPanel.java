@@ -168,41 +168,34 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // show all photos that the member owns
         final SimplePanel photoContainer = new SimplePanel();
         add(photoContainer, 0, 370);
-        _itemsvc.loadPhotos(new InfoCallback<List<Photo>>() {
-            public void onSuccess (List<Photo> result) {
-                final PhotoList myPhotos = new PhotoList(new SimpleDataModel<Photo>(result), 12);
-                photoContainer.setWidget(myPhotos);
-                // allow photos to get dropped onto this panel (to remove them from a gallery)
-                _dragController.registerDropController(
-                    new SimpleDropController(GalleryEditPanel.this) {
-                        @Override public void onPreviewDrop(DragContext context)
-                        throws VetoDragException {
-                            super.onPreviewDrop(context);
-                            if (context.draggable instanceof PayloadWidget) {
-                                PayloadWidget<?> payload = (PayloadWidget<?>) context.draggable;
-                                // Veto any attempts to drop photos that came from the "my photos"
-                                // panel. This will position them back where they came from rather
-                                // than having them vanish into the ether.
-                                if (payload.getSource() == myPhotos) {
-                                    throw new VetoDragException();
-                                }
-                            }
-                        }
-                        @Override public void onDrop(DragContext context) {
-                            super.onDrop(context);
-                            for (Widget widget : context.selectedWidgets) {
-                                // to the ether with you
-                                remove(widget);
-                            }
-                        }
-                    }
-                );
-            }
-        });
+
+        // only populate the box if it's a member editing their own gallery (i.e. not support)
+        if (CShell.getMemberId() == _galleryData.owner.getMemberId()) {
+            _itemsvc.loadPhotos(new InfoCallback<List<Photo>>() {
+                public void onSuccess (List<Photo> result) {
+                    createPhotoBox(photoContainer, result);
+                }
+            });
+        } else {
+            // otherwise create the box explicitly with an empty result
+            createPhotoBox(photoContainer, new ArrayList<Photo>());
+        }
 
         // "your photos" title goes over photo list
         add(new Image("/images/people/gallery_photo_icon.png"), 10, 375);
-        add(MsoyUI.createLabel(_pmsgs.galleryPhotoListTitle(), "PhotoListTitle"), 65, 385);
+
+        String photoBoxTitle;
+        if (CShell.getMemberId() == _galleryData.owner.getMemberId()) {
+            photoBoxTitle = _pmsgs.galleryPhotoListTitle();
+        } else {
+            photoBoxTitle = "Drag here to remove from gallery.";
+        }
+        add(MsoyUI.createLabel(photoBoxTitle, "PhotoListTitle"), 65, 385);
+
+        // if we're support, we're done
+        if (CShell.getMemberId() != _galleryData.owner.getMemberId()) {
+            return;
+        }
 
         // button link to photo upload panel goes over photo list
         add(MsoyUI.createActionLabel(_pmsgs.galleryUploadPhotos(), "UploadPhotos",
@@ -213,6 +206,37 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                     Link.go(Pages.STUFF, "c", Item.PHOTO);
                 }
             }), 210, 395);
+    }
+
+    protected void createPhotoBox (final SimplePanel photoContainer, List<Photo> result)
+    {
+        final PhotoList myPhotos = new PhotoList(new SimpleDataModel<Photo>(result), 12);
+        photoContainer.setWidget(myPhotos);
+        // allow photos to get dropped onto this panel (to remove them from a gallery)
+        _dragController.registerDropController(
+            new SimpleDropController(GalleryEditPanel.this) {
+                @Override public void onPreviewDrop(DragContext context)
+                throws VetoDragException {
+                    super.onPreviewDrop(context);
+                    if (context.draggable instanceof PayloadWidget) {
+                        PayloadWidget<?> payload = (PayloadWidget<?>) context.draggable;
+                        // Veto any attempts to drop photos that came from the "my photos"
+                        // panel. This will position them back where they came from rather
+                        // than having them vanish into the ether.
+                        if (payload.getSource() == myPhotos) {
+                            throw new VetoDragException();
+                        }
+                    }
+                }
+                @Override public void onDrop(DragContext context) {
+                    super.onDrop(context);
+                    for (Widget widget : context.selectedWidgets) {
+                        // to the ether with you
+                        remove(widget);
+                    }
+                }
+            }
+        );
     }
 
     /**

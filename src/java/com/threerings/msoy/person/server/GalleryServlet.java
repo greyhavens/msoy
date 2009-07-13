@@ -76,7 +76,7 @@ public class GalleryServlet extends MsoyServiceServlet
         }
 
         MemberRecord member = requireAuthedUser();
-        if (existingGallery.ownerId != member.memberId) {
+        if (existingGallery.ownerId != member.memberId && !member.isSupport()) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
