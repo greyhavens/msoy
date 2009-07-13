@@ -23,6 +23,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.RandomUtil;
 
 import net.sf.ehcache.CacheManager;
@@ -42,6 +43,8 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.web.gwt.ServiceException;
 
+import com.threerings.msoy.group.server.persist.BrandShareRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -302,9 +305,26 @@ public class MoneyLogic
         MoneyTransactionRecord buyerTx = ibr.buyerTx;
         MoneyTransactionRecord changeTx = ibr.changeTx;
 
+        List<List<BrandShareRecord>> listingShares = Lists.newArrayList();
+        for (CatalogRecord listing : listings) {
+            if (listing.brandId != 0) {
+                List<BrandShareRecord> shares = _groupRepo.getBrandShares(listing.brandId);
+                if (!shares.isEmpty()) {
+                    listingShares.add(shares);
+                } else {
+                    // a listing with a brand with no share holder is treated like an unbranded
+                    // listing, i.e. the monies go to the creator. we mark this with a null.
+                    listingShares.add(null);
+                }
+
+            } else {
+                listingShares.add(null);
+            }
+        }
+
         // see what kind of payouts we're going pay- null means don't load, don't care
-        List<CurrencyAmount> creatorPayouts =
-            magicFree ? null : computeCreatorPayouts(quote, listings);
+        List<IntMap<CurrencyAmount>> creatorPayouts =
+            magicFree ? null : computeCreatorPayouts(quote, listings, listingShares);
         CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
         CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
 
@@ -312,18 +332,23 @@ public class MoneyLogic
         if (creatorPayouts != null) {
             creatorTxs = Lists.newArrayListWithExpectedSize(creatorPayouts.size());
             for (int ii = 0; ii < creatorPayouts.size(); ++ii) {
-                int creatorId = listings.get(ii).item.creatorId;
-                TransactionType txType = ii == 0 ? TransactionType.CREATOR_PAYOUT :
+                IntMap<CurrencyAmount> payouts = creatorPayouts.get(ii);
+                // TODO: Introduce BRAND_PAYOUT and BASIS_BRAND_PAYOUT?
+                TransactionType txType = (ii == 0) ? TransactionType.CREATOR_PAYOUT :
                     TransactionType.BASIS_CREATOR_PAYOUT;
-                CurrencyAmount amount = creatorPayouts.get(ii);
+                // TODO: Introduce m.branded_item_sold and m.derived_branded_item_sold?
                 String message = MessageBundle.tcompose(ii == 0 ? "m.item_sold" :
                     "m.derived_item_sold", itemName, item.type, item.catalogId);
-                try {
-                    creatorTxs.add(_repo.accumulateAndStoreTransaction(
-                                       creatorId, amount.currency, amount.amount, txType, message,
-                                       iident, buyerTx.id, buyerId, true));
-                } catch (DatabaseException de) {
-                    log.warning(de.getMessage()); // keep going with the main transaction
+                for (Map.Entry<Integer, CurrencyAmount> payment : payouts.entrySet()) {
+                    int payeeId = payment.getKey();
+                    CurrencyAmount amount = payment.getValue();
+                    try {
+                        creatorTxs.add(_repo.accumulateAndStoreTransaction(
+                            payeeId, amount.currency, amount.amount, txType, message,
+                            iident, buyerTx.id, buyerId, true));
+                    } catch (DatabaseException de) {
+                        log.warning(de.getMessage()); // keep going with the main transaction
+                    }
                 }
             }
         }
@@ -1146,25 +1171,23 @@ public class MoneyLogic
     /**
      * Compute the payouts that creators should receive for the given price quote. The first
      * listing is the creator who listed the item. Others are contributors. Payouts are made based
-     * on a fraction of the total payout due, with the lister receiving any remainder.
+     * on a fraction of the total payout due, with the lister receiving any remainder. Each
+     * creator may be a brand, in which case more complicated stuff happens.
      */
-    protected List<CurrencyAmount> computeCreatorPayouts (
-        PriceQuote quote, List<CatalogRecord> listings)
+    protected List<IntMap<CurrencyAmount>> computeCreatorPayouts (
+        PriceQuote quote, List<CatalogRecord> listings, List<List<BrandShareRecord>> listingShares)
         throws ServiceException
     {
         // get the normal total creator payout - this is what we'll distribute
         CurrencyAmount totalPayout = computePayout(quote, _runtime.money.creatorPercentage);
 
-        // optimize the single creator case with no bases
-        if (listings.size() == 1) {
-            return Collections.singletonList(totalPayout);
-        }
-
         // all listings must match this currency - detecting race condition
         Currency baseCurrency = listings.get(listings.size() - 1).currency;
 
-        // list of divided payouts
-        List<CurrencyAmount> divvies = Lists.newArrayListWithExpectedSize(listings.size());
+        // map of divided payouts
+        List<IntMap<CurrencyAmount>> divvies = Lists.newArrayList();
+
+        int payoutSum = 0;
 
         // loop from the end and give each creator a portion of the payout
         int totalCost = listings.get(0).cost, lastCost = 0;
@@ -1177,13 +1200,32 @@ public class MoneyLogic
                 throw new ServiceException(MoneyCodes.E_INTERNAL_ERROR);
             }
 
-            // each creator gets a % of the payout based on the % of the cost he contributes
-            float costContribution = (float)(listing.cost - lastCost) / totalCost;
-            CurrencyAmount payout = new CurrencyAmount(totalPayout.currency, (int)(Math.floor(
-                costContribution * totalPayout.amount)));
-            divvies.add(payout);
+            float listingPayout;
+            if (ii > 0) {
+                // each creator gets a % of the payout based on the % of the cost he contributes
+                float costContribution = (float)(listing.cost - lastCost) / totalCost;
+                listingPayout = costContribution * totalPayout.amount;
+            } else {
+                // except the main creator, who gets whatever's left in the pot
+                listingPayout = totalPayout.amount - payoutSum;
+            }
 
-            if (payout.amount == 0) {
+            if (listingPayout > 0) {
+                IntMap<CurrencyAmount> result = IntMaps.newHashIntMap();
+                divvies.add(result);
+
+                List<BrandShareRecord> shares = listingShares.get(ii);
+                if (shares != null) {
+                    // this item is branded: split into payouts for potentially lots of people
+                    payoutSum += computePayoutsForListing(
+                        result, shares, totalPayout.currency, listingPayout);
+                } else {
+                    // this item is not branded: just insert payout for the creator
+                    payoutSum += computePayoutsForListing(
+                        result, listing.item.creatorId, totalPayout.currency, listingPayout);
+                }
+
+            } else {
                 log.warning("Payout or cost too small for divvying", "totalCost", totalCost,
                     "listingPortion", listing.cost - lastCost, "totalPayout", totalPayout,
                     "itemType", listing.item.getType(), "catalogId", listing.catalogId);
@@ -1193,16 +1235,9 @@ public class MoneyLogic
             lastCost = listing.cost;
         }
 
-        // reverse so the divvies match the incoming list
         Collections.reverse(divvies);
 
-        // calculate the distributed payout so far
-        int payoutSum = 0;
-        for (CurrencyAmount amount : divvies) {
-            payoutSum += amount.amount;
-        }
-
-        // since we use Math.floor, this should never happen
+        // this should never happen
         if (payoutSum > totalPayout.amount) {
             log.warning("Fishy... basis payouts larger than overall payout", "payoutSum", payoutSum,
                 "totalPayout", totalPayout, "itemType", listings.get(0).item.getType(),
@@ -1210,12 +1245,43 @@ public class MoneyLogic
             throw new ServiceException(MoneyCodes.E_INTERNAL_ERROR);
         }
 
-        // since we use Math.floor, complete payout by giving leftovers to the main creator
-        if (payoutSum < totalPayout.amount) {
-            divvies.get(0).amount += totalPayout.amount - payoutSum;
+        return divvies;
+    }
+
+    /**
+     * Figure out payouts for a single branded listing (which may not be the item actually sold,
+     * because of derivations).
+     *
+     * TODO: For now we just drop the missing change from taking Math.floor() but this should be
+     * handled better before we release.
+     */
+    protected int computePayoutsForListing (
+        IntMap<CurrencyAmount> result, List<BrandShareRecord> shares, Currency currency, float payout)
+    {
+        int totShares = 0;
+        for (BrandShareRecord rec : shares) {
+            totShares += rec.shares;
         }
 
-        return divvies;
+        int listingPayoutSum = 0;
+        for (BrandShareRecord rec : shares) {
+            int creatorPayout = (int)Math.floor((payout * rec.shares) / totShares);
+            listingPayoutSum += creatorPayout;
+            result.put(rec.memberId, new CurrencyAmount(currency, creatorPayout));
+        }
+        return listingPayoutSum;
+    }
+
+    /**
+     * Figure out payouts for a single unbranded listing (which may not be the item actually sold,
+     * because of derivations).
+     */
+    protected int computePayoutsForListing (
+        IntMap<CurrencyAmount> result, int creatorId, Currency currency, float payout)
+    {
+        int creatorPayout = (int)Math.floor(payout);
+        result.put(creatorId, new CurrencyAmount(currency, creatorPayout));
+        return creatorPayout;
     }
 
     /**
@@ -1433,6 +1499,7 @@ public class MoneyLogic
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected UserActionRepository _userActionRepo;
+    @Inject protected GroupRepository _groupRepo;
 
     /** An arbitrary key for tracking quotes in {@link #listItem}. */
     protected static final Object LIST_ITEM_KEY = new Object();
