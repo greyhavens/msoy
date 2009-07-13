@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -19,7 +18,6 @@ import com.samskivert.util.RandomUtil;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.msoy.game.server.GameUtil;
 import com.threerings.msoy.peer.data.HostedPlace;
@@ -172,56 +170,37 @@ public class PopularPlacesSnapshot
 
         // now we can count up the population in all scenes and games. collect greeter online info
         // while we're at it
-        peerMan.applyToNodes(new Function<NodeObject,Void>() {
-            public Void apply (NodeObject nodeobj) {
-                MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
+        for (MsoyNodeObject mnobj : peerMan.getMsoyNodeObjects()) {
+            for (MemberScene ms : mnobj.memberScenes) {
+                seenIds.add(ms.memberId);
 
-                for (MemberScene ms : mnobj.memberScenes) {
-                    seenIds.add(ms.memberId);
+                HostedRoom room = mnobj.hostedScenes.get(ms.sceneId);
+                if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
+                    if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                        // map whirled rooms by whirled id
+                        increment(_whirleds, _whlist, room.ownerId, room);
+                    }
+                    increment(_scenes, _sclist, room.placeId, room);
 
-                    HostedRoom room = mnobj.hostedScenes.get(ms.sceneId);
-                    if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
-                        if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                            // map whirled rooms by whirled id
-                            increment(_whirleds, _whlist, room.ownerId, room);
-                        }
-                        increment(_scenes, _sclist, room.placeId, room);
-
-                        // mark as an online greeter if appropriate
-                        if (greeters.contains(ms.memberId)) {
-                            onlineGreeters.add(ms.memberId);
-                        }
+                    // mark as an online greeter if appropriate
+                    if (greeters.contains(ms.memberId)) {
+                        onlineGreeters.add(ms.memberId);
                     }
                 }
+            }
 
-                for (MemberGame mg : mnobj.memberGames) {
-                    seenIds.add(mg.memberId);
+            for (MemberGame mg : mnobj.memberGames) {
+                seenIds.add(mg.memberId);
 
-                    if (!GameUtil.isDevelopmentVersion(mg.gameId)) {
-                        HostedPlace game = mnobj.hostedGames.get(mg.gameId);
-                        if (game != null) {
-                            // map games by game id
-                            increment(_games, _glist, game.placeId, game);
-                        }
+                if (!GameUtil.isDevelopmentVersion(mg.gameId)) {
+                    HostedPlace game = mnobj.hostedGames.get(mg.gameId);
+                    if (game != null) {
+                        // map games by game id
+                        increment(_games, _glist, game.placeId, game);
                     }
                 }
-
-                return null;
             }
-
-            protected void increment (IntMap<Place> places, List<Place> plist,
-                                      int placeId, HostedPlace hp) {
-                Place place = places.get(placeId);
-                if (place == null) {
-                    place = new Place();
-                    place.placeId = placeId;
-                    place.name = hp.name;
-                    places.put(placeId, place);
-                    plist.add(place);
-                }
-                place.population++;
-            }
-        });
+        }
 
         // note our total population
         _totalPopulation = seenIds.size();
@@ -249,6 +228,20 @@ public class PopularPlacesSnapshot
         // and voila, we are read-only lists
         _greeters = Collections.unmodifiableList(glist);
         _onlineGreeters = Collections.unmodifiableList(oglist);
+    }
+
+    protected static void increment (IntMap<Place> places, List<Place> plist,
+                                     int placeId, HostedPlace hp)
+    {
+        Place place = places.get(placeId);
+        if (place == null) {
+            place = new Place();
+            place.placeId = placeId;
+            place.name = hp.name;
+            places.put(placeId, place);
+            plist.add(place);
+        }
+        place.population++;
     }
 
     protected static void sortAndPrune (List<Place> list)

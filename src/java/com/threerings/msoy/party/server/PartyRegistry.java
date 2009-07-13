@@ -261,30 +261,26 @@ public class PartyRegistry
         final MemberObject member = (MemberObject)caller;
 
         final List<PartyBoardInfo> list = Lists.newArrayList();
-        _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
-            public Void apply (NodeObject node) {
-                MsoyNodeObject nodeObj = (MsoyNodeObject) node;
-                for (PartyInfo info : nodeObj.partyInfos) {
-                    if ((info.population >= PartyCodes.MAX_PARTY_SIZE) ||
-                            (info.recruitment == PartyCodes.RECRUITMENT_CLOSED)) {
-                        continue; // skip: too big, or closed
-                    }
-                    if ((mode == PartyCodes.BOARD_AWAITING_PLAYERS) &&
-                            (info.statusType != PartyCodes.STATUS_TYPE_LOBBY)) {
-                        continue; // skip: we want only boards awaiting players.
-                    }
-                    PartySummary summary = nodeObj.hostedParties.get(info.id);
-                    if ((info.recruitment == PartyCodes.RECRUITMENT_GROUP) &&
-                            !member.isGroupMember(summary.group.getGroupId())) {
-                        continue; // skip: user not a group member
-                    }
-                    PartyBoardInfo boardInfo = new PartyBoardInfo(summary, info);
-                    boardInfo.computeScore(member);
-                    list.add(boardInfo);
+        for (MsoyNodeObject nodeObj : _peerMgr.getMsoyNodeObjects()) {
+            for (PartyInfo info : nodeObj.partyInfos) {
+                if ((info.population >= PartyCodes.MAX_PARTY_SIZE) ||
+                    (info.recruitment == PartyCodes.RECRUITMENT_CLOSED)) {
+                    continue; // skip: too big, or closed
                 }
-                return null; // Void
+                if ((mode == PartyCodes.BOARD_AWAITING_PLAYERS) &&
+                    (info.statusType != PartyCodes.STATUS_TYPE_LOBBY)) {
+                    continue; // skip: we want only boards awaiting players.
+                }
+                PartySummary summary = nodeObj.hostedParties.get(info.id);
+                if ((info.recruitment == PartyCodes.RECRUITMENT_GROUP) &&
+                    !member.isGroupMember(summary.group.getGroupId())) {
+                    continue; // skip: user not a group member
+                }
+                PartyBoardInfo boardInfo = new PartyBoardInfo(summary, info);
+                boardInfo.computeScore(member);
+                list.add(boardInfo);
             }
-        });
+        }
 
         // sort and prune
         // Note: perhaps create a data structure that only saves the top N items and rolls

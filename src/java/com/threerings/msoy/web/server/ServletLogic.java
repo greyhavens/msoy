@@ -8,8 +8,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.data.NodeObject;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.web.gwt.ServiceException;
@@ -24,14 +24,16 @@ public class ServletLogic
      * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
      * and blocks the current thread until the execution has completed.
      */
-    public void invokePeerOperation (String name, final Function<NodeObject,Void> op)
+    public void invokePeerOperation (String name, final Function<MsoyNodeObject,Void> op)
         throws ServiceException
     {
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(name);
         _omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
-                    _peerMan.applyToNodes(op);
+                    for (MsoyNodeObject mnobj : _peerMan.getMsoyNodeObjects()) {
+                        op.apply(mnobj);
+                    }
                     waiter.requestCompleted(null);
                 } catch (Exception e) {
                     waiter.requestFailed(e);

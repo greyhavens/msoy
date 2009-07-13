@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -193,8 +194,8 @@ public class MemberHelper
         final IntMap<MemberCard.InScene> rstatuses = IntMaps.newHashIntMap();
         final IntMap<MemberCard.InGame> gstatuses = IntMaps.newHashIntMap();
         _servletLogic.invokePeerOperation(
-            "resolveMemberCards(" + memberIds + ")", new MsoyPeerManager.NodeOp() {
-            public void apply (MsoyNodeObject mnobj) {
+            "resolveMemberCards(" + memberIds + ")", new Function<MsoyNodeObject, Void>() {
+            public Void apply (MsoyNodeObject mnobj) {
                 for (Integer id : memberIds) {
                     MemberCard.InGame gstatus = getGameStatus(mnobj, id);
                     if (gstatus != null) {
@@ -205,6 +206,7 @@ public class MemberHelper
                         rstatuses.put(id, rstatus);
                     }
                 }
+                return null;
             }
         });
 

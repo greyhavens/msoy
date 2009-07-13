@@ -14,6 +14,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -123,17 +124,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         void disconnectedFromPeer (String node);
     }
 
-    /** Useful with {@link #applyToNodes}. */
-    public static abstract class NodeOp implements Function<NodeObject, Void>
-    {
-        public abstract void apply (MsoyNodeObject mnobj);
-
-        public Void apply (NodeObject nodeobj) {
-            apply((MsoyNodeObject)nodeobj);
-            return null;
-        }
-    }
-
     /** Useful with {@link #lookupNodeDatum}. */
     public static abstract class NodeFunc<T> implements Function<NodeObject, T>
     {
@@ -172,6 +162,19 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Inject public MsoyPeerManager (Lifecycle cycle)
     {
         super(cycle);
+    }
+
+    /**
+     * Returns an iterable over all node objects (this and other peers') casted to {@link
+     * MsoyNodeObject}.
+     */
+    public Iterable<MsoyNodeObject> getMsoyNodeObjects ()
+    {
+        return Iterables.transform(getNodeObjects(), new Function<NodeObject, MsoyNodeObject>() {
+            public MsoyNodeObject apply (NodeObject node) {
+                return (MsoyNodeObject)node;
+            }
+        });
     }
 
     /**
@@ -214,21 +217,19 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public Set<Integer> filterOnline (final Set<Integer> memberIds)
     {
-        final Set<Integer> onlineIds = Sets.newHashSet();
-        applyToNodes(new NodeOp() {
-            public void apply (MsoyNodeObject mnobj) {
-                for (MemberScene scene : mnobj.memberScenes) {
-                    if (memberIds.contains(scene.memberId)) {
-                        onlineIds.add(scene.memberId);
-                    }
-                }
-                for (MemberGame game : mnobj.memberGames) {
-                    if (memberIds.contains(game.memberId)) {
-                        onlineIds.add(game.memberId);
-                    }
+        Set<Integer> onlineIds = Sets.newHashSet();
+        for (MsoyNodeObject mnobj : getMsoyNodeObjects()) {
+            for (MemberScene scene : mnobj.memberScenes) {
+                if (memberIds.contains(scene.memberId)) {
+                    onlineIds.add(scene.memberId);
                 }
             }
-        });
+            for (MemberGame game : mnobj.memberGames) {
+                if (memberIds.contains(game.memberId)) {
+                    onlineIds.add(game.memberId);
+                }
+            }
+        }
         return onlineIds;
     }
 
@@ -237,23 +238,21 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public MemberLocation getMemberLocation (int memberId)
     {
-        final Integer memberKey = memberId;
-        final MemberLocation loc = new MemberLocation();
-        applyToNodes(new NodeOp() {
-            public void apply (MsoyNodeObject mnobj) {
-                MemberScene scene = mnobj.memberScenes.get(memberKey);
-                if (scene != null) {
-                    loc.memberId = scene.memberId;
-                    loc.sceneId = scene.sceneId;
-                }
-                MemberGame game = mnobj.memberGames.get(memberKey);
-                if (game != null) {
-                    loc.memberId = game.memberId;
-                    loc.gameId = game.gameId;
-                    loc.avrGame = game.avrGame;
-                }
+        Integer memberKey = memberId;
+        MemberLocation loc = new MemberLocation();
+        for (MsoyNodeObject mnobj : getMsoyNodeObjects()) {
+            MemberScene scene = mnobj.memberScenes.get(memberKey);
+            if (scene != null) {
+                loc.memberId = scene.memberId;
+                loc.sceneId = scene.sceneId;
             }
-        });
+            MemberGame game = mnobj.memberGames.get(memberKey);
+            if (game != null) {
+                loc.memberId = game.memberId;
+                loc.gameId = game.gameId;
+                loc.avrGame = game.avrGame;
+            }
+        }
         return (loc.memberId != 0) ? loc : null;
     }
 

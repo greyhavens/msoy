@@ -622,16 +622,12 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireSupportUser();
 
-        // Collect the names of all the nodes
-        final Set<String> names = Sets.newHashSet();
-        _peerMgr.applyToNodes(new Function<NodeObject, Void>() {
-            public Void apply (NodeObject node) {
-                names.add(node.nodeName);
-                return null;
+        return Sets.newHashSet(
+            Iterables.transform(_peerMgr.getNodeObjects(), new Function<NodeObject, String>() {
+            public String apply (NodeObject node) {
+                return node.nodeName;
             }
-        });
-
-        return names;
+        }));
     }
 
     // from interface AdminService

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -91,15 +90,12 @@ public class EHCachePeerCoordinator extends CacheManagerPeerProviderFactory
             // list the current whirled peers
             final List<CachePeer> result = Lists.newArrayList();
             final Set<String> nodes = Sets.newHashSet();
-            _peerMan.applyToNodes(new Function<NodeObject, Void>() {
-                public Void apply (NodeObject node) {
-                    if (node != _peerMan.getNodeObject()) {
-                        addCachesForNode(result, node.nodeName);
-                        nodes.add(node.nodeName);
-                    }
-                    return null;
+            for (NodeObject node : _peerMan.getNodeObjects()) {
+                if (node != _peerMan.getNodeObject()) {
+                    addCachesForNode(result, node.nodeName);
+                    nodes.add(node.nodeName);
                 }
-            });
+            }
 
             // if any previously known peer is no longer with us, clear out the cache
             Set<Tuple<String, String>> toRemove = Sets.newHashSet();
