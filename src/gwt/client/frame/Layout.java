@@ -101,12 +101,11 @@ public abstract class Layout
     }
 
     /**
-     * Detects if this layout should display the tabs above web content.
-     * TODO: remove
+     * Detects if this layout should adjust the title bar to look good in a frame.
      */
-    public boolean showsTabs ()
+    public boolean usesFramedTitleBar ()
     {
-        return true;
+        return false;
     }
 
     /**

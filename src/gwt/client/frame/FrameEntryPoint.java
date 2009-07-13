@@ -586,8 +586,9 @@ public class FrameEntryPoint
         // finally actually display the client
         WorldClient.displayFlash(args, _layout.getClientProvider());
 
-        if (_layout.alwaysShowsTitleBar()) {
-            _bar = TitleBar.createClient(_layout, game, _closeContent);
+        TitleBar bar = TitleBar.createClient(_layout, game, _closeContent);
+        if (bar != null) {
+            _bar = bar;
             _bar.setCloseVisible(!isMonoScreen());
             _layout.setTitleBar(_bar);
         }

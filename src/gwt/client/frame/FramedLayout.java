@@ -110,9 +110,9 @@ public class FramedLayout extends Layout
     }
 
     @Override // from Layout
-    public boolean showsTabs ()
+    public boolean usesFramedTitleBar ()
     {
-        return false;
+        return true;
     }
 
     /**

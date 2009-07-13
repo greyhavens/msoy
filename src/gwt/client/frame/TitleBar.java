@@ -5,6 +5,7 @@ package client.frame;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
@@ -23,11 +24,11 @@ public abstract class TitleBar
      */
     public static TitleBar create (Layout layout, Tabs tab, ClickHandler onClose)
     {
-        StandardTitleBar titleBar = StandardTitleBar.create(
-            tab, onClose, !(layout instanceof FacebookLayout));
-        if (!layout.showsTabs()) {
-            titleBar.hideTabs();
+        if (layout instanceof FacebookLayout) {
+            return new FacebookTitleBar(false);
         }
+
+        StandardTitleBar titleBar = new StandardTitleBar(tab, onClose, layout.usesFramedTitleBar());
         return titleBar;
     }
 
@@ -41,16 +42,10 @@ public abstract class TitleBar
      */
     public static TitleBar createClient (Layout layout, boolean inGame, ClickHandler onClose)
     {
-        if (!layout.alwaysShowsTitleBar()) {
+        if (!(layout instanceof FacebookLayout) || !inGame) {
             return null;
         }
-        StandardTitleBar titleBar =  inGame ?
-            StandardTitleBar.createGame(onClose, !(layout instanceof FacebookLayout)) :
-            StandardTitleBar.createWorld(onClose, !(layout instanceof FacebookLayout));
-        if (!layout.showsTabs()) {
-            titleBar.hideTabs();
-        }
-        return titleBar;
+        return new FacebookTitleBar(true);
     }
 
     /**
