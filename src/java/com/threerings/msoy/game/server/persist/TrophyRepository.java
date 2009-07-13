@@ -11,9 +11,12 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.CountRecord;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Ops;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
@@ -67,6 +70,15 @@ public class TrophyRepository extends DepotRepository
     {
         return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, gameId,
                                                      TrophyRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Counts the number of trophies a user has for a given game.
+     */
+    public int countTrophies (int gameId, int memberId)
+    {
+        return load(CountRecord.class, new Where(Ops.and(TrophyRecord.GAME_ID.eq(gameId),
+            TrophyRecord.MEMBER_ID.eq(memberId))), new FromOverride(TrophyRecord.class)).count;
     }
 
     /**

@@ -35,6 +35,7 @@ import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -120,7 +121,10 @@ public class FacebookPageServlet extends MsoyServiceServlet
 
         log.info("Got friends with games", "size", result.size());
 
-        // TODO: get the trophy counts for each friend
+        // get the trophy counts for each friend
+        for (FacebookFriendInfo info : result) {
+            info.trophyCount = _trophyRepo.countTrophies(info.lastGame.id, info.memberId);
+        }
 
         // sort by level
         Collections.sort(result, new Comparator<FacebookFriendInfo>() {
@@ -183,7 +187,8 @@ public class FacebookPageServlet extends MsoyServiceServlet
 
     @Inject protected FacebookLogic _fbLogic;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MoneyRepository _moneyRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MoneyRepository _moneyRepo;
     @Inject protected RatingRepository _ratingRepo;
+    @Inject protected TrophyRepository _trophyRepo;
 }
