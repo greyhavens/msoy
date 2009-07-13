@@ -162,8 +162,8 @@ public class ItemServlet extends MsoyServiceServlet
         boolean newSolid = (newCount == MIN_SOLID_RATINGS && newAverage >= 4) ||
             (newCount > MIN_SOLID_RATINGS && newAverage >= 4 && (!result.right || oldAverage < 4));
 
-        // If this is a potentially new "solid" rating, update the stat
-        if (newSolid) {
+        // If this is a potentially new "solid" rating and the item is listed, update the stat
+        if (newSolid && item.catalogId != 0) {
             _statLogic.addToSetStat(item.creatorId, StatType.SOLID_4_STAR_RATINGS, originalId);
         }
 

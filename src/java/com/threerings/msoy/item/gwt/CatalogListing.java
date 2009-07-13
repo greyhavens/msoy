@@ -11,6 +11,7 @@ import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
@@ -86,6 +87,9 @@ public class CatalogListing
 
     /** The details of the listed item (including the item). */
     public ItemDetail detail;
+
+    /** The details of the brand that owns this listing, or null. */
+    public BrandDetail brand;
 
     /** The item id of the original from which this listing was created. */
     public int originalItemId;

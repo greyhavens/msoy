@@ -19,10 +19,10 @@ import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
-
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
@@ -37,6 +37,10 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.group.gwt.BrandDetail;
+import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.persist.BrandShareRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.gwt.FeedMessageType;
 import com.threerings.msoy.person.server.FeedLogic;
 
@@ -168,7 +172,7 @@ public class CatalogServlet extends MsoyServiceServlet
                                 creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
                         }
                         // else: I guess if they earned BLING, that's it's own reward
-    
+
                         // Some items have a stat that may need updating
                         if (itemType == Item.AVATAR) {
                             _statLogic.ensureIntStatMinimum(
@@ -204,7 +208,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                         Currency currency, int cost, int basisId)
+                         Currency currency, int cost, int basisId, int brandId)
         throws ServiceException
     {
         final MemberRecord mrec = requireRegisteredUser();
@@ -247,6 +251,13 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
+        // validate the brand
+        if (brandId != 0) {
+            if (_groupRepo.getBrandShare(brandId, mrec.memberId) == 0) {
+                throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+            }
+        }
+
         // sanitize the sales target
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
@@ -271,6 +282,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final Currency fcurrency = currency;
         final int fpricing = pricing, fsalesTarget = salesTarget, fcost = cost;
         final int fbasisId = basisId;
+        final int fbrandId = brandId;
         // the coin minimum price is the listing fee
         int listFee = ItemPrices.getMinimumPrice(Currency.COINS, item.type, rating);
 
@@ -281,7 +293,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 repo.insertOriginalItem(master, true);
                 // create and insert the catalog record, return its new id
                 return repo.insertListing(master, originalItemId, fpricing, fsalesTarget,
-                                          fcurrency, fcost, now, fbasisId);
+                                          fcurrency, fcost, now, fbasisId, fbrandId);
             }
         }).toPurchaseResult().ware;
 
@@ -350,7 +362,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // load up the basis item if requested
         CatalogListing.BasisItem basis = null;
         if (forDisplay && record.basisId > 0) {
-            CatalogRecord basisRec = 
+            CatalogRecord basisRec =
                 _itemLogic.getRepository(itemType).loadListing(record.basisId, true);
             if (basisRec != null) {
                 basis = new CatalogListing.BasisItem();
@@ -359,6 +371,17 @@ public class CatalogServlet extends MsoyServiceServlet
                 basis.creator = _memberRepo.loadMemberName(basisRec.item.creatorId);
                 basis.hidden = (basisRec.pricing == CatalogListing.PRICING_HIDDEN);
             }
+        }
+
+        // if this is a branded item, we load up a bunch of new things
+        BrandDetail brand = null;
+        if (record.brandId != 0) {
+            brand = _groupLogic.loadBrandDetail(record.brandId);
+            if (brand == null) {
+                log.warning("Eek, listing's brand doesn't exist", "itemType", itemType,
+                    "catalogId", catalogId, "brandId", record.brandId);
+            }
+
         }
 
         // load up to 5 derived items if requested
@@ -381,19 +404,21 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // finally convert the listing to a runtime record
-        CatalogListing clrec = record.toListing();
-        clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
-        clrec.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
-        clrec.quote = quote;
-        clrec.basis = basis;
-        clrec.derivatives = derivatives;
+        CatalogListing listing = record.toListing();
+        listing.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
+
+        listing.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
+        listing.quote = quote;
+        listing.basis = basis;
+        listing.brand = brand;
+        listing.derivatives = derivatives;
 
         // let's remember this
         final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
         final String tracker = (mrec != null) ? mrec.visitorId : getVisitorTracker();
         _eventLog.shopDetailsViewed(memberId, tracker);
 
-        return clrec;
+        return listing;
     }
 
     public CatalogListing.DerivedItem[] loadAllDerivedItems (byte itemType, int catalogId)
@@ -444,7 +469,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                               Currency currency, int cost, int basisId)
+                               Currency currency, int cost, int basisId, int brandId)
         throws ServiceException
     {
         MemberRecord mrec = requireRegisteredUser();
@@ -479,6 +504,13 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
+        // validate the brand
+        if (brandId != 0) {
+            if (_groupRepo.getBrandShare(brandId, mrec.memberId) == 0) {
+                throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+            }
+        }
+
         // load a copy of the original item
         ItemRecord originalItem = repo.loadOriginalItem(record.originalItemId);
         if (originalItem == null) {
@@ -494,7 +526,7 @@ public class CatalogServlet extends MsoyServiceServlet
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // now we can update the record
-        repo.updatePricing(catalogId, pricing, salesTarget, currency, cost,
+        repo.updatePricing(catalogId, pricing, salesTarget, currency, cost, brandId,
                            System.currentTimeMillis());
 
         // update the basis and derivation counts
@@ -562,6 +594,17 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
         return cards;
+    }
+
+    public List<BrandDetail> loadBrands ()
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        List<BrandDetail> brands = Lists.newArrayList();
+        for (BrandShareRecord rec : _groupRepo.getBrands(mrec.memberId)) {
+            brands.add(_groupLogic.loadBrandDetail(rec.groupId));
+        }
+        return brands;
     }
 
     // from interface CatalogService
@@ -658,10 +701,12 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GameLogic _gameLogic;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected StatLogic _statLogic;
     @Inject protected UserActionRepository _userActionRepo;
