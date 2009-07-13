@@ -50,10 +50,21 @@
     </dirset>
   </path>
 
-  <!-- declare the libraries needed by the MSOY runtime -->
-  <filelist dir="." id="dist.libs">
-    <file name="${extlibs.dir}/activation.jar"/>
+  <!-- declare the libraries needed only during the build process -->
+  <filelist dir="." id="build.libs">
     <file name="${extlibs.dir}/advanced-components-1.4.1.jar"/>
+    <file name="${extlibs.dir}/gwt-dnd.jar"/>
+    <file name="${extlibs.dir}/gwt-incubator.jar"/>
+    <file name="${extlibs.dir}/junit-3.7.jar"/>
+    <file name="${extlibs.dir}/junit4.jar"/>
+    <!--<file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
+    <file name="${extlibs.dir}/retroweaver-rt-1.2.2.jar"/>-->
+    <file name="${extlibs.dir}/proguard.jar"/>
+  </filelist>
+
+  <!-- declare the libraries needed by the MSOY runtime and for building -->
+  <filelist dir="." id="runtime.libs">
+    <file name="${extlibs.dir}/activation.jar"/>
     <file name="${extlibs.dir}/aopalliance.jar"/>
     <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
     <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
@@ -72,25 +83,18 @@
     <file name="${extlibs.dir}/google-collect.jar"/>
     <file name="${extlibs.dir}/guice.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
-    <file name="${extlibs.dir}/gwt-dnd.jar"/>
-    <file name="${extlibs.dir}/gwt-incubator.jar"/>
     <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty.jar"/>
-    <file name="${extlibs.dir}/junit-3.7.jar"/>
-    <file name="${extlibs.dir}/junit4.jar"/>
     <file name="${extlibs.dir}/mail.jar"/>
     <file name="${extlibs.dir}/mina-core.jar"/>
     <file name="${extlibs.dir}/mina-filter-ssl.jar"/>
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
     <file name="${extlibs.dir}/postgresql-jdbc4.jar"/>
-    <file name="${extlibs.dir}/proguard.jar"/>
     <file name="${extlibs.dir}/quartz.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
-    <file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>
-    <file name="${extlibs.dir}/retroweaver-rt-1.2.2.jar"/>
     <file name="${extlibs.dir}/s3lib.jar"/>
     <file name="${extlibs.dir}/servlet-api.jar"/>
     <file name="${extlibs.dir}/slf4j-api.jar"/>
@@ -172,7 +176,8 @@
 
   <!-- fetches our library dependencies -->
   <target name="mavendeps" depends="prepare">
-    <artifact:dependencies filesetId="dependency.fileset">
+    <!-- these libraries we need for building and for the server runtime -->
+    <artifact:dependencies filesetId="runtime.fileset">
       <remoteRepository refid="ooo.maven.depends.repo"/>
       <dependency groupId="com.threerings.panopticon" artifactId="panopticon-client"
                   version="0.0-SNAPSHOT"/>
@@ -199,40 +204,53 @@
                   type="swc"/>
       <dependency groupId="com.threerings" artifactId="whirledthanelib" version="0.0-SNAPSHOT"
                   type="swc"/>
+      <dependency groupId="com.threerings" artifactId="gwt-utils" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="pulse" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings" artifactId="gwt-utils" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
                   type="swc"/>
       <dependency groupId="com.threerings.underwire" artifactId="underwire" version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
-                  version="0.0-SNAPSHOT"/>
-      <dependency groupId="com.samskivert" artifactId="depot-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
     <copy todir="${deploy.dir}/lib">
-      <fileset refid="dependency.fileset"/>
+      <fileset refid="runtime.fileset"/>
+      <mapper type="flatten"/>
+    </copy>
+
+    <!-- these libraries we only need to build -->
+    <artifact:dependencies filesetId="build.fileset">
+      <remoteRepository refid="ooo.maven.depends.repo"/>
+      <dependency groupId="com.samskivert" artifactId="depot-gwt" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.narya" artifactId="narya-tools" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
+                  version="0.0-SNAPSHOT"/>
+    </artifact:dependencies>
+    <copy todir="${deploy.dir}/build">
+      <fileset refid="build.fileset"/>
       <mapper type="flatten"/>
     </copy>
   </target>
 
   <!-- declare our classpath -->
-  <path id="classpath">
+  <path id="build.classpath">
     <pathelement location="${classes.dir}"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+    <fileset dir="${deploy.dir}/build" includes="*.jar"/>
     <fileset dir="lib" includes="plugin.jar"/>
   </path>
 
   <!-- declare our GWT classpath -->
   <path id="gwt.classpath">
     <fileset dir="${deploy.dir}/lib">
+      <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
+      <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
+    </fileset>
+    <fileset dir="${deploy.dir}/build">
       <include name="gwt-incubator.jar"/>
       <include name="advanced-components-1.4.1.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
-      <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
-      <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
       <include name="gwt-dnd.jar"/>
     </fileset>
     <pathelement location="${src.dir}"/>
@@ -266,6 +284,7 @@
   <!-- prepares the application directories -->
   <target name="prepare" depends="config">
     <mkdir dir="${deploy.dir}/lib"/>
+    <mkdir dir="${deploy.dir}/build"/>
     <mkdir dir="${deploy.dir}/tmp"/>
     <mkdir dir="${classes.dir}"/>
     <mkdir dir="${classes.dir}/rsrc"/>
@@ -275,9 +294,12 @@
       </fileset>
     </copy>
 
-    <!-- Copy all the libs we depend on. -->
+    <!-- copy all the libs we need for building and for runtime -->
     <copyfilelist dest="${deploy.dir}/lib">
-      <filelist refid="dist.libs"/>
+      <filelist refid="runtime.libs"/>
+    </copyfilelist>
+    <copyfilelist dest="${deploy.dir}/build">
+      <filelist refid="build.libs"/>
     </copyfilelist>
 
     <!-- create our toybox propertis from msoy-server.properties -->
@@ -331,7 +353,7 @@
   <!-- defines our various presents ant tasks -->
   <target name="toolprep" depends="prepare">
     <taskdef resource="com/threerings/presents/tools.properties"
-             classpath="${deploy.dir}/lib/narya-tools-0.0-SNAPSHOT.jar"/>
+             classpath="${deploy.dir}/build/narya-tools-0.0-SNAPSHOT.jar"/>
   </target>
 
   <!-- creates page.gwt.xml from page.gwt.xml.in, doing user agent fiddling -->
@@ -396,7 +418,7 @@
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
     <taskdef name="i18nsync" classname="com.threerings.gwt.tools.I18nSyncTask"
-             classpathref="classpath"/>
+             classpathref="build.classpath"/>
     <i18nsync srcdir="${gsrc.dir}">
       <fileset dir="${gsrc.dir}" includes="client/*/*Messages.properties"/>
     </i18nsync>
@@ -680,13 +702,13 @@
     </java>
 
     <echo message="Turning .swfs into .abcs..."/>
-    <java outputproperty="dump" classpathref="classpath"
+    <java outputproperty="dump" classpathref="build.classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/msoylib.abc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
     </java>
-    <java outputproperty="dump" classpathref="classpath"
+    <java outputproperty="dump" classpathref="build.classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/MsoyThaneClient.abc"/>
@@ -821,15 +843,15 @@
   <!-- generates fields for persistent record classes -->
   <target name="genrecord" depends="prepare">
     <taskdef name="grecord" classname="com.samskivert.depot.tools.GenRecordTask"
-             classpathref="classpath"/>
+             classpathref="build.classpath"/>
     <!-- make sure the record class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="classpath"/>
+      <classpath refid="build.classpath"/>
       <include name="**/*Record.java"/>
     </javac>
     <!-- now update the source files -->
-    <grecord classpathref="classpath">
+    <grecord classpathref="build.classpath">
       <fileset dir="${src.dir}" includes="**/*Record.java"/>
     </grecord>
   </target>
@@ -839,11 +861,11 @@
     <!-- make sure the dobject class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="classpath"/>
+      <classpath refid="build.classpath"/>
       <include name="**/*Object.java"/>
     </javac>
     <!-- now generate the associated files -->
-    <gendobj classpathref="classpath">
+    <gendobj classpathref="build.classpath">
       <fileset dir="${src.dir}" includes="**/*Object.java"/>
     </gendobj>
   </target>
@@ -853,12 +875,12 @@
     <!-- make sure the service class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="classpath"/>
+      <classpath refid="build.classpath"/>
       <include name="**/client/*Service.java"/>
       <exclude name="**/web/**"/>
     </javac>
     <!-- now generate the associated files -->
-    <genservice header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="classpath">
+    <genservice header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="build.classpath">
       <fileset dir="${src.dir}">
         <include name="**/client/*Service.java"/>
         <exclude name="**/admin/**"/>
@@ -868,7 +890,7 @@
       </fileset>
       <adapter service="WorldGameService"/>
     </genservice>
-    <genservice header="lib/SOURCE_HEADER" classpathref="classpath">
+    <genservice header="lib/SOURCE_HEADER" classpathref="build.classpath">
       <fileset dir="${src.dir}">
         <include name="**/admin/client/*Service.java"/>
         <include name="**/peer/client/*Service.java"/>
@@ -883,11 +905,11 @@
     <!-- make sure the receiver class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="classpath"/>
+      <classpath refid="build.classpath"/>
       <include name="**/*Receiver.java"/>
     </javac>
     <!-- now generate the associated files -->
-    <genreceiver header="lib/SOURCE_HEADER" classpathref="classpath">
+    <genreceiver header="lib/SOURCE_HEADER" classpathref="build.classpath">
       <fileset dir="${src.dir}">
         <include name="**/*Receiver.java"/>
       </fileset>
@@ -898,7 +920,7 @@
   <target name="procstream" depends="toolprep">
     <!-- now instrument the associated files -->
     <instream outdir="${classes.dir}">
-      <path refid="classpath"/>
+      <path refid="build.classpath"/>
       <!--<fileset dir="${classes.dir}" includes="**/data/*.class"/>-->
       <fileset dir="${classes.dir}" includes="**/data/**/*.class"/>
     </instream>
@@ -934,11 +956,11 @@
     </else></if>
 
     <mkdir dir="${basedir}/${deploy.dir}/tmp"/>
-    <taskdef name="unit" classpathref="classpath"
+    <taskdef name="unit" classpath="${deploy.dir}/build/junit4.jar"
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
 
       <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
-        <classpath refid="classpath"/>
+        <classpath refid="build.classpath"/>
         <formatter type="brief" usefile="false" unless="use.xml.output"/>
         <formatter type="xml" usefile="true" if="use.xml.output"/>
 
@@ -971,7 +993,7 @@
     <echo>Compiling MSOY...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="classpath"/>
+      <classpath refid="build.classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
@@ -1144,7 +1166,6 @@
     <copy todir="${approot.server.code}/${deploy.dir}/lib">
       <fileset dir="${deploy.dir}/lib">
         <include name="*.jar"/>
-        <exclude name="narya-tools*.jar"/>
       </fileset>
     </copy>
 
