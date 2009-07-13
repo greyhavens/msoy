@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -15,12 +16,14 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
-
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
@@ -55,8 +58,13 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.server.GroupLogic;
+import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
@@ -168,6 +176,12 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // load group info
         result.groups = resolveGroupsData(memrec, tgtrec);
+
+        // figure out which brands the player has a share in
+        result.brands = resolveBrandShares(memrec, tgtrec);
+
+        // figure out which brands we can assign the player shares in
+        result.grantable = resolveBrandInvites(result.groups, memrec, tgtrec);
 
         // load feed
         result.feed = _feedLogic.loadMemberFeed(memberId, MAX_FEED_ENTRIES);
@@ -356,29 +370,15 @@ public class ProfileServlet extends MsoyServiceServlet
         if (profile.award != null && profile.award.type == AwardType.BADGE) {
             EarnedBadgeRecord earnedBadgeRec =
                 _badgeRepo.loadEarnedBadge(tgtrec.memberId, profile.award.awardId);
-            if (earnedBadgeRec == null) {
-                log.warning("Eek, profile award badge id not known", "memberId", tgtrec.memberId,
-                    "awardId", profile.award.awardId);
-            } else {
-                profile.award.name = Badge.getLevelName(earnedBadgeRec.level);
-                profile.award.whenEarned = earnedBadgeRec.whenEarned.getTime();
-                profile.award.icon = EarnedBadge.getImageMedia(
-                    earnedBadgeRec.badgeCode, earnedBadgeRec.level);
-            }
+            profile.award.name = Badge.getLevelName(earnedBadgeRec.level);
+            profile.award.whenEarned = earnedBadgeRec.whenEarned.getTime();
+            profile.award.icon = EarnedBadge.getImageMedia(
+                earnedBadgeRec.badgeCode, earnedBadgeRec.level);
 
         } else if (profile.award != null && profile.award.type == AwardType.MEDAL) {
             EarnedMedalRecord earnedMedalRec =
                 _medalRepo.loadEarnedMedal(tgtrec.memberId, profile.award.awardId);
-
-            MedalRecord medalRec;
-            if (earnedMedalRec == null) {
-                log.warning("Eek, profile award medal id not known", "memberId", tgtrec.memberId,
-                    "awardId", profile.award.awardId);
-                medalRec = null;
-            } else {
-                medalRec = _medalRepo.loadMedal(profile.award.awardId);
-            }
-
+            MedalRecord medalRec = _medalRepo.loadMedal(profile.award.awardId);
             if (medalRec != null) {
                 profile.award.whenEarned = earnedMedalRec.whenEarned.getTime();
                 profile.award.name = medalRec.name;
@@ -397,6 +397,40 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
         return _groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
+    }
+
+    protected List<BrandDetail> resolveBrandShares (MemberRecord reqrec, MemberRecord tgtrec)
+    {
+        List<BrandDetail> result = Lists.newArrayList();
+        // load the brand details for each group in which this player has shares
+        for (BrandShareRecord brandRecord : _groupRepo.getBrands(tgtrec.memberId)) {
+            result.add(_groupLogic.loadBrandDetail(brandRecord.groupId));
+        }
+        return result;
+    }
+
+    protected Set<Integer> resolveBrandInvites (
+        List<GroupCard> groups, MemberRecord reqrec, MemberRecord tgtrec)
+    {
+        Set<Integer> result = Sets.newHashSet();
+
+        // fetch our managed groups from DB
+        IntSet managedGroups = new ArrayIntSet();
+        for (GroupMembershipRecord grec : _groupRepo.getMemberships(reqrec.memberId)) {
+            if (grec.rank == Rank.MANAGER) {
+                managedGroups.add(grec.groupId);
+            }
+        }
+
+        // any group the target's in and which we admin, we can grant/revoke shares
+        for (GroupCard card : groups) {
+            int groupId = card.name.getGroupId();
+            if (managedGroups.contains(groupId)) {
+                result.add(groupId);
+            }
+        }
+
+        return result;
     }
 
     protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)
@@ -466,6 +500,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected GalleryLogic _galleryLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected MoneyLogic _moneyLogic;
