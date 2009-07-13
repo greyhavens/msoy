@@ -234,7 +234,7 @@
   </target>
 
   <!-- declare our classpath -->
-  <path id="build.classpath">
+  <path id="classpath">
     <pathelement location="${classes.dir}"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
     <fileset dir="${deploy.dir}/build" includes="*.jar"/>
@@ -246,6 +246,7 @@
     <fileset dir="${deploy.dir}/lib">
       <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
       <include name="gwt-utils-0.0-SNAPSHOT.jar"/>
+      <include name="*-gwt-0.0-SNAPSHOT.jar"/>
     </fileset>
     <fileset dir="${deploy.dir}/build">
       <include name="gwt-incubator.jar"/>
@@ -418,7 +419,7 @@
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
     <taskdef name="i18nsync" classname="com.threerings.gwt.tools.I18nSyncTask"
-             classpathref="build.classpath"/>
+             classpathref="classpath"/>
     <i18nsync srcdir="${gsrc.dir}">
       <fileset dir="${gsrc.dir}" includes="client/*/*Messages.properties"/>
     </i18nsync>
@@ -702,13 +703,13 @@
     </java>
 
     <echo message="Turning .swfs into .abcs..."/>
-    <java outputproperty="dump" classpathref="build.classpath"
+    <java outputproperty="dump" classpathref="classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/msoylib.abc"/>
       <arg value="${deploy.dir}/msoylib.swc"/>
     </java>
-    <java outputproperty="dump" classpathref="build.classpath"
+    <java outputproperty="dump" classpathref="classpath"
           classname="flash.swf.tools.SwfxPrinter" fork="true" failonerror="true">
       <arg value="-dump"/>
       <arg value="${deploy.dir}/MsoyThaneClient.abc"/>
@@ -843,15 +844,15 @@
   <!-- generates fields for persistent record classes -->
   <target name="genrecord" depends="prepare">
     <taskdef name="grecord" classname="com.samskivert.depot.tools.GenRecordTask"
-             classpathref="build.classpath"/>
+             classpathref="classpath"/>
     <!-- make sure the record class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="build.classpath"/>
+      <classpath refid="classpath"/>
       <include name="**/*Record.java"/>
     </javac>
     <!-- now update the source files -->
-    <grecord classpathref="build.classpath">
+    <grecord classpathref="classpath">
       <fileset dir="${src.dir}" includes="**/*Record.java"/>
     </grecord>
   </target>
@@ -861,11 +862,11 @@
     <!-- make sure the dobject class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="build.classpath"/>
+      <classpath refid="classpath"/>
       <include name="**/*Object.java"/>
     </javac>
     <!-- now generate the associated files -->
-    <gendobj classpathref="build.classpath">
+    <gendobj classpathref="classpath">
       <fileset dir="${src.dir}" includes="**/*Object.java"/>
     </gendobj>
   </target>
@@ -875,12 +876,12 @@
     <!-- make sure the service class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="build.classpath"/>
+      <classpath refid="classpath"/>
       <include name="**/client/*Service.java"/>
       <exclude name="**/web/**"/>
     </javac>
     <!-- now generate the associated files -->
-    <genservice header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="build.classpath">
+    <genservice header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/client/*Service.java"/>
         <exclude name="**/admin/**"/>
@@ -890,7 +891,7 @@
       </fileset>
       <adapter service="WorldGameService"/>
     </genservice>
-    <genservice header="lib/SOURCE_HEADER" classpathref="build.classpath">
+    <genservice header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/admin/client/*Service.java"/>
         <include name="**/peer/client/*Service.java"/>
@@ -905,11 +906,11 @@
     <!-- make sure the receiver class files are all compiled -->
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="build.classpath"/>
+      <classpath refid="classpath"/>
       <include name="**/*Receiver.java"/>
     </javac>
     <!-- now generate the associated files -->
-    <genreceiver header="lib/SOURCE_HEADER" classpathref="build.classpath">
+    <genreceiver header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/*Receiver.java"/>
       </fileset>
@@ -920,7 +921,7 @@
   <target name="procstream" depends="toolprep">
     <!-- now instrument the associated files -->
     <instream outdir="${classes.dir}">
-      <path refid="build.classpath"/>
+      <path refid="classpath"/>
       <!--<fileset dir="${classes.dir}" includes="**/data/*.class"/>-->
       <fileset dir="${classes.dir}" includes="**/data/**/*.class"/>
     </instream>
@@ -960,7 +961,7 @@
       classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
 
       <unit printsummary="no" haltonfailure="yes" fork="yes" dir="${basedir}">
-        <classpath refid="build.classpath"/>
+        <classpath refid="classpath"/>
         <formatter type="brief" usefile="false" unless="use.xml.output"/>
         <formatter type="xml" usefile="true" if="use.xml.output"/>
 
@@ -993,7 +994,7 @@
     <echo>Compiling MSOY...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="off" deprecation="on" source="1.5" target="1.5">
-      <classpath refid="build.classpath"/>
+      <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
     </javac>
