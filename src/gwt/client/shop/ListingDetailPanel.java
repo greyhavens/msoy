@@ -20,6 +20,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DateUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
+import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -84,6 +85,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _listing = listing;
         init(listing.detail);
 
+        if (listing.brand != null) {
+            _creator.setBrand(listing.brand.group);
+        }
+
         HorizontalPanel extras = new HorizontalPanel();
         extras.setStyleName("Extras");
 
@@ -113,8 +118,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _indeets.add(extras);
 
-        // if we are the creator (lister) of this item, allow us to delist it
-        if (_detail.creator.getMemberId() == CShell.getMemberId() || CShell.isSupport()) {
+        // if we are the creator (lister) of this item, or brand shareholder, allow us to delist it
+        if (mayManage()) {
             HorizontalPanel controls = new HorizontalPanel();
             controls.setStyleName("controls");
 
@@ -238,6 +243,21 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected boolean inShop ()
     {
         return true;
+    }
+
+    protected boolean mayManage ()
+    {
+        if (CShell.isSupport() || _detail.creator.getMemberId() == CShell.getMemberId()) {
+            return true;
+        }
+        if (_listing.brand != null) {
+            for (BrandShare shareHolder : _listing.brand.shareHolders) {
+                if (shareHolder.member.getMemberId() == CShell.getMemberId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected static Widget createSeparator ()
