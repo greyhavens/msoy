@@ -21,6 +21,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -113,8 +114,28 @@ public class DoListItemPopup extends VerticalPanel
             _stars.setRating(listing.detail.item.getRating());
         }
 
+        // possibly add the brand selection ui
+        if (_item.supportsDerivation() && (firstTime || repricing)) {
+            SmartTable brand = new SmartTable(0, 3);
+            brand.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBrandIntro(), null), 3, null);
+            brand.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+
+            int row = brand.addText(_imsgs.doListBrand(), 1, "rightLabel");
+            brand.setWidget(row, 1, _brandBox = new ListBox(), 1, null);
+            _brandBox.addItem(_imsgs.doListNoBrand());
+
+            _catalogsvc.loadBrands(new InfoCallback<List<BrandDetail>>() {
+                @Override public void onSuccess (List<BrandDetail> result) {
+                    gotBrands(result, listing);
+                }
+            });
+
+            add(MsoyUI.createLabel(_imsgs.doListSelectBrandHeader(), "Header"));
+            add(brand);
+        }
+
         // possibly add the basis selection ui
-        if (_item.supportsDerviation() && (firstTime || repricing)) {
+        if (_item.supportsDerivation() && (firstTime || repricing)) {
             SmartTable basis = new SmartTable(0, 3);
             basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3, null);
             basis.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
@@ -247,7 +268,7 @@ public class DoListItemPopup extends VerticalPanel
                         return false;
                     }
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
-                                         getCurrency(), getCost(), getBasisId(), this);
+                                         getCurrency(), getCost(), getBasisId(), getBrandId(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Integer result) {
@@ -291,7 +312,7 @@ public class DoListItemPopup extends VerticalPanel
                     }
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
                                               salesTarget, getCurrency(), getCost(), getBasisId(),
-                                              this);
+                                              getBrandId(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
@@ -390,6 +411,18 @@ public class DoListItemPopup extends VerticalPanel
         return basis == null ? 0 : basis.catalogId;
     }
 
+    protected int getBrandId ()
+    {
+        if (_brandBox == null) {
+            return 0;
+        }
+        int ix = _brandBox.getSelectedIndex();
+        if (ix == 0) {
+            return 0;
+        }
+        return _brandItems.get(ix - 1).group.getGroupId();
+    }
+
     protected void setCurrency (Currency currency)
     {
         if (_currencyBox == null) {
@@ -415,6 +448,17 @@ public class DoListItemPopup extends VerticalPanel
         }
     }
 
+    protected void gotBrands (List<BrandDetail> result, CatalogListing listing)
+    {
+        for (BrandDetail detail : result) {
+            _brandBox.addItem(detail.group.toString());
+            _brandItems.add(detail);
+            if (listing != null && detail.group.equals(listing.brand.group)) {
+                _brandBox.setSelectedIndex(_brandBox.getItemCount() - 1);
+            }
+        }
+    }
+
     protected Stars _stars = new Stars(0f, false, false, new Stars.StarMouseListener() {
         public void starClicked (byte newRating) {
             _stars.setRating(newRating);
@@ -434,6 +478,9 @@ public class DoListItemPopup extends VerticalPanel
     protected ListBox _basisBox;
     protected List<ListingCard> _basisItems = new ArrayList<ListingCard>();
     protected CatalogListing _previousBasis;
+
+    protected ListBox _brandBox;
+    protected List<BrandDetail> _brandItems = new ArrayList<BrandDetail>();
 
     protected ListBox _pricingBox;
     protected ListBox _currencyBox;

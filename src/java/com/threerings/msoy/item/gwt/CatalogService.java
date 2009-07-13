@@ -15,6 +15,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
@@ -97,7 +98,7 @@ public interface CatalogService extends RemoteService
      * @return the catalog id of the newly listed item.
      */
     int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                  Currency currency, int cost, int basisId)
+                  Currency currency, int cost, int basisId, int brandId)
         throws ServiceException;
 
     /**
@@ -124,7 +125,7 @@ public interface CatalogService extends RemoteService
      * Updates the specified catalog listing's price.
      */
     void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                        Currency currency, int cost, int basisId)
+                        Currency currency, int cost, int basisId, int brandId)
         throws ServiceException;
 
     /**
@@ -151,6 +152,13 @@ public interface CatalogService extends RemoteService
      * cost of the items, the caller should use {@link CatalogListing#getMinimumDerivedCost}.
      */
     List<ListingCard> loadPotentialBasisItems (byte itemType)
+        throws ServiceException;
+
+    /**
+     * Load the groups where the current player has a non-zero amount of brand shares and return
+     * the details for each such brand.
+     */
+    List<BrandDetail> loadBrands ()
         throws ServiceException;
 
     /**

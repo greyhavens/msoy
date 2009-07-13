@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PurchaseResult;
-
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing.DerivedItem;
@@ -41,7 +41,8 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#listItem}
      */
     void listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
-                   Currency currency, int cost, int basisId, AsyncCallback<Integer> callback);
+                   Currency currency, int cost, int basisId, int brandId,
+                   AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
@@ -63,7 +64,8 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#updatePricing}
      */
     void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                        Currency currency, int cost, int basisId, AsyncCallback<Void> callback);
+                        Currency currency, int cost, int basisId, int brandId,
+                        AsyncCallback<Void> callback);
 
     /**
      * Removes the specified catalog listing.
@@ -85,6 +87,11 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#loadPotentialBasisItems}.
      */
     void loadPotentialBasisItems (byte itemType, AsyncCallback<List<ListingCard>> callback);
+
+    /**
+     * The asynchronous version of {@link CatalogService#loadBrands}.
+     */
+    void loadBrands (AsyncCallback<List<BrandDetail>> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadSuite}.

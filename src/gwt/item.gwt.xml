@@ -3,6 +3,12 @@
 
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/gwt"/>
+
+  <!-- for brands. urgh, the tendrils -->
+  <source path="com/threerings/msoy/group/data/all"/>
+  <source path="com/threerings/msoy/group/gwt"/>
+  <source path="com/threerings/msoy/fora/gwt"/>
+
   <source path="com/threerings/msoy/money/gwt"/>
   <source path="com/threerings/msoy/money/data/all"/>
 
