@@ -19,11 +19,13 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -42,9 +44,12 @@ import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Group.Policy;
 import com.threerings.msoy.group.data.all.GroupMembership.Rank;
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupExtras;
+import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
+import com.threerings.msoy.group.server.persist.BrandShareRecord;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -199,6 +204,35 @@ public class GroupLogic
     }
 
     /**
+     * Create and initialize a {@link BrandDetail} for the given group. This loads the name of
+     * the group along with the name and share information of each brand shareholder.
+     */
+    public BrandDetail loadBrandDetail (int brandId)
+    {
+        GroupName groupName = _groupRepo.loadGroupName(brandId);
+        if (groupName == null) {
+            return null;
+        }
+        BrandDetail brand = new BrandDetail(groupName);
+        // BrandShareRecord will be a small table fully cached in DB RAM, so this is quick
+        for (BrandShareRecord rec : _groupRepo.getBrandShares(brandId)) {
+            if (rec.shares == 0) {
+                log.warning("Eek, brand share record with zero shares", "brandId", brandId,
+                    "memberId", rec.memberId);
+                continue;
+            }
+            MemberName memberName = _memberRepo.loadMemberName(rec.memberId);
+            if (memberName == null) {
+                log.warning("Eek, non-existent member in brand", "brandId", brandId,
+                    "memberId", rec.memberId);
+                continue;
+            }
+            brand.shareHolders.add(new BrandShare(memberName, rec.shares));
+        }
+        return brand;
+    }
+
+    /**
      * Resolves the {@link GroupCard#homeSnapshot} data for the supplied set of cards.
      */
     public void resolveSnapshots (Collection<GroupCard> cards)
@@ -252,6 +286,7 @@ public class GroupLogic
     // our dependencies
     @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected RuntimeConfig _runtime;

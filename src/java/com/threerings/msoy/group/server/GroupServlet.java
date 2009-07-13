@@ -23,6 +23,7 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -78,6 +79,7 @@ import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
+import com.threerings.msoy.item.data.ItemCodes;
 
 import static com.threerings.msoy.Log.log;
 
@@ -604,7 +606,7 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // Note that the user must already have loaded the group detail in order to be calling this
-        // If the client is hacked, let 'em see the medals, no great shakes 
+        // If the client is hacked, let 'em see the medals, no great shakes
         return Lists.newArrayList(
             Lists.transform(_medalRepo.loadGroupMedals(groupId), MedalRecord.TO_MEDAL));
     }
@@ -701,6 +703,27 @@ public class GroupServlet extends MsoyServiceServlet
         MedalRecord medalRec = _medalRepo.loadMedal(medalId);
         return medalRec == null ? null : medalRec.toMedal();
     }
+
+    // from GroupService
+    public void setBrandShares (int brandId, int targetId, int shares)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        // make sure we're allow to administer this brand
+        if (_groupRepo.getMembership(brandId, mrec.memberId).left != Rank.MANAGER) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+
+        // make sure the target's a member of the brand's group
+        if (_groupRepo.getMembership(brandId, targetId).left == Rank.NON_MEMBER) {
+            // anything else is a bug or a hacked client
+            throw new ServiceException(ItemCodes.E_INTERNAL_ERROR);
+        }
+
+        _groupRepo.setBrandShare(brandId, targetId, shares);
+    }
+
 
     /**
      * Fill in the current number of people in rooms (population) and the number of total threads
