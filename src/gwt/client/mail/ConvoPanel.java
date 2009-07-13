@@ -273,12 +273,12 @@ public class ConvoPanel extends FlowPanel
     {
         public ComplainHandler (Button trigger, String targetName)
         {
-            super(trigger, ""); // kludge to ensure call of displayPopup
+            super(trigger, ""); // kludge to ensure call of displayConfirmPopup
             _targetName = targetName;
         }
 
         @Override // from ClickCallback
-        protected void displayPopup ()
+        protected void displayConfirmPopup ()
         {
             final BorderedDialog dialog = new BorderedDialog(false) {
                 protected void onClosed (boolean autoClosed) {

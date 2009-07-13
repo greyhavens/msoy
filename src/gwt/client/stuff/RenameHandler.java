@@ -56,7 +56,7 @@ public class RenameHandler extends ClickCallback<String>
     }
 
     // from ClickCallback
-    protected void displayPopup ()
+    protected void displayConfirmPopup ()
     {
         BorderedDialog dialog = new BorderedDialog(false) {
             protected void onClosed (boolean autoClosed) {
