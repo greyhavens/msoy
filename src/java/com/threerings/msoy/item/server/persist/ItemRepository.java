@@ -1276,11 +1276,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             clauses.add(new Limit(0, maximum));
         }
         return Lists.transform(findAllKeys(getCatalogClass(), false, clauses),
-            new Function<Key<? extends CatalogRecord>, Integer>() {
-                public Integer apply (Key<? extends CatalogRecord> key) {
-                    return CatalogRecord.getCatalogId(key);
-                }
-            });
+            Key.<CatalogRecord>toInt());
     }
 
     /**

@@ -36,15 +36,6 @@ import com.threerings.msoy.money.data.all.Currency;
 public abstract class CatalogRecord extends PersistentRecord
     implements Streamable
 {
-    /**
-     * Extracts the catalog id from the given primary key. This is just so callers are not forced
-     * to assume too much about our key layout.
-     */
-    public static int getCatalogId (Key<? extends CatalogRecord> key)
-    {
-        return (Integer)key.getValues()[0];
-    }
-
     // AUTO-GENERATED: FIELDS START
     public static final Class<CatalogRecord> _R = CatalogRecord.class;
     public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
