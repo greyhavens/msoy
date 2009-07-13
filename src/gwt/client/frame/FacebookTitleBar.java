@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
-import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
