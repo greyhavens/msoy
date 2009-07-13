@@ -5,8 +5,6 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
-import com.google.common.base.Function;
-
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.*; // for Depot annotations
@@ -64,12 +62,4 @@ public class SubscriptionRecord extends PersistentRecord
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END
-
-    /** Turns a Key back into a memberId. */
-    public static Function<Key<SubscriptionRecord>,Integer> KEY_TO_MEMBER_ID =
-        new Function<Key<SubscriptionRecord>,Integer>() {
-            public Integer apply (Key<SubscriptionRecord> key) {
-                return (Integer) key.getValues()[0];
-            }
-        };
 }

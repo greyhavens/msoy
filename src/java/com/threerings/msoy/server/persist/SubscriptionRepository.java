@@ -106,7 +106,7 @@ public class SubscriptionRepository extends DepotRepository
                 new Or(
                     SubscriptionRecord.LAST_GRANT.lessThan(monthAgo),
                     SubscriptionRecord.LAST_GRANT.isNull()))));
-        return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
+        return Lists.transform(keys, Key.<SubscriptionRecord>toInt());
     }
 
     /**
@@ -120,7 +120,7 @@ public class SubscriptionRepository extends DepotRepository
                 new Or(
                     SubscriptionRecord.SPECIAL_ITEM_TYPE.notEq(type),
                     SubscriptionRecord.SPECIAL_ITEM_ID.notEq(itemId)))));
-        return Lists.transform(keys, SubscriptionRecord.KEY_TO_MEMBER_ID);
+        return Lists.transform(keys, Key.<SubscriptionRecord>toInt());
     }
 
     /**
@@ -178,7 +178,7 @@ public class SubscriptionRepository extends DepotRepository
         Timestamp now = new Timestamp(System.currentTimeMillis());
         List<Key<BarscriptionRecord>> keys = findAllKeys(BarscriptionRecord.class, true,
             new Where(BarscriptionRecord.EXPIRES.lessThan(now)));
-        return Lists.transform(keys, BarscriptionRecord.KEY_TO_MEMBER_ID);
+        return Lists.transform(keys, Key.<BarscriptionRecord>toInt());
     }
 
     public void noteBarscriptionEnded (int memberId)
