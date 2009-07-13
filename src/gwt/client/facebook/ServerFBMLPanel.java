@@ -12,9 +12,10 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Wraps web content containing FBML code in a <code>fb:serverfbml</code> panel, for use within a
  * Facebook iframed application. Normally, this is only necessary for non-XFBML tags, i.e. tags
- * that take input from the user like <code>fb:request-form</code>. Once all FBML code is nested
- * call {@link #render}. This will do the jiggery-pokery necessary to wrap the interior in a script
- * tag and tell Facebook to reparse the DOM tree and load up the new fbml code.
+ * that take input from the user like <code>fb:request-form</code>. Once the widget is loaded
+ * ({@link Widget#onLoad}), the render method is called. This will do the jiggery-pokery necessary
+ * to wrap the interior in a script tag and tell Facebook to reparse the DOM tree and load up the
+ * new fbml code.
  */
 public class ServerFBMLPanel extends Composite
 {
