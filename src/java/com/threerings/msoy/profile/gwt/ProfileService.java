@@ -4,6 +4,7 @@
 package com.threerings.msoy.profile.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -18,6 +19,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.person.gwt.FeedMessage;
@@ -77,6 +79,16 @@ public interface ProfileService extends RemoteService
          * This user's groups.
          */
         public List<GroupCard> groups;
+
+        /**
+         * A list of brands in which this player has shares.
+         */
+        public List<BrandDetail> brands;
+
+        /**
+         * A subset of this player's groups in which we have management privileges;
+         */
+        public Set<Integer> grantable;
 
         /**
          * This user's game ratings.

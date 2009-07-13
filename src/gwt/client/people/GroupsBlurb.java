@@ -3,10 +3,16 @@
 
 package client.people;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -14,6 +20,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -21,7 +28,9 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 import client.ui.ThumbBox;
+import client.util.InfoCallback;
 import client.util.Link;
 
 /**
@@ -40,7 +49,7 @@ public class GroupsBlurb extends Blurb
     {
         super.init(pdata);
         setHeader(_msgs.groupsTitle());
-        setContent(new GroupsGrid(pdata.groups));
+        setContent(new GroupsGrid(pdata.groups, pdata.brands, pdata.grantable));
     }
 
     protected static Widget createEmptyTable (String message, String link, Pages page, String args)
@@ -53,8 +62,87 @@ public class GroupsBlurb extends Blurb
 
     protected class GroupsGrid extends PagedGrid<GroupCard>
     {
-        public GroupsGrid (List<GroupCard> groups) {
+        protected class GroupWidget extends FlowPanel
+        {
+            public GroupWidget (GroupCard card, int shares, int totalShares, boolean grant)
+            {
+                _groupId = card.name.getGroupId();
+                _shares = shares;
+                _totalShares = totalShares;
+                _grant = grant;
+
+                setStyleName("Group");
+                add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", _groupId));
+                add(Link.create(card.name.toString(), Pages.GROUPS, "d", _groupId));
+                add(_brandBit = new FlowPanel());
+                updateBrand();
+            }
+
+            protected void updateBrand ()
+            {
+                if (_shares > 0 || _grant) {
+                    _brandBit.clear();
+                    if (_editing) {
+                        _brandBox = new ListBox();
+                        _brandBox.addItem(_msgs.groupsNoShares());
+                        for (int ii = 1; ii <= BrandDetail.MAX_SHARES; ii ++) {
+                            _brandBox.addItem(String.valueOf(ii));
+                        }
+                        _brandBox.setSelectedIndex(Math.min(_shares, BrandDetail.MAX_SHARES));
+
+                        _brandBit.add(MsoyUI.createLabel(_msgs.groupsBrandShares(""), null));
+                        _brandBit.add(_brandBox);
+
+                        _brandBit.add(MsoyUI.createTinyButton("Set", new ClickHandler() {
+                            @Override public void onClick (ClickEvent event) {
+                                final int newShares = _brandBox.getSelectedIndex();
+                                if (newShares == _shares) {
+                                    return;
+                                }
+                                // create a callback that updates the UI
+                                InfoCallback<Void> callback = new InfoCallback<Void> () {
+                                    @Override public void onSuccess (Void result) {
+                                        _totalShares += (newShares - _shares);
+                                        _shares = newShares;
+                                        _editing = false;
+                                        updateBrand();
+                                    }
+                                };
+                                // then call the server to actually set the new share count
+                                _groupsvc.setBrandShares(
+                                    _groupId, _name.getMemberId(), newShares, callback);
+                            }
+                        }));
+                    } else {
+                        _brandBit.add(MsoyUI.createLabel(_msgs.groupsBrandShares(
+                            (_shares == 0) ? "0" : (_shares + "/" + _totalShares)), null));
+                        if (_grant) {
+                            _brandBit.add(MsoyUI.createTinyButton("Change", new ClickHandler() {
+                                @Override public void onClick (ClickEvent event) {
+                                    _editing = true;
+                                    updateBrand();
+                                }
+                            }));
+                        }
+                    }
+                }
+            }
+
+            protected int _groupId;
+            protected FlowPanel _brandBit;
+            protected ListBox _brandBox;
+            protected int _shares, _totalShares;
+            protected boolean _grant, _editing;
+        }
+
+        public GroupsGrid (List<GroupCard> groups, List<BrandDetail> brands, Set<Integer> grants)
+        {
             super(GROUP_ROWS, GROUP_COLUMNS, PagedGrid.NAV_ON_BOTTOM);
+            _brands = new HashMap<Integer, BrandDetail>();
+            for (BrandDetail brand : brands) {
+                _brands.put(brand.group.getGroupId(), brand);
+            }
+            _grants = grants;
             setModel(new SimpleDataModel<GroupCard>(groups), 0);
         }
 
@@ -83,42 +171,19 @@ public class GroupsBlurb extends Blurb
         @Override // from PagedGrid
         protected Widget createWidget (GroupCard card)
         {
-            return new GroupWidget(card);
+            int groupId = card.name.getGroupId();
+            int shares = 0, totalShares = 0;
+
+            BrandDetail brand = _brands.get(groupId);
+            if (brand != null) {
+                shares = brand.getShares(_name.getMemberId());
+                totalShares = brand.getTotalShares();
+            }
+            return new GroupWidget(card, shares, totalShares, _grants.contains(groupId));
         }
 
-//         @Override // from PagedGrid
-//         protected void addCustomControls (FlexTable controls)
-//         {
-//             if (!CShell.isGuest() && CShell.getMemberId() != _name.getMemberId()) {
-//                 Button inviteButton = new Button(_msgs.inviteToGroup());
-//                 new ClickCallback<List<GroupMembership>>(inviteButton) {
-//                     @Override protected boolean callService () {
-//                         _groupsvc.getMembershipGroups(CShell.getMemberId(), true, this);
-//                         return true;
-//                     }
-//                     @Override protected boolean gotResult (List<GropuMembership> inviteGroups) {
-//                         if (inviteGroups.size() == 0) {
-//                             MsoyUI.infoNear(_msgs.haveNoGroups(), _trigger);
-//                         } else {
-//                             new MailComposition(_name, "Join this group!",
-//                                                 new GroupInvite.Composer(inviteGroups),
-//                                                 "Check out this scrumptious group.").show();
-//                         }
-//                         return true;
-//                     }
-//                 };
-//                 controls.setWidget(0, 0, inviteButton);
-//             }
-//         }
-    }
-
-    protected class GroupWidget extends FlowPanel
-    {
-        public GroupWidget (final GroupCard card) {
-            setStyleName("Group");
-            add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", card.name.getGroupId()));
-            add(Link.create(card.name.toString(), Pages.GROUPS, "d", card.name.getGroupId()));
-        }
+        protected Map<Integer, BrandDetail> _brands;
+        protected Set<Integer> _grants;
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
