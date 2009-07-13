@@ -149,4 +149,9 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService#getMedal}
      */
     void getMedal (int medalId, AsyncCallback<Medal> callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#setBrandShare}.
+     */
+    void setBrandShares (int brandId, int targetId, int shares, AsyncCallback<Void> callback);
 }

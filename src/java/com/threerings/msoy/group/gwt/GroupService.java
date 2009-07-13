@@ -240,4 +240,10 @@ public interface GroupService extends RemoteService
      */
     Medal getMedal (int medalId)
         throws ServiceException;
+
+    /**
+     * Change a member's share count in a brand.
+     */
+    void setBrandShares (int brandId, int targetId, int shares)
+        throws ServiceException;
 }
