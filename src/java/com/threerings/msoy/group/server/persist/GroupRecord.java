@@ -76,15 +76,6 @@ public class GroupRecord extends PersistentRecord
         }
     };
 
-    /** Converts a group key to a group id. NOTE: this must be co-maintained with the auto-
-     * generated {@link #getKey}. */
-    public static final Function <Key<GroupRecord>, Integer> TO_GROUP_ID =
-        new Function <Key<GroupRecord>, Integer>() {
-        public Integer apply (Key<GroupRecord> key) {
-            return ((Integer)key.getValues()[0]);
-        }
-    };
-
     /** The unique id of this group. */
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

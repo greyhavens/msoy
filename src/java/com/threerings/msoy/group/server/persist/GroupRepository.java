@@ -594,7 +594,7 @@ public class GroupRepository extends DepotRepository
     public List<Integer> getGroupIdsWithPolicy (Group.Policy policy)
     {
         return Lists.transform(findAllKeys(GroupRecord.class, false, new Where(
-            GroupRecord.POLICY, policy)), GroupRecord.TO_GROUP_ID);
+            GroupRecord.POLICY, policy)), Key.<GroupRecord>toInt());
     }
 
     protected GroupMembershipRecord loadMembership (int groupId, int memberId)
@@ -690,11 +690,7 @@ public class GroupRepository extends DepotRepository
         }
 
         return Lists.transform(findAllKeys(GroupMembershipRecord.class, false, new Where(test)),
-            new Function<Key<GroupMembershipRecord>, Integer> () {
-                public Integer apply (Key<GroupMembershipRecord> key) {
-                    return (Integer)key.getValues()[0];
-                }
-            });
+            Key.<GroupMembershipRecord>toInt());
     }
 
     @Override // from DepotRepository
