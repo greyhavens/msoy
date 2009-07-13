@@ -30,7 +30,7 @@ public class FacebookTitleBar extends TitleBar
         _contents.add(button("Games", Pages.GAMES));
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
         _contents.add(Link.createTop("Fan", DeploymentConfig.facebookApplicationUrl));
-        _contents.add(button("Trophies", Pages.GAMES, CShell.getMemberId()));
+        _contents.add(button("Trophies", Pages.GAMES, "t", CShell.getMemberId()));
     }
 
     @Override // from TitleBar
