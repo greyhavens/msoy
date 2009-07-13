@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -233,12 +232,9 @@ public class WorldGameRegistry
     {
         // add all the tables to a list
         final List<TablesWaiting> games = Lists.newArrayList();
-        _peerMan.applyToNodes(new Function<NodeObject,Void>() {
-            public Void apply (NodeObject nodeObj) {
-                Iterables.addAll(games, ((MsoyNodeObject) nodeObj).tablesWaiting);
-                return null; // Void
-            }
-        });
+        for (NodeObject nodeObj : _peerMan.getNodeObjects()) {
+            Iterables.addAll(games, ((MsoyNodeObject) nodeObj).tablesWaiting);
+        }
         // randomize and return up to N
         Collections.shuffle(games);
         CollectionUtil.limit(games, MAX_TABLES_WAITING);
