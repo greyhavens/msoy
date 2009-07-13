@@ -512,7 +512,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * Checks if this item supports derivation. Derived items may set a non-zero value in
      * {@link com.threerings.msoy.item.gwt.CatalogListing#basisId}.
      */
-    public boolean supportsDerviation ()
+    public boolean supportsDerivation ()
     {
         return supportsDerivation(getType());
     }
