@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -449,7 +448,11 @@ public class GroupRepository extends DepotRepository
      */
     public List<BrandShareRecord> getBrands (int memberId)
     {
-        return findAll(BrandShareRecord.class, new Where(BrandShareRecord.MEMBER_ID, memberId));
+        // TODO: disabling caching here is non-ideal but there's something mysterious going
+        // TODO: on that I will debug after today's release. it's also not a huge deal because
+        // TODO: BrandShareRecord is going to be a small table entirely cached in the DB's RAM.
+        return findAll(BrandShareRecord.class, CacheStrategy.NONE,
+            new Where(BrandShareRecord.MEMBER_ID, memberId));
     }
 
     /**
