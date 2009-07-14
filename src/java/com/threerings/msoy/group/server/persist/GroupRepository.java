@@ -465,9 +465,13 @@ public class GroupRepository extends DepotRepository
      * Update the number of shares the given player has in the brand. The player must be a member
      * of the group or undefined badness may occur.
      */
-    public boolean setBrandShare (int groupId, int memberId, int shares)
+    public void setBrandShare (int groupId, int memberId, int shares)
     {
-        return store(new BrandShareRecord(memberId, groupId, shares));
+        if (shares == 0) {
+            delete(BrandShareRecord.getKey(memberId, groupId));
+        } else {
+            store(new BrandShareRecord(memberId, groupId, shares));
+        }
     }
 
     /**
