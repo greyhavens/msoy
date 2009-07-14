@@ -599,7 +599,7 @@ public class GameServlet extends MsoyServiceServlet
         // this is only used for editing, so bypass the cache
         List<ArcadeEntryRecord> entries = _mgameRepo.loadArcadeEntries(page, false);
         ArcadeEntriesResult result = new ArcadeEntriesResult();
-        result.entries = Lists.newArrayListWithExpectedSize(entries.size());
+        result.entries = Lists.newArrayListWithCapacity(entries.size());
         ArrayIntSet featured = new ArrayIntSet();
         for (int ii = 0, ll = entries.size(); ii < ll; ++ii) {
             int gameId = entries.get(ii).gameId;
