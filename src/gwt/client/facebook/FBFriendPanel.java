@@ -54,8 +54,7 @@ public class FBFriendPanel extends AbsoluteCSSPanel
         }
         add(MsoyUI.createFlowPanel("Photo",
             new FBMLPanel("profile-pic", "uid", uid, "linked", "false", "size", "square")));
-        add(MsoyUI.createLabel(convertToText(info.coins), "Coins"));
-        add(MsoyUI.createFlowPanel("CoinIcon"));
+        add(MsoyUI.createLabel(_msgs.level(convertToText(info.level)), "Level"));
         Thumbnail lastGame = info.lastGame;
         if (lastGame != null) {
             add(new ThumbBox(lastGame.media, halfSize, Pages.GAMES, "d", lastGame.id));

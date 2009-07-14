@@ -102,29 +102,20 @@
   width: 50px;
   height: 50px;
   top: 24px;
-  left: 16px;
+  left: 27px;
 }
 
-.friendInfo .Coins {
-  width: 32px;
+.friendInfo .Level {
+  width: 104px;
   height: 11px;
   font-size: 9px;
   color: #3b5998;
-  right: 1px;
-  bottom: 74px;
-}
-
-.friendInfo .CoinIcon {
-  background: url(/images/facebook/coin_stack.png) no-repeat;
-  width: 16px;
-  height: 11px;
-  right: 32px;
-  bottom: 75px;
+  bottom: 61px;
 }
 
 .friendInfo .thumbBox {
   position: absolute;
-  left: 16px;
+  left: 32px;
   bottom: 25px;
 }
 
@@ -136,7 +127,6 @@
   right: 1px;
   bottom: 23px;
 }
-
 
 .friendInfo .TrophyIcon {
   background: url(/images/facebook/trophy.png) no-repeat;

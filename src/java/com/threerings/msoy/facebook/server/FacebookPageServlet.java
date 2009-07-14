@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
 
+import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
@@ -37,7 +38,6 @@ import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
-import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
@@ -73,12 +73,6 @@ public class FacebookPageServlet extends MsoyServiceServlet
         for (MemberCardRecord friend : _memberRepo.loadMemberCards(friendsInfo.keySet())) {
             FacebookFriendInfo info = friendsInfo.get(friend.memberId);
             info.level = friend.level;
-        }
-
-        // insert coins
-        for (MemberAccountRecord friendAcc : _moneyRepo.loadAll(friendsInfo.keySet())) {
-            FacebookFriendInfo info = friendsInfo.get(friendAcc.memberId);
-            info.coins = friendAcc.coins;
         }
 
         // find the last played games & ratings (1p only) + collect game ids
@@ -126,14 +120,14 @@ public class FacebookPageServlet extends MsoyServiceServlet
             info.trophyCount = _trophyRepo.countTrophies(info.lastGame.id, info.memberId);
         }
 
-        // sort by coins
+        // sort by level
         Collections.sort(result, new Comparator<FacebookFriendInfo>() {
             @Override public int compare (FacebookFriendInfo o1, FacebookFriendInfo o2) {
-                // highest coins first
-                int cmp = o2.coins - o1.coins;
+                // first by descending level
+                int cmp = Comparators.compare(o2.level, o1.level);
                 if (cmp == 0) {
-                    // disambiguate on member id
-                    cmp = o1.memberId - o2.memberId;
+                    // then by increasing member id
+                    cmp = Comparators.compare(o1.memberId, o2.memberId);
                 }
                 return cmp;
             }

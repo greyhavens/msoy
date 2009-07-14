@@ -34,9 +34,6 @@ public class FacebookFriendInfo
     /** The facebook user id. */
     public long facebookUid;
 
-    /** The number of coins the friend has. */
-    public int coins;
-
     /** The Whirled level of the friend. */
     public int level;
 
