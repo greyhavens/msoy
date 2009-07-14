@@ -41,9 +41,7 @@ public class FBFriendPanel extends AbsoluteCSSPanel
         addStyleName(rank % 2 == 0 ? "friendInfoEven" : "friendInfoOdd");
 
         int halfSize = MediaDesc.HALF_THUMBNAIL_SIZE;
-        String uid = String.valueOf(info.facebookUid);
-        add(MsoyUI.createFlowPanel("Name",
-            new FBMLPanel("name", "uid", uid, "linked", "false", "firstnameonly", "true")));
+        add(MsoyUI.createFlowPanel("Name", FBMLPanel.makeName(info.facebookUid)));
 
         if (rank <= 3) {
             FlowPanel rankIcon = MsoyUI.createFlowPanel("RankIcon");
@@ -52,8 +50,7 @@ public class FBFriendPanel extends AbsoluteCSSPanel
         } else {
             add(MsoyUI.createLabel("" + rank, "Rank"));
         }
-        add(MsoyUI.createFlowPanel("Photo",
-            new FBMLPanel("profile-pic", "uid", uid, "linked", "false", "size", "square")));
+        add(MsoyUI.createFlowPanel("Photo", FBMLPanel.makeProfilePic(info.facebookUid)));
         add(MsoyUI.createLabel(_msgs.level(convertToText(info.level)), "Level"));
         Thumbnail lastGame = info.lastGame;
         if (lastGame != null) {

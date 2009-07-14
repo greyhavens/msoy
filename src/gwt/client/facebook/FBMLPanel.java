@@ -39,6 +39,29 @@ public class FBMLPanel extends FlowPanel
     }
 
     /**
+     * Creates an <code>fb:name</code> tag for the given user with all of our usual options.
+     */
+    public static FBMLPanel makeName (long uid)
+    {
+        return new FBMLPanel("name",
+            "uid", String.valueOf(uid),
+            "linked", "false",
+            "firstnameonly", "true",
+            "capitalize", "true");
+    }
+
+    /**
+     * Creates an <code>fb:profile-pic</code> tag for the given user with all of our usual options.
+     */
+    public static FBMLPanel makeProfilePic (long uid)
+    {
+        return new FBMLPanel("profile-pic",
+            "uid", String.valueOf(uid),
+            "linked", "false",
+            "size", "square");
+    }
+
+    /**
      * Creates a new fb panel using the given tag and optional attributes. The tag will
      * automatically be prefixed by the namespace. An even number of attribute arguments must be
      * provided: name1, value1, name2, value2, ... No escaping is done on values.

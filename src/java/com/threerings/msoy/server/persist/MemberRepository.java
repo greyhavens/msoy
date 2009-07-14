@@ -1105,9 +1105,17 @@ public class MemberRepository extends DepotRepository
      */
     public String lookupExternalSessionKey (ExternalAuther auther, int memberId)
     {
-        ExternalMapRecord record = load(
-            ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
+        ExternalMapRecord record = loadExternalMapEntry(auther, memberId);
         return (record == null) ? null : record.sessionKey;
+    }
+
+    /**
+     * Loads up and returns the external map record for the specified member. Returns null if there
+     * is no such mapping.
+     */
+    public ExternalMapRecord loadExternalMapEntry (ExternalAuther auther, int memberId)
+    {
+        return load(ExternalMapRecord.class, ExternalMapRecord.getMemberKey(auther, memberId));
     }
 
     /**

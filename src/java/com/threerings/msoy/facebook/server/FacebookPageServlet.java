@@ -60,7 +60,7 @@ public class FacebookPageServlet extends MsoyServiceServlet
     {
         // set up return map
         IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exRec : loadMappedFriends()) {
+        for (ExternalMapRecord exRec : loadMappedFriends(true)) {
             FacebookFriendInfo info = new FacebookFriendInfo();
             info.facebookUid = Long.valueOf(exRec.externalId);
             info.memberId = exRec.memberId;
@@ -141,29 +141,29 @@ public class FacebookPageServlet extends MsoyServiceServlet
     {
         // return mapped fb friends
         List<Long> friends = Lists.newArrayList();
-        for (ExternalMapRecord exRec : loadMappedFriends()) {
+        for (ExternalMapRecord exRec : loadMappedFriends(false)) {
             friends.add(Long.valueOf(exRec.externalId));
         }
 
         return friends;
     }
 
-    protected List<ExternalMapRecord> loadMappedFriends ()
+    protected List<ExternalMapRecord> loadMappedFriends (boolean includeSelf)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
 
         // get the session key
-        String sessionKey = _memberRepo.lookupExternalSessionKey(
+        ExternalMapRecord mapRec = _memberRepo.loadExternalMapEntry(
             ExternalAuther.FACEBOOK, mrec.memberId);
-        if (sessionKey == null) {
+        if (mapRec == null || mapRec.sessionKey == null) {
             throw new ServiceException(FacebookCodes.NO_SESSION);
         }
 
         // get facebook friends to seed (more accurate)
         Set<String> facebookFriendIds = Sets.newHashSet();
         try {
-            FacebookJaxbRestClient client = _fbLogic.getFacebookClient(sessionKey);
+            FacebookJaxbRestClient client = _fbLogic.getFacebookClient(mapRec.sessionKey);
             for (Long uid : client.friends_get().getUid()) {
                 facebookFriendIds.add(String.valueOf(uid));
             }
@@ -176,7 +176,12 @@ public class FacebookPageServlet extends MsoyServiceServlet
         }
 
         // filter by those hooked up to Whirled and
-        return _memberRepo.loadExternalAccounts(ExternalAuther.FACEBOOK, facebookFriendIds);
+        List<ExternalMapRecord> exRecs = _memberRepo.loadExternalAccounts(
+            ExternalAuther.FACEBOOK, facebookFriendIds);
+        if (includeSelf) {
+            exRecs.add(mapRec);
+        }
+        return exRecs;
     }
 
     @Inject protected FacebookLogic _fbLogic;
