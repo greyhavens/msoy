@@ -4,6 +4,7 @@
 package client.facebook;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import client.ui.MsoyUI;
@@ -11,7 +12,9 @@ import client.ui.MsoyUI;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
@@ -57,10 +60,18 @@ public class FBFriendBar extends AbsoluteCSSPanel
     {
         _friendPanels = new ArrayList<FBFriendPanel>(friends.size());
         for (int ii = 0, ll = friends.size(); ii < ll; ++ii) {
-            _friendPanels.add(new FBFriendPanel(friends.get(ii), ii + 1));
+            FBFriendPanel panel = new FBFriendPanel(friends.get(ii), ii + 1);
+            String id = HTMLPanel.createUniqueId();
+            panel.getElement().setId(id);
+            _parsed.put(id, 0L); // never parsed
+            _friendPanels.add(panel);
         }
         while (_friendPanels.size() < FRIEND_COUNT) {
             _friendPanels.add(new FBFriendPanel(null, _friendPanels.size() + 1));
+        }
+        for (FBFriendPanel panel : _friendPanels) {
+            panel.setVisible(false);
+            add(panel);
         }
         _offset = 0;
         update();
@@ -69,30 +80,34 @@ public class FBFriendBar extends AbsoluteCSSPanel
     protected void update ()
     {
         for (FBFriendPanel panel : _friendPanels) {
-            if (panel.getParent() == this) {
-                remove(panel);
-            }
+            panel.setVisible(false);
         }
         // countdown, lowest ranks on the left
         for (int ii =_offset, col = FRIEND_COUNT; col >= 1; ++ii, --col) {
             FBFriendPanel panel = get(ii);
-            add(panel);
+            panel.setVisible(true);
             panel.getElement().setAttribute("column", String.valueOf(col));
         }
 
         _left.setVisible(_friendPanels.size() > FRIEND_COUNT);
         _right.setVisible(_friendPanels.size() > FRIEND_COUNT);
 
-        // TODO: if slow, maybe play with adding extra panels to DOM as hidden to get FB to do
-        // larger batches
-        FBMLPanel.reparse(this);
+        // reparse 3 sections of panels, 1 now and 2 later
+        reparseRange(_offset, _offset + FRIEND_COUNT - 1);
+        if (_timer != null) {
+            _timer.cancel();
+        }
+        _timer = new Timer() {
+            @Override public void run () {
+                reparseRange(_offset + FRIEND_COUNT, _offset + FRIEND_COUNT * 2 - 1);
+                reparseRange(_offset - FRIEND_COUNT, _offset - 1);
+            }
+        };
+        _timer.schedule(2000);
     }
 
     public void scroll (int delta)
     {
-        if (_friendPanels.size() <= FRIEND_COUNT) {
-            return;
-        }
         _offset += delta;
         update();
     }
@@ -100,19 +115,40 @@ public class FBFriendBar extends AbsoluteCSSPanel
     protected FBFriendPanel get (int offset)
     {
         int size = _friendPanels.size();
-        if (size == 0) {
-            return null;
-        }
         while (offset < 0) {
             offset += size;
         }
         return _friendPanels.get(offset % size);
     }
 
-    int _offset;
+    protected void reparseRange (int start, int end)
+    {
+        long now = System.currentTimeMillis();
+        for (int ii = start; ii <= end; ++ii) {
+            FBFriendPanel panel = get(ii);
+            String id = panel.getElement().getId();
+            Long time = _parsed.get(id);
+            if (time == null || time != 0) {
+                continue;
+            }
+            FBMLPanel.reparse(panel);
+            _parsed.put(id, now);
+        }
+    }
+
+    // we are experiencing this bug: http://bugs.developers.facebook.com/show_bug.cgi?id=4852
+    // the last comment was from May so workaround by hacking a bit
+    protected void checkForFailedParsings ()
+    {
+        // TODO
+    }
+
+    protected int _offset;
     // store the entire panel since the FBMPLPanel.reparse is very expensive
-    List<FBFriendPanel> _friendPanels;
-    PushButton _left, _right;
+    protected List<FBFriendPanel> _friendPanels;
+    protected PushButton _left, _right;
+    protected HashMap<String, Long> _parsed = new HashMap<String, Long>();
+    protected Timer _timer;
 
     protected static final int FRIEND_COUNT = 6;
 
