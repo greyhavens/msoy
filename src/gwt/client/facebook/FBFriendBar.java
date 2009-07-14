@@ -12,6 +12,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PushButton;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 
@@ -30,17 +31,18 @@ public class FBFriendBar extends AbsoluteCSSPanel
         super("friendBar", "fixed");
 
         add(MsoyUI.createLabel(_msgs.friendBarTitle(), "title"));
-        add(MsoyUI.createImageButton("fbscrollLeft", new ClickHandler() {
+        add(_left = MsoyUI.createImageButton("fbscrollLeft", new ClickHandler() {
             @Override public void onClick (ClickEvent event) {
                 scroll(1); // left
             }
         }));
-        add(MsoyUI.createImageButton("fbscrollRight", new ClickHandler() {
+        add(_right = MsoyUI.createImageButton("fbscrollRight", new ClickHandler() {
             @Override public void onClick (ClickEvent event) {
                 scroll(-1); // right
             }
         }));
-
+        _left.setVisible(false);
+        _right.setVisible(false);
         _fbsvc.getFriends(new AsyncCallback<List<FacebookFriendInfo>>() {
             @Override public void onSuccess (List<FacebookFriendInfo> result) {
                 init(result);
@@ -73,12 +75,13 @@ public class FBFriendBar extends AbsoluteCSSPanel
         }
         // countdown, lowest ranks on the left
         for (int ii =_offset, col = FRIEND_COUNT; col >= 1; ++ii, --col) {
-            if (ii < _friendPanels.size()) {
-                FBFriendPanel panel = _friendPanels.get(ii);
-                add(panel);
-                panel.getElement().setAttribute("column", String.valueOf(col));
-            }
+            FBFriendPanel panel = get(ii);
+            add(panel);
+            panel.getElement().setAttribute("column", String.valueOf(col));
         }
+
+        _left.setVisible(_friendPanels.size() > FRIEND_COUNT);
+        _right.setVisible(_friendPanels.size() > FRIEND_COUNT);
 
         // TODO: if slow, maybe play with adding extra panels to DOM as hidden to get FB to do
         // larger batches
@@ -87,17 +90,29 @@ public class FBFriendBar extends AbsoluteCSSPanel
 
     public void scroll (int delta)
     {
-        int offset = _offset + delta;
-        if (offset < 0 || offset + FRIEND_COUNT >= _friendPanels.size()) {
+        if (_friendPanels.size() <= FRIEND_COUNT) {
             return;
         }
-        _offset = offset;
+        _offset += delta;
         update();
+    }
+
+    protected FBFriendPanel get (int offset)
+    {
+        int size = _friendPanels.size();
+        if (size == 0) {
+            return null;
+        }
+        while (offset < 0) {
+            offset += size;
+        }
+        return _friendPanels.get(offset % size);
     }
 
     int _offset;
     // store the entire panel since the FBMPLPanel.reparse is very expensive
     List<FBFriendPanel> _friendPanels;
+    PushButton _left, _right;
 
     protected static final int FRIEND_COUNT = 6;
 
