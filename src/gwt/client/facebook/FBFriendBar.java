@@ -12,6 +12,7 @@ import client.ui.MsoyUI;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -66,9 +67,20 @@ public class FBFriendBar extends AbsoluteCSSPanel
             _parsed.put(id, 0L); // never parsed
             _friendPanels.add(panel);
         }
+
+        // pad out for testing
+        boolean testScrolling = false;
+        if (testScrolling) {
+            while (_friendPanels.size() < FRIEND_COUNT * 2) {
+                _friendPanels.add(new FBFriendPanel(friends.get(0), _friendPanels.size() + 1));
+            }
+        }
+
+        // add empty slots (w/ invite button)
         while (_friendPanels.size() < FRIEND_COUNT) {
             _friendPanels.add(new FBFriendPanel(null, _friendPanels.size() + 1));
         }
+
         for (FBFriendPanel panel : _friendPanels) {
             panel.setVisible(false);
             add(panel);
@@ -87,6 +99,11 @@ public class FBFriendBar extends AbsoluteCSSPanel
             FBFriendPanel panel = get(ii);
             panel.setVisible(true);
             panel.getElement().setAttribute("column", String.valueOf(col));
+
+            // workaround for IE: attribute selectors do not appear to update dynamically
+            // ... so just remove and readd a style attribute here
+            DOM.setStyleAttribute(panel.getElement(), "left", "0px");
+            DOM.setStyleAttribute(panel.getElement(), "left", "");
         }
 
         _left.setVisible(_friendPanels.size() > FRIEND_COUNT);
