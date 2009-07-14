@@ -86,6 +86,7 @@
   font-size: 12px;
   color: #FFFFFF;
   padding-top: 2px;
+  left: 0px;
 }
 
 .friendInfo .Rank {
@@ -111,6 +112,7 @@
   font-size: 9px;
   color: #3b5998;
   bottom: 61px;
+  left: 0px;
 }
 
 .friendInfo .thumbBox {
