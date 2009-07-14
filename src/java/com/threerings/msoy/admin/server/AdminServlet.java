@@ -41,12 +41,14 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.SubscriptionRepository;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
 import com.threerings.msoy.underwire.server.SupportLogic;
@@ -178,23 +180,25 @@ public class AdminServlet extends MsoyServiceServlet
         // log this as a warning so that it shows up in the nightly filtered logs
         log.warning("Configuring role", "setter", memrec.who(), "target", tgtrec.who(),
                     "role", role);
-// Commented out July 8, 2009: Do not allow modification to the subscriber role, as
-// we would need to make modifications to the SubscriberRecord table as well.
-//        boolean isSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER);
-//        boolean isPermSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER_PERMANENT);
-//        if (role == WebCreds.Role.SUBSCRIBER) {
-//            if (!isSub && !isPermSub) {
-//                log.warning("Making user a permanent subscriber", new Exception());
-//                tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, true);
-//            }
-//        } else if (isPermSub) {
-//            log.warning("Stripping user of permanent subscription", new Exception());
-//            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, false);
-//
-//        } else if (isSub) {
-//            log.warning("Stripping user of subscriber status!", new Exception());
-//            tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER, false);
-//        }
+        boolean isSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER);
+        boolean isPermSub = tgtrec.isSet(MemberRecord.Flag.SUBSCRIBER_PERMANENT);
+        if (role == WebCreds.Role.SUBSCRIBER) {
+            if (!isSub && !isPermSub) {
+                log.warning("Making user a permanent subscriber", new Exception());
+                tgtrec.setFlag(MemberRecord.Flag.SUBSCRIBER_PERMANENT, true);
+                _subscripRepo.noteSubscriptionBilled(tgtrec.memberId, 0);
+            }
+
+        } else if ((role.ordinal() < WebCreds.Role.SUBSCRIBER.ordinal()) && (isPermSub || isSub)) {
+            log.warning("Stripping user of subscription!", "permanent", isPermSub, new Exception());
+            tgtrec.setFlag(
+                isPermSub ? MemberRecord.Flag.SUBSCRIBER_PERMANENT : MemberRecord.Flag.SUBSCRIBER,
+                false);
+            if (isPermSub != isSub) {
+                // normal case: end the sub. We only don't if they were PERM and normal!
+                _subscripRepo.noteSubscriptionEnded(tgtrec.memberId);
+            }
+        }
         tgtrec.setFlag(MemberRecord.Flag.SUPPORT, role == WebCreds.Role.SUPPORT);
         if (memrec.isMaintainer()) {
             tgtrec.setFlag(MemberRecord.Flag.ADMIN, role == WebCreds.Role.ADMIN);
@@ -203,6 +207,7 @@ public class AdminServlet extends MsoyServiceServlet
             tgtrec.setFlag(MemberRecord.Flag.MAINTAINER, role == WebCreds.Role.MAINTAINER);
         }
         _memberRepo.storeFlags(tgtrec);
+        MemberNodeActions.tokensChanged(tgtrec.memberId, tgtrec.toTokenRing());
     }
 
     // from interface AdminService
@@ -926,5 +931,6 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected RootDObjectManager _omgr;
     @Inject protected RuntimeConfig _runtimeConfig;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected SubscriptionRepository _subscripRepo;
     @Inject protected SupportLogic _supportLogic;
 }
