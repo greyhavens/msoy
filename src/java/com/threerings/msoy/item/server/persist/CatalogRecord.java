@@ -8,7 +8,6 @@ import java.util.Date;
 
 import com.google.common.base.Function;
 
-import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
