@@ -101,8 +101,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // TODO: move all this to PopularPlacesShapshot, why recalculate per request?
-        boolean newFacebookStuff =
-            (portal == ArcadeData.Portal.FACEBOOK) && DeploymentConfig.devDeployment;
+        boolean facebook = portal == ArcadeData.Portal.FACEBOOK;
 
         ArcadeDataBuilder bldr = new ArcadeDataBuilder(portal);
         ArcadeData data = new ArcadeData();
@@ -111,12 +110,12 @@ public class GameServlet extends MsoyServiceServlet
         data.featuredGames = bldr.buildFeatured();
 
         // list of top 10 or 20 games by ranking
-        data.topGames = bldr.buildTopGames(newFacebookStuff ? 10 : 20);
+        data.topGames = bldr.buildTopGames(facebook ? 10 : 20);
 
         // list of the top-200 games alphabetically (only include name and id)
         data.allGames = bldr.buildAllGames();
 
-        if (newFacebookStuff) {
+        if (facebook) {
             // for the facebook redesigned ui, we replace the genres with a "game wall"
             data.gameWall = bldr.buildGameWall(data.topGames.size());
 
