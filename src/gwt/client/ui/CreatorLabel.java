@@ -27,11 +27,13 @@ public class CreatorLabel extends FlowPanel
 
     public CreatorLabel (MemberName name)
     {
+        this();
         setMember(name);
     }
 
     public CreatorLabel (GroupName name)
     {
+        this();
         setBrand(name);
     }
 
