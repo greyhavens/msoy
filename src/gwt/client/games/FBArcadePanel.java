@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.ServiceUtil;
 
@@ -28,11 +29,11 @@ import client.util.PageCallback;
 /**
  * Main game display.
  */
-public class FBArcadePanel extends AbsolutePanel
+public class FBArcadePanel extends AbsoluteCSSPanel
 {
     public FBArcadePanel ()
     {
-        setStyleName("fbarcade");
+        super("fbarcade", "fixed");
         add(MsoyUI.createNowLoading());
         _gamesvc.loadArcadeData(ArcadeData.Portal.FACEBOOK, new PageCallback<ArcadeData>(this) {
             public void onSuccess (ArcadeData data) {
@@ -50,7 +51,7 @@ public class FBArcadePanel extends AbsolutePanel
         // top games
         FlowPanel topGames = MsoyUI.createFlowPanel("TopGames");
         topGames.add(MsoyUI.createLabel("Top 10 Games", "title"));
-        add(makeAbsolute(topGames));
+        add(topGames);
         DOM.setStyleAttribute(topGames.getElement(), "position", "absolute");
         int ii;
         for (ii = 0; ii < data.topGames.size(); ii++) {
@@ -66,7 +67,7 @@ public class FBArcadePanel extends AbsolutePanel
         }
 
         // featured games
-        add(makeAbsolute(new FBFeaturedGamePanel(data.featuredGames)));
+        add(new FBFeaturedGamePanel(data.featuredGames));
 
         // game wall
         AbsolutePanel gameWall = new AbsolutePanel();
@@ -89,13 +90,7 @@ public class FBArcadePanel extends AbsolutePanel
             }
         }
 
-        add(makeAbsolute(gameWall));
-    }
-
-    protected Widget makeAbsolute (Widget w)
-    {
-        DOM.setStyleAttribute(w.getElement(), "position", "absolute");
-        return w;
+        add(gameWall);
     }
 
     /**
@@ -129,8 +124,7 @@ public class FBArcadePanel extends AbsolutePanel
         } else {
             FlowPanel bits = new FlowPanel();
             bits.add(link);
-            bits.add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline),
-                                        "tipLabel"));
+            bits.add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "tipLabel"));
             table.setWidget(row, startCol+1, bits);
         }
     }

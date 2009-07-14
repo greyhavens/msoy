@@ -997,10 +997,14 @@
 
 .fbfeaturedGame .thumbBox {
   border: 1px solid #94a3c4;
+  left: 10px;
+  top: 37px;
 }
 
 .fbfeaturedGame .scroller {
   margin-top: 5px;
+  left: 10px;
+  top: 165px;
 }
 
 .fbfeaturedGame .bits {
@@ -1008,60 +1012,68 @@
   border: 1px solid #94a3c4;
   height: 151px;
   background: #eceff5;
+  left: 198px;
+  top: 37px;
+  width: 336px;
+  height: 150px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.fbfeaturedGame .bits td.name {
-  width: 195px;
+.fbfeaturedGame .bits .Name {
   font-size: 20px;
   font-weight: bold;
-  height: 25px;
-  vertical-align: bottom;
-  padding-left: 11px;
+  left: 12px;
+  top: 8px;
+  width: 314px;
+  height: 24px;
 }
 
-.fbfeaturedGame .bits td.genre {
+.fbfeaturedGame .bits .Genre {
   font-size: 14px;
   font-weight: bold;
+  width: 196px;
   height: 18px;
-  vertical-align: bottom;
-  padding-left: 11px;
+  left: 12px;
+  top: 32px;
 }
 
-.fbfeaturedGame .bits td.starsCell {
-  width: 121px;
-  vertical-align: bottom;
-  text-align: right;
-  padding-right: 7px;
+.fbfeaturedGame .bits .stars {
+  right: 10px;
+  top: 34px;
 }
 
-.fbfeaturedGame .bits td.creator {
+.fbfeaturedGame .bits .creator {
   font-size: 11px;
-  vertical-align: bottom;
-  padding-left: 11px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  width: 196px;
+  height: 14px;
+  left: 12px;
+  top: 52px;
 }
 
-.fbfeaturedGame .bits td.online {
+.fbfeaturedGame .bits .Online {
   font-size: 14px;
   text-align: right;
-  padding-right: 7px;
+  top: 52px;
+  right: 10px;
 }
 
-.fbfeaturedGame td.description {
-  width: 195px;
-  height: 84px;
+.fbfeaturedGame .Bottom {
+}
+
+.fbfeaturedGame .Description {
   color: black;
-  padding-left: 11px;
-  padding-right: 5px;
-  overflow: hidden;
+  white-space: normal;
   font-size: 14px;
-  vertical-align: top;
+  left: 12px;
+  top: 68px;
+  height: 80px;
+  width: 196px;
 }
 
-.fbfeaturedGame td.playCell {
-  padding-right: 7px;
-  vertical-align: top;
+.fbfeaturedGame .fbplayButton {
+  right: 8px;
+  bottom: 8px;
 }
 
 /* ------------------------------------
