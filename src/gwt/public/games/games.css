@@ -847,6 +847,10 @@
   top: 249px;
 }
 
+.fbarcade .tipLabel {
+  color: #3b5998;
+}
+
 /* ------------------------------------
    FBArcadePanel - top 10 games
 -------------------------------------*/
@@ -1112,5 +1116,9 @@
 .fbgameHeaderPanel .GenreLinks a {
   margin: 0 5px 0 5px;
   color: #3b5998;
+}
+
+.fbgameHeaderPanel .GenreLinks a:hover {
+  color: #0092f6;
 }
 
