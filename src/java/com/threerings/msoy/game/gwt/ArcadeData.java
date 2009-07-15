@@ -82,6 +82,9 @@ public class ArcadeData
     /** The number of featured games we show on the Arcade page. */
     public static int FEATURED_GAME_COUNT = 5;
 
+    /** TEMP. Will be populated instead of featuredGames for the FB arcade. */
+    public MochiGameInfo[] mochiGames;
+
     /** Info on the featured games. */
     public GameInfo[] featuredGames;
 

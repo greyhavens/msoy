@@ -61,11 +61,13 @@ import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
 import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
+import com.threerings.msoy.game.server.persist.MochiGameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -106,7 +108,11 @@ public class GameServlet extends MsoyServiceServlet
         ArcadeData data = new ArcadeData();
 
         // top 5 hand-picked featured games
-        data.featuredGames = bldr.buildFeatured();
+        if (facebook) {
+            data.mochiGames = bldr.loadMochiGames();
+        } else {
+            data.featuredGames = bldr.buildFeatured();
+        }
 
         // list of top 10 or 20 games by ranking
         data.topGames = bldr.buildTopGames(facebook ? 10 : 20);
@@ -780,15 +786,16 @@ public class GameServlet extends MsoyServiceServlet
         public ArcadeDataBuilder (ArcadeData.Portal portal)
         {
             _portal = portal;
-
-            // load the hand-picked "top games"
-            _agames = _mgameRepo.loadArcadeEntries(portal, true);
-
             // set up "approved" set for some portals
             Set<Integer> approvedGames = null;
-            if (portal.isFiltered()) {
-                approvedGames = Sets.newHashSet(
-                    Lists.transform(_agames, ArcadeEntryRecord.TO_GAME_ID));
+
+            // load the hand-picked "top games"
+            if (portal != ArcadeData.Portal.FACEBOOK) {
+                _agames = _mgameRepo.loadArcadeEntries(portal, true);
+                if (portal.isFiltered()) {
+                    approvedGames = Sets.newHashSet(
+                        Lists.transform(_agames, ArcadeEntryRecord.TO_GAME_ID));
+                }
             }
 
             // load the top N (where N is large) games and build everything from that list
@@ -800,6 +807,19 @@ public class GameServlet extends MsoyServiceServlet
                 }
                 _games.put(grec.gameId, grec);
             }
+        }
+
+        /**
+         * TEMP
+         */
+        public MochiGameInfo[] loadMochiGames ()
+        {
+            List<MochiGameInfoRecord> games = _mgameRepo.loadLatestMochiGames(5); // TODO 5
+            MochiGameInfo[] ret = new MochiGameInfo[games.size()];
+            for (int ii = 0; ii < ret.length; ii++) {
+                ret[ii] = games.get(ii).toGameInfo();
+            }
+            return ret;
         }
 
         public GameInfo[] buildFeatured ()

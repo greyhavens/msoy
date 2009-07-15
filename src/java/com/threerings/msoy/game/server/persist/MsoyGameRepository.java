@@ -190,6 +190,15 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
+     * Load the latest mochi games.
+     */
+    public List<MochiGameInfoRecord> loadLatestMochiGames (int count)
+    {
+        return findAll(MochiGameInfoRecord.class,
+            OrderBy.descending(MochiGameInfoRecord.ID), new Limit(0, count));
+    }
+
+    /**
      * Loads the entries for the given arcade portal.
      */
     public List<ArcadeEntryRecord> loadArcadeEntries (ArcadeData.Portal portal, boolean useCache)
@@ -604,6 +613,7 @@ public class MsoyGameRepository extends DepotRepository
         classes.add(GamePlayRecord.class);
         classes.add(GameTraceLogRecord.class);
         classes.add(InstructionsRecord.class);
+        classes.add(MochiGameInfoRecord.class);
     }
 
     protected RatingRepository _ratingRepo;
