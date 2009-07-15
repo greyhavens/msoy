@@ -172,6 +172,180 @@ public class FeedItemGeneratorUnitTest
         assertTrue(aggMsg.messages.get(1) == msgs.get(3));
     }
 
+    @Test public void testAggregateGroupDepletion ()
+    {
+        List<FeedMessage> msgs = new ArrayList<FeedMessage>();
+
+        // this data is a canonical version of a live user's feed that was casuing a crash in the
+        // message aggregation code (fixed in msoy r17548)
+
+        // TODO: pare down what is actually needed to check "isDepleted" code path
+        msgs.add(playedGame(1, 1));
+        msgs.add(playedGame(1, 1));
+        msgs.add(playedGame(1, 2));
+        msgs.add(playedGame(2, 3));
+        msgs.add(playedGame(2, 3));
+        msgs.add(playedGame(2, 3));
+        msgs.add(playedGame(3, 4));
+        msgs.add(playedGame(3, 4));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(5, 4));
+        msgs.add(playedGame(5, 4));
+        msgs.add(playedGame(4, 4));
+        msgs.add(playedGame(3, 6));
+        msgs.add(playedGame(6, 3));
+        msgs.add(playedGame(6, 7));
+        msgs.add(playedGame(7, 8));
+        msgs.add(playedGame(6, 1));
+        msgs.add(playedGame(8, 3));
+        msgs.add(playedGame(9, 9));
+        msgs.add(playedGame(9, 1));
+        msgs.add(playedGame(3, 1));
+        msgs.add(playedGame(3, 1));
+        msgs.add(playedGame(10, 5));
+        msgs.add(playedGame(11, 10));
+        msgs.add(playedGame(10, 11));
+        msgs.add(playedGame(12, 5));
+        msgs.add(playedGame(12, 5));
+        msgs.add(playedGame(12, 5));
+        msgs.add(playedGame(10, 9));
+        msgs.add(playedGame(13, 3));
+        msgs.add(playedGame(13, 3));
+        msgs.add(playedGame(13, 3));
+        msgs.add(playedGame(4, 12));
+        msgs.add(playedGame(4, 12));
+        msgs.add(playedGame(14, 5));
+        msgs.add(playedGame(14, 5));
+        msgs.add(playedGame(14, 5));
+        msgs.add(playedGame(3, 5));
+        msgs.add(playedGame(3, 5));
+        msgs.add(playedGame(3, 8));
+        msgs.add(playedGame(4, 13));
+        msgs.add(playedGame(1, 5));
+        msgs.add(playedGame(1, 5));
+        msgs.add(playedGame(1, 8));
+        msgs.add(playedGame(15, 5));
+        msgs.add(playedGame(15, 3));
+        msgs.add(playedGame(15, 3));
+        msgs.add(playedGame(16, 14));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(15, 5));
+        msgs.add(playedGame(17, 2));
+        msgs.add(playedGame(3, 5));
+        msgs.add(playedGame(3, 5));
+        msgs.add(playedGame(3, 5));
+        msgs.add(playedGame(15, 5));
+        msgs.add(playedGame(15, 5));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(4, 16));
+        msgs.add(playedGame(15, 3));
+        msgs.add(playedGame(7, 17));
+        msgs.add(playedGame(18, 18));
+        msgs.add(playedGame(18, 18));
+        msgs.add(playedGame(18, 18));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(4, 15));
+        msgs.add(playedGame(4, 18));
+        msgs.add(playedGame(15, 3));
+        msgs.add(playedGame(15, 14));
+        msgs.add(playedGame(15, 19));
+        msgs.add(playedGame(10, 17));
+        msgs.add(playedGame(10, 17));
+        msgs.add(playedGame(10, 17));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(15, 20));
+        msgs.add(playedGame(15, 20));
+        msgs.add(playedGame(13, 18));
+        msgs.add(playedGame(13, 18));
+        msgs.add(playedGame(13, 8));
+        msgs.add(playedGame(1, 1));
+        msgs.add(playedGame(1, 1));
+        msgs.add(playedGame(1, 21));
+        msgs.add(playedGame(7, 17));
+        msgs.add(playedGame(7, 9));
+        msgs.add(playedGame(7, 9));
+        msgs.add(playedGame(3, 9));
+        msgs.add(playedGame(18, 22));
+        msgs.add(playedGame(4, 23));
+        msgs.add(playedGame(3, 17));
+        msgs.add(playedGame(3, 17));
+        msgs.add(playedGame(15, 14));
+        msgs.add(playedGame(15, 14));
+        msgs.add(playedGame(15, 14));
+        msgs.add(playedGame(13, 24));
+        msgs.add(playedGame(13, 25));
+        msgs.add(playedGame(13, 25));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(11, 16));
+        msgs.add(playedGame(4, 26));
+        msgs.add(playedGame(4, 26));
+        msgs.add(playedGame(1, 27));
+        msgs.add(playedGame(1, 27));
+        msgs.add(playedGame(1, 27));
+        msgs.add(playedGame(2, 19));
+        msgs.add(playedGame(2, 19));
+        msgs.add(playedGame(2, 19));
+        msgs.add(playedGame(19, 17));
+        msgs.add(playedGame(19, 17));
+        msgs.add(playedGame(19, 17));
+        msgs.add(playedGame(7, 15));
+        msgs.add(playedGame(7, 15));
+        msgs.add(playedGame(7, 7));
+        msgs.add(playedGame(3, 17));
+        msgs.add(playedGame(3, 17));
+        msgs.add(playedGame(3, 17));
+        msgs.add(playedGame(20, 27));
+        msgs.add(playedGame(4, 28));
+        msgs.add(playedGame(4, 28));
+        msgs.add(playedGame(4, 28));
+        msgs.add(playedGame(15, 19));
+        msgs.add(playedGame(15, 19));
+        msgs.add(playedGame(15, 19));
+        msgs.add(playedGame(14, 19));
+        msgs.add(playedGame(14, 19));
+        msgs.add(playedGame(14, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(3, 19));
+        msgs.add(playedGame(3, 19));
+        msgs.add(playedGame(3, 19));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(4, 5));
+        msgs.add(playedGame(7, 20));
+        msgs.add(playedGame(4, 19));
+        msgs.add(playedGame(4, 19));
+        msgs.add(playedGame(4, 19));
+        msgs.add(playedGame(7, 29));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(16, 14));
+        msgs.add(playedGame(16, 14));
+        msgs.add(playedGame(16, 14));
+        msgs.add(playedGame(18, 3));
+        msgs.add(playedGame(10, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(13, 19));
+        msgs.add(playedGame(13, 19));
+
+        // the test is that this aggregate does not throw an exception
+        FeedMessageAggregator.aggregate(msgs, false);
+    }
+
     public void genMessage (FeedMessage msg)
     {
         new StubGenerator().addMessage(msg);
@@ -184,6 +358,12 @@ public class FeedItemGeneratorUnitTest
             list.add(msg);
         }
         new StubGenerator().addMessage(new AggregateFeedMessage(style, msgs[0].type, 0L, list));
+    }
+
+    public FriendFeedMessage playedGame (int actorId, int gameId)
+    {
+        return new FriendFeedMessage(FeedMessageType.FRIEND_PLAYED_GAME,
+                    new MemberName("M" + actorId, actorId), new String[]{"", "" + gameId, ""}, 0);
     }
 
     public static class StubGenerator
@@ -374,3 +554,4 @@ public class FeedItemGeneratorUnitTest
     }
 
 }
+
