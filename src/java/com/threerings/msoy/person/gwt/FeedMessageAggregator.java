@@ -87,8 +87,8 @@ public class FeedMessageAggregator
                     // remove the message from the other group to prevent double display
                     groups.other(destination).remove(message);
 
-                    // add to new messages if it is not yet displayed
-                    if (!destination.isDisplayed()) {
+                    // add to new messages if it is not yet displayed and not depleted
+                    if (!destination.isDisplayed() && !destination.isDepleted()) {
                         newMessages.add(destination.display());
                     }
                 }
@@ -294,21 +294,41 @@ public class FeedMessageAggregator
             }
 
             /**
+             * Detects if this group has had all its messages removed. This can happen if all the
+             * message got displayed in preceding groups of the opposite aggregation style and
+             * hence removed from this one. This in turn can occur if a lot of players are doing
+             * a small set of distinct actions, e.g. playing games.
+             */
+            public boolean isDepleted ()
+            {
+                return _list.size() == 0;
+            }
+
+            /**
              * Marks this group as being displayed and returns the aggregation of all messages. To
-             * save memory, also clears the group since it is not needed any more.
+             * save memory, also clears the group since it is not needed any more. The group must
+             * not be already displayed and not depleted or an exception is thrown.
              */
             public FeedMessage display ()
             {
+                if (_displayed || _list.size() == 0) {
+                    throw new RuntimeException();
+                }
+
                 _displayed = true;
-                List<FeedMessage> messages = new ArrayList<FeedMessage>(_list.size());
+
+                List<FeedMessage> messages = new ArrayList<FeedMessage>(
+                    Math.min(_list.size(), MAX_AGGREGATED_ITEMS));
                 for (KeyedMessage entry : _list) {
                     messages.add(entry.message);
+                    if (messages.size() >= MAX_AGGREGATED_ITEMS) {
+                        break;
+                    }
                 }
                 FeedMessage first = messages.get(0);
                 FeedMessage result = first;
                 if (_list.size() > 1) {
-                    result = new AggregateFeedMessage(
-                        _style, first.type, first.posted, messages);
+                    result = new AggregateFeedMessage(_style, first.type, first.posted, messages);
                 }
                 _list.clear();
                 return result;
@@ -328,10 +348,7 @@ public class FeedMessageAggregator
             protected void add (KeyedMessage message)
             {
                 if (_displayed) {
-                    // TODO: better way of logging in server/client shared code
-                    //CShell.log(
-                    //    "Ignoring addition of messages to a MessageAggregate that has been displayed");
-                    return;
+                    throw new RuntimeException();
                 }
 
                 _size++;
@@ -388,10 +405,7 @@ public class FeedMessageAggregator
                 if (group == null) {
                     _map.put(key, group = new Group());
                 }
-                // TODO: something better than just culling the message
-                if (group.size() < MAX_AGGREGATED_ITEMS) {
-                    group.add(message);
-                }
+                group.add(message);
             }
         }
 
