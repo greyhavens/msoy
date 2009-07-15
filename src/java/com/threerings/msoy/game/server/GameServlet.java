@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.server;
 
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +26,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.samskivert.io.StreamUtil;
+
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.Comparators;
@@ -31,6 +39,7 @@ import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
@@ -67,7 +76,6 @@ import com.threerings.msoy.game.gwt.TrophyCase;
 import com.threerings.msoy.game.server.persist.GameCodeRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
-import com.threerings.msoy.game.server.persist.MochiGameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -682,6 +690,58 @@ public class GameServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface GAmeService
+    public void addMochiGame (String mochiTag)
+        throws ServiceException
+    {
+        requireSupportUser();
+
+        try {
+            URL url = new URL("http://www.mochiads.com/feeds/games/" +
+                MOCHI_PUBLISHER_ID + "/" + mochiTag + "/?format=json");
+            JSONObject feed = new JSONObject(StreamUtil.toString(url.openStream()));
+
+            JSONObject game = feed.getJSONArray("games").getJSONObject(0);
+
+            // now copy the rough data into our nice record
+            MochiGameInfo info = new MochiGameInfo();
+            info.name = getJSONStr("name", game, GameInfo.MAX_NAME_LENGTH);
+            info.tag = mochiTag;
+            info.categories = getJSONStr("categories", game, 255);
+            info.author = getJSONStr("author", game, 255);
+            info.desc = getJSONStr("description", game, GameInfo.MAX_DESCRIPTION_LENGTH);
+            info.thumbURL = getJSONStr("thumbnail_url", game, 255);
+            info.swfURL = getJSONStr("swf_url", game, 255);
+            info.width = game.getInt("width");
+            info.height = game.getInt("height");
+
+            _mgameRepo.addMochiGame(info);
+
+        } catch (Exception e) {
+            log.warning("Problem adding mochi game.", e);
+            throw (ServiceException)
+                new ServiceException(ServiceCodes.E_INTERNAL_ERROR).initCause(e);
+        }
+    }
+
+    /**
+     * Utility to get a value from a JSONObject and truncate it.
+     */
+    protected String getJSONStr (String key, JSONObject obj, int maxLen)
+        throws JSONException
+    {
+        Object v = obj.opt(key);
+        String s;
+        if (v instanceof String) {
+            s = (String)v;
+        } else if (v instanceof JSONArray) {
+            s = ((JSONArray)v).join(", ");
+        } else {
+            s = String.valueOf(v);
+        }
+        return StringUtil.truncate(s, maxLen);
+    }
+
     protected PlayerRating[] toRatingResult (
         List<RatingRecord> records, IntMap<PlayerRating> players)
     {
@@ -814,12 +874,8 @@ public class GameServlet extends MsoyServiceServlet
          */
         public MochiGameInfo[] loadMochiGames ()
         {
-            List<MochiGameInfoRecord> games = _mgameRepo.loadLatestMochiGames(5); // TODO 5
-            MochiGameInfo[] ret = new MochiGameInfo[games.size()];
-            for (int ii = 0; ii < ret.length; ii++) {
-                ret[ii] = games.get(ii).toGameInfo();
-            }
-            return ret;
+            Collection<MochiGameInfo> games = _mgameRepo.loadLatestMochiGames(5); // TODO 5
+            return games.toArray(new MochiGameInfo[games.size()]);
         }
 
         public GameInfo[] buildFeatured ()
@@ -1003,6 +1059,8 @@ public class GameServlet extends MsoyServiceServlet
     protected static final int MAX_RANKINGS = 10;
     protected static final int ARCADE_RAW_COUNT = 200;
     protected static final float MIN_ARCADE_RATING = 3.0f;
+
+    protected static final String MOCHI_PUBLISHER_ID = "709d64407cb1971b";
 
     /** Players that haven't played a rated game in 14 days are not included in top-ranked. */
     protected static final long RATING_CUTOFF = 14 * 24*60*60*1000L;

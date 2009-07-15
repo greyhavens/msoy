@@ -153,4 +153,9 @@ public interface GameServiceAsync
      */
     void updateArcadeEntries (ArcadeData.Portal portal, List<Integer> entries,
         Set<Integer> featured, Set<Integer> removed, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GameService#addMochiGame}.
+     */
+    void addMochiGame (String mochiTag, AsyncCallback<Void> callback);
 }

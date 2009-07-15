@@ -240,4 +240,10 @@ public interface GameService extends RemoteService
     void updateArcadeEntries (ArcadeData.Portal portal, List<Integer> entries,
         Set<Integer> featured, Set<Integer> removed)
         throws ServiceException;
+
+    /**
+     * Admin command to add a mochi game to the database.
+     */
+    void addMochiGame (String mochiTag)
+        throws ServiceException;
 }

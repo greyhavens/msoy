@@ -52,6 +52,7 @@ import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.gwt.GameCode;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.game.gwt.MochiGameInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -192,10 +193,21 @@ public class MsoyGameRepository extends DepotRepository
     /**
      * Load the latest mochi games.
      */
-    public List<MochiGameInfoRecord> loadLatestMochiGames (int count)
+    public Collection<MochiGameInfo> loadLatestMochiGames (int count)
     {
         return findAll(MochiGameInfoRecord.class,
-            OrderBy.descending(MochiGameInfoRecord.ID), new Limit(0, count));
+            OrderBy.descending(MochiGameInfoRecord.ID), new Limit(0, count))
+            .map(MochiGameInfoRecord.TO_INFO);
+    }
+
+    /**
+     * Add the specified mochi game to the database.
+     */
+    public void addMochiGame (MochiGameInfo info)
+    {
+        MochiGameInfoRecord rec = new MochiGameInfoRecord();
+        rec.update(info);
+        store(rec);
     }
 
     /**
