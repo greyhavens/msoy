@@ -47,7 +47,7 @@ public class FBFriendBar extends AbsoluteCSSPanel
         }));
         _left.setVisible(false);
         _right.setVisible(false);
-        _fbsvc.getFriends(new AsyncCallback<List<FacebookFriendInfo>>() {
+        _fbsvc.getAppFriendsInfo(new AsyncCallback<List<FacebookFriendInfo>>() {
             @Override public void onSuccess (List<FacebookFriendInfo> result) {
                 init(result);
             }

@@ -6,9 +6,11 @@ package com.threerings.msoy.facebook.server;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
@@ -33,9 +35,11 @@ import com.threerings.msoy.facebook.data.FacebookCodes;
 import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 
+import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameGenre;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -55,19 +59,11 @@ public class FacebookPageServlet extends MsoyServiceServlet
     implements FacebookService
 {
     @Override // from FacebookService
-    public List<FacebookFriendInfo> getFriends ()
+    public List<FacebookFriendInfo> getAppFriendsInfo ()
         throws ServiceException
     {
         // set up return map
-        IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
-        for (ExternalMapRecord exRec : loadMappedFriends(true)) {
-            FacebookFriendInfo info = new FacebookFriendInfo();
-            info.facebookUid = Long.valueOf(exRec.externalId);
-            info.memberId = exRec.memberId;
-            friendsInfo.put(exRec.memberId, info);
-        }
-
-        log.info("Got mapped friends", "size", friendsInfo.size());
+        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo();
 
         // insert level
         for (MemberCardRecord friend : _memberRepo.loadMemberCards(friendsInfo.keySet())) {
@@ -84,8 +80,6 @@ public class FacebookPageServlet extends MsoyServiceServlet
             thumbnail.id = Math.abs(rating.gameId);
             games.put(thumbnail.id, thumbnail);
         }
-
-        log.info("Got most recent ratings", "size", lastGames.size());
 
         // load up games
         for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, 200)) {
@@ -113,25 +107,62 @@ public class FacebookPageServlet extends MsoyServiceServlet
             result.add(info);
         }
 
-        log.info("Got friends with games", "size", result.size());
-
         // get the trophy counts for each friend
         for (FacebookFriendInfo info : result) {
             info.trophyCount = _trophyRepo.countTrophies(info.lastGame.id, info.memberId);
         }
 
-        // sort by level
-        Collections.sort(result, new Comparator<FacebookFriendInfo>() {
-            @Override public int compare (FacebookFriendInfo o1, FacebookFriendInfo o2) {
-                // first by descending level
-                int cmp = Comparators.compare(o2.level, o1.level);
-                if (cmp == 0) {
-                    // then by increasing member id
-                    cmp = Comparators.compare(o1.memberId, o2.memberId);
-                }
-                return cmp;
+        sortByLevel(result);
+
+        return result;
+    }
+
+    @Override // from FacebookService
+    public List<FacebookFriendInfo> getGameFriendsInfo (int gameId)
+        throws ServiceException
+    {
+        // set up return map
+        IntMap<FacebookFriendInfo> friendsInfo = getInitialFriendInfo();
+
+        // find the ratings (single player only)
+        IntMap<RatingRecord> ratings = IntMaps.newHashIntMap();
+        for (RatingRecord rating :  _ratingRepo.getTopRatings(
+            -gameId, friendsInfo.size(), 0L, friendsInfo.intKeySet())) {
+            ratings.put(rating.playerId, rating);
+        }
+
+        // assign ratings and trophies and build final list
+        Map<String, FacebookFriendInfo.Thumbnail> trophies = Maps.newHashMap();
+        List<FacebookFriendInfo> result = Lists.newArrayList();
+        for (FacebookFriendInfo friend : friendsInfo.values()) {
+            RatingRecord rating = ratings.get(friend.memberId);
+
+            // no rating - skip
+            if (rating == null) {
+                continue;
             }
-        });
+
+            result.add(friend);
+            friend.level = rating.rating;
+            friend.trophyCount = _trophyRepo.countTrophies(gameId, friend.memberId);
+
+            List<TrophyRecord> earned = _trophyRepo.loadRecentTrophies(friend.memberId, 1);
+            if (earned.size() > 0) {
+                String ident = earned.get(0).ident;
+                FacebookFriendInfo.Thumbnail icon = trophies.get(ident);
+                if (icon == null) {
+                    icon = new FacebookFriendInfo.Thumbnail();
+                    Trophy trophy = earned.get(0).toTrophy();
+                    icon.name = trophy.name;
+                    icon.media = trophy.trophyMedia;
+                    trophies.put(ident, icon);
+                }
+                friend.lastGame = icon;
+            }
+        }
+
+        sortByLevel(result);
+
         return result;
     }
 
@@ -182,6 +213,42 @@ public class FacebookPageServlet extends MsoyServiceServlet
             exRecs.add(mapRec);
         }
         return exRecs;
+    }
+
+    /**
+     * Builds the mapping keyed by member containing all facebook friends of the authed user who
+     * also have Whirled accounts, filling in only the facebook uid and member id fields.
+     */
+    protected IntMap<FacebookFriendInfo> getInitialFriendInfo ()
+        throws ServiceException
+    {
+        IntMap<FacebookFriendInfo> friendsInfo = IntMaps.newHashIntMap();
+        for (ExternalMapRecord exRec : loadMappedFriends(true)) {
+            FacebookFriendInfo info = new FacebookFriendInfo();
+            info.facebookUid = Long.valueOf(exRec.externalId);
+            info.memberId = exRec.memberId;
+            friendsInfo.put(exRec.memberId, info);
+        }
+
+        log.info("Got mapped friends", "size", friendsInfo.size());
+
+        return friendsInfo;
+    }
+
+    protected void sortByLevel (List<FacebookFriendInfo> result)
+    {
+        // sort by level
+        Collections.sort(result, new Comparator<FacebookFriendInfo>() {
+            @Override public int compare (FacebookFriendInfo o1, FacebookFriendInfo o2) {
+                // first by descending level
+                int cmp = Comparators.compare(o2.level, o1.level);
+                if (cmp == 0) {
+                    // then by increasing member id
+                    cmp = Comparators.compare(o1.memberId, o2.memberId);
+                }
+                return cmp;
+            }
+        });
     }
 
     @Inject protected FacebookLogic _fbLogic;

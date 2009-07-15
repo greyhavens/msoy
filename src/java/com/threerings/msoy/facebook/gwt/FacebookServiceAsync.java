@@ -13,9 +13,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface FacebookServiceAsync
 {
     /**
-     * The asynchronous version of {@link FacebookService#getFriends}.
+     * The asynchronous version of {@link FacebookService#getAppFriendsInfo}.
      */
-    void getFriends (AsyncCallback<List<FacebookFriendInfo>> callback);
+    void getAppFriendsInfo (AsyncCallback<List<FacebookFriendInfo>> callback);
+
+    /**
+     * The asynchronous version of {@link FacebookService#getGameFriendsInfo}.
+     */
+    void getGameFriendsInfo (int gameId, AsyncCallback<List<FacebookFriendInfo>> callback);
 
     /**
      * The asynchronous version of {@link FacebookService#getFriendsUsingApp}.

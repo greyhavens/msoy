@@ -21,10 +21,17 @@ public interface FacebookService extends RemoteService
 
     /**
      * Retrieves the list of friends and their associated info for the currently logged in user.
-     * The initial candidates for the list are those Facebook friends who also have a mapped
-     * Whirled account.
      */
-    List<FacebookFriendInfo> getFriends ()
+    List<FacebookFriendInfo> getAppFriendsInfo ()
+        throws ServiceException;
+
+    /**
+     * Retrieves the list of friends who have played the given game and their associated info for
+     * the currently logged in user.
+     * TODO: this is not yet being used because mochi games are totally unintegrated (no ratings or
+     * trophies).
+     */
+    List<FacebookFriendInfo> getGameFriendsInfo (int gameId)
         throws ServiceException;
 
     /**
