@@ -27,7 +27,13 @@ import client.ui.Stars;
 import client.ui.ThumbBox;
 
 /**
- * Displays a list of featured games, defaulting to the first one
+ * A "temporary" copy of FBFeaturedGamePanel that displays mochi games instead of
+ * featured games.
+ * TODO TEMP TODO
+ * If you are making changes:
+ * - do you need to change the other file?
+ * - why is this here still in use?
+ * We should integrate mochi games more fully, not continue to hack this. Talk to Ray.
  */
 public class FBMochiGamePanel extends AbsoluteCSSPanel
 {

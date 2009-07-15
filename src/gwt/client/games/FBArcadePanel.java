@@ -47,8 +47,7 @@ public class FBArcadePanel extends AbsoluteCSSPanel
     public void playMochiGame (MochiGameInfo info)
     {
         clear();
-        add(WidgetUtil.createTransparentFlashContainer(
-            info.tag, info.swfURL, info.width, info.height, null));
+        add(WidgetUtil.createFlashContainer(info.tag, info.swfURL, info.width, info.height, null));
     }
 
     protected void init (final ArcadeData data)

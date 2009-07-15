@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -134,6 +135,24 @@ public class EditArcadePanel extends FlowPanel
                     return true;
                 }
             };
+
+            // Mochi game adding
+            final TextBox mochiTag = new TextBox();
+            final Button addMochi = new Button("add mochi game");
+            new ClickCallback<Void>(addMochi) {
+                @Override protected boolean callService () {
+                    _gamesvc.addMochiGame(mochiTag.getText().trim(), this);
+                    return true;
+                }
+
+                @Override protected boolean gotResult (Void result) {
+                    MsoyUI.info("Game added");
+                    mochiTag.setText("");
+                    return true;
+                }
+            };
+            add(mochiTag);
+            add(addMochi);
         }
 
         protected boolean saveChanges (AsyncCallback<Void> callback)
