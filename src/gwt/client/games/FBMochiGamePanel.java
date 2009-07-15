@@ -53,10 +53,12 @@ public class FBMochiGamePanel extends AbsoluteCSSPanel
         MochiGameInfo game = _games[index];
         add(MsoyUI.createLabel("Daily Games", "title"));
 
-        SimplePanel thumbnail = new SimplePanel();
-        thumbnail.addStyleName("thumbBox");
-        DOM.setStyleAttribute(thumbnail.getElement(), "overflow", "hidden");
-        thumbnail.add(new Image(game.thumbURL));
+        AbsoluteCSSPanel thumbnail = new AbsoluteCSSPanel("thumbBox", "fixed");
+        // mochi images are 100x100, or smaller. Crap
+        Image icon = new Image(game.thumbURL);
+        DOM.setStyleAttribute(icon.getElement(), "left", (75/2) + "px");
+        DOM.setStyleAttribute(icon.getElement(), "top", (25/2) + "px");
+        thumbnail.add(icon);
 
         add(thumbnail);
         add(createScroller(index));
@@ -96,7 +98,7 @@ public class FBMochiGamePanel extends AbsoluteCSSPanel
     {
         AbsoluteCSSPanel bits = new AbsoluteCSSPanel("bits", "fixed");
         bits.add(MsoyUI.createLabel(game.name, "Name"));
-        bits.add(MsoyUI.createLabel(game.categories, "Genre"));
+        //bits.add(MsoyUI.createLabel(game.categories, "Genre"));
 
         FlowPanel cpan = new FlowPanel();
         cpan.addStyleName("creator");
