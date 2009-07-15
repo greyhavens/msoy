@@ -75,7 +75,8 @@ public class GamesPage extends Page
                 GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
         } else {
-            if (CShell.isFacebook() || action.equals("fb")) {
+            if (CShell.isFacebook()
+                    || action.equals("fb")) { // TEMP: "fb" action added by Ray for testing
                 // show the facebook portal and request to show the friends panel
                 setContent(new FBArcadePanel());
                 CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
