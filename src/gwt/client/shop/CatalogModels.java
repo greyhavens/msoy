@@ -83,7 +83,7 @@ public class CatalogModels
                 new ChainedCallback<CatalogService.FavoritesResult, List<ListingCard>>(callback) {
                 public void onSuccess (CatalogService.FavoritesResult result) {
                     _noter = result.noter;
-                    _parent.onSuccess(result.favorites);
+                    forwardSuccess(result.favorites);
                 }
             });
         }
