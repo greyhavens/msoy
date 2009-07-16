@@ -96,6 +96,14 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     };
 
     /**
+     * A list of item types that can specify a brand when listed.
+     */
+    public static final byte[] BRANDABLE_TYPES = {
+        AVATAR, FURNITURE, DECOR, TOY, PET, LAUNCHER, LEVEL_PACK, ITEM_PACK, PHOTO, AUDIO, VIDEO,
+        PROP
+    };
+
+    /**
      * Enumerates the ways in which an item can be used, stored in the {@link #used} member.
      */
     public enum UsedAs
@@ -307,13 +315,17 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public static boolean supportsDerivation (byte itemType)
     {
-        for (int ii = 0; ii < DERIVATION_TYPES.length; ++ii) {
-            if (DERIVATION_TYPES[ii] == itemType) {
-                return true;
-            }
-        }
-        return false;
+        return supports(itemType, DERIVATION_TYPES);
     }
+
+    /**
+     * Checks if the given item type supports brands.
+     */
+    public static boolean supportsBranding (byte itemType)
+    {
+        return supports(itemType, BRANDABLE_TYPES);
+    }
+
 
     /**
      * Returns this item's composite identifier.
@@ -403,8 +415,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     {
         return (sourceId != 0) || (sourceId == 0 && ownerId == 0);
     }
-    
-    /** 
+
+    /**
      * Calculate this item's average rating from the sum and count.
      */
     public float getRating ()
@@ -518,6 +530,15 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
         return supportsDerivation(getType());
     }
 
+    /**
+     * Checks if this item supports branding. Branded items may set a non-zero value in
+     * {@link com.threerings.msoy.item.gwt.CatalogListing#brandId}.
+     */
+    public boolean supportsBranding ()
+    {
+        return supportsBranding(getType());
+    }
+
     // from DSet.Entry
     public Comparable<?> getKey ()
     {
@@ -586,6 +607,16 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     {
         text = (text == null) ? "" : text.trim();
         return (text.length() > 0 && text.length() <= maxLength);
+    }
+
+    protected static boolean supports (byte itemType, byte[] supportedTypes)
+    {
+        for (byte type : supportedTypes) {
+            if (type == itemType) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

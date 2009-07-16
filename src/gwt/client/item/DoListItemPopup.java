@@ -116,7 +116,7 @@ public class DoListItemPopup extends VerticalPanel
         }
 
         // possibly add the brand selection ui
-        if (_item.supportsDerivation() && (firstTime || repricing)) {
+        if (_item.supportsBranding() && (firstTime || repricing)) {
             SmartTable brand = new SmartTable(0, 3);
             brand.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBrandIntro(), null), 3, null);
             brand.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
