@@ -64,16 +64,15 @@ public class GroupsBlurb extends Blurb
     {
         protected class GroupWidget extends FlowPanel
         {
-            public GroupWidget (GroupCard card, int shares, int totalShares, boolean grant)
+            public GroupWidget (GroupCard card, int shares, BrandDetail brand, boolean grant)
             {
-                _groupId = card.name.getGroupId();
+                _brand = brand;
                 _shares = shares;
-                _totalShares = totalShares;
                 _grant = grant;
 
                 setStyleName("Group");
-                add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", _groupId));
-                add(Link.create(card.name.toString(), Pages.GROUPS, "d", _groupId));
+                add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", brand.group.getGroupId()));
+                add(Link.create(card.name.toString(), Pages.GROUPS, "d", brand.group.getGroupId()));
                 add(_brandBit = new FlowPanel());
                 updateBrand();
             }
@@ -102,20 +101,20 @@ public class GroupsBlurb extends Blurb
                                 // create a callback that updates the UI
                                 InfoCallback<Void> callback = new InfoCallback<Void> () {
                                     @Override public void onSuccess (Void result) {
-                                        _totalShares += (newShares - _shares);
+                                        _brand.setShares(_name.getMemberId(), newShares);
                                         _shares = newShares;
                                         _editing = false;
                                         updateBrand();
                                     }
                                 };
                                 // then call the server to actually set the new share count
-                                _groupsvc.setBrandShares(
-                                    _groupId, _name.getMemberId(), newShares, callback);
+                                _groupsvc.setBrandShares(_brand.group.getGroupId(),
+                                    _name.getMemberId(), newShares, callback);
                             }
                         }));
                     } else {
-                        _brandBit.add(MsoyUI.createLabel(_msgs.groupsBrandShares(
-                            (_shares == 0) ? "0" : (_shares + "/" + _totalShares)), null));
+                        _brandBit.add(MsoyUI.createLabel(_msgs.groupsBrandShares((_shares == 0) ?
+                            "0" : (_shares + "/" + _brand.getTotalShares())), null));
                         if (_grant) {
                             _brandBit.add(MsoyUI.createTinyButton("Change", new ClickHandler() {
                                 @Override public void onClick (ClickEvent event) {
@@ -128,10 +127,10 @@ public class GroupsBlurb extends Blurb
                 }
             }
 
-            protected int _groupId;
+            protected BrandDetail _brand;
             protected FlowPanel _brandBit;
             protected ListBox _brandBox;
-            protected int _shares, _totalShares;
+            protected int _shares;
             protected boolean _grant, _editing;
         }
 
@@ -172,14 +171,15 @@ public class GroupsBlurb extends Blurb
         protected Widget createWidget (GroupCard card)
         {
             int groupId = card.name.getGroupId();
-            int shares = 0, totalShares = 0;
+            int shares = 0;
+
+            OOPS... BRAND CAN BE NULL
 
             BrandDetail brand = _brands.get(groupId);
             if (brand != null) {
                 shares = brand.getShares(_name.getMemberId());
-                totalShares = brand.getTotalShares();
             }
-            return new GroupWidget(card, shares, totalShares, _grants.contains(groupId));
+            return new GroupWidget(card, shares, brand, _grants.contains(groupId));
         }
 
         protected Map<Integer, BrandDetail> _brands;

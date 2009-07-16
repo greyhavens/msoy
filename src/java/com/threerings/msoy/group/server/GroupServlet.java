@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +74,7 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.BrandDetail.BrandShare;
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -153,6 +155,7 @@ public class GroupServlet extends MsoyServiceServlet
         // set up the detail
         GroupDetail detail = new GroupDetail();
         detail.group = grec.toGroupObject();
+        detail.brand = _groupLogic.loadBrandDetail(groupId);
         detail.extras = grec.toExtrasObject();
         detail.homeSnapshot = _sceneRepo.loadSceneSnapshot(grec.homeSceneId);
         detail.creator = _memberRepo.loadMemberName(grec.creatorId);
@@ -187,15 +190,33 @@ public class GroupServlet extends MsoyServiceServlet
         // a join on ProfileRecord and GroupMembershipRecord, so do two passes...
 
         // first managers
+        Set<Integer> managers = Sets.newHashSet(
+            _groupRepo.getMemberIdsWithRank(groupId, Rank.MANAGER));
         detail.topMembers = resolveGroupMemberCards(
-            groupId, _groupRepo.getMemberIdsWithRank(groupId, Rank.MANAGER), 0,
-            GroupDetail.NUM_TOP_MEMBERS);
+            groupId, managers, 0, GroupDetail.NUM_TOP_MEMBERS);
+
+        // then shareholders (if we are below the needed number)
+        Set<Integer> holders = Sets.newHashSet();
+        if (detail.topMembers.size() < GroupDetail.NUM_TOP_MEMBERS) {
+            for (BrandShare share : detail.brand.shareHolders) {
+                // but don't add the managers again
+                int memberId = share.member.getMemberId();
+                if (!managers.contains(memberId)) {
+                    holders.add(memberId);
+                }
+            }
+
+            detail.topMembers.addAll(resolveGroupMemberCards(
+                groupId, holders, 0, GroupDetail.NUM_TOP_MEMBERS - detail.topMembers.size()));
+        }
 
         // then everyone else (if we are below the needed number)
         if (detail.topMembers.size() < GroupDetail.NUM_TOP_MEMBERS) {
+            List<Integer> everyone = _groupRepo.getMemberIdsWithRank(groupId, Rank.MEMBER);
+            // except the shareholders, which we already added
+            everyone.removeAll(holders);
             detail.topMembers.addAll(resolveGroupMemberCards(
-                groupId, _groupRepo.getMemberIdsWithRank(groupId, Rank.MEMBER), 0,
-                GroupDetail.NUM_TOP_MEMBERS - detail.topMembers.size()));
+                groupId, everyone, 0, GroupDetail.NUM_TOP_MEMBERS - detail.topMembers.size()));
         }
 
         return detail;
@@ -746,7 +767,7 @@ public class GroupServlet extends MsoyServiceServlet
      * resolved group member cards.
      */
     protected List<GroupMemberCard> resolveGroupMemberCards (
-        int groupId, List<Integer> memberIds, int offset, int count)
+        int groupId, Collection<Integer> memberIds, int offset, int count)
     {
         // load a page of member cards, sorted by last online
         Map<Integer, MemberCardRecord> cards = Maps.newLinkedHashMap();

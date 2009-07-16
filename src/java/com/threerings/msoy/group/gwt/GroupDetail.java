@@ -28,6 +28,9 @@ public class GroupDetail
     /** The group whose details we contain. */
     public Group group;
 
+    /** The details concerning this group's associated brand. */
+    public BrandDetail brand;
+
     /** The extra details that are needed on the GroupView page. */
     public GroupExtras extras;
 

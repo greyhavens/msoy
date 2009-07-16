@@ -322,6 +322,8 @@ public class GroupDetailPanel extends FlowPanel
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
                 if (member.rank == Rank.MANAGER) {
                     members.setHTML(ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
+                } else if (_detail.brand != null && _detail.brand.getShares(member.name.getMemberId()) > 0) {
+                    members.setHTML(ii * 2, 1, _msgs.detailTopMembersShareholder(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""
                     + member.name, member.name.getMemberId()), "Name");

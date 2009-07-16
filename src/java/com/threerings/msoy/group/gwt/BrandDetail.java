@@ -59,6 +59,15 @@ public class BrandDetail
         this.shareHolders = new ArrayList<BrandShare>();
     }
 
+    public void setShares (int memberId, int newShares)
+    {
+        for (BrandShare share : shareHolders) {
+            if (share.member.getMemberId() == memberId) {
+                share.shares = newShares;
+            }
+        }
+    }
+
     public int getShares (int memberId)
     {
         for (BrandShare share : shareHolders) {
