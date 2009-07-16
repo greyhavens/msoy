@@ -252,6 +252,19 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
+    public void setValidated (int memberId, boolean value)
+        throws ServiceException
+    {
+        requireSupportUser();
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        tgtrec.setFlag(MemberRecord.Flag.VALIDATED, value);
+        _memberRepo.storeFlags(tgtrec);
+    }
+
+    // from interface AdminService
     public List<ABTest> getABTests ()
         throws ServiceException
     {

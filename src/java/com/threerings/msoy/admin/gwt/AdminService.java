@@ -116,6 +116,12 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
+     * Configures this member's validated flag.
+     */
+    void setValidated (int memberId, boolean value)
+        throws ServiceException;
+
+    /**
      * Configures a member as support personnel or not. Only callable by admins.
      */
     List<ABTest> getABTests ()

@@ -46,6 +46,11 @@ public interface AdminServiceAsync
     void setDisplayName (int memberId, String name, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link AdminService#setValidated}.
+     */
+    void setValidated (int memberId, boolean valid, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link AdminService#getABTests}.
      */
     void getABTests (AsyncCallback<List<ABTest>> callback);

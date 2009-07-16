@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.Popups;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -89,8 +90,21 @@ public class MemberInfoPanel extends AdminDataPanel<MemberAdminInfo>
         row = table.addText("Account name:", 1, "Label");
         table.setText(row, 1, info.accountName);
 
-        row = table.addText("Validated?:", 1, "Label");
-        table.setText(row, 1, String.valueOf(info.validated));
+        row = table.addText("Validated:", 1, "Label");
+        final CheckBox validated = new CheckBox();
+        validated.setValue(info.validated);
+        table.setWidget(row, 1, validated);
+
+        validated.addClickHandler(new ClickHandler() {
+            public void onClick (ClickEvent event) {
+                _adminsvc.setValidated(info.name.getMemberId(), validated.getValue(),
+                    new InfoCallback<Void>() {
+                        public void onSuccess (Void result) {
+                            Popups.info("Validated flag changed successfully");
+                        }
+                    });
+            }
+        });
 
         row = table.addText("Perma name:", 1, "Label");
         table.setText(row, 1, info.permaName == null ? "" : info.permaName);
