@@ -35,7 +35,7 @@ public class ListingBox extends ItemBox
     {
         super(card.thumbMedia, card.name, card.remixable, Pages.SHOP, args);
 
-        String cname = _imsgs.itemBy(card.creator.toString());
+        String cname = _imsgs.itemBy(card.getListedBy().toString());
         addLabel(MsoyUI.createLabel(cname, "Creator"));
 
         int row = getRowCount();

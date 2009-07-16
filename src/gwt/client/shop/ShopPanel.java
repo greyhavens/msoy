@@ -151,7 +151,7 @@ public class ShopPanel extends FlowPanel
     {
         FlowPanel left = new FlowPanel();
         left.add(MsoyUI.createLabel(card.name, "Name"));
-        left.add(MsoyUI.createLabel(_imsgs.itemBy(card.creator.toString()), "Creator"));
+        left.add(MsoyUI.createLabel(_imsgs.itemBy(card.getListedBy().toString()), "Creator"));
         left.add(WidgetUtil.makeShim(5, 5));
         left.add(MsoyUI.createLabel(card.descrip, "Descrip"));
 
@@ -189,7 +189,7 @@ public class ShopPanel extends FlowPanel
                                          Pages.SHOP, makeShopArgs(card)), 1, "Thumb");
             setText(1, 0, _msgs.shopRank(""+rank), 1, "Ranking");
             setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden
-            setText(2, 1, _imsgs.itemBy(card.creator.toString()), 1, "Creator");
+            setText(2, 1, _imsgs.itemBy(card.getListedBy().toString()), 1, "Creator");
         }
     }
 

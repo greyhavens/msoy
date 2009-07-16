@@ -5,9 +5,11 @@ package com.threerings.msoy.item.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.util.Name;
 
 /**
  * Contains a smidgen of information on an item.
@@ -26,6 +28,9 @@ public class ListingCard implements IsSerializable
     /** This item's thumbnail media. */
     public MediaDesc thumbMedia;
 
+    /** The brand for this listing, or null. */
+    public GroupName brand;
+
     /** The creator of this item. */
     public MemberName creator;
 
@@ -43,6 +48,11 @@ public class ListingCard implements IsSerializable
 
     /** The item's price. */
     public int cost;
+
+    public Name getListedBy ()
+    {
+        return (brand != null) ? brand : creator;
+    }
 
     @Override // from Object
     public boolean equals (Object other)

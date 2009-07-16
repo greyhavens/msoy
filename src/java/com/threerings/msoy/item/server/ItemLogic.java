@@ -35,6 +35,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.underwire.web.data.Event;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -53,6 +54,7 @@ import com.threerings.msoy.game.server.GameNodeActions;
 import com.threerings.msoy.game.server.PlayerNodeActions;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.mail.server.MailLogic;
@@ -293,6 +295,38 @@ public class ItemLogic
     }
 
     /**
+     * Ensures that the specified user or a support user is taking the requested action.
+     */
+    public void requireIsUser (MemberRecord mrec, int targetId, String action, ItemRecord item)
+        throws ServiceException
+    {
+        if (mrec != null && (mrec.memberId == targetId || mrec.isSupport())) {
+            return;
+        }
+        String who = (mrec == null) ? "null" : mrec.who();
+        String iid = (item == null) ? "null" : ""+item.itemId;
+        log.warning("Access denied for catalog action", "who", who, "wanted", targetId,
+            "action", action, "item", iid);
+        throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+    }
+
+    /**
+     * Ensures that a user requesting an action is in a brand, or is support.
+     */
+    public void requireIsInBrand (MemberRecord mrec, int brandId, String action, ItemRecord item)
+        throws ServiceException
+    {
+        if (mrec != null && _groupRepo.getBrandShare(brandId, mrec.memberId) > 0) {
+            return;
+        }
+        String who = (mrec == null) ? "null" : mrec.who();
+        String iid = (item == null) ? "null" : ""+item.itemId;
+        log.warning("Access denied for catalog action", "who", who, "brand", brandId,
+            "action", action, "item", iid);
+        throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+    }
+
+    /**
      * Loads and returns the specified listings. Throws {@link ItemCodes#E_NO_SUCH_ITEM} if the
      * listing could not be found.
      */
@@ -349,7 +383,7 @@ public class ItemLogic
             return 0;
         }
 
-        // TODO: attribution phase II - recursively delist derivatives 
+        // TODO: attribution phase II - recursively delist derivatives
 
         // record a note unless the remover is support
         StringBuilder note = remover.isSupport() ? null :
@@ -441,20 +475,20 @@ public class ItemLogic
             return;
         }
 
-        // TODO: attribution phase II - recursively update derived listings 
+        // TODO: attribution phase II - recursively update derived listings
 
         byte type = basis.item.getType();
         try {
             // give all derived listings a new price
             int updated =
                 getRepository(type).updateDerivedCosts(basis.catalogId, newCost - basis.cost);
-    
+
             if (updated != basis.derivationCount) {
                 log.warning("Mismatch in number of updated derived records and derivationCount",
                     "type", type, "catId", basis.catalogId, "updated", updated,
                     "derivationCount", basis.derivationCount);
             }
-    
+
             log.info("Updated cost of derived listings", "type", type, "basisId", basis.catalogId,
                 "count", updated, "oldCost", basis.cost, "newCost", newCost);
 
@@ -597,7 +631,7 @@ public class ItemLogic
     public void resolveCardNames (List<ListingCard> list)
     {
         // look up the names and build a map of memberId -> MemberName
-        IntMap<MemberName> map = _memberRepo.loadMemberNames(
+        IntMap<MemberName> memberMap = _memberRepo.loadMemberNames(
             list, new Function<ListingCard,Integer>() {
                 public Integer apply (ListingCard card) {
                     return card.creator.getMemberId();
@@ -605,8 +639,21 @@ public class ItemLogic
             });
         // finally fill in the listings using the map
         for (ListingCard card : list) {
-            card.creator = map.get(card.creator.getMemberId());
+            card.creator = memberMap.get(card.creator.getMemberId());
         }
+
+        // look up the names and build a map of memberId -> MemberName
+        IntMap<GroupName> brandMap = _groupRepo.loadGroupNames(
+            list, new Function<ListingCard,Integer>() {
+                public Integer apply (ListingCard card) {
+                    return card.brand.getGroupId();
+                }
+            });
+        // finally fill in the listings using the map
+        for (ListingCard card : list) {
+            card.brand = brandMap.get(card.brand.getGroupId());
+        }
+
     }
 
     /**
@@ -871,7 +918,7 @@ public class ItemLogic
     /**
      * Checks if a listing of the given type by the given creator id can be based on the given
      * existing listing. If currency is not null, then the currency and cost are checked against
-     * the minimum pricing requirements of a derived item as well. 
+     * the minimum pricing requirements of a derived item as well.
      */
     public boolean isSuitableBasis (byte type, int creatorId, CatalogRecord basisRec,
                                     Currency currency, int cost)
@@ -1056,6 +1103,7 @@ public class ItemLogic
     @Inject protected PlayerNodeActions _playerActions;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected ItemListRepository _listRepo;
+    @Inject protected GroupRepository _groupRepo;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
