@@ -211,6 +211,15 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
+     * Just puke if we can't find it.
+     */
+    public MochiGameInfo loadMochiGame (String tag)
+    {
+        return load(MochiGameInfoRecord.class, new Where(MochiGameInfoRecord.TAG.eq(tag)))
+            .toGameInfo();
+    }
+
+    /**
      * Loads the entries for the given arcade portal.
      */
     public List<ArcadeEntryRecord> loadArcadeEntries (ArcadeData.Portal portal, boolean useCache)

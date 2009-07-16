@@ -25,6 +25,7 @@ import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 import client.ui.ThumbBox;
+import client.util.Link;
 
 /**
  * A "temporary" copy of FBFeaturedGamePanel that displays mochi games instead of
@@ -37,10 +38,9 @@ import client.ui.ThumbBox;
  */
 public class FBMochiGamePanel extends AbsoluteCSSPanel
 {
-    public FBMochiGamePanel (MochiGameInfo[] games, FBArcadePanel panel)
+    public FBMochiGamePanel (MochiGameInfo[] games)
     {
         super("fbfeaturedGame", "fixed");
-        _panel = panel;
         _games = games;
         if (games.length > 0) {
             selectGame(0);
@@ -116,17 +116,11 @@ public class FBMochiGamePanel extends AbsoluteCSSPanel
 
         PushButton play = new PushButton();
         play.setStyleName("fbplayButton");
-        play.addClickHandler(new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                _panel.playMochiGame(game);
-            }
-        });
+        play.addClickHandler(Link.createHandler(Pages.GAMES, "mochi", game.tag));
         bits.add(play);
 
         return bits;
     }
-
-    protected FBArcadePanel _panel;
 
     protected MochiGameInfo[] _games;
 

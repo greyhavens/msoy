@@ -74,6 +74,10 @@ public class GamesPage extends Page
                 ByteEnumUtil.fromByte(ArcadeData.Portal.class, portal),
                 GameInfo.Sort.fromToken(args.get(1, "")), args.get(3, null)));
 
+        } else if (action.equals("mochi")) {
+            String mochiTag = args.get(1, "");
+            setContent(new MochiGamePanel(mochiTag));
+
         } else {
             if (CShell.isFacebook()
                     || action.equals("fb")) { // TEMP: "fb" action added by Ray for testing

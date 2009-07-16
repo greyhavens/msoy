@@ -724,6 +724,14 @@ public class GameServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface GAmeService
+    public MochiGameInfo getMochiGame (String mochiTag)
+        throws ServiceException
+    {
+        // any user may call this
+        return _mgameRepo.loadMochiGame(mochiTag);
+    }
+
     /**
      * Utility to get a value from a JSONObject and truncate it.
      */

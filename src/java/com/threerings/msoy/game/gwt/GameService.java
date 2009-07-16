@@ -246,4 +246,10 @@ public interface GameService extends RemoteService
      */
     void addMochiGame (String mochiTag)
         throws ServiceException;
+
+    /**
+     * Get the info on a mochi game.
+     */
+    MochiGameInfo getMochiGame (String mochiTag)
+        throws ServiceException;
 }

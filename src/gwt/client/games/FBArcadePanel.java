@@ -44,13 +44,6 @@ public class FBArcadePanel extends AbsoluteCSSPanel
         });
     }
 
-    public void playMochiGame (MochiGameInfo info)
-    {
-        clear();
-        // TODO: track something
-        add(WidgetUtil.createFlashContainer(info.tag, info.swfURL, info.width, info.height, null));
-    }
-
     protected void init (final ArcadeData data)
     {
         clear();
@@ -77,7 +70,7 @@ public class FBArcadePanel extends AbsoluteCSSPanel
 
         // featured games
         //add(new FBFeaturedGamePanel(data.featuredGames));
-        add(new FBMochiGamePanel(data.mochiGames, this));
+        add(new FBMochiGamePanel(data.mochiGames));
 
         // game wall
         AbsolutePanel gameWall = new AbsolutePanel();
