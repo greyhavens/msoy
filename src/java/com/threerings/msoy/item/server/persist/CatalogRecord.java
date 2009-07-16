@@ -21,6 +21,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -150,6 +151,7 @@ public abstract class CatalogRecord extends PersistentRecord
             card.itemType = item.getType();
             card.name = item.name;
             card.thumbMedia = item.getThumbMediaDesc();
+            card.brand = (brandId != 0) ? new GroupName(null, brandId) : null;
             card.creator = new MemberName(null, item.creatorId); // name filled in by caller
             card.descrip = item.description;
             card.remixable = item.isRemixable();
