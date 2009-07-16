@@ -36,7 +36,7 @@ public abstract class InfoCallback<T> extends PopupCallback<T>
         super(errorNear);
     }
 
-    @Override // from AbstractPopupCallback<T>
+    @Override // from PopupCallback<T>
     protected String formatError (Throwable cause)
     {
         return CShell.serverError(cause);
