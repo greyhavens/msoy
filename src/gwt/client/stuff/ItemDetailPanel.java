@@ -189,6 +189,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             // this handles both creating and updating of listings
             ClickHandler onDoList = new ClickHandler() {
                 public void onClick (ClickEvent event) {
+                    // TODO RELISTING
                     DoListItemPopup.show(_item, null, ItemDetailPanel.this);
                 }
             };

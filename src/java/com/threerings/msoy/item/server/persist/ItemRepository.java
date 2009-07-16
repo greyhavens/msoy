@@ -1130,6 +1130,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // clear out the listing mappings for the original item
         if (listing.originalItemId != 0) {
+            // TODO RELISTING
             noteListing(listing.originalItemId, 0);
         }
         if (listing.basisId > 0) {

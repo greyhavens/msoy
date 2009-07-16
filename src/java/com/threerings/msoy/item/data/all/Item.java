@@ -182,7 +182,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
-    /** The id of the catalog listing associated with this item. This item may be the
+    /** The id of the catalog listing associated with this item. 0 if the item was never listed,
+     * negative if once listed, positive if listed currently. This item may be the
      * original item of a purchased clone. Use isListedOriginal() to check. */
     public int catalogId;
 
@@ -350,7 +351,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public boolean isListedOriginal ()
     {
-        return (sourceId == 0) && (catalogId != 0) && (ownerId != 0);
+        return (sourceId == 0) && (catalogId > 0) && (ownerId != 0);
     }
 
     /**
@@ -359,7 +360,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public boolean isCatalogMaster ()
     {
-        return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
+        return (sourceId == 0) && (catalogId > 0) && (ownerId == 0);
     }
 
     /**
@@ -367,7 +368,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public boolean isCatalogClone ()
     {
-        return (sourceId != 0) && (catalogId != 0);
+        return (sourceId != 0) && (catalogId > 0);
     }
 
     /**

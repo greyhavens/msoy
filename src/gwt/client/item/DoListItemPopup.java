@@ -56,8 +56,8 @@ public class DoListItemPopup extends VerticalPanel
             return;
         }
 
-        String title = (item.catalogId == 0) ? _imsgs.doListCreateTitle()
-                                             : _imsgs.doListUpdateTitle();
+        String title = item.isListedOriginal() ? _imsgs.doListUpdateTitle()
+                                                : _imsgs.doListCreateTitle();
         CShell.frame.showDialog(title, new DoListItemPopup(item, listing, listener));
     }
 
@@ -70,6 +70,7 @@ public class DoListItemPopup extends VerticalPanel
 
         // note whether we are listing this item for the first time or updating its listing or
         // whether or not we're repricing an existing listing
+        // TODO RELISTING
         boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
         if (firstTime) {
             add(MsoyUI.createLabel(_imsgs.doListBlurb(), "Blurb"));
@@ -268,7 +269,7 @@ public class DoListItemPopup extends VerticalPanel
                         return false;
                     }
                     _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
-                                         getCurrency(), getCost(), getBasisId(), getBrandId(), this);
+                        getCurrency(), getCost(), getBasisId(), getBrandId(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Integer result) {

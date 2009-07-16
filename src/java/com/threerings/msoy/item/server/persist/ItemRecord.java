@@ -100,11 +100,11 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     @Index(name="ixOwner")
     public int ownerId;
 
-    /** The catalog listing associated with this item. Set to 0 if this item is not listed. If
-     * nonzero, the item is either:
-     * the original item (sourceId == 0 && ownerId != 0),
-     * the master item (sourceId == 0 && ownerId == 0),
-     * or just a purchased item (sourceId != 0).
+    /** The catalog listing associated with this item. This is 0 if the item has never been
+     * listed, or a negative number if it was once listed. If positive, then the item is either:
+     * - the original item (sourceId == 0 && ownerId != 0),
+     * - the master item (sourceId == 0 && ownerId == 0),
+     * - or just a purchased item (sourceId != 0).
      *
      * See {@link #isListedOriginal} and {@link #isCatalogMaster}.
      */
@@ -180,11 +180,11 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /**
      * Returns true if this item is an original item that has been listed in the catalog and now
-     * serves as the work-in-progress item from which the litsing is generated.
+     * serves as the work-in-progress item from which the listing is generated.
      */
     public boolean isListedOriginal ()
     {
-        return (sourceId == 0) && (catalogId != 0) && (ownerId != 0);
+        return (sourceId == 0) && (catalogId > 0) && (ownerId != 0);
     }
 
     /**
@@ -193,7 +193,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      */
     public boolean isCatalogMaster ()
     {
-        return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
+        return (sourceId == 0) && (catalogId > 0) && (ownerId == 0);
     }
 
     /**

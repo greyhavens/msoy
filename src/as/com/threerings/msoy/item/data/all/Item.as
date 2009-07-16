@@ -114,8 +114,9 @@ public /*abstract*/ class Item
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public var ownerId :int;
 
-    /** The id of the catalog listing associated with this item. This item may be the
-     * original item or a purchased clone. Use isListedOriginal() to check. */
+    /** The id of the catalog listing associated with this item. 0 if the item was never listed,
+     * negative if once listed, positive if listed currently. This item may be the
+     * original item of a purchased clone. Use isListedOriginal() to check. */
     public var catalogId :int;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
@@ -240,7 +241,7 @@ public /*abstract*/ class Item
      */
     public function isListedOriginal () :Boolean
     {
-        return (sourceId == 0) && (catalogId != 0) && (ownerId != 0);
+        return (sourceId == 0) && (catalogId > 0) && (ownerId != 0);
     }
 
     /**
@@ -248,7 +249,7 @@ public /*abstract*/ class Item
      */
     public function isCatalogClone () :Boolean
     {
-        return (sourceId != 0) && (catalogId != 0);
+        return (sourceId != 0) && (catalogId > 0);
     }
 
     /**
@@ -257,17 +258,7 @@ public /*abstract*/ class Item
      */
     public function isCatalogMaster () :Boolean
     {
-        return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
-    }
-
-    /**
-     * Returns the suite for which this item is the parent. If the item is a listed catalog master,
-     * the suite id will be its negated catalog listing id. If the item is a mutable original, the
-     * suite id will be its item id.
-     */
-    public function getSuiteId () :int
-    {
-        return (isCatalogMaster() || isCatalogClone()) ? -catalogId : itemId;
+        return (sourceId == 0) && (catalogId > 0) && (ownerId == 0);
     }
 
     /**

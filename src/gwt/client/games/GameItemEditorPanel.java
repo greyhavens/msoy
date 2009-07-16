@@ -81,7 +81,7 @@ public class GameItemEditorPanel extends SmartTable
             setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1, null);
             Args eargs = Args.compose("e", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
-            setText(row, col++, (item.catalogId == 0) ? "" : _msgs.gieIsPublished());
+            setText(row, col++, item.isListedOriginal() ? _msgs.gieIsPublished() : "");
             if (item instanceof IdentGameItem) {
                 setText(row, col++, ((IdentGameItem)item).ident);
             }
