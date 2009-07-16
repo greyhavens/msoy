@@ -262,8 +262,7 @@ public class CatalogServlet extends MsoyServiceServlet
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // make sure we own AND created this item
-        requireIsUser(mrec, originalItem.ownerId, "listItem", originalItem);
-        requireIsUser(mrec, originalItem.creatorId, "listItem", originalItem);
+        _itemLogic.requireIsUser(mrec, originalItem.ownerId, "listItem", originalItem);
 
         // make sure this item is not already listed
         if (originalItem.catalogId != 0) {
@@ -442,7 +441,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // make sure we own this item
-        requireIsUser(mrec, originalItem.ownerId, "updateListing", originalItem);
+        _itemLogic.requireIsUser(mrec, originalItem.ownerId, "updateListing", originalItem);
 
         // load up the old catalog record
         CatalogRecord record = repo.loadListing(originalItem.catalogId, false);
@@ -504,13 +503,6 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
-        // validate the brand
-        if (brandId != 0) {
-            if (_groupRepo.getBrandShare(brandId, mrec.memberId) == 0) {
-                throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-            }
-        }
-
         // load a copy of the original item
         ItemRecord originalItem = repo.loadOriginalItem(record.originalItemId);
         if (originalItem == null) {
@@ -519,8 +511,19 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
-        // make sure we own this item
-        requireIsUser(mrec, originalItem.ownerId, "updatePricing", originalItem);
+        if (record.brandId == 0) {
+            // if the record is not listed by a brand, just make sure we're the original owner
+            _itemLogic.requireIsUser(mrec, originalItem.ownerId, "updatePricing", originalItem);
+
+        } else {
+            // else verify our ownership in the brand
+            _itemLogic.requireIsInBrand(mrec, record.brandId, "updatePricing", originalItem);
+        }
+
+        // if we're switching the item over to another brand, make sure we belong to that one too
+        if (brandId != 0 && brandId != record.brandId) {
+            _itemLogic.requireIsInBrand(mrec, brandId, "updatePricing", originalItem);
+        }
 
         // sanitize the sales target
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
@@ -678,21 +681,6 @@ public class CatalogServlet extends MsoyServiceServlet
         } catch (Exception e) {
             log.warning("Failed to check salability", "type", itemType, e);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
-        }
-    }
-
-    /**
-     * Ensures that the specified user or a support user is taking the requested action.
-     */
-    protected void requireIsUser (MemberRecord mrec, int targetId, String action, ItemRecord item)
-        throws ServiceException
-    {
-        if (mrec == null || (mrec.memberId != targetId && !mrec.isSupport())) {
-            String who = (mrec == null) ? "null" : mrec.who();
-            String iid = (item == null) ? "null" : ""+item.itemId;
-            log.warning("Access denied for catalog action", "who", who, "wanted", targetId,
-                        "action", action, "item", iid);
-            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
     }
 
