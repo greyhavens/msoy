@@ -19,6 +19,8 @@ import com.samskivert.depot.PersistenceContext;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.server.ReportManager;
 
+import com.threerings.pulse.server.persist.PulseDatabase;
+
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
@@ -41,8 +43,9 @@ public abstract class MsoyBaseServer extends WhirledServer
             // depot dependencies (we will initialize this persistence context later when the
             // server is ready to do database operations; not initializing it now ensures that no
             // one sneaks any database manipulations into the dependency resolution phase)
-            bind(PersistenceContext.class).toInstance(new PersistenceContext());
-
+            PersistenceContext pctx = new PersistenceContext();
+            bind(PersistenceContext.class).toInstance(pctx);
+            bind(PersistenceContext.class).annotatedWith(PulseDatabase.class).toInstance(pctx);
             // bind the batch invoker
             bind(Invoker.class).annotatedWith(BatchInvoker.class).to(MsoyBatchInvoker.class);
         }
