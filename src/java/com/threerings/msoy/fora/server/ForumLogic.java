@@ -6,11 +6,9 @@ package com.threerings.msoy.fora.server;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
-import java.util.Set;
-
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -93,17 +91,12 @@ public class ForumLogic
             _memberRepo.loadFriendIds(mrec.memberId), _groupLogic.getHiddenGroupIds(
                 mrec.memberId, null), maximum);
 
-        // build the group names so these can be displayed on the client
-        Set<Integer> groupIds = Sets.newHashSet();
-        for (ForumThreadRecord ftr : threads) {
-            groupIds.add(ftr.groupId);
-        }
-
-        // load group names
-        Map<Integer, GroupName> groupNames = Maps.newHashMap();
-        for (GroupName name : _groupRepo.loadGroupNames(groupIds)) {
-            groupNames.put(name.getGroupId(), name);
-        }
+        IntMap<GroupName> groupNames = _groupRepo.loadGroupNames(
+            threads, new Function<ForumThreadRecord, Integer> () {
+                @Override public Integer apply (ForumThreadRecord record) {
+                    return record.groupId;
+                }
+            });
 
         return resolveThreads(mrec, threads, groupNames, true, false);
     }

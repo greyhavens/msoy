@@ -7,7 +7,6 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -103,9 +102,8 @@ public class PublicInfoServlet extends HttpServlet
         throws Exception
     {
         JSONArray results = new JSONArray();
-        List<GroupName> groups = _whirledRepo.loadGroupNames(ids);
 
-        for (GroupName group : groups) {
+        for (GroupName group : _whirledRepo.loadGroupNames(ids).values()) {
             if (group != null) {
                 JSONObject m = new JSONObject();
                 m.put("id", group.getGroupId());

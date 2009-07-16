@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -258,20 +259,28 @@ public class GroupRepository extends DepotRepository
      */
     public GroupName loadGroupName (int groupId)
     {
-        List<GroupName> result = loadGroupNames(Collections.singleton(groupId));
-        return result.isEmpty() ? null : result.get(0);
+        IntMap<GroupName> result = loadGroupNames(Collections.singleton(groupId));
+        return result.isEmpty() ? null : result.values().iterator().next();
+    }
+
+    public <C> IntMap<GroupName> loadGroupNames (Iterable<C> records, Function<C, Integer> getId)
+    {
+        Set<Integer> groupIds = new ArrayIntSet();
+        for (C record : records) {
+            groupIds.add(getId.apply(record));
+        }
+        return loadGroupNames(groupIds);
+
     }
 
     /**
-     * Looks up groups' names by id.
+     * Looks up members' names by id.
      */
-    public List<GroupName> loadGroupNames (Set<Integer> groupIds)
+    public IntMap<GroupName> loadGroupNames (Set<Integer> groupIds)
     {
-        List<GroupName> names = Lists.newArrayList();
-        if (groupIds.size() > 0) {
-            for (GroupNameRecord gnr : loadAll(GroupNameRecord.class, groupIds)) {
-                names.add(gnr.toGroupName());
-            }
+        IntMap<GroupName> names = IntMaps.newHashIntMap();
+        for (GroupNameRecord name : loadAll(GroupNameRecord.class, groupIds)) {
+            names.put(name.groupId, name.toGroupName());
         }
         return names;
     }
