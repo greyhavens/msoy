@@ -31,6 +31,6 @@ public class FacebookTemplateCard
      */
     public static String toEntryVector (String code, String variant)
     {
-        return "v.fb" + code + variant;
+        return "fb." + code + variant;
     }
 }

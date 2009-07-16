@@ -38,6 +38,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.web.gwt.CookieNames;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
+import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -137,8 +138,7 @@ public class FacebookServlet extends HttpServlet
             // if the member has the same visitor id as the one we just made up, they were just
             // created and we need to note that this is an entry
             if (vinfo.id.equals(mrec.visitorId)) {
-                _memberLogic.noteNewVisitor(
-                    vinfo, true, StringUtil.deNull(req.getPathInfo()), req.getHeader("Referrer"));
+                _memberLogic.noteNewVisitor(vinfo, true, info.vector, req.getHeader("Referrer"));
             }
 
             // activate a session for them
@@ -238,6 +238,10 @@ public class FacebookServlet extends HttpServlet
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
             info.gameId = ParameterUtil.getIntParameter(req, "game", 0, "Invalid game parameter");
+            info.vector = req.getParameter("vec");
+            if (info.vector == null) {
+                info.vector = FacebookTemplateCard.toEntryVector("app", "");
+            }
             return info;
         }
 
@@ -263,6 +267,7 @@ public class FacebookServlet extends HttpServlet
         info.apiKey = fbinfo.apiKey;
         info.appSecret = fbinfo.appSecret;
         info.chromeless = fbinfo.chromeless;
+        info.vector = FacebookTemplateCard.toEntryVector("proxygame", "" + info.gameId);
         return info;
     }
 
@@ -285,6 +290,7 @@ public class FacebookServlet extends HttpServlet
         public String apiKey;
         public String appSecret;
         public boolean chromeless;
+        public String vector;
     }
 
     @Inject protected FacebookLogic _faceLogic;
