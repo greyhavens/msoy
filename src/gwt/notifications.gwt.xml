@@ -1,0 +1,13 @@
+<!-- $Id$ -->
+<!-- GWT build file for notifications module -->
+
+<module>
+  <inherits name="global"/>
+
+  <source path="com/threerings/msoy/notifications/gwt"/>
+
+  <source path="client/notifications"/>
+
+  <public path="public/notifications"/>
+  <stylesheet src="notifications.css"/>
+</module>

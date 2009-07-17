@@ -71,6 +71,8 @@ import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.server.MeServlet;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.server.MoneyServlet;
+import com.threerings.msoy.notifications.gwt.NotificationsService;
+import com.threerings.msoy.notifications.server.NotificationsServlet;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.server.ProfileServlet;
 import com.threerings.msoy.stuff.gwt.StuffService;
@@ -225,6 +227,7 @@ public class MsoyHttpServer extends Server
         .put(WebRoomService.ENTRY_POINT, WebRoomServlet.class)
         .put(SurveyService.ENTRY_POINT, SurveyServlet.class)
         .put(FacebookService.ENTRY_POINT, FacebookPageServlet.class)
+        .put(NotificationsService.ENTRY_POINT, NotificationsServlet.class)
         .put("/facebook/*", FacebookServlet.class)
         .put("/ooo", OOOXmlRpcServlet.class)
         .put("/pulse", PulseServlet.class)
