@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -28,6 +26,7 @@ import com.threerings.messaging.amqp.AMQPMessageConfig;
 import com.threerings.messaging.amqp.AMQPMessageConnection;
 
 import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.peer.server.EHCachePeerCoordinator;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientResolver;
@@ -71,7 +70,6 @@ import com.threerings.msoy.game.server.persist.MsoyGameCookieRepository;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
-import com.threerings.msoy.peer.server.EHCachePeerCoordinator;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.server.MsoySceneFactory;
@@ -82,6 +80,8 @@ import com.threerings.msoy.spam.server.SpamLogic;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldManager;
 import com.threerings.msoy.world.tour.server.TourManager;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Brings together all of the services needed by the World server.
