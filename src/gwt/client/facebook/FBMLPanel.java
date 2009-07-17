@@ -34,7 +34,6 @@ public class FBMLPanel extends FlowPanel
         if (id == null || id.isEmpty()) {
             ancestor.getElement().setId(id = HTMLPanel.createUniqueId());
         }
-        CShell.log("Reparsing XFBML", "id", id);
         nativeReparse(id);
     }
 
