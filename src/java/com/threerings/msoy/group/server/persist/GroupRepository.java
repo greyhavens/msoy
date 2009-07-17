@@ -263,11 +263,19 @@ public class GroupRepository extends DepotRepository
         return result.isEmpty() ? null : result.values().iterator().next();
     }
 
+    /**
+     * Looks up group names by calling the supplied function on a collection of objects to
+     * extract an id from each one. The function may return null to indicate that object
+     * should not be include in the returned mapping.
+     */
     public <C> IntMap<GroupName> loadGroupNames (Iterable<C> records, Function<C, Integer> getId)
     {
         Set<Integer> groupIds = new ArrayIntSet();
         for (C record : records) {
-            groupIds.add(getId.apply(record));
+            Integer id = getId.apply(record);
+            if (id != null) {
+                groupIds.add(id);
+            }
         }
         return loadGroupNames(groupIds);
 

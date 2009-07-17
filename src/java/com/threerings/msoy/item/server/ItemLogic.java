@@ -646,12 +646,14 @@ public class ItemLogic
         IntMap<GroupName> brandMap = _groupRepo.loadGroupNames(
             list, new Function<ListingCard,Integer>() {
                 public Integer apply (ListingCard card) {
-                    return card.brand.getGroupId();
+                    return (card.brand != null) ? card.brand.getGroupId() : null;
                 }
             });
         // finally fill in the listings using the map
         for (ListingCard card : list) {
-            card.brand = brandMap.get(card.brand.getGroupId());
+            if (card.brand != null) {
+                card.brand = brandMap.get(card.brand.getGroupId());
+            }
         }
 
     }
