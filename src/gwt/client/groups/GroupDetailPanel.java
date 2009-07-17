@@ -320,10 +320,15 @@ public class GroupDetailPanel extends FlowPanel
                                              Pages.PEOPLE, ""+member.name.getMemberId());
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
+
+                int shares = _detail.brand.getShares(member.name.getMemberId());
+                String shareDesc = shares + "/" + _detail.brand.getTotalShares();
                 if (member.rank == Rank.MANAGER) {
-                    members.setHTML(ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
-                } else if (_detail.brand != null && _detail.brand.getShares(member.name.getMemberId()) > 0) {
-                    members.setHTML(ii * 2, 1, _msgs.detailTopMembersShareholder(), 1, "Manager");
+                    members.setHTML(
+                        ii * 2, 1, _msgs.detailTopMembersManager(shareDesc), 1, "Manager");
+                } else if (_detail.brand != null && shares > 0) {
+                    members.setHTML(
+                        ii * 2, 1, _msgs.detailTopMembersShareholder(shareDesc), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""
                     + member.name, member.name.getMemberId()), "Name");
