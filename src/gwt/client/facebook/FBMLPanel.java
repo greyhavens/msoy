@@ -3,8 +3,6 @@
 
 package client.facebook;
 
-import client.shell.CShell;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
