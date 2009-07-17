@@ -177,11 +177,11 @@ public class ProfileServlet extends MsoyServiceServlet
         // load group info
         result.groups = resolveGroupsData(memrec, tgtrec);
 
-        // figure out which brands the player has a share in
-        result.brands = resolveBrandShares(memrec, tgtrec);
-
         // figure out which brands we can assign the player shares in
         result.grantable = resolveBrandInvites(result.groups, memrec, tgtrec);
+
+        // figure out which brands the player has a share in
+        result.brands = resolveBrandShares(result.grantable, memrec, tgtrec);
 
         // load feed
         result.feed = _feedLogic.loadMemberFeed(memberId, MAX_FEED_ENTRIES);
@@ -399,12 +399,20 @@ public class ProfileServlet extends MsoyServiceServlet
         return _groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
     }
 
-    protected List<BrandDetail> resolveBrandShares (MemberRecord reqrec, MemberRecord tgtrec)
+    protected List<BrandDetail> resolveBrandShares (Set<Integer> invites, MemberRecord reqrec, MemberRecord tgtrec)
     {
         List<BrandDetail> result = Lists.newArrayList();
-        // load the brand details for each group in which this player has shares
+
+        // load details for the brands we can invite to
+        for (Integer invite : invites) {
+            result.add(_groupLogic.loadBrandDetail(invite));
+        }
+
+        // and also for any brand the player's already a shareholder in
         for (BrandShareRecord brandRecord : _groupRepo.getBrands(tgtrec.memberId)) {
-            result.add(_groupLogic.loadBrandDetail(brandRecord.groupId));
+            if (!invites.contains(brandRecord.groupId)) {
+                result.add(_groupLogic.loadBrandDetail(brandRecord.groupId));
+            }
         }
         return result;
     }

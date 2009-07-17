@@ -64,15 +64,15 @@ public class GroupsBlurb extends Blurb
     {
         protected class GroupWidget extends FlowPanel
         {
-            public GroupWidget (GroupCard card, int shares, BrandDetail brand, boolean grant)
+            public GroupWidget (GroupCard card, BrandDetail brand, boolean grant)
             {
                 _brand = brand;
-                _shares = shares;
+                _shares = brand.getShares(_name.getMemberId());
                 _grant = grant;
 
                 setStyleName("Group");
-                add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", brand.group.getGroupId()));
-                add(Link.create(card.name.toString(), Pages.GROUPS, "d", brand.group.getGroupId()));
+                add(new ThumbBox(card.getLogo(), Pages.GROUPS, "d", card.name.getGroupId()));
+                add(Link.create(card.name.toString(), Pages.GROUPS, "d", card.name.getGroupId()));
                 add(_brandBit = new FlowPanel());
                 updateBrand();
             }
@@ -171,15 +171,7 @@ public class GroupsBlurb extends Blurb
         protected Widget createWidget (GroupCard card)
         {
             int groupId = card.name.getGroupId();
-            int shares = 0;
-
-            OOPS... BRAND CAN BE NULL
-
-            BrandDetail brand = _brands.get(groupId);
-            if (brand != null) {
-                shares = brand.getShares(_name.getMemberId());
-            }
-            return new GroupWidget(card, shares, brand, _grants.contains(groupId));
+            return new GroupWidget(card, _brands.get(groupId), _grants.contains(groupId));
         }
 
         protected Map<Integer, BrandDetail> _brands;
