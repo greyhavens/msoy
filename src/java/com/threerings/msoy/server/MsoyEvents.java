@@ -731,7 +731,7 @@ public class MsoyEvents
 
         public BroadcastSent (int memberId, int barsPaid)
         {
-            this.timestamp = new Date(System.currentTimeMillis());
+            this.timestamp = new Date();
             this.memberId = memberId;
             this.barsPaid = barsPaid;
         }
@@ -749,7 +749,7 @@ public class MsoyEvents
 
         public FacebookMochiGameEntered (int memberId, String mochiTag)
         {
-            this.timestamp = new Date(); // current time
+            this.timestamp = new Date();
             this.memberId = memberId;
             this.mochiTag = mochiTag;
         }
