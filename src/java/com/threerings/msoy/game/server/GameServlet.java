@@ -858,26 +858,23 @@ public class GameServlet extends MsoyServiceServlet
         public ArcadeDataBuilder (ArcadeData.Portal portal)
         {
             _portal = portal;
+            // load the hand-picked "top games"
+            _agames = _mgameRepo.loadArcadeEntries(portal, true);
+
             // set up "approved" set for some portals
             Set<Integer> approvedGames = null;
-
-            // load the hand-picked "top games"
-            if (portal != ArcadeData.Portal.FACEBOOK) {
-                _agames = _mgameRepo.loadArcadeEntries(portal, true);
-                if (portal.isFiltered()) {
-                    approvedGames = Sets.newHashSet(
-                        Lists.transform(_agames, ArcadeEntryRecord.TO_GAME_ID));
-                }
+            if (portal.isFiltered()) {
+                approvedGames = Sets.newHashSet(
+                    Lists.transform(_agames, ArcadeEntryRecord.TO_GAME_ID));
             }
 
             // load the top N (where N is large) games and build everything from that list
             _games = Maps.newLinkedHashMap();
             for (GameInfoRecord grec : _mgameRepo.loadGenre(GameGenre.ALL, ARCADE_RAW_COUNT)) {
                 // for filtered arcade portals, filter the whole map
-                if (approvedGames != null && !approvedGames.contains(grec.gameId)) {
-                    continue;
+                if (approvedGames == null || approvedGames.contains(grec.gameId)) {
+                    _games.put(grec.gameId, grec);
                 }
-                _games.put(grec.gameId, grec);
             }
         }
 
