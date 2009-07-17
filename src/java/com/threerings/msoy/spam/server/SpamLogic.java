@@ -1064,8 +1064,28 @@ public class SpamLogic
                 case OBJECT:
                     return _pmsgs.get("friendPlayedGames", subject, object);
                 }
+
+            case FRIEND_CREATED_GROUP:
+                return _pmsgs.get("friendCreatedGroup", subject, object);
+
+            case FRIEND_JOINED_GROUP:
+                switch (plural) {
+                default:
+                case NONE:
+                    return _pmsgs.get("friendJoinedGroup", subject, object);
+                case SUBJECT:
+                    return _pmsgs.get("friendsJoinedGroup", subject, object);
+                case OBJECT:
+                    return _pmsgs.get("friendJoinedGroups", subject, object);
+                }
+
+            case FRIEND_SUBSCRIBED:
+                return plural == Plural.SUBJECT ?
+                    _pmsgs.get("friendsSubscribed", subject) :
+                    _pmsgs.get("friendSubscribed", subject);
             }
-            return "Unknown message type: " + subject + " did something to " + object + ".";
+
+            return subject + " " + type + " " + object + " (plural: " + plural + ").";
         }
 
         // from Messages

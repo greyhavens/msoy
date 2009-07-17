@@ -204,7 +204,7 @@ public class FeedMessagePanel extends FocusPanel
                     }
 
                 default:
-                    return "Unknown message type: " + subject + " did something to " + object + ".";
+                    return subject + " " + type + " " + object + " (plural: " + plural + ").";
                 }
             }
 
