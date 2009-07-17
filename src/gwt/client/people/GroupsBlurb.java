@@ -67,7 +67,9 @@ public class GroupsBlurb extends Blurb
             public GroupWidget (GroupCard card, BrandDetail brand, boolean grant)
             {
                 _brand = brand;
-                _shares = brand.getShares(_name.getMemberId());
+                if (_brand != null) {
+                    _shares = brand.getShares(_name.getMemberId());
+                }
                 _grant = grant;
 
                 setStyleName("Group");
