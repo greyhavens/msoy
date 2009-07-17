@@ -737,6 +737,24 @@ public class MsoyEvents
         }
     }
 
+    /**
+     * Notes that a mochi game was played on facebook arcade.
+     */
+    @Event(name="FacebookMochiGameEntered")
+    public static class FacebookMochiGameEntered implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int memberId;
+        @Field final public String mochiTag;
+
+        public FacebookMochiGameEntered (int memberId, String mochiTag)
+        {
+            this.timestamp = new Date(); // current time
+            this.memberId = memberId;
+            this.mochiTag = mochiTag;
+        }
+    }
+
     protected static String toValue (String input) {
         return (input != null) ? input : "";
     }

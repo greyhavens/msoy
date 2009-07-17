@@ -376,6 +376,11 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.BroadcastSent(memberId, barsPaid));
     }
+
+    public void facebookMochiGameEntered (int memberId, String mochiTag)
+    {
+        post(new MsoyEvents.FacebookMochiGameEntered(memberId, mochiTag));
+    }
     
     /**
      * Action performed on the client such as clicking a particular button.

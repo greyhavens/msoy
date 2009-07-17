@@ -87,6 +87,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -728,8 +729,11 @@ public class GameServlet extends MsoyServiceServlet
     public MochiGameInfo getMochiGame (String mochiTag)
         throws ServiceException
     {
-        // any user may call this
-        return _mgameRepo.loadMochiGame(mochiTag);
+        MemberRecord member = getAuthedUser();
+        // make sure we got something before we log something
+        MochiGameInfo info = _mgameRepo.loadMochiGame(mochiTag);
+        _eventLog.facebookMochiGameEntered((member != null) ? member.memberId : 0, mochiTag);
+        return info;
     }
 
     /**
@@ -1058,6 +1062,7 @@ public class GameServlet extends MsoyServiceServlet
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
