@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.ServiceUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -19,7 +18,6 @@ import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameCard;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
-import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;

@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -19,12 +18,8 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.game.PlayButton;
 import client.shell.DynamicLookup;
-import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
-import client.ui.Stars;
-import client.ui.ThumbBox;
 import client.util.Link;
 
 /**
