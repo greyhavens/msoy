@@ -454,7 +454,8 @@ public class DoListItemPopup extends VerticalPanel
         for (BrandDetail detail : result) {
             _brandBox.addItem(detail.group.toString());
             _brandItems.add(detail);
-            if (listing != null && detail.group.equals(listing.brand.group)) {
+            if (listing != null && listing.brand != null &&
+                    detail.group.equals(listing.brand.group)) {
                 _brandBox.setSelectedIndex(_brandBox.getItemCount() - 1);
             }
         }
