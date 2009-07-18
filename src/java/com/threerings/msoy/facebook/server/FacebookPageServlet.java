@@ -230,8 +230,6 @@ public class FacebookPageServlet extends MsoyServiceServlet
             friendsInfo.put(exRec.memberId, info);
         }
 
-        log.info("Got mapped friends", "size", friendsInfo.size());
-
         return friendsInfo;
     }
 

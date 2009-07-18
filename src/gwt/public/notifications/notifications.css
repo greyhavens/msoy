@@ -4,30 +4,73 @@
  * Styles for notifications pages.
  */
 
-.notifications {
+.notifications, .notifications .Absolute {
+  width: 100%;
   height: 78px;
-  width: 100%;
 }
 
-.notifications .Absolute {
-  width: 100%;
-  height: 100%;
-}
-
-.notifications .Absolute .Test {
-  left: 8px;
-  top: 8px;
-}
-
-.notifications .Absolute .Close {
-  width: 19px;
-  height: 19px;
+.notifications .Close {
+  width: 16px;
+  height: 16px;
   right: 8px;
   top: 8px;
   background: url(/images/facebook/notifications_close.png) no-repeat;
 }
 
-.notifications .Absolute .Close-up-hovering, .notifications .Absolute .Close-down-hovering {
-  background-position: 0px -19px;
+.notifications .Close-up-hovering, .notifications .Close-down-hovering {
+  background-position: 0px -16px;
+}
+
+.notifications .Cycle {
+  width: 16px;
+  height: 16px;
+  right: 26px;
+  top: 8px;
+  background: url(/images/facebook/notifications_cycle.png) no-repeat;
+}
+
+.notifications .Cycle-up-hovering, .notifications .Cycle-down-hovering {
+  background-position: 0px -16px;
+}
+
+.notifications .notification {
+  height: 68px;
+  width: 680px;
+  left: 5px;
+  top: 5px;
+}
+
+.notifications .Bookmark .Reminder {
+  width: 550px;
+  font-size: 14px;
+  font-weight: bold;
+  top: 15px;
+  left: 15px;
+}
+
+.notifications .Bookmark .DidIt,
+.notifications .Bookmark .Later {
+  width: 120px;
+  height: 20px;
+  left: 555px;
+  background-color: #d8dfea;
+  text-decoration: none;
+  text-align: center;
+  font-size: 12px;
+  padding-top: 4px;
+}
+
+.notifications .Bookmark .DidIt {
+  top: 10px;
+}
+
+.notifications .Bookmark .Later {
+  top: 40px;
+}
+
+.notifications .Bookmark .DidIt-up-hovering, .notifications .Bookmark .DidIt-down-hovering,
+.notifications .Bookmark .Later-up-hovering, .notifications .Bookmark .Later-down-hovering {
+  background-color: #aeb4bd;
+  text-decoration: underline;
 }
 

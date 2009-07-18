@@ -23,4 +23,7 @@ public class CookieNames
 
     /** Holds info about how we are embedded. */
     public static final String EMBED = "emb";
+
+    /** Sets where or not the user claims to have bookmarked our FB app. */
+    public static final String BOOKMARKED = "bmd";
 }
