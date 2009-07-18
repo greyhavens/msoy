@@ -153,7 +153,7 @@
     -->
 
     <cacheManagerPeerProviderFactory
-         class="com.threerings.msoy.peer.server.EHCachePeerCoordinator"/>
+         class="com.threerings.presents.peer.server.EHCachePeerCoordinator"/>
 
     <!--
     CacheManagerPeerListener
