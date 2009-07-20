@@ -104,8 +104,8 @@ public class StuffServlet extends MsoyServiceServlet
 
         // make sure the item in question is consistent as far as the item is concerned
         if (!item.isConsistent()) {
-            log.warning("Requested to update item with invalid version [who=" + memrec.who() +
-                        ", item=" + item + "].");
+            log.warning("Requested to update item with invalid version",
+                "who", memrec.who(), "item", item);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -198,8 +198,8 @@ public class StuffServlet extends MsoyServiceServlet
 
         // make sure they supplied a valid item type
         if (Item.getClassForType(type) == null) {
-            log.warning("Requested to load inventory for invalid item type " +
-                        "[who=" + who(memrec) + ", type=" + type + "].");
+            log.warning("Requested to load inventory for invalid item type",
+                "who", who(memrec), "type", type);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
