@@ -137,7 +137,7 @@ public class TrophyFeederPanel extends FloatingPanel
     {
         _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
             trophy.gameId, _gameName, trophy.name, trophy.description,
-            trophy.trophyMedia.getMediaPath(), _gameDescription ]);
+            trophy.trophyMedia.getMediaPath(), _gameDescription, trophy.ident ]);
 
         btn.enabled = false;
         if (_mode == MODE_NEW) {

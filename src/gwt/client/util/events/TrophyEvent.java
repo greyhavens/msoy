@@ -80,6 +80,14 @@ public class TrophyEvent extends FlashEvent
         return _mediaURL;
     }
 
+    /**
+     * Returns the trophy identifier.
+     */
+    public String getTrophyIdent ()
+    {
+        return _ident;
+    }
+
     @Override // from FlashEvent
     public void fromJSObject (JavaScriptObject args)
     {
@@ -89,6 +97,7 @@ public class TrophyEvent extends FlashEvent
         _descrip = JavaScriptUtil.getStringElement(args, 3);
         _mediaURL = JavaScriptUtil.getStringElement(args, 4);
         _gameDesc = JavaScriptUtil.getStringElement(args, 5);
+        _ident = JavaScriptUtil.getStringElement(args, 6);
     }
 
     @Override // from FlashEvent
@@ -100,6 +109,7 @@ public class TrophyEvent extends FlashEvent
         JavaScriptUtil.setStringElement(args, 3, _descrip);
         JavaScriptUtil.setStringElement(args, 4, _mediaURL);
         JavaScriptUtil.setStringElement(args, 5, _gameDesc);
+        JavaScriptUtil.setStringElement(args, 6, _ident);
     }
 
     @Override // from FlashEvent
@@ -116,4 +126,5 @@ public class TrophyEvent extends FlashEvent
     protected String _descrip;
     protected String _mediaURL;
     protected String _gameDesc;
+    protected String _ident;
 }
