@@ -168,6 +168,12 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Notes that the user published a trophy on facebook (or at least viewed the publish dialog).
+     */
+    void trophyPublishedToFacebook (int gameId, String ident)
+        throws ServiceException;
+
+    /**
      * Get the price of a barscription.
      */
     PriceQuote getBarscriptionCost ()

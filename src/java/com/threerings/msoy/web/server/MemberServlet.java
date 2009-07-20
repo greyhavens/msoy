@@ -344,6 +344,14 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    public void trophyPublishedToFacebook (int gameId, String ident)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        _facebookRepo.noteTrophyPublished(memrec.memberId, gameId, ident);
+    }
+
+    // from WebMemberService
     public PriceQuote getBarscriptionCost ()
         throws ServiceException
     {

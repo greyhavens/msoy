@@ -4,6 +4,7 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
@@ -75,8 +76,13 @@ public class ExternalFeeder
      */
     protected void trophyPublished (int gameId, String trophyIdent)
     {
-        // TODO
-        // Window.alert("Trophy published: " + gameId + ":" + trophyIdent);
+        _membersvc.trophyPublishedToFacebook(gameId, trophyIdent, new AsyncCallback<Void>() {
+            @Override public void onFailure (Throwable caught) {
+                CShell.log("Failed to contact server for trophy published", caught);
+            }
+            @Override public void onSuccess (Void result) {
+            }
+        });
     }
 
     protected native void publishTrophy (

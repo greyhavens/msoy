@@ -122,6 +122,11 @@ public interface WebMemberServiceAsync
     void getFacebookTemplate (String code, AsyncCallback<FacebookTemplateCard> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#trophyPublishedToFacebook}.
+     */
+    void trophyPublishedToFacebook (int gameId, String ident, AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#getBarscriptionCost}.
      */
     void getBarscriptionCost (AsyncCallback<PriceQuote> callback);
