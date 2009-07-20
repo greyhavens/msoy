@@ -17,6 +17,7 @@ import com.threerings.util.Log;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyUserOccupantInfo;
 import com.threerings.msoy.room.data.MemberInfo;
@@ -62,9 +63,12 @@ public class MsoyNameLabel extends Sprite
     {
         if (subscriber == (_subscriberIcon == null)) {
             if (subscriber) {
-                _subscriberIcon = new SUBSCRIBER();
+                _subscriberIcon = new GlowSprite();
+                _subscriberIcon.addChild(new SUBSCRIBER());
+                _subscriberIcon.init(0xFFFFFF, MsoyController.SUBSCRIBE);
                 addChild(_subscriberIcon);
                 _label.x = _subscriberIcon.width;
+
             } else {
                 removeChild(_subscriberIcon);
                 _subscriberIcon = null;
@@ -100,7 +104,7 @@ public class MsoyNameLabel extends Sprite
 
     protected var _label :TextField;
 
-    protected var _subscriberIcon :DisplayObject;
+    protected var _subscriberIcon :GlowSprite;
 
     protected static const FORMAT :TextFormat =
         TextFieldUtil.createFormat({ font: "_sans", size: 12, bold: true });
