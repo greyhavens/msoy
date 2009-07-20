@@ -18,6 +18,8 @@ import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.notifications.gwt.Notification;
 import com.threerings.msoy.notifications.gwt.NotificationType;
 import com.threerings.msoy.notifications.gwt.NotificationsService;
@@ -26,6 +28,7 @@ import com.threerings.msoy.web.gwt.CookieNames;
 
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
+import client.util.MediaUtil;
 
 
 /**
@@ -95,30 +98,42 @@ public class NotificationsPanel extends FlowPanel
 
     protected Widget createPanel (final int index)
     {
-        Notification notification = _notifications.get(index);
-        switch (notification.type) {
+        AbsoluteCSSPanel panel = new AbsoluteCSSPanel("Content", "fixed");
+        Notification notif = _notifications.get(index);
+        switch (notif.type) {
         case BOOKMARK:
-            AbsoluteCSSPanel panel = new AbsoluteCSSPanel("Bookmark", "fixed");
-            PushButton button;
+            panel.addStyleName("Bookmark");
             panel.add(MsoyUI.createHTML(_msgs.bookmarkReminder(), "Reminder"));
-            panel.add(button = MsoyUI.createImageButton("DidIt", new ClickHandler() {
+            panel.add(easyButton(1, _msgs.bookmarkDidIt(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         clearBookmarkReminder();
                         removeNotification(index);
                     }
                 }));
-            button.setText(_msgs.bookmarkDidIt());
-            panel.add(button = MsoyUI.createImageButton("Later", new ClickHandler() {
+            panel.add(easyButton(2, _msgs.bookmarkLater(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         removeNotification(index);
                     }
                 }));
-            button.setText(_msgs.bookmarkLater());
-            return panel;
+            break;
         case PROMOTION:
+            break;
         case TROPHY:
+            panel.addStyleName("PublishTrophy");
+            Trophy trophy = ((Notification.TrophyData)notif.data).trophy;
+            panel.add(createThumbnail(trophy.trophyMedia, "Thumbnail"));
+            panel.add(MsoyUI.createLabel(_msgs.publishTrophyTip(trophy.name), "Tip"));
+            panel.add(easyButton(1, _msgs.publishTrophy(), new ClickHandler () {
+                @Override public void onClick (ClickEvent event) {
+                }
+            }));
+            panel.add(easyButton(2, _msgs.publishTrophyInfo(), new ClickHandler () {
+                @Override public void onClick (ClickEvent event) {
+                }
+            }));
+            break;
         }
-        return null;
+        return panel;
     }
 
     protected void removeNotification (int index)
@@ -136,6 +151,21 @@ public class NotificationsPanel extends FlowPanel
     protected void clearBookmarkReminder ()
     {
         CookieUtil.set("/", 365, CookieNames.BOOKMARKED, "t");
+    }
+
+    protected PushButton easyButton (int row, String text, ClickHandler handler)
+    {
+        PushButton button = MsoyUI.createImageButton("easyButton", handler);
+        button.setText(text);
+        button.getElement().setAttribute("row", "" + row);
+        return button;
+    }
+
+    protected Widget createThumbnail (MediaDesc media, String style)
+    {
+        Widget w = MediaUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE);
+        w.addStyleName(style);
+        return w;
     }
 
     protected List<Notification> _notifications = new ArrayList<Notification>();

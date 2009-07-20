@@ -34,22 +34,13 @@
 }
 
 .notifications .notification {
-  height: 68px;
-  width: 680px;
-  left: 5px;
-  top: 5px;
+  height: 74px;
+  width: 686px;
+  left: 2px;
+  top: 2px;
 }
 
-.notifications .Bookmark .Reminder {
-  width: 550px;
-  font-size: 14px;
-  font-weight: bold;
-  top: 15px;
-  left: 15px;
-}
-
-.notifications .Bookmark .DidIt,
-.notifications .Bookmark .Later {
+.notifications .easyButton {
   width: 120px;
   height: 20px;
   left: 555px;
@@ -60,17 +51,36 @@
   padding-top: 4px;
 }
 
-.notifications .Bookmark .DidIt {
+.notifications .easyButton-up-hovering, .notifications .easyButton-down-hovering {
+  background-color: #aeb4bd;
+  text-decoration: underline;
+}
+
+.notifications .easyButton[row="1"] {
   top: 10px;
 }
 
-.notifications .Bookmark .Later {
+.notifications .easyButton[row="2"] {
   top: 40px;
 }
 
-.notifications .Bookmark .DidIt-up-hovering, .notifications .Bookmark .DidIt-down-hovering,
-.notifications .Bookmark .Later-up-hovering, .notifications .Bookmark .Later-down-hovering {
-  background-color: #aeb4bd;
-  text-decoration: underline;
+.notifications .Bookmark .Reminder {
+  width: 535px;
+  font-size: 14px;
+  font-weight: bold;
+  top: 15px;
+  left: 15px;
+}
+
+.notifications .PublishTrophy .Thumbnail {
+  left: 15px;
+}
+
+.notifications .PublishTrophy .Tip {
+  width: 465px;
+  font-size: 14px;
+  font-weight: bold;
+  top: 15px;
+  left: 85px;
 }
 

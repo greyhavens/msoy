@@ -5,6 +5,7 @@
   <inherits name="global"/>
 
   <source path="com/threerings/msoy/notifications/gwt"/>
+  <source path="com/threerings/msoy/game/data/all"/>
 
   <source path="client/notifications"/>
 

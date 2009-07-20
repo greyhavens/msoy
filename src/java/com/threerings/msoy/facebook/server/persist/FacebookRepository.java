@@ -21,6 +21,14 @@ import com.samskivert.depot.clause.Where;
 public class FacebookRepository extends DepotRepository
 {
     /**
+     * Assembles the unique id for a trophy published action.
+     */
+    public static String getTrophyPublishedActionId (int gameId, String trophyIdent)
+    {
+        return gameId + ":" + trophyIdent;
+    }
+
+    /**
      * Creates a new repository.
      */
     @Inject
@@ -67,8 +75,8 @@ public class FacebookRepository extends DepotRepository
      */
     public void noteTrophyPublished (int memberId, int gameId, String trophyIdent)
     {
-        store(createAction(memberId,
-            FacebookActionRecord.Type.PUBLISHED_TROPHY, gameId + ":" + trophyIdent));
+        store(createAction(memberId, FacebookActionRecord.Type.PUBLISHED_TROPHY,
+            getTrophyPublishedActionId(gameId, trophyIdent)));
     }
 
     /**

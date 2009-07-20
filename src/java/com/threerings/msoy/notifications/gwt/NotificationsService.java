@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Service for accessing messages to the user.
@@ -20,5 +21,6 @@ public interface NotificationsService extends RemoteService
     /**
      * Gets the current list of notifications for the logged-in user.
      */
-    public List<Notification> getNotifications ();
+    public List<Notification> getNotifications ()
+        throws ServiceException;
 }
