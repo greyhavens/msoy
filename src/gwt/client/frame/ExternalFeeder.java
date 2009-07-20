@@ -65,14 +65,24 @@ public class ExternalFeeder
             DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector;
 
         publishTrophy(actionUrl, templateId, event.getGameId(), event.getGame(),
-            event.getGameDescription(), event.getTrophy(), event.getDescription(), mediaURL,
-            trophyURL, vector);
+            event.getGameDescription(), event.getTrophy(), event.getTrophyIdent(),
+            event.getDescription(), mediaURL, trophyURL, vector);
     }
 
-    protected native void publishTrophy (String actionUrl, String templateId, int gameId,
-                                         String game, String gameDesc, String trophy,
-                                         String descrip, String mediaURL, String trophyURL,
-                                         String vector)
+    /**
+     * Called by facebook.js when the trophy feed publish dialog is closed. There is no guarantee
+     * that the user actually chose to do it.
+     */
+    protected void trophyPublished (int gameId, String trophyIdent)
+    {
+        // TODO
+        // Window.alert("Trophy published: " + gameId + ":" + trophyIdent);
+    }
+
+    protected native void publishTrophy (
+        String actionUrl, String templateId, int gameId, String game, String gameDesc,
+        String trophy, String ident, String descrip, String mediaURL, String trophyURL,
+        String vector)
     /*-{
         var data = {
             "game_id": gameId,
@@ -83,7 +93,11 @@ public class ExternalFeeder
             "vector": vector,
             "action_url": actionUrl,
             "images": [ {"src": mediaURL, "href": actionUrl} ] };
-        $wnd.FB_PostTrophy(templateId, data);
+
+        var trophyPublished = this.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;);
+        $wnd.FB_PostTrophy(templateId, data, function () {
+            trophyPublished(gameId, ident);
+        });
     }-*/;
 
     // Handy JSON for pasting into Facebook's template editor

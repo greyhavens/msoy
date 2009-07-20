@@ -20,21 +20,21 @@ window.FB_RequireSession = function() {
     });
 };
 
-window.FB_PostStory = function(bundleId, data, targetIds, body) {
+window.FB_PostStory = function(bundleId, data, targetIds, body, callback) {
     var showingFeed = false;
     FB_WithInit(function() {
         FB.Connect.requireSession(function() {
             if (!showingFeed) {
                 showingFeed = true;
                 FB.Connect.showFeedDialog(bundleId, data, targetIds, body, null,
-                    FB.RequireConnect.promptConnect, function () { /*noop*/ });
+                    FB.RequireConnect.promptConnect, callback);
             }
         });
     });
 };
 
-window.FB_PostTrophy = function(templateId, data) {
-    FB_PostStory(templateId, data, [], "");
+window.FB_PostTrophy = function(templateId, data, callback) {
+    FB_PostStory(templateId, data, [], "", callback);
 };
 
 window.FB_Logout = function() {
@@ -51,4 +51,3 @@ window.FB_ParseXFBML = function (id) {
         }
     });
 }
-
