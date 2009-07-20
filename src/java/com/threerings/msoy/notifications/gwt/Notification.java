@@ -28,6 +28,12 @@ public class Notification
         /** The trophy that was earned. */
         public Trophy trophy;
 
+        /** The game name. */
+        public String gameName;
+
+        /** The game description. */
+        public String gameDesc;
+
         /**
          * Creates a new trophy data for serialization.
          */
@@ -38,9 +44,11 @@ public class Notification
         /**
          * Creates a new trophy data.
          */
-        public TrophyData (Trophy trophy)
+        public TrophyData (Trophy trophy, String gameName, String gameDesc)
         {
             this.trophy = trophy;
+            this.gameName = gameName;
+            this.gameDesc = gameDesc;
         }
     }
 

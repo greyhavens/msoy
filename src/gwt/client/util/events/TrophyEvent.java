@@ -32,6 +32,18 @@ public class TrophyEvent extends FlashEvent
     {
     }
 
+    public TrophyEvent (int gameId, String gameName, String gameDesc, String trophyName,
+        String trophyIdent, String trophyDesc, String mediaURL)
+    {
+        _gameId = gameId;
+        _game = gameName;
+        _gameDesc = gameDesc;
+        _trophy = trophyName;
+        _ident = trophyIdent;
+        _descrip = trophyDesc;
+        _mediaURL = mediaURL;
+    }
+
     /**
      * Returns the id of the game in which the trophy was earned.
      */

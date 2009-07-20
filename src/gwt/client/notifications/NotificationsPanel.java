@@ -24,11 +24,17 @@ import com.threerings.msoy.notifications.gwt.Notification;
 import com.threerings.msoy.notifications.gwt.NotificationType;
 import com.threerings.msoy.notifications.gwt.NotificationsService;
 import com.threerings.msoy.notifications.gwt.NotificationsServiceAsync;
+import com.threerings.msoy.notifications.gwt.Notification.TrophyData;
 import com.threerings.msoy.web.gwt.CookieNames;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
+import client.util.Link;
 import client.util.MediaUtil;
+import client.util.events.TrophyEvent;
 
 
 /**
@@ -120,17 +126,20 @@ public class NotificationsPanel extends FlowPanel
             break;
         case TROPHY:
             panel.addStyleName("PublishTrophy");
-            Trophy trophy = ((Notification.TrophyData)notif.data).trophy;
+            final TrophyData trophyData = (TrophyData)notif.data;
+            final Trophy trophy = trophyData.trophy;
             panel.add(createThumbnail(trophy.trophyMedia, "Thumbnail"));
             panel.add(MsoyUI.createLabel(_msgs.publishTrophyTip(trophy.name), "Tip"));
             panel.add(easyButton(1, _msgs.publishTrophy(), new ClickHandler () {
                 @Override public void onClick (ClickEvent event) {
+                    CShell.frame.dispatchEvent(new TrophyEvent(trophy.gameId, trophyData.gameName,
+                        trophyData.gameDesc, trophy.name, trophy.ident, trophy.description,
+                        trophy.trophyMedia.getMediaPath()));
+                    //removeNotification(index);
                 }
             }));
-            panel.add(easyButton(2, _msgs.publishTrophyInfo(), new ClickHandler () {
-                @Override public void onClick (ClickEvent event) {
-                }
-            }));
+            panel.add(easyButton(2, _msgs.publishTrophyInfo(), Link.createHandler(Pages.GAMES,
+                SharedNaviUtil.GameDetails.TROPHIES.args(trophy.gameId))));
             break;
         }
         return panel;

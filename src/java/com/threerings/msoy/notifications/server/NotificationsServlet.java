@@ -10,9 +10,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
+import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -51,6 +54,7 @@ public class NotificationsServlet extends MsoyServiceServlet
         }
 
         // add notifications for recent, unpublished trophies
+        IntMap<GameInfoRecord> games = IntMaps.newHashIntMap();
         for (TrophyRecord trophy : _trophyRepo.loadRecentTrophies(
             memrec.memberId, MAX_RECENT_TROPHIES)) {
             if (now - trophy.whenEarned.getTime() > MAX_TROPHY_AGE) {
@@ -59,10 +63,19 @@ public class NotificationsServlet extends MsoyServiceServlet
             if (published.containsKey(toActionId(trophy))) {
                 continue;
             }
-
+            GameInfoRecord ginfo = games.get(trophy.gameId);
+            if (ginfo == null) {
+                games.put(trophy.gameId, ginfo = _mgameRepo.loadGame(trophy.gameId));
+                if (ginfo == null) {
+                    continue;
+                }
+            }
+            // note we don't resolve the trophy description here; the client only needs it to fill
+            // out the trophy info passed to facebook, but our templates don't currently require it
             Notification notif = new Notification();
             notif.type = NotificationType.TROPHY;
-            notif.data = new Notification.TrophyData(trophy.toTrophy());
+            notif.data = new Notification.TrophyData(
+                trophy.toTrophy(), ginfo.name, ginfo.description);
             result.add(notif);
         }
 
