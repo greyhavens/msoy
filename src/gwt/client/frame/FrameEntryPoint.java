@@ -551,7 +551,8 @@ public class FrameEntryPoint
 
         } else if (action.equals("fbgame")) {
             // we're entering a chromeless facebook game (fbgame_gameId_fbid_fbtok)
-            _facebookInfo = new String[] { args.get(2, ""), args.get(3, "") };
+            _facebookId = args.get(2, "");
+            _facebookSession = args.get(3, "");
             FlashClients.setChromeless(true);
             displayGame("p", args.get(1, 0), 0, "", 0);
 
@@ -825,9 +826,14 @@ public class FrameEntryPoint
         return getVisitorInfo().id;
     }
 
-    protected String[] getFacebookInfo ()
+    protected String getFacebookId ()
     {
-        return _facebookInfo;
+        return _facebookId;
+    }
+
+    protected String getFacebookSession ()
+    {
+        return _facebookSession;
     }
 
     protected void setTitleFromFlash (String title)
@@ -898,8 +904,12 @@ public class FrameEntryPoint
         $wnd.getVisitorId = function () {
              return entry.@client.frame.FrameEntryPoint::getVisitorId()();
         };
-        $wnd.getFacebookInfo = function () {
-             return entry.@client.frame.FrameEntryPoint::getFacebookInfo()();
+        // anoyingly these have to be specified separately, ActionScript chokes on String[]
+        $wnd.getFacebookId = function () {
+             return entry.@client.frame.FrameEntryPoint::getFacebookId()();
+        };
+        $wnd.getFacebookSession = function () {
+             return entry.@client.frame.FrameEntryPoint::getFacebookSession()();
         };
         $wnd.toggleClientHeight = function () {
             @client.util.FlashClients::toggleClientFullHeight()();
@@ -930,7 +940,7 @@ public class FrameEntryPoint
     protected String _currentToken = "", _prevToken = "";
     protected String _pageToken = "", _bottomFrameToken = "";
     protected String _closeToken, _closeTitle;
-    protected String[] _facebookInfo;
+    protected String _facebookId, _facebookSession;
 
     protected FrameHeader _header;
     protected Layout _layout;

@@ -293,12 +293,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     {
         if (!isEmbedded() && ExternalInterface.available) {
             try {
-                var result :Object = ExternalInterface.call("getFacebookInfo");
-                if (result != null) {
-                    return result as Array;
-                }
+                var id :String = ExternalInterface.call("getFacebookId") as String;
+                var session :String = ExternalInterface.call("getFacebookSession") as String;
+                return (id == null) ? null : [ id, session ];
             } catch (e :Error) {
-                log.info("ExternalInterface.call('getFacebookInfo') failed", e);
+                log.info("ExternalInterface.call('getFacebookId') failed", e);
             }
         }
         return null;
