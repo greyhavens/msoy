@@ -251,9 +251,6 @@ public class MemberSprite extends ActorSprite
 }
 }
 
-import flash.display.Sprite;
-import flash.events.MouseEvent;
-import flash.filters.GlowFilter;
 import flash.geom.Rectangle;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextField;
@@ -267,6 +264,7 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.ui.GlowSprite;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -281,7 +279,7 @@ import com.threerings.msoy.room.client.MsoySprite;
 /**
  * A decoration used when this actor is at a table in a lobby.
  */
-class TableIcon extends Sprite
+class TableIcon extends GlowSprite
 {
     public function TableIcon (host :MemberSprite, gameSummary :GameSummary)
     {
@@ -313,15 +311,18 @@ class TableIcon extends Sprite
             height += label.height;
         }
 
-        addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
-        addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
+        var cmd :Object;
+        var arg :Object;
         if (gameSummary.avrGame) {
-            Command.bind(this, MouseEvent.CLICK, WorldController.JOIN_AVR_GAME, gameSummary.gameId);
+            cmd = WorldController.JOIN_AVR_GAME;
+            arg = gameSummary.gameId;
+
         } else {
             var memberId :int = (host.getActorInfo().username as MemberName).getMemberId();
-            Command.bind(this, MouseEvent.CLICK,
-                WorldController.JOIN_PLAYER_GAME, [ gameSummary.gameId, memberId ] );
+            cmd = WorldController.JOIN_PLAYER_GAME;
+            arg = [ gameSummary.gameId, memberId ];
         }
+        init(MsoySprite.GAME_HOVER, cmd, arg);
 
         _host.addDecoration(this,
             // specify our bounds explicitly, as our width is centered at 0.
@@ -339,22 +340,12 @@ class TableIcon extends Sprite
         _host.removeDecoration(this);
     }
 
-    protected function handleMouseIn (... ignored) :void
-    {
-        this.filters = [ new GlowFilter(MsoySprite.GAME_HOVER, 1, 32, 32, 2) ];
-    }
-
-    protected function handleMouseOut (... ignored) :void
-    {
-        this.filters = null;
-    }
-
     protected var _host :MemberSprite;
     protected var _gameSummary :GameSummary;
     protected var _gameThumb :ScalingMediaContainer;
 }
 
-class PartyIcon extends Sprite
+class PartyIcon extends GlowSprite
 {
     /** The party id. */
     public var id :int;
@@ -375,13 +366,10 @@ class PartyIcon extends Sprite
         _icon.x = _icon.maxW / -2; // position with 0 at center
         addChild(_icon);
 
+        init(MsoySprite.OTHER_HOVER, WorldController.GET_PARTY_DETAIL, summ.id);
+
         var width :int = _icon.maxW;
         var height :int = _icon.maxH
-
-        addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
-        addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
-        Command.bind(this, MouseEvent.CLICK, WorldController.GET_PARTY_DETAIL, summ.id);
-
         _host.addDecoration(this,
             // specify our bounds explicitly, as our width is centered at 0.
             { toolTip: summ.name, bounds: new Rectangle(width/-2, 0, width, height) });
@@ -391,16 +379,6 @@ class PartyIcon extends Sprite
     {
         _icon.shutdown();
         _host.removeDecoration(this);
-    }
-
-    protected function handleMouseIn (... ignored) :void
-    {
-        this.filters = [ new GlowFilter(MsoySprite.OTHER_HOVER, 1, 32, 32, 2) ];
-    }
-
-    protected function handleMouseOut (... ignored) :void
-    {
-        this.filters = null;
     }
 
     protected var _host :MemberSprite;
