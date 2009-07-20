@@ -286,6 +286,25 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Returns a two element array containing [ facebookId, facebookSession ]. The array may be
+     * null and the session token may be the empty string if we don't know this information.
+     */
+    public function getFacebookInfo () :Array
+    {
+        if (!isEmbedded() && ExternalInterface.available) {
+            try {
+                var result :Object = ExternalInterface.call("getFacebookInfo");
+                if (result != null) {
+                    return result as Array;
+                }
+            } catch (e :Error) {
+                log.info("ExternalInterface.call('getFacebookInfo') failed", e);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the affiliate idq provided to the Flash client in our movie parameters. Will be 0 to
      * indicate that we have no affiliate or a positive integer.
      */

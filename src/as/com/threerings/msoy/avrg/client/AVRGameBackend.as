@@ -291,6 +291,7 @@ public class AVRGameBackend extends ControlBackend
         o["getAvatarMasterItemId_v1"] = getAvatarMasterItemId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
         o["getPlayerName_v1"] = getPlayerName_v1;
+        o["getFacebookInfo_v1"] = getFacebookInfo_v1;
         o["holdsTrophy_v1"] = holdsTrophy_v1;
         o["getPlayerItemPacks_v1"] = getPlayerItemPacks_v1;
         o["getPlayerLevelPacks_v1"] = getPlayerLevelPacks_v1;
@@ -558,6 +559,12 @@ public class AVRGameBackend extends ControlBackend
     protected function getPlayerName_v1 (targetId :int /* ignored */) :String
     {
         return _wctx.getMyName().toString();
+    }
+
+    // PlayerSubControl
+    protected function getFacebookInfo_v1 (targetId :int /* ignored */) :Array
+    {
+        return _wctx.getMsoyClient().getFacebookInfo().concat(); // clone the array
     }
 
     // PlayerSubControl

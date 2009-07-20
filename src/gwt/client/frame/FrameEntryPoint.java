@@ -549,6 +549,12 @@ public class FrameEntryPoint
             displayGame(args.get(1, ""), args.get(2, 0), args.get(3, 0), args.get(4, ""),
                         args.get(5, 0));
 
+        } else if (action.equals("fbgame")) {
+            // we're entering a chromeless facebook game (fbgame_gameId_fbid_fbtok)
+            _facebookInfo = new String[] { args.get(2, ""), args.get(3, "") };
+            FlashClients.setChromeless(true);
+            displayGame("p", args.get(1, 0), 0, "", 0);
+
         } else if (action.equals("tour")) {
             displayWorldClient("tour=true", null, false);
 
@@ -611,9 +617,6 @@ public class FrameEntryPoint
         // configure our world client with a default host and port in case we're first to the party
         WorldClient.setDefaultServer(config.groupServer, config.groupPort);
 
-        // if we're launching a chromeless game from inside the Facebook App we do some hackery
-        FlashClients.setChromeless(action.equals("pc"));
-
         // sanitize our token
         token = (token == null) ? "" : token;
 
@@ -642,7 +645,7 @@ public class FrameEntryPoint
             } else if (action.equals("j")) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
 
-            // everything else ("p", "pc" and "i" and legacy codes) means 'play now'
+            // everything else ("p" and "i" and legacy codes) means 'play now'
             } else if (otherId1 != 0) {
                 args += "&playerId=" + otherId1;
             }
@@ -822,6 +825,11 @@ public class FrameEntryPoint
         return getVisitorInfo().id;
     }
 
+    protected String[] getFacebookInfo ()
+    {
+        return _facebookInfo;
+    }
+
     protected void setTitleFromFlash (String title)
     {
         // if we're displaying content currently, don't let flash mess with the title
@@ -890,6 +898,9 @@ public class FrameEntryPoint
         $wnd.getVisitorId = function () {
              return entry.@client.frame.FrameEntryPoint::getVisitorId()();
         };
+        $wnd.getFacebookInfo = function () {
+             return entry.@client.frame.FrameEntryPoint::getFacebookInfo()();
+        };
         $wnd.toggleClientHeight = function () {
             @client.util.FlashClients::toggleClientFullHeight()();
         }
@@ -916,12 +927,10 @@ public class FrameEntryPoint
     }-*/;
 
     protected Pages _page;
-    protected String _currentToken = "";
-    protected String _pageToken = "";
-    protected String _prevToken = "";
-    protected String _bottomFrameToken = "";
-    protected String _closeToken;
-    protected String _closeTitle;
+    protected String _currentToken = "", _prevToken = "";
+    protected String _pageToken = "", _bottomFrameToken = "";
+    protected String _closeToken, _closeTitle;
+    protected String[] _facebookInfo;
 
     protected FrameHeader _header;
     protected Layout _layout;
