@@ -130,6 +130,8 @@
                         multicastGroupPort=4446, timeToLive=1"/>
     -->
 
+    <cacheManagerPeerProviderFactory
+         class="com.threerings.presents.peer.server.EHCachePeerCoordinator"/>
 
     <!--
     (Enable for distributed operation)
