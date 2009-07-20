@@ -30,6 +30,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
@@ -453,11 +454,16 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Load & return the brand shareholder details of a certain group.
+     * Load & return the brand shareholder details of a certain group. The result is ordered
+     * by share count (descending) and, strictly as a backup, by member id.
      */
     public List<BrandShareRecord> getBrandShares (int groupId)
     {
-        return findAll(BrandShareRecord.class, new Where(BrandShareRecord.GROUP_ID, groupId));
+        return findAll(BrandShareRecord.class,
+            new Where(BrandShareRecord.GROUP_ID, groupId),
+            new OrderBy(new SQLExpression[] {
+                BrandShareRecord.SHARES, BrandShareRecord.MEMBER_ID,
+            }, new OrderBy.Order[] { Order.DESC, Order.ASC }));
     }
 
     /**
