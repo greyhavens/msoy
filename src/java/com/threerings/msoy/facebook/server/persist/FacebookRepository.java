@@ -63,16 +63,12 @@ public class FacebookRepository extends DepotRepository
     }
 
     /**
-     * Records an action with the given parameters and the current time.
+     * Records a member having published a trophy with the given identifier and game.
      */
-    public void noteAction (int memberId, FacebookActionRecord.Type type, String id)
+    public void noteTrophyPublished (int memberId, int gameId, String trophyIdent)
     {
-        FacebookActionRecord action = new FacebookActionRecord();
-        action.memberId = memberId;
-        action.type = type;
-        action.id = id;
-        action.timestamp = new Timestamp(System.currentTimeMillis());
-        store(action);
+        store(createAction(memberId,
+            FacebookActionRecord.Type.PUBLISHED_TROPHY, gameId + ":" + trophyIdent));
     }
 
     /**
@@ -90,6 +86,20 @@ public class FacebookRepository extends DepotRepository
     public void pruneActions ()
     {
         // TODO: implement and schedule with cron logic
+    }
+
+    /**
+     * Creates a new action with the given fields and the current time.
+     */
+    protected FacebookActionRecord createAction (
+        int memberId, FacebookActionRecord.Type type, String id)
+    {
+        FacebookActionRecord action = new FacebookActionRecord();
+        action.memberId = memberId;
+        action.type = type;
+        action.id = id;
+        action.timestamp = new Timestamp(System.currentTimeMillis());
+        return action;
     }
 
     @Override // from DepotRepository
