@@ -86,14 +86,16 @@ public class NotificationsPanel extends FlowPanel
 
     protected void update ()
     {
-        if (_notifications.size() == 0 || _dismissed) {
+        int size = _notifications.size();
+        if (size == 0 || _dismissed) {
             setVisible(false);
             return;
         }
 
         setVisible(true);
-        _cycle.setVisible(_notifications.size() > 1);
-        _notification.setWidget(createPanel(_selected));
+        _selected = Math.max(Math.min(_selected, size - 1), 0);
+        _cycle.setVisible(size > 1);
+        _notification.setWidget(createPanel(_notifications.get(_selected)));
     }
 
     protected void selectNext ()
@@ -102,10 +104,9 @@ public class NotificationsPanel extends FlowPanel
         update();
     }
 
-    protected Widget createPanel (final int index)
+    protected Widget createPanel (final Notification notif)
     {
         AbsoluteCSSPanel panel = new AbsoluteCSSPanel("Content", "fixed");
-        Notification notif = _notifications.get(index);
         switch (notif.type) {
         case BOOKMARK:
             panel.addStyleName("Bookmark");
@@ -113,12 +114,12 @@ public class NotificationsPanel extends FlowPanel
             panel.add(easyButton(1, _msgs.bookmarkDidIt(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         clearBookmarkReminder();
-                        removeNotification(index);
+                        removeNotification(notif);
                     }
                 }));
             panel.add(easyButton(2, _msgs.bookmarkLater(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
-                        removeNotification(index);
+                        removeNotification(notif);
                     }
                 }));
             break;
@@ -135,7 +136,7 @@ public class NotificationsPanel extends FlowPanel
                     CShell.frame.dispatchEvent(new TrophyEvent(trophy.gameId, trophyData.gameName,
                         trophyData.gameDesc, trophy.name, trophy.ident, trophy.description,
                         trophy.trophyMedia.getMediaPath()));
-                    //removeNotification(index);
+                    removeNotification(notif);
                 }
             }));
             panel.add(easyButton(2, _msgs.publishTrophyInfo(), Link.createHandler(Pages.GAMES,
@@ -145,16 +146,21 @@ public class NotificationsPanel extends FlowPanel
         return panel;
     }
 
-    protected void removeNotification (int index)
+    protected void removeNotification (Notification notif)
     {
-        if (index >= _notifications.size()) {
+        int index = _notifications.indexOf(notif);
+        if (index < 0) {
             return;
         }
         _notifications.remove(index);
         if (index < _selected) {
             _selected--;
+        } else if (index == _selected) {
+            if (_selected == _notifications.size()) {
+                _selected = 0;
+            }
+            update();
         }
-        update();
     }
 
     protected void clearBookmarkReminder ()
