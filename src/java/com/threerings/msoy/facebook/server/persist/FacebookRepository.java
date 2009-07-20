@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.facebook.server.persist;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -61,9 +62,40 @@ public class FacebookRepository extends DepotRepository
             new Where(FacebookTemplateRecord.CODE.eq(code)));
     }
 
+    /**
+     * Records an action with the given parameters and the current time.
+     */
+    public void noteAction (int memberId, FacebookActionRecord.Type type, String id)
+    {
+        FacebookActionRecord action = new FacebookActionRecord();
+        action.memberId = memberId;
+        action.type = type;
+        action.id = id;
+        action.timestamp = new Timestamp(System.currentTimeMillis());
+        store(action);
+    }
+
+    /**
+     * Loads all actions performed by the member of the given id.
+     */
+    public List<FacebookActionRecord> loadActions (int memberId)
+    {
+        return findAll(FacebookActionRecord.class, new Where(
+            FacebookActionRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Removes old facbook action records.
+     */
+    public void pruneActions ()
+    {
+        // TODO: implement and schedule with cron logic
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(FacebookTemplateRecord.class);
+        classes.add(FacebookActionRecord.class);
     }
 }
