@@ -24,6 +24,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.IntTuple;
 import com.samskivert.util.RandomUtil;
 
 import net.sf.ehcache.CacheManager;
@@ -1225,6 +1226,7 @@ public class MoneyLogic
                         result, listing.item.creatorId, totalPayout.currency, listingPayout);
                 }
 
+
             } else {
                 log.warning("Payout or cost too small for divvying", "totalCost", totalCost,
                     "listingPortion", listing.cost - lastCost, "totalPayout", totalPayout,
@@ -1251,25 +1253,36 @@ public class MoneyLogic
     /**
      * Figure out payouts for a single branded listing (which may not be the item actually sold,
      * because of derivations).
-     *
-     * TODO: For now we just drop the missing change from taking Math.floor() but this should be
-     * handled better before we release.
      */
     protected int computePayoutsForListing (
-        IntMap<CurrencyAmount> result, List<BrandShareRecord> shares, Currency currency, float payout)
+        IntMap<CurrencyAmount> result, List<BrandShareRecord> shares, Currency currency,
+        float totalPayout)
     {
         int totShares = 0;
         for (BrandShareRecord rec : shares) {
             totShares += rec.shares;
         }
 
-        int listingPayoutSum = 0;
+        // figure out what we're paying
+        List<IntTuple> payments = Lists.newArrayList();
+        int paymentSum = 0;
         for (BrandShareRecord rec : shares) {
-            int creatorPayout = (int)Math.floor((payout * rec.shares) / totShares);
-            listingPayoutSum += creatorPayout;
-            result.put(rec.memberId, new CurrencyAmount(currency, creatorPayout));
+            int payment = ((int)Math.floor((totalPayout * rec.shares) / totShares));
+            payments.add(new IntTuple(rec.memberId, payment));
+            paymentSum += payment;
         }
-        return listingPayoutSum;
+
+        // construct the output mapping, distributing the change to the first N shareholders
+        for (IntTuple tuple : payments) {
+            int payment = tuple.right;
+            if (paymentSum + 1 <= totalPayout) {
+                // there is still change to hand out
+                payment += 1;
+                paymentSum += 1;
+            }
+            result.put(tuple.left, new CurrencyAmount(currency, payment));
+        }
+        return paymentSum;
     }
 
     /**
