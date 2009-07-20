@@ -197,7 +197,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             basedOn.add(_listing.basis.hidden ? new InlineLabel(basis.name) :
                 Link.shopListingView(basis.name, type, basis.catalogId));
             basedOn.add(new InlineLabel(" " + _cmsgs.creatorBy() + " "));
-            basedOn.add(Link.memberView(basis.creator));
+            basedOn.add(basis.brand != null ?
+                Link.groupView(basis.brand) : Link.memberView(basis.creator));
             _details.add(basedOn);
         }
 

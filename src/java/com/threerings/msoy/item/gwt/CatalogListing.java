@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.gwt.BrandDetail;
 import com.threerings.msoy.money.data.all.Currency;
@@ -78,6 +79,7 @@ public class CatalogListing
     {
         public int catalogId;
         public String name;
+        public GroupName brand;
         public MemberName creator;
         public boolean hidden;
     }

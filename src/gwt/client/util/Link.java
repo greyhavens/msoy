@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.impl.HyperlinkImpl;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -50,6 +51,14 @@ public class Link
     public static Widget groupView (String label, int groupId)
     {
         return create(label, Pages.GROUPS, "d", groupId);
+    }
+
+    /**
+     * Returns link that displays the details of a given group.
+     */
+    public static Widget groupView (GroupName name)
+    {
+        return create(name.toString(), Pages.GROUPS, "d", name.getGroupId());
     }
 
     /**
