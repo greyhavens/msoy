@@ -851,6 +851,7 @@ public class GameGameRegistry
                     trophy.gameId = fGameId;
                     trophy.trophyMedia = source.getPrimaryMedia();
                     trophy.name = source.name;
+                    trophy.ident = source.ident;
                     boolean got = plobj.ownsGameContent(
                         fGameId, GameData.TROPHY_DATA, source.ident);
                     if (!source.secret || got) {

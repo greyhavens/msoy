@@ -21,6 +21,9 @@ public class Trophy extends SimpleStreamableObject
     /** The name of the trophy. */
     public var name :String;
 
+    /** The identifier of the trophy. */
+    public var ident :String;
+
     /** The description of how to earn this trophy (not always available). */
     public var description :String;
 
@@ -30,17 +33,13 @@ public class Trophy extends SimpleStreamableObject
     /** When this trophy was earned. */
     public var whenEarned :Long;
 
-    public function Trophy ()
-    {
-        // nada
-    }
-
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
+        ident = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
         trophyMedia = MediaDesc(ins.readObject());
         whenEarned = (ins.readField(Long) as Long);
@@ -52,6 +51,7 @@ public class Trophy extends SimpleStreamableObject
         super.writeObject(out);
         out.writeInt(gameId);
         out.writeField(name);
+        out.writeField(ident);
         out.writeField(description);
         out.writeObject(trophyMedia);
         out.writeField(whenEarned);

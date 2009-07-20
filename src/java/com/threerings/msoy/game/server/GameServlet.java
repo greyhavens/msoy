@@ -799,6 +799,7 @@ public class GameServlet extends MsoyServiceServlet
             Trophy trophy = new Trophy();
             trophy.gameId = grec.gameId;
             trophy.name = record.name;
+            trophy.ident = record.ident;
             trophy.trophyMedia = new MediaDesc(record.thumbMediaHash, record.thumbMimeType);
             trophies.put(record.ident, trophy);
         }

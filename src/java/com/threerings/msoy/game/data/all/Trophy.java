@@ -21,6 +21,9 @@ public class Trophy extends SimpleStreamableObject
     /** The name of the trophy. */
     public String name;
 
+    /** The identifier of the trophy. */
+    public String ident;
+
     /** The description of how to earn this trophy (not always available). */
     public String description;
 

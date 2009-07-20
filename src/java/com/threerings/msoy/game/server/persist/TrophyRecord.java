@@ -71,6 +71,7 @@ public class TrophyRecord extends PersistentRecord
         Trophy trophy = new Trophy();
         trophy.gameId = gameId;
         trophy.name = name;
+        trophy.ident = ident;
         trophy.trophyMedia = getTrophyMedia();
         trophy.whenEarned = whenEarned.getTime();
         return trophy;
