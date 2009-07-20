@@ -71,11 +71,19 @@ public class TrophyRecord extends PersistentRecord
         Trophy trophy = new Trophy();
         trophy.gameId = gameId;
         trophy.name = name;
-        trophy.trophyMedia = new MediaDesc(
-            trophyMediaHash, trophyMimeType, MediaDesc.computeConstraint(
-                MediaDesc.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
+        trophy.trophyMedia = getTrophyMedia();
         trophy.whenEarned = whenEarned.getTime();
         return trophy;
+    }
+
+    /**
+     * Converts this persistent record to only the media descriptor.
+     */
+    public MediaDesc getTrophyMedia ()
+    {
+        return new MediaDesc(
+            trophyMediaHash, trophyMimeType, MediaDesc.computeConstraint(
+                MediaDesc.THUMBNAIL_SIZE, TrophySource.TROPHY_WIDTH, TrophySource.TROPHY_HEIGHT));
     }
 
     @Override // from Object
