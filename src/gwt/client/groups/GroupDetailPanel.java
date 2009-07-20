@@ -323,13 +323,21 @@ public class GroupDetailPanel extends FlowPanel
 
                 int shares = _detail.brand.getShares(member.name.getMemberId());
                 String shareDesc = shares + "/" + _detail.brand.getTotalShares();
+                String desc;
                 if (member.rank == Rank.MANAGER) {
-                    members.setHTML(
-                        ii * 2, 1, _msgs.detailTopMembersManager(shareDesc), 1, "Manager");
+                    if (shares > 0) {
+                        desc = _msgs.detailTopMembersManagerWithShares(shareDesc);
+                    } else {
+                        desc = _msgs.detailTopMembersManager();
+                    }
+
                 } else if (_detail.brand != null && shares > 0) {
-                    members.setHTML(
-                        ii * 2, 1, _msgs.detailTopMembersShareholder(shareDesc), 1, "Manager");
+                    desc = _msgs.detailTopMembersShareholder(shareDesc);
+
+                } else {
+                    desc = "";
                 }
+                members.setHTML(ii * 2, 1, desc, 1, "Manager");
                 SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""
                     + member.name, member.name.getMemberId()), "Name");
                 members.setWidget((ii * 2) + 1, 0, name);
