@@ -297,7 +297,6 @@ public class ThaneAVRGameBackend
 
         // .getPlayer()
         o["player_getRoomId_v1"] = player_getRoomId_v1;
-        o["player_getFriendInfo_v1"] = player_getFriendInfo_v1;
         o["player_moveToRoom_v1"] = player_moveToRoom_v1;
         o["getPlayerName_v1"] = getPlayerName_v1;
         o["holdsTrophy_v1"] = holdsTrophy_v1;
@@ -582,11 +581,6 @@ public class ThaneAVRGameBackend
     protected function player_getRoomId_v1 (playerId :int) :int
     {
         return getPlayerRoomId(playerId);
-    }
-
-    protected function player_getFriendInfo_v1 (playerId :int) :Array
-    {
-        return []; // TODO
     }
 
     protected function player_moveToRoom_v1 (playerId :int, roomId :int, exitCoords :Array) :void
