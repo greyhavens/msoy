@@ -56,6 +56,8 @@ public class MoneyMessageListener
                 SubscriptionBilledMessage ssm = null;
                 try {
                     ssm = new SubscriptionBilledMessage(message);
+                    log.info("Noting subscription billed: ", "accountName", ssm.accountName,
+                        "months", ssm.months);
                     _subLogic.noteSubscriptionBilled(ssm.accountName, ssm.months);
                 } catch (Exception e) {
                     log.warning("Fouled-up trying to note a subscription billing",
@@ -70,6 +72,7 @@ public class MoneyMessageListener
                 SubscriptionEndedMessage sem = null;
                 try {
                     sem = new SubscriptionEndedMessage(message);
+                    log.info("Noting subscription ended: ", "accountName", sem.accountName);
                     _subLogic.noteSubscriptionEnded(sem.accountName);
                 } catch (Exception e) {
                     log.warning("Fouled-up trying to note a subscription end",
@@ -82,6 +85,8 @@ public class MoneyMessageListener
         listen("barsBought", new MessageListener() {
             public void received (final byte[] message, final Replier replier) {
                 BarsBoughtMessage bbm = new BarsBoughtMessage(message);
+                log.info("Noting bars bought: ", "accountName", bbm.accountName,
+                    "numBars", bbm.numBars, "payment", bbm.payment);
                 MemberRecord member = _memberRepo.loadMember(bbm.accountName);
                 if (member != null) {
                     _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
@@ -96,6 +101,7 @@ public class MoneyMessageListener
         listen("getBarCount", new MessageListener() {
             public void received (final byte[] message, final Replier replier) {
                 GetBarCountMessage gbcm = new GetBarCountMessage(message);
+                log.info("Getting bar count: ", "accountName", gbcm.accountName);
                 MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
                 try {
                     int bars;
