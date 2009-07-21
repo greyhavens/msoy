@@ -722,7 +722,7 @@ public class ItemLogic
 
         ItemFlagRecord frec = new ItemFlagRecord();
         frec.comment = comment;
-        frec.kind = (byte)kind.ordinal();
+        frec.kind = kind;
         frec.memberId = memberId;
         frec.itemType = ident.type;
         // if we're being asked to flag a clone, instead make it refer to the original

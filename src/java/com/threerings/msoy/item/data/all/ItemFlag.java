@@ -6,6 +6,7 @@ package com.threerings.msoy.item.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.samskivert.depot.ByteEnum;
 
 /**
  * A flag on an item.
@@ -15,9 +16,22 @@ public class ItemFlag
 {
     /** Kinds of flags. */
     public enum Kind
-        implements IsSerializable
+        implements IsSerializable, ByteEnum
     {
-        MATURE, COPYRIGHT, STOLEN, UNATTRIBUTED, SCAM, BROKEN;
+        MATURE(0), COPYRIGHT(1), STOLEN(2), UNATTRIBUTED(3), SCAM(4), BROKEN(5);
+
+        // from ByteEnum
+        public byte toByte ()
+        {
+            return _value;
+        }
+
+        Kind (int value)
+        {
+            _value = (byte)value;
+        }
+
+        protected byte _value;
     }
 
     /** Item flagged. */

@@ -43,8 +43,8 @@ public class ItemFlagRecord extends PersistentRecord
     /** Id of item flagged. */
     @Id public int itemId;
 
-    /** Type of flag (from {@link ItemFlag.Kind}. */
-    @Id public byte kind;
+    /** Kind of flag. */
+    @Id public ItemFlag.Kind kind;
 
     /** When the flag was entered. */
     public Timestamp timestamp;
@@ -57,7 +57,7 @@ public class ItemFlagRecord extends PersistentRecord
         ItemFlag itemFlag = new ItemFlag();
         itemFlag.memberId = memberId;
         itemFlag.itemIdent = new ItemIdent(itemType, itemId);
-        itemFlag.kind = ItemFlag.Kind.values()[kind];
+        itemFlag.kind = kind;
         itemFlag.comment = comment;
         itemFlag.timestamp = new Date(timestamp.getTime());
         return itemFlag;
