@@ -17,8 +17,6 @@ import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
-import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -60,16 +58,16 @@ public class ExternalFeeder
         String vector = template.toEntryVector("trophy");
         String templateId = String.valueOf(template.bundleId);
 
+        // we use it in 3 places, but they all just go to the game detail screen on facebook
+        // TODO: link different things to different places? more redirects in FacebookServlet?
+        String actionURL =
+            DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector;
+
         List<Object> images = new ArrayList<Object>();
         if (event.getGameMediaURL() != null) {
-            images.add(createImage(event.getGameMediaURL(),
-                Pages.GAMES.makeURL("vec", vector,
-                    SharedNaviUtil.GameDetails.INSTRUCTIONS.args(event.getGameId()))));
+            images.add(createImage(event.getGameMediaURL(), actionURL));
         }
-
-        images.add(createImage(event.getMediaURL(),
-            Pages.GAMES.makeURL("vec", vector,
-                SharedNaviUtil.GameDetails.TROPHIES.args(event.getGameId()))));
+        images.add(createImage(event.getMediaURL(), actionURL));
 
         setPublicImages(images);
 
@@ -79,8 +77,7 @@ public class ExternalFeeder
         data.put("game_desc", event.getGameDescription());
         data.put("trophy", event.getTrophy());
         data.put("descrip", event.getDescription());
-        data.put("action_url",
-            DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector);
+        data.put("action_url", actionURL);
         data.put("vector", vector);
         data.put("images", JavaScriptUtil.createArray(images));
 
