@@ -14,32 +14,32 @@
 }
 
 .notifications .Close {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   right: 8px;
   top: 8px;
   background: url(/images/facebook/notifications_close.png) no-repeat;
 }
 
 .notifications .Close-up-hovering, .notifications .Close-down-hovering {
-  background-position: 0px -16px;
+  background-position: 0px -12px;
 }
 
 .notifications .Cycle {
-  width: 16px;
-  height: 16px;
-  right: 26px;
+  width: 12px;
+  height: 12px;
+  right: 22px;
   top: 8px;
   background: url(/images/facebook/notifications_cycle.png) no-repeat;
 }
 
 .notifications .Cycle-up-hovering, .notifications .Cycle-down-hovering {
-  background-position: 0px -16px;
+  background-position: 0px -12px;
 }
 
 .notifications .notification {
   height: 74px;
-  width: 686px;
+  width: 702px;
   left: 2px;
   top: 2px;
 }
@@ -47,7 +47,7 @@
 .notifications .easyButton {
   width: 120px;
   height: 20px;
-  left: 555px;
+  left: 571px;
   background-color: #d8dfea;
   text-decoration: none;
   text-align: center;
@@ -73,7 +73,7 @@
 }
 
 .notifications .Bookmark .Reminder {
-  width: 525px;
+  width: 541px;
   font-size: 14px;
   font-weight: bold;
   top: 15px;
@@ -86,7 +86,7 @@
 }
 
 .notifications .PublishTrophy .Tip {
-  width: 455px;
+  width: 471px;
   font-size: 14px;
   font-weight: bold;
   top: 15px;

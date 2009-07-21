@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
 import com.threerings.gwt.util.CookieUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.notifications.gwt.Notification;
