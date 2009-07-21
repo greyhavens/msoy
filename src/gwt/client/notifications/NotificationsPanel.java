@@ -26,13 +26,10 @@ import com.threerings.msoy.notifications.gwt.NotificationsService;
 import com.threerings.msoy.notifications.gwt.NotificationsServiceAsync;
 import com.threerings.msoy.notifications.gwt.Notification.TrophyData;
 import com.threerings.msoy.web.gwt.CookieNames;
-import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.SharedNaviUtil;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.InfoCallback;
-import client.util.Link;
 import client.util.MediaUtil;
 import client.util.events.TrophyEvent;
 
@@ -117,7 +114,7 @@ public class NotificationsPanel extends FlowPanel
                         removeNotification(notif);
                     }
                 }));
-            panel.add(easyButton(2, _msgs.bookmarkLater(), new ClickHandler() {
+            panel.add(easyButton(3, _msgs.bookmarkLater(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         removeNotification(notif);
                     }
@@ -130,8 +127,9 @@ public class NotificationsPanel extends FlowPanel
             final TrophyData trophyData = (TrophyData)notif.data;
             final Trophy trophy = trophyData.trophy;
             panel.add(createThumbnail(trophy.trophyMedia, "Thumbnail"));
-            panel.add(MsoyUI.createLabel(_msgs.publishTrophyTip(trophy.name), "Tip"));
-            panel.add(easyButton(1, _msgs.publishTrophy(), new ClickHandler () {
+            panel.add(MsoyUI.createLabel(
+                _msgs.publishTrophyTip(trophy.name, trophyData.gameName), "Tip"));
+            panel.add(easyButton(2, _msgs.publishTrophy(), new ClickHandler () {
                 @Override public void onClick (ClickEvent event) {
                     CShell.frame.dispatchEvent(new TrophyEvent(trophy.gameId, trophyData.gameName,
                         trophyData.gameDesc, trophy.name, trophy.ident, trophy.description,
@@ -139,8 +137,6 @@ public class NotificationsPanel extends FlowPanel
                     removeNotification(notif);
                 }
             }));
-            panel.add(easyButton(2, _msgs.publishTrophyInfo(), Link.createHandler(Pages.GAMES,
-                SharedNaviUtil.GameDetails.TROPHIES.args(trophy.gameId))));
             break;
         }
         return panel;
@@ -168,11 +164,11 @@ public class NotificationsPanel extends FlowPanel
         CookieUtil.set("/", 365, CookieNames.BOOKMARKED, "t");
     }
 
-    protected PushButton easyButton (int row, String text, ClickHandler handler)
+    protected PushButton easyButton (int slot, String text, ClickHandler handler)
     {
         PushButton button = MsoyUI.createImageButton("easyButton", handler);
         button.setText(text);
-        button.getElement().setAttribute("row", "" + row);
+        button.getElement().setAttribute("slot", "" + slot);
         return button;
     }
 

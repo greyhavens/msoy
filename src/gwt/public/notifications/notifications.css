@@ -5,8 +5,12 @@
  */
 
 .notifications, .notifications .Absolute {
-  width: 100%;
+  width: 758px;
   height: 78px;
+}
+
+.notifications {
+  border: 1px solid gray;
 }
 
 .notifications .Close {
@@ -56,16 +60,20 @@
   text-decoration: underline;
 }
 
-.notifications .easyButton[row="1"] {
+.notifications .easyButton[slot="1"] {
   top: 10px;
 }
 
-.notifications .easyButton[row="2"] {
+.notifications .easyButton[slot="2"] {
+  top: 25px;
+}
+
+.notifications .easyButton[slot="3"] {
   top: 40px;
 }
 
 .notifications .Bookmark .Reminder {
-  width: 535px;
+  width: 525px;
   font-size: 14px;
   font-weight: bold;
   top: 15px;
@@ -77,7 +85,7 @@
 }
 
 .notifications .PublishTrophy .Tip {
-  width: 465px;
+  width: 455px;
   font-size: 14px;
   font-weight: bold;
   top: 15px;

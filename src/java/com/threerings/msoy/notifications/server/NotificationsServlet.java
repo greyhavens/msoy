@@ -42,7 +42,6 @@ public class NotificationsServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        long now = System.currentTimeMillis();
         List<Notification> result = Lists.newArrayList();
 
         // set up the map of already-published trophies
@@ -57,9 +56,6 @@ public class NotificationsServlet extends MsoyServiceServlet
         IntMap<GameInfoRecord> games = IntMaps.newHashIntMap();
         for (TrophyRecord trophy : _trophyRepo.loadRecentTrophies(
             memrec.memberId, MAX_RECENT_TROPHIES)) {
-            if (now - trophy.whenEarned.getTime() > MAX_TROPHY_AGE) {
-                break;
-            }
             if (published.containsKey(toActionId(trophy))) {
                 continue;
             }
@@ -89,7 +85,6 @@ public class NotificationsServlet extends MsoyServiceServlet
 
     protected static final int MAX_TROPHY_NOTIFICATIONS = 10;
     protected static final int MAX_RECENT_TROPHIES = 50;
-    protected static final long MAX_TROPHY_AGE = 3 * 24 * 60 * 60 * 1000L; // 3 days
 
     @Inject FacebookRepository _facebookRepo;
     @Inject MsoyGameRepository _mgameRepo;
