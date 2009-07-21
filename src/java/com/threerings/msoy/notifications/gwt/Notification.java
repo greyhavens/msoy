@@ -34,6 +34,9 @@ public class Notification
         /** The game description. */
         public String gameDesc;
 
+        /** The game icon. */
+        public String gameMediaURL;
+
         /**
          * Creates a new trophy data for serialization.
          */
@@ -44,11 +47,12 @@ public class Notification
         /**
          * Creates a new trophy data.
          */
-        public TrophyData (Trophy trophy, String gameName, String gameDesc)
+        public TrophyData (Trophy trophy, String gameName, String gameDesc, String gameMediaURL)
         {
             this.trophy = trophy;
             this.gameName = gameName;
             this.gameDesc = gameDesc;
+            this.gameMediaURL = gameMediaURL;
         }
     }
 

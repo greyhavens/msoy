@@ -18,6 +18,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SharedNaviUtil;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -60,12 +61,17 @@ public class ExternalFeeder
         String templateId = String.valueOf(template.bundleId);
 
         List<Object> images = new ArrayList<Object>();
-        images.add(createImage(event.getMediaURL(),
-            Pages.GAMES.makeURL("vec", vector, event.getGameId(), "d", "t")));
-
-        if (DeploymentConfig.devDeployment) {
-            setPublicImages(images);
+        if (event.getGameMediaURL() != null) {
+            images.add(createImage(event.getGameMediaURL(),
+                Pages.GAMES.makeURL("vec", vector,
+                    SharedNaviUtil.GameDetails.INSTRUCTIONS.args(event.getGameId()))));
         }
+
+        images.add(createImage(event.getMediaURL(),
+            Pages.GAMES.makeURL("vec", vector,
+                SharedNaviUtil.GameDetails.TROPHIES.args(event.getGameId()))));
+
+        setPublicImages(images);
 
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("game_id", event.getGameId());
@@ -94,15 +100,38 @@ public class ExternalFeeder
     }
 
     /**
-     * Swap in some images with arbitrary public URLs here to satisfy Facebook's validation.
+     * Swaps in some images with arbitrary public URLs here if this is a dev deployment that does
+     * not use media.whirled.com.
      */
     protected void setPublicImages (List<Object> images)
     {
-        for (int ii = 0; ii < images.size(); ++ii) {
-            JavaScriptObject jsobj = (JavaScriptObject)images.get(ii);
-            JavaScriptUtil.setDictionaryEntry(jsobj, "src", 
-                "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png");
+        String pubRoot = "http://media.whirled.com/";
+        if (!DeploymentConfig.devDeployment || DeploymentConfig.mediaURL.equals(pubRoot)) {
+            return;
         }
+
+        String pubImages[] = {
+            pubRoot + "708ca91490155abc18f99a74e8bba5129b5033f6.png",  // CC game thumb
+            pubRoot + "240aa9267fa6dc8422588e6818862301fd658e6f.png"}; // CC Freshman trophy
+
+        if (images.size() == 2) {
+            // game and trophy images
+            setImageSrc(images, 0, pubImages[0]);
+            setImageSrc(images, 1, pubImages[1]);
+
+        } else if (images.size() == 1) {
+            // trophy only
+            setImageSrc(images, 0, pubImages[1]);
+        }        
+    }
+
+    /**
+     * Swap in some images with arbitrary public URLs here to satisfy Facebook's validation.
+     */
+    protected void setImageSrc (List<Object> images, int idx, String url)
+    {
+        JavaScriptObject jsobj = (JavaScriptObject)images.get(idx);
+        JavaScriptUtil.setDictionaryEntry(jsobj, "src", url);
     }
 
     /**

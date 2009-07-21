@@ -126,8 +126,8 @@ public class NotificationsPanel extends FlowPanel
             panel.add(easyButton(2, _msgs.publishTrophy(), new ClickHandler () {
                 @Override public void onClick (ClickEvent event) {
                     CShell.frame.dispatchEvent(new TrophyEvent(trophy.gameId, trophyData.gameName,
-                        trophyData.gameDesc, trophy.name, trophy.ident, trophy.description,
-                        trophy.trophyMedia.getMediaPath()));
+                        trophyData.gameDesc, trophyData.gameMediaURL, trophy.name, trophy.ident,
+                        trophy.description, trophy.trophyMedia.getMediaPath()));
                     removeNotification(notif);
                 }
             }));

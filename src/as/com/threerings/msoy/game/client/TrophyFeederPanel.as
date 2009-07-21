@@ -135,9 +135,11 @@ public class TrophyFeederPanel extends FloatingPanel
 
     protected function postTrophyToFeed (trophy :Trophy, btn :CommandButton) :void
     {
+        // TODO: get the game thumbnail. ugh
+        var gameThumbnail :String = null;
         _ctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
             trophy.gameId, _gameName, trophy.name, trophy.description,
-            trophy.trophyMedia.getMediaPath(), _gameDescription, trophy.ident ]);
+            trophy.trophyMedia.getMediaPath(), _gameDescription, trophy.ident, gameThumbnail ]);
 
         btn.enabled = false;
         if (_mode == MODE_NEW) {

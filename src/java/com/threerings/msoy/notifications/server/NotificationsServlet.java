@@ -71,8 +71,8 @@ public class NotificationsServlet extends MsoyServiceServlet
             // out the trophy info passed to facebook, but our templates don't currently require it
             Notification notif = new Notification();
             notif.type = NotificationType.TROPHY;
-            notif.data = new Notification.TrophyData(
-                trophy.toTrophy(), ginfo.name, ginfo.description);
+            notif.data = new Notification.TrophyData(trophy.toTrophy(), ginfo.name,
+                ginfo.description, ginfo.getShotMedia().getMediaPath());
             result.add(notif);
 
             if (result.size() == MAX_TROPHY_NOTIFICATIONS) {

@@ -32,8 +32,8 @@ public class TrophyEvent extends FlashEvent
     {
     }
 
-    public TrophyEvent (int gameId, String gameName, String gameDesc, String trophyName,
-        String trophyIdent, String trophyDesc, String mediaURL)
+    public TrophyEvent (int gameId, String gameName, String gameDesc, String gameMediaURL,
+        String trophyName, String trophyIdent, String trophyDesc, String trophyMediaURL)
     {
         _gameId = gameId;
         _game = gameName;
@@ -41,7 +41,8 @@ public class TrophyEvent extends FlashEvent
         _trophy = trophyName;
         _ident = trophyIdent;
         _descrip = trophyDesc;
-        _mediaURL = mediaURL;
+        _mediaURL = trophyMediaURL;
+        _gameMediaURL = gameMediaURL;
     }
 
     /**
@@ -66,6 +67,14 @@ public class TrophyEvent extends FlashEvent
     public String getGameDescription ()
     {
         return _gameDesc;
+    }
+
+    /**
+     * Returns the URL of the game's media to be shown.
+     */
+    public String getGameMediaURL ()
+    {
+        return _gameMediaURL;
     }
 
     /**
@@ -110,6 +119,7 @@ public class TrophyEvent extends FlashEvent
         _mediaURL = JavaScriptUtil.getStringElement(args, 4);
         _gameDesc = JavaScriptUtil.getStringElement(args, 5);
         _ident = JavaScriptUtil.getStringElement(args, 6);
+        _gameMediaURL = JavaScriptUtil.getStringElement(args, 7);
     }
 
     @Override // from FlashEvent
@@ -122,6 +132,7 @@ public class TrophyEvent extends FlashEvent
         JavaScriptUtil.setStringElement(args, 4, _mediaURL);
         JavaScriptUtil.setStringElement(args, 5, _gameDesc);
         JavaScriptUtil.setStringElement(args, 6, _ident);
+        JavaScriptUtil.setStringElement(args, 7, _gameMediaURL);
     }
 
     @Override // from FlashEvent
@@ -137,6 +148,7 @@ public class TrophyEvent extends FlashEvent
     protected String _trophy;
     protected String _descrip;
     protected String _mediaURL;
+    protected String _gameMediaURL;
     protected String _gameDesc;
     protected String _ident;
 }
