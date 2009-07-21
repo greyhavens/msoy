@@ -66,6 +66,7 @@ public class NotificationsServlet extends MsoyServiceServlet
                     continue;
                 }
             }
+
             // note we don't resolve the trophy description here; the client only needs it to fill
             // out the trophy info passed to facebook, but our templates don't currently require it
             Notification notif = new Notification();
@@ -73,6 +74,10 @@ public class NotificationsServlet extends MsoyServiceServlet
             notif.data = new Notification.TrophyData(
                 trophy.toTrophy(), ginfo.name, ginfo.description);
             result.add(notif);
+
+            if (result.size() == MAX_TROPHY_NOTIFICATIONS) {
+                break;
+            }
         }
 
         return result;
