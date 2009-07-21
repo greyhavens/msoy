@@ -99,9 +99,9 @@ public class ExternalFeeder
     protected void setPublicImages (List<Object> images)
     {
         for (int ii = 0; ii < images.size(); ++ii) {
-            images.set(ii, createImage(
-                "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
-                "http://www.whirled.com/go/games-d_827_t"));
+            JavaScriptObject jsobj = (JavaScriptObject)images.get(ii);
+            JavaScriptUtil.setDictionaryEntry(jsobj, "src", 
+                "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png");
         }
     }
 

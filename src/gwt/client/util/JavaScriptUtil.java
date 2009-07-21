@@ -106,7 +106,7 @@ public class JavaScriptUtil
 
         } catch (e) {
             if ($wnd.console) {
-                $wnd.console.log("Error in createFromMap: " + e);
+                $wnd.console.log("Error in createDictionaryFromMap: " + e);
             }
             return null;
         }
@@ -123,9 +123,24 @@ public class JavaScriptUtil
 
         } catch (e) {
             if ($wnd.console) {
-                $wnd.console.log("Error in getMapEntry: " + e);
+                $wnd.console.log("Error in getDictionaryEntry: " + e);
             }
             return null;
+        }
+    }-*/;
+
+    /**
+     * Attempts to set an entry in a java script dictionary. In the event of an exception, logs the
+     * error to the console, if active.
+     */
+    public static native <K, V> void setDictionaryEntry (JavaScriptObject map, K key, V value) /*-{
+        try {
+            map[key] = value;
+
+        } catch (e) {
+            if ($wnd.console) {
+                $wnd.console.log("Error in setDictionaryEntry: " + e);
+            }
         }
     }-*/;
 
