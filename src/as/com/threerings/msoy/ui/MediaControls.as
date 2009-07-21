@@ -20,8 +20,8 @@ import flash.text.TextFieldAutoSize;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.SimpleIconButton;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.ui.SimpleIconButton;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.flash.media.MediaPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
 

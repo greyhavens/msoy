@@ -9,7 +9,7 @@ import flash.events.KeyboardEvent;
 import flash.ui.Mouse;
 import mx.containers.VBox;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 import com.threerings.flex.CommandButton;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;

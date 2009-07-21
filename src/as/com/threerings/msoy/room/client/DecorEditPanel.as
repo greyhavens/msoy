@@ -21,7 +21,7 @@ import mx.events.CloseEvent;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 
 import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;

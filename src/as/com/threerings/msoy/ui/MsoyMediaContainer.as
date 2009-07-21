@@ -17,8 +17,8 @@ import mx.events.SWFBridgeEvent;
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.MediaContainer;
-import com.threerings.flash.MenuUtil;
+import com.threerings.media.MediaContainer;
+import com.threerings.ui.MenuUtil;
 import com.threerings.flash.media.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;

@@ -33,7 +33,7 @@ import com.threerings.crowd.chat.client.ChatSnooper;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
-import com.threerings.flash.MenuUtil;
+import com.threerings.ui.MenuUtil;
 
 import com.threerings.flash.media.AudioPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;

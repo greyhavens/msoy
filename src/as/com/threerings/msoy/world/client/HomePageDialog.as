@@ -12,7 +12,7 @@ import mx.containers.Tile;
 import mx.containers.Canvas;
 import mx.controls.Text;
 
-import com.threerings.flash.GraphicsUtil;
+import com.threerings.display.GraphicsUtil;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.io.TypedArray;
 import com.threerings.util.Log;

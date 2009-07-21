@@ -9,8 +9,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import com.threerings.flash.MathUtil;
-import com.threerings.flash.Vector2;
+import com.threerings.util.MathUtil;
+import com.threerings.geom.Vector2;
 
 import com.threerings.msoy.ui.MsoyLoadedAsset;
 

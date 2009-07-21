@@ -30,7 +30,7 @@ import caurina.transitions.Tweener;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexWrapper;
 

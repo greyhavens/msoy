@@ -37,7 +37,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
-import com.threerings.flash.ColorUtil;
+import com.threerings.display.ColorUtil;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;

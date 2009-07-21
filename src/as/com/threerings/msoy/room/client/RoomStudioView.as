@@ -17,7 +17,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 

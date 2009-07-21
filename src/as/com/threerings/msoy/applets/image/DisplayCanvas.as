@@ -28,7 +28,7 @@ import mx.containers.Canvas;
 
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.LoaderUtil;
+import com.threerings.display.LoaderUtil;
 
 /**
  * Dispatched when the size of the image is known.

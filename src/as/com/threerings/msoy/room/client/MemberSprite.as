@@ -259,7 +259,7 @@ import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MediaDesc;

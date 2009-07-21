@@ -12,7 +12,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.util.Log;
 
 import com.threerings.crowd.data.OccupantInfo;

@@ -22,7 +22,7 @@ import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.MenuUtil;
+import com.threerings.ui.MenuUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;

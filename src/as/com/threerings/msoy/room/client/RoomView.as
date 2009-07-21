@@ -25,7 +25,7 @@ import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flash.MenuUtil;
+import com.threerings.ui.MenuUtil;
 
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;

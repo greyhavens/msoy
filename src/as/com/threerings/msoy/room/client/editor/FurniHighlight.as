@@ -7,8 +7,8 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 
-import com.threerings.flash.GraphicsUtil;
-import com.threerings.flash.MediaContainer;
+import com.threerings.display.GraphicsUtil;
+import com.threerings.media.MediaContainer;
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomElementSprite;
 

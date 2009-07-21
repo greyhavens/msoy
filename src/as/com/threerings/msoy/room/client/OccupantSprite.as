@@ -16,8 +16,8 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.ArrayUtil;
 
-import com.threerings.flash.FilterUtil;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.display.FilterUtil;
+import com.threerings.text.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 

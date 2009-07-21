@@ -23,7 +23,7 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
-import com.threerings.flash.ColorUtil;
+import com.threerings.display.ColorUtil;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
@@ -592,7 +592,7 @@ import flash.geom.Rectangle;
 
 import com.threerings.util.Log;
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 
 import com.threerings.msoy.client.PlaceLayer;
 

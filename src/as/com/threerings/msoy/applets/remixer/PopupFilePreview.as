@@ -32,7 +32,7 @@ import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.CameraSnapshotter;
+import com.threerings.display.CameraSnapshotter;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;

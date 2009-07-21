@@ -5,7 +5,7 @@ package com.threerings.msoy.room.client {
 
 import flash.geom.Point;
 
-import com.threerings.flash.Vector3;
+import com.threerings.geom.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.room.data.MsoyLocation;
 
@@ -505,7 +505,7 @@ public class RoomMetrics
 }
 }
 
-import com.threerings.flash.Vector3;
+import com.threerings.geom.Vector3;
 
 // These internal wrapper classes specify the vector's coordinate space. This let us use the
 // compiler to catch coordinate space conversion mistakes at compile time.

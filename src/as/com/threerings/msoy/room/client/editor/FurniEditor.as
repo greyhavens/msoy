@@ -6,7 +6,7 @@ package com.threerings.msoy.room.client.editor {
 import flash.display.Graphics;
 import flash.geom.Point;
 
-import com.threerings.flash.GraphicsUtil;
+import com.threerings.display.GraphicsUtil;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomView;

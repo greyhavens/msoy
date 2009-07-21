@@ -15,7 +15,7 @@ import flash.text.TextField;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;

@@ -11,7 +11,7 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 
 import com.threerings.msoy.client.MsoyParameters;
 

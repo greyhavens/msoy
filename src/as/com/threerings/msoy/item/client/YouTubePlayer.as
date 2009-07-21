@@ -23,7 +23,7 @@ import com.threerings.util.Log;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.LoaderUtil;
+import com.threerings.display.LoaderUtil;
 
 import com.threerings.flash.media.MediaPlayerCodes;
 import com.threerings.flash.media.VideoPlayer;

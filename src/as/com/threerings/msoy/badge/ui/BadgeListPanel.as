@@ -59,7 +59,7 @@ import mx.controls.Label;
 
 import mx.core.ScrollPolicy;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 
 import com.threerings.flex.FlexWrapper;
 

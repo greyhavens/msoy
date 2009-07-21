@@ -16,7 +16,7 @@ import mx.containers.HBox;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Integer;
 
-import com.threerings.flash.DisplayUtil;
+import com.threerings.display.DisplayUtil;
 
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;

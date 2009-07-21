@@ -32,7 +32,7 @@ import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.GraphicsUtil;
+import com.threerings.display.GraphicsUtil;
 
 /**
  * Dispatched when a color is selected.

@@ -5,7 +5,7 @@ package com.threerings.msoy.ui {
 
 import mx.core.Container;
 
-import com.threerings.flash.MediaContainer;
+import com.threerings.media.MediaContainer;
 
 import com.threerings.msoy.data.all.MediaDesc;
 

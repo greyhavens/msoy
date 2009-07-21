@@ -24,8 +24,8 @@ import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.ParameterUtil;
 
-import com.threerings.flash.SimpleSkinButton;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.ui.SimpleSkinButton;
+import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.applets.net.MediaUploadUtil;
 

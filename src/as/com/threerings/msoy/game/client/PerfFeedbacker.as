@@ -10,7 +10,7 @@ import flash.events.Event;
 
 import flash.utils.getTimer;
 
-import com.threerings.flash.ColorUtil;
+import com.threerings.display.ColorUtil;
 
 import com.threerings.msoy.game.data.PerfRecord;
 

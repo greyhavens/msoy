@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.flash.AnimationImpl;
+import com.threerings.display.AnimationImpl;
 
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;

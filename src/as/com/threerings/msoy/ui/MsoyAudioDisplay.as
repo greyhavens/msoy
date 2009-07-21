@@ -16,7 +16,7 @@ import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.flash.media.AudioPlayer;
 import com.threerings.flash.media.Mp3AudioPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;

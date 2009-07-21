@@ -15,7 +15,7 @@ import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.flash.CameraSnapshotter;
+import com.threerings.display.CameraSnapshotter;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandComboBox;

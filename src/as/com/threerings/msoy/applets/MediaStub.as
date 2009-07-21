@@ -22,7 +22,7 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
-import com.threerings.flash.LoaderUtil;
+import com.threerings.display.LoaderUtil;
 
 /**
  * The MediaStub is built and placed on the media server. It is then loaded

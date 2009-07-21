@@ -25,7 +25,7 @@ import flash.utils.ByteArray;
 
 import mx.controls.scrollClasses.ScrollBar;
 
-import com.threerings.flash.BackgroundJPGEncoder;
+import com.threerings.display.BackgroundJPGEncoder;
 
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;

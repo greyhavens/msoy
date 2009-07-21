@@ -16,7 +16,7 @@ import flash.text.TextFormat;
 
 import com.threerings.util.Name;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 
 import com.threerings.msoy.utils.TextUtil;
 

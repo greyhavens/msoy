@@ -15,7 +15,7 @@ import mx.containers.HBox;
 import mx.controls.Image;
 import mx.controls.Label;
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;

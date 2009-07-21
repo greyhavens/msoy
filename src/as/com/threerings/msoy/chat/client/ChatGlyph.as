@@ -16,7 +16,7 @@ import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
 
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.text.TextFieldUtil;
 
 public class ChatGlyph extends Sprite
 {
