@@ -5,6 +5,7 @@ package com.threerings.msoy.item.client {
 
 import mx.containers.Grid;
 import mx.controls.TextArea;
+import mx.controls.TextInput;
 
 import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
@@ -44,8 +45,13 @@ public class FlagItemDialog extends FloatingPanel
         _comment.percentWidth = 100;
         _comment.maxChars = 2047;
 
+        _link = new TextInput();
+        _link.percentWidth = 100;
+        _link.maxChars = 255;
+
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, Msgs.ITEM.get("l.flag_kind"), _kind);
+        GridUtil.addRow(grid, Msgs.ITEM.get("l.flag_link"), _link);
         GridUtil.addRow(grid, Msgs.ITEM.get("l.flag_comment"), _comment);
         addChild(grid);
 
@@ -60,8 +66,13 @@ public class FlagItemDialog extends FloatingPanel
 
     override protected function okButtonClicked () :void
     {
+        // TODO: require some text in the link if STOLEN, COPYRIGHT or UNATTRIBUTED
+        var comment :String = _comment.text;
+        if (_link.text.length > 0) {
+            comment = "Link: " + _link.text + ". " + comment;
+        }
         var isvc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        isvc.addFlag(_ctx.getClient(), _ident, ItemFlag_Kind(_kind.selectedItem), _comment.text,
+        isvc.addFlag(_ctx.getClient(), _ident, ItemFlag_Kind(_kind.selectedItem), comment,
             _ctx.confirmListener("m.flag_reported", MsoyCodes.ITEM_MSGS));
     }
 
@@ -70,5 +81,7 @@ public class FlagItemDialog extends FloatingPanel
     protected var _kind :CommandComboBox;
 
     protected var _comment :TextArea;
+
+    protected var _link :TextInput;
 }
 }
