@@ -59,11 +59,6 @@ public class NotificationsPanel extends FlowPanel
         _notification.setStyleName("notification");
         add(content);
 
-        if (!DeploymentConfig.fbnotifications) {
-            setVisible(false);
-            return;
-        }
-
         if (CookieUtil.get(CookieNames.BOOKMARKED) == null) {
             Notification bookmark = new Notification();
             bookmark.type = NotificationType.BOOKMARK;
