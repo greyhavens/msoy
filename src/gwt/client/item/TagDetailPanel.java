@@ -121,6 +121,9 @@ public class TagDetailPanel extends VerticalPanel
                         addCommand(_cmsgs.tagMatureFlag(), ItemFlag.Kind.MATURE);
                         addCommand(_cmsgs.tagCopyrightFlag(), ItemFlag.Kind.COPYRIGHT);
                         addCommand(_cmsgs.tagStolenFlag(), ItemFlag.Kind.STOLEN);
+                        addCommand(_cmsgs.tagUnattributedFlag(), ItemFlag.Kind.UNATTRIBUTED);
+                        addCommand(_cmsgs.tagScamFlag(), ItemFlag.Kind.SCAM);
+                        addCommand(_cmsgs.tagBrokenFlag(), ItemFlag.Kind.BROKEN);
                     }
                     protected void addCommand (String label, ItemFlag.Kind kind) {
                         addMenuItem(label, new FlagCommand(kind));
@@ -322,10 +325,11 @@ public class TagDetailPanel extends VerticalPanel
 
         public void execute ()
         {
-            BorderedDialog dialog = new BorderedDialog(false) {};
+            final BorderedDialog dialog = new BorderedDialog(false) {};
             dialog.setHeaderTitle(_cmsgs.tagFlagDialogTitle());
 
             String[] prompts;
+            boolean showLinkBox = false;
             switch (_kind) {
             default:
             case MATURE:
@@ -335,32 +339,62 @@ public class TagDetailPanel extends VerticalPanel
             case COPYRIGHT:
                 prompts = new String[] {
                     _cmsgs.tagCopyrightPrompt1(), _cmsgs.tagCopyrightPrompt2() };
+                showLinkBox = true;
                 break;
 
             case STOLEN:
                 prompts = new String[] { _cmsgs.tagStolenPrompt1(), _cmsgs.tagStolenPrompt2() };
+                showLinkBox = true;
+                break;
+
+            case UNATTRIBUTED:
+                prompts = new String[] {
+                    _cmsgs.tagUnattributedPrompt1(), _cmsgs.tagUnattributedPrompt2() };
+                showLinkBox = true;
+                break;
+
+            case SCAM:
+                prompts = new String[] { _cmsgs.tagScamPrompt1(), _cmsgs.tagScamPrompt2() };
+                break;
+
+            case BROKEN:
+                prompts = new String[] { _cmsgs.tagBrokenPrompt1(), _cmsgs.tagBrokenPrompt2() };
                 break;
             }
 
             final SmartTable content = new SmartTable(0, 10);
             content.setWidth("300px");
-            content.setText(0, 0, prompts[0]);
-            content.setText(1, 0, prompts[1]);
-            content.setWidget(2, 0, _comment = MsoyUI.createTextArea(null, 64, 4));
+            int row = 0;
+            content.setText(row++, 0, prompts[0], 2, null);
+            content.setText(row++, 0, prompts[1], 2, null);
+            if (showLinkBox) {
+                content.setText(row, 0, _cmsgs.tagFlagDialogLinkLabel());
+                content.setWidget(row++, 1, _link = MsoyUI.createTextBox("", 255, 48));
+            }
+            content.setWidget(row++, 0, _comment = MsoyUI.createTextArea(null, 64, 4), 2, null);
             dialog.setContents(content);
             dialog.addButton(new Button(_cmsgs.cancel(), dialog.onCancel()));
-            dialog.addButton(new Button(_cmsgs.tagFlagDialogAccept(), dialog.onAction(
-                new Command() {
-                    public void execute () {
-                        _flagger.addFlag(_kind, _comment.getText());
-                        MsoyUI.info(_cmsgs.tagThanks());
+            dialog.addButton(new Button(_cmsgs.tagFlagDialogAccept(), new ClickHandler() {
+                @Override public void onClick (ClickEvent event) {
+                    if (_link != null && _link.getText().trim().equals("")) {
+                        MsoyUI.error(_cmsgs.errFlagLinkRequired());
+                        return;
                     }
-                })));
+                    String comment = _comment.getText();
+                    if (_link != null) {
+                        comment = "Link: " + _link.getText() + ". " + comment;
+                    }
+                    _flagger.addFlag(_kind, comment);
+                    MsoyUI.info(_cmsgs.tagThanks());
+                    dialog.hide();
+                }
+            }));
             dialog.show();
         }
 
         protected ItemFlag.Kind _kind;
         protected TextArea _comment;
+        protected TextBox _link;
     }
 
     protected TagService _service;
