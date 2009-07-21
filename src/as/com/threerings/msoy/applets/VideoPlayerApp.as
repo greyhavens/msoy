@@ -11,8 +11,8 @@ import flash.external.ExternalInterface;
 
 import com.threerings.util.ParameterUtil;
 
-import com.threerings.flash.media.FlvVideoPlayer;
-import com.threerings.flash.media.VideoPlayer;
+import com.threerings.media.FlvVideoPlayer;
+import com.threerings.media.VideoPlayer;
 
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.ui.MsoyVideoDisplay;

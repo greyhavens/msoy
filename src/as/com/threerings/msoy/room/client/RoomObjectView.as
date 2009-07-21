@@ -35,8 +35,8 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.ui.MenuUtil;
 
-import com.threerings.flash.media.AudioPlayer;
-import com.threerings.flash.media.MediaPlayerCodes;
+import com.threerings.media.AudioPlayer;
+import com.threerings.media.MediaPlayerCodes;
 
 import com.threerings.whirled.data.SceneUpdate;
 

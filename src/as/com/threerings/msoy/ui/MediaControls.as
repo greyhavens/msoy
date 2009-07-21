@@ -22,8 +22,8 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.ui.SimpleIconButton;
 import com.threerings.text.TextFieldUtil;
-import com.threerings.flash.media.MediaPlayer;
-import com.threerings.flash.media.MediaPlayerCodes;
+import com.threerings.media.MediaPlayer;
+import com.threerings.media.MediaPlayerCodes;
 
 import com.threerings.msoy.ui.skins.CommentButton;
 import com.threerings.msoy.ui.skins.VolumeButton;

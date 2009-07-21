@@ -18,8 +18,8 @@ import caurina.transitions.Tweener;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.media.MediaPlayerCodes;
-import com.threerings.flash.media.VideoPlayer;
+import com.threerings.media.MediaPlayerCodes;
+import com.threerings.media.VideoPlayer;
 
 /**
  * The msoy-skinned video display.

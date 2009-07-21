@@ -20,7 +20,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.display.FilterUtil;
-import com.threerings.flash.media.VideoPlayer;
+import com.threerings.media.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;

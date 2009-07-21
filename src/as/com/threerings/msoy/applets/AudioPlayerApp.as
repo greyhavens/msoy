@@ -11,7 +11,7 @@ import flash.external.ExternalInterface;
 
 import com.threerings.util.ParameterUtil;
 
-import com.threerings.flash.media.Mp3AudioPlayer;
+import com.threerings.media.Mp3AudioPlayer;
 
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.ui.MsoyAudioDisplay;

@@ -19,7 +19,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.media.MediaContainer;
 import com.threerings.ui.MenuUtil;
-import com.threerings.flash.media.VideoPlayer;
+import com.threerings.media.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;

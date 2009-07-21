@@ -30,9 +30,9 @@ import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flash.media.AudioPlayer;
-import com.threerings.flash.media.MediaPlayerCodes;
-import com.threerings.flash.media.Mp3AudioPlayer;
+import com.threerings.media.AudioPlayer;
+import com.threerings.media.MediaPlayerCodes;
+import com.threerings.media.Mp3AudioPlayer;
 
 import com.threerings.flex.CommandMenu;
 
