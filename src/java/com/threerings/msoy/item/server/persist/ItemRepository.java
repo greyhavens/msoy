@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
@@ -451,10 +452,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         });
 
         // remove any items beyond maxCount
-        for (int ii = size - 1; ii >= maxCount; ii--) {
-            list.remove(ii);
-        }
-
+        CollectionUtil.limit(list, maxCount);
         return list;
     }
 
