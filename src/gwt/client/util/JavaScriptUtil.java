@@ -3,6 +3,7 @@
 
 package client.util;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -88,7 +89,8 @@ public class JavaScriptUtil
     /**
      * Converts a java map into a javascript dictionary that can then be passed into a native
      * method. Returns null in the event of an exception and logs the error to the console, if
-     * active.
+     * active. Note that each value must be a JSNI type (String, boolean, JavaScriptObject or a
+     * numeric type other than long). As far as I'm aware, the map key type must be String. 
      */
     public static native <K, V> JavaScriptObject createDictionaryFromMap (Map<K, V> map) /*-{
         try {
@@ -143,6 +145,28 @@ public class JavaScriptUtil
         } catch (e) {
             if ($wnd.console) {
                 $wnd.console.log("Error in dictionaryToString: " + e);
+            }
+            return null;
+        }
+    }-*/;
+
+    /**
+     * Creates a javascript array containing the given elements. Note that each element must be a
+     * JSNI type (String, boolean, JavaScriptObject or a numeric type other than long). Returns
+     * null in the event of an exception and logs the error to the console, if active.
+     */
+    public static native JavaScriptObject createArray (List<Object> elements) /*-{
+        try {
+            var array = [];
+            var iter = elements.@java.util.List::iterator()();
+            while (iter.@java.util.Iterator::hasNext()()) {
+                var elem = iter.@java.util.Iterator::next()();
+                array.push(elem);
+            }
+            return array;
+        } catch (e) {
+            if ($wnd.console) {
+                $wnd.console.log("Error in createArray: " + e);
             }
             return null;
         }
