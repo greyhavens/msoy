@@ -3,10 +3,19 @@
 
 package client.frame;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.ServiceUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
+
 import com.threerings.msoy.web.gwt.FacebookTemplateCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -14,6 +23,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.util.InfoCallback;
+import client.util.JavaScriptUtil;
 import client.util.events.FlashEvents;
 import client.util.events.TrophyEvent;
 
@@ -49,25 +59,50 @@ public class ExternalFeeder
         String vector = template.toEntryVector("trophy");
         String templateId = String.valueOf(template.bundleId);
 
-        // Swap in some arbitrary public URLs here to satisfy Facebook's overly aggressive URL
-        // validation... however, the other links in the template appear to fail as well. But since
-        // they are in the template there isn't much we can do about it except make them link to
-        // whirled.com. But then the template creation UI is very difficult to use... I guess we
-        // will just have to get in line with Facebook and never test anything in development. If
-        // we need a release to fix trophy publishing, so be it.
-        // TODO: remove hackery if and when Facebook realize the value of testing
-        String mediaURL = event.getMediaURL();
-        String trophyURL = Pages.GAMES.makeURL("vec", vector, event.getGameId(), "d", "t");
-        if (DeploymentConfig.devDeployment) {
-            mediaURL = "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png";
-            trophyURL = "http://www.whirled.com/go/games-d_827_t";
-        }
-        String actionUrl =
-            DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector;
+        List<Object> images = new ArrayList<Object>();
+        images.add(createImage(event.getMediaURL(),
+            Pages.GAMES.makeURL("vec", vector, event.getGameId(), "d", "t")));
 
-        publishTrophy(actionUrl, templateId, event.getGameId(), event.getGame(),
-            event.getGameDescription(), event.getTrophy(), event.getTrophyIdent(),
-            event.getDescription(), mediaURL, trophyURL, vector);
+        if (DeploymentConfig.devDeployment) {
+            setPublicImages(images);
+        }
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("game_id", event.getGameId());
+        data.put("game", event.getGame());
+        data.put("game_desc", event.getGameDescription());
+        data.put("trophy", event.getTrophy());
+        data.put("descrip", event.getDescription());
+        data.put("action_url",
+            DeploymentConfig.facebookCanvasUrl + "?game=" + event.getGameId() + "&vec=" + vector);
+        data.put("vector", vector);
+        data.put("images", JavaScriptUtil.createArray(images));
+
+        publishTrophy(templateId, event.getGameId(), event.getTrophyIdent(),
+            JavaScriptUtil.createDictionaryFromMap(data));
+    }
+
+    /**
+     * Creates a JSNI dictionary referring to the given image source and href.
+     */
+    protected JavaScriptObject createImage (String src, String href)
+    {
+        Map<String, Object> image = new HashMap<String, Object>();
+        image.put("src", src);
+        image.put("href", href);
+        return JavaScriptUtil.createDictionaryFromMap(image);
+    }
+
+    /**
+     * Swap in some images with arbitrary public URLs here to satisfy Facebook's validation.
+     */
+    protected void setPublicImages (List<Object> images)
+    {
+        for (int ii = 0; ii < images.size(); ++ii) {
+            images.set(ii, createImage(
+                "http://mediacloud.whirled.com/240aa9267fa6dc8422588e6818862301fd658e6f.png",
+                "http://www.whirled.com/go/games-d_827_t"));
+        }
     }
 
     /**
@@ -86,25 +121,13 @@ public class ExternalFeeder
     }
 
     protected native void publishTrophy (
-        String actionUrl, String templateId, int gameId, String game, String gameDesc,
-        String trophy, String ident, String descrip, String mediaURL, String trophyURL,
-        String vector)
-    /*-{
-        var data = {
-            "game_id": gameId,
-            "game": game,
-            "game_desc": gameDesc,
-            "trophy": trophy,
-            "descrip": descrip,
-            "vector": vector,
-            "action_url": actionUrl,
-            "images": [ {"src": mediaURL, "href": actionUrl} ] };
-
+        String templateId, int gameId, String ident, JavaScriptObject data) /*-{
         var trophyPublished = this.@client.frame.ExternalFeeder::trophyPublished(ILjava/lang/String;);
         $wnd.FB_PostTrophy(templateId, data, function () {
             trophyPublished(gameId, ident);
         });
     }-*/;
+
 
     // Handy JSON for pasting into Facebook's template editor
     /*
@@ -114,7 +137,6 @@ public class ExternalFeeder
           "game_desc" :
               "Build an army of corpses to destroy your foes in this puzzle-action hybrid.",
           "trophy" : "Freshman",
-          "descrip" : "Complete Chapter 3 of \"The Incident.\"",
           "vector" : "v.none",
           "action_url": "http://www.whirled.com/go/games-d_827",
           "images" : [ {"src" :
