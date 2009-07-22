@@ -116,12 +116,6 @@ public class RoomView extends Sprite
     }
 
     // from MsoyPlaceView
-    public function padVertical () :Boolean
-    {
-        return true;
-    }
-
-    // from MsoyPlaceView
     public function shouldUseChatOverlay () :Boolean
     {
         return true;

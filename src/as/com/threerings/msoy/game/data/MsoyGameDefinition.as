@@ -40,22 +40,6 @@ public class MsoyGameDefinition extends GameDefinition
         return digest;
     }
 
-    /**
-     * Configures the path to this game's media.
-     */
-    public function setMediaPath (path :String) :void
-    {
-        digest = path;
-    }
-
-    /**
-     * Configures the path to this game's server media.
-     */
-    public function setServerMediaPath (mediaPath :String) :void
-    {
-        serverMedia = mediaPath;
-    }
-
     // from GameDefinition
     public override function getServerMediaPath (gameId :int) :String
     {

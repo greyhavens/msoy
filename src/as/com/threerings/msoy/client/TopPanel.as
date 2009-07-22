@@ -328,13 +328,6 @@ public class TopPanel extends Canvas
         _placeBox.setActualSize(w, h);
     }
 
-    protected function padVertical (view :PlaceView) :Boolean
-    {
-        return (view is MsoyPlaceView) && (view as MsoyPlaceView).padVertical();
-    }
-
-    protected static const CHAT_PADDING :int = 15;
-
     /** The giver of life. */
     protected var _ctx :MsoyContext;
 

@@ -31,12 +31,6 @@ public class NoPlaceView extends LayeredContainer
     }
 
     // from MsoyPlaceView
-    public function padVertical () :Boolean
-    {
-        return false;
-    }
-
-    // from MsoyPlaceView
     public function shouldUseChatOverlay () :Boolean
     {
         return true;

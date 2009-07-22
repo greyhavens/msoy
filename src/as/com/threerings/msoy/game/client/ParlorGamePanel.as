@@ -81,12 +81,6 @@ public class ParlorGamePanel extends WhirledGamePanel
     }
 
     // from MsoyPlaceView
-    public function padVertical () :Boolean
-    {
-        return false;
-    }
-
-    // from MsoyPlaceView
     public function shouldUseChatOverlay () :Boolean
     {
         return (_showPlayers != null);
