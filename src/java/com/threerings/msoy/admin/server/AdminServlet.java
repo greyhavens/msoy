@@ -40,6 +40,7 @@ import com.whirled.bureau.data.BureauTypes;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
+import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -62,6 +63,7 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -750,6 +752,22 @@ public class AdminServlet extends MsoyServiceServlet
         }
     }
 
+    @Override // from AdminService
+    public void sendFacebookNotification (String id, String text, int delay)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookLogic.scheduleNotification(id, text, delay * 60 * 1000L);
+    }
+
+    @Override // from AdminService
+    public List<NotificationStatus> getFacebookNotificationStatuses ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        return _facebookLogic.getNotificationStatuses();
+    }
+
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
@@ -926,6 +944,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ABTestRepository _testRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected ContestRepository _contestRepo;
+    @Inject protected FacebookLogic _facebookLogic;
     @Inject protected FacebookRepository _facebookRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected ItemFlagRepository _itemFlagRepo;

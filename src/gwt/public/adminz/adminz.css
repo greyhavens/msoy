@@ -305,3 +305,34 @@
 .entrySummary .AltRow {
   background: #DDDDDD;
 }
+
+/* ------------------------------------
+   FacebookNotificationsPanel
+-------------------------------------*/
+
+.facebookNotifications {
+  font-size: 12px;
+}
+
+.facebookNotifications .Instructions {
+  padding: 10px;
+  font-size: 14px;
+}
+
+.facebookNotifications .Form .Row {
+  padding: 2px 0 7px 10px;
+}
+
+.facebookNotifications .Form .Row .gwt-Label {
+  padding: 3px;
+}
+
+.facebookNotifications .Status .Row {
+  padding: 1px 0 1px 20px;
+}
+
+.facebookNotifications .Status .Value {
+  padding-left: 5px;
+}
+
+

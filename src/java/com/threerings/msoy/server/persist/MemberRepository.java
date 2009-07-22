@@ -1134,6 +1134,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads all mappings for the given external site.
+     */
+    public List<ExternalMapRecord> loadExternalMappings (ExternalAuther auther)
+    {
+        return findAll(ExternalMapRecord.class, new Where(
+            ExternalMapRecord.PARTNER_ID.eq(auther.toByte())));
+    }
+
+    /**
      * Creates a temp ban record for a member, or updates a pre-existing temp ban record.
      */
     public void tempBanMember (int memberId, Timestamp expires, String warning)

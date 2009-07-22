@@ -15,6 +15,7 @@ import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -174,4 +175,14 @@ public interface AdminServiceAsync
      */
     void updateFacebookTemplates (Set<FacebookTemplate> changed, Set<FacebookTemplate> removed,
         AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#sendFacebookNotification}.
+     */
+    void sendFacebookNotification (String id, String text, int delay, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#getFacebookNotificationStatuses}.
+     */
+    void getFacebookNotificationStatuses (AsyncCallback<List<NotificationStatus>> callback);
 }

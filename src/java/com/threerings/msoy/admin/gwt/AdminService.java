@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import com.threerings.gwt.util.PagedResult;
 
@@ -20,6 +21,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
+import com.threerings.msoy.facebook.gwt.NotificationStatus;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -32,10 +34,14 @@ import com.threerings.msoy.money.gwt.BroadcastHistory;
 /**
  * Defines remote services available to admins.
  */
+@RemoteServiceRelativePath(value=AdminService.REL_PATH)
 public interface AdminService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/adminsvc";
+
+    /** The relative path for this service. */
+    public static final String REL_PATH = "../../.." + AdminService.ENTRY_POINT;
 
     /**
      * Return value for an item transaction query.
@@ -267,5 +273,18 @@ public interface AdminService extends RemoteService
      * by the given codes.
      */
     void updateFacebookTemplates (Set<FacebookTemplate> changed, Set<FacebookTemplate> removed)
+        throws ServiceException;
+
+    /**
+     * Sends a Facebook notification to all our Facebook users after the given delay in minutes.
+     * Users who have removed the application are not addressed.
+     */
+    void sendFacebookNotification (String id, String text, int delay)
+        throws ServiceException;
+
+    /**
+     * Gets the statuses of all registered facebook notifications.
+     */
+    List<NotificationStatus> getFacebookNotificationStatuses ()
         throws ServiceException;
 }
