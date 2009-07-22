@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.channels.SocketChannel;
+import java.util.Enumeration;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -178,7 +180,36 @@ public class MsoyHttpServer extends Server
     {
         for (String pname : ParameterUtil.getParameterNames(req)) {
             for (String value : req.getParameterValues(pname)) {
-                log.info("  " + pname + " -> " + value);
+                log.info("  param " + pname + " -> " + value);
+            }
+        }
+    }
+
+    public static void dumpCookies (HttpServletRequest req)
+    {
+        if (req.getCookies() == null) {
+            log.info("  null cookies");
+            return;
+        }
+        for (Cookie cookie : req.getCookies()) {
+            log.info("  cookie " + cookie.getName() + " -> " + cookie.getValue());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void dumpHeaders (HttpServletRequest req)
+    {
+        Enumeration<String> names = req.getHeaderNames();
+        if (names == null) {
+            log.info("  null headers");
+            return;
+        }
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            Enumeration<String> values = req.getHeaders(name);
+            while (values.hasMoreElements()) {
+                String value = values.nextElement();
+                log.info("  header " + name + " -> " + value);
             }
         }
     }
