@@ -55,6 +55,7 @@ public class TopPanel extends Canvas
     public function TopPanel (ctx :MsoyContext, controlBar :ControlBar)
     {
         _ctx = ctx;
+        _showChrome = !ctx.getMsoyClient().isChromeless();
         percentWidth = 100;
         percentHeight = 100;
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -65,45 +66,37 @@ public class TopPanel extends Canvas
         _ctx.getMsoyChatDirector().setChatTabs(chatTabs);
 
         _headerBar = new HeaderBar(_ctx, this, chatTabs);
-        if (UberClient.isRegularClient()) {
-            _headerBar.includeInLayout = false;
-            _headerBar.setStyle("top", 0);
-            _headerBar.setStyle("left", 0);
-            _headerBar.setStyle("right", 0);
-            if (!_ctx.getMsoyClient().isChromeless()) {
-                addChild(_headerBar);
-            }
-        }
+        _headerBar.includeInLayout = false;
+        _headerBar.setStyle("left", 0);
+        _headerBar.setStyle("right", 0);
+        addChild(_headerBar);
 
         _placeBox = new PlaceBox();
         _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
+        // set up the control bar
         _controlBar = controlBar;
+        _controlBar.includeInLayout = false;
         _controlBar.init(this);
-        if (!_ctx.getMsoyClient().isChromeless()) {
-            // set up the control bar
-            _controlBar.includeInLayout = false;
-            _controlBar.setStyle("bottom", 0);
-            _controlBar.setStyle("left", 0);
-            _controlBar.setStyle("right", 0);
-            addChild(_controlBar);
+        _controlBar.setStyle("left", 0);
+        _controlBar.setStyle("right", 0);
+        addChild(_controlBar);
 
-            // show a subtle build-stamp on dev builds
-            if (DeploymentConfig.devDeployment) {
-                var buildStamp :Label = new Label();
-                buildStamp.includeInLayout = false;
-                buildStamp.mouseEnabled = false;
-                buildStamp.mouseChildren = false;
-                buildStamp.text = "Build: " + DeploymentConfig.buildTime;
-                buildStamp.setStyle("color", "#F7069A");
-                buildStamp.setStyle("fontSize", 8);
-                buildStamp.setStyle("bottom", ControlBar.HEIGHT);
-                // The scrollbar isn't really this thick, but it's pretty close.
-                buildStamp.setStyle("right", ScrollBar.THICKNESS);
-                addChild(buildStamp);
-            }
+        // show a subtle build-stamp on dev builds
+        if (DeploymentConfig.devDeployment) {
+            var buildStamp :Label = new Label();
+            buildStamp.includeInLayout = false;
+            buildStamp.mouseEnabled = false;
+            buildStamp.mouseChildren = false;
+            buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+            buildStamp.setStyle("color", "#F7069A");
+            buildStamp.setStyle("fontSize", 8);
+            buildStamp.setStyle("bottom", ControlBar.HEIGHT);
+            // The scrollbar isn't really this thick, but it's pretty close.
+            buildStamp.setStyle("right", ScrollBar.THICKNESS);
+            addChild(buildStamp);
         }
 
         // only create and display an overlay for real clients
@@ -157,6 +150,15 @@ public class TopPanel extends Canvas
     public function getPlaceChatOverlay () :ComicOverlay
     {
         return _comicOverlay;
+    }
+
+    /**
+     * Change whether we're showing or hiding most of the UI.
+     */
+    public function setShowChrome (show :Boolean) :void
+    {
+        _showChrome = show;
+        layoutPanels();
     }
 
     /**
@@ -265,7 +267,7 @@ public class TopPanel extends Canvas
 
     protected function getHeaderBarHeight () :int
     {
-        return (_headerBar.parent != null) ? HeaderBar.HEIGHT : 0;
+        return _showChrome ? HeaderBar.HEIGHT : 0;
     }
 
     protected function layoutPanels () :void
@@ -276,11 +278,8 @@ public class TopPanel extends Canvas
         app.width = _ctx.getWidth();
         app.height = _ctx.getHeight();
 
-        _controlBar.setStyle("left", 0);
-        if (_headerBar.parent != null) {
-            _headerBar.setStyle("left", 0);
-            _headerBar.setStyle("top", 0);
-        }
+        _controlBar.setStyle("bottom", _showChrome ? 0 : -ControlBar.HEIGHT);
+        _headerBar.setStyle("top", _showChrome ? 0 : -HeaderBar.HEIGHT);
 
         if (_leftPanel != null) {
             _leftPanel.setStyle("top", getHeaderBarHeight());
@@ -312,7 +311,7 @@ public class TopPanel extends Canvas
         var w :int = _ctx.getWidth() - getLeftPanelWidth();
         var h :int = _ctx.getHeight() - top;
 
-        if (_controlBar.parent != null) {
+        if (_showChrome) {
             bottom += ControlBar.HEIGHT;
             h -= ControlBar.HEIGHT;
         }
@@ -338,6 +337,9 @@ public class TopPanel extends Canvas
 
     /** The giver of life. */
     protected var _ctx :MsoyContext;
+
+    /** Are we showing the header and control bars? */
+    protected var _showChrome :Boolean;
 
     /** The box that will hold the placeview. */
     protected var _placeBox :PlaceBox;

@@ -310,6 +310,7 @@ public class AVRGameBackend extends ControlBackend
         o["localChat_v1"] = localChat_v1;
         o["getStageSize_v1"] = getPaintableArea_v1; // backwards compat.
         o["getPaintableArea_v1"] = getPaintableArea_v1;
+        o["setShowChrome_v1"] = setShowChrome_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
@@ -747,6 +748,12 @@ public class AVRGameBackend extends ControlBackend
         validateChat(msg);
         // The sendChat() messages will end up being routed through this method on each client.
         displayInfo(null, MessageBundle.taint(msg), ChatCodes.PLACE_CHAT_TYPE);
+    }
+
+    // LocalSubControl
+    protected function setShowChrome_v1 (show :Boolean) :void
+    {
+        _wctx.getTopPanel().setShowChrome(show);
     }
 
     // LocalSubControl
