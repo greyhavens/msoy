@@ -35,6 +35,7 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.Lifecycle;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -171,6 +172,15 @@ public class MsoyHttpServer extends Server
             handlers.addHandler(logger);
         }
         setHandler(handlers);
+    }
+
+    public static void dumpParameters (HttpServletRequest req)
+    {
+        for (String pname : ParameterUtil.getParameterNames(req)) {
+            for (String value : req.getParameterValues(pname)) {
+                log.info("  " + pname + " -> " + value);
+            }
+        }
     }
 
     protected static class MsoyChannelConnector extends SelectChannelConnector

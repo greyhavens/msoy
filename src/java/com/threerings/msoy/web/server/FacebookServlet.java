@@ -92,7 +92,7 @@ public class FacebookServlet extends HttpServlet
         throws ServletException, IOException
     {
         log.info("Got HEAD request " + req.getRequestURL());
-        dumpParameters(req);
+        MsoyHttpServer.dumpParameters(req);
     }
 
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
@@ -100,7 +100,7 @@ public class FacebookServlet extends HttpServlet
     {
         if (DeploymentConfig.devDeployment) {
             log.info("Got GET request " + req.getRequestURL());
-            dumpParameters(req);
+            MsoyHttpServer.dumpParameters(req);
         }
 
         // determine whether we're in game mode or Whirled mode
@@ -181,16 +181,7 @@ public class FacebookServlet extends HttpServlet
         throws ServletException, IOException
     {
         log.info("Got POST request " + req.getRequestURL());
-        dumpParameters(req);
-    }
-
-    protected void dumpParameters (HttpServletRequest req)
-    {
-        for (String pname : ParameterUtil.getParameterNames(req)) {
-            for (String value : req.getParameterValues(pname)) {
-                log.info("  " + pname + " -> " + value);
-            }
-        }
+        MsoyHttpServer.dumpParameters(req);
     }
 
     protected void sendResponse (HttpServletResponse rsp, String message)
