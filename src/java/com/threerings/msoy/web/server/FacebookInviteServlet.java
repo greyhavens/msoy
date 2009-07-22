@@ -204,7 +204,12 @@ public class FacebookInviteServlet extends HttpServlet
 
     protected void logSentInvites (HttpServletRequest req, int memberId, boolean isGame)
     {
-        String ids = req.getParameter("ids[]");
+        if (DeploymentConfig.devDeployment) {
+            MsoyHttpServer.dumpParameters(req);
+        }
+
+        // http://wiki.developers.facebook.com/index.php/Fb:request-form#POST_Variables
+        String[] ids = req.getParameterValues("ids[]");
         log.info("Facebook invite complete", "ids", ids, "method", req.getMethod());
 
         // null means they pressed skip (not all that relevant for a FB connect app)
@@ -222,18 +227,8 @@ public class FacebookInviteServlet extends HttpServlet
         }
 
         // report an invite sent for each id
-        // TODO: why is facebook not giving us the promised comma-separated list of users ids?
-        // http://wiki.developers.facebook.com/index.php/Fb:request-form#POST_Variables
-        if (ids.length() > 0) {
-            for (int pos, npos = 0; npos != -1; ) {
-                pos = npos;
-                npos = ids.indexOf(',', pos);
-                String recip = npos == -1 ? ids.substring(pos) : ids.substring(pos, npos);
-                _logger.gameInviteSent(gameId, memberId, recip, "facebook");
-                if (npos != -1) {
-                    ++npos;
-                }
-            }
+        for (String id : ids) {
+            _logger.gameInviteSent(gameId, memberId, id, "facebook");
         }
     }
 
