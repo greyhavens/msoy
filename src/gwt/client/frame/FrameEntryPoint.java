@@ -126,21 +126,8 @@ public class FrameEntryPoint
         // clear out the loading HTML so we can display a browser warning or load Whirled
         DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
 
-        // If the browser is unsupported, hide the page (still being built) and show a warning.
-        ClickHandler continueClicked = new ClickHandler() {
-            public void onClick (ClickEvent event) {
-                // close the warning and show the page if the visitor choose to continue
-                RootPanel.get(LOADING).clear();
-                RootPanel.get(LOADING).setVisible(false);
-            }
-        };
-        Widget warningDialog = BrowserTest.getWarningDialog(continueClicked);
-        if (warningDialog != null) {
-            RootPanel.get(LOADING).add(warningDialog);
-        } else {
-            RootPanel.get(LOADING).clear();
-            RootPanel.get(LOADING).setVisible(false);
-        }
+        RootPanel.get(LOADING).clear();
+        RootPanel.get(LOADING).setVisible(false);
     }
 
     // from interface ValueChangeHandler
