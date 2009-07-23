@@ -12,6 +12,8 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.web.gwt.ExternalAuther;
 
+import com.threerings.msoy.facebook.server.FacebookAuthHandler;
+
 import com.threerings.msoy.server.persist.MemberRepository;
 
 /**

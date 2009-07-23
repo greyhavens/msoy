@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.facebook.server;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -27,6 +27,7 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.FacebookServlet;
 
 import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.server.ExternalAuthHandler;
 
 import static com.threerings.msoy.Log.log;
 

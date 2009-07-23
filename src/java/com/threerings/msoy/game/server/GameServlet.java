@@ -59,6 +59,7 @@ import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
+import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FacebookInfo;
@@ -86,7 +87,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
-import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.PopularPlacesSnapshot;

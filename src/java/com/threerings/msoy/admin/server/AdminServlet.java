@@ -40,7 +40,6 @@ import com.whirled.bureau.data.BureauTypes;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
-import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -64,6 +63,7 @@ import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.NotificationStatus;
+import com.threerings.msoy.facebook.server.FacebookLogic;
 import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;

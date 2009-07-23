@@ -24,12 +24,13 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.facebook.server.FacebookLogic;
 
 import com.threerings.msoy.game.gwt.FacebookInfo;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.facebook.server;
 
 import java.net.URL;
 import java.util.Date;
@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 
 import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
