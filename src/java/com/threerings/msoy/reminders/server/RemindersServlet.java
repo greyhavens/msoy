@@ -5,9 +5,11 @@ package com.threerings.msoy.reminders.server;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.IntMap;
@@ -16,6 +18,8 @@ import com.samskivert.util.IntMaps;
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
+import com.threerings.msoy.game.gwt.ArcadeData;
+import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -53,11 +57,17 @@ public class RemindersServlet extends MsoyServiceServlet
             }
         }
 
-        // add notifications for recent, unpublished trophies
+        // load up facebook approved games
+        Set<Integer> approvedGames = Sets.newHashSet();
+        approvedGames.addAll(Lists.transform(_mgameRepo.loadArcadeEntries(
+            ArcadeData.Portal.FACEBOOK, true), ArcadeEntryRecord.TO_GAME_ID));
+
+        // add notifications for recent, unpublished trophies in approved games
         IntMap<GameInfoRecord> games = IntMaps.newHashIntMap();
         for (TrophyRecord trophy : _trophyRepo.loadRecentTrophies(
             memrec.memberId, MAX_RECENT_TROPHIES)) {
-            if (published.containsKey(toActionId(trophy))) {
+            if (published.containsKey(toActionId(trophy)) ||
+                !approvedGames.contains(trophy.gameId)) {
                 continue;
             }
             GameInfoRecord ginfo = games.get(trophy.gameId);
