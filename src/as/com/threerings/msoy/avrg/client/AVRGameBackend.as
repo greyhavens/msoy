@@ -773,8 +773,9 @@ public class AVRGameBackend extends ControlBackend
     {
         if (bounds != null) {
             // Make a copy to prevent usercode from changing our stored value without
-            // first going through this method.
-            bounds = bounds.clone();
+            // first going through this method. Don't use clone, in case the supplied Rectangle
+            // is a subclass that has overridden clone to do funky things.
+            bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
         }
         _wctx.getTopPanel().getPlaceContainer().setRoomBounds(bounds);
     }
