@@ -97,6 +97,43 @@ public class FacebookRepository extends DepotRepository
     }
 
     /**
+     * Loads all notifications.
+     */
+    public List<FacebookNotificationRecord> loadNotifications ()
+    {
+        return findAll(FacebookNotificationRecord.class);
+    }
+
+    /**
+     * Updates or adds a new notification.
+     */
+    public void storeNotification (String id, String text)
+    {
+        FacebookNotificationRecord notifRec = new FacebookNotificationRecord();
+        notifRec.id = id;
+        notifRec.text = text;
+        store(notifRec);
+    }
+
+    /**
+     * Loads and returns the text of the notification with the given id, or null if it does not
+     * exist.
+     */
+    public String getNotification (String id)
+    {
+        FacebookNotificationRecord notifRec = load(FacebookNotificationRecord.getKey(id));
+        return notifRec == null ? null : notifRec.text;
+    }
+
+    /**
+     * Deletes the notification with the given id.
+     */
+    public void deleteNotification (String id)
+    {
+        delete(FacebookNotificationRecord.getKey(id));
+    }
+
+    /**
      * Creates a new action with the given fields and the current time.
      */
     protected FacebookActionRecord createAction (
@@ -115,5 +152,6 @@ public class FacebookRepository extends DepotRepository
     {
         classes.add(FacebookTemplateRecord.class);
         classes.add(FacebookActionRecord.class);
+        classes.add(FacebookNotificationRecord.class);
     }
 }
