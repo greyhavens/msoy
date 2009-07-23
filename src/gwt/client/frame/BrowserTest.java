@@ -3,6 +3,7 @@
 
 package client.frame;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 
 import com.google.gwt.core.client.GWT;
@@ -26,6 +27,8 @@ public class BrowserTest
      */
     public static Widget getWarningDialog (ClickHandler continueClicked)
     {
+        boolean facebook = CShell.isFacebook();
+
         // TEMP: clear old cookie
         CookieUtil.clear("/", "BrowserTest_seen");
         // if they already have a cookie, don't show a message
@@ -39,23 +42,26 @@ public class BrowserTest
         String agent = getUserAgent().toLowerCase();
         // old MSIE
         if (agent.contains("msie 6.0")) {
+            // facebook or not, this is a very old browser at this point
             message = _msgs.browserOldMsie();
 
-        // MSIE 8, needs "compatability view" for now.
+        // MSIE 8 works alright until further notice
         } else if (agent.contains("msie 8")) {
-            message = _msgs.browserMsie8();
+            message = null;
 
-        // newer MSIE, but not too new!
+        // not 6 or 8, must be 7?
         } else if (agent.contains("msie")) {
             message = null;
 
-        // safari
+        // safari/chrome
         } else if (agent.contains("webkit")) {
-            message = _msgs.browserUnsupported();
+            // TEMP: safari doesn't support framed apps *at all* by default
+            // Note we have to check isFramed here because the facebook cookie is not present
+            message = Layout.isFramed() ? _msgs.browserSafariNoCookies() : null;
 
         // opera
         } else if (agent.contains("opera")) {
-            message = _msgs.browserUnsupported();
+            message = facebook ? null : _msgs.browserUnsupported();
 
         // lump all gecko browsers into firefox
         } else if (agent.contains("gecko")) {
@@ -71,7 +77,7 @@ public class BrowserTest
 
         // all else
         } else {
-            message = _msgs.browserUnsupported();
+            message = facebook ? null : _msgs.browserUnsupported();
         }
 
         FlowPanel browserTestWidget = null;
