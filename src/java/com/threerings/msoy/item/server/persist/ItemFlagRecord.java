@@ -68,7 +68,7 @@ public class ItemFlagRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link ItemFlagRecord}
      * with the supplied key values.
      */
-    public static Key<ItemFlagRecord> getKey (int memberId, byte itemType, int itemId, byte kind)
+    public static Key<ItemFlagRecord> getKey (int memberId, byte itemType, int itemId, ItemFlag.Kind kind)
     {
         return new Key<ItemFlagRecord>(
                 ItemFlagRecord.class,
