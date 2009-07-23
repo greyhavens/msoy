@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.threerings.msoy.facebook.gwt.NotificationStatus;
+import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -76,6 +77,9 @@ public class FacebookLogic
      */
     public void scheduleNotification (String id, String content, long delay)
     {
+        // convert to millis
+        delay *= 60 * 1000L;
+
         synchronized (_notifications) {
             NotificationBatch notification = _notifications.get(id);
             if (notification == null) {
@@ -83,6 +87,19 @@ public class FacebookLogic
             }
             notification.schedule(delay, content);
         }
+    }
+
+    /**
+     * Schedules a notification with text loaded from the database.
+     */
+    public void scheduleNotification (String id, long delay)
+    {
+        String text = _facebookRepo.getNotification(id);
+        if (StringUtil.isBlank(text)) {
+            log.warning("Missing notification", "id", id);
+            return;
+        }
+        scheduleNotification(id, text, delay);
     }
 
     /**
@@ -202,8 +219,9 @@ public class FacebookLogic
 
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
 
-    protected @Inject @BatchInvoker Invoker _batchInvoker;
-    protected @Inject MemberRepository _memberRepo;
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected FacebookRepository _facebookRepo;
+    @Inject protected MemberRepository _memberRepo;
 
     protected static final int CONNECT_TIMEOUT = 15*1000; // in millis
     protected static final int READ_TIMEOUT = 15*1000; // in millis

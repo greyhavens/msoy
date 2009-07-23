@@ -287,4 +287,22 @@ public interface AdminService extends RemoteService
      */
     List<NotificationStatus> getFacebookNotificationStatuses ()
         throws ServiceException;
+
+    /**
+     * Gets the saved facebook notifications.
+     */
+    List<FacebookNotification> loadFacebookNotifications ()
+        throws ServiceException;
+
+    /**
+     * Updates or adds a new facebook notification.
+     */
+    void saveFacebookNotification (FacebookNotification notif)
+        throws ServiceException;
+
+    /**
+     * Delets a facebook notification.
+     */
+    void deleteFacebookNotification (String id)
+        throws ServiceException;
 }

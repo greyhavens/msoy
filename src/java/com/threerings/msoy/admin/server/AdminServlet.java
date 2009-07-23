@@ -64,6 +64,7 @@ import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.facebook.gwt.FacebookTemplate;
 import com.threerings.msoy.facebook.gwt.NotificationStatus;
+import com.threerings.msoy.facebook.server.persist.FacebookNotificationRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 import com.threerings.msoy.facebook.server.persist.FacebookTemplateRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
@@ -98,6 +99,7 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo.BureauInfo;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.EntrySummary;
+import com.threerings.msoy.admin.gwt.FacebookNotification;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.ABTestLogic;
@@ -757,7 +759,7 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdminUser();
-        _facebookLogic.scheduleNotification(id, text, delay * 60 * 1000L);
+        _facebookLogic.scheduleNotification(id, text, delay);
     }
 
     @Override // from AdminService
@@ -766,6 +768,34 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireAdminUser();
         return _facebookLogic.getNotificationStatuses();
+    }
+
+    @Override // from AdminService
+    public void deleteFacebookNotification (String id)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookRepo.deleteNotification(id);
+    }
+
+    @Override // from AdminService
+    public List<FacebookNotification> loadFacebookNotifications ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        List<FacebookNotification> notifs = Lists.newArrayList();
+        for (FacebookNotificationRecord notif : _facebookRepo.loadNotifications()) {
+            notifs.add(notif.toNotification());
+        }
+        return notifs;
+    }
+
+    @Override // from AdminService
+    public void saveFacebookNotification (FacebookNotification notif)
+        throws ServiceException
+    {
+        requireAdminUser();
+        _facebookRepo.storeNotification(notif.id, notif.text);
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
