@@ -86,6 +86,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.server.FacebookLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
@@ -718,6 +719,9 @@ public class GameServlet extends MsoyServiceServlet
 
             _mgameRepo.addMochiGame(info);
 
+            // fire off a notification to get people to come back and play
+            _facebookLogic.scheduleNotification("daily_games_updated", 30);
+
         } catch (Exception e) {
             log.warning("Problem adding mochi game.", e);
             throw (ServiceException)
@@ -1055,6 +1059,7 @@ public class GameServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected CommentRepository _commentRepo;
+    @Inject protected FacebookLogic _facebookLogic;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameNodeActions _gameActions;
     @Inject protected GroupRepository _groupRepo;
