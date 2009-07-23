@@ -154,8 +154,10 @@ public class PlaceBox extends LayeredContainer
                 var p :Point = DisplayUtil.fitRectInRect(_roomBounds, new Rectangle(0, 0, w, h));
                 _base.x = Math.max(0, p.x);
                 _base.y = Math.max(0, p.y);
+                // TODO: enforce a min size?
                 w = Math.min(_roomBounds.width, w);
                 h = Math.min(_roomBounds.height, h);
+
             } else {
                 _base.x = _roomBounds.x;
                 _base.y = _roomBounds.y;
@@ -172,6 +174,9 @@ public class PlaceBox extends LayeredContainer
         } else if (_placeView != null) {
             Log.getLog(this).warning("PlaceView is not a PlayerLayer or an UIComponent.");
         }
+
+        // TODO: bubble chat can currently overflow a restricted placeview size.
+        // Fixing it was turning rabbit-holey, so I'm punting.
     }
 
     /** The mask configured on the PlaceView so that it doesn't overlap our other components. */

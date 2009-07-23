@@ -140,12 +140,12 @@ public class ComicOverlay extends ChatOverlay
         }
     }
 
-    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        for each (var cloud :BubbleCloud in _bubbles.values()) {
-            cloud.viewWidth = unscaledWidth;
-        }
-    }
+//    public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
+//    {
+//        for each (var cloud :BubbleCloud in _bubbles.values()) {
+//            cloud.viewWidth = unscaledWidth;
+//        }
+//    }
 
     /**
      * Scrolls the scrollable glyphs by applying a scroll rect to the sprite that they are on.
@@ -606,10 +606,10 @@ import com.threerings.msoy.chat.client.ComicOverlay;
  */
 class BubbleCloud
 {
-    public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, pos :Point,
-        viewWidth :Number, viewHeight :Number)
+    public function BubbleCloud (
+        overlay :ComicOverlay, maxBubbles :int, pos :Point, viewWidth :Number, viewHeight :Number)
     {
-        _scrollOverlay = overlay;
+        _overlay = overlay;
         _maxBubbles = maxBubbles;
         _pos = pos;
         _viewWidth = viewWidth;
@@ -676,7 +676,7 @@ class BubbleCloud
     {
         _bubbles.unshift(bubble);
         while (_bubbles.length > _maxBubbles) {
-            _scrollOverlay.removeGlyph(_bubbles.pop() as BubbleGlyph);
+            _overlay.removeGlyph(_bubbles.pop() as BubbleGlyph);
         }
         for (var ii :int = 1; ii < _bubbles.length; ii++) {
             (_bubbles[ii] as BubbleGlyph).removeTail();
@@ -696,7 +696,7 @@ class BubbleCloud
             }
         }
         // make sure the bubble gets removed from the overlay, whether we found it here or not.
-        _scrollOverlay.removeGlyph(bubble);
+        _overlay.removeGlyph(bubble);
     }
 
     private static const log :Log = Log.getLog(BubbleCloud);
@@ -706,7 +706,7 @@ class BubbleCloud
 
     protected var _bubbles :Array = [];
     protected var _pos :Point;
-    protected var _scrollOverlay :ComicOverlay;
+    protected var _overlay :ComicOverlay;
     protected var _maxBubbles :int;
     protected var _viewWidth :Number;
     protected var _viewHeight :Number;
