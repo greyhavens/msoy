@@ -101,6 +101,10 @@ public class AVRGameBackend extends ControlBackend
         }
 
         _partyHelper.shutdown();
+
+        // ensure the placeview gets the full display again
+        setRoomViewBounds_v1(null);
+
         super.shutdown();
     }
 
@@ -311,6 +315,8 @@ public class AVRGameBackend extends ControlBackend
         o["getStageSize_v1"] = getPaintableArea_v1; // backwards compat.
         o["getPaintableArea_v1"] = getPaintableArea_v1;
         o["setShowChrome_v1"] = setShowChrome_v1;
+        o["setOverlay_v1"] = setOverlay_v1;
+        o["setRoomViewBounds_v1"] = setRoomViewBounds_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
@@ -754,6 +760,23 @@ public class AVRGameBackend extends ControlBackend
     protected function setShowChrome_v1 (show :Boolean) :void
     {
         _wctx.getTopPanel().setShowChrome(show);
+    }
+
+    // LocalSubControl
+    protected function setOverlay_v1 (overlay :DisplayObject) :void
+    {
+        // TODO
+    }
+
+    // LocalSubControl
+    protected function setRoomViewBounds_v1 (bounds :Rectangle) :void
+    {
+        if (bounds != null) {
+            // Make a copy to prevent usercode from changing our stored value without
+            // first going through this method.
+            bounds = bounds.clone();
+        }
+        _wctx.getTopPanel().getPlaceContainer().setRoomBounds(bounds);
     }
 
     // LocalSubControl

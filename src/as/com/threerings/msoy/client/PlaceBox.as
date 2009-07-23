@@ -7,10 +7,13 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Shape;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
 
 import com.threerings.util.Log;
+
+import com.threerings.display.DisplayUtil;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyPlaceView;
@@ -81,6 +84,12 @@ public class PlaceBox extends LayeredContainer
         return false;
     }
 
+    public function setRoomBounds (r :Rectangle) :void
+    {
+        _roomBounds = r;
+        layoutPlaceView();
+    }
+
     /**
      * @return true if there are glyphs under the specified point.  If the glyph extends
      * InteractiveObject and the glyph sprite has mouseEnabled == false, it is not checked.
@@ -129,11 +138,37 @@ public class PlaceBox extends LayeredContainer
             }
         }
 
+        layoutPlaceView();
+    }
+
+    protected function layoutPlaceView () :void
+    {
+        var w :Number = this.width;
+        var h :Number = this.height;
+        if (_roomBounds == null) {
+            _base.x = 0;
+            _base.y = 0;
+
+        } else {
+            if (CLEAN_BOUNDS) {
+                var p :Point = DisplayUtil.fitRectInRect(_roomBounds, new Rectangle(0, 0, w, h));
+                _base.x = Math.max(0, p.x);
+                _base.y = Math.max(0, p.y);
+                w = Math.min(_roomBounds.width, w);
+                h = Math.min(_roomBounds.height, h);
+            } else {
+                _base.x = _roomBounds.x;
+                _base.y = _roomBounds.y;
+                w = _roomBounds.width;
+                h = _roomBounds.height;
+            }
+        }
+
         // now inform the place view of its new size
         if (_placeView is UIComponent) {
-            UIComponent(_placeView).setActualSize(width, height);
+            UIComponent(_placeView).setActualSize(w, h);
         } else if (_placeView is PlaceLayer) {
-            PlaceLayer(_placeView).setPlaceSize(width, height);
+            PlaceLayer(_placeView).setPlaceSize(w, h);
         } else if (_placeView != null) {
             Log.getLog(this).warning("PlaceView is not a PlayerLayer or an UIComponent.");
         }
@@ -144,5 +179,9 @@ public class PlaceBox extends LayeredContainer
 
     /** The current place view. */
     protected var _placeView :PlaceView;
+
+    protected var _roomBounds :Rectangle;
+
+    protected static const CLEAN_BOUNDS :Boolean = true;
 }
 }
