@@ -108,6 +108,18 @@ public class StringUtil
         return value;
     }
 
+    /**
+     * Truncates the string so it has length less than the given limit. Returns null if the input
+     * is null.
+     */
+    public static String truncate (String str, int limit)
+    {
+        if (str == null) {
+            return null;
+        }
+        return str.length() > limit ? str.substring(0, limit) : str;
+    }
+
     /** Map of strings that must be replaced inside html attributes and their replacements. (They
      * need to be applied in order so amps are not double escaped.) */
     protected static final String[][] ATTR_ESCAPES = {
