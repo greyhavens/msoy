@@ -706,22 +706,21 @@ public class WorldController extends MsoyController
             return;
         }
 
+        // observe location changes
+        var adapter :LocationAdapter;
         // retry this function on location change
         var didChange :Function = function (place :PlaceObject) :void {
             _wctx.getLocationDirector().removeLocationObserver(adapter);
             handleJoinAVRGame(gameId, sceneId, token, inviterMemberId);
         };
-
         // remove the observer on failure
         var changeFailed :Function = function (place :PlaceObject) :void {
             _wctx.getLocationDirector().removeLocationObserver(adapter);
         }
-
-        // observe location changes
-        var adapter :LocationAdapter = new LocationAdapter(null, didChange, changeFailed);
+        adapter = new LocationAdapter(null, didChange, changeFailed);
         _wctx.getLocationDirector().addLocationObserver(adapter);
 
-        // move to the scene
+        // now, move to the scene
         _wctx.getSceneDirector().moveTo(sceneId);
     }
 
