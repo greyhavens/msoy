@@ -314,25 +314,22 @@
   font-size: 12px;
 }
 
-.facebookNotifications .Instructions {
-  padding: 10px;
+.facebookNotifications .Title {
+  padding: 20px 0px 5px 10px;
+  border-top: 1px solid black;
   font-size: 14px;
+  font-weight: bold;
 }
 
-.facebookNotifications .Form .Row {
+.facebookNotifications .Edit .Row {
   padding: 2px 0 7px 10px;
 }
 
-.facebookNotifications .Form .Row .gwt-Label {
+.facebookNotifications .Edit .Row .gwt-Label {
   padding: 3px;
 }
 
-.facebookNotifications .Status .Row {
-  padding: 1px 0 1px 20px;
+.facebookNotifications div.Saved, .facebookNotifications div.Status {
+  padding-left: 10px;
 }
-
-.facebookNotifications .Status .Value {
-  padding-left: 5px;
-}
-
 
