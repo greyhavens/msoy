@@ -3,34 +3,26 @@
 
 package com.threerings.msoy.money.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import com.google.inject.Inject;
-
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Lifecycle;
 import com.samskivert.util.StringUtil;
-
-import com.threerings.presents.annotation.MainInvoker;
-
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.SubscriptionLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.messaging.ConnectedListener;
+import com.threerings.messaging.AddressedMessageListener;
 import com.threerings.messaging.DestinationAddress;
 import com.threerings.messaging.IntMessage;
 import com.threerings.messaging.MessageConnection;
 import com.threerings.messaging.MessageListener;
 import com.threerings.messaging.Replier;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.SubscriptionLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.presents.annotation.MainInvoker;
 
 /**
  * Responsible for receiving messages from outside systems (such as billing) and calling
@@ -124,12 +116,10 @@ public class MoneyMessageListener
     // from interface Lifecycle.Component
     public void shutdown ()
     {
-        for (ConnectedListener listener : _listeners) {
-            try {
-                listener.close();
-            } catch (IOException ioe) {
-                log.warning("Could not close money message listener.", ioe);
-            }
+        try {
+            _conn.close();
+        } catch (IOException ioe) {
+            log.warning("Could not close money message listener connection.", ioe);
         }
     }
 
@@ -144,12 +134,7 @@ public class MoneyMessageListener
         }
 
         DestinationAddress addr = new DestinationAddress("whirled.money." + command + "@whirled");
-        ConnectedListener cl = _conn.listen(addr.getRoutingKey(), addr, listener);
-        if (cl.isClosed()) {
-            log.warning("Weird! Listener is already closed! That's bad?", "command", command);
-            return;
-        }
-        _listeners.add(cl);
+        _conn.listen(new AddressedMessageListener(addr.getRoutingKey(), addr, listener));
     }
 
     /**
@@ -238,9 +223,6 @@ public class MoneyMessageListener
             return StringUtil.fieldsToString(this);
         }
     }
-
-    /** Our listeners. */
-    protected List<ConnectedListener> _listeners = Lists.newArrayList();
 
     // dependencies
     @Inject @MainInvoker protected Invoker _invoker;
