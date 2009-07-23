@@ -113,7 +113,7 @@ public class ConfigProfilePanel extends FlowPanel
         }));
 
         PushButton done = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.cpDone(), null);
-        config.setWidget(row, 0, done, 2, null);
+        config.setWidget(row, 0, done, 2);
         config.getFlexCellFormatter().setHorizontalAlignment(row++, 0, HasAlignment.ALIGN_RIGHT);
 
         new ClickCallback<Void>(done) {

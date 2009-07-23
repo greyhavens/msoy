@@ -41,7 +41,7 @@ public class PanopticonStatusPanel extends SmartTable
         _nodeList = new ListBox(true);
         _nodeList.setVisibleItemCount(10);
         _nodeList.addStyleName("nodeList");
-        addWidget(_nodeList, 1, null);
+        addWidget(_nodeList, 1);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         setText(0, 1, _msgs.panRestartDescription());
         setWidget(1, 0, new Button(_msgs.panRestart(), new ClickHandler() {
@@ -63,7 +63,7 @@ public class PanopticonStatusPanel extends SmartTable
                     }
                 });
             }
-        }), 2, null);
+        }), 2);
         
         refresh();
     }

@@ -92,7 +92,7 @@ public class LandingPanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         setWidget(0, 1, rightbits);
         getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-        setWidget(1, 0, LandingCopyright.addFinePrint(new FlowPanel()), 2, null);
+        setWidget(1, 0, LandingCopyright.addFinePrint(new FlowPanel()), 2);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
     }
 

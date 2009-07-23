@@ -70,7 +70,7 @@ public class MyGroupsPanel extends FlowPanel
             getWidget(0, 1).addStyleName("Bold");
             setText(0, 2, _msgs.mgMembers(""+card.memberCount), 1, "Link");
 
-            setWidget(1, 0, MsoyUI.createLabel(card.blurb, "Blurb"), 1, null);
+            setWidget(1, 0, MsoyUI.createLabel(card.blurb, "Blurb"), 1);
             getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
 
             String hmsg = (card.population == 0) ?

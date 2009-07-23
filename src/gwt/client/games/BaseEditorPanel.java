@@ -55,7 +55,7 @@ public class BaseEditorPanel extends SmartTable
             FlowPanel bits = MsoyUI.createFlowPanel("Label");
             bits.add(MsoyUI.createLabel(name, "nowrapLabel"));
             bits.add(MsoyUI.createLabel(tip, "tipLabel"));
-            row = addWidget(bits, 1, null);
+            row = addWidget(bits, 1);
         }
         getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         setWidget(row, 1, widget);
@@ -75,7 +75,7 @@ public class BaseEditorPanel extends SmartTable
 
     protected void addSpacer ()
     {
-        addWidget(WidgetUtil.makeShim(10, 10), 2, null);
+        addWidget(WidgetUtil.makeShim(10, 10), 2);
     }
 
     protected Button addSaveRow ()

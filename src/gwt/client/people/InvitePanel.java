@@ -90,7 +90,7 @@ public abstract class InvitePanel extends FlowPanel
             setStyleName("IM");
             setWidth("100%");
             setText(0, 0, _msgs.inviteIMCopy(), 1, "Bold");
-            setText(1, 0, _msgs.inviteIMTip(), 1, null);
+            setText(1, 0, _msgs.inviteIMTip(), 1);
             TextBox link = new TextBox();
             link.setText(shareURL);
             link.setReadOnly(true);

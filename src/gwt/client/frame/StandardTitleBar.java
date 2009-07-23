@@ -36,10 +36,10 @@ public class StandardTitleBar extends TitleBar
         if (framed) {
             // add a style that overrides some bits
             _contents.addStyleName("framedTitle");
-            _contents.setText(0, 0, "", 3, null);
+            _contents.setText(0, 0, "", 3);
 
         } else {
-            _contents.setWidget(0, 0, createImage(tab), 3, null);
+            _contents.setWidget(0, 0, createImage(tab), 3);
         }
 
         _tab = tab;

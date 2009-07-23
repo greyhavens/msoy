@@ -102,7 +102,7 @@ public class ContestsEditor extends AdminDataPanel<List<Contest>>
         TextBoxUtil.addTypingListener(_pastBlurb.getTextArea(), updateOnKeyPress);
 
         create.setText(row++, 0, _msgs.promoPreview());
-        create.setWidget(row++, 0, _previewContainer = new SimplePanel(), 2, null);
+        create.setWidget(row++, 0, _previewContainer = new SimplePanel(), 2);
 
         Button editButton = new Button(_msgs.contestsClearButton(), new ClickHandler() {
             public void onClick (ClickEvent event) {
@@ -114,7 +114,7 @@ public class ContestsEditor extends AdminDataPanel<List<Contest>>
                 publishContest(createContest());
             }
         });
-        create.setWidget(row, 0, MsoyUI.createButtonPair(editButton, _saveButton), 2, null);
+        create.setWidget(row, 0, MsoyUI.createButtonPair(editButton, _saveButton), 2);
         create.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
 
         // set default dates and button text

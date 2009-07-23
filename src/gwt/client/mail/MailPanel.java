@@ -109,7 +109,7 @@ public class MailPanel extends FlowPanel
             });
             footer.setWidget(0, col++, selall, 1, "SelectAll");
             Button delsel = new Button(_msgs.mailDelSel());
-            footer.setWidget(0, col++, delsel, 1, null);
+            footer.setWidget(0, col++, delsel, 1);
             footer.getFlexCellFormatter().setWidth(0, col, "50%");
             footer.setHTML(0, col++, "&nbsp;");
             footer.setHTML(0, col++, "&nbsp;", 1, "BottomRight");

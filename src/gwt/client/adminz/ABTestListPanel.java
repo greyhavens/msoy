@@ -44,7 +44,7 @@ public class ABTestListPanel extends AdminDataPanel<List<ABTest>>
 
         for (final ABTest test : tests) {
             int row = contents.addWidget(
-                Link.create(test.name, Pages.ADMINZ, "test", test.testId), 1, null);
+                Link.create(test.name, Pages.ADMINZ, "test", test.testId), 1);
             col = 1;
             contents.setText(row, col++, DateUtil.formatDate(test.started));
             contents.setText(row, col++, DateUtil.formatDate(test.ended));

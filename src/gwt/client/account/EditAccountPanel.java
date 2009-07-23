@@ -147,7 +147,7 @@ public class EditAccountPanel extends FlowPanel
         // the second row informs of their validation status and allows resend of validation email
         table.setText(1, 0, _msgs.editEmailValid(), 1, "rightLabel");
         if (CShell.creds.validated) {
-            table.setText(1, 1, _msgs.editEmailIsValid(), 2, null);
+            table.setText(1, 1, _msgs.editEmailIsValid(), 2);
         } else {
             table.setText(1, 1, _msgs.editEmailNotValid(), 2, "Warning");
             table.setWidget(2, 2, _revalidate = new Button(_msgs.editEmailResend()));
@@ -170,12 +170,12 @@ public class EditAccountPanel extends FlowPanel
         SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
         _whirledEmail = new CheckBox(_msgs.editWhirledMailEmailTip());
-        table.setWidget(0, 1, _whirledEmail, 2, null);
+        table.setWidget(0, 1, _whirledEmail, 2);
         _whirledEmail.addStyleName("tipLabel");
         _whirledEmail.setValue(_accountInfo.emailWhirledMail);
 
         table.setText(1, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
-        table.setWidget(1, 1, _announceEmail = new CheckBox(_msgs.editAnnounceEmailTip()), 2, null);
+        table.setWidget(1, 1, _announceEmail = new CheckBox(_msgs.editAnnounceEmailTip()), 2);
         _announceEmail.addStyleName("tipLabel");
         _announceEmail.setValue(_accountInfo.emailAnnouncements);
 
@@ -289,7 +289,7 @@ public class EditAccountPanel extends FlowPanel
         RadioButton randomCharity = new RadioButton(CHARITY_RADIO_GROUP);
         charityButtons.add(randomCharity);
         charityTable.setWidget(1, 0, randomCharity, 1, "rightLabel");
-        charityTable.setText(1, 1, _msgs.defaultCharity(), 2, null);
+        charityTable.setText(1, 1, _msgs.defaultCharity(), 2);
         if (_accountInfo.charityMemberId == 0) {
             randomCharity.setValue(true);
         }
@@ -341,7 +341,7 @@ public class EditAccountPanel extends FlowPanel
             table.setText(0, 0, _msgs.fbconnectActive());
             return table;
         }
-        table.setWidget(0, 0, MsoyUI.createHTML(_msgs.fbconnectWhy(), "Info"), 2, null);
+        table.setWidget(0, 0, MsoyUI.createHTML(_msgs.fbconnectWhy(), "Info"), 2);
         table.setText(1, 0, _msgs.fbconnectLink(), 1, "rightLabel");
         table.setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickHandler() {
             public void onClick (ClickEvent event) {

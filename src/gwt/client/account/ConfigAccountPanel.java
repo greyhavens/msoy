@@ -50,8 +50,8 @@ public class ConfigAccountPanel extends FlowPanel
 
         int row = 0;
         SmartTable table = new SmartTable(0, 10);
-        table.setText(row++, 0, _msgs.configIntro(), 3, null);
-        table.setHTML(row++, 0, "&nbsp;", 3, null);
+        table.setText(row++, 0, _msgs.configIntro(), 3);
+        table.setHTML(row++, 0, "&nbsp;", 3);
 
         table.setText(row, 0, _msgs.editEmail(), 1, "rightLabel");
         _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1);
@@ -66,8 +66,8 @@ public class ConfigAccountPanel extends FlowPanel
         table.setWidget(row++, 1, _confirm = new PasswordTextBox());
         TextBoxUtil.addTypingListener(_confirm, _validator);
 
-        table.setHTML(row++, 0, "&nbsp;", 3, null);
-        table.setText(row++, 0, _msgs.configAuthTip(), 3, null);
+        table.setHTML(row++, 0, "&nbsp;", 3);
+        table.setText(row++, 0, _msgs.configAuthTip(), 3);
 
         table.setWidget(row++, 2, _submit = MsoyUI.createButton(
             MsoyUI.MEDIUM_THIN, _msgs.configSubmit(), new ClickHandler() {

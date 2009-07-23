@@ -75,10 +75,10 @@ public class GameItemEditorPanel extends SmartTable
         for (Item item : items) {
             int col = 0;
             setWidget(row, col++, MediaUtil.createMediaView(
-                          item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1, null);
-            setText(row, col++, item.name, 1, null);
+                          item.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE), 1);
+            setText(row, col++, item.name, 1);
             Args dargs = Args.compose("d", item.getType(), item.itemId);
-            setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1, null);
+            setWidget(row, col++, Link.create(_msgs.gieView(), Pages.STUFF, dargs), 1);
             Args eargs = Args.compose("e", item.getType(), item.itemId);
             setWidget(row, col++, Link.create(_msgs.gieEdit(), Pages.STUFF, eargs));
             setText(row, col++, item.isListedOriginal() ? _msgs.gieIsPublished() : "");
@@ -109,7 +109,7 @@ public class GameItemEditorPanel extends SmartTable
         Args cargs = Args.compose("c", itemType, GameInfo.toDevId(gameId));
         bits.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.gieCreate(),
                                      Link.createHandler(Pages.STUFF, cargs)));
-        setWidget(row, 0, bits, getRowCount() == 0 ? 1 : getCellCount(0), null);
+        setWidget(row, 0, bits, getRowCount() == 0 ? 1 : getCellCount(0));
         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_CENTER);
     }
 

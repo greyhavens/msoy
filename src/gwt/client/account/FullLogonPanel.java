@@ -33,14 +33,14 @@ public class FullLogonPanel extends LogonPanel
         super(Mode.HORIZ, MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.logonLogon(), null));
 
         // add the interface for logging in via Facebook connect
-        setText(1, 0, _msgs.logonFacebook(), 1, null);
+        setText(1, 0, _msgs.logonFacebook(), 1);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
         setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickHandler() {
             public void onClick (ClickEvent event) {
                 // TODO: display a little circular "pending" icon; turn off clickability
                 initiateFacebookLogon();
             }
-        }), 1, null);
+        }), 1);
     }
 
     protected void initiateFacebookLogon ()

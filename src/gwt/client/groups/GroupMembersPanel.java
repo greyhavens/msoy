@@ -138,7 +138,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
             setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");
             String rankStr = card.rank == Rank.MANAGER ? "Manager" : "";
             setText(1, 0, rankStr, 1, "tipLabel");
-            setWidget(2, 0, new MemberStatusLabel(card), 2, null);
+            setWidget(2, 0, new MemberStatusLabel(card), 2);
 
             // if we aren't authorized for membership control on this member, skip these widgets
             if (!(CShell.isSupport() || (_detail.myRank == Rank.MANAGER && amSenior(card)))) {

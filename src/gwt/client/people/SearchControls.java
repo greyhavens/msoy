@@ -45,9 +45,9 @@ public class SearchControls extends SmartTable
         setWidget(0, 0, action, 1, "Action");
         getFlexCellFormatter().setRowSpan(0, 0, 3);
 
-        setWidget(0, 1, MsoyUI.createLabel(_msgs.searchTip(), "Tip"), 2, null);
+        setWidget(0, 1, MsoyUI.createLabel(_msgs.searchTip(), "Tip"), 2);
 
-        setWidget(1, 0, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
+        setWidget(1, 0, _search = MsoyUI.createTextBox("", -1, -1), 1);
         _search.setWidth("200px");
         TextBoxUtil.addTypingListener(_search, new Command() {
             public void execute () {
@@ -62,7 +62,7 @@ public class SearchControls extends SmartTable
 
         Widget friendlyLink = Link.create(_msgs.searchGreetersLink(), Pages.PEOPLE, "friendly");
         friendlyLink.setStyleName("SeeGreeters");
-        setWidget(2, 0, friendlyLink, 3, null);
+        setWidget(2, 0, friendlyLink, 3);
     }
 
     public void setSearch (String query)

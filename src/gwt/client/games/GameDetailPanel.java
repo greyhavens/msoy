@@ -100,7 +100,7 @@ public class GameDetailPanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         setWidget(0, 1, new GameNamePanel(
-                      info.name, info.genre, info.creator, info.description), 2, null);
+                      info.name, info.genre, info.creator, info.description), 2);
 
         setWidget(1, 0, new GameBitsPanel(detail));
 
@@ -133,7 +133,7 @@ public class GameDetailPanel extends SmartTable
             protected Args getTabArgs (int tabIdx) {
                 return getTabCode(tabIdx).args(_gameId);
             }
-        }, 3, null);
+        }, 3);
 
         // add the about/instructions tab
         addTab(GameDetails.INSTRUCTIONS, _msgs.tabInstructions(), new InstructionsPanel(detail));

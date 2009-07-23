@@ -108,7 +108,7 @@ public class ABTestSummaryPanel extends AdminDataPanel<ABTestSummary>
     protected int addRow (SmartTable table, String label, Object data)
     {
         int row = table.addText(label, 1, "rightLabel");
-        table.setText(row, 1, (data == null) ? "" : data.toString(), 1, null);
+        table.setText(row, 1, (data == null) ? "" : data.toString(), 1);
         return row;
     }
 

@@ -30,7 +30,7 @@ public class PublishPanel extends SmartTable
         super("publish", 0, 10);
 
         int row = 0;
-        setText(row, 0, _msgs.publishIntro(), 3, null);
+        setText(row, 0, _msgs.publishIntro(), 3);
 
         setText(++row, 1, _msgs.publishInDev(), 1, "Header");
         setText(row, 2, _msgs.publishPub(), 1, "Header");

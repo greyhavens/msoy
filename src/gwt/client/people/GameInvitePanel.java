@@ -108,7 +108,7 @@ public class GameInvitePanel extends InvitePanel
                                           MediaDesc.THUMBNAIL_SIZE), 1, "thumbnail");
         info.getFlexCellFormatter().setRowSpan(0, 0, 2);
         info.setText(0, 1, _msgs.gameInviteIntro(detail.info.name), 1, "Intro");
-        info.setText(1, 0, _msgs.gameInviteTip(), 1, null);
+        info.setText(1, 0, _msgs.gameInviteTip(), 1);
         add(info);
 
         // buttons to invoke the various ways to invite
@@ -247,7 +247,7 @@ public class GameInvitePanel extends InvitePanel
                 }
             };
             _send.setEnabled(false);
-            setWidget(row, 0, _send, 2, null);
+            setWidget(row, 0, _send, 2);
             getFlexCellFormatter().setHorizontalAlignment(row++, 0, HasAlignment.ALIGN_RIGHT);
             downloadFriends();
         }

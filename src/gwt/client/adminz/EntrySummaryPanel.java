@@ -93,7 +93,7 @@ public class EntrySummaryPanel extends AdminDataPanel<List<EntrySummary>>
     protected void setRow (SmartTable table, int row, String vector, int entries, int registrations)
     {
         int col = 0;
-        table.setText(row, col++, vector, 2, null);
+        table.setText(row, col++, vector, 2);
         table.setText(row, col++, ""+entries, 1, "rightLabel");
         table.setText(row, col++, ""+registrations, 1, "rightLabel");
         if (entries > 0) {

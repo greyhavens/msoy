@@ -121,7 +121,7 @@ public class EditIssuePanel extends SmartTable
     {
         int row = 0;
         setText(row++, 0, _issue.summary, 2, "Title");
-        setText(row++, 0, IssueMsgs.typeMsg(_issue.type), 2, null);
+        setText(row++, 0, IssueMsgs.typeMsg(_issue.type), 2);
 
         setText(row, 0, _msgs.iCreator(), 1, "Label");
         setText(row++, 1, ""+_issue.creator);
@@ -141,11 +141,11 @@ public class EditIssuePanel extends SmartTable
 
         if (!StringUtil.isBlank(_issue.description)) {
             setText(row++, 0, _msgs.iDescription(), 3, "SubTitle");
-            setText(row++, 0, _issue.description, 3, null);
+            setText(row++, 0, _issue.description, 3);
         }
         if (_issue.state != Issue.STATE_OPEN) {
             setText(row++, 0, _msgs.iComment(), 3, "SubTitle");
-            setText(row++, 0, StringUtil.getOr(_issue.closeComment, _msgs.noComment()), 3, null);
+            setText(row++, 0, StringUtil.getOr(_issue.closeComment, _msgs.noComment()), 3);
 
             if (CShell.isSupport()) {
                 Button reopen = new Button(_msgs.iReopen());
@@ -283,7 +283,7 @@ public class EditIssuePanel extends SmartTable
             }
         }
         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        setWidget(row++, 0, qbuts, 2, null);
+        setWidget(row++, 0, qbuts, 2);
     }
 
     protected void setOwners (List<MemberName> owners)
@@ -317,7 +317,7 @@ public class EditIssuePanel extends SmartTable
 
     protected void addMessage (ForumMessage message)
     {
-        addWidget(new IssueMessagePanel(message), 3, null);
+        addWidget(new IssueMessagePanel(message), 3);
     }
 
     protected class CommitCallback extends ClickCallback<Issue>

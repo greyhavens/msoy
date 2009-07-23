@@ -63,11 +63,11 @@ public abstract class WebMailControls extends FlowPanel
         row.setWidth("100%");
 
         col = 0;
-        row.setText(0, col++, _msgs.emailAccount(), 1, null);
+        row.setText(0, col++, _msgs.emailAccount(), 1);
         final TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
         DefaultTextListener.configure(account, _msgs.emailWebAddress());
         row.setWidget(0, col++, account);
-        row.setText(0, col++, _msgs.emailPassword(), 1, null);
+        row.setText(0, col++, _msgs.emailPassword(), 1);
         final TextBox password = new PasswordTextBox();
         row.setWidget(0, col++, password);
 
@@ -75,7 +75,7 @@ public abstract class WebMailControls extends FlowPanel
         row.setWidget(0, col++, doimp);
 
         // privacy soother
-        row.setText(1, 0, _msgs.emailCaveat(), row.getCellCount(0), null);
+        row.setText(1, 0, _msgs.emailCaveat(), row.getCellCount(0));
         add(row);
 
         // wire up the import button

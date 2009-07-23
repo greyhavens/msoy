@@ -139,7 +139,7 @@ public class InviteUtils
                     contents.setText(row++, 0, _msgs.inviteResultsSuccessful());
                     success = true;
                 }
-                contents.setText(row++, 0, _msgs.inviteMember(ec.name, ec.email), 3, null);
+                contents.setText(row++, 0, _msgs.inviteMember(ec.name, ec.email), 3);
             }
         }
         if (success) {
@@ -180,7 +180,7 @@ public class InviteUtils
             String result = invRes.results[ii].startsWith("e.") ?
                 _msgs.inviteResultsNote(name, CShell.serverError(invRes.results[ii])) :
                 _msgs.inviteResultsNote(name, invRes.results[ii]);
-            contents.setText(row++, 0, result, 3, null);
+            contents.setText(row++, 0, result, 3);
         }
         rp.show();
     }

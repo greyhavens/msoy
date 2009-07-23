@@ -118,7 +118,7 @@ public class CatalogPanel extends SmartTable
                 controls.setWidget(0, 1, _sortBox);
             }
         };
-        _listings.setWidget(2, 0, _items, 2, null);
+        _listings.setWidget(2, 0, _items, 2);
         _listings.getFlexCellFormatter().setHeight(2, 0, "100%");
         _listings.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
     }

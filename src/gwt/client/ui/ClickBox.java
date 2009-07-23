@@ -23,7 +23,7 @@ public class ClickBox extends SmartTable
     {
         super("clickBox", 0, 0);
 
-        addWidget(new ThumbBox(media, page, args), getColumns(), null);
+        addWidget(new ThumbBox(media, page, args), getColumns());
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
         addLabel(Link.createBlock(name, null, page, args));
     }
@@ -34,7 +34,7 @@ public class ClickBox extends SmartTable
     protected void addLabel (Widget label)
     {
         label.addStyleName("Label");
-        addWidget(label, getColumns(), null);
+        addWidget(label, getColumns());
     }
 
     /**

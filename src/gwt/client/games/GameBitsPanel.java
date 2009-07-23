@@ -38,12 +38,12 @@ public class GameBitsPanel extends SmartTable
 
         if (detail.metrics.gamesPlayed > 0) {
             setText(row, 0, _msgs.bitsGamesPlayed(), 1, "Label");
-            setText(row++, 1, detail.metrics.gamesPlayed, 1, null);
+            setText(row++, 1, detail.metrics.gamesPlayed, 1);
         }
 
         if (CShell.getMemberId() == detail.info.creator.getMemberId() || CShell.isSupport()) {
             setWidget(row++, 0, Link.create(_msgs.bitsEdit(), Pages.GAMES, "e", detail.info.gameId),
-                      2, null);
+                      2);
         }
     }
 

@@ -36,7 +36,7 @@ public class RoomsPanel extends FlowPanel
         setStyleName("roomsPanel");
 
         SmartTable header = new SmartTable("Info", 0, 0);
-        header.setWidget(0, 0, new Marquee(null, _msgs.roomsMarquee()), 1, null);
+        header.setWidget(0, 0, new Marquee(null, _msgs.roomsMarquee()), 1);
         header.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         header.setText(1, 0, _msgs.roomsIntro(), 1, "Intro");
 

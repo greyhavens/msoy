@@ -27,7 +27,7 @@ public class CreateGamePanel extends BaseEditorPanel
         addStyleName("createGame");
 
         int row = 0;
-        setWidget(row++, 0, MsoyUI.createHTML(_msgs.cgIntro(), "Intro"), 2, null);
+        setWidget(row++, 0, MsoyUI.createHTML(_msgs.cgIntro(), "Intro"), 2);
 
         RadioButton parlor = new RadioButton("type", _msgs.cgTypeParlor());
         parlor.setValue(true);

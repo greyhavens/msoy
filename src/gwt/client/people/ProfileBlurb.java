@@ -140,7 +140,7 @@ public class ProfileBlurb extends Blurb
         if (_pdata.profile.award != null) {
             Award award = _pdata.profile.award;
             FlowPanel awardBox = MsoyUI.createFlowPanel("AwardBox");
-            info.addWidget(awardBox, 1, null);
+            info.addWidget(awardBox, 1);
 
             String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
             ClickHandler clicker = Link.createHandler(Pages.ME, page, _name.getMemberId());
@@ -229,7 +229,7 @@ public class ProfileBlurb extends Blurb
         content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         content.setWidget(0, 2, details);
         content.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        content.setWidget(1, 1, _buttons, 2, null);
+        content.setWidget(1, 1, _buttons, 2);
         setContent(content);
 
         // display the edit button if this is our profile
@@ -362,7 +362,7 @@ public class ProfileBlurb extends Blurb
             }
         });
         econtent.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        econtent.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, commit), 2, null);
+        econtent.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, commit), 2);
 
         setContent(econtent);
         setFooter(null);

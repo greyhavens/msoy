@@ -39,7 +39,7 @@ public class ExchangePanel extends SmartTable
         setText(row++, 2, "Target bar pool:", 1, "rightLabel");
         setText(row, 0, "Coin balance:", 1, "rightLabel");
 
-        addWidget(new RecentExchanges(new ExchangeDataDataModel()), 4, null);
+        addWidget(new RecentExchanges(new ExchangeDataDataModel()), 4);
     }
 
     protected class ExchangeDataDataModel

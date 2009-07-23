@@ -57,7 +57,7 @@ public class BlingPanel extends FlowPanel
         add(new TongueBox(_msgs.blingHeader(), balance));
 
         SmartTable exchange = new SmartTable(0, 10);
-        exchange.setText(0, 0, _msgs.exchangeBlingDescription(), 3, null);
+        exchange.setText(0, 0, _msgs.exchangeBlingDescription(), 3);
         exchange.setText(1, 0, _msgs.exchangeAmount(), 1, "rightLabel");
         exchange.setWidget(1, 1, _exchangeBox = new NumberTextBox(false));
         exchange.setWidget(1, 2, _exchangeBtn = new Button(_msgs.exchangeButton()));
@@ -185,7 +185,7 @@ public class BlingPanel extends FlowPanel
             setCellSpacing(10);
 
             int row = 0;
-            setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
+            setText(row++, 0, _msgs.blingCashOutDescription(), 3);
             setText(row++, 0, _msgs.blingCashOutWarning(
                 String.valueOf(BlingInfo.CASHOUT_DAYS)), 3, "warning");
             setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
@@ -197,7 +197,7 @@ public class BlingPanel extends FlowPanel
                         formatUSD((int)(_cashOutBox.getNumber().floatValue() * worthPerBling))));
                 }
             });
-            setWidget(row++, 1, MsoyUI.createButtonPair(_cashOutBox, worthLabel), 2, null);
+            setWidget(row++, 1, MsoyUI.createButtonPair(_cashOutBox, worthLabel), 2);
 
             for (int ii = 0; ii < _labels.length; ii++) {
                 setText(row, 0, _msgs.fieldTemplate(_labels[ii]), 1, "rightLabel");

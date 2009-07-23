@@ -221,7 +221,7 @@ public class ConvoPanel extends FlowPanel
             _contents.remove(_reply);
 
             final SmartTable reply = new SmartTable(0, 0);
-            reply.setWidget(0, 0, _repmsg, 2, null);
+            reply.setWidget(0, 0, _repmsg, 2);
             _repmsg.setVisibleLines(4);
             _repmsg.setWidth("350px");
 

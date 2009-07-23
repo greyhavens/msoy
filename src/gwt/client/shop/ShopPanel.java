@@ -166,7 +166,7 @@ public class ShopPanel extends FlowPanel
         contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         contents.setWidget(0, 1, right);
         contents.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-        contents.setWidget(1, 0, WidgetUtil.makeShim(5, 5), 2, null);
+        contents.setWidget(1, 0, WidgetUtil.makeShim(5, 5), 2);
         MoneyLabel price = new MoneyLabel(card.currency, card.cost);
         price.insert(new InlineLabel(_msgs.shopPrice(), false, false, true), 0);
         contents.setWidget(2, 0, price);

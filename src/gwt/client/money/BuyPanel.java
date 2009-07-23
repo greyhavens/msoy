@@ -75,7 +75,7 @@ public abstract class BuyPanel<T> extends SmartTable
         _barPanel.add(_getBars = Link.create(_msgs.getBars(), Pages.BILLING));
         _barPanel.add(_switchToCoins = MsoyUI.createActionLabel(
                           _msgs.buyWithCoins(), "inline", switchCurrency));
-        setWidget(0, 0, _barPanel, 2, null);
+        setWidget(0, 0, _barPanel, 2);
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
 
         // Buy with coins, plus a link to switch to buying with bars
@@ -83,7 +83,7 @@ public abstract class BuyPanel<T> extends SmartTable
         _coinPanel.add(_buyCoins = new BuyButton(Currency.COINS));
         _coinPanel.add(
             _switchToBars = MsoyUI.createActionLabel(_msgs.buyWithBars(), switchCurrency));
-        setWidget(1, 0, _coinPanel, 2, null);
+        setWidget(1, 0, _coinPanel, 2);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
 
         updatePrice(quote);

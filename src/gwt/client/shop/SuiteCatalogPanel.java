@@ -88,7 +88,7 @@ public class SuiteCatalogPanel extends SmartTable
             }
         };
         items.setModel(SimpleDataModel.newModel(suite.listings), 0);
-        _listings.setWidget(1, 0, items, 2, null);
+        _listings.setWidget(1, 0, items, 2);
     }
 
     protected SmartTable _listings;

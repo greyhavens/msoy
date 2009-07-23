@@ -37,7 +37,7 @@ public class ConfirmDeletePanel extends FlowPanel
         table.setText(0, 0, _msgs.confirmDeleteTip(), 3, "Info");
 
         table.setWidget(1, 0, _confirm = new CheckBox(), 1, "rightLabel");
-        table.setText(1, 1, _msgs.confirmDeleteConfirm(), 2, null);
+        table.setText(1, 1, _msgs.confirmDeleteConfirm(), 2);
 
         table.setText(2, 0, _msgs.confirmDeletePassword(), 1, "rightLabel");
         table.setWidget(2, 1, _password = new PasswordTextBox());

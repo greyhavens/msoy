@@ -74,11 +74,11 @@ public class FindFriendsPanel extends InvitePanel
         _results.setText(row++, 0, _msgs.ffResultsTitle(), 4, "Bold");
 
         if (members.size() == 0) {
-            _results.setText(row++, 0, _msgs.ffResultsNone(), 4, null);
+            _results.setText(row++, 0, _msgs.ffResultsNone(), 4);
 
         } else {
-            _results.setText(row++, 0, _msgs.ffResultsSome(), 4, null);
-            _results.setHTML(row++, 0, "&nbsp;", 4, null);
+            _results.setText(row++, 0, _msgs.ffResultsSome(), 4);
+            _results.setHTML(row++, 0, "&nbsp;", 4);
             _results.setText(row, 0, _msgs.ffResultsMName(), 1, "Header");
             _results.setText(row++, 1, _msgs.ffResultsEmail(), 1, "Header");
 
@@ -99,12 +99,12 @@ public class FindFriendsPanel extends InvitePanel
                 }
             }
 
-            _results.setHTML(row++, 0, "&nbsp;", 4, null);
-            _results.setText(row, 0, _msgs.ffAllDone(), 3, null);
+            _results.setHTML(row++, 0, "&nbsp;", 4);
+            _results.setText(row, 0, _msgs.ffAllDone(), 3);
         }
 
         _results.setWidget(row, 1, Link.create(_msgs.ffNext(), PeoplePage.getSelf(),
-                                               "invites", "newuser"), 1, null);
+                                               "invites", "newuser"), 1);
     }
 
     protected FlowPanel _webmail;

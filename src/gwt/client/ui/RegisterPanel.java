@@ -102,9 +102,9 @@ public class RegisterPanel extends FlowPanel
 
         SmartTable regi = new SmartTable(0, 5);
 
-        regi.setText(0, 0, _cmsgs.regiRegSecurity(), 2, null);
+        regi.setText(0, 0, _cmsgs.regiRegSecurity(), 2);
         if (RecaptchaUtil.isEnabled()) {
-            regi.setWidget(1, 0, RecaptchaUtil.createDiv("recaptchaDiv"), 2, null);
+            regi.setWidget(1, 0, RecaptchaUtil.createDiv("recaptchaDiv"), 2);
             DeferredCommand.addCommand(new Command() { // delay init until div is added to DOM
                 public void execute () {
                     RecaptchaUtil.init("recaptchaDiv");
@@ -114,7 +114,7 @@ public class RegisterPanel extends FlowPanel
             regi.setText(1, 0, "CAPTCHA not enabled.", 2, "NoCaptcha");
         }
         final CheckBox tosBox = new CheckBox(_cmsgs.regiRegTOS(), true);
-        regi.setWidget(2, 0, tosBox, 2, null);
+        regi.setWidget(2, 0, tosBox, 2);
 
         regi.setWidget(3, 0, MsoyUI.createActionLabel(_cmsgs.regiRegBack(), new ClickHandler() {
             public void onClick (ClickEvent event) {

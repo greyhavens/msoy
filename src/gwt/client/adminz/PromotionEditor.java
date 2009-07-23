@@ -70,7 +70,7 @@ public class PromotionEditor extends AdminDataPanel<List<Promotion>>
     {
         int row = 0;
         create.setText(row, 0, _msgs.promoId());
-        create.setWidget(row++, 1, _promoId = MsoyUI.createTextBox(promo.promoId, 80, 20), 2, null);
+        create.setWidget(row++, 1, _promoId = MsoyUI.createTextBox(promo.promoId, 80, 20), 2);
         create.setText(row, 0, _msgs.promoStarts());
         create.setWidget(row++, 1, _starts = new DatePicker(promo.starts));
         _starts.setTimeVisible(true);
@@ -93,7 +93,7 @@ public class PromotionEditor extends AdminDataPanel<List<Promotion>>
             }
         }));
         create.setText(row, 0, _msgs.promoBlurb());
-        create.setWidget(row++, 1, _blurb = new LimitedTextArea(255, 60, 5), 2, null);
+        create.setWidget(row++, 1, _blurb = new LimitedTextArea(255, 60, 5), 2);
         _blurb.setText(promo.blurb);
         TextBoxUtil.addTypingListener(_blurb.getTextArea(), new Command() {
             public void execute () {
@@ -109,7 +109,7 @@ public class PromotionEditor extends AdminDataPanel<List<Promotion>>
             public void onClick (ClickEvent event) {
                 publishPromotion(createPromotion());
             }
-        }), 2, null);
+        }), 2);
         create.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
     }
 

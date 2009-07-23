@@ -21,7 +21,7 @@ public class FacebookInfoEditorPanel extends BaseEditorPanel
 {
     public FacebookInfoEditorPanel (final FacebookInfo info)
     {
-        addWidget(MsoyUI.createHTML(_msgs.fieIntro(), null), 2, null);
+        addWidget(MsoyUI.createHTML(_msgs.fieIntro(), null), 2);
 
         addSpacer();
 

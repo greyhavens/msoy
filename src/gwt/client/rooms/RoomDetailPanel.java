@@ -101,7 +101,7 @@ public class RoomDetailPanel extends SmartTable
         StyledTabPanel tabs = new StyledTabPanel();
         tabs.add(new CommentsPanel(Comment.TYPE_ROOM, detail.info.sceneId, true),
                  _msgs.tabComments());
-        addWidget(tabs, 2, null);
+        addWidget(tabs, 2);
         tabs.selectTab(0);
     }
 

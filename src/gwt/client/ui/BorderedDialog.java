@@ -71,7 +71,7 @@ public abstract class BorderedDialog extends BorderedPopup
 
     public void setContents (Widget contents)
     {
-        _main.setWidget(1, 0, contents, _main.getCellCount(0), null);
+        _main.setWidget(1, 0, contents, _main.getCellCount(0));
     }
 
     public void addButton (Button button)

@@ -124,7 +124,7 @@ public class InterestsBlurb extends Blurb
         };
 
         editor.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        editor.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, update), 2, null);
+        editor.setWidget(row++, 0, MsoyUI.createButtonPair(cancel, update), 2);
 
         setContent(editor);
         setFooter(null);

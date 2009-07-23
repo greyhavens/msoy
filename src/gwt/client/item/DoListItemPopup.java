@@ -96,14 +96,14 @@ public class DoListItemPopup extends VerticalPanel
         // add a rating interface
         if (_item.isSalable() && firstTime) {
             SmartTable rating = new SmartTable(0, 3);
-            rating.addWidget(MsoyUI.createHTML(_imsgs.doListRatingIntro(), null), 2, null);
-            rating.addWidget(WidgetUtil.makeShim(5, 5), 2, null);
-            int row = rating.addText(_imsgs.doListRating(), 1, null);
+            rating.addWidget(MsoyUI.createHTML(_imsgs.doListRatingIntro(), null), 2);
+            rating.addWidget(WidgetUtil.makeShim(5, 5), 2);
+            int row = rating.addText(_imsgs.doListRating(), 1);
             rating.getFlexCellFormatter().setWidth(row, 0, "150px"); // yay html!
-            rating.setWidget(row, 1, _stars, 1, null);
-            row = rating.addText(_imsgs.doListFee(), 1, null);
+            rating.setWidget(row, 1, _stars, 1);
+            row = rating.addText(_imsgs.doListFee(), 1);
             _fee = new MoneyLabel(Currency.COINS, getMinimumPrice(Currency.COINS));
-            rating.setWidget(row, 1, _fee, 1, null);
+            rating.setWidget(row, 1, _fee, 1);
             add(MsoyUI.createLabel(_imsgs.doListRatingHeader(), "Header"));
             add(rating);
 
@@ -118,11 +118,11 @@ public class DoListItemPopup extends VerticalPanel
         // possibly add the brand selection ui
         if (_item.supportsBranding() && (firstTime || repricing)) {
             SmartTable brand = new SmartTable(0, 3);
-            brand.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBrandIntro(), null), 3, null);
-            brand.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+            brand.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBrandIntro(), null), 3);
+            brand.addWidget(WidgetUtil.makeShim(5, 5), 3);
 
             int row = brand.addText(_imsgs.doListBrand(), 1, "rightLabel");
-            brand.setWidget(row, 1, _brandBox = new ListBox(), 1, null);
+            brand.setWidget(row, 1, _brandBox = new ListBox(), 1);
             _brandBox.addItem(_imsgs.doListNoBrand());
 
             _catalogsvc.loadBrands(new InfoCallback<List<BrandDetail>>() {
@@ -138,11 +138,11 @@ public class DoListItemPopup extends VerticalPanel
         // possibly add the basis selection ui
         if (_item.supportsDerivation() && (firstTime || repricing)) {
             SmartTable basis = new SmartTable(0, 3);
-            basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3, null);
-            basis.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+            basis.addWidget(MsoyUI.createHTML(_imsgs.doListSelectBasisIntro(), null), 3);
+            basis.addWidget(WidgetUtil.makeShim(5, 5), 3);
 
             int row = basis.addText(_imsgs.doListBasis(), 1, "rightLabel");
-            basis.setWidget(row, 1, _basisBox = new ListBox(), 1, null);
+            basis.setWidget(row, 1, _basisBox = new ListBox(), 1);
             _basisBox.addItem(_imsgs.doListNoBasis());
             _basisBox.addChangeHandler(new ChangeHandler() {
                 public void onChange (ChangeEvent event) {
@@ -170,11 +170,11 @@ public class DoListItemPopup extends VerticalPanel
             SmartTable pricing = new SmartTable(0, 3);
 
             int row = pricing.addWidget(
-                MsoyUI.createHTML(_imsgs.doListPricingIntro(), null), 3, null);
-            pricing.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+                MsoyUI.createHTML(_imsgs.doListPricingIntro(), null), 3);
+            pricing.addWidget(WidgetUtil.makeShim(5, 5), 3);
 
             row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
-            pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
+            pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1);
             int defaultPricing = repricing ? listing.pricing : CatalogListing.PRICING_ESCALATE;
             int pricingIndex = -1;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
@@ -201,11 +201,11 @@ public class DoListItemPopup extends VerticalPanel
 
             _salesTargetLabel = new Label(_imsgs.doListSalesTarget());
             row = pricing.addWidget(_salesTargetLabel, 1, "rightLabel");
-            pricing.setWidget(row, 1, _salesTarget = new NumberTextBox(false, 5, 5), 1, null);
+            pricing.setWidget(row, 1, _salesTarget = new NumberTextBox(false, 5, 5), 1);
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setNumber(salesTarget);
 
-            pricing.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+            pricing.addWidget(WidgetUtil.makeShim(5, 5), 3);
 
             _currencyBox = new ListBox();
             for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
@@ -229,7 +229,7 @@ public class DoListItemPopup extends VerticalPanel
             pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
 
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
-            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 7, 7), 1, null);
+            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 7, 7), 1);
             int cost = (listing == null) ? DEFAULT_COIN_COST : listing.quote.getListedAmount();
             _cost.setNumber(cost);
 

@@ -437,7 +437,7 @@ public abstract class ItemEditor extends FlowPanel
     {
         if (_tabs == null) {
             int row = _content.getRowCount();
-            _content.setWidget(row, 0, _tabs = new StyledTabPanel(), 2, null);
+            _content.setWidget(row, 0, _tabs = new StyledTabPanel(), 2);
             _tabs.setWidth("100%");
         }
         _tabs.add(_currentTab = new FlexTable(), label);

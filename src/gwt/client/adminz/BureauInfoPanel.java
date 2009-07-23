@@ -148,8 +148,8 @@ public class BureauInfoPanel extends VerticalPanel
         table.setText(row, col++, _msgs.bureauGame());
         table.setText(row, col++, _msgs.bureauStatus());
         table.setText(row, col++, _msgs.bureauHost());
-        table.setText(row, col++, _msgs.bureauTimes(), 2, null);
-        table.setText(row, col++, _msgs.bureauLogSpace(), 2, null);
+        table.setText(row, col++, _msgs.bureauTimes(), 2);
+        table.setText(row, col++, _msgs.bureauLogSpace(), 2);
         //table.setText(row, col++, _msgs.bureauMessage());
         table.getRowFormatter().addStyleName(row++, "header");
 

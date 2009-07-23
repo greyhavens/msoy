@@ -108,7 +108,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             Button btn = new Button(_msgs.coEntryTransactionsButton());
             btn.addStyleName("sideButton");
             btn.addClickHandler(Link.createHandler(Pages.ME, "transactions", "3", item.memberId));
-            extras.addWidget(btn, 0, null);
+            extras.addWidget(btn, 0);
             btn = new Button(_msgs.coEntryCashOutButton());
             btn.addStyleName("sideButton");
             btn.addClickHandler(new ClickHandler() {
@@ -116,7 +116,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                     showPanel(new CashOutPanel(item.cashOutInfo.blingAmount));
                 }
             });
-            extras.addWidget(btn, 0, null);
+            extras.addWidget(btn, 0);
             btn = new Button(_msgs.coEntryCancelButton());
             btn.addStyleName("sideButton");
             btn.addClickHandler(new ClickHandler() {
@@ -124,7 +124,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                     showPanel(new CancelRequestPanel());
                 }
             });
-            extras.addWidget(btn, 0, null);
+            extras.addWidget(btn, 0);
             setWidget(0, 2, extras);
             getFlexCellFormatter().setRowSpan(0, 2, getRowCount());
             getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);

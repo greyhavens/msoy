@@ -158,7 +158,7 @@ public class StatusPanel extends SmartTable
         getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_CENTER);
 
         // coins, bars, level on bottom
-        setWidget(1, 0, _levels, 0, null);
+        setWidget(1, 0, _levels, 0);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
 
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));

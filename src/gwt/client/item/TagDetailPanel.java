@@ -365,13 +365,13 @@ public class TagDetailPanel extends VerticalPanel
             final SmartTable content = new SmartTable(0, 10);
             content.setWidth("300px");
             int row = 0;
-            content.setText(row++, 0, prompts[0], 2, null);
-            content.setText(row++, 0, prompts[1], 2, null);
+            content.setText(row++, 0, prompts[0], 2);
+            content.setText(row++, 0, prompts[1], 2);
             if (showLinkBox) {
                 content.setText(row, 0, _cmsgs.tagFlagDialogLinkLabel());
                 content.setWidget(row++, 1, _link = MsoyUI.createTextBox("", 255, 48));
             }
-            content.setWidget(row++, 0, _comment = MsoyUI.createTextArea(null, 64, 4), 2, null);
+            content.setWidget(row++, 0, _comment = MsoyUI.createTextArea(null, 64, 4), 2);
             dialog.setContents(content);
             dialog.addButton(new Button(_cmsgs.cancel(), dialog.onCancel()));
             dialog.addButton(new Button(_cmsgs.tagFlagDialogAccept(), new ClickHandler() {
