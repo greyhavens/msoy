@@ -1,12 +1,12 @@
 //
 // $Id$
 
-package com.threerings.msoy.notifications.gwt;
+package com.threerings.msoy.reminders.gwt;
 
 /**
- * Defines the types of notifications.
+ * Defines the types of reminders.
  */
-public enum NotificationType
+public enum ReminderType
 {
     /** Reminds the user to bookmark the application (facebook). */
     BOOKMARK,

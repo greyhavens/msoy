@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.notifications;
+package client.reminders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +19,11 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.notifications.gwt.Notification;
-import com.threerings.msoy.notifications.gwt.NotificationType;
-import com.threerings.msoy.notifications.gwt.NotificationsService;
-import com.threerings.msoy.notifications.gwt.NotificationsServiceAsync;
-import com.threerings.msoy.notifications.gwt.Notification.TrophyData;
+import com.threerings.msoy.reminders.gwt.Reminder;
+import com.threerings.msoy.reminders.gwt.ReminderType;
+import com.threerings.msoy.reminders.gwt.RemindersService;
+import com.threerings.msoy.reminders.gwt.RemindersServiceAsync;
+import com.threerings.msoy.reminders.gwt.Reminder.TrophyData;
 import com.threerings.msoy.web.gwt.CookieNames;
 
 import client.shell.CShell;
@@ -34,13 +34,13 @@ import client.util.events.TrophyEvent;
 
 
 /**
- * Displays messages of interest to the user.
+ * Displays messages of interest to the user reminding them that they work for us.
  */
-public class NotificationsPanel extends FlowPanel
+public class RemindersPanel extends FlowPanel
 {
-    public NotificationsPanel ()
+    public RemindersPanel ()
     {
-        setStyleName("notifications");
+        setStyleName("reminders");
         // the outer panel cannot be absolute for some reason, so embed one <sigh>
         AbsoluteCSSPanel content = new AbsoluteCSSPanel("Absolute", "fixed");
         content.add(MsoyUI.createImageButton("Close", new ClickHandler() {
@@ -54,21 +54,21 @@ public class NotificationsPanel extends FlowPanel
                 selectNext();
             }
         }));
-        content.add(_notification = new SimplePanel());
-        _notification.setStyleName("notification");
+        content.add(_reminder = new SimplePanel());
+        _reminder.setStyleName("reminder");
         add(content);
 
         if (CookieUtil.get(CookieNames.BOOKMARKED) == null) {
-            Notification bookmark = new Notification();
-            bookmark.type = NotificationType.BOOKMARK;
-            _notifications.add(bookmark);
+            Reminder bookmark = new Reminder();
+            bookmark.type = ReminderType.BOOKMARK;
+            _reminders.add(bookmark);
         }
         update();
-        _nsvc.getNotifications(new InfoCallback<List<Notification>>() {
-            @Override public void onSuccess (List<Notification> result) {
+        _svc.getReminders(new InfoCallback<List<Reminder>>() {
+            @Override public void onSuccess (List<Reminder> result) {
                 // TODO: do we need to re-sort?
                 if (result != null) {
-                    _notifications.addAll(result);
+                    _reminders.addAll(result);
                     update();
                 }
             }
@@ -77,7 +77,7 @@ public class NotificationsPanel extends FlowPanel
 
     protected void update ()
     {
-        int size = _notifications.size();
+        int size = _reminders.size();
         if (size == 0 || _dismissed) {
             setVisible(false);
             return;
@@ -86,31 +86,31 @@ public class NotificationsPanel extends FlowPanel
         setVisible(true);
         _selected = Math.max(Math.min(_selected, size - 1), 0);
         _cycle.setVisible(size > 1);
-        _notification.setWidget(createPanel(_notifications.get(_selected)));
+        _reminder.setWidget(createPanel(_reminders.get(_selected)));
     }
 
     protected void selectNext ()
     {
-        _selected = (_selected + 1) % _notifications.size();
+        _selected = (_selected + 1) % _reminders.size();
         update();
     }
 
-    protected Widget createPanel (final Notification notif)
+    protected Widget createPanel (final Reminder reminder)
     {
         AbsoluteCSSPanel panel = new AbsoluteCSSPanel("Content", "fixed");
-        switch (notif.type) {
+        switch (reminder.type) {
         case BOOKMARK:
             panel.addStyleName("Bookmark");
             panel.add(MsoyUI.createHTML(_msgs.bookmarkReminder(), "Reminder"));
             panel.add(easyButton(1, _msgs.bookmarkDidIt(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
                         clearBookmarkReminder();
-                        removeNotification(notif);
+                        removeNotification(reminder);
                     }
                 }));
             panel.add(easyButton(3, _msgs.bookmarkLater(), new ClickHandler() {
                     public void onClick (ClickEvent event) {
-                        removeNotification(notif);
+                        removeNotification(reminder);
                     }
                 }));
             break;
@@ -118,7 +118,7 @@ public class NotificationsPanel extends FlowPanel
             break;
         case TROPHY:
             panel.addStyleName("PublishTrophy");
-            final TrophyData trophyData = (TrophyData)notif.data;
+            final TrophyData trophyData = (TrophyData)reminder.data;
             final Trophy trophy = trophyData.trophy;
             panel.add(createThumbnail(trophy.trophyMedia, "Thumbnail"));
             panel.add(MsoyUI.createLabel(
@@ -128,7 +128,7 @@ public class NotificationsPanel extends FlowPanel
                     CShell.frame.dispatchEvent(new TrophyEvent(trophy.gameId, trophyData.gameName,
                         trophyData.gameDesc, trophyData.gameMediaURL, trophy.name, trophy.ident,
                         trophy.description, trophy.trophyMedia.getMediaPath()));
-                    removeNotification(notif);
+                    removeNotification(reminder);
                 }
             }));
             break;
@@ -136,17 +136,17 @@ public class NotificationsPanel extends FlowPanel
         return panel;
     }
 
-    protected void removeNotification (Notification notif)
+    protected void removeNotification (Reminder reminder)
     {
-        int index = _notifications.indexOf(notif);
+        int index = _reminders.indexOf(reminder);
         if (index < 0) {
             return;
         }
-        _notifications.remove(index);
+        _reminders.remove(index);
         if (index < _selected) {
             _selected--;
         } else if (index == _selected) {
-            if (_selected == _notifications.size()) {
+            if (_selected == _reminders.size()) {
                 _selected = 0;
             }
             update();
@@ -173,13 +173,12 @@ public class NotificationsPanel extends FlowPanel
         return w;
     }
 
-    protected List<Notification> _notifications = new ArrayList<Notification>();
+    protected List<Reminder> _reminders = new ArrayList<Reminder>();
     protected PushButton _cycle;
-    protected SimplePanel _notification;
+    protected SimplePanel _reminder;
     protected boolean _dismissed;
     protected int _selected;
 
-    protected static final NotificationsServiceAsync _nsvc =
-        GWT.create(NotificationsService.class);
-    protected static final NotificationsMessages _msgs = GWT.create(NotificationsMessages.class);
+    protected static final RemindersServiceAsync _svc = GWT.create(RemindersService.class);
+    protected static final RemindersMessages _msgs = GWT.create(RemindersMessages.class);
 }

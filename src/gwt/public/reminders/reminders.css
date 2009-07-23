@@ -1,50 +1,50 @@
 /**
  * $Id$
  *
- * Styles for notifications pages.
+ * Styles for reminders pages.
  */
 
-.notifications, .notifications .Absolute {
+.reminders, .reminders .Absolute {
   width: 758px;
   height: 78px;
 }
 
-.notifications {
+.reminders {
   border: 1px solid gray;
 }
 
-.notifications .Close {
+.reminders .Close {
   width: 12px;
   height: 12px;
   right: 8px;
   top: 8px;
-  background: url(/images/facebook/notifications_close.png) no-repeat;
+  background: url(/images/facebook/reminders_close.png) no-repeat;
 }
 
-.notifications .Close-up-hovering, .notifications .Close-down-hovering {
+.reminders .Close-up-hovering, .reminders .Close-down-hovering {
   background-position: 0px -12px;
 }
 
-.notifications .Cycle {
+.reminders .Cycle {
   width: 12px;
   height: 12px;
   right: 22px;
   top: 8px;
-  background: url(/images/facebook/notifications_cycle.png) no-repeat;
+  background: url(/images/facebook/reminders_cycle.png) no-repeat;
 }
 
-.notifications .Cycle-up-hovering, .notifications .Cycle-down-hovering {
+.reminders .Cycle-up-hovering, .reminders .Cycle-down-hovering {
   background-position: 0px -12px;
 }
 
-.notifications .notification {
+.reminders .reminder {
   height: 74px;
   width: 702px;
   left: 2px;
   top: 2px;
 }
 
-.notifications .easyButton {
+.reminders .easyButton {
   width: 120px;
   height: 20px;
   left: 571px;
@@ -55,24 +55,24 @@
   padding-top: 4px;
 }
 
-.notifications .easyButton-up-hovering, .notifications .easyButton-down-hovering {
+.reminders .easyButton-up-hovering, .reminders .easyButton-down-hovering {
   background-color: #aeb4bd;
   text-decoration: underline;
 }
 
-.notifications .easyButton[slot="1"] {
+.reminders .easyButton[slot="1"] {
   top: 10px;
 }
 
-.notifications .easyButton[slot="2"] {
+.reminders .easyButton[slot="2"] {
   top: 25px;
 }
 
-.notifications .easyButton[slot="3"] {
+.reminders .easyButton[slot="3"] {
   top: 40px;
 }
 
-.notifications .Bookmark .Reminder {
+.reminders .Bookmark .Reminder {
   width: 541px;
   font-size: 14px;
   font-weight: bold;
@@ -80,12 +80,12 @@
   left: 15px;
 }
 
-.notifications .PublishTrophy .Thumbnail {
+.reminders .PublishTrophy .Thumbnail {
   left: 15px;
   top: 7px;
 }
 
-.notifications .PublishTrophy .Tip {
+.reminders .PublishTrophy .Tip {
   width: 471px;
   font-size: 14px;
   font-weight: bold;

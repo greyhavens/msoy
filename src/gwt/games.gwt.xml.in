@@ -2,7 +2,7 @@
   <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="game"/>
   <inherits name="trophy"/>
-  <inherits name="notifications"/>
+  <inherits name="reminders"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 

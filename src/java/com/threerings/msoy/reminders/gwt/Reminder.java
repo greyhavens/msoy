@@ -1,15 +1,15 @@
 //
 // $Id$
 
-package com.threerings.msoy.notifications.gwt;
+package com.threerings.msoy.reminders.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**
- * A message for display to the user about something of interest, a suggestion or tip etc.
+ * A message for display to the user reminding them to do something.
  */
-public class Notification
+public class Reminder
     implements IsSerializable
 {
     /**
@@ -56,9 +56,9 @@ public class Notification
         }
     }
 
-    /** The type of notification. */
-    public NotificationType type;
+    /** The type of reminder. */
+    public ReminderType type;
 
-    /** The data for the message, if any. */
+    /** The data for the reminder, if any. */
     public Data data;
 }

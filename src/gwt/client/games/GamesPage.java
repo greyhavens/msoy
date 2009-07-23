@@ -15,7 +15,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SharedNaviUtil.GameDetails;
 
-import client.notifications.NotificationsPanel;
+import client.reminders.RemindersPanel;
 import client.shell.CShell;
 import client.shell.Page;
 
@@ -85,7 +85,7 @@ public class GamesPage extends Page
                     || action.equals("fb")) { // TEMP: "fb" action added by Ray for testing
                 // show the facebook portal and request to show the friends panel
                 FlowPanel arcade = new FlowPanel();
-                arcade.add(new NotificationsPanel());
+                arcade.add(new RemindersPanel());
                 arcade.add(new FBArcadePanel());
                 setContent(arcade);
                 CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));

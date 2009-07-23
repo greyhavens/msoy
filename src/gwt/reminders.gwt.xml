@@ -1,0 +1,14 @@
+<!-- $Id$ -->
+<!-- GWT build file for notifications module -->
+
+<module>
+  <inherits name="global"/>
+
+  <source path="com/threerings/msoy/reminders/gwt"/>
+  <source path="com/threerings/msoy/game/data/all"/>
+
+  <source path="client/reminders"/>
+
+  <public path="public/reminders"/>
+  <stylesheet src="reminders.css"/>
+</module>

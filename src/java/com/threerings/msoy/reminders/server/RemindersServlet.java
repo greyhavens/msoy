@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.notifications.server;
+package com.threerings.msoy.reminders.server;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+
 import com.threerings.msoy.facebook.server.persist.FacebookActionRecord;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
 
@@ -22,9 +23,9 @@ import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
-import com.threerings.msoy.notifications.gwt.Notification;
-import com.threerings.msoy.notifications.gwt.NotificationType;
-import com.threerings.msoy.notifications.gwt.NotificationsService;
+import com.threerings.msoy.reminders.gwt.Reminder;
+import com.threerings.msoy.reminders.gwt.ReminderType;
+import com.threerings.msoy.reminders.gwt.RemindersService;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -32,17 +33,17 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
- * Provides the server implementation for {@link NotificationService}.
+ * Provides the server implementation for {@link RemindersService}.
  */
-public class NotificationsServlet extends MsoyServiceServlet
-    implements NotificationsService
+public class RemindersServlet extends MsoyServiceServlet
+    implements RemindersService
 {
-    @Override // from NotificationService
-    public List<Notification> getNotifications ()
+    @Override // from RemindersService
+    public List<Reminder> getReminders ()
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        List<Notification> result = Lists.newArrayList();
+        List<Reminder> result = Lists.newArrayList();
 
         // set up the map of already-published trophies
         Map<String, FacebookActionRecord> published = Maps.newHashMap();
@@ -69,13 +70,13 @@ public class NotificationsServlet extends MsoyServiceServlet
 
             // note we don't resolve the trophy description here; the client only needs it to fill
             // out the trophy info passed to facebook, but our templates don't currently require it
-            Notification notif = new Notification();
-            notif.type = NotificationType.TROPHY;
-            notif.data = new Notification.TrophyData(trophy.toTrophy(), ginfo.name,
+            Reminder reminder = new Reminder();
+            reminder.type = ReminderType.TROPHY;
+            reminder.data = new Reminder.TrophyData(trophy.toTrophy(), ginfo.name,
                 ginfo.description, ginfo.getShotMedia().getMediaPath());
-            result.add(notif);
+            result.add(reminder);
 
-            if (result.size() == MAX_TROPHY_NOTIFICATIONS) {
+            if (result.size() == MAX_TROPHY_REMINDERS) {
                 break;
             }
         }
@@ -88,11 +89,11 @@ public class NotificationsServlet extends MsoyServiceServlet
         return FacebookRepository.getTrophyPublishedActionId(trophy.gameId, trophy.ident);
     }
 
-    protected static final int MAX_TROPHY_NOTIFICATIONS = 10;
+    protected static final int MAX_TROPHY_REMINDERS = 10;
     protected static final int MAX_RECENT_TROPHIES = 50;
 
-    @Inject FacebookRepository _facebookRepo;
-    @Inject MsoyGameRepository _mgameRepo;
-    @Inject TrophyRepository _trophyRepo;
-    @Inject TrophySourceRepository _trophySourceRepo;
+    protected @Inject FacebookRepository _facebookRepo;
+    protected @Inject MsoyGameRepository _mgameRepo;
+    protected @Inject TrophyRepository _trophyRepo;
+    protected @Inject TrophySourceRepository _trophySourceRepo;
 }
