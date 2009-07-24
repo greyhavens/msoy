@@ -125,6 +125,12 @@ public class FacebookLogic
             SERVER_URL, apiKey, appSecret, sessionKey, CONNECT_TIMEOUT, READ_TIMEOUT);
     }
 
+    protected FacebookJaxbRestClient getFacebookBatchClient ()
+    {
+        return new FacebookJaxbRestClient(SERVER_URL, requireAPIKey(), requireSecret(), null,
+            CONNECT_TIMEOUT, BATCH_READ_TIMEOUT);
+    }
+
     protected String requireAPIKey ()
     {
         String apiKey = ServerConfig.config.getValue("facebook.api_key", "");
@@ -194,7 +200,7 @@ public class FacebookLogic
 
             // TODO: hmm, going over each individual user and getting a jax response for each one
             // seems rather inefficient
-            FacebookJaxbRestClient client = getFacebookClient();
+            FacebookJaxbRestClient client = getFacebookBatchClient();
             List<Long> userIds = Lists.newArrayList();
             for (ExternalMapRecord extRec :
                 _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK)) {
@@ -226,6 +232,7 @@ public class FacebookLogic
 
     protected static final int CONNECT_TIMEOUT = 15*1000; // in millis
     protected static final int READ_TIMEOUT = 15*1000; // in millis
+    protected static final int BATCH_READ_TIMEOUT = 5*60*1000; // 5 minutes
 
     protected static final URL SERVER_URL;
     static {
