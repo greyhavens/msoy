@@ -267,8 +267,7 @@ public class ServerConfig
             config.getValue("messaging.server.username", ""),
             config.getValue("messaging.server.password", ""),
             config.getValue("messaging.server.realm", ""),
-            config.getValue("messaging.server.heartbeat", 0),
-            config.getValue("messaging.server.maxListenerThreads", 5));
+            config.getValue("messaging.server.heartbeat", 0));
     }
 
     /** The pattern via which we obtain our node id from our name. */
