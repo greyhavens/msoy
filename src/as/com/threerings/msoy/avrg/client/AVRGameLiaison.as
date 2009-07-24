@@ -114,6 +114,18 @@ public class AVRGameLiaison extends GameLiaison
     override public function shutdown () :void
     {
         super.shutdown();
+
+        // TODO, If we are in "no place", we should go to the last place visited, or home.
+        // The last place is problematic because it could have been a scene that triggered
+        // our participation in this AVRG in the first place, so what we really want is
+        // "the last place visited before we started playing this game". But even that could
+        // be somewhat wrong if you jumped directly from one AVRG to another. Do you really
+        // want to go back? So: home. But home itself could have forced you into an AVRG,
+        // perhaps even the one you are trying to quit. Perhaps the ultimate solution is
+        // to pop up a little dealy: "where do you want to go today?". For now: go home.
+        if (0 == _wctx.getWorldController().getCurrentSceneId()) {
+            _wctx.getWorldController().handleGoScene(_wctx.getMemberObject().homeSceneId);
+        }
     }
 
     public function leaveAVRGame () :void
@@ -125,6 +137,9 @@ public class AVRGameLiaison extends GameLiaison
             getAVRGameController().removeDeactivateHandler(onUserDeactivate);
         }
 
+        // NOTE: Ray 2009-07-24: the callback to this service does not seem to be getting called.
+        // Perhaps deactivating the game causes the connection to drop, and so we never get
+        // the response?
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
         svc.deactivateGame(_gctx.getClient(), _gameId,
             _gctx.getWorldContext().confirmListener(_gctx.getLocationDirector().leavePlace,
