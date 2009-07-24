@@ -17,6 +17,7 @@ import com.threerings.whirled.client.PendingData;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.client.persist.SceneRepository;
 
+import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -155,6 +156,17 @@ public class MsoySceneDirector extends SceneDirector
     override protected function sendMoveRequest () :void
     {
         var data :MsoyPendingData = _pendingData as MsoyPendingData;
+
+        // special code to handle moving to scene 0 (leaving all scenes)
+        if (data.sceneId == 0) {
+            _previousSceneId = _sceneId;
+            _pendingData = null;
+            _locdir.leavePlace();
+            _sceneId = 0; // not -1
+            // TODO: using the NoPlaceView freaks out the chat. Or something does. Fuck me.
+            //_worldctx.setPlaceView(new NoPlaceView());
+            return;
+        }
 
         // check the version of our cached copy of the scene to which we're requesting to move; if
         // we were unable to load it, assume a cached version of zero

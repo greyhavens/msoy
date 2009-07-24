@@ -687,10 +687,11 @@ public class WorldController extends MsoyController
      * Handles JOIN_AVR_GAME.
      */
     public function handleJoinAVRGame (
-        gameId :int, sceneId :int = 0, token :String = "", inviterMemberId :int = 0) :void
+        gameId :int, sceneId :int = int.MIN_VALUE,
+        token :String = "", inviterMemberId :int = 0) :void
     {
-        // by default, kick off in current scene
-        if (sceneId == 0) {
+        // by default, kick off in current scene (0 is now valid to mean "no scene")
+        if (sceneId == int.MIN_VALUE) {
             sceneId = getCurrentSceneId();
         }
 
@@ -1029,7 +1030,9 @@ public class WorldController extends MsoyController
         } else if (null != params["sceneId"]) {
             var sceneId :int = int(params["sceneId"]);
             if (sceneId == 0) {
-                sceneId = _wctx.getMemberObject().getHomeSceneId();
+                log.warning("Moving to scene 0, I hope that's what we actually want.",
+                    "raw arg", params["sceneId"]);
+                //sceneId = _wctx.getMemberObject().getHomeSceneId();
             }
             _wctx.getSceneDirector().moveTo(sceneId);
 
