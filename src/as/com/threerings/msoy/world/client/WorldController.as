@@ -698,7 +698,7 @@ public class WorldController extends MsoyController
         }
 
         // either we don't want a scene, or we're already in the right one, carry on
-        if (sceneId <= 0 || sceneId == getCurrentSceneId()) {
+        if (sceneId == getCurrentSceneId()) {
             _wctx.getGameDirector().activateAVRGame(
                 gameId, StringUtil.deNull(token), inviterMemberId);
             if (sceneId != 0 && inGWTApp()) {
