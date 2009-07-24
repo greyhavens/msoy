@@ -53,7 +53,10 @@ public class LaunchConfig
     /** The port on which the game should connect to the world server. */
     public int groupPort;
 
-    /** The scene to which the client should go if this is an in-world game. */
+    /** The scene to which the client should go if this is an in-world game.
+     * 0 = start in no room.
+     * MIN_VALUE = start in user's home, or any other convenient room.
+     */
     public int sceneId;
 
     /** The port on which the game should connect to the server for HTTP requests (used by Java

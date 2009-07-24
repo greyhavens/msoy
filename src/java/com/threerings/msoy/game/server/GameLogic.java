@@ -112,10 +112,15 @@ public class GameLogic
         config.httpPort = ServerConfig.httpPort;
 
         // if this is an AVRG (and not roomless), send the user to its group's home scene
-        if (game.isAVRG && game.groupId != 0 && !roomless) {
-            GroupRecord gprec = _groupRepo.loadGroup(game.groupId);
-            if (gprec != null) {
-                config.sceneId = gprec.homeSceneId;
+        if (game.isAVRG) {
+            if (roomless) {
+                config.sceneId = 0;
+
+            } else {
+                GroupRecord gprec = (game.groupId != 0) ? _groupRepo.loadGroup(game.groupId) : null;
+                // (gprec may be null even if we try to load it from the repo).
+                // Play in group's home, or user's home.
+                config.sceneId = (gprec != null) ? gprec.homeSceneId : Integer.MIN_VALUE;
             }
         }
 

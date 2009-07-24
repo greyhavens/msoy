@@ -690,9 +690,11 @@ public class WorldController extends MsoyController
         gameId :int, sceneId :int = int.MIN_VALUE,
         token :String = "", inviterMemberId :int = 0) :void
     {
-        // by default, kick off in current scene (0 is now valid to mean "no scene")
+        // 0 means "no scene"
+        // MIN_VALUE means "user's home, or current scene"
         if (sceneId == int.MIN_VALUE) {
-            sceneId = getCurrentSceneId();
+            var curScene :int = getCurrentSceneId();
+            sceneId = (curScene != 0) ? curScene : _wctx.getMemberObject().getHomeSceneId();
         }
 
         // either we don't want a scene, or we're already in the right one, carry on
