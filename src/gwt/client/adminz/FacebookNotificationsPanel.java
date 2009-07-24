@@ -176,12 +176,14 @@ public class FacebookNotificationsPanel extends AdminDataPanel<List<FacebookNoti
         _status.setText(0, 2, _msgs.fbNotifsStartHdr());
         _status.setText(0, 3, _msgs.fbNotifsFinishedHdr());
         _status.setText(0, 4, _msgs.fbNotifsUserCountHdr());
+        _status.setText(0, 5, _msgs.fbNotifsSentCountHdr());
         for (NotificationStatus status : statuses) {
             int row = _status.addText(status.id, 1);
             _status.setText(row, 1, status.status);
             _status.setText(row, 2, fmtDate(status.start));
             _status.setText(row, 3, fmtDate(status.finished));
             _status.setText(row, 4, String.valueOf(status.userCount));
+            _status.setText(row, 5, String.valueOf(status.sentCount));
         }
     }
 

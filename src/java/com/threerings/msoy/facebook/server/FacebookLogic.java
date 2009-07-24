@@ -4,9 +4,14 @@
 package com.threerings.msoy.facebook.server;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -17,8 +22,6 @@ import com.samskivert.util.StringUtil;
 
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.threerings.msoy.facebook.gwt.NotificationStatus;
 import com.threerings.msoy.facebook.server.persist.FacebookRepository;
@@ -150,6 +153,24 @@ public class FacebookLogic
     }
 
     /**
+     * Divides up a list into segements and calls the given function on each one. Returns a list
+     * of return values of the segments.
+     */
+    protected static <F, T> List<T> segment (
+        List<F> list, Function<List<F>, T> fn, int maxLength)
+    {
+        int size = list.size();
+        if (size == 0) {
+            return Collections.emptyList();
+        }
+        List<T> results = Lists.newArrayListWithCapacity((size - 1) / maxLength + 1);
+        for (int ii = 0; ii < size; ii += maxLength) {
+            results.add(fn.apply(list.subList(ii, Math.min(ii + maxLength, size))));
+        }
+        return results;
+    }
+
+    /**
      * A notification batch.
      */
     protected class NotificationBatch
@@ -165,7 +186,7 @@ public class FacebookLogic
             if (_interval == null) {
                 _interval = new Interval(_batchInvoker) {
                     public void expired () {
-                        trySend();
+                        send();
                     }
                 };
             }
@@ -179,31 +200,44 @@ public class FacebookLogic
             return _status;
         }
 
-        protected void trySend ()
+        protected void send ()
+        {
+            _status = new NotificationStatus(_id);
+            _status.start = new Date();
+
+            final FacebookJaxbRestClient client = getFacebookBatchClient();
+            final int BATCH_SIZE = 100;
+            segment(_memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK),
+                new Function<List<ExternalMapRecord>, Void>() {
+                    public Void apply (List<ExternalMapRecord> exRecs) {
+                        sendBatch(client, exRecs);
+                        return null;
+                    }
+                }, BATCH_SIZE);
+
+            _status.status = "Finished";
+            _status.finished = new Date();
+            log.info("Successfully sent notification", "id", _id, "count", _status.sentCount);
+        }
+
+        protected void sendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
         {
             try {
-                send();
-                log.info("Successfully sent notification", "id", _id);
-
+                trySendBatch(client, batch);
             } catch (Exception e) {
-                log.warning("Unable to send notification", "id", _id, e);
-                _status.status = "Failed: " + e;
+                log.warning("Failed to send facebook notifications", e);
             }
         }
 
-        protected void send ()
+        protected void trySendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
             throws FacebookException
         {
-            _status = new NotificationStatus(_id);
             _status.status = "Loading recipients";
-            _status.start = new Date();
 
             // TODO: hmm, going over each individual user and getting a jax response for each one
             // seems rather inefficient
-            FacebookJaxbRestClient client = getFacebookBatchClient();
             List<Long> userIds = Lists.newArrayList();
-            for (ExternalMapRecord extRec :
-                _memberRepo.loadExternalMappings(ExternalAuther.FACEBOOK)) {
+            for (ExternalMapRecord extRec : batch) {
                 Long userId = Long.valueOf(extRec.externalId);
                 if (client.users_isAppUser(userId)) {
                     userIds.add(userId);
@@ -211,11 +245,13 @@ public class FacebookLogic
                 }
             }
 
+            if (userIds.size() == 0) {
+                return;
+            }
+
             _status.status = "Sending";
             client.notifications_send(userIds, _content, true);
-
-            _status.status = "Finished";
-            _status.finished = new Date();
+            _status.sentCount += userIds.size();
         }
 
         protected String _id;
