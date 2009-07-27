@@ -142,12 +142,21 @@ public class GameInvitePanel extends InvitePanel
                 return new WhirledFriendsPanel(message, detail.gameId, detail.info.name, iargs);
             }
         });
-        addMethodButton("Facebook", new InviteMethodCreator() {
-            public Widget create () {
-                showFBInvitePopup(detail.gameId, message, iargs.toToken());
-                return null;
-            }
-        });
+
+        // Disable facebook invites to games, this seems to be killing our ignore rate. For
+        // reference, there were 54 new users on whirled who entered via a Vampires link over the
+        // 2 weeks ending july 27th. We don't know how many of those were specific to Facebook, but
+        // it serves as an upper bound. Of those, 24 created an account. The numbers on Facebook
+        // Insights > Features were 1164 ignore and 194 accept at that time.
+        // TODO: Fix if ignore rate drops or re-enable if it stays the same
+        if (false) {
+            addMethodButton("Facebook", new InviteMethodCreator() {
+                public Widget create () {
+                    showFBInvitePopup(detail.gameId, message, iargs.toToken());
+                    return null;
+                }
+            });
+        }
         addMethodButtons();
     }
 
