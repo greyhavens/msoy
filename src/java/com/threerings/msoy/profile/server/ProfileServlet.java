@@ -194,21 +194,30 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void updateProfile (String displayName, boolean greeter, final Profile profile)
+    public void updateProfile (int memberId, String displayName, boolean greeter, final Profile profile)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
-        int memberId = memrec.memberId;
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null || tgtrec.isDeleted()) {
+            log.warning("Can't update non-existent or deleted profile", "id", memberId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
 
-        if (!ObjectUtil.equals(memrec.name, displayName)) {
+        MemberRecord memrec = requireAuthedUser();
+        if (memrec.memberId != tgtrec.memberId && !memrec.isSupport()) {
+            log.warning("Profile update forbidden", "ourId", memrec.memberId, "targetId", memberId);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        if (!ObjectUtil.equals(tgtrec.name, displayName)) {
             // this will hork with a ServiceException if the name is bogus
-            _memberLogic.setDisplayName(memberId, displayName, memrec.isSupport());
+            _memberLogic.setDisplayName(memberId, displayName, tgtrec.isSupport());
         }
 
         // don't let the user become a greeter if it is disabled
-        if (!memrec.isGreeter() && greeter) {
+        if (!tgtrec.isGreeter() && greeter) {
             int friendCount = _memberRepo.countFullFriends(memberId);
-            if (getGreeterStatus(memrec, friendCount) == GreeterStatus.DISABLED) {
+            if (getGreeterStatus(tgtrec, friendCount) == GreeterStatus.DISABLED) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
         }
@@ -244,8 +253,8 @@ public class ProfileServlet extends MsoyServiceServlet
             _moneyLogic.awardCoins(memberId, CoinAwards.CREATED_PROFILE, true, action);
 
             // now that the member has a name, try sending the affiliate a friend request
-            int affiliateId = memrec.affiliateMemberId;
-            if (memrec.isSet(MemberRecord.Flag.FRIEND_AFFILIATE) && affiliateId > 0 &&
+            int affiliateId = tgtrec.affiliateMemberId;
+            if (tgtrec.isSet(MemberRecord.Flag.FRIEND_AFFILIATE) && affiliateId > 0 &&
                 _memberRepo.getFriendship(memberId, affiliateId) == Friendship.NOT_FRIENDS) {
                 try {
                     _memberLogic.inviteToBeFriend(memberId, affiliateId);
@@ -259,16 +268,16 @@ public class ProfileServlet extends MsoyServiceServlet
         } else {
             _userActionRepo.logUserAction(action);
         }
-        _eventLog.profileUpdated(memberId, memrec.visitorId);
+        _eventLog.profileUpdated(memberId, tgtrec.visitorId);
 
         final boolean photoChanged = !orec.getPhoto().equals(nrec.getPhoto());
         final boolean statusChanged = !ObjectUtil.equals(orec.headline, nrec.headline);
-        final boolean greeterChanged = memrec.isGreeter() != greeter;
+        final boolean greeterChanged = (tgtrec.isGreeter() != greeter);
         if (greeterChanged) {
-            memrec.setFlag(MemberRecord.Flag.GREETER, greeter);
-            _memberRepo.storeFlags(memrec);
+            tgtrec.setFlag(MemberRecord.Flag.GREETER, greeter);
+            _memberRepo.storeFlags(tgtrec);
             // let the world servers know about the info change
-            MemberNodeActions.tokensChanged(memberId, memrec.toTokenRing());
+            MemberNodeActions.tokensChanged(memberId, tgtrec.toTokenRing());
         }
         if (statusChanged || photoChanged) {
             // let the world servers know about the info change
@@ -278,12 +287,23 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void updateInterests (final List<Interest> interests)
+    public void updateInterests (int memberId, List<Interest> interests)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser();
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null || tgtrec.isDeleted()) {
+            log.warning("Can't update interests for non-existent/deleted player", "id", memberId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        MemberRecord memrec = requireAuthedUser();
+        if (memrec.memberId != tgtrec.memberId && !memrec.isSupport()) {
+            log.warning("Profile update forbidden", "ourId", memrec.memberId, "targetId", memberId);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
         // store the supplied interests in the repository; blank interests will be deleted
-        _profileRepo.storeInterests(memrec.memberId, interests);
+        _profileRepo.storeInterests(memberId, interests);
     }
 
     // from interface ProfileService

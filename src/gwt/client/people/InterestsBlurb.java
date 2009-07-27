@@ -67,7 +67,7 @@ public class InterestsBlurb extends Blurb
         setContent(contents);
 
         // display the edit button if this is our profile
-        if (_name.getMemberId() == CShell.getMemberId()) {
+        if (CShell.isSupport() || _name.getMemberId() == CShell.getMemberId()) {
             setFooterLabel(_msgs.interestsEdit(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     startEdit();
@@ -103,7 +103,7 @@ public class InterestsBlurb extends Blurb
         new ClickCallback<Void>(update) {
             @Override protected boolean callService () {
                 _newInterests = getNewInterests();
-                _profilesvc.updateInterests(_newInterests, this);
+                _profilesvc.updateInterests(_name.getMemberId(), _newInterests, this);
                 return true;
             }
 
@@ -159,11 +159,11 @@ public class InterestsBlurb extends Blurb
     {
         FlowPanel panel = new FlowPanel();
         String[] ivec = interests.split(",");
-        for (int ii = 0; ii < ivec.length; ii++) {
+        for (String element2 : ivec) {
             if (panel.getWidgetCount() > 0) {
                 panel.add(new InlineLabel(",", false, false, true));
             }
-            String interest = ivec[ii].trim();
+            String interest = element2.trim();
             panel.add(Link.create(interest, Pages.PEOPLE, "search", "0", interest));
         }
 

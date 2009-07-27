@@ -22,14 +22,16 @@ public interface ProfileServiceAsync
 
     /**
      * The asynchronous version of {@link ProfileService#updateProfile}.
+     * @param memberId
      */
     void updateProfile (
-        String displayName, boolean greeter, Profile profile, AsyncCallback<Void> callback);
+        int memberId, String displayName, boolean greeter, Profile profile,
+        AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#updateInterests}.
      */
-    void updateInterests (List<Interest> interests, AsyncCallback<Void> callback);
+    void updateInterests (int memberId, List<Interest> interests, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#findProfiles}.

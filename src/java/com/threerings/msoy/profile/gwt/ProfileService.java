@@ -128,13 +128,13 @@ public interface ProfileService extends RemoteService
     /**
      * Requests that this user's profile be updated.
      */
-    void updateProfile (String displayName, boolean greeter, Profile profile)
+    void updateProfile (int memberId, String displayName, boolean greeter, Profile profile)
         throws ServiceException;
 
     /**
      * Updates the calling user's interests.
      */
-    void updateInterests (List<Interest> interests)
+    void updateInterests (int memberId, List<Interest> interests)
         throws ServiceException;
 
     /**

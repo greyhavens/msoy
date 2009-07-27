@@ -232,8 +232,8 @@ public class ProfileBlurb extends Blurb
         content.setWidget(1, 1, _buttons, 2);
         setContent(content);
 
-        // display the edit button if this is our profile
-        if (_name.getMemberId() == CShell.getMemberId()) {
+        // display the edit button if this is our profile or we're support
+        if (CShell.isSupport() || _name.getMemberId() == CShell.getMemberId()) {
             setFooterLabel(_msgs.profileEdit(), new ClickHandler() {
                 public void onClick (ClickEvent event) {
                     startEdit();
@@ -407,7 +407,7 @@ public class ProfileBlurb extends Blurb
             _greeter = _egreeter.getValue() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
         }
 
-        _profilesvc.updateProfile(name, _greeter == GreeterStatus.GREETER, _profile,
+        _profilesvc.updateProfile(_name.getMemberId(), name, _greeter == GreeterStatus.GREETER, _profile,
             new InfoCallback<Void>() {
                 public void onSuccess (Void result) {
                     displayProfile();

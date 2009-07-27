@@ -128,7 +128,7 @@ public class ConfigProfilePanel extends FlowPanel
                     MsoyUI.infoNear(_cmsgs.nonSupportNameInvalid(), _name);
                     return false;
                 }
-                _profilesvc.updateProfile(_dname, false, _profile, this);
+                _profilesvc.updateProfile(CShell.getMemberId(), _dname, false, _profile, this);
                 return true;
             }
             protected boolean gotResult (Void result) {
