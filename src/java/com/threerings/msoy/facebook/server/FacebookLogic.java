@@ -217,7 +217,7 @@ public class FacebookLogic
 
             _status.status = "Finished";
             _status.finished = new Date();
-            log.info("Successfully sent notification", "id", _id, "count", _status.sentCount);
+            log.info("Successfully sent notifications", "id", _id, "count", _status.sentCount);
         }
 
         protected void sendBatch (FacebookJaxbRestClient client, List<ExternalMapRecord> batch)
@@ -234,24 +234,31 @@ public class FacebookLogic
         {
             _status.status = "Loading recipients";
 
-            // TODO: hmm, going over each individual user and getting a jax response for each one
-            // seems rather inefficient
-            List<Long> userIds = Lists.newArrayList();
-            for (ExternalMapRecord extRec : batch) {
-                Long userId = Long.valueOf(extRec.externalId);
-                if (client.users_isAppUser(userId)) {
-                    userIds.add(userId);
-                    _status.userCount++;
+            List<FQL.Exp> uids = Lists.transform(batch,
+                new Function<ExternalMapRecord, FQL.Exp>() {
+                public FQL.Exp apply (ExternalMapRecord exRec) {
+                    return FQL.unquoted(exRec.externalId);
                 }
+            });
+
+            FQLQuery getUsers = new FQLQuery(USERS_TABLE, new FQL.Field[] {UID, IS_APP_USER},
+                new FQL.Where(UID.in(uids)));
+
+            List<Long> targetIds = Lists.newArrayListWithCapacity(uids.size());
+            for (FQLQuery.Record result : getUsers.run(client)) {
+                if (!result.getField(IS_APP_USER).equals("1")) {
+                    continue;
+                }
+                targetIds.add(Long.valueOf(result.getField(UID)));
             }
 
-            if (userIds.size() == 0) {
+            if (targetIds.size() == 0) {
                 return;
             }
 
             _status.status = "Sending";
-            client.notifications_send(userIds, _content, true);
-            _status.sentCount += userIds.size();
+            client.notifications_send(targetIds, _content, true);
+            _status.sentCount += targetIds.size();
         }
 
         protected String _id;
@@ -261,6 +268,10 @@ public class FacebookLogic
     }
 
     protected Map<String, NotificationBatch> _notifications = Maps.newHashMap();
+
+    protected static final FQL.Field UID = new FQL.Field("uid");
+    protected static final FQL.Field IS_APP_USER = new FQL.Field("is_app_user");
+    protected static final String USERS_TABLE = "user";
 
     @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected FacebookRepository _facebookRepo;
