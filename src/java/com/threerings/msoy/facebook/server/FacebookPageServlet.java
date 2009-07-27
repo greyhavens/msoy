@@ -35,7 +35,9 @@ import com.threerings.msoy.facebook.gwt.FacebookFriendInfo;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
+import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -73,7 +75,15 @@ public class FacebookPageServlet extends MsoyServiceServlet
         // find the last played games & ratings (1p only) + collect game ids
         IntMap<FacebookFriendInfo.Thumbnail> games = IntMaps.newHashIntMap();
         IntMap<RatingRecord> lastGames = IntMaps.newHashIntMap();
-        for (RatingRecord rating : _ratingRepo.getMostRecentRatings(friendsInfo.keySet(), -1)) {
+
+        Set<Integer> approvedGames = Sets.newHashSet();
+        for (Integer gameId : Lists.transform(_mgameRepo.loadArcadeEntries(
+            ArcadeData.Portal.FACEBOOK, true), ArcadeEntryRecord.TO_GAME_ID)) {
+            approvedGames.add(-gameId);
+        }
+
+        for (RatingRecord rating : _ratingRepo.getMostRecentRatings(
+            friendsInfo.keySet(), approvedGames, 0)) {
             lastGames.put(rating.playerId, rating);
             FacebookFriendInfo.Thumbnail thumbnail = new FacebookFriendInfo.Thumbnail();
             thumbnail.id = Math.abs(rating.gameId);
