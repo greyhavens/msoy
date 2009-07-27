@@ -3,12 +3,9 @@
 
 package client.facebook;
 
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.ui.MsoyUI;
 import client.shell.Page;
 
 /**
@@ -23,17 +20,10 @@ public class FacebookPage extends Page
         if (action.equals("friends")) {
             setContent("Friends", new FBFriendBar());
 
-        } else if (action.equals("test")) {
-            FlowPanel fbml = new FlowPanel();
-            fbml.add(MsoyUI.createLabel("Table with nested fb:name:", null));
-            SmartTable test = new SmartTable(10, 10);
-            test.setWidget(0, 0, new FBMLPanel("name", "uid", "507435487")); // Shanti
-            test.setWidget(0, 1, new FBMLPanel("name", "uid", "540615819")); // Michael
-            test.setWidget(1, 0, new FBMLPanel("name", "uid", "553328385")); // Jamie
-            test.setWidget(1, 1, new FBMLPanel("name", "uid", "532587813")); // Daniel
-            fbml.add(test);
-            setContent("FBML Test", fbml);
-            FBMLPanel.reparse(fbml);
+        } else if (action.equals("game")) {
+            // TODO: specific friends bar mode for games
+            // int gameId = args.get(1, 0);
+            setContent("Friends", new FBFriendBar());
 
         } else if (action.equals("invite")) {
             setContent("Invite", FBInvitePanel.create());

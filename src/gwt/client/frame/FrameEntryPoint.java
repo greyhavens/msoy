@@ -429,9 +429,12 @@ public class FrameEntryPoint
         CShell.log("Opening bottom frame", "token", token);
         Pages page = Pages.fromHistory(token);
         Args args = Args.fromHistory(token);
-        _bottomFrame = new PageFrame(page, BOTTOM_FRAME_ID);
-        _bottomFrameToken = args.recompose(0).toToken();
-        _layout.setBottomContent(_bottomFrame);
+        String bottomFrameToken = args.recompose(0).toToken();
+        if (!bottomFrameToken.equals(_bottomFrameToken)) {
+            _bottomFrame = new PageFrame(page, BOTTOM_FRAME_ID);
+            _bottomFrameToken = bottomFrameToken;
+            _layout.setBottomContent(_bottomFrame);
+        }
     }
 
     /**
@@ -478,6 +481,7 @@ public class FrameEntryPoint
 
         _layout.setContent(_bar, _pageFrame);
         _bottomFrame = null;
+        _bottomFrameToken = "";
     }
 
     protected void clearContent (boolean restoreClient)
@@ -490,6 +494,7 @@ public class FrameEntryPoint
         }
         _pageFrame = null;
         _bottomFrame = null;
+        _bottomFrameToken = "";
         if (!_layout.alwaysShowsTitleBar()) {
             _bar = null;
         }
@@ -610,6 +615,9 @@ public class FrameEntryPoint
                 launchGame(result, action, otherId1, token, otherId2);
             }
         });
+        if (CShell.isFacebook()) {
+            openBottomFrame(Pages.FACEBOOK.makeToken("game", gameId));
+        }
     }
 
     protected void launchGame (final LaunchConfig config, String action, final int otherId1,

@@ -38,10 +38,13 @@ public class GamesPage extends Page
             } else {
                 setContent(panel = new GameDetailPanel());
             }
-            panel.setGame(args.get(1, 0), GameDetails.getByCode(args.get(2, "")));
+            int gameId = args.get(1, 0);
+            panel.setGame(gameId, GameDetails.getByCode(args.get(2, "")));
+            showFriendsBar(gameId);
 
         } else if (action.equals("t")) {
             setContent(new TrophyCasePanel(args.get(1, 0)));
+            showFriendsBar(0);
 
         } else if (action.equals("ct")) {
             setContent(_msgs.compareTitle(),
@@ -51,6 +54,7 @@ public class GamesPage extends Page
             setContent(new GameGenrePanel(getDefaultPortal(),
                 ByteEnumUtil.fromByte(GameGenre.class, args.get(1, GameGenre.ALL.toByte())),
                 GameInfo.Sort.fromToken(args.get(2, "")), args.get(3, null)));
+            showFriendsBar(0);
 
         } else if (action.equals("m")) {
             setContent(new MyGamesPanel(GameInfo.Sort.fromToken(args.get(1, ""))));
@@ -88,7 +92,7 @@ public class GamesPage extends Page
                 arcade.add(new RemindersPanel());
                 arcade.add(new FBArcadePanel());
                 setContent(arcade);
-                CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
+                showFriendsBar(0);
 
             } else {
                 setContent(new ArcadePanel(getDefaultPortal()));
@@ -105,6 +109,21 @@ public class GamesPage extends Page
     protected ArcadeData.Portal getDefaultPortal ()
     {
         return CShell.isFacebook() ? ArcadeData.Portal.FACEBOOK : ArcadeData.Portal.MAIN;
+    }
+
+    protected void showFriendsBar (int gameId)
+    {
+        if (!CShell.isFacebook()) {
+            return;
+        }
+
+        if (gameId == 0) {
+            CShell.log("Opening bottom friends frame");
+            CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("friends"));
+        } else {
+            CShell.log("Opening bottom friends frame in game mode", "gameId", gameId);
+            CShell.frame.openBottomFrame(Pages.FACEBOOK.makeToken("game", gameId));
+        }
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
