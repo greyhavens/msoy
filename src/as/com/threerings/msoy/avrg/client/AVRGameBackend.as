@@ -482,8 +482,8 @@ public class AVRGameBackend extends ControlBackend
     {
         validateRoomTargetId(targetId);
         var sprite :MemberSprite = getAvatarSprite(playerId);
-        var actorInfo :ActorInfo = sprite.getActorInfo();
         if (sprite != null) {
+            var actorInfo :ActorInfo = sprite.getActorInfo();
             var data :Object = new Object();
             data["entityId"] = actorInfo.getItemIdent().toString();
             data["state"] = actorInfo.getState();
