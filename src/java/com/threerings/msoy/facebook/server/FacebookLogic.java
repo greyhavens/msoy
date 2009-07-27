@@ -256,6 +256,7 @@ public class FacebookLogic
                 return;
             }
 
+            _status.userCount += targetIds.size();
             _status.status = "Sending";
             client.notifications_send(targetIds, _content, true);
             _status.sentCount += targetIds.size();

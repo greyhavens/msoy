@@ -16,7 +16,7 @@ import com.google.code.facebookapi.FacebookJaxbRestClient;
 import com.google.code.facebookapi.schema.FqlQueryResponse;
 import com.threerings.msoy.facebook.server.FQL.Field;
 
-import static com.threerings.msoy.Log.log;
+//import static com.threerings.msoy.Log.log;
 
 /**
  * Constructs, runs and parses the results of an FQL query.
@@ -50,7 +50,6 @@ public class FQLQuery
     {
         StringBuilder query = new StringBuilder();
         append(query);
-        log.info("Running FQL", "string", query);
         return new ResultSet((FqlQueryResponse)client.fql_query(query));
     }
 
