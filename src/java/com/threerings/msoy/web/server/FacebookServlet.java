@@ -109,22 +109,22 @@ public class FacebookServlet extends HttpServlet
             AppInfo info = parseAppInfo(req);
 
             // make sure we have signed facebook data
-            validateRequest(req, info.appSecret);
+            validateSignature(req, info.appSecret);
 
             // we should either have 'canvas_user' or 'user'
             FacebookAppCreds creds = new FacebookAppCreds();
-            creds.uid = ParameterUtil.getParameter(req, fbParam("canvas_user"), "");
+            creds.uid = req.getParameter(FB_CANVAS_USER);
             if (StringUtil.isBlank(creds.uid)) {
-                creds.uid = ParameterUtil.getParameter(req, fbParam("user"), "");
+                creds.uid = req.getParameter(FB_USER);
             }
-            boolean added = "1".equals(ParameterUtil.getParameter(req, fbParam("added"), ""));
+            boolean added = "1".equals(req.getParameter(FB_ADDED));
             if (StringUtil.isBlank(creds.uid) || !added) {
                 sendTopRedirect(rsp, getLoginURL(info.apiKey));
                 return;
             }
             creds.apiKey = info.apiKey;
             creds.appSecret = info.appSecret;
-            creds.sessionKey = ParameterUtil.getParameter(req, fbParam("session_key"), true);
+            creds.sessionKey = req.getParameter(FB_SESSION_KEY);
 
             // create a new visitor info which will either be ignored or used shortly
             VisitorInfo vinfo = new VisitorInfo();
@@ -213,10 +213,10 @@ public class FacebookServlet extends HttpServlet
         }
     }
 
-    protected void validateRequest (HttpServletRequest req, String secret)
+    protected void validateSignature (HttpServletRequest req, String secret)
         throws ServiceException
     {
-        String sig = ParameterUtil.getParameter(req, "fb_sig", true);
+        String sig = req.getParameter("fb_sig");
         if (StringUtil.isBlank(sig)) {
             throw new ServiceException("Missing fb_sig parameter");
         }
@@ -288,14 +288,6 @@ public class FacebookServlet extends HttpServlet
         return "http://www.facebook.com/login.php?api_key=" + key + "&canvas=1&v=1.0";
     }
 
-    /**
-     * Shortcut for prepending {@link #FBKEY_PREFIX}.
-     */
-    protected String fbParam (String name)
-    {
-        return FBKEY_PREFIX + name;
-    }
-
     protected static class AppInfo
     {
         public int gameId;
@@ -311,7 +303,12 @@ public class FacebookServlet extends HttpServlet
     @Inject protected MsoyAuthenticator _auther;
     @Inject protected MsoyGameRepository _mgameRepo;
 
-    protected static final String FBKEY_PREFIX = "fb_sig_";
+    protected static final String FB_SIG = "fb_sig";
+    protected static final String FBKEY_PREFIX = FB_SIG + "_";
+    protected static final String FB_USER = FBKEY_PREFIX + "user";
+    protected static final String FB_CANVAS_USER = FBKEY_PREFIX + "canvas_user";
+    protected static final String FB_ADDED = FBKEY_PREFIX + "added";
+    protected static final String FB_SESSION_KEY = FBKEY_PREFIX + "session_key";
     protected static final int FBAUTH_DAYS = 2;
     protected static final String GAME_PATH = "/game/";
 }
