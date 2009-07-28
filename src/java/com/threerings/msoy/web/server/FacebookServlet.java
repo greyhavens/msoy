@@ -8,7 +8,6 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -88,15 +87,17 @@ public class FacebookServlet extends HttpServlet
         }
     }
 
+    @Override // from HttpServlet
     protected void doHead (HttpServletRequest req, HttpServletResponse rsp)
-        throws ServletException, IOException
+        throws IOException
     {
         log.info("Got HEAD request " + req.getRequestURL());
         MsoyHttpServer.dumpParameters(req);
     }
 
+    @Override // from HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
-        throws ServletException, IOException
+        throws IOException
     {
         if (DeploymentConfig.devDeployment) {
             log.info("Got GET request " + req.getRequestURL());
@@ -178,8 +179,9 @@ public class FacebookServlet extends HttpServlet
         }
     }
 
+    @Override // from HttpServlet
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
-        throws ServletException, IOException
+        throws IOException
     {
         log.info("Got POST request " + req.getRequestURL());
         MsoyHttpServer.dumpParameters(req);
