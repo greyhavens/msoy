@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.servlet.util.FriendlyException;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.StringUtil;
 
@@ -119,10 +118,8 @@ public class FacebookServlet extends HttpServlet
             }
             boolean added = "1".equals(ParameterUtil.getParameter(req, fbParam("added"), ""));
             if (StringUtil.isBlank(creds.uid) || !added) {
-                // this the "way" iframed Facebook apps redirect to the logon page, awseome!
-                throw new FriendlyException(
-                    "<script type=\"text/javascript\">\n" +
-                    "top.location.href = \"" + getLoginURL(info.apiKey) + "\";\n</script>");
+                sendTopRedirect(rsp, getLoginURL(info.apiKey));
+                return;
             }
             creds.apiKey = info.apiKey;
             creds.appSecret = info.appSecret;
@@ -172,9 +169,12 @@ public class FacebookServlet extends HttpServlet
             }
 
         } catch (ServiceException se) {
-            sendResponse(rsp, se.getMessage());
-        } catch (FriendlyException fe) {
-            sendResponse(rsp, fe.getMessage());
+            log.warning("Error in Facebook callback", se);
+            // TODO: we won't need these extra dumps once everything is working well
+            MsoyHttpServer.dumpParameters(req);
+            MsoyHttpServer.dumpCookies(req);
+            MsoyHttpServer.dumpHeaders(req);
+            rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -183,6 +183,20 @@ public class FacebookServlet extends HttpServlet
     {
         log.info("Got POST request " + req.getRequestURL());
         MsoyHttpServer.dumpParameters(req);
+    }
+
+    protected void sendTopRedirect (HttpServletResponse rsp, String url)
+        throws IOException
+    {
+        PrintStream out = null;
+        try {
+            out = new PrintStream(rsp.getOutputStream());
+            out.println("<html><head><script language=\"JavaScript\">");
+            out.println("window.top.location = '" + url + "';");
+            out.println("</script></head></html>");
+        } finally {
+            StreamUtil.close(out);
+        }
     }
 
     protected void sendResponse (HttpServletResponse rsp, String message)
@@ -198,11 +212,11 @@ public class FacebookServlet extends HttpServlet
     }
 
     protected void validateRequest (HttpServletRequest req, String secret)
-        throws FriendlyException
+        throws ServiceException
     {
         String sig = ParameterUtil.getParameter(req, "fb_sig", true);
         if (StringUtil.isBlank(sig)) {
-            throw new FriendlyException("Missing fb_sig parameter");
+            throw new ServiceException("Missing fb_sig parameter");
         }
 
         // obtain a list of all fb_sig_ keys and sort them alphabetically by key
@@ -218,19 +232,22 @@ public class FacebookServlet extends HttpServlet
         // concatenate them all together (no separator) and MD5 this plus our secret key
         String sigdata = StringUtil.join(params.toArray(new String[params.size()]), "");
         if (!sig.equals(StringUtil.md5hex(sigdata + secret))) {
-            throw new FriendlyException("Invalid fb_sig parameter");
+            throw new ServiceException("Invalid fb_sig parameter");
         }
     }
 
     protected AppInfo parseAppInfo (HttpServletRequest req)
-        throws FriendlyException
+        throws ServiceException
     {
         String path = req.getPathInfo();
         AppInfo info = new AppInfo();
         if (path == null || !path.startsWith(GAME_PATH)) {
             info.apiKey = ServerConfig.config.getValue("facebook.api_key", "");
             info.appSecret = ServerConfig.config.getValue("facebook.secret", "");
-            info.gameId = ParameterUtil.getIntParameter(req, "game", 0, "Invalid game parameter");
+            String gameId = req.getParameter("game");
+            if (!StringUtil.isBlank(gameId)) {
+                info.gameId = Integer.parseInt(gameId);
+            }
             info.vector = req.getParameter("vec");
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
@@ -242,19 +259,19 @@ public class FacebookServlet extends HttpServlet
         try {
             gameId = Integer.parseInt(path.substring(GAME_PATH.length()));
         } catch (Exception e) {
-            throw new FriendlyException("Invalid game URL: " + path);
+            throw new ServiceException("Invalid game URL: " + path);
         }
 
         GameInfoRecord ginfo = _mgameRepo.loadGame(gameId);
         if (ginfo == null) {
-            throw new FriendlyException("Unknown game: " + gameId);
+            throw new ServiceException("Unknown game: " + gameId);
         }
 
         info.gameId = ginfo.gameId;
 
         FacebookInfo fbinfo = _mgameRepo.loadFacebookInfo(ginfo.gameId);
         if (fbinfo.apiKey == null) {
-            throw new FriendlyException("Game missing Facebook info: " + ginfo.name);
+            throw new ServiceException("Game missing Facebook info: " + ginfo.name);
         }
 
         info.apiKey = fbinfo.apiKey;
