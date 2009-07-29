@@ -79,4 +79,13 @@ public abstract class TitleBar
      * @param position the index within the existing links
      */
     public abstract void addContextLink (String label, Pages page, Args args, int position);
+
+    /**
+     * Returns true if the layout should give the title bar more room. Exactly what is meant by
+     * more room is up to the layout. 
+     */
+    public boolean isExtended ()
+    {
+        return false;
+    }
 }

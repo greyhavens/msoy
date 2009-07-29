@@ -137,7 +137,7 @@ public class FramedLayout extends Layout
     {
         int avail = Window.getClientHeight();
         if (_bar.getWidget() != null) {
-            avail -= FRAMED_NAVI_HEIGHT;
+            avail -= getTitleBarHeight();
         }
         if (_client.getWidget() != null) {
             avail -= 300;
@@ -145,7 +145,10 @@ public class FramedLayout extends Layout
         return avail;
     }
 
-    protected SimplePanel _client, _bar, _content;
+    protected int getTitleBarHeight ()
+    {
+        return 28;
+    }
 
-    protected static final int FRAMED_NAVI_HEIGHT = 28;
+    protected SimplePanel _client, _bar, _content;
 }

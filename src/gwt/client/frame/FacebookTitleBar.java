@@ -77,6 +77,12 @@ public class FacebookTitleBar extends TitleBar
         // not supported
     }
 
+    @Override // from TitleBar
+    public boolean isExtended ()
+    {
+        return _contents.getElement().getAttribute("mode").equals("challenge");
+    }
+
     protected Widget button (String style, Pages page, Object...args)
     {
         return MsoyUI.createImageButton(style, Link.createHandler(page, args));

@@ -31,6 +31,7 @@ public class FacebookLayout extends FramedLayout
     public void setTitleBar (TitleBar bar)
     {
         _bar.setWidget(bar.exposeWidget());
+        _extendedTitleBar = bar.isExtended();
     }
 
     @Override // from Layout
@@ -51,7 +52,7 @@ public class FacebookLayout extends FramedLayout
     public void setBottomContent (Widget content)
     {
         content.setWidth("100%");
-        content.setHeight(FB_FRAME_HEIGHT + "px");
+        content.setHeight(BOTTOM_FRAME_HEIGHT + "px");
         content.getElement().setAttribute("scrolling", "no");
         _bottomContent.setWidget(content);
         updateMainContentHeight();
@@ -71,11 +72,19 @@ public class FacebookLayout extends FramedLayout
     {
         int height = super.calcMainContentHeight();
         if (_bottomContent.getWidget() != null) {
-            height -= FB_FRAME_HEIGHT;
+            height -= BOTTOM_FRAME_HEIGHT;
         }
         return height;
     }
 
+    @Override // from FramedLayout
+    protected int getTitleBarHeight ()
+    {
+        // values also specified in frame.css
+        return _extendedTitleBar ? 83 : 53;
+    }
+
     protected SimplePanel _bottomContent;
-    protected static final int FB_FRAME_HEIGHT = 222;
+    protected boolean _extendedTitleBar;
+    protected static final int BOTTOM_FRAME_HEIGHT = 193;
 }
