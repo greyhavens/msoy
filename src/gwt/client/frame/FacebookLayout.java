@@ -81,7 +81,7 @@ public class FacebookLayout extends FramedLayout
     protected int getTitleBarHeight ()
     {
         // values also specified in frame.css
-        return _extendedTitleBar ? 83 : 53;
+        return _extendedTitleBar ? 66 : 53;
     }
 
     protected SimplePanel _bottomContent;

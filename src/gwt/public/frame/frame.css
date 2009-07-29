@@ -233,7 +233,7 @@
 }
 
 .fbpageTitle[mode="challenge"] {
-  height: 83px;
+  height: 66px;
 }
 
 .fbpageTitle .Logo {
@@ -299,9 +299,10 @@
 
 .fbpageTitle .Challenge {
   top: auto;
-  top: 59px;
+  top: 49px;
   width: 100%;
   text-align: center;
+  font-size: 12px;
 }
 
 .fbpageTitle .Challenge a {
