@@ -226,7 +226,14 @@
 .fbpageTitle {
   background: #3b5998;
   width: 100%;
+}
+
+.fbpageTitle[mode="normal"] {
   height: 53px;
+}
+
+.fbpageTitle[mode="challenge"] {
+  height: 83px;
 }
 
 .fbpageTitle .Logo {
@@ -261,6 +268,10 @@
   background-position: 0 -30px;
 }
 
+.fbpageTitle .Invite-up-hovering, .fbpageTitle .Invite-down-hovering {
+  background-position: 0 -30px;
+}
+
 .fbpageTitle .Fan {
   left: 500px;
 }
@@ -284,6 +295,23 @@
 
 .fbpageTitle .Trophies-up-hovering, .fbpageTitle .Trophies-down-hovering {
   background-position: 0 -30px;
+}
+
+.fbpageTitle .Challenge {
+  top: auto;
+  top: 59px;
+  width: 100%;
+  text-align: center;
+}
+
+.fbpageTitle .Challenge a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.fbpageTitle .Challenge a:hover {
+  text-decoration: underline;
 }
 
 /** Home icon shown when we have no client */

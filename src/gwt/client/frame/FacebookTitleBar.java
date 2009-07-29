@@ -4,6 +4,7 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
@@ -23,14 +24,28 @@ import client.util.Link;
  */
 public class FacebookTitleBar extends TitleBar
 {
-    public FacebookTitleBar (boolean inGame)
+    public FacebookTitleBar ()
     {
+        this(null, 0);
+    }
+
+    public FacebookTitleBar (String gameName, int gameId)
+    {
+        // temporarily disabled for production, need to implement #facebook-challenge first
+        boolean challenge = gameName != null && DeploymentConfig.devDeployment;
+
         _contents = new AbsoluteCSSPanel("fbpageTitle");
+        _contents.getElement().setAttribute("mode", challenge ? "challenge" : "normal");
         _contents.add(MsoyUI.createFlowPanel("Logo"));
         _contents.add(button("Games", Pages.GAMES));
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
         _contents.add(Link.createTop("Fan", DeploymentConfig.facebookApplicationUrl));
         _contents.add(button("Trophies", Pages.GAMES, "t", CShell.getMemberId()));
+        if (challenge) {
+            _contents.add(MsoyUI.createFlowPanel("Challenge", Link.create(
+                "Click here to challenge a friend to beat you in " + gameName, Pages.FACEBOOK,
+                "challenge", gameId)));
+        }
     }
 
     @Override // from TitleBar

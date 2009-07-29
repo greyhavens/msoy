@@ -6,6 +6,7 @@ package client.frame;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.LaunchConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.Tabs;
@@ -25,7 +26,7 @@ public abstract class TitleBar
     public static TitleBar create (Layout layout, Tabs tab, ClickHandler onClose)
     {
         if (layout instanceof FacebookLayout) {
-            return new FacebookTitleBar(false);
+            return new FacebookTitleBar();
         }
 
         StandardTitleBar titleBar = new StandardTitleBar(tab, onClose, layout.usesFramedTitleBar());
@@ -36,16 +37,15 @@ public abstract class TitleBar
      * Creates a new title bar for flash content.
      * @param layout determines some features of the title bar such as tabs usage and whether the
      * back button is shown
-     * @param tab the tab to select if applicable
-     * @param onClose the callback to invoke when the "close" button is clicked
+     * @param game if not null, the game that the title bar is for
      * @return null if the layout does not show the title bar on flash
      */
-    public static TitleBar createClient (Layout layout, boolean inGame, ClickHandler onClose)
+    public static TitleBar createClient (Layout layout, LaunchConfig game)
     {
-        if (!(layout instanceof FacebookLayout) || !inGame) {
+        if (!(layout instanceof FacebookLayout) || game == null) {
             return null;
         }
-        return new FacebookTitleBar(true);
+        return new FacebookTitleBar(game.name, game.gameId);
     }
 
     /**
