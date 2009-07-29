@@ -177,7 +177,7 @@
 }
 
 .friendInfo .InviteButton-up-hovering, .friendInfo .InviteButton-down-hovering {
-  background: url(/images/facebook/friend_bar_invite_over.png) no-repeat;
+  background-position: 0 -30px;
   cursor: pointer;
 }
 

@@ -248,7 +248,7 @@
 }
 
 .fbpageTitle .Games-up-hovering, .fbpageTitle .Games-down-hovering {
-  background: url(/images/facebook/games_button_over.png) no-repeat;
+  background-position: 0 -30px;
 }
 
 .fbpageTitle .Invite {
@@ -258,7 +258,7 @@
 }
 
 .fbpageTitle .Invite-up-hovering, .fbpageTitle .Invite-down-hovering {
-  background: url(/images/facebook/invite_button_over.png) no-repeat;
+  background-position: 0 -30px;
 }
 
 .fbpageTitle .Fan {
@@ -273,7 +273,7 @@
 }
 
 .fbpageTitle .Fan a:hover {
-  background: url(/images/facebook/fan_button_over.png) no-repeat;
+  background-position: 0 -30px;
 }
 
 .fbpageTitle .Trophies {
@@ -283,7 +283,7 @@
 }
 
 .fbpageTitle .Trophies-up-hovering, .fbpageTitle .Trophies-down-hovering {
-  background: url(/images/facebook/trophies_button_over.png) no-repeat;
+  background-position: 0 -30px;
 }
 
 /** Home icon shown when we have no client */
