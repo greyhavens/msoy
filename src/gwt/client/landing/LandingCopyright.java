@@ -22,7 +22,7 @@ public class LandingCopyright extends FlowPanel
 {
     public static FlowPanel addFinePrint (FlowPanel panel)
     {
-        int year = 1900 + DateUtil.getYear(new Date());
+        int year = DateUtil.getYear(new Date());
         panel.add(MsoyUI.createHTML(_msgs.landingCopyright(""+year), "inline"));
         panel.add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
         panel.add(MsoyUI.createExternalAnchor(

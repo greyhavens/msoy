@@ -55,7 +55,7 @@ public class DateFields extends HorizontalPanel
         divider.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
 
         add(_year = new ListBox());
-        int start = DateUtil.getYear(new Date())+1900+yearN;
+        int start = DateUtil.getYear(new Date())+yearN;
         for (int ii = 0; ii < yearN-year0; ii++) {
             _year.addItem(""+(start-ii));
         }
