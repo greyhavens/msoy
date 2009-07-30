@@ -30,9 +30,7 @@ public class FacebookTitleBar extends TitleBar
 
     public FacebookTitleBar (String gameName, int gameId)
     {
-        // temporarily disabled for production, need to implement #facebook-challenge first
-        boolean challenge = gameName != null && DeploymentConfig.devDeployment;
-
+        boolean challenge = gameName != null;
         _contents = new AbsoluteCSSPanel("fbpageTitle");
         _contents.getElement().setAttribute("mode", challenge ? "challenge" : "normal");
         _contents.add(MsoyUI.createFlowPanel("Logo"));
