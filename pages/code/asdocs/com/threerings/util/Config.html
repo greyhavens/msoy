@@ -82,7 +82,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#ensureCapacity()">ensureCapacity</a>(kilobytes:int, rl:<a href="ResultListener.html">ResultListener</a>):void</div>
+<a class="signatureLink" href="#ensureCapacity()">ensureCapacity</a>(kilobytes:int, onFailure:Function, onSuccess:Function = null):void</div>
 <div class="summaryTableDescription">
      Ensure that we can store preferences up to the specified size.</div>
 </td><td class="summaryTableOwnerCol">Config</td>
@@ -198,23 +198,28 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ensureCapacity(kilobytes:int, rl:<a href="ResultListener.html">ResultListener</a>):void</code><p>
-     Ensure that we can store preferences up to the specified size.
-     Note that calling this method may pop up a dialog to the user, asking
-     them if it's ok to increase the capacity. The result listener may
-     never be called if the user doesn't answer the pop-up.
+<code>public function ensureCapacity(kilobytes:int, onFailure:Function, onSuccess:Function = null):void</code><p>
+     Ensure that we can store preferences up to the specified size. Note that calling this method
+     may pop up a dialog to the user, asking them if it's ok to increase the capacity. The result
+     listener may never be called if the user doesn't answer the pop-up.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">kilobytes</span>:int</code> &mdash; an optional listener that will be informed as to whether
-     the request succeeded.
+<td width="20px"></td><td><code><span class="label">kilobytes</span>:int</code> &mdash; a function that will be passed an exception on failure.
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">rl</span>:<a href="ResultListener.html">ResultListener</a></code></td>
+<td width="20px"></td><td><code><span class="label">onFailure</span>:Function</code> &mdash; an optional function that will be passed <code>this</code> on success.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">onSuccess</span>:Function</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>
