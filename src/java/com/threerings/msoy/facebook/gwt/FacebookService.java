@@ -40,4 +40,10 @@ public interface FacebookService extends RemoteService
      */
     List<Long> getFriendsUsingApp ()
         throws ServiceException;
+
+    /**
+     * Retrieves the name of the game with the given id.
+     */
+    String getGameName (int gameId)
+        throws ServiceException;
 }

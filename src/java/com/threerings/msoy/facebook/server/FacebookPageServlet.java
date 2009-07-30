@@ -188,6 +188,17 @@ public class FacebookPageServlet extends MsoyServiceServlet
         return friends;
     }
 
+    @Override // from FacebookService
+    public String getGameName (int gameId)
+        throws ServiceException
+    {
+        GameInfoRecord game = _mgameRepo.loadGame(gameId);
+        if (game == null) {
+            throw new ServiceException();
+        }
+        return game.name;
+    }
+
     protected List<ExternalMapRecord> loadMappedFriends (boolean includeSelf)
         throws ServiceException
     {
