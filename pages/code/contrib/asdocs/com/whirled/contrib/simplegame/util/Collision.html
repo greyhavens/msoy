@@ -239,43 +239,47 @@ showHideInherited();
 <code>public static function movingCircleIntersectsStaticCircle(cA:Vector2, rA:Number, directionA:Vector2, distanceA:Number, cB:Vector2, rB:Number):Number</code><p>
      Returns a value in [0, 1] that indicates the distance that circle A's path
      must be scaled to avoid intersecting with circle B, or -1 if no interesection
-     occurs.
-          "direction" must be a unit-length vector. The two circles must not already be
-     intersecting.
-     </p><span class="label">Parameters</span>
+     occurs. The two circles must not already be intersecting.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">cA</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">cA</span>:Vector2</code> &mdash; the moving circle's center point
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">rA</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">rA</span>:Number</code> &mdash; the moving circle's radius
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">directionA</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">directionA</span>:Vector2</code> &mdash; the moving circle's movement vector (must be unit length)
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">distanceA</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">distanceA</span>:Number</code> &mdash; the distance the moving circle is traveling
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">cB</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">cB</span>:Vector2</code> &mdash; the static circle's center point
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">rB</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">rB</span>:Number</code> &mdash; the static circle's radius
+     </td>
 </tr>
 </table>
 <p></p>
@@ -296,43 +300,47 @@ showHideInherited();
 <code>public static function movingCirclesIntersect(cA:Vector2, rA:Number, dA:Vector2, cB:Vector2, rB:Number, dB:Vector2):Number</code><p>
      Returns a value in [0, 1] that indicates the distance that the two circles'
      paths must be scaled to avoid intersecting each other, or -1 if no interesection
-     will occurs.
-          dA and dB on'tneed to be unit length vectors. The two circles must not already be
-     intersecting.
-     </p><span class="label">Parameters</span>
+     will occurs. The two circles must not already be intersecting.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">cA</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">cA</span>:Vector2</code> &mdash; circle A's center point
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">rA</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">rA</span>:Number</code> &mdash; circle A's radius
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">dA</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">dA</span>:Vector2</code> &mdash; circle A's movement offset
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">cB</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">cB</span>:Vector2</code> &mdash; circle B's center point
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">rB</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">rB</span>:Number</code> &mdash; circle B's radius
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">dB</span>:Vector2</code></td>
+<td width="20px"></td><td><code><span class="label">dB</span>:Vector2</code> &mdash; circle B's movement offset
+     </td>
 </tr>
 </table>
 <p></p>

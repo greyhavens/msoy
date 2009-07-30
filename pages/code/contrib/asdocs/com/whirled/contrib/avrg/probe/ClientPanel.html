@@ -108,9 +108,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#toString()">toString</a>(obj:Object):String</div>
+<a class="signatureLink" href="#toString()">toString</a>(obj:*):String</div>
 <div class="summaryTableDescription">[static]
-     Converts an object to a string, interpreting fields directly if it is a simple object.</div>
+     Converts a reference to a string, interpreting fields directly if it is a simple object.</div>
 </td><td class="summaryTableOwnerCol">ClientPanel</td>
 </tr>
 </table>
@@ -284,13 +284,13 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function toString(obj:Object):String</code><p>
-     Converts an object to a string, interpreting fields directly if it is a simple object.
+<code>public static function toString(obj:*):String</code><p>
+     Converts a reference to a string, interpreting fields directly if it is a simple object.
      Also has a special case for <code>AVRGameAvatar</code> because it has no toString method.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">obj</span>:Object</code></td>
+<td width="20px"></td><td><code><span class="label">obj</span>:*</code></td>
 </tr>
 </table>
 <p></p>
