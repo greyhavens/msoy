@@ -30,9 +30,8 @@ public class FramedLayout extends Layout
         closeContent(false);
         content.setWidth("100%");
 
-        if (bar != null) {
-            _bar.setWidget(bar.exposeWidget());
-        }
+        Widget barWidget = bar != null ? bar.exposeWidget() : null;
+        _bar.setWidget(barWidget);
 
         // if we have a client, adjust its height...
         if (_client.getWidget() != null) {

@@ -474,7 +474,10 @@ public class FrameEntryPoint
             closeClient();
         }
 
-        if (!isHeaderless()) {
+        if (isHeaderless()) {
+            _bar = null;
+
+        } else {
             _bar = TitleBar.create(_layout, page.getTab(), _closeContent);
             _bar.setCloseVisible(FlashClients.clientExists());
         }
