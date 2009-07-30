@@ -84,7 +84,9 @@ public class FacebookInviteServlet extends HttpServlet
 
             } else if (req.getPathInfo().equals("/ndone")) {
                 logSentInvites(req, memberId, false);
-                rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
+
+                // just head back to the facebook app
+                MsoyHttpServer.sendTopRedirect(rsp, DeploymentConfig.facebookCanvasUrl);
 
             } else {
                 rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -112,7 +114,9 @@ public class FacebookInviteServlet extends HttpServlet
 
         } else if (req.getPathInfo().equals("/ndone")) {
             logSentInvites(req, memberId, false);
-            rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
+
+            // just head back to the facebook app
+            MsoyHttpServer.sendTopRedirect(rsp, DeploymentConfig.facebookCanvasUrl);
 
         } else {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
