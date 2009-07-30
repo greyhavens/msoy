@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.channels.SocketChannel;
 import java.util.Enumeration;
@@ -37,6 +38,7 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.Lifecycle;
 
@@ -176,6 +178,25 @@ public class MsoyHttpServer extends Server
         setHandler(handlers);
     }
 
+    /**
+     * Sends a short script that will redirect the user's browser window to the given URL (as
+     * opposed to {@link HttpServletResponse#sendRedirect()}, which only works for the frame making
+     * the request.
+     */
+    public static void sendTopRedirect (HttpServletResponse rsp, String url)
+        throws IOException
+    {
+        PrintStream out = null;
+        try {
+            out = new PrintStream(rsp.getOutputStream());
+            out.println("<html><head><script language=\"JavaScript\">");
+            out.println("window.top.location = '" + url + "';");
+            out.println("</script></head></html>");
+        } finally {
+            StreamUtil.close(out);
+        }
+    }
+    
     public static void dumpParameters (HttpServletRequest req)
     {
         for (String pname : ParameterUtil.getParameterNames(req)) {

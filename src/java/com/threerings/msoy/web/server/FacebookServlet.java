@@ -119,7 +119,7 @@ public class FacebookServlet extends HttpServlet
             }
             boolean added = "1".equals(req.getParameter(FB_ADDED));
             if (StringUtil.isBlank(creds.uid) || !added) {
-                sendTopRedirect(rsp, getLoginURL(info.apiKey));
+                MsoyHttpServer.sendTopRedirect(rsp, getLoginURL(info.apiKey));
                 return;
             }
             creds.apiKey = info.apiKey;
@@ -185,20 +185,6 @@ public class FacebookServlet extends HttpServlet
     {
         log.info("Got POST request " + req.getRequestURL());
         MsoyHttpServer.dumpParameters(req);
-    }
-
-    protected void sendTopRedirect (HttpServletResponse rsp, String url)
-        throws IOException
-    {
-        PrintStream out = null;
-        try {
-            out = new PrintStream(rsp.getOutputStream());
-            out.println("<html><head><script language=\"JavaScript\">");
-            out.println("window.top.location = '" + url + "';");
-            out.println("</script></head></html>");
-        } finally {
-            StreamUtil.close(out);
-        }
     }
 
     protected void sendResponse (HttpServletResponse rsp, String message)
