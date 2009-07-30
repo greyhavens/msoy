@@ -17,6 +17,9 @@ import com.google.inject.Inject;
 
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJaxbRestClient;
+import com.google.code.facebookapi.ProfileField;
+import com.google.code.facebookapi.schema.User;
+import com.google.code.facebookapi.schema.UsersGetInfoResponse;
 
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
@@ -25,9 +28,7 @@ import com.samskivert.util.IntMaps;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
-import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -207,19 +208,29 @@ public class FacebookPageServlet extends MsoyServiceServlet
             throw new ServiceException(FacebookCodes.NO_SESSION);
         }
 
-        info.username = mrec.name;
-        info.gender = FacebookService.Gender.HIDDEN;
-        ProfileRecord profile = _profileRepo.loadProfile(mrec.memberId);
-        if (profile != null) {
-            switch (profile.sex) {
-            case Profile.SEX_MALE:
+        // use the facebook name for consistency and the facebook gender in case privacy settings
+        // have changed. users will expect this
+        FacebookJaxbRestClient client = _fbLogic.getFacebookClient(mapRec.sessionKey);
+        Long userId = Long.valueOf(mapRec.externalId);
+        List<ProfileField> fields = Lists.newArrayList();
+        fields.add(ProfileField.FIRST_NAME);
+        fields.add(ProfileField.SEX);
+        try {
+            User user = ((UsersGetInfoResponse)client.users_getInfo(
+                Collections.singletonList(userId), fields)).getUser().get(0);
+            info.username = user.getFirstName();
+            if ("male".equalsIgnoreCase(user.getSex())) {
                 info.gender = FacebookService.Gender.MALE;
-                break;
-            case Profile.SEX_FEMALE:
+            } else if ("female".equalsIgnoreCase(user.getSex())) {
                 info.gender = FacebookService.Gender.FEMALE;
-                break;
+            } else {
+                info.gender = FacebookService.Gender.HIDDEN;
             }
+
+        } catch (FacebookException fe) {
+            log.warning("Could not get first name and sex, go figure!", "user", userId, fe);
         }
+
         return info;
     }
 
