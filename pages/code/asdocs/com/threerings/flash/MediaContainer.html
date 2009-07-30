@@ -1,0 +1,1436 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,_h,_initialized,_isImage,_media,_url,_w,log,addListeners,configureMask,containerDimensionsUpdated,contentDimensionsUpdated,createVideoUI,didShowNewMedia,getContentHeight,getContentWidth,getContext,getMaskRectangle,getMaxContentHeight,getMaxContentWidth,getMedia,getMediaScaleX,getMediaScaleY,getSecurityDomain,handleComplete,handleError,handleInit,handleProgress,handleShutdownOnRemove,hitTestPoint,initLoader,isContentInitialized,isImage,removeListeners,setMedia,setMediaBytes,setMediaClass,setMediaObject,setShutdownOnRemove,setupBrokenImage,setupSwfOrImage,setupVideo,showNewMedia,shutdown,shutdownMedia,startedLoading,stoppedLoading,toString,updateContentDimensions,updateLoadingProgress,willShowNewMedia" name="keywords">
+<title>com.threerings.flash.MediaContainer</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'MediaContainer - Whirled API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/flash/MediaContainer.html&amp;com/threerings/flash/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;MediaContainer</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class MediaContainer"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.threerings.flash</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class MediaContainer</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">MediaContainer <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.display.Sprite</td>
+</tr>
+</table>
+<p></p>
+ A wrapper class for all media that will be placed on the screen.
+ Subject to change.
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_h">_h</a> : int<div class="summaryTableDescription"> The unscaled height of our content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_initialized">_initialized</a> : Boolean<div class="summaryTableDescription"> If we're using a Loader, true once the INIT event has been dispatched.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_isImage">_isImage</a> : Boolean<div class="summaryTableDescription"> Are we displaying an image? </div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_media">_media</a> : DisplayObject<div class="summaryTableDescription"> Either a Loader or a VideoDisplay.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_url">_url</a> : String<div class="summaryTableDescription"> The unaltered URL of the content we're displaying.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_w">_w</a> : int<div class="summaryTableDescription"> The unscaled width of our content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#MediaContainer()">MediaContainer</a>(url:String = null)</div>
+<div class="summaryTableDescription">
+     Constructor.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#containerDimensionsUpdated()">containerDimensionsUpdated</a>(newWidth:Number, newHeight:Number):void</div>
+<div class="summaryTableDescription">
+     Called by MediaWrapper as notification that its size has changed.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getContentHeight()">getContentHeight</a>():int</div>
+<div class="summaryTableDescription">
+     Get the height of the content, bounded by the maximum.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getContentWidth()">getContentWidth</a>():int</div>
+<div class="summaryTableDescription">
+     Get the width of the content, bounded by the maximum.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMaxContentHeight()">getMaxContentHeight</a>():int</div>
+<div class="summaryTableDescription">
+     Get the maximum allowable height for our content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMaxContentWidth()">getMaxContentWidth</a>():int</div>
+<div class="summaryTableDescription">
+     Get the maximum allowable width for our content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMedia()">getMedia</a>():DisplayObject</div>
+<div class="summaryTableDescription">
+     Get the media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMediaScaleX()">getMediaScaleX</a>():Number</div>
+<div class="summaryTableDescription">
+     Get the X scaling factor to use on the actual media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMediaScaleY()">getMediaScaleY</a>():Number</div>
+<div class="summaryTableDescription">
+     Get the Y scaling factor to use on the actual media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#hitTestPoint()">hitTestPoint</a>(x:Number, y:Number, shapeFlag:Boolean = false):Boolean</div>
+<div class="summaryTableDescription">
+     Note: This method is NOT used in normal mouseOver calculations.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isContentInitialized()">isContentInitialized</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Return true if the content has been initialized.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setMedia()">setMedia</a>(url:String):void</div>
+<div class="summaryTableDescription">
+     Configure the media to display.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setMediaBytes()">setMediaBytes</a>(bytes:ByteArray):void</div>
+<div class="summaryTableDescription">
+     Set the media to display as a ByteArray.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setMediaClass()">setMediaClass</a>(clazz:Class):void</div>
+<div class="summaryTableDescription">
+     Configure our media as an instance of the specified class.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setMediaObject()">setMediaObject</a>(disp:DisplayObject):void</div>
+<div class="summaryTableDescription">
+     Configure an already-instantiated DisplayObject as our media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setShutdownOnRemove()">setShutdownOnRemove</a>(enable:Boolean = true):void</div>
+<div class="summaryTableDescription">
+     Sets whether this MediaContainer automatically shuts down when removed
+     from the stage.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdown()">shutdown</a>(completely:Boolean = true):void</div>
+<div class="summaryTableDescription">
+     Unload the media we're displaying, clean up any resources.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#toString()">toString</a>():String</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addListeners()">addListeners</a>(info:LoaderInfo):void</div>
+<div class="summaryTableDescription">
+     Add our listeners to the LoaderInfo object.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#configureMask()">configureMask</a>(rect:Rectangle):void</div>
+<div class="summaryTableDescription">
+     Configure the mask for this object.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#contentDimensionsUpdated()">contentDimensionsUpdated</a>():void</div>
+<div class="summaryTableDescription">
+     Called when we know the true size of the content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createVideoUI()">createVideoUI</a>(player:<a href="media/VideoPlayer.html">VideoPlayer</a>):DisplayObject</div>
+<div class="summaryTableDescription">
+     Create the actual display for the VideoPlayer.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#didShowNewMedia()">didShowNewMedia</a>():void</div>
+<div class="summaryTableDescription">
+     A place where subclasses can configure things after we've setup new media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getContext()">getContext</a>(url:String):LoaderContext</div>
+<div class="summaryTableDescription">
+     Return the LoaderContext that should be used to load the media
+     at the specified url.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getMaskRectangle()">getMaskRectangle</a>():Rectangle</div>
+<div class="summaryTableDescription">
+     Get the mask area, or null if no mask is needed.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getSecurityDomain()">getSecurityDomain</a>(imageURL:String):SecurityDomain</div>
+<div class="summaryTableDescription">
+     Return the security domain to use for the specified image url.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleComplete()">handleComplete</a>(event:Event):void</div>
+<div class="summaryTableDescription">
+     Callback function to receive COMPLETE events for swfs or images.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleError()">handleError</a>(event:ErrorEvent):void</div>
+<div class="summaryTableDescription">
+     A callback to receive IO_ERROR and SECURITY_ERROR events.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleInit()">handleInit</a>(event:Event):void</div>
+<div class="summaryTableDescription">
+     Handles the INIT event for content loaded with a Loader.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleProgress()">handleProgress</a>(event:ProgressEvent):void</div>
+<div class="summaryTableDescription">
+     A callback to receive PROGRESS events.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleShutdownOnRemove()">handleShutdownOnRemove</a>(event:Event):void</div>
+<div class="summaryTableDescription">
+     Handle shutting us down when we're removed.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#initLoader()">initLoader</a>():Loader</div>
+<div class="summaryTableDescription">
+     Initialize a Loader as our _media, and configure it however needed to prepare
+     loading user content.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isImage()">isImage</a>(url:String):Boolean</div>
+<div class="summaryTableDescription">
+     Does the specified url represent an image?
+     </div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeListeners()">removeListeners</a>(info:LoaderInfo):void</div>
+<div class="summaryTableDescription">
+     Remove our listeners from the LoaderInfo object.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setupBrokenImage()">setupBrokenImage</a>(w:int = -1, h:int = -1):void</div>
+<div class="summaryTableDescription">
+     Display a 'broken image' to indicate there were troubles with
+     loading the media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setupSwfOrImage()">setupSwfOrImage</a>(url:String):void</div>
+<div class="summaryTableDescription">
+     Configure this sprite to show an image or flash movie.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setupVideo()">setupVideo</a>(url:String):void</div>
+<div class="summaryTableDescription">
+     Configure this sprite to show a video.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#showNewMedia()">showNewMedia</a>(url:String):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdownMedia()">shutdownMedia</a>():void</div>
+<div class="summaryTableDescription">
+     Do whatever is necessary to shut down the media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#startedLoading()">startedLoading</a>():void</div>
+<div class="summaryTableDescription">
+     Called when we've started loading new media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#stoppedLoading()">stoppedLoading</a>():void</div>
+<div class="summaryTableDescription">
+     Called when we've stopped loading, which may be as a result of
+     completion, an error while loading, or early termination.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateContentDimensions()">updateContentDimensions</a>(ww:int, hh:int):void</div>
+<div class="summaryTableDescription">
+     Called during loading as we figure out how big the content we're
+     loading is.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateLoadingProgress()">updateLoadingProgress</a>(soFar:Number, total:Number):void</div>
+<div class="summaryTableDescription">
+     Update the graphics to indicate how much is loaded.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#willShowNewMedia()">willShowNewMedia</a>():void</div>
+<div class="summaryTableDescription">
+     A place where subclasses can initialize things prior to showing new media.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+</table>
+</div>
+<a name="eventSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Events</div>
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:complete">complete</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when we've shown new media.</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:init">init</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when we've initialized our content.</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:mediaSizeKnown">mediaSizeKnown</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when the size of the media being loaded is known.</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:unload">unload</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when we've unloaded our content...</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SIZE_KNOWN">SIZE_KNOWN</a> : String = "mediaSizeKnown"<div class="summaryTableDescription">[static] A ValueEvent we dispatch when our size is known.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+</table>
+</div>
+<a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#log">log</a> : <a href="../util/Log.html">Log</a>
+<div class="summaryTableDescription">[static] A log instance that can be shared by sprites.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_h"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_h</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _h:int</code><p> The unscaled height of our content. </p></div>
+<a name="_initialized"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_initialized</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _initialized:Boolean</code><p> If we're using a Loader, true once the INIT event has been dispatched. </p></div>
+<a name="_isImage"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_isImage</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _isImage:Boolean</code><p> Are we displaying an image? </p></div>
+<a name="_media"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_media</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _media:DisplayObject</code><p> Either a Loader or a VideoDisplay. </p></div>
+<a name="_url"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_url</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _url:String</code><p> The unaltered URL of the content we're displaying. </p></div>
+<a name="_w"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_w</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _w:int</code><p> The unscaled width of our content. </p></div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="MediaContainer()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MediaContainer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function MediaContainer(url:String = null)</code><p>
+     Constructor.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="addListeners()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addListeners</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function addListeners(info:LoaderInfo):void</code><p>
+     Add our listeners to the LoaderInfo object.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">info</span>:LoaderInfo</code></td>
+</tr>
+</table>
+</div>
+<a name="configureMask()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">configureMask</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function configureMask(rect:Rectangle):void</code><p>
+     Configure the mask for this object.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rect</span>:Rectangle</code></td>
+</tr>
+</table>
+</div>
+<a name="containerDimensionsUpdated()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">containerDimensionsUpdated</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function containerDimensionsUpdated(newWidth:Number, newHeight:Number):void</code><p>
+     Called by MediaWrapper as notification that its size has changed.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">newWidth</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">newHeight</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="contentDimensionsUpdated()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">contentDimensionsUpdated</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function contentDimensionsUpdated():void</code><p>
+     Called when we know the true size of the content. Subclasses may override and use this
+     opportunity to do their thing, too.
+     </p></div>
+<a name="createVideoUI()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createVideoUI</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function createVideoUI(player:<a href="media/VideoPlayer.html">VideoPlayer</a>):DisplayObject</code><p>
+     Create the actual display for the VideoPlayer.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">player</span>:<a href="media/VideoPlayer.html">VideoPlayer</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>DisplayObject</code></td>
+</tr>
+</table>
+</div>
+<a name="didShowNewMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">didShowNewMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function didShowNewMedia():void</code><p>
+     A place where subclasses can configure things after we've setup new media.
+     </p></div>
+<a name="getContentHeight()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getContentHeight</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getContentHeight():int</code><p>
+     Get the height of the content, bounded by the maximum.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getContentWidth()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getContentWidth</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getContentWidth():int</code><p>
+     Get the width of the content, bounded by the maximum.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getContext()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getContext</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getContext(url:String):LoaderContext</code><p>
+     Return the LoaderContext that should be used to load the media
+     at the specified url.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>LoaderContext</code></td>
+</tr>
+</table>
+</div>
+<a name="getMaskRectangle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMaskRectangle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getMaskRectangle():Rectangle</code><p>
+     Get the mask area, or null if no mask is needed.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Rectangle</code></td>
+</tr>
+</table>
+</div>
+<a name="getMaxContentHeight()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMaxContentHeight</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMaxContentHeight():int</code><p>
+     Get the maximum allowable height for our content.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getMaxContentWidth()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMaxContentWidth</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMaxContentWidth():int</code><p>
+     Get the maximum allowable width for our content.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMedia():DisplayObject</code><p>
+     Get the media. If the media was loaded using a URL, this will
+     likely be the Loader object holding the real media.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>DisplayObject</code></td>
+</tr>
+</table>
+</div>
+<a name="getMediaScaleX()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMediaScaleX</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMediaScaleX():Number</code><p>
+     Get the X scaling factor to use on the actual media.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
+<a name="getMediaScaleY()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getMediaScaleY</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getMediaScaleY():Number</code><p>
+     Get the Y scaling factor to use on the actual media.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
+<a name="getSecurityDomain()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getSecurityDomain</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getSecurityDomain(imageURL:String):SecurityDomain</code><p>
+     Return the security domain to use for the specified image url.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">imageURL</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>SecurityDomain</code></td>
+</tr>
+</table>
+</div>
+<a name="handleComplete()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleComplete(event:Event):void</code><p>
+     Callback function to receive COMPLETE events for swfs or images.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="handleError()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleError(event:ErrorEvent):void</code><p>
+     A callback to receive IO_ERROR and SECURITY_ERROR events.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ErrorEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="handleInit()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleInit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleInit(event:Event):void</code><p>
+     Handles the INIT event for content loaded with a Loader.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="handleProgress()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleProgress</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleProgress(event:ProgressEvent):void</code><p>
+     A callback to receive PROGRESS events.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ProgressEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="handleShutdownOnRemove()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleShutdownOnRemove</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleShutdownOnRemove(event:Event):void</code><p>
+     Handle shutting us down when we're removed. Only called if
+     setShutdownOnRemove() was enabled.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="hitTestPoint()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">hitTestPoint</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function hitTestPoint(x:Number, y:Number, shapeFlag:Boolean = false):Boolean</code><p>
+     Note: This method is NOT used in normal mouseOver calculations.
+     Normal mouseOver stuff seems to be completely broken for transparent
+     images: the transparent portion is a 'hit'. I've (Ray) tried
+     just about everything to fix this, more than once.
+          But if someone oescall this method (we do, in whirled), then
+     attempt to do the right thing.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">shapeFlag</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="initLoader()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">initLoader</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function initLoader():Loader</code><p>
+     Initialize a Loader as our _media, and configure it however needed to prepare
+     loading user content.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Loader</code></td>
+</tr>
+</table>
+</div>
+<a name="isContentInitialized()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isContentInitialized</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isContentInitialized():Boolean</code><p>
+     Return true if the content has been initialized.
+     For most content, this is true if the media is non-null, but
+     for anything loaded with a Loader, it is only true after the INIT event is dispatched.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="isImage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isImage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function isImage(url:String):Boolean</code><p>
+     Does the specified url represent an image?
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="removeListeners()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeListeners</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function removeListeners(info:LoaderInfo):void</code><p>
+     Remove our listeners from the LoaderInfo object.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">info</span>:LoaderInfo</code></td>
+</tr>
+</table>
+</div>
+<a name="setMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setMedia(url:String):void</code><p>
+     Configure the media to display.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="setMediaBytes()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setMediaBytes</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setMediaBytes(bytes:ByteArray):void</code><p>
+     Set the media to display as a ByteArray.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">bytes</span>:ByteArray</code></td>
+</tr>
+</table>
+</div>
+<a name="setMediaClass()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setMediaClass</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setMediaClass(clazz:Class):void</code><p>
+     Configure our media as an instance of the specified class.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">clazz</span>:Class</code></td>
+</tr>
+</table>
+</div>
+<a name="setMediaObject()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setMediaObject</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setMediaObject(disp:DisplayObject):void</code><p>
+     Configure an already-instantiated DisplayObject as our media.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
+</tr>
+</table>
+</div>
+<a name="setShutdownOnRemove()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setShutdownOnRemove</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setShutdownOnRemove(enable:Boolean = true):void</code><p>
+     Sets whether this MediaContainer automatically shuts down when removed
+     from the stage. By default this is not enabled.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">enable</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="setupBrokenImage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setupBrokenImage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function setupBrokenImage(w:int = -1, h:int = -1):void</code><p>
+     Display a 'broken image' to indicate there were troubles with
+     loading the media.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">w</span>:int</code> (default = <code>-1</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">h</span>:int</code> (default = <code>-1</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="setupSwfOrImage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setupSwfOrImage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function setupSwfOrImage(url:String):void</code><p>
+     Configure this sprite to show an image or flash movie.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="setupVideo()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setupVideo</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function setupVideo(url:String):void</code><p>
+     Configure this sprite to show a video.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="showNewMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showNewMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function showNewMedia(url:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="shutdown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function shutdown(completely:Boolean = true):void</code><p>
+     Unload the media we're displaying, clean up any resources.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">completely</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; if true, we're going away and should stop
+     everything. Otherwise, we're just loading up new media.
+     </td>
+</tr>
+</table>
+</div>
+<a name="shutdownMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdownMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function shutdownMedia():void</code><p>
+     Do whatever is necessary to shut down the media.
+     </p></div>
+<a name="startedLoading()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">startedLoading</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function startedLoading():void</code><p>
+     Called when we've started loading new media. Will not be called
+     for new media that does not require loading.
+     </p></div>
+<a name="stoppedLoading()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">stoppedLoading</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function stoppedLoading():void</code><p>
+     Called when we've stopped loading, which may be as a result of
+     completion, an error while loading, or early termination.
+     </p></div>
+<a name="toString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">toString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function toString():String</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="updateContentDimensions()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateContentDimensions</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateContentDimensions(ww:int, hh:int):void</code><p>
+     Called during loading as we figure out how big the content we're
+     loading is.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ww</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">hh</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="updateLoadingProgress()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateLoadingProgress</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateLoadingProgress(soFar:Number, total:Number):void</code><p>
+     Update the graphics to indicate how much is loaded.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">soFar</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">total</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="willShowNewMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">willShowNewMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function willShowNewMedia():void</code><p>
+     A place where subclasses can initialize things prior to showing new media.
+     </p></div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:complete"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">complete</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href=""><code>flash.events.Event</code></a>
+<br>
+<p></p><p>
+ Dispatched when we've shown new media.
+  </p></div>
+<a name="event:init"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">init</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href=""><code>flash.events.Event</code></a>
+<br>
+<p></p><p>
+ Dispatched when we've initialized our content. This is merely a redispatch
+ of the INIT event we get from the loader.
+  </p></div>
+<a name="event:mediaSizeKnown"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">mediaSizeKnown</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../util/ValueEvent.html"><code>com.threerings.util.ValueEvent</code></a>
+<br>
+<span class="label">ValueEvent.type property = </span><a href="../flash/MediaContainer.html#SIZE_KNOWN"><code>com.threerings.flash.MediaContainer.SIZE_KNOWN</code></a>
+<br><p>
+ Dispatched when the size of the media being loaded is known.
+  </p><p> A ValueEvent we dispatch when our size is known.
+     Value: [ width, height ].
+          </p></div>
+<a name="event:unload"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">unload</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href=""><code>flash.events.Event</code></a>
+<br>
+<p></p><p>
+ Dispatched when we've unloaded our content... always. The LoaderInfo's UNLOAD event
+ is only dispatched if the INIT event has already been dispatched and not if you cancel a
+ load before it INIT.
+ </p></div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="log"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">log</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const log:<a href="../util/Log.html">Log</a></code><p> A log instance that can be shared by sprites. </p></div>
+<a name="SIZE_KNOWN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SIZE_KNOWN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SIZE_KNOWN:String = "mediaSizeKnown"</code><p> A ValueEvent we dispatch when our size is known.
+     Value: [ width, height ].
+          </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
+</div>
+</body>
+</html>
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="MultiLoader,com.threerings.util.MultiLoader,_activeMultiLoaders,_complete,_forEach,_remaining,_result,_targetsToKeys,checkReport,getContents,getLoaders,handleComplete,handleError,loadClasses,processProperty" name="keywords">
+<title>com.threerings.util.MultiLoader</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'MultiLoader - Whirled API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/MultiLoader.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;MultiLoader</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class MultiLoader"); titleBar_setSubNav(true,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class MultiLoader</td>
+</tr>
+</table>
+<p></p>
+ Easy loader for many things, including managing multiple downloads.
+ More documentation coming.
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_complete">_complete</a> : Function<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_forEach">_forEach</a> : Boolean<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_remaining">_remaining</a> : int = 0<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_result">_result</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_targetsToKeys">_targetsToKeys</a> : Dictionary<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#MultiLoader()">MultiLoader</a>(sources:Object, completeCallback:Function, generatorFn:Function = null, forEach:Boolean = false, isCompleteCheckFn:String = null, errorTypes:Array = null, completeType:String = null)</div>
+<div class="summaryTableDescription">
+     Coordinate loading some asynchronous objects.</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getContents()">getContents</a>(sources:Object, completeCallback:Function, forEach:Boolean = false, appDom:ApplicationDomain = null):void</div>
+<div class="summaryTableDescription">[static]
+     Load one or more sources and return DisplayObjects.</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getLoaders()">getLoaders</a>(sources:Object, completeCallback:Function, forEach:Boolean = false, appDom:ApplicationDomain = null):void</div>
+<div class="summaryTableDescription">[static]
+     Exactly like getContents() only it returns the Loader objects rather than their contents.</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadClasses()">loadClasses</a>(sources:Object, appDom:ApplicationDomain, completeCallback:Function):void</div>
+<div class="summaryTableDescription">[static]
+     Loads classes into the specified ApplicationDomain.</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#checkReport()">checkReport</a>(key:*):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleComplete()">handleComplete</a>(event:Event):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleError()">handleError</a>(event:ErrorEvent):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#processProperty()">processProperty</a>(retval:Object, testClass:Class, prop:String):Object</div>
+<div class="summaryTableDescription">[static]
+     Utility method used in this class.</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_activeMultiLoaders">_activeMultiLoaders</a> : Dictionary<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_complete"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_complete</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _complete:Function</code>
+</div>
+<a name="_forEach"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_forEach</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _forEach:Boolean</code>
+</div>
+<a name="_remaining"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_remaining</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _remaining:int = 0</code>
+</div>
+<a name="_result"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_result</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _result:Object</code>
+</div>
+<a name="_targetsToKeys"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_targetsToKeys</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _targetsToKeys:Dictionary</code>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="MultiLoader()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MultiLoader</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function MultiLoader(sources:Object, completeCallback:Function, generatorFn:Function = null, forEach:Boolean = false, isCompleteCheckFn:String = null, errorTypes:Array = null, completeType:String = null)</code><p>
+     Coordinate loading some asynchronous objects.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sources</span>:Object</code> &mdash; An Array, Dictionary, or Object of sources, or just a single source.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">completeCallback</span>:Function</code> &mdash; the function to call when complete.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">generatorFn</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; a function to call to generate the IEventDispatchers, or
+     null if the source values are already ready to go.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">forEach</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; whether to call the completeCallback for each source, or all-at-once at
+     the end. If forEach is used, keys will never be returned.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">isCompleteCheckFn</span>:String</code> (default = <code>null</code>)<code></code> &mdash; a function to attempt to call on the dispatcher to see if
+     it's already complete after generation.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">errorTypes</span>:Array</code> (default = <code>null</code>)<code></code> &mdash; an Array of event types that will be dispatched by the loader.
+     If unspecifed, all the normal error event types are used.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">completeType</span>:String</code> (default = <code>null</code>)<code></code> &mdash; the event complete type. If unspecifed </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="checkReport()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">checkReport</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function checkReport(key:*):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:*</code></td>
+</tr>
+</table>
+</div>
+<a name="getContents()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getContents</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getContents(sources:Object, completeCallback:Function, forEach:Boolean = false, appDom:ApplicationDomain = null):void</code><p>
+     Load one or more sources and return DisplayObjects.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sources</span>:Object</code> &mdash; an Array, Dictionary, or Object containing sources as values, or a single
+     source value. The sources may be Strings (representing urls), URLRequests, ByteArrays,
+     or a Class that can be instantiated to become a URLRequest or ByteArray. Note that
+     the format of your sources Object dictates the format of the return Object.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">completeCallback</span>:Function</code> &mdash; the function to call when complete. The signature should be:
+     <code>function (value :Object) :void</code>. Note that the structure of the return Object
+     is dictated by the sources parameter. If you pass in an Array, you get your results
+     in an Array. If you use a Dictionary or Object, the results will be returned as the same,
+     with the same keys used in sources now pointing to the results. If your sources parameter
+     was just a single source (like a String) then the result will just be a single result,
+     like a DisplayObject. Each result will be a DisplayObject or an Error
+     describing the problem.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">forEach</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; if true, each value or error will be returned as soon as possible. The values
+     or errors will be returned directly to the completeCallback. Any keys are lost, so you
+     probably only want to use this with an Array sources.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">appDom</span>:ApplicationDomain</code> (default = <code>null</code>)<code></code> &mdash; the ApplicationDomain in which to load the contents, or null to specify
+     that it should load in a child of the current ApplicationDomain.
+     
+     </td>
+</tr>
+</table>
+<br>
+<span class="label">Example</span>
+<br>Load one embed, add it as a child.
+     <div class='listing'><pre>
+     MultiLoader.getContents(EMBED_CONSTANT, addChild);
+     </pre></div>
+          <p></p>Load 3 embeds, add them as children.
+     <div class='listing'><pre>
+     MultiLoader.getContents([EMBED1, EMBED2, EMBED3], addChild, true);
+     </pre></div>
+          <p></p>Load multiple URLs, have the contents returned to the result function one at
+     a time.
+     <div class='listing'><pre>
+     function handleComplete (result :Object) :void {
+        // process a result here. Result may be a DisplayObject or an Error.
+     };
+     
+     var obj :Object = {
+         key1: "http://somehost.com/someImage.gif",
+         key2: "http://somehost.com/someOtherImage.gif"
+     };
+     
+     MultiLoader.getContents(obj, handleComplete, true);
+     </pre></div>
+     
+     <p></p>Load 3 embeds, wait to handle them until they're all loaded.
+     <div class='listing'><pre>
+     function handleComplete (results :Array) :void {
+         // process results here
+     };
+          MultiLoader.getContents([EMBED1, EMBED2, EMBED3], handleComplete);
+     </pre></div>
+     <p></p>
+</div>
+<a name="getLoaders()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getLoaders</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getLoaders(sources:Object, completeCallback:Function, forEach:Boolean = false, appDom:ApplicationDomain = null):void</code><p>
+     Exactly like getContents() only it returns the Loader objects rather than their contents.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sources</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">completeCallback</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">forEach</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">appDom</span>:ApplicationDomain</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">getContents()</div>
+<br>
+<span class="label">Example</span>
+<br>Advanced usage: Loading classes.
+     <div class='listing'><pre>
+     // A holder for new classes, created as a child of the system domain.
+     var appDom :ApplicationDomain = new ApplicationDomain(null);
+     <br/>
+     function handleComplete (results :Object) :void {
+         // now we can retrieve classes
+         var clazz :Class = appDom.getDefinition("com.package.SomeClass") as Class;
+     }
+     <br/>
+     // load all the classes contained in the specified sources
+     MultiLoader.getLoaders([EMBED, "http://site.com/pack.swf"], handleComplete, false, appDom);
+     <br/>
+     [Embed(source="resource.swf", mimeType="application/octet-stream")]
+     private static const EMBED :Class;
+     </pre></div>
+          <p></p>
+</div>
+<a name="handleComplete()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleComplete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleComplete(event:Event):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:Event</code></td>
+</tr>
+</table>
+</div>
+<a name="handleError()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleError(event:ErrorEvent):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:ErrorEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="loadClasses()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">loadClasses</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function loadClasses(sources:Object, appDom:ApplicationDomain, completeCallback:Function):void</code><p>
+     Loads classes into the specified ApplicationDomain.
+     The complete callback receives either the same ApplicationDomain or no arguments.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sources</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">appDom</span>:ApplicationDomain</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">completeCallback</span>:Function</code></td>
+</tr>
+</table>
+</div>
+<a name="processProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">processProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function processProperty(retval:Object, testClass:Class, prop:String):Object</code><p>
+     Utility method used in this class.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">retval</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">testClass</span>:Class</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">prop</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="_activeMultiLoaders"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_activeMultiLoaders</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const _activeMultiLoaders:Dictionary</code>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
+</div>
+</body>
+</html>
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

@@ -1,0 +1,768 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeAllIf,removeFirst,removeFirstIf,removeLast,removeLastIf,shuffle,sort,sortedInsert,stableSort" name="keywords">
+<title>com.threerings.util.ArrayUtil</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'ArrayUtil - Whirled API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/ArrayUtil.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;ArrayUtil</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class ArrayUtil"); titleBar_setSubNav(false,false,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ArrayUtil</td>
+</tr>
+</table>
+<p></p>
+ Contains methods that should be in Array, but aren't. Additionally
+ contains methods that understand the interfaces in this package.
+ So, for example, removeFirst() understands Equalable and will remove
+ an element that is equals() to the specified element, rather than just
+ === (strictly equals) to the specified element.
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#contains()">contains</a>(arr:Array, element:Object):Boolean</div>
+<div class="summaryTableDescription">[static]
+     </div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#copy()">copy</a>(src:Array, srcoffset:uint, dst:Array, dstoffset:uint, count:uint):void</div>
+<div class="summaryTableDescription">[static]
+     Copy a segment of one array to another.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#copyOf()">copyOf</a>(arr:Array):Array</div>
+<div class="summaryTableDescription">[static]
+     Creates a shallow copy of the array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#create()">create</a>(size:uint, val:* = null):Array</div>
+<div class="summaryTableDescription">[static]
+     Creates a new Array and fills it with a default value.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#equals()">equals</a>(ar1:Array, ar2:Array):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Do the two arrays contain elements that are all equals()?
+     </div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#findIf()">findIf</a>(arr:Array, predicate:Function):*</div>
+<div class="summaryTableDescription">[static]
+     Returns the first item in the array for which the predicate function returns true, or
+     undefined if no such item was found.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#indexIf()">indexIf</a>(arr:Array, predicate:Function):int</div>
+<div class="summaryTableDescription">[static]
+     Returns the index of the first item in the array for which the predicate function
+     returns true, or -1 if no such item was found.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#indexOf()">indexOf</a>(arr:Array, element:Object):int</div>
+<div class="summaryTableDescription">[static]
+     Returns the first index of the supplied element in the array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeAll()">removeAll</a>(arr:Array, element:Object):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Removes all instances of the specified element from the array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeAllIf()">removeAllIf</a>(arr:Array, pred:Function):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Removes all elements in the array for which the specified predicate returns true.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeFirst()">removeFirst</a>(arr:Array, element:Object):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Remove the first instance of the specified element from the array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeFirstIf()">removeFirstIf</a>(arr:Array, pred:Function):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Removes the first element in the array for which the specified predicate returns true.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeLast()">removeLast</a>(arr:Array, element:Object):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Remove the last instance of the specified element from the array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeLastIf()">removeLastIf</a>(arr:Array, pred:Function):Boolean</div>
+<div class="summaryTableDescription">[static]
+     Removes the last element in the array for which the specified predicate returns true.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shuffle()">shuffle</a>(arr:Array, rando:<a href="Random.html">Random</a> = null):void</div>
+<div class="summaryTableDescription">[static]
+     Randomly shuffle the elements in the specified array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#sort()">sort</a>(arr:Array):void</div>
+<div class="summaryTableDescription">[static]
+     Sort the specified array according to natural order- all elements
+     must implement Comparable or be null.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#sortedInsert()">sortedInsert</a>(arr:Array, val:Function, comp:* = null):int</div>
+<div class="summaryTableDescription">[static]
+     Inserts an object into a sorted Array in its correct, sorted location.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#stableSort()">stableSort</a>(arr:Array, comp:Function = null):void</div>
+<div class="summaryTableDescription">[static]
+     Perform a stable sort on the specified array.</div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="contains()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">contains</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function contains(arr:Array, element:Object):Boolean</code><p>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the specified element, or one that is Equalable.equals() to it, is
+     contained in the array.
+     </td>
+</tr>
+</table>
+</div>
+<a name="copy()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">copy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function copy(src:Array, srcoffset:uint, dst:Array, dstoffset:uint, count:uint):void</code><p>
+     Copy a segment of one array to another.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">src</span>:Array</code> &mdash; the array to copy from
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">srcoffset</span>:uint</code> &mdash; the position in the source array to begin copying from
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dst</span>:Array</code> &mdash; the array to copy into
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dstoffset</span>:uint</code> &mdash; the position in the destition array to begin copying into
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">count</span>:uint</code> &mdash; the number of elements to copy
+     </td>
+</tr>
+</table>
+</div>
+<a name="copyOf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">copyOf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function copyOf(arr:Array):Array</code><p>
+     Creates a shallow copy of the array.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="create()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">create</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function create(size:uint, val:* = null):Array</code><p>
+     Creates a new Array and fills it with a default value.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">size</span>:uint</code> &mdash; the size of the array
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">val</span>:*</code> (default = <code>null</code>)<code></code> &mdash; the value to store at each index of the Array
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="equals()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">equals</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function equals(ar1:Array, ar2:Array):Boolean</code><p>
+     Do the two arrays contain elements that are all equals()?
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ar1</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">ar2</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="findIf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">findIf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function findIf(arr:Array, predicate:Function):*</code><p>
+     Returns the first item in the array for which the predicate function returns true, or
+     undefined if no such item was found. The predicate function should be of type:
+       function (element : :Boolean { }
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">predicate</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>*</code> &mdash; the matching element, or undefined if no matching element was found.
+     </td>
+</tr>
+</table>
+</div>
+<a name="indexIf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">indexIf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function indexIf(arr:Array, predicate:Function):int</code><p>
+     Returns the index of the first item in the array for which the predicate function
+     returns true, or -1 if no such item was found. The predicate function should be of type:
+       function (element : :Boolean { }
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">predicate</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code> &mdash; the zero-based index of the matching element, or -1 if none found.
+     </td>
+</tr>
+</table>
+</div>
+<a name="indexOf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">indexOf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function indexOf(arr:Array, element:Object):int</code><p>
+     Returns the first index of the supplied element in the array. Note that if the element
+     implements Equalable, an element that is equals() will have its index returned, instead
+     of requiring the search element to be === (strictly equal) to an element in the array
+     like Array.indexOf().
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code> &mdash; the zero-based index of the matching element, or -1 if none found.
+     </td>
+</tr>
+</table>
+</div>
+<a name="removeAll()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeAll</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function removeAll(arr:Array, element:Object):Boolean</code><p>
+     Removes all instances of the specified element from the array.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if at least one element was removed, false otherwise.
+     </td>
+</tr>
+</table>
+</div>
+<a name="removeAllIf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeAllIf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function removeAllIf(arr:Array, pred:Function):Boolean</code><p>
+     Removes all elements in the array for which the specified predicate returns true.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a Function of the form: function (element : :Boolean
+          </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">pred</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if an element was removed, false otherwise.
+     </td>
+</tr>
+</table>
+</div>
+<a name="removeFirst()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeFirst</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function removeFirst(arr:Array, element:Object):Boolean</code><p>
+     Remove the first instance of the specified element from the array.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if an element was removed, false otherwise.
+     </td>
+</tr>
+</table>
+</div>
+<a name="removeFirstIf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeFirstIf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function removeFirstIf(arr:Array, pred:Function):Boolean</code><p>
+     Removes the first element in the array for which the specified predicate returns true.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a Function of the form: function (element : :Boolean
+          </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">pred</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if an element was removed, false otherwise.
+     </td>
+</tr>
+</table>
+</div>
+<a name="removeLast()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeLast</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function removeLast(arr:Array, element:Object):Boolean</code><p>
+     Remove the last instance of the specified element from the array.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">element</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if an element was removed, false otherwise.
+     </td>
+</tr>
+</table>
+</div>
+<a name="removeLastIf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeLastIf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function removeLastIf(arr:Array, pred:Function):Boolean</code><p>
+     Removes the last element in the array for which the specified predicate returns true.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a Function of the form: function (element : :Boolean
+          </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">pred</span>:Function</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if an element was removed, false otherwise.
+     </td>
+</tr>
+</table>
+</div>
+<a name="shuffle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shuffle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function shuffle(arr:Array, rando:<a href="Random.html">Random</a> = null):void</code><p>
+     Randomly shuffle the elements in the specified array.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a random number generator to use, or null if you don't care.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rando</span>:<a href="Random.html">Random</a></code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="sort()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sort</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function sort(arr:Array):void</code><p>
+     Sort the specified array according to natural order- all elements
+     must implement Comparable or be null.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+</tr>
+</table>
+</div>
+<a name="sortedInsert()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sortedInsert</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function sortedInsert(arr:Array, val:Function, comp:* = null):int</code><p>
+     Inserts an object into a sorted Array in its correct, sorted location.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a function that takes two objects in the array and returns -1 if the first
+     object should appear before the second in the container, 1 if it should appear after,
+     and 0 if the order does not matter. If omitted, Comparators.COMPARABLE is used and
+     the array elements should be Comparable objects.
+          </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">val</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">comp</span>:*</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code> &mdash; the index of the inserted item
+     </td>
+</tr>
+</table>
+</div>
+<a name="stableSort()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">stableSort</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function stableSort(arr:Array, comp:Function = null):void</code><p>
+     Perform a stable sort on the specified array.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">arr</span>:Array</code> &mdash; a function that takes two objects in the array and returns -1 if the first
+     object should appear before the second in the container, 1 if it should appear after,
+     and 0 if the order does not matter. If omitted, Comparators.COMPARABLE is used and
+     the array elements should be Comparable objects.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">comp</span>:Function</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2007-2009 Three Rings Design, Inc.</center>
+</div>
+</body>
+</html>
+<!--Copyright © 2007-2009 Three Rings Design, Inc.-->

@@ -38,7 +38,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class StreamableHashMap</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">StreamableHashMap <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> com.threerings.util.HashMap</td>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">StreamableHashMap <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="HashMap.html">HashMap</a></td>
 </tr>
 <tr>
 <td class="classHeaderTableLabel">Implements</td><td>com.threerings.io.Streamable</td>
@@ -52,9 +52,73 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
+<div class="showHideLinks">
+<div class="hideInheritedMethod" id="hideInheritedMethod">
+<a onclick="javascript:setInheritedVisible(false,'Method');" href="#methodSummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Public Methods</a>
+</div>
+<div class="showInheritedMethod" id="showInheritedMethod">
+<a onclick="javascript:setInheritedVisible(true,'Method');" href="#methodSummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Public Methods</a>
+</div>
+</div>
 <table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#clear()">clear</a>():void</div>
+<div class="summaryTableDescription"> 
+     Clear this map, removing all stored elements.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#containsKey()">containsKey</a>(key:Object):Boolean</div>
+<div class="summaryTableDescription"> 
+     Returns true if the specified key exists in the map.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#forEach()">forEach</a>(fn:Function):void</div>
+<div class="summaryTableDescription"> 
+     Call the specified function, which accepts two args: key and value,
+     for every mapping.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#get()">get</a>(key:Object):*</div>
+<div class="summaryTableDescription"> </div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#isEmpty()">isEmpty</a>():Boolean</div>
+<div class="summaryTableDescription"> 
+     Returns true if this map contains no elements.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#keys()">keys</a>():Array</div>
+<div class="summaryTableDescription"> 
+     Return all the unique keys in this Map, in Array form.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#put()">put</a>(key:Object, value:Object):*</div>
+<div class="summaryTableDescription"> 
+     Store a value in the map associated with the specified key.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -62,6 +126,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#readObject()">readObject</a>(ins:ObjectInputStream):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">StreamableHashMap</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#remove()">remove</a>(key:Object):*</div>
+<div class="summaryTableDescription"> 
+     Removes the mapping for the specified key.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#size()">size</a>():int</div>
+<div class="summaryTableDescription"> 
+     Return the current size of the map.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="HashMap.html#values()">values</a>():Array</div>
+<div class="summaryTableDescription"> 
+     Return all the values in this Map, in Array form.</div>
+</td><td class="summaryTableOwnerCol"><a href="HashMap.html">HashMap</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">

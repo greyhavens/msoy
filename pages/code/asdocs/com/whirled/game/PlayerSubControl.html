@@ -269,37 +269,34 @@ showHideInherited();
      the associated prize item.
           </p><p> Note: a game is only allowed to award a prize once per game session. This is to guard
      against bugs that might try to award many hundreds of the same prize to a user while playing
-     a game. If you <em>really</em> want to award multiple instances of a prize, you will need to
-     make different prize items with unique identifiers which all reference the same target item.
-     </p>
-          <p> Note also: because a game <em>can</em> award the same prize more than once if the player
-     earns the prize in separate game sessions, a game that wishes to only award a prize once
-     should couple the award of the prize with the award of a trophy and then structure their
-     code like so: </p>
-          <div class='listing'><pre>
+     a game. If you eallywant to award multiple instances of a prize, you will need to make
+     different prize items with unique identifiers which all reference the same target item. </p>
+          <p> Note also: because a game anaward the same prize more than once if the player earns
+     the prize in separate game sessions, a game that wishes to only award a prize once should
+     couple the award of the prize with the award of a trophy and then structure their code like
+     so: </p>
+          <pre>
      if (_ctrl.awardTrophy("special_award_trophy")) {
          _ctrl.awardPrize("special_award_avatar");
      }
-     </pre></div>
+     </pre>
           <p> The first time the player accomplishes the necessary goal, they will be awarded the
-     trophy and the prize. Subsequently, <code>awardTrophy()</code> will return false indicating
-     that the player already has the trophy in question and the prize will not be awarded.
-     Alternatively the game could store whether or not the player has earned the prize in a user
-     cookie. </p>
+     trophy and the prize. Subsequently, awardTrophy() will return false indicating that the
+     player already has the trophy in question and the prize will not be awarded. Alternatively
+     the game could store whether or not the player has earned the prize in a user cookie. </p>
           <p>Note thirdly: Clients may only award prized to the current player. Server agents do not
      have a current player and therefore must pass in a valid player id.</p>
           <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the identifier of the prize to award
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the id of the player to award the prize to
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; the id of the player to award the prize to
-     </td>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
 </div>
