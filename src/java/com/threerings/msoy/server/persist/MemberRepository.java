@@ -22,7 +22,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.CacheKey;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
@@ -112,13 +111,12 @@ public class MemberRepository extends DepotRepository
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
-            public void entryInvalidated (CacheKey key, MemberRecord member) {
+            public void entryInvalidated (MemberRecord member) {
                 _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
             }
-            public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
+            public void entryCached (MemberRecord newEntry, MemberRecord oldEntry) {
             }
-            @Override
-            public String toString () {
+            @Override public String toString () {
                 return "MemberRecord -> MemberNameRecord";
             }
         });
