@@ -25,6 +25,9 @@ import com.samskivert.util.IntMaps;
 import com.threerings.parlor.rating.server.persist.RatingRecord;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.persist.ExternalMapRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -176,27 +179,48 @@ public class FacebookPageServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public List<Long> getFriendsUsingApp ()
+    public InviteInfo getInviteInfo (int gameId)
         throws ServiceException
     {
-        // return mapped fb friends
-        List<Long> friends = Lists.newArrayList();
-        for (ExternalMapRecord exRec : loadMappedFriends(false)) {
-            friends.add(Long.valueOf(exRec.externalId));
+        InviteInfo info = new InviteInfo();
+        if (gameId == 0) {
+            info.excludeIds = Lists.newArrayList();
+            for (ExternalMapRecord exRec : loadMappedFriends(false)) {
+                info.excludeIds.add(Long.valueOf(exRec.externalId));
+            }
+
+        } else {
+            GameInfoRecord game = _mgameRepo.loadGame(gameId);
+            if (game == null) {
+                throw new ServiceException();
+            }
+            info.gameName = game.name;
         }
 
-        return friends;
-    }
+        MemberRecord mrec = requireAuthedUser();
 
-    @Override // from FacebookService
-    public String getGameName (int gameId)
-        throws ServiceException
-    {
-        GameInfoRecord game = _mgameRepo.loadGame(gameId);
-        if (game == null) {
-            throw new ServiceException();
+        // get the session key
+        ExternalMapRecord mapRec = _memberRepo.loadExternalMapEntry(
+            ExternalAuther.FACEBOOK, mrec.memberId);
+
+        if (mapRec == null || mapRec.sessionKey == null) {
+            throw new ServiceException(FacebookCodes.NO_SESSION);
         }
-        return game.name;
+
+        info.username = mrec.name;
+        info.gender = FacebookService.Gender.HIDDEN;
+        ProfileRecord profile = _profileRepo.loadProfile(mrec.memberId);
+        if (profile != null) {
+            switch (profile.sex) {
+            case Profile.SEX_MALE:
+                info.gender = FacebookService.Gender.MALE;
+                break;
+            case Profile.SEX_FEMALE:
+                info.gender = FacebookService.Gender.FEMALE;
+                break;
+            }
+        }
+        return info;
     }
 
     protected List<ExternalMapRecord> loadMappedFriends (boolean includeSelf)
@@ -220,8 +244,7 @@ public class FacebookPageServlet extends MsoyServiceServlet
             }
 
         } catch (FacebookException fe) {
-            log.warning("Unable to get facebook friends",
-                "memberId", mrec.memberId, fe);
+            log.warning("Unable to get facebook friends", "memberId", mrec.memberId, fe);
             // pass along the translated text for now
             throw new ServiceException(fe.getMessage());
         }
@@ -273,6 +296,7 @@ public class FacebookPageServlet extends MsoyServiceServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected MoneyRepository _moneyRepo;
+    @Inject protected ProfileRepository _profileRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;
 }

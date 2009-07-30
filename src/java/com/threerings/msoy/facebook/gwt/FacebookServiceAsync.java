@@ -6,6 +6,7 @@ package com.threerings.msoy.facebook.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 
 /**
  * The asynchronous (client-side) version of {@link FacebookService}.
@@ -23,12 +24,7 @@ public interface FacebookServiceAsync
     void getGameFriendsInfo (int gameId, AsyncCallback<List<FacebookFriendInfo>> callback);
 
     /**
-     * The asynchronous version of {@link FacebookService#getFriendsUsingApp}.
+     * The asynchronous version of {@link FacebookService#getInviteInfo}.
      */
-    void getFriendsUsingApp (AsyncCallback<List<Long>> callback);
-
-    /**
-     * The asynchronous version of {@link FacebookService#getGameName}.
-     */
-    void getGameName (int gameId, AsyncCallback<String> callback);
+    void getInviteInfo (int gameId, AsyncCallback<InviteInfo> callback);
 }

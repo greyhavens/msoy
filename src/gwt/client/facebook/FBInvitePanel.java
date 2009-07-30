@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.facebook.gwt.FacebookServiceAsync;
+import com.threerings.msoy.facebook.gwt.FacebookService.InviteInfo;
 import com.threerings.msoy.web.gwt.CookieNames;
 
 /**
@@ -34,11 +35,15 @@ public class FBInvitePanel extends ServerFBMLPanel
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getFriendsUsingApp(new InfoCallback<List<Long>>() {
-            public void onSuccess (List<Long> result) {
+        _fbsvc.getInviteInfo(0, new InfoCallback<InviteInfo>() {
+            public void onSuccess (InviteInfo result) {
+                // inviteGeneric = {0} has invited you to join {1} team on {2}.
                 String app = DeploymentConfig.facebookApplicationName;
-                div.add(new FBInvitePanel(result, _msgs.inviteGeneric(app),
-                    _msgs.inviteGenericTip(), _msgs.inviteGenericAccept(app), "", app));
+                String invite = _msgs.inviteGeneric(
+                    result.username, getPronoun(result.gender), app);
+                String tip = _msgs.inviteGenericTip();
+                String accept = _msgs.inviteChallengeAccept(app);
+                div.add(new FBInvitePanel(result.excludeIds, invite, tip, accept, "", app));
             }
         });
         return div;
@@ -53,12 +58,16 @@ public class FBInvitePanel extends ServerFBMLPanel
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getGameName(gameId, new InfoCallback<String>() {
-            String app = DeploymentConfig.facebookApplicationName;
-            public void onSuccess (String result) {
-                div.add(new FBInvitePanel(null, _msgs.inviteChallenge(app, result),
-                    _msgs.inviteChallengeTip(), _msgs.inviteChallengeAccept(result),
-                    "game=" + gameId, result));
+        _fbsvc.getInviteInfo(gameId, new InfoCallback<InviteInfo>() {
+            public void onSuccess (InviteInfo result) {
+                // {0} just played {1} on {2} and challenges you to beat {3} high score!
+                String app = DeploymentConfig.facebookApplicationName;
+                String invite = _msgs.inviteChallenge(
+                    result.username, result.gameName, app, getPronoun(result.gender));
+                String tip = _msgs.inviteChallengeTip();
+                String accept = _msgs.inviteChallengeAccept(app);
+                div.add(new FBInvitePanel(
+                    result.excludeIds, invite, tip, accept, "game=" + gameId, result.gameName));
             }
         });
         return div;
@@ -110,7 +119,17 @@ public class FBInvitePanel extends ServerFBMLPanel
         FBMLPanel reqChoice = new FBMLPanel("req-choice", "url", url, "label", accept);
         FlowPanel div = new FlowPanel();
         div.add(reqChoice);
-        return StringUtil.escapeAttribute(text + div.getElement().getInnerHTML());
+        return StringUtil.escapeAttribute(text) + div.getElement().getInnerHTML();
+    }
+
+    protected static String getPronoun (FacebookService.Gender gender)
+    {
+        switch (gender) {
+        case FEMALE: return _msgs.possessiveHers();
+        case MALE: return _msgs.possessiveHis();
+        case HIDDEN: return _msgs.possessiveNeutral();
+        }
+        return "";
     }
 
     protected static final FacebookMessages _msgs = GWT.create(FacebookMessages.class);

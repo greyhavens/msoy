@@ -5,6 +5,7 @@ package com.threerings.msoy.facebook.gwt;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -18,6 +19,30 @@ public interface FacebookService extends RemoteService
 {
     public static final String ENTRY_POINT = "/fbpage";
     public static final String REL_PATH = "../../.." + FacebookService.ENTRY_POINT;
+
+    /**
+     * Genders for the purposes of a facebook invite.
+     */
+    public static enum Gender { MALE, FEMALE, HIDDEN };
+
+    /**
+     * Provides data for the invitaion request form.
+     */
+    public static class InviteInfo
+        implements IsSerializable
+    {
+        /** The sending user's name. */
+        public String username;
+
+        /** The sending user's gender, for pronoun selection. */
+        public Gender gender;
+
+        /** The game being invited to, only used when requesting a info for a game. */
+        public String gameName;
+
+        /** The friends to exclude (ones that are already using the application). */
+        public List<Long> excludeIds;
+    }
 
     /**
      * Retrieves the list of friends and their associated info for the currently logged in user.
@@ -35,15 +60,9 @@ public interface FacebookService extends RemoteService
         throws ServiceException;
 
     /**
-     * Retrieves the list of facebook ids that are friends of the currently logged in user and have
-     * associated whirled accounts.
+     * Retrieves the information for sending an invite to the given game, or the application if
+     * the game id is 0.
      */
-    List<Long> getFriendsUsingApp ()
-        throws ServiceException;
-
-    /**
-     * Retrieves the name of the game with the given id.
-     */
-    String getGameName (int gameId)
+    InviteInfo getInviteInfo (int gameId)
         throws ServiceException;
 }
