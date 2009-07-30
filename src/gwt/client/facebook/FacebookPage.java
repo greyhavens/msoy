@@ -26,7 +26,11 @@ public class FacebookPage extends Page
             setContent("Friends", new FBFriendBar());
 
         } else if (action.equals("invite")) {
-            setContent("Invite", FBInvitePanel.create());
+            setContent("Invite", FBInvitePanel.createGeneric());
+
+        } else if (action.equals("challenge")) {
+            int gameId = args.get(1, 0);
+            setContent("Challenge", FBInvitePanel.createChallenge(gameId));
         }
     }
 
