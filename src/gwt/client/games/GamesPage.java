@@ -83,6 +83,7 @@ public class GamesPage extends Page
         } else if (action.equals("mochi")) {
             String mochiTag = args.get(1, "");
             setContent(new MochiGamePanel(mochiTag));
+            showFriendsBar(0); // just show the generic friends bar for mochi games
 
         } else {
             if (CShell.isFacebook()
