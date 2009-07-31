@@ -41,7 +41,8 @@ public class MemberName extends Name
      */
     public static final String ILLEGAL_DISPLAY_NAME_CHARS = "\u007F" + // renders invisible in flash
         "\uFFFC\uFFFD" + // used by whirled for delimiting links in chat
-        "\u202A\u202B\u202C\u202D\u202E"; // control text direction
+        "\u202A\u202B\u202C\u202D\u202E" + // control text direction
+        "\u534D\u5350\u0FCC"; // swastikas
 
     /** The maximum length for an account name (email address). */
     public static final int MAX_EMAIL_LENGTH = 128;
@@ -211,11 +212,13 @@ public class MemberName extends Name
     /** Helper for {@link #isValidDisplayName}. */
     protected static boolean containsOnlyLegalChars (String name)
     {
+        boolean visible = false;
         for (int ii = 0, nn = name.length(); ii < nn; ii++) {
             char c = name.charAt(ii);
             if ((c < ' ') || (-1 != ILLEGAL_DISPLAY_NAME_CHARS.indexOf(c))) {
                 return false;
             }
+            visible = visible || !isWhitespace(c);
         }
         return true;
     }

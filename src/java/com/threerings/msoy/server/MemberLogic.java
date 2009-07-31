@@ -584,6 +584,25 @@ public class MemberLogic
     }
 
     /**
+     * Validate that the specified display name is kosher.
+     */
+    public void validateDisplayName (String name, boolean allowSupportNames)
+        throws ServiceException
+    {
+        if (!MemberName.isValidDisplayName(name) ||
+                (!allowSupportNames && !MemberName.isValidNonSupportName(name))) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // TODO: improve. Load patterns from the database at startup?
+        // validate the name against some simple stop patterns.
+        name = name.toLowerCase();
+        if ((-1 != name.indexOf("nigger")) || (-1 != name.indexOf("faggot"))) {
+            throw new ServiceException("e.bad_displayname");
+        }
+    }
+
+    /**
      * Retrieves a list of lists of experiences to be displayed on the home page. Each list is
      * a category of experiences. The first is games, the second is rooms. Within each list, each
      * experience the member has had recently will be given a weighted score to determine the order
@@ -707,25 +726,6 @@ public class MemberLogic
         } else {
             return new HomePageItem(HomePageItem.ACTION_GAME, new BasicNavItemData(
                 game.gameId, game.name), game.getThumbMedia());
-        }
-    }
-
-    /**
-     * Validate that the specified display name is kosher.
-     */
-    protected void validateDisplayName (String name, boolean allowSupportNames)
-        throws ServiceException
-    {
-        if (!MemberName.isValidDisplayName(name) ||
-                (!allowSupportNames && !MemberName.isValidNonSupportName(name))) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        // TODO: improve. Load patterns from the database at startup?
-        // validate the name against some simple stop patterns.
-        name = name.toLowerCase();
-        if ((-1 != name.indexOf("nigger")) || (-1 != name.indexOf("faggot"))) {
-            throw new ServiceException("e.bad_displayname");
         }
     }
 

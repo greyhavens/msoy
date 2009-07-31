@@ -499,11 +499,8 @@ public class AccountLogic
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
 
-        // validate display name length (this is enforced on the client)
-        if (!MemberName.isValidDisplayName(displayName) ||
-            !MemberName.isValidNonSupportName(displayName)) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        // validate display name for length, whitespace and some racist content
+        _memberLogic.validateDisplayName(displayName, false);
     }
 
     protected int resolveAffiliate (int affiliateId, InvitationRecord invite)
