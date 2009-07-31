@@ -165,6 +165,10 @@ public class FacebookServlet extends HttpServlet
                     // Facebook iframe bug on Mac Firefox, yay)
                     rsp.sendRedirect("/#" + Pages.GAMES.makeToken("d", info.gameId));
                 }
+            } else if (!StringUtil.isBlank(info.mochiGameTag)) {
+                // straight into the Mochi game
+                rsp.sendRedirect("/#" + Pages.GAMES.makeToken("mochi", info.mochiGameTag));
+
             } else {
                 rsp.sendRedirect("/#" + Pages.GAMES.makeToken());
             }
@@ -236,6 +240,7 @@ public class FacebookServlet extends HttpServlet
             if (!StringUtil.isBlank(gameId)) {
                 info.gameId = Integer.parseInt(gameId);
             }
+            info.mochiGameTag = req.getParameter("mgame");
             info.vector = req.getParameter("vec");
             if (info.vector == null) {
                 info.vector = FacebookTemplateCard.toEntryVector("app", "");
@@ -277,6 +282,7 @@ public class FacebookServlet extends HttpServlet
     protected static class AppInfo
     {
         public int gameId;
+        public String mochiGameTag;
         public String apiKey;
         public String appSecret;
         public boolean chromeless;
