@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -207,12 +208,14 @@ public class ForumServlet extends MsoyServiceServlet
         result.canPostReply = (mrec != null) && group.checkAccess(rank, Group.Access.POST, 0);
         result.isManager = (mrec != null && mrec.isSupport()) || (rank == Rank.MANAGER);
 
-        // load up the messages, convert to runtime records, compute highest post id
+        // load up the messages, convert to runtime records, compute indices and highest post id
         List<ForumMessage> messages = resolveMessages(
             _forumRepo.loadMessages(threadId, offset, count));
         int highestPostId = 0;
-        for (ForumMessage msg : messages) {
+        for (int ii = 0, ll = messages.size(); ii < ll; ++ii)  {
+            ForumMessage msg = messages.get(ii);
             highestPostId = Math.max(highestPostId, msg.messageId);
+            msg.messageIndex = offset + ii;
         }
         result.messages = messages;
 
@@ -266,8 +269,17 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
-        // do the search and return the results
-        return resolveMessages(_forumRepo.findMessages(threadId, search, limit));
+        // do the search
+        List<ForumMessage> messages = resolveMessages(
+            _forumRepo.findMessages(threadId, search, limit));
+
+        // fill in the index for permalinks
+        IntIntMap idToIndex = _forumRepo.loadMessageIds(threadId);
+        for (ForumMessage msg : messages) {
+            msg.messageIndex = idToIndex.getOrElse(msg.messageId, 0);
+        }
+
+        return messages;
     }
 
     // from interface ForumService

@@ -257,7 +257,8 @@ public class ForumModels
         @Override // from ServiceBackedDataModel
         public void appendItem (ForumMessage message) {
             super.appendItem(message);
-            _thread.posts++;
+            // assign the new index and increment posts
+            message.messageIndex = _thread.posts++;
             // mark our thread as read up to this message
             _thread.lastReadPostId = message.messageId;
             _thread.lastReadPostIndex = _thread.posts - 1;

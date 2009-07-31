@@ -78,6 +78,14 @@ public class ForumMessageRecord extends PersistentRecord
     public String message;
 
     /**
+     * Extract the message id from the key.
+     */
+    public static int extractMessageId (Key<ForumMessageRecord> key)
+    {
+        return (Integer)(key.getValues()[0]);
+    }
+
+    /**
      * Converts this persistent record into a runtime record.
      *
      * @param members a mapping from memberId to {@link MemberCard} that should contain a mapping

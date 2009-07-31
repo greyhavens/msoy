@@ -279,6 +279,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                     public void onClick (ClickEvent event) {
                         _parent.editPost(_message, new InfoCallback<ForumMessage>() {
                             public void onSuccess (ForumMessage message) {
+                                message.messageIndex = _message.messageIndex;
                                 setMessage(message);
                             }
                         });
@@ -322,7 +323,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             String path = "/images/msgs/" +
                 ((_message.messageId > _thread.lastReadPostId) ? "unread" : "read") + ".png";
-            Args args = _thread.getPagePostArgs(_page, _message.messageId);
+            Args args = _thread.getPostArgs(_message.messageIndex, _message.messageId);
             return Link.createImage(path, _mmsgs.permaLink(), Pages.GROUPS, args);
         }
 

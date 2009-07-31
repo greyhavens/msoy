@@ -136,13 +136,11 @@ public class ForumThread
     }
 
     /**
-     * Get the token arguments that will link to given message id on a given page.
+     * Get the token arguments that will link to a message with the given index and id.
      */
-    public Args getPagePostArgs (int page, int messageId)
+    public Args getPostArgs (int messageIndex, int messageId)
     {
-        // fake up a message index that will put us on the correct page
-        int msgIndex = page * MESSAGES_PER_PAGE;
-        return getArgs(msgIndex, messageId);
+        return getArgs(messageIndex, messageId);
     }
 
     // from Object

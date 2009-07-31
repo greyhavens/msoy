@@ -17,6 +17,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
@@ -35,6 +36,7 @@ import com.samskivert.depot.operator.FullText;
 import com.samskivert.depot.operator.GreaterThan;
 import com.samskivert.depot.operator.Not;
 import com.samskivert.depot.operator.Or;
+import com.samskivert.util.IntIntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -242,6 +244,21 @@ public class ForumRepository extends DepotRepository
                             new FullText(ForumMessageRecord.class,
                                          ForumMessageRecord.FTS_MESSAGE, search).match());
         return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
+    }
+
+    /**
+     * Loads up a map of message id to the index of the message within the containing thread.
+     */
+    public IntIntMap loadMessageIds (int threadId)
+    {
+        IntIntMap idToIndex = new IntIntMap();
+        int index = 0;
+        for (Key<ForumMessageRecord> key : findAllKeys(ForumMessageRecord.class, false,
+            new Where(ForumMessageRecord.THREAD_ID.eq(threadId)),
+            OrderBy.ascending(ForumMessageRecord.CREATED))) {
+            idToIndex.put(ForumMessageRecord.extractMessageId(key), index++);
+        }
+        return idToIndex;
     }
 
     /**

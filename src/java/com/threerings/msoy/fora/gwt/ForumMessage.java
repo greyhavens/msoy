@@ -21,6 +21,10 @@ public class ForumMessage
     /** This message's unique identifier. */
     public int messageId;
 
+    /** This message's index in its owning thread's list. Note that this value is not filled in by
+     * the server when a single message operation is being performed. */
+    public int messageIndex;
+
     /** The id of the thread to which this message belongs. */
     public int threadId;
 
