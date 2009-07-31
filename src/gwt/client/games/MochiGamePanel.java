@@ -14,7 +14,10 @@ import com.threerings.gwt.util.ServiceUtil;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.MochiGameInfo;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.PageCallback;
 
@@ -37,6 +40,8 @@ public class MochiGamePanel extends FlowPanel
     protected void init (MochiGameInfo info)
     {
         clear();
+        CShell.frame.addNavLink("Click here to challenge a friend to beat you in " + info.name,
+            Pages.FACEBOOK, Args.compose("mochichallenge", info.tag), -1);
         Widget game = WidgetUtil.createFlashContainer(
             info.tag, info.swfURL, info.width, info.height, null);
         game.addStyleName("Game");
@@ -45,6 +50,13 @@ public class MochiGamePanel extends FlowPanel
         DOM.setStyleAttribute(game.getElement(), "marginLeft", "auto");
         DOM.setStyleAttribute(game.getElement(), "marginRight", "auto");
         add(game);
+    }
+
+    @Override // from Widget
+    protected void onUnload ()
+    {
+        // TODO: removeNavLink?
+        CShell.frame.addNavLink("", Pages.GAMES, Args.compose(), -1);
     }
 
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
