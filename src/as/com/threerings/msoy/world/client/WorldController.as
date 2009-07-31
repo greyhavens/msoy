@@ -53,6 +53,7 @@ import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.game.client.GameGameService;
 import com.threerings.msoy.game.client.ParlorGamePanel;
 import com.threerings.msoy.game.client.TablesWaitingPanel;
+import com.threerings.msoy.game.data.ParlorGameConfig;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
@@ -1131,6 +1132,10 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function canManagePlace () :Boolean
     {
+        // TODO: this function should really be split into canManageRoom and canManageGame because
+        // of AVRGs being both. ShareDialog currently allows a room manager to embed out an AVRG
+        // because of this, but it's not like the feature is that popular
+
         // support can manage any place...
         if (_wctx.getTokens().isSupport()) {
             return true;
@@ -1140,12 +1145,13 @@ public class WorldController extends MsoyController
         if (view is RoomView) {
             return RoomView(view).getRoomController().canManageRoom();
         }
-// TODO!
-//         const gameCfg :ParlorGameConfig = _wctx.getGameDirector().getGameConfig();
-//         if (gameCfg != null) {
-//             // in games, we can "manage" if we're the owner
-//             return gameCfg.game.creatorId == _wctx.getMyId();
-//         }
+
+        const gameCfg :ParlorGameConfig = _wctx.getGameDirector().getGameConfig();
+        if (gameCfg != null) {
+            // in games, we can "manage" if we're the owner
+            return gameCfg.game.creatorId == _wctx.getMyId();
+        }
+
         return false;
     }
 
