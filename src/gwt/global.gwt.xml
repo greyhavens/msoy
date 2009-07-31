@@ -22,4 +22,15 @@
 
   <stylesheet src="global.css"/>
   <stylesheet src="gwt.css"/>
+
+  <!-- Standard implementations of href attribute -->
+  <replace-with class="client.ui.impl.HrefImpl">
+    <when-type-is class="client.ui.impl.HrefImpl"/>
+  </replace-with>
+
+  <!-- IE8 implementation of href attribute -->
+  <replace-with class="client.ui.impl.HrefImplIE8">
+    <when-type-is class="client.ui.impl.HrefImpl"/>
+    <when-property-is name="user.agent" value="ie8"/>
+  </replace-with>
 </module>
