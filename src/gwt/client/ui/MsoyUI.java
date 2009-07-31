@@ -222,14 +222,20 @@ public class MsoyUI
      */
     public static HTML createRestrictedHTML (String html, boolean whirledOnly)
     {
+        String id = "[-0-9a-zA-Z]+";
+        String idd = "(" + id + "\\.)";
+        String idds = "(" + idd + "+)";
+        String http = "http://";
+        String port = "(:[0-9]+)?";
+        String path = "/([^ ]*)";
         html = escapeHTML(html);
         if (whirledOnly) {
-            html = html.replaceAll("(http://(.*?\\.)?whirled.com/([^ ]+))",
-                "<a href=\"$1\">$3</a>");
+            html = html.replaceAll("(" + http + idds + "?" + "whirled.com" + path + ")",
+                "<a href=\"$1\">$4</a>");
 
         } else {
             // TODO: java.net.IDN
-            html = html.replaceAll("(http://(([-0-9a-zA-Z]+.)+[-0-9a-zA-Z]+(/([^ ]+))?))",
+            html = html.replaceAll("(" + http + "(" + idds + id + port + "(" + path + ")?))",
                 "<a href=\"$1\">$2</a>");
         }
         return createHTML(html, null);
