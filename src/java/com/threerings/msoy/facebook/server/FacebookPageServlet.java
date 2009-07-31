@@ -41,6 +41,7 @@ import com.threerings.msoy.facebook.gwt.FacebookService;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameGenre;
+import com.threerings.msoy.game.gwt.MochiGameInfo;
 import com.threerings.msoy.game.server.persist.ArcadeEntryRecord;
 import com.threerings.msoy.game.server.persist.GameInfoRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -180,18 +181,28 @@ public class FacebookPageServlet extends MsoyServiceServlet
     }
 
     @Override // from FacebookService
-    public InviteInfo getInviteInfo (int gameId)
+    public InviteInfo getInviteInfo (String gameSpec)
         throws ServiceException
     {
         InviteInfo info = new InviteInfo();
-        if (gameId == 0) {
+        if (gameSpec.length() == 0) {
+            // application invite
             info.excludeIds = Lists.newArrayList();
             for (ExternalMapRecord exRec : loadMappedFriends(false)) {
                 info.excludeIds.add(Long.valueOf(exRec.externalId));
             }
 
-        } else {
-            GameInfoRecord game = _mgameRepo.loadGame(gameId);
+        } else if (gameSpec.startsWith("w:")) {
+            // whirled game invite
+            GameInfoRecord game = _mgameRepo.loadGame(Integer.parseInt(gameSpec.substring(2)));
+            if (game == null) {
+                throw new ServiceException();
+            }
+            info.gameName = game.name;
+
+        } else if (gameSpec.startsWith("m:")) {
+            // mochi game invite
+            MochiGameInfo game = _mgameRepo.loadMochiGame(gameSpec.substring(2));
             if (game == null) {
                 throw new ServiceException();
             }

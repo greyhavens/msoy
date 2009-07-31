@@ -31,6 +31,10 @@ public class FacebookPage extends Page
         } else if (action.equals("challenge")) {
             int gameId = args.get(1, 0);
             setContent("Challenge", FBInvitePanel.createChallenge(gameId));
+
+        } else if (action.equals("mochichallenge")) {
+            String tag = args.get(1, "");
+            setContent("Challenge", FBInvitePanel.createMochiChallenge(tag));
         }
     }
 

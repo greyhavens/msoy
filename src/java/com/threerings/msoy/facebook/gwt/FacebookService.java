@@ -63,6 +63,6 @@ public interface FacebookService extends RemoteService
      * Retrieves the information for sending an invite to the given game, or the application if
      * the game id is 0.
      */
-    InviteInfo getInviteInfo (int gameId)
+    InviteInfo getInviteInfo (String gameSpec)
         throws ServiceException;
 }

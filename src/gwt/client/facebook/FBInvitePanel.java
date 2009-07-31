@@ -28,14 +28,14 @@ import com.threerings.msoy.web.gwt.CookieNames;
 public class FBInvitePanel extends ServerFBMLPanel
 {
     /**
-     * Creates a panel to contain the generic invite, then populates it once the user's non-whirled
-     * friends are known.
+     * Creates a panel to contain a generic invite, automatically populating it once the
+     * appropriate invite information is returned.
      */
     public static Widget createGeneric ()
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getInviteInfo(0, new InfoCallback<InviteInfo>() {
+        _fbsvc.getInviteInfo("", new InfoCallback<InviteInfo>() {
             public void onSuccess (InviteInfo result) {
                 // inviteGeneric = {0} has invited you to join {1} team on {2}.
                 String app = DeploymentConfig.facebookApplicationName;
@@ -50,24 +50,47 @@ public class FBInvitePanel extends ServerFBMLPanel
     }
 
     /**
-     * Creates a panel to contain the challenge request, then populates it once the game name is
-     * known.
+     * Creates a panel to contain a challenge request for the given whirled game id, automatically
+     * populating it once the appropriate invite information is returned.
      * TODO: high scores?
      */
     public static Widget createChallenge (final int gameId)
     {
         // TOOD: some loading message
         final FlowPanel div = new FlowPanel();
-        _fbsvc.getInviteInfo(gameId, new InfoCallback<InviteInfo>() {
+        _fbsvc.getInviteInfo("w:" + gameId, new InfoCallback<InviteInfo>() {
             public void onSuccess (InviteInfo result) {
                 // {0} just played {1} on {2} and challenges you to beat {3} high score!
                 String app = DeploymentConfig.facebookApplicationName;
                 String invite = _msgs.inviteChallenge(
                     result.username, result.gameName, app, getPronoun(result.gender));
                 String tip = _msgs.inviteChallengeTip();
-                String accept = _msgs.inviteChallengeAccept(app);
+                String accept = _msgs.inviteChallengeAccept(result.gameName);
                 div.add(new FBInvitePanel(
                     result.excludeIds, invite, tip, accept, "game=" + gameId, result.gameName));
+            }
+        });
+        return div;
+    }
+
+    /**
+     * Creates a panel to contain a challenge request for the given mopchi game tag, automatically
+     * populating it once the appropriate invite information is returned.
+     */
+    public static Widget createMochiChallenge (final String mochiTag)
+    {
+        // TOOD: some loading message
+        final FlowPanel div = new FlowPanel();
+        _fbsvc.getInviteInfo("m:" + mochiTag, new InfoCallback<InviteInfo>() {
+            public void onSuccess (InviteInfo result) {
+                // {0} just played {1} on {2} and challenges you to beat {3} high score!
+                String app = DeploymentConfig.facebookApplicationName;
+                String invite = _msgs.inviteChallenge(
+                    result.username, result.gameName, app, getPronoun(result.gender));
+                String tip = _msgs.inviteChallengeTip();
+                String accept = _msgs.inviteChallengeAccept(result.gameName);
+                div.add(new FBInvitePanel(
+                    result.excludeIds, invite, tip, accept, "mgame=" + mochiTag, result.gameName));
             }
         });
         return div;

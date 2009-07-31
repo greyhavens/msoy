@@ -26,5 +26,5 @@ public interface FacebookServiceAsync
     /**
      * The asynchronous version of {@link FacebookService#getInviteInfo}.
      */
-    void getInviteInfo (int gameId, AsyncCallback<InviteInfo> callback);
+    void getInviteInfo (String gameSpec, AsyncCallback<InviteInfo> callback);
 }
