@@ -28,6 +28,9 @@ public class GameSummary extends SimpleStreamableObject
     /** The thumbnail media for the game we're summarizing. */
     public MediaDesc thumbMedia;
 
+    /** The member id of the creator of the game. */
+    public int creatorId;
+
     /** Used for unserialization. */
     public GameSummary ()
     {
@@ -37,13 +40,14 @@ public class GameSummary extends SimpleStreamableObject
      * Creates a summary for the specified game.
      */
     public GameSummary (int gameId, String name, String description, boolean isAVRG,
-                        MediaDesc thumbMedia)
+                        MediaDesc thumbMedia, int creatorId)
     {
         this.gameId = gameId;
         this.name = name;
         this.description = description;
         this.avrGame = isAVRG;
         this.thumbMedia = thumbMedia;
+        this.creatorId = creatorId;
     }
 
     @Override // from Object

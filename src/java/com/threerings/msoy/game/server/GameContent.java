@@ -44,6 +44,6 @@ public class GameContent
     public GameSummary toGameSummary ()
     {
         return new GameSummary(
-            gameId, game.name, game.description, game.isAVRG, game.getThumbMedia());
+            gameId, game.name, game.description, game.isAVRG, game.getThumbMedia(), game.creatorId);
     }
 }

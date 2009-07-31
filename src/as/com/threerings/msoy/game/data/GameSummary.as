@@ -33,6 +33,9 @@ public class GameSummary extends SimpleStreamableObject
     /** The thumbnail media for the game we're summarizing. */
     public var thumbMedia :MediaDesc;
 
+    /** The member id of the creator of the game. */
+    public var creatorId :int;
+
     public function GameSummary ()
     {
         // only used for unserialization
@@ -47,6 +50,7 @@ public class GameSummary extends SimpleStreamableObject
         data.description = this.description;
         data.avrGame = this.avrGame;
         data.thumbMedia = this.thumbMedia;
+        data.creatorId = this.creatorId;
         return data;
     }
 
@@ -69,6 +73,7 @@ public class GameSummary extends SimpleStreamableObject
         description = (ins.readField(String) as String);
         avrGame = ins.readBoolean();
         thumbMedia = MediaDesc(ins.readObject());
+        creatorId = ins.readInt();
     }
 
     // documntation from Streamable
@@ -80,6 +85,7 @@ public class GameSummary extends SimpleStreamableObject
         out.writeField(description);
         out.writeBoolean(avrGame);
         out.writeObject(thumbMedia);
+        out.writeInt(creatorId);
     }
 }
 }
