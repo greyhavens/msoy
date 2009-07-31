@@ -4,6 +4,7 @@
 package client.frame;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.AbsoluteCSSPanel;
@@ -30,18 +31,17 @@ public class FacebookTitleBar extends TitleBar
 
     public FacebookTitleBar (String gameName, int gameId)
     {
-        boolean challenge = gameName != null;
         _contents = new AbsoluteCSSPanel("fbpageTitle");
-        _contents.getElement().setAttribute("mode", challenge ? "challenge" : "normal");
         _contents.add(MsoyUI.createFlowPanel("Logo"));
         _contents.add(button("Games", Pages.GAMES));
         _contents.add(button("Invite", Pages.FACEBOOK, "invite"));
         _contents.add(Link.createTop("Fan", DeploymentConfig.facebookApplicationUrl));
         _contents.add(button("Trophies", Pages.GAMES, "t", CShell.getMemberId()));
-        if (challenge) {
-            _contents.add(MsoyUI.createFlowPanel("Challenge", Link.create(
-                "Click here to challenge a friend to beat you in " + gameName, Pages.FACEBOOK,
-                "challenge", gameId)));
+        if (gameName == null) {
+            _contents.getElement().setAttribute("mode", "normal");
+        } else {
+            String challenge = "Click here to challenge a friend to beat you in " + gameName;
+            addContextLink(challenge, Pages.FACEBOOK, Args.compose("challenge", gameId), -1);
         }
     }
 
@@ -66,7 +66,32 @@ public class FacebookTitleBar extends TitleBar
     @Override // from TitleBar
     public void addContextLink (String label, Pages page, Args args, int position)
     {
-        // not supported
+        // -1 is a special signal that this is a challenge link. other positions are not supported
+        if (position != -1) {
+            return;
+        }
+
+        boolean challenge = !label.isEmpty();
+
+        // set the style attribute for the challenge mode
+        _contents.getElement().setAttribute("mode", challenge ? "challenge" : "normal");
+
+        // workaround for IE: attribute selectors do not appear to update dynamically
+        // ... so just remove and readd a style attribute here
+        DOM.setStyleAttribute(_contents.getElement(), "left", "0px");
+        DOM.setStyleAttribute(_contents.getElement(), "left", "");
+
+        // remove the old challenge if any
+        if (_challenge != null) {
+            _contents.remove(_challenge);
+            _challenge = null;
+        }
+
+        // add the new one
+        if (challenge) {
+            _contents.add(_challenge = MsoyUI.createFlowPanel("Challenge",
+                Link.create(label, page, args)));
+        }
     }
 
     @Override // from TitleBar
@@ -87,6 +112,7 @@ public class FacebookTitleBar extends TitleBar
     }
 
     protected AbsoluteCSSPanel _contents;
+    protected Widget _challenge;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

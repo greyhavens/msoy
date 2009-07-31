@@ -114,6 +114,12 @@ public class FramedLayout extends Layout
         return true;
     }
 
+    @Override // from Layout
+    public void updateTitleBarHeight ()
+    {
+        // not supported
+    }
+
     /**
      * Adds our previously created panel members to the root panel. Subclasses can change the order
      * or whatever.

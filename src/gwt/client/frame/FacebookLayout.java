@@ -58,6 +58,12 @@ public class FacebookLayout extends FramedLayout
         updateMainContentHeight();
     }
 
+    @Override // from Layout
+    public void updateTitleBarHeight ()
+    {
+        updateMainContentHeight();
+    }
+
     @Override // from FramedLayout
     protected void addPanels (RootPanel root)
     {

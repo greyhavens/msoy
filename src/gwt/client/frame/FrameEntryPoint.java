@@ -279,6 +279,7 @@ public class FrameEntryPoint
     public void addNavLink (String label, Pages page, Args args, int position)
     {
         _bar.addContextLink(label, page, args, position);
+        _layout.updateTitleBarHeight();
     }
 
     // from interface Frame

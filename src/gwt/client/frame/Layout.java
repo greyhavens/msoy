@@ -83,6 +83,11 @@ public abstract class Layout
     public abstract void addNoClientIcon ();
 
     /**
+     * Updates the layout after the title bar changes height.
+     */
+    public abstract void updateTitleBarHeight ();
+
+    /**
      * Detects if this layout always shows the title bar. That is, the title bar is displayed even
      * when the client is active.
      */

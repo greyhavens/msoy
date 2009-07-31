@@ -169,6 +169,12 @@ public class StandardLayout extends Layout
     }
 
     @Override // from Layout
+    public void updateTitleBarHeight ()
+    {
+        // not supported
+    }
+
+    @Override // from Layout
     protected void init (FrameHeader header, ClickHandler onGoHome) {
         super.init(header, onGoHome);
         RootPanel.get().addStyleName("standardPage");
