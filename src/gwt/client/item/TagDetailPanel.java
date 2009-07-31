@@ -382,7 +382,7 @@ public class TagDetailPanel extends VerticalPanel
                     }
                     String comment = _comment.getText();
                     if (_link != null) {
-                        comment = "Link: " + _link.getText() + ". " + comment;
+                        comment = "Link: " + _link.getText() + " " + comment;
                     }
                     _flagger.addFlag(_kind, comment);
                     MsoyUI.info(_cmsgs.tagThanks());

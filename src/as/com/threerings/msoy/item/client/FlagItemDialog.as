@@ -69,7 +69,7 @@ public class FlagItemDialog extends FloatingPanel
         // TODO: require some text in the link if STOLEN, COPYRIGHT or UNATTRIBUTED
         var comment :String = _comment.text;
         if (_link.text.length > 0) {
-            comment = "Link: " + _link.text + ". " + comment;
+            comment = "Link: " + _link.text + " " + comment;
         }
         var isvc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
         isvc.addFlag(_ctx.getClient(), _ident, ItemFlag_Kind(_kind.selectedItem), comment,
