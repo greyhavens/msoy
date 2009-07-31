@@ -195,7 +195,9 @@ public class MsoyUI
         return label;
     }
 
-    /** Escapes an HTML/XML string. */
+    /**
+     * Escapes an HTML/XML string.
+     */
     public static String escapeHTML (String html)
     {
         return html.replaceAll("&", "&amp;")
@@ -206,15 +208,18 @@ public class MsoyUI
 
     /**
      * Creates a safe, restricted HTML from user input. URLs specifying a *.whirled.com domain are
-     * automatically turned into links. Html characters are escaped. */
+     * automatically turned into links. Html characters are escaped.
+     */
     public static HTML createRestrictedHTML (String html)
     {
         return createRestrictedHTML(html, true);
     }
 
-    /** Creates a safe, restricted HTML from user input. URLs are automatically tuend into links,
+    /**
+     * Creates a safe, restricted HTML from user input. URLs are automatically turned into links,
      * other text is escaped. Optionally, the URLs that get converted may be limited yo only those
-     * in a whirled.com subdomain. */
+     * in a whirled.com subdomain.
+     */
     public static HTML createRestrictedHTML (String html, boolean whirledOnly)
     {
         html = escapeHTML(html);
