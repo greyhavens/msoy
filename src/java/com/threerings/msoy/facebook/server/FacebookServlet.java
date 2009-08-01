@@ -58,10 +58,8 @@ import static com.threerings.msoy.Log.log;
 
 /**
  * Implementation of FacebookService.
- * TODO: rename this FacebookServlet and the class currently using that name
- * FacebookCallbackServlet since this fits better into the convention of what servlets do
  */
-public class FacebookPageServlet extends MsoyServiceServlet
+public class FacebookServlet extends MsoyServiceServlet
     implements FacebookService
 {
     @Override // from FacebookService
